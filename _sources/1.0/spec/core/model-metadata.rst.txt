@@ -5,7 +5,10 @@ Model metadata
 ==============
 
 :dfn:`Metadata` is a schema-less extensibility mechanism that can be applied
-to a model using a :ref:`metadata statement <metadata-statement>`.
+to a model using a :ref:`metadata statement <metadata-statement>`. For
+example, metadata is used to define :ref:`validators <validation>` and
+:ref:`suppressions <suppression-definition>` that are applied to the entire
+model.
 
 .. contents:: Table of contents
     :depth: 1
@@ -19,26 +22,24 @@ to a model using a :ref:`metadata statement <metadata-statement>`.
 Metadata statement
 ------------------
 
-The metadata statement is used to attach arbitrary :ref:`metadata <metadata>`
-to a model. Metadata statements MUST appear before a namespace statement
-or any shapes are defined.
+Metadata statements MUST appear before any namespace statement or any shapes
+are defined. Metadata is defined by the following ABNF:
 
 .. productionlist:: smithy
-    metadata_statement:"metadata" `metadata_key` "=" `metadata_value`
-    metadata_key:`text`
-    metadata_value:`node_value`
+    metadata_section   :*(`metadata_statement`)
+    metadata_statement :"metadata" `ws` `node_object_key` `ws` "=" `ws` `node_value` `br`
 
 .. code-block:: smithy
     :caption: Example
 
-    metadata example.string1 = "hello there"
-    metadata example.string2 = 'hello there'
-    metadata example.bool1 = true
-    metadata example.bool2 = false
-    metadata example.number = 10
-    metadata example.array = [10, true, "hello"]
-    metadata example.object = {foo: "baz"}
-    metadata example.null = null
+    metadata exampleString = "hello there"
+    metadata "example.string2" = 'hello there'
+    metadata bool1 = true
+    metadata bool2 = false
+    metadata number = 10
+    metadata array = [10, true, "hello"]
+    metadata object = {foo: "baz"}
+    metadata null = null
 
 
 .. _merging-metadata:

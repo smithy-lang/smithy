@@ -174,7 +174,7 @@ JSON</div>
 </div>
 <p>The shape ID of a trait is <em>resolved</em> against <a class="reference internal" href="shapes.html#grammar-token-use_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">use_statement</span></code></a>s and the
 current namespace in exactly the same same way as
-<a class="reference internal" href="lexical-structure.html#relative-shape-id"><span class="std std-ref">other shape IDs</span></a>.</p>
+<a class="reference internal" href="shapes.html#relative-shape-id"><span class="std std-ref">other shape IDs</span></a>.</p>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
 <p class="last">Trait names are case-sensitive; it is invalid, for example, to refer to
@@ -191,7 +191,7 @@ model that applies documentation traits to the shapes.</p>
 <p>Apply statements are formed using the following grammar:</p>
 <pre>
 <strong id="grammar-token-apply_statement">apply_statement</strong> =
-    &quot;apply&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a> <a class="reference internal" href="#grammar-token-trait"><code class="xref docutils literal notranslate"><span class="pre">trait</span></code></a>
+    &quot;apply&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-trait"><code class="xref docutils literal notranslate"><span class="pre">trait</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a>
 </pre>
 <p>The following example applies the <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a> and
 <a class="reference internal" href="constraint-traits.html#length-trait"><span class="std std-ref">length trait</span></a> to the <code class="docutils literal notranslate"><span class="pre">smithy.example#MyString</span></code> shape:</p>
@@ -260,17 +260,23 @@ member and do not conflict.</p>
 trait is defined in the IDL by enclosing the value in parenthesis. Trait values
 can only appear immediately before a shape.</p>
 <pre>
+<strong id="grammar-token-trait_statements">trait_statements</strong> =
+     *(<a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-trait"><code class="xref docutils literal notranslate"><span class="pre">trait</span></code></a>) <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a>
+
 <strong id="grammar-token-trait">trait</strong> =
-    &quot;&#64;&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a> [&quot;(&quot; <a class="reference internal" href="#grammar-token-trait_body_value"><code class="xref docutils literal notranslate"><span class="pre">trait_body_value</span></code></a> &quot;)&quot;]
+    &quot;&#64;&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a> [<a class="reference internal" href="#grammar-token-trait_body"><code class="xref docutils literal notranslate"><span class="pre">trait_body</span></code></a>]
+
+<strong id="grammar-token-trait_body">trait_body</strong> =
+    &quot;(&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-trait_body_value"><code class="xref docutils literal notranslate"><span class="pre">trait_body_value</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> &quot;)&quot;
 
 <strong id="grammar-token-trait_body_value">trait_body_value</strong> =
     <a class="reference internal" href="#grammar-token-trait_structure"><code class="xref docutils literal notranslate"><span class="pre">trait_structure</span></code></a> / <a class="reference internal" href="lexical-structure.html#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>
 
 <strong id="grammar-token-trait_structure">trait_structure</strong> =
-    <a class="reference internal" href="#grammar-token-trait_structure_kvp"><code class="xref docutils literal notranslate"><span class="pre">trait_structure_kvp</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-trait_structure_kvp"><code class="xref docutils literal notranslate"><span class="pre">trait_structure_kvp</span></code></a>)
+    <a class="reference internal" href="#grammar-token-trait_structure_kvp"><code class="xref docutils literal notranslate"><span class="pre">trait_structure_kvp</span></code></a> *(<a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-comma"><code class="xref docutils literal notranslate"><span class="pre">comma</span></code></a> <a class="reference internal" href="#grammar-token-trait_structure_kvp"><code class="xref docutils literal notranslate"><span class="pre">trait_structure_kvp</span></code></a>)
 
 <strong id="grammar-token-trait_structure_kvp">trait_structure_kvp</strong> =
-    <a class="reference internal" href="lexical-structure.html#grammar-token-text"><code class="xref docutils literal notranslate"><span class="pre">text</span></code></a> &quot;:&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>
+    <a class="reference internal" href="lexical-structure.html#grammar-token-node_object_key"><code class="xref docutils literal notranslate"><span class="pre">node_object_key</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> &quot;:&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>
 </pre>
 <p>The following example applies various traits to a structure shape and its
 members.</p>

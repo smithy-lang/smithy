@@ -111,7 +111,10 @@
   <div class="section" id="model-metadata">
 <span id="metadata"></span><h1>18. Model metadata<a class="headerlink" href="#model-metadata" title="Permalink to this headline">¶</a></h1>
 <p><em class="dfn">Metadata</em> is a schema-less extensibility mechanism that can be applied
-to a model using a <a class="reference internal" href="#metadata-statement"><span class="std std-ref">metadata statement</span></a>.</p>
+to a model using a <a class="reference internal" href="#metadata-statement"><span class="std std-ref">metadata statement</span></a>. For
+example, metadata is used to define <a class="reference internal" href="model-validation.html#validation"><span class="std std-ref">validators</span></a> and
+<a class="reference internal" href="model-validation.html#suppression-definition"><span class="std std-ref">suppressions</span></a> that are applied to the entire
+model.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
@@ -121,29 +124,25 @@ to a model using a <a class="reference internal" href="#metadata-statement"><spa
 </div>
 <div class="section" id="metadata-statement">
 <span id="id1"></span><h2>18.1. Metadata statement<a class="headerlink" href="#metadata-statement" title="Permalink to this headline">¶</a></h2>
-<p>The metadata statement is used to attach arbitrary <a class="reference internal" href="#metadata"><span class="std std-ref">metadata</span></a>
-to a model. Metadata statements MUST appear before a namespace statement
-or any shapes are defined.</p>
+<p>Metadata statements MUST appear before any namespace statement or any shapes
+are defined. Metadata is defined by the following ABNF:</p>
 <pre>
+<strong id="grammar-token-metadata_section">metadata_section</strong> =
+    *(<a class="reference internal" href="#grammar-token-metadata_statement"><code class="xref docutils literal notranslate"><span class="pre">metadata_statement</span></code></a>)
+
 <strong id="grammar-token-metadata_statement">metadata_statement</strong> =
-    &quot;metadata&quot; <a class="reference internal" href="#grammar-token-metadata_key"><code class="xref docutils literal notranslate"><span class="pre">metadata_key</span></code></a> &quot;=&quot; <a class="reference internal" href="#grammar-token-metadata_value"><code class="xref docutils literal notranslate"><span class="pre">metadata_value</span></code></a>
-
-<strong id="grammar-token-metadata_key">metadata_key</strong> =
-    <a class="reference internal" href="lexical-structure.html#grammar-token-text"><code class="xref docutils literal notranslate"><span class="pre">text</span></code></a>
-
-<strong id="grammar-token-metadata_value">metadata_value</strong> =
-    <a class="reference internal" href="lexical-structure.html#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>
+    &quot;metadata&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-node_object_key"><code class="xref docutils literal notranslate"><span class="pre">node_object_key</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> &quot;=&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a>
 </pre>
 <div class="literal-block-wrapper docutils container" id="id3">
 <div class="code-block-caption"><span class="caption-text">Example</span><a class="headerlink" href="#id3" title="Permalink to this code">¶</a></div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> example.string1 </span><span class="nd">=</span> <span class="s2">&quot;hello there&quot;</span>
-<span class="kd">metadata</span><span class="nc"> example.string2 </span><span class="nd">=</span> <span class="s1">&#39;hello there&#39;</span>
-<span class="kd">metadata</span><span class="nc"> example.bool1 </span><span class="nd">=</span> <span class="kc">true</span>
-<span class="kd">metadata</span><span class="nc"> example.bool2 </span><span class="nd">=</span> <span class="kc">false</span>
-<span class="kd">metadata</span><span class="nc"> example.number </span><span class="nd">=</span> <span class="m">10</span>
-<span class="kd">metadata</span><span class="nc"> example.array </span><span class="nd">=</span> [<span class="m">10</span>, <span class="kc">true</span>, <span class="s2">&quot;hello&quot;</span>]
-<span class="kd">metadata</span><span class="nc"> example.object </span><span class="nd">=</span> {<span class="nl">foo:</span> <span class="s2">&quot;baz&quot;</span>}
-<span class="kd">metadata</span><span class="nc"> example.null </span><span class="nd">=</span> <span class="kc">null</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> exampleString </span><span class="nd">=</span> <span class="s2">&quot;hello there&quot;</span>
+<span class="kd">metadata</span><span class="nc"> &quot;example.string2&quot; </span><span class="nd">=</span> <span class="s1">&#39;hello there&#39;</span>
+<span class="kd">metadata</span><span class="nc"> bool1 </span><span class="nd">=</span> <span class="kc">true</span>
+<span class="kd">metadata</span><span class="nc"> bool2 </span><span class="nd">=</span> <span class="kc">false</span>
+<span class="kd">metadata</span><span class="nc"> number </span><span class="nd">=</span> <span class="m">10</span>
+<span class="kd">metadata</span><span class="nc"> array </span><span class="nd">=</span> [<span class="m">10</span>, <span class="kc">true</span>, <span class="s2">&quot;hello&quot;</span>]
+<span class="kd">metadata</span><span class="nc"> object </span><span class="nd">=</span> {<span class="nl">foo:</span> <span class="s2">&quot;baz&quot;</span>}
+<span class="kd">metadata</span><span class="nc"> null </span><span class="nd">=</span> <span class="kc">null</span>
 </pre></div>
 </div>
 </div>
