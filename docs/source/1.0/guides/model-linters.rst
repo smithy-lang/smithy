@@ -27,8 +27,8 @@ to a ``build.gradle.kts`` file:
     .. code-tab:: kotlin
 
         dependencies {
-            implementation("software.amazon.smithy:smithy-model:1.0.0")
-            implementation("software.amazon.smithy:smithy-linters:1.0.0")
+            implementation("software.amazon.smithy:smithy-model:1.0.1")
+            implementation("software.amazon.smithy:smithy-linters:1.0.1")
         }
 
 After the dependency is added and available on the Java classpath, validators
