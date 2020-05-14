@@ -432,7 +432,7 @@ public final class ModelAssembler {
      *
      * <pre>{@code
      * ModelAssembler assembler = Model.assembler();
-     * assembler.putLoaderVisitorSetting(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true);
+     * assembler.putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true);
      * }</pre>
      *
      * @param setting Name of the property to put.
