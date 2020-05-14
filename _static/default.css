@@ -54,20 +54,26 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
 }
 
-h1 {
-  margin-top: 0;
-  font-size: 2.4em;
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a, h7 a {
+  color: #000;
+}
+
+h1, h2, h3, h4, h5, h6, h7 {
   border-bottom: 1px solid #ccc;
   padding-bottom: 0.3em;
 }
 
-h2 {
-  font-size: 2em;
+h2, h3, h4, h5, h6, h7 {
+  margin-top: 2em;
 }
 
-h2, h3, h4, h5, h6, h7 {
-  padding: 0 0 0.4em 0;
-  margin-top: 2.5em;
+h1 {
+  margin-top: 0;
+  font-size: 2.4em;
+}
+
+h2 {
+  font-size: 2em;
 }
 
 h3 {
@@ -266,7 +272,6 @@ a:hover, .reference.external:hover {
   text-decoration: underline dotted #ccc;
 }
 
-/* First title (h1) on the page */
 .headerlink {
   visibility: none;
   margin-left: 1em;
@@ -496,7 +501,7 @@ pre {
   padding: 1em;
   overflow: auto;
   line-height: 1.45;
-  background-color: #2f2d2a;
+  background-color: #333;
   border-radius: 3px;
   font-size: 1em;
   color: #A9B7C6;
@@ -504,6 +509,7 @@ pre {
   white-space: pre;
   word-break: normal;
   word-wrap: normal;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
 }
 
 code, pre {
@@ -636,8 +642,8 @@ table.highlighttable pre {
 
 #right-column {
   font-size: 14px;
-  background: #efebe9;
   padding-top: 1em;
+  border-left: 1px solid rgba(0, 0, 0, 0.15);
 }
 
 #right-column > .column-body > .sidebar {
@@ -815,9 +821,10 @@ dt:target, .highlighted {
 /* -------- Page relations (bottom next/previous links) ------- */
 
 .relations {
-  margin-top: 2em;
+  margin-top: 3em;
   padding-top: 2em;
   display: flex;
+  border-top: 1px solid rgba(0, 0, 0, 0.15);
 }
 
 .relations .previous-page {
@@ -830,27 +837,31 @@ dt:target, .highlighted {
 
 .relations a {
   display: block;
-  color: #005cc5;
+  color: #8c5954;
   border-radius: 2px;
-  border: 1px solid #005cc5;
+  border: 1px solid #8c5954;
   padding: 0.8rem 1em;
   transition: background .25s, color 0.25s;
 }
 
 .relations a:hover {
   color: #fff;
-  background: #005cc5;
+  background: #8c5954;
   text-decoration: none;
 }
 
 .next-previous {
   font-size: 0.8em;
   text-align: right;
+  margin-bottom: 0.5em;
 }
 
 #right-column .next-previous a {
   display: inline;
   padding-right: 2em;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: #666;
 }
 
 /* -------- toctree --------- */
@@ -946,11 +957,6 @@ dt:target, .highlighted {
 
   .site-logo .logo-text {
     padding-left: 16px;
-  }
-
-  /* Don't show the hover anchor links when too small as it will often cause the links to jump around. */
-  *:hover > .headerlink {
-    display: none;
   }
 
   .splash-row {

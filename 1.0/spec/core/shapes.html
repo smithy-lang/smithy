@@ -115,7 +115,7 @@
                     
                     
   <div class="section" id="shapes">
-<span id="id1"></span><h1>3. Shapes<a class="headerlink" href="#shapes" title="Permalink to this headline">¶</a></h1>
+<span id="id1"></span><h1><a href="#shapes">3. Shapes</a></h1>
 <p><em>Shapes</em> are instances of <em>types</em> that describe the structure of an API.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
@@ -128,7 +128,7 @@
 </ul>
 </div>
 <div class="section" id="shape-section">
-<h2>3.1. Shape section<a class="headerlink" href="#shape-section" title="Permalink to this headline">¶</a></h2>
+<h2><a href="#shape-section">3.1. Shape section</a></h2>
 <p>The shape section of the IDL is used to define shapes and apply traits to
 shapes. It comes after any <a class="reference internal" href="lexical-structure.html#grammar-token-control_section"><code class="xref std std-token docutils literal notranslate"><span class="pre">control</span> <span class="pre">statements</span></code></a> and
 <a class="reference internal" href="model-metadata.html#grammar-token-metadata_section"><code class="xref std std-token docutils literal notranslate"><span class="pre">metadata</span> <span class="pre">statements</span></code></a>.</p>
@@ -137,7 +137,7 @@ shapes. It comes after any <a class="reference internal" href="lexical-structure
     [<a class="reference internal" href="#grammar-token-namespace_statement"><code class="xref docutils literal notranslate"><span class="pre">namespace_statement</span></code></a> [<a class="reference internal" href="#grammar-token-use_section"><code class="xref docutils literal notranslate"><span class="pre">use_section</span></code></a>] [<a class="reference internal" href="#grammar-token-shape_statements"><code class="xref docutils literal notranslate"><span class="pre">shape_statements</span></code></a>]]
 </pre>
 <div class="section" id="namespaces">
-<span id="id2"></span><h3>3.1.1. Namespaces<a class="headerlink" href="#namespaces" title="Permalink to this headline">¶</a></h3>
+<span id="id2"></span><h3><a href="#namespaces">3.1.1. Namespaces</a></h3>
 <p>Shapes are defined inside a <em class="dfn">namespace</em>. A namespace is mechanism for
 logically grouping shapes in a way that makes them reusable alongside other
 models without naming conflicts.</p>
@@ -182,7 +182,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="referring-to-shapes">
-<span id="use-statement"></span><h3>3.1.2. Referring to shapes<a class="headerlink" href="#referring-to-shapes" title="Permalink to this headline">¶</a></h3>
+<span id="use-statement"></span><h3><a href="#referring-to-shapes">3.1.2. Referring to shapes</a></h3>
 <p>The <em>use section</em> of the IDL is used to import shapes into the current
 namespace so that they can be referred to using a relative shape.</p>
 <pre>
@@ -227,7 +227,7 @@ shapes imported with a <code class="docutils literal notranslate"><span class="p
 <li>Shapes IDs with members names cannot be imported with a use statement.</li>
 </ol>
 <div class="section" id="relative-shape-id-resolution">
-<span id="relative-shape-id"></span><h4>3.1.2.1. Relative shape ID resolution<a class="headerlink" href="#relative-shape-id-resolution" title="Permalink to this headline">¶</a></h4>
+<span id="relative-shape-id"></span><h4><a href="#relative-shape-id-resolution">3.1.2.1. Relative shape ID resolution</a></h4>
 <p>In the Smithy IDL, relative shape IDs are resolved using the following process:</p>
 <ol class="arabic simple">
 <li>If a <a class="reference internal" href="#grammar-token-use_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">use_statement</span></code></a> has imported a shape with the same name,
@@ -296,7 +296,7 @@ to.</p>
 </div>
 </div>
 <div class="section" id="defining-shapes">
-<h2>3.2. Defining shapes<a class="headerlink" href="#defining-shapes" title="Permalink to this headline">¶</a></h2>
+<h2><a href="#defining-shapes">3.2. Defining shapes</a></h2>
 <p>Shape statements are used to define shapes.</p>
 <pre>
 <strong id="grammar-token-shape_statements">shape_statements</strong> =
@@ -322,7 +322,7 @@ to.</p>
   / <a class="reference internal" href="#grammar-token-resource_statement"><code class="xref docutils literal notranslate"><span class="pre">resource_statement</span></code></a>
 </pre>
 <div class="section" id="shape-names">
-<span id="id3"></span><h3>3.2.1. Shape names<a class="headerlink" href="#shape-names" title="Permalink to this headline">¶</a></h3>
+<span id="id3"></span><h3><a href="#shape-names">3.2.1. Shape names</a></h3>
 <p>Consumers of a Smithy model MAY choose to inflect shape names, structure
 member names, and other facets of a Smithy model in order to expose a more
 idiomatic experience to particular programming languages. In order to make this
@@ -360,7 +360,7 @@ initialisms are capitalized.</p>
 </div>
 </div>
 <div class="section" id="simple-types">
-<span id="id4"></span><h2>3.3. Simple types<a class="headerlink" href="#simple-types" title="Permalink to this headline">¶</a></h2>
+<span id="id4"></span><h2><a href="#simple-types">3.3. Simple types</a></h2>
 <p><em>Simple types</em> are types that do not contain nested types or shape references.
 Shapes that are simple types are defined using the following grammar:</p>
 <pre>
@@ -516,7 +516,7 @@ These shapes can be referenced using a relative shape ID
 (for example, <code class="docutils literal notranslate"><span class="pre">smithy.api#String</span></code>).</p>
 </div>
 <div class="section" id="timestamp-serialization-format">
-<span id="id5"></span><h3>3.3.1. Timestamp serialization format<a class="headerlink" href="#timestamp-serialization-format" title="Permalink to this headline">¶</a></h3>
+<span id="id5"></span><h3><a href="#timestamp-serialization-format">3.3.1. Timestamp serialization format</a></h3>
 <p>By default, the serialization format of a timestamp is implicitly determined by
 the <a class="reference internal" href="protocol-traits.html#protocoldefinition-trait"><span class="std std-ref">protocol</span></a> of a service; however, the serialization
 format can be explicitly configured in some protocols to override the default format
@@ -534,7 +534,7 @@ the <code class="docutils literal notranslate"><span class="pre">timestampFormat
 by tooling to represent a timestamp.</p>
 </div>
 <div class="section" id="document-types">
-<span id="document-type"></span><h3>3.3.2. Document types<a class="headerlink" href="#document-types" title="Permalink to this headline">¶</a></h3>
+<span id="document-type"></span><h3><a href="#document-types">3.3.2. Document types</a></h3>
 <p>A document type represents a protocol-specific untyped value. Documents
 are useful when interacting with data that has no predefined schema,
 uses a schema language that is not compatible with Smithy, or if the schema
@@ -550,7 +550,7 @@ Smithy model.</p>
 </div>
 </div>
 <div class="section" id="aggregate-types">
-<span id="id6"></span><h2>3.4. Aggregate types<a class="headerlink" href="#aggregate-types" title="Permalink to this headline">¶</a></h2>
+<span id="id6"></span><h2><a href="#aggregate-types">3.4. Aggregate types</a></h2>
 <p>Aggregate types are types that are composed of other types. Aggregate shapes
 reference other shapes using <a class="reference internal" href="#member"><span class="std std-ref">members</span></a>.</p>
 <table border="1" class="colwidths-given docutils">
@@ -586,7 +586,7 @@ different, but fixed, types</td>
 </tbody>
 </table>
 <div class="section" id="member">
-<span id="id7"></span><h3>3.4.1. Member<a class="headerlink" href="#member" title="Permalink to this headline">¶</a></h3>
+<span id="id7"></span><h3><a href="#member">3.4.1. Member</a></h3>
 <p><em class="dfn">Members</em> are defined in aggregate types to reference other shapes using
 a <a class="reference internal" href="lexical-structure.html#shape-id"><span class="std std-ref">shape ID</span></a>. A member MUST NOT target an <code class="docutils literal notranslate"><span class="pre">operation</span></code>,
 <code class="docutils literal notranslate"><span class="pre">resource</span></code>, <code class="docutils literal notranslate"><span class="pre">service</span></code>, <code class="docutils literal notranslate"><span class="pre">member</span></code>, or <a class="reference internal" href="traits.html#trait-shapes"><span class="std std-ref">trait shapes</span></a>.</p>
@@ -647,7 +647,7 @@ JSON</div>
 </pre>
 </div>
 <div class="section" id="list">
-<span id="id8"></span><h3>3.4.2. List<a class="headerlink" href="#list" title="Permalink to this headline">¶</a></h3>
+<span id="id8"></span><h3><a href="#list">3.4.2. List</a></h3>
 <p>The <em class="dfn">list</em> type represents a homogeneous collection of values. A list
 statement requires that a <a class="reference internal" href="#member"><span class="std std-ref">member</span></a> named <code class="docutils literal notranslate"><span class="pre">member</span></code> is defined
 in its body. Lists are defined using the following grammar:</p>
@@ -740,7 +740,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="set">
-<span id="id9"></span><h3>3.4.3. Set<a class="headerlink" href="#set" title="Permalink to this headline">¶</a></h3>
+<span id="id9"></span><h3><a href="#set">3.4.3. Set</a></h3>
 <p>The <em class="dfn">set</em> type represents an unordered collection of unique homogeneous
 values. A set statement requires that a <a class="reference internal" href="#member"><span class="std std-ref">member</span></a> named
 <code class="docutils literal notranslate"><span class="pre">member</span></code> is defined in its body. Sets are defined using the following
@@ -831,7 +831,7 @@ data structure in a list and rely on validation to ensure uniqueness.</p>
 </div>
 </div>
 <div class="section" id="map">
-<span id="id10"></span><h3>3.4.4. Map<a class="headerlink" href="#map" title="Permalink to this headline">¶</a></h3>
+<span id="id10"></span><h3><a href="#map">3.4.4. Map</a></h3>
 <p>The <em class="dfn">map</em> type represents a map data structure that maps string keys to
 homogeneous values. A map cannot contain duplicate keys. A map statement
 requires that a <code class="docutils literal notranslate"><span class="pre">key</span></code> and <code class="docutils literal notranslate"><span class="pre">value</span></code> <a class="reference internal" href="#member"><span class="std std-ref">member</span></a> are defined in
@@ -938,7 +938,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="structure">
-<span id="id11"></span><h3>3.4.5. Structure<a class="headerlink" href="#structure" title="Permalink to this headline">¶</a></h3>
+<span id="id11"></span><h3><a href="#structure">3.4.5. Structure</a></h3>
 <p>The <em class="dfn">structure</em> type represents a fixed set of named, unordered,
 heterogeneous members. A member name maps to exactly one structure
 <a class="reference internal" href="#member"><span class="std std-ref">member</span></a> definition. A structure is defined using the
@@ -1048,7 +1048,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="union">
-<span id="id12"></span><h3>3.4.6. Union<a class="headerlink" href="#union" title="Permalink to this headline">¶</a></h3>
+<span id="id12"></span><h3><a href="#union">3.4.6. Union</a></h3>
 <p>The union type represents a <a class="reference external" href="https://en.wikipedia.org/wiki/Tagged_union">tagged union data structure</a> that can take
 on several different, but fixed, types. Only one type can be used at any
 one time. A union is defined using the following grammar:</p>
@@ -1109,7 +1109,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="default-values">
-<span id="id13"></span><h3>3.4.7. Default values<a class="headerlink" href="#default-values" title="Permalink to this headline">¶</a></h3>
+<span id="id13"></span><h3><a href="#default-values">3.4.7. Default values</a></h3>
 <p>The values provided for <a class="reference internal" href="#member"><span class="std std-ref">members</span></a> of
 <a class="reference internal" href="#aggregate-types"><span class="std std-ref">aggregate shapes</span></a> are either always present and
 set to a default value when necessary or <em>boxed</em>, meaning a value is
@@ -1126,7 +1126,7 @@ with the box trait. Members that target strings, timestamps, and
 aggregate shapes are always considered boxed and have no default values.</p>
 </div>
 <div class="section" id="recursive-shape-definitions">
-<h3>3.4.8. Recursive shape definitions<a class="headerlink" href="#recursive-shape-definitions" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#recursive-shape-definitions">3.4.8. Recursive shape definitions</a></h3>
 <p>Smithy allows for recursive shape definitions with the following constraint:
 the member of a list, set, or map cannot directly or transitively target its
 containing shape unless one or more members in the path from the container
@@ -1219,7 +1219,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="service-types">
-<span id="id14"></span><h2>3.5. Service types<a class="headerlink" href="#service-types" title="Permalink to this headline">¶</a></h2>
+<span id="id14"></span><h2><a href="#service-types">3.5. Service types</a></h2>
 <p><em>Service types</em> are types that form services, resources, and operations.</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
@@ -1244,7 +1244,7 @@ JSON</div>
 </tbody>
 </table>
 <div class="section" id="service">
-<span id="id15"></span><h3>3.5.1. Service<a class="headerlink" href="#service" title="Permalink to this headline">¶</a></h3>
+<span id="id15"></span><h3><a href="#service">3.5.1. Service</a></h3>
 <p>A <em class="dfn">service</em> is the entry point of an API that aggregates resources and
 operations together. The <a class="reference internal" href="#resource"><span class="std std-ref">resources</span></a> and
 <a class="reference internal" href="#operation"><span class="std std-ref">operations</span></a> of an API are bound within the closure of a
@@ -1318,7 +1318,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="service-operations">
-<span id="id16"></span><h4>3.5.1.1. Service operations<a class="headerlink" href="#service-operations" title="Permalink to this headline">¶</a></h4>
+<span id="id16"></span><h4><a href="#service-operations">3.5.1.1. Service operations</a></h4>
 <p><a class="reference internal" href="#operation"><span class="std std-ref">Operation</span></a> shapes can be bound to a service by adding the
 shape ID of an operation to the <code class="docutils literal notranslate"><span class="pre">operations</span></code> property of a service.
 Operations bound directly to a service are typically RPC-style operations
@@ -1374,7 +1374,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="service-resources">
-<span id="id17"></span><h4>3.5.1.2. Service resources<a class="headerlink" href="#service-resources" title="Permalink to this headline">¶</a></h4>
+<span id="id17"></span><h4><a href="#service-resources">3.5.1.2. Service resources</a></h4>
 <p><a class="reference internal" href="#resource"><span class="std std-ref">Resource</span></a> shapes can be bound to a service by adding the
 shape ID of a resource to the <code class="docutils literal notranslate"><span class="pre">resources</span></code> property of a service.</p>
 <div class="sphinx-tabs docutils container">
@@ -1422,7 +1422,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="service-closure">
-<span id="id18"></span><h4>3.5.1.3. Service closure<a class="headerlink" href="#service-closure" title="Permalink to this headline">¶</a></h4>
+<span id="id18"></span><h4><a href="#service-closure">3.5.1.3. Service closure</a></h4>
 <p>The <em>closure</em> of a service is the set of shapes connected to a service
 through resources, operations, and members.</p>
 <div class="admonition important">
@@ -1452,7 +1452,7 @@ fully-qualified path from the service to the shape.</p>
 </div>
 </div>
 <div class="section" id="operation">
-<span id="id19"></span><h3>3.5.2. Operation<a class="headerlink" href="#operation" title="Permalink to this headline">¶</a></h3>
+<span id="id19"></span><h3><a href="#operation">3.5.2. Operation</a></h3>
 <p>The <em class="dfn">operation</em> type represents the input, output, and possible errors of
 an API operation. Operation shapes are bound to <a class="reference internal" href="#resource"><span class="std std-ref">resource</span></a>
 shapes and <a class="reference internal" href="#service"><span class="std std-ref">service</span></a> shapes. An operation shape is defined by
@@ -1536,7 +1536,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="operation-input">
-<span id="id20"></span><h4>3.5.2.1. Operation input<a class="headerlink" href="#operation-input" title="Permalink to this headline">¶</a></h4>
+<span id="id20"></span><h4><a href="#operation-input">3.5.2.1. Operation input</a></h4>
 <p>The input of an operation is an optional shape ID that MUST target a
 structure shape. An operation is not required to accept input.</p>
 <p>The following example defines an operation that accepts an input structure
@@ -1577,7 +1577,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="operation-output">
-<span id="id21"></span><h4>3.5.2.2. Operation output<a class="headerlink" href="#operation-output" title="Permalink to this headline">¶</a></h4>
+<span id="id21"></span><h4><a href="#operation-output">3.5.2.2. Operation output</a></h4>
 <p>The output of an operation is an optional shape ID that MUST target a
 structure shape. An operation is not required to return output.</p>
 <p>The following example defines an operation that returns an output
@@ -1618,7 +1618,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="operation-errors">
-<span id="id22"></span><h4>3.5.2.3. Operation errors<a class="headerlink" href="#operation-errors" title="Permalink to this headline">¶</a></h4>
+<span id="id22"></span><h4><a href="#operation-errors">3.5.2.3. Operation errors</a></h4>
 <p>The errors of an operation is an optional array of shape IDs that MUST
 target structure shapes that are marked with the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>. Errors
 defined on an operation are errors that can potentially occur when calling
@@ -1668,7 +1668,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="resource">
-<span id="id23"></span><h3>3.5.3. Resource<a class="headerlink" href="#resource" title="Permalink to this headline">¶</a></h3>
+<span id="id23"></span><h3><a href="#resource">3.5.3. Resource</a></h3>
 <p>Smithy defines a <em class="dfn">resource</em> as an entity with an identity that has a
 set of operations. A resource shape is defined by the following grammar:</p>
 <pre>
@@ -1737,7 +1737,7 @@ than once in the entire closure of a resource or service.</td>
 </tbody>
 </table>
 <div class="section" id="resource-identifiers">
-<span id="identifiers"></span><h4>3.5.3.1. Identifiers<a class="headerlink" href="#resource-identifiers" title="Permalink to this headline">¶</a></h4>
+<span id="identifiers"></span><h4><a href="#resource-identifiers">3.5.3.1. Identifiers</a></h4>
 <p><em class="dfn">Identifiers</em> are used to refer to a specific resource within a service.
 The identifiers property of a resource is a map of identifier names to
 <a class="reference internal" href="lexical-structure.html#shape-id"><span class="std std-ref">shape IDs</span></a> that MUST target string shapes.</p>
@@ -1980,7 +1980,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="binding-identifiers-to-operations">
-<span id="binding-identifiers"></span><h4>3.5.3.2. Binding identifiers to operations<a class="headerlink" href="#binding-identifiers-to-operations" title="Permalink to this headline">¶</a></h4>
+<span id="binding-identifiers"></span><h4><a href="#binding-identifiers-to-operations">3.5.3.2. Binding identifiers to operations</a></h4>
 <p><em>Identifier bindings</em> indicate which top-level members of the input structure
 of an operation provide values for the identifiers of a resource.</p>
 <p><strong>Validation</strong></p>
@@ -2007,7 +2007,7 @@ of the resource it is bound to, but MUST bind all identifiers of any parent
 resource.</p>
 </div>
 <div class="section" id="implicit-identifier-bindings">
-<span id="id24"></span><h4>3.5.3.3. Implicit identifier bindings<a class="headerlink" href="#implicit-identifier-bindings" title="Permalink to this headline">¶</a></h4>
+<span id="id24"></span><h4><a href="#implicit-identifier-bindings">3.5.3.3. Implicit identifier bindings</a></h4>
 <p><em>Implicit identifier bindings</em> are formed when the input of an operation
 contains member names that target the same shapes that are defined in the
 &quot;identifiers&quot; property of the resource to which an operation is bound.</p>
@@ -2191,7 +2191,7 @@ identifier bindings because <code class="docutils literal notranslate"><span cla
 input member named &quot;forecastId&quot; that targets <code class="docutils literal notranslate"><span class="pre">ForecastId</span></code>.</p>
 </div>
 <div class="section" id="explicit-identifier-bindings">
-<h4>3.5.3.4. Explicit identifier bindings<a class="headerlink" href="#explicit-identifier-bindings" title="Permalink to this headline">¶</a></h4>
+<h4><a href="#explicit-identifier-bindings">3.5.3.4. Explicit identifier bindings</a></h4>
 <p><em>Explicit identifier bindings</em> are defined by applying the
 <a class="reference internal" href="resource-traits.html#resourceidentifier-trait"><span class="std std-ref">resourceIdentifier trait</span></a> to a member of the input of for an
 operation bound to a resource. Explicit bindings are necessary when the name of
@@ -2236,7 +2236,7 @@ on <code class="docutils literal notranslate"><span class="pre">GetHistoricalFor
 to the &quot;historicalId&quot; identifier.</p>
 </div>
 <div class="section" id="lifecycle-operations">
-<span id="id25"></span><h4>3.5.3.5. Lifecycle operations<a class="headerlink" href="#lifecycle-operations" title="Permalink to this headline">¶</a></h4>
+<span id="id25"></span><h4><a href="#lifecycle-operations">3.5.3.5. Lifecycle operations</a></h4>
 <p><em class="dfn">Lifecycle operations</em> are used to transition the state of a resource
 using well-defined semantics. Lifecycle operations are defined by setting the
 <code class="docutils literal notranslate"><span class="pre">put</span></code>, <code class="docutils literal notranslate"><span class="pre">create</span></code>, <code class="docutils literal notranslate"><span class="pre">read</span></code>, <code class="docutils literal notranslate"><span class="pre">update</span></code>, <code class="docutils literal notranslate"><span class="pre">delete</span></code>, and <code class="docutils literal notranslate"><span class="pre">list</span></code> properties
@@ -2257,7 +2257,7 @@ of a resource to target an operation shape.</p>
 </div>
 </div>
 <div class="section" id="put-lifecycle">
-<span id="id26"></span><h4>3.5.3.6. Put lifecycle<a class="headerlink" href="#put-lifecycle" title="Permalink to this headline">¶</a></h4>
+<span id="id26"></span><h4><a href="#put-lifecycle">3.5.3.6. Put lifecycle</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">put</span></code> lifecycle operation is used to create a resource using identifiers
 provided by the client.</p>
 <p><strong>Validation</strong></p>
@@ -2292,7 +2292,7 @@ created or replaced ...</div></blockquote>
 replaced using the <code class="docutils literal notranslate"><span class="pre">put</span></code> operation.</p>
 </div>
 <div class="section" id="create-lifecycle">
-<span id="id27"></span><h4>3.5.3.7. Create lifecycle<a class="headerlink" href="#create-lifecycle" title="Permalink to this headline">¶</a></h4>
+<span id="id27"></span><h4><a href="#create-lifecycle">3.5.3.7. Create lifecycle</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">create</span></code> operation is used to create a resource using one or more
 identifiers created by the service.</p>
 <p><strong>Validation</strong></p>
@@ -2322,7 +2322,7 @@ identifiers created by the service.</p>
 </div>
 </div>
 <div class="section" id="read-lifecycle">
-<span id="id28"></span><h4>3.5.3.8. Read lifecycle<a class="headerlink" href="#read-lifecycle" title="Permalink to this headline">¶</a></h4>
+<span id="id28"></span><h4><a href="#read-lifecycle">3.5.3.8. Read lifecycle</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">read</span></code> operation is the canonical operation used to retrieve the current
 representation of a resource.</p>
 <p><strong>Validation</strong></p>
@@ -2346,7 +2346,7 @@ representation of a resource.</p>
 </div>
 </div>
 <div class="section" id="update-lifecycle">
-<span id="id29"></span><h4>3.5.3.9. Update lifecycle<a class="headerlink" href="#update-lifecycle" title="Permalink to this headline">¶</a></h4>
+<span id="id29"></span><h4><a href="#update-lifecycle">3.5.3.9. Update lifecycle</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">update</span></code> operation is the canonical operation used to update a
 resource.</p>
 <p><strong>Validation</strong></p>
@@ -2371,7 +2371,7 @@ resource.</p>
 </div>
 </div>
 <div class="section" id="delete-lifecycle">
-<span id="id30"></span><h4>3.5.3.10. Delete lifecycle<a class="headerlink" href="#delete-lifecycle" title="Permalink to this headline">¶</a></h4>
+<span id="id30"></span><h4><a href="#delete-lifecycle">3.5.3.10. Delete lifecycle</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">delete</span></code> operation is canonical operation used to delete a resource.</p>
 <p><strong>Validation</strong></p>
 <ul class="simple">
@@ -2395,7 +2395,7 @@ resource.</p>
 </div>
 </div>
 <div class="section" id="list-lifecycle">
-<span id="id31"></span><h4>3.5.3.11. List lifecycle<a class="headerlink" href="#list-lifecycle" title="Permalink to this headline">¶</a></h4>
+<span id="id31"></span><h4><a href="#list-lifecycle">3.5.3.11. List lifecycle</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">list</span></code> operation is the canonical operation used to list a
 collection of resources.</p>
 <p><strong>Validation</strong></p>
@@ -2431,7 +2431,7 @@ being listed.</li>
 </div>
 </div>
 <div class="section" id="referencing-resources">
-<span id="id32"></span><h4>3.5.3.12. Referencing resources<a class="headerlink" href="#referencing-resources" title="Permalink to this headline">¶</a></h4>
+<span id="id32"></span><h4><a href="#referencing-resources">3.5.3.12. Referencing resources</a></h4>
 <p>References between resources can be defined in a Smithy model at design-time.
 Resource references allow tooling to understand the relationships between
 resources and how to dereference the location of a resource.</p>

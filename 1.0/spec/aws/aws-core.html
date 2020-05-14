@@ -115,7 +115,7 @@
                     
                     
   <div class="section" id="aws-core-specification">
-<h1>AWS Core Specification<a class="headerlink" href="#aws-core-specification" title="Permalink to this headline">¶</a></h1>
+<h1><a href="#aws-core-specification">AWS Core Specification</a></h1>
 <p>Various AWS-specific traits are used to integrate Smithy models with other
 AWS products like AWS CloudFormation and tools like the AWS SDKs.</p>
 <div class="contents local topic" id="table-of-contents">
@@ -157,7 +157,7 @@ AWS products like AWS CloudFormation and tools like the AWS SDKs.</p>
 </ul>
 </div>
 <div class="section" id="aws-api-service-trait">
-<span id="id1"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.api#service</span></code> trait<a class="headerlink" href="#aws-api-service-trait" title="Permalink to this headline">¶</a></h2>
+<span id="id1"></span><h2><a href="#aws-api-service-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#service</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>An AWS service is defined using the <code class="docutils literal notranslate"><span class="pre">aws.api#service</span></code> trait. This
@@ -273,7 +273,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="sdkid">
-<span id="service-sdk-id"></span><h3><code class="docutils literal notranslate"><span class="pre">sdkId</span></code><a class="headerlink" href="#sdkid" title="Permalink to this headline">¶</a></h3>
+<span id="service-sdk-id"></span><h3><a href="#sdkid"><code class="docutils literal notranslate"><span class="pre">sdkId</span></code></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">sdkId</span></code> property is a <strong>required</strong> <code class="docutils literal notranslate"><span class="pre">string</span></code> value that specifies
 the AWS SDK service ID (e.g., &quot;API Gateway&quot;). This value is used for
 generating client names in SDKs and for linking between services.</p>
@@ -290,7 +290,7 @@ does change, the service will be considered a brand new service in the AWS SDKs
 and Tools.</li>
 </ul>
 <div class="section" id="choosing-an-sdk-service-id">
-<h4>Choosing an SDK service ID<a class="headerlink" href="#choosing-an-sdk-service-id" title="Permalink to this headline">¶</a></h4>
+<h4><a href="#choosing-an-sdk-service-id">Choosing an SDK service ID</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">sdkId</span></code> value should reasonably represent the service it identifies. <code class="docutils literal notranslate"><span class="pre">sdkId</span></code>
 MUST NOT be an arbitrary value; for example for Amazon DynamoDB, an appropriate
 &quot;serviceId&quot; would be &quot;DynamoDB&quot; while an inappropriate value would be &quot;Foo&quot;.</p>
@@ -315,7 +315,7 @@ those words are actually part of the official name of a service.</li>
 and their SDK service IDs.</p>
 </div>
 <div class="section" id="using-sdk-service-id-for-client-naming">
-<h4>Using SDK service ID for client naming<a class="headerlink" href="#using-sdk-service-id-for-client-naming" title="Permalink to this headline">¶</a></h4>
+<h4><a href="#using-sdk-service-id-for-client-naming">Using SDK service ID for client naming</a></h4>
 <p>Unless explicitly overridden though other traits or configuration, AWS SDKs
 SHOULD use the <code class="docutils literal notranslate"><span class="pre">sdkId</span></code> property when choosing the name of a client class.</p>
 <p>For the AWS CLI, the typical value need to use a command involves both
@@ -332,7 +332,7 @@ appending the word &quot;Client&quot; to the final transformed &quot;serviceId&q
 </div>
 </div>
 <div class="section" id="cloudformationname">
-<span id="service-cloudformation-name"></span><h3><code class="docutils literal notranslate"><span class="pre">cloudFormationName</span></code><a class="headerlink" href="#cloudformationname" title="Permalink to this headline">¶</a></h3>
+<span id="service-cloudformation-name"></span><h3><a href="#cloudformationname"><code class="docutils literal notranslate"><span class="pre">cloudFormationName</span></code></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">cloudFormationName</span></code> property is a <code class="docutils literal notranslate"><span class="pre">string</span></code> value that specifies
 the <a class="reference external" href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws.template-resource-type-ref.html">AWS CloudFormation service name</a> (e.g., <code class="docutils literal notranslate"><span class="pre">ApiGateway</span></code>). When not set,
 this value defaults to the name of the service shape. This value is part of
@@ -341,7 +341,7 @@ resources in the service (e.g., <code class="docutils literal notranslate"><span
 must match the following regex: <code class="docutils literal notranslate"><span class="pre">^[A-Z][A-Za-z0-9]+$</span></code>.</p>
 </div>
 <div class="section" id="arnnamespace">
-<span id="service-arn-namespace"></span><h3><code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code><a class="headerlink" href="#arnnamespace" title="Permalink to this headline">¶</a></h3>
+<span id="service-arn-namespace"></span><h3><a href="#arnnamespace"><code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code> property is a <code class="docutils literal notranslate"><span class="pre">string</span></code> value that defines the
 <a class="reference external" href="http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#genref-aws-service-namespaces">ARN service namespace</a> of the service (e.g., &quot;apigateway&quot;). This value is
 used in ARNs assigned to resources in the service. If not set, this value
@@ -354,7 +354,7 @@ the <a class="reference internal" href="#aws-api-arn-trait"><span class="std std
 are combined with the service's arnNamespace to form an ARN.</p>
 </div>
 <div class="section" id="cloudtraileventsource">
-<span id="service-cloudtrail-event-source"></span><h3><code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code><a class="headerlink" href="#cloudtraileventsource" title="Permalink to this headline">¶</a></h3>
+<span id="service-cloudtrail-event-source"></span><h3><a href="#cloudtraileventsource"><code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code> property is a <code class="docutils literal notranslate"><span class="pre">string</span></code> value that defines the
 <em>eventSource</em> property contained in CloudTrail <a class="reference external" href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-record-contents.html">event records</a>
 emitted by the service. If not specified, this value defaults to the
@@ -372,7 +372,7 @@ Amazon CloudWatch is <code class="docutils literal notranslate"><span class="pre
 need to explicitly configure the <code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code> setting.</p>
 </div>
 <div class="section" id="abbreviation">
-<span id="service-abbreviation"></span><h3><code class="docutils literal notranslate"><span class="pre">abbreviation</span></code><a class="headerlink" href="#abbreviation" title="Permalink to this headline">¶</a></h3>
+<span id="service-abbreviation"></span><h3><a href="#abbreviation"><code class="docutils literal notranslate"><span class="pre">abbreviation</span></code></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">abbreviation</span></code> property is a <code class="docutils literal notranslate"><span class="pre">string</span></code> value that defines the official
 abbreviation of a service. For example, the official abbreviation of
 &quot;Amazon Simple Storage Service&quot; is &quot;Amazon S3&quot;, and the abbreviation of
@@ -382,7 +382,7 @@ and their abbreviations.</p>
 </div>
 </div>
 <div class="section" id="aws-api-arn-trait">
-<span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait<a class="headerlink" href="#aws-api-arn-trait" title="Permalink to this headline">¶</a></h2>
+<span id="id2"></span><h2><a href="#aws-api-arn-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Trait summary</dt>
 <dd>Defines an ARN of a Smithy resource shape.</dd>
@@ -444,7 +444,7 @@ based on the ARN identifier of a parent resource.</td>
 </tbody>
 </table>
 <div class="section" id="format-of-an-arn">
-<h3>Format of an ARN<a class="headerlink" href="#format-of-an-arn" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#format-of-an-arn">Format of an ARN</a></h3>
 <p>An ARN is is a structured URI made up of the following components:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>arn:partition:service:region:account-id:resource
                          \       /
@@ -493,7 +493,7 @@ arn:aws:s3:::my_corporate_bucket/exampleobject.png
 </div>
 </div>
 <div class="section" id="relative-arn-templates">
-<h3>Relative ARN templates<a class="headerlink" href="#relative-arn-templates" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#relative-arn-templates">Relative ARN templates</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">arn</span></code> traits with relative templates are combined with the service to form an
 absolute ARN template. This ARN template can only be expanded at runtime with
 actual values for the partition, region name, account ID, and identifier
@@ -573,7 +573,7 @@ identifier is to be inserted into the ARN template when resolving it at
 runtime.</p>
 </div>
 <div class="section" id="using-an-arn-as-a-resource-identifier">
-<h3>Using an ARN as a resource identifier<a class="headerlink" href="#using-an-arn-as-a-resource-identifier" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#using-an-arn-as-a-resource-identifier">Using an ARN as a resource identifier</a></h3>
 <p><em>Absolute</em> ARN templates are used to provide an entire ARN to a resource that
 is not combined with the service ARN namespace. When a resource uses an ARN as
 its identifier, an absolute ARN template MUST be defined on the resource
@@ -640,7 +640,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="aws-api-arnreference-trait">
-<span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait<a class="headerlink" href="#aws-api-arnreference-trait" title="Permalink to this headline">¶</a></h2>
+<span id="id3"></span><h2><a href="#aws-api-arnreference-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Trait summary</dt>
 <dd>Specifies that a string shape contains a fully formed AWS ARN.</dd>
@@ -783,7 +783,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="aws-api-data-trait">
-<span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait<a class="headerlink" href="#aws-api-data-trait" title="Permalink to this headline">¶</a></h2>
+<span id="id4"></span><h2><a href="#aws-api-data-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Indicates that the target contains data of the specified classification.</dd>
@@ -895,7 +895,7 @@ JSON</div>
 <a class="reference internal" href="../core/documentation-traits.html#sensitive-trait"><span class="std std-ref">sensitive trait</span></a> as necessary.</p>
 </div>
 <div class="section" id="data-classifications">
-<span id="id5"></span><h3>Data Classifications<a class="headerlink" href="#data-classifications" title="Permalink to this headline">¶</a></h3>
+<span id="id5"></span><h3><a href="#data-classifications">Data Classifications</a></h3>
 <p>The following table describes the available data classifications that can be
 applied through the <code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait.</p>
 <table border="1" class="colwidths-given docutils">
@@ -940,7 +940,7 @@ permissions. Data of this classification should be marked with the
 </div>
 </div>
 <div class="section" id="aws-api-controlplane-trait">
-<span id="id6"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.api#controlPlane</span></code> trait<a class="headerlink" href="#aws-api-controlplane-trait" title="Permalink to this headline">¶</a></h2>
+<span id="id6"></span><h2><a href="#aws-api-controlplane-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#controlPlane</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Indicates that a service, resource, or operation is considered part of
@@ -1003,7 +1003,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="aws-api-dataplane-trait">
-<span id="id7"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.api#dataPlane</span></code> trait<a class="headerlink" href="#aws-api-dataplane-trait" title="Permalink to this headline">¶</a></h2>
+<span id="id7"></span><h2><a href="#aws-api-dataplane-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#dataPlane</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Indicates that a service, resource, or operation is considered part of
@@ -1066,13 +1066,13 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="client-endpoint-discovery">
-<span id="endpoint-discovery"></span><h2>Client Endpoint Discovery<a class="headerlink" href="#client-endpoint-discovery" title="Permalink to this headline">¶</a></h2>
+<span id="endpoint-discovery"></span><h2><a href="#client-endpoint-discovery">Client Endpoint Discovery</a></h2>
 <p>Services running on cellular infrastructure may wish to enable automatic
 endpoint discovery in clients. The AWS SDKs provide functionality to
 automatically discover, cache, and connect to service endpoints. The
 following traits provide the information needed to perform this.</p>
 <div class="section" id="aws-api-clientendpointdiscovery-trait">
-<span id="client-endpoint-discovery-trait"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscovery</span></code> trait<a class="headerlink" href="#aws-api-clientendpointdiscovery-trait" title="Permalink to this headline">¶</a></h3>
+<span id="client-endpoint-discovery-trait"></span><h3><a href="#aws-api-clientendpointdiscovery-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscovery</span></code> trait</a></h3>
 <dl class="docutils">
 <dt>Trait summary</dt>
 <dd>The <code class="docutils literal notranslate"><span class="pre">clientEndpointDiscovery</span></code> trait indicates the operation that the
@@ -1126,7 +1126,7 @@ or both of the following members:</p>
 </ul>
 </div>
 <div class="section" id="aws-api-clientdiscoveredendpoint-trait">
-<span id="client-discovered-endpoint-trait"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.api#clientDiscoveredEndpoint</span></code> trait<a class="headerlink" href="#aws-api-clientdiscoveredendpoint-trait" title="Permalink to this headline">¶</a></h3>
+<span id="client-discovered-endpoint-trait"></span><h3><a href="#aws-api-clientdiscoveredendpoint-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#clientDiscoveredEndpoint</span></code> trait</a></h3>
 <dl class="docutils">
 <dt>Trait summary</dt>
 <dd>The <code class="docutils literal notranslate"><span class="pre">clientDiscoveredEndpoint</span></code> trait indicates that the target operation
@@ -1163,7 +1163,7 @@ discover a more specific endpoint.</td>
 </table>
 </div>
 <div class="section" id="aws-api-clientendpointdiscoveryid-trait">
-<span id="client-endpoint-discovery-id-trait"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscoveryId</span></code> trait<a class="headerlink" href="#aws-api-clientendpointdiscoveryid-trait" title="Permalink to this headline">¶</a></h3>
+<span id="client-endpoint-discovery-id-trait"></span><h3><a href="#aws-api-clientendpointdiscoveryid-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscoveryId</span></code> trait</a></h3>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>The <code class="docutils literal notranslate"><span class="pre">clientEndpointDiscoveryId</span></code> trait indicates which member(s) of the
@@ -1175,7 +1175,7 @@ operation input should be used to discover an endpoint for the service.</dd>
 </dl>
 </div>
 <div class="section" id="example-model">
-<h3>Example Model<a class="headerlink" href="#example-model" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#example-model">Example Model</a></h3>
 <p>The following model illustrates an API that uses a <code class="docutils literal notranslate"><span class="pre">DescribeEndpoints</span></code>
 operation to perform endpoint discovery for a <code class="docutils literal notranslate"><span class="pre">GetObject</span></code> operation
 using an <code class="docutils literal notranslate"><span class="pre">clientEndpointDiscoveryId</span></code>.</p>
@@ -1381,7 +1381,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="client-behavior">
-<h3>Client Behavior<a class="headerlink" href="#client-behavior" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#client-behavior">Client Behavior</a></h3>
 <p>When a client calls an operation which has the <code class="docutils literal notranslate"><span class="pre">clientDiscoveredEndpoint</span></code>
 trait where <code class="docutils literal notranslate"><span class="pre">required</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> or where the client has explicitly
 enabled endpoint discovery, the client MUST attempt to perform endpoint
@@ -1405,7 +1405,7 @@ members in the client operation's input shape that have the
 response. The client SHOULD prioritize endpoints by the order in which they
 appear in the list.</p>
 <div class="section" id="caching">
-<h4>Caching<a class="headerlink" href="#caching" title="Permalink to this headline">¶</a></h4>
+<h4><a href="#caching">Caching</a></h4>
 <p>In order to reduce the necessary number of calls needed, clients SHOULD cache
 the endpoints returned in the response. Clients SHOULD evict an endpoint from
 the cache after a number of minutes defined in the <code class="docutils literal notranslate"><span class="pre">CachePeriodInMinutes</span></code>
@@ -1428,9 +1428,9 @@ context.</p>
 </div>
 </div>
 <div class="section" id="appendix">
-<h2>Appendix<a class="headerlink" href="#appendix" title="Permalink to this headline">¶</a></h2>
+<h2><a href="#appendix">Appendix</a></h2>
 <div class="section" id="appendix-a-example-sdk-service-ids">
-<span id="aws-service-appendix-a"></span><h3>Appendix A: Example SDK service IDs<a class="headerlink" href="#appendix-a-example-sdk-service-ids" title="Permalink to this headline">¶</a></h3>
+<span id="aws-service-appendix-a"></span><h3><a href="#appendix-a-example-sdk-service-ids">Appendix A: Example SDK service IDs</a></h3>
 <p>The following, non-exhaustive, table defines the SDK service ID of many
 existing AWS services.</p>
 <table border="1" class="colwidths-given docutils">

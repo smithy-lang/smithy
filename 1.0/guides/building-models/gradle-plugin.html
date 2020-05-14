@@ -115,13 +115,13 @@
                     
                     
   <div class="section" id="smithy-gradle-plugin">
-<h1>Smithy Gradle Plugin<a class="headerlink" href="#smithy-gradle-plugin" title="Permalink to this headline">¶</a></h1>
+<h1><a href="#smithy-gradle-plugin">Smithy Gradle Plugin</a></h1>
 <p>The <a class="reference external" href="https://github.com/awslabs/smithy-gradle-plugin/">Smithy Gradle plugin</a> integrates Smithy with <a class="reference external" href="https://gradle.org/">Gradle</a>. This plugin can
 build artifacts from Smithy models, generate JARs that contain Smithy models
 found in Java projects, and generate JARs that contain filtered <a class="reference internal" href="build-config.html#projections"><span class="std std-ref">projections</span></a>
 of Smithy models.</p>
 <div class="section" id="installation">
-<span id="plugin-install"></span><h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<span id="plugin-install"></span><h2><a href="#installation">Installation</a></h2>
 <p>The Smithy Gradle plugin is applied using the <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy</span></code> plugin.
 The following example configures a project to use the Smithy Gradle plugin:</p>
 <div class="sphinx-tabs docutils container">
@@ -141,7 +141,7 @@ Kotlin</div>
 </div>
 </div>
 <div class="section" id="smithy-model-sources">
-<span id="id1"></span><h2>Smithy model sources<a class="headerlink" href="#smithy-model-sources" title="Permalink to this headline">¶</a></h2>
+<span id="id1"></span><h2><a href="#smithy-model-sources">Smithy model sources</a></h2>
 <p>When a JAR is generated for a project, any Smithy models found in the
 following directories will be added to the JAR:</p>
 <ul class="simple">
@@ -157,7 +157,7 @@ JAR. Any project that then depends on this created JAR will be able to find
 and use the Smithy models contained in the JAR when using <em>model discovery</em>.</p>
 </div>
 <div class="section" id="building-smithy-models">
-<span id="id2"></span><h2>Building Smithy models<a class="headerlink" href="#building-smithy-models" title="Permalink to this headline">¶</a></h2>
+<span id="id2"></span><h2><a href="#building-smithy-models">Building Smithy models</a></h2>
 <p>This plugin operates in two different modes:</p>
 <ol class="arabic simple">
 <li>If no <code class="docutils literal notranslate"><span class="pre">projection</span></code> is specified for the <code class="docutils literal notranslate"><span class="pre">SmithyExtension</span></code>, then the plugin
@@ -167,7 +167,7 @@ runs in a &quot;projection&quot; mode.</li>
 </ol>
 </div>
 <div class="section" id="smithy-extension-properties">
-<span id="id3"></span><h2>Smithy extension properties<a class="headerlink" href="#smithy-extension-properties" title="Permalink to this headline">¶</a></h2>
+<span id="id3"></span><h2><a href="#smithy-extension-properties">Smithy extension properties</a></h2>
 <p>This plugin is configured using the <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.gradle.SmithyExtension</span></code>
 extension:</p>
 <div class="sphinx-tabs docutils container">
@@ -240,7 +240,7 @@ default, the build will fail if unknown traits are encountered.</td>
 </tbody>
 </table>
 <div class="section" id="building-a-source-model">
-<span id="building-source-model"></span><h3>Building a source model<a class="headerlink" href="#building-a-source-model" title="Permalink to this headline">¶</a></h3>
+<span id="building-source-model"></span><h3><a href="#building-a-source-model">Building a source model</a></h3>
 <p>A &quot;source&quot; build is run when no <code class="docutils literal notranslate"><span class="pre">projection</span></code> is configured in
 <code class="docutils literal notranslate"><span class="pre">SmithyExtension</span></code>. Because no projection was specified, <strong>smithy-build</strong> is
 executed using the <code class="docutils literal notranslate"><span class="pre">compileClasspath</span></code> plus the <code class="docutils literal notranslate"><span class="pre">buildscript</span></code> classpath. To
@@ -284,7 +284,7 @@ Kotlin</div>
 </div>
 </div>
 <div class="section" id="generating-a-projection">
-<span id="generating-projection"></span><h3>Generating a projection<a class="headerlink" href="#generating-a-projection" title="Permalink to this headline">¶</a></h3>
+<span id="generating-projection"></span><h3><a href="#generating-a-projection">Generating a projection</a></h3>
 <p>A &quot;projection&quot; build is run when a :ref:<code class="docutils literal notranslate"><span class="pre">`projection</span></code> &lt;projections&gt;` is
 specified in the <code class="docutils literal notranslate"><span class="pre">SmithyExtension</span></code>. You might want to create a projection of
 a model if you need to maintain an internal version of a model that contains
@@ -396,7 +396,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="projection-tags">
-<span id="id4"></span><h3>Projection tags<a class="headerlink" href="#projection-tags" title="Permalink to this headline">¶</a></h3>
+<span id="id4"></span><h3><a href="#projection-tags">Projection tags</a></h3>
 <p>Projections are meant to <em>project</em> and filter other models into another
 model. You need to specify which dependencies are being projected into your
 JAR by setting the <code class="docutils literal notranslate"><span class="pre">projectionSourceTags</span></code> property.</p>
@@ -442,7 +442,7 @@ and group name + &quot;:&quot; + name + &quot;:&quot; version. This allows model
 be queried by group and artifact names in addition to custom tags.</p>
 </div>
 <div class="section" id="building-artifacts-from-smithy-models">
-<span id="artifacts-from-smithy-models"></span><h3>Building artifacts from Smithy models<a class="headerlink" href="#building-artifacts-from-smithy-models" title="Permalink to this headline">¶</a></h3>
+<span id="artifacts-from-smithy-models"></span><h3><a href="#building-artifacts-from-smithy-models">Building artifacts from Smithy models</a></h3>
 <p>If a <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> file is found at the root of the project, then it
 will be used to generate <a class="reference internal" href="build-config.html#projection-artifacts"><span class="std std-ref">artifacts</span></a> from the Smithy model.</p>
 <p>The following example generates an OpenAPI model from a Smithy model:</p>

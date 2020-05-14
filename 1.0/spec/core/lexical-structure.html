@@ -115,7 +115,7 @@
                     
                     
   <div class="section" id="smithy-idl-lexical-structure">
-<span id="lexical-structure"></span><h1>2. Smithy IDL lexical structure<a class="headerlink" href="#smithy-idl-lexical-structure" title="Permalink to this headline">¶</a></h1>
+<span id="lexical-structure"></span><h1><a href="#smithy-idl-lexical-structure">2. Smithy IDL lexical structure</a></h1>
 <p>This document defines the <a class="reference external" href="https://tools.ietf.org/html/rfc5234">ABNF</a> grammar and syntax for defining models using
 the <em>Smithy interface definition language</em> (IDL).</p>
 <p>Smithy models are defined using either the Smithy IDL or the
@@ -150,7 +150,7 @@ for tooling and integrations.</p>
 </ul>
 </div>
 <div class="section" id="smithy-idl-abnf">
-<span id="id1"></span><h2>2.1. Smithy IDL ABNF<a class="headerlink" href="#smithy-idl-abnf" title="Permalink to this headline">¶</a></h2>
+<span id="id1"></span><h2><a href="#smithy-idl-abnf">2.1. Smithy IDL ABNF</a></h2>
 <p>The Smithy IDL is defined by the following ABNF:</p>
 <pre>
 <strong id="grammar-token-idl">idl</strong> =
@@ -161,7 +161,7 @@ for tooling and integrations.</p>
 </pre>
 </div>
 <div class="section" id="lexical-notes">
-<h2>2.2. Lexical notes<a class="headerlink" href="#lexical-notes" title="Permalink to this headline">¶</a></h2>
+<h2><a href="#lexical-notes">2.2. Lexical notes</a></h2>
 <p>Smithy models MUST be encoded using UTF-8 and SHOULD use Unix style
 line endings (<code class="docutils literal notranslate"><span class="pre">\n</span></code>). The Smithy ABNF is whitespace sensitive.
 Whitespace is controlled using the following productions:</p>
@@ -179,7 +179,7 @@ Whitespace is controlled using the following productions:</p>
     %x0A / %x0D.0A ; \n and \r\n
 </pre>
 <div class="section" id="comments">
-<span id="id2"></span><h3>2.2.1. Comments<a class="headerlink" href="#comments" title="Permalink to this headline">¶</a></h3>
+<span id="id2"></span><h3><a href="#comments">2.2.1. Comments</a></h3>
 <p>Comments can occur at any place in the IDL between tokens where whitespace
 (<a class="reference internal" href="#grammar-token-ws"><code class="xref std std-token docutils literal notranslate"><span class="pre">ws</span></code></a>) can occur. Comments in Smithy are defined using two forward
 slashes followed by any character. A newline terminates a comment.</p>
@@ -201,7 +201,7 @@ slashes followed by any character. A newline terminates a comment.</p>
 </div>
 </div>
 <div class="section" id="documentation-comment">
-<span id="id3"></span><h4>2.2.1.1. Documentation comment<a class="headerlink" href="#documentation-comment" title="Permalink to this headline">¶</a></h4>
+<span id="id3"></span><h4><a href="#documentation-comment">2.2.1.1. Documentation comment</a></h4>
 <p>Documentation comments are a special kind of comment that provide
 documentation for shapes. A documentation comment is formed when three
 forward slashes (<code class="docutils literal notranslate"><span class="pre">&quot;///&quot;</span></code>) appear as the first non-whitespace characters
@@ -280,7 +280,7 @@ documentation comment comes before the traits applied to a shape:</p>
 </div>
 </div>
 <div class="section" id="control-section">
-<span id="control-statement"></span><h2>2.3. Control section<a class="headerlink" href="#control-section" title="Permalink to this headline">¶</a></h2>
+<span id="control-statement"></span><h2><a href="#control-section">2.3. Control section</a></h2>
 <p>The <em>control section</em> of a model contains <a class="reference internal" href="#grammar-token-control_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">control</span> <span class="pre">statements</span></code></a>
 that apply metadata to a <em>specific file</em>. Control statements, if defined,
 MUST appear at the beginning of a Smithy file before any other statements.</p>
@@ -293,7 +293,7 @@ MUST appear at the beginning of a Smithy file before any other statements.</p>
 </pre>
 <p>Implementations MUST ignore unknown control statements.</p>
 <div class="section" id="version-statement">
-<span id="smithy-version"></span><h3>2.3.1. Version statement<a class="headerlink" href="#version-statement" title="Permalink to this headline">¶</a></h3>
+<span id="smithy-version"></span><h3><a href="#version-statement">2.3.1. Version statement</a></h3>
 <p>The Smithy specification is versioned using a <code class="docutils literal notranslate"><span class="pre">major</span></code> . <code class="docutils literal notranslate"><span class="pre">minor</span></code>
 versioning scheme. A version requirement is specified for a model file using
 the <code class="docutils literal notranslate"><span class="pre">$version</span></code> control statement. When no version number is specified in
@@ -368,7 +368,7 @@ supported by the tool loading the models.</p>
 </div>
 </div>
 <div class="section" id="shape-id">
-<span id="id4"></span><h2>2.4. Shape ID<a class="headerlink" href="#shape-id" title="Permalink to this headline">¶</a></h2>
+<span id="id4"></span><h2><a href="#shape-id">2.4. Shape ID</a></h2>
 <p>A <em class="dfn">shape ID</em> is used to refer to shapes and traits in the model.
 Shape IDs adhere to the following syntax:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>com.foo.baz#ShapeName$memberName
@@ -388,7 +388,7 @@ member name are separated by the &quot;<code class="docutils literal notranslate
 present.</dd>
 </dl>
 <div class="section" id="shape-id-abnf">
-<span id="id5"></span><h3>2.4.1. Shape ID ABNF<a class="headerlink" href="#shape-id-abnf" title="Permalink to this headline">¶</a></h3>
+<span id="id5"></span><h3><a href="#shape-id-abnf">2.4.1. Shape ID ABNF</a></h3>
 <p>Shape IDs are formally defined by the following ABNF:</p>
 <pre>
 <strong id="grammar-token-shape_id">shape_id</strong> =
@@ -411,7 +411,7 @@ present.</dd>
 </pre>
 </div>
 <div class="section" id="shape-id-member-names">
-<span id="id6"></span><h3>2.4.2. Shape ID member names<a class="headerlink" href="#shape-id-member-names" title="Permalink to this headline">¶</a></h3>
+<span id="id6"></span><h3><a href="#shape-id-member-names">2.4.2. Shape ID member names</a></h3>
 <p>A <a class="reference internal" href="shapes.html#member"><span class="std std-ref">member</span></a> of an <a class="reference internal" href="shapes.html#aggregate-types"><span class="std std-ref">aggregate shape</span></a> can be
 referenced in a shape ID by appending a dollar sign (<code class="docutils literal notranslate"><span class="pre">$</span></code>) followed by the
 appropriate member name. Member names for each shape are defined as follows:</p>
@@ -456,7 +456,7 @@ appropriate member name. Member names for each shape are defined as follows:</p>
 </table>
 </div>
 <div class="section" id="shape-id-conflicts">
-<span id="id7"></span><h3>2.4.3. Shape ID conflicts<a class="headerlink" href="#shape-id-conflicts" title="Permalink to this headline">¶</a></h3>
+<span id="id7"></span><h3><a href="#shape-id-conflicts">2.4.3. Shape ID conflicts</a></h3>
 <p>While shape IDs used within a model are case-sensitive, no two shapes in
 the model can have the same case-insensitive shape ID. For example,
 <code class="docutils literal notranslate"><span class="pre">com.Foo#baz</span></code> and <code class="docutils literal notranslate"><span class="pre">com.foo#baz</span></code> are not allowed in the same model. This
@@ -464,7 +464,7 @@ property also extends to member names: <code class="docutils literal notranslate
 <code class="docutils literal notranslate"><span class="pre">com.foo#Baz$Bar</span></code> are not allowed on the same structure.</p>
 </div>
 <div class="section" id="syntactic-shape-ids-in-the-idl">
-<span id="syntactic-shape-ids"></span><h3>2.4.4. Syntactic shape IDs in the IDL<a class="headerlink" href="#syntactic-shape-ids-in-the-idl" title="Permalink to this headline">¶</a></h3>
+<span id="syntactic-shape-ids"></span><h3><a href="#syntactic-shape-ids-in-the-idl">2.4.4. Syntactic shape IDs in the IDL</a></h3>
 <p>Unquoted string values that are not object keys in the Smithy IDL are
 considered shape IDs and are resolved to absolute shape IDs using the
 process defined in <a class="reference internal" href="shapes.html#relative-shape-id"><span class="std std-ref">Relative shape ID resolution</span></a>. Values that are not meant to be
@@ -516,7 +516,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="node-values">
-<span id="id8"></span><h2>2.5. Node values<a class="headerlink" href="#node-values" title="Permalink to this headline">¶</a></h2>
+<span id="id8"></span><h2><a href="#node-values">2.5. Node values</a></h2>
 <p><em>Node values</em> are analogous to JSON values. Node values are used to define
 <a class="reference internal" href="model-metadata.html#metadata"><span class="std std-ref">metadata</span></a> and <a class="reference internal" href="traits.html#trait-values"><span class="std std-ref">trait values</span></a>.
 Smithy's node values have many advantages over JSON: comments,
@@ -644,7 +644,7 @@ values are defined.</p>
 </div>
 </div>
 <div class="section" id="string-values">
-<h2>2.6. String values<a class="headerlink" href="#string-values" title="Permalink to this headline">¶</a></h2>
+<h2><a href="#string-values">2.6. String values</a></h2>
 <pre>
 <strong id="grammar-token-quoted_text">quoted_text</strong> =
     DQUOTE *<a class="reference internal" href="#grammar-token-quoted_char"><code class="xref docutils literal notranslate"><span class="pre">quoted_char</span></code></a> DQUOTE
@@ -682,7 +682,7 @@ to LF (u000A). This ensures that strings defined in a Smithy model are
 equivalent across platforms. If a literal <code class="docutils literal notranslate"><span class="pre">\r</span></code> is desired, it can be added
 a string value using the Unicode escape <code class="docutils literal notranslate"><span class="pre">\u000d</span></code>.</p>
 <div class="section" id="string-escape-characters">
-<span id="id9"></span><h3>2.6.1. String escape characters<a class="headerlink" href="#string-escape-characters" title="Permalink to this headline">¶</a></h3>
+<span id="id9"></span><h3><a href="#string-escape-characters">2.6.1. String escape characters</a></h3>
 <p>The Smithy IDL supports escape sequences only within quoted strings.  The following
 escape sequences are allowed:</p>
 <table border="1" class="colwidths-given docutils">
@@ -743,7 +743,7 @@ escape sequences are allowed:</p>
 <p>Any other sequence following a backslash is an error.</p>
 </div>
 <div class="section" id="text-blocks">
-<span id="id10"></span><h3>2.6.2. Text blocks<a class="headerlink" href="#text-blocks" title="Permalink to this headline">¶</a></h3>
+<span id="id10"></span><h3><a href="#text-blocks">2.6.2. Text blocks</a></h3>
 <p>A text block is a string literal that can span multiple lines and
 automatically removes any incidental whitespace. A text block is opened with
 three double quotes (&quot;&quot;&quot;), followed by a newline, zero or more content
@@ -788,7 +788,7 @@ not including a trailing new line:</p>
 </pre></div>
 </div>
 <div class="section" id="incidental-white-space-removal">
-<span id="incidental-whitespace"></span><h4>2.6.2.1. Incidental white space removal<a class="headerlink" href="#incidental-white-space-removal" title="Permalink to this headline">¶</a></h4>
+<span id="incidental-whitespace"></span><h4><a href="#incidental-white-space-removal">2.6.2.1. Incidental white space removal</a></h4>
 <p>Smithy will re-indent the content of a text block by removing all
 incidental whitespace using the following algorithm:</p>
 <ol class="arabic">
@@ -854,7 +854,7 @@ left margin):</p>
 </ol>
 </div>
 <div class="section" id="significant-trailing-line">
-<h4>2.6.2.2. Significant trailing line<a class="headerlink" href="#significant-trailing-line" title="Permalink to this headline">¶</a></h4>
+<h4><a href="#significant-trailing-line">2.6.2.2. Significant trailing line</a></h4>
 <p>The last line of text block content is used when determining the common
 whitespace prefix.</p>
 <p>Consider the following example:</p>
@@ -888,7 +888,7 @@ is equivalent to the following:</p>
 </div>
 </div>
 <div class="section" id="escapes-in-text-blocks">
-<h4>2.6.2.3. Escapes in text blocks<a class="headerlink" href="#escapes-in-text-blocks" title="Permalink to this headline">¶</a></h4>
+<h4><a href="#escapes-in-text-blocks">2.6.2.3. Escapes in text blocks</a></h4>
 <p>Text blocks support all of the <a class="reference internal" href="#string-escape-characters"><span class="std std-ref">string escape characters</span></a>
 of other strings. The use of three double quotes allows unescaped double quotes
 (&quot;) to appear in text blocks. The following text block is interpreted as

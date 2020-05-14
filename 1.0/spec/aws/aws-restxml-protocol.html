@@ -115,7 +115,7 @@
                     
                     
   <div class="section" id="aws-restxml-protocol">
-<span id="id1"></span><h1>AWS restXml protocol<a class="headerlink" href="#aws-restxml-protocol" title="Permalink to this headline">¶</a></h1>
+<span id="id1"></span><h1><a href="#aws-restxml-protocol">AWS restXml protocol</a></h1>
 <p>This specification defines the <code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> protocol.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
@@ -130,7 +130,7 @@
 </ul>
 </div>
 <div class="section" id="aws-protocols-restxml-trait">
-<span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> trait<a class="headerlink" href="#aws-protocols-restxml-trait" title="Permalink to this headline">¶</a></h2>
+<span id="id2"></span><h2><a href="#aws-protocols-restxml-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Adds support for an HTTP-based protocol that sends XML requests and
@@ -261,7 +261,7 @@ preferred over <code class="docutils literal notranslate"><span class="pre">http
 </div>
 </div>
 <div class="section" id="supported-traits">
-<h2>Supported traits<a class="headerlink" href="#supported-traits" title="Permalink to this headline">¶</a></h2>
+<h2><a href="#supported-traits">Supported traits</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> protocol supports the following traits
 that affect serialization:</p>
 <table border="1" class="colwidths-given docutils">
@@ -339,7 +339,7 @@ for the targeted shape.</td>
 </table>
 </div>
 <div class="section" id="content-type">
-<h2>Content-Type<a class="headerlink" href="#content-type" title="Permalink to this headline">¶</a></h2>
+<h2><a href="#content-type">Content-Type</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> protocol uses a default Content-Type
 of <code class="docutils literal notranslate"><span class="pre">application/xml</span></code>.</p>
 <p>Input or output shapes that apply the <a class="reference internal" href="../core/http-traits.html#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a> on one of
@@ -381,7 +381,7 @@ protocols.</td>
 </table>
 </div>
 <div class="section" id="xml-shape-serialization">
-<h2>XML shape serialization<a class="headerlink" href="#xml-shape-serialization" title="Permalink to this headline">¶</a></h2>
+<h2><a href="#xml-shape-serialization">XML shape serialization</a></h2>
 <p>XML requests and responses are serialized within an XML root node with the
 name of the operation's input, output, or error shape that is being serialized.</p>
 <table border="1" class="colwidths-given docutils">
@@ -487,14 +487,14 @@ including examples and behaviors when using multiple XML traits.</p>
 </div>
 </div>
 <div class="section" id="http-binding-serialization">
-<h2>HTTP binding serialization<a class="headerlink" href="#http-binding-serialization" title="Permalink to this headline">¶</a></h2>
+<h2><a href="#http-binding-serialization">HTTP binding serialization</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> protocol supports all of the HTTP binding traits
 defined in the <a class="reference internal" href="../core/http-traits.html#http-traits"><span class="std std-ref">HTTP protocol bindings</span></a> specification. The
 serialization formats and and behaviors described for each trait are supported
 as defined in the <code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> protocol.</p>
 </div>
 <div class="section" id="operation-error-serialization">
-<span id="restxml-errors"></span><h2>Operation error serialization<a class="headerlink" href="#operation-error-serialization" title="Permalink to this headline">¶</a></h2>
+<span id="restxml-errors"></span><h2><a href="#operation-error-serialization">Operation error serialization</a></h2>
 <p>Error responses in the <code class="docutils literal notranslate"><span class="pre">restXml</span></code> protocol are wrapped in one additional
 nested XML element with the name <code class="docutils literal notranslate"><span class="pre">Error</span></code> by default. All error structure
 members are serialized within this element, unless bound to another location
@@ -527,7 +527,7 @@ using this additional nested XML element.</p>
 </div>
 </div>
 <div class="section" id="protocol-compliance-tests">
-<h2>Protocol compliance tests<a class="headerlink" href="#protocol-compliance-tests" title="Permalink to this headline">¶</a></h2>
+<h2><a href="#protocol-compliance-tests">Protocol compliance tests</a></h2>
 <p>A full compliance test suite is provided and SHALL be considered a normative
 reference: <a class="reference external" href="https://github.com/awslabs/smithy/tree/master/smithy-aws-protocol-tests/model/restXml">https://github.com/awslabs/smithy/tree/master/smithy-aws-protocol-tests/model/restXml</a></p>
 <p>These compliance tests define a model that is used to define test cases and

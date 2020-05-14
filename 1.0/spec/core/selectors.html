@@ -109,7 +109,7 @@
                     
                     
   <div class="section" id="selectors">
-<span id="id1"></span><h1>17. Selectors<a class="headerlink" href="#selectors" title="Permalink to this headline">¶</a></h1>
+<span id="id1"></span><h1><a href="#selectors">17. Selectors</a></h1>
 <p>A <em class="dfn">Smithy selector</em> is a domain specific language (DSL) used to match
 shapes within a model. Selectors are used to build custom
 <a class="reference internal" href="model-validation.html#emiteachselector"><span class="std std-ref">validators</span></a> and to specify where it is valid to
@@ -130,7 +130,7 @@ apply a <a class="reference internal" href="traits.html#trait-shape-properties">
 </ul>
 </div>
 <div class="section" id="introduction">
-<h2>17.1. Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<h2><a href="#introduction">17.1. Introduction</a></h2>
 <p>A <em>selector</em> is used to traverse a model as a graph and find matching shapes.
 A model can be thought of as a traversable graph, more specifically, as a
 labeled multidigraph: each <a class="reference internal" href="shapes.html#shapes"><span class="std std-ref">shape</span></a> in a model is a labeled graph
@@ -142,7 +142,7 @@ shape has a member that targets a shape; thus, the list shape is connected
 to the member shape, and the member shape is connected to the targeted shape.</p>
 </div>
 <div class="section" id="matching-shapes-with-selectors">
-<h2>17.2. Matching shapes with selectors<a class="headerlink" href="#matching-shapes-with-selectors" title="Permalink to this headline">¶</a></h2>
+<h2><a href="#matching-shapes-with-selectors">17.2. Matching shapes with selectors</a></h2>
 <p>Every shape in a model is sent through a selector, one at a time. The
 individual shape that is sent through a selector is called the
 <em>starting shape</em>. When given a shape, a selector <em>yields</em> zero or more
@@ -167,7 +167,7 @@ selector results.</p>
 </div>
 </div>
 <div class="section" id="matching-shapes-by-type">
-<h2>17.3. Matching shapes by type<a class="headerlink" href="#matching-shapes-by-type" title="Permalink to this headline">¶</a></h2>
+<h2><a href="#matching-shapes-by-type">17.3. Matching shapes by type</a></h2>
 <p>Shapes can be matched by type using the following tokens:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
@@ -271,12 +271,12 @@ selector results.</p>
 </div>
 </div>
 <div class="section" id="attribute-selectors">
-<h2>17.4. Attribute selectors<a class="headerlink" href="#attribute-selectors" title="Permalink to this headline">¶</a></h2>
+<h2><a href="#attribute-selectors">17.4. Attribute selectors</a></h2>
 <p><em>Attribute selectors</em> are used to match shapes based on
 <a class="reference internal" href="lexical-structure.html#shape-id"><span class="std std-ref">shape IDs</span></a>, <a class="reference internal" href="traits.html#traits"><span class="std std-ref">traits</span></a>, and other
 <a class="reference internal" href="#selector-attributes"><span class="std std-ref">attributes</span></a>.</p>
 <div class="section" id="attribute-existence">
-<span id="id2"></span><h3>17.4.1. Attribute existence<a class="headerlink" href="#attribute-existence" title="Permalink to this headline">¶</a></h3>
+<span id="id2"></span><h3><a href="#attribute-existence">17.4.1. Attribute existence</a></h3>
 <p>An attribute existence check tests for the existence of an attribute without
 any kind of comparison.</p>
 <p>The following selector matches shapes that are marked with the
@@ -294,7 +294,7 @@ contains a non-empty <code class="docutils literal notranslate"><span class="pre
 </div>
 </div>
 <div class="section" id="attribute-comparison">
-<h3>17.4.2. Attribute comparison<a class="headerlink" href="#attribute-comparison" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#attribute-comparison">17.4.2. Attribute comparison</a></h3>
 <p>An attribute selector with a <a class="reference internal" href="#grammar-token-selector_comparator"><code class="xref std std-token docutils literal notranslate"><span class="pre">comparator</span></code></a>
 checks for the existence of an attribute and compares the resolved
 attribute value to a comma separated list of possible values. The
@@ -309,7 +309,7 @@ side of the comparator.</p>
 </ul>
 </div>
 <div class="section" id="string-comparators">
-<span id="id3"></span><h3>17.4.3. String comparators<a class="headerlink" href="#string-comparators" title="Permalink to this headline">¶</a></h3>
+<span id="id3"></span><h3><a href="#string-comparators">17.4.3. String comparators</a></h3>
 <p><a class="reference internal" href="#grammar-token-selector_string_comparator"><code class="xref std std-token docutils literal notranslate"><span class="pre">String</span> <span class="pre">comparators</span></code></a> are used to compare
 the string representation of values. Attributes that do not have a string
 representation are treated as an empty string when these comparisons are
@@ -401,7 +401,7 @@ that case-insensitively contains the word &quot;token&quot;:</p>
 </div>
 </div>
 <div class="section" id="numeric-comparators">
-<span id="id4"></span><h3>17.4.4. Numeric comparators<a class="headerlink" href="#numeric-comparators" title="Permalink to this headline">¶</a></h3>
+<span id="id4"></span><h3><a href="#numeric-comparators">17.4.4. Numeric comparators</a></h3>
 <p>Relative comparators only match if both values being compared contain valid
 <a class="reference internal" href="lexical-structure.html#grammar-token-number"><code class="xref std std-token docutils literal notranslate"><span class="pre">number</span></code></a> productions when converted to a string.</p>
 <table border="1" class="colwidths-given docutils">
@@ -446,7 +446,7 @@ is not a valid number:</p>
 </div>
 </div>
 <div class="section" id="attributes">
-<span id="selector-attributes"></span><h2>17.5. Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<span id="selector-attributes"></span><h2><a href="#attributes">17.5. Attributes</a></h2>
 <p>Selector attributes return objects that MAY have nested properties. Objects
 returned from selectors MAY be available to cast to a string. Shapes support
 the following attributes:</p>
@@ -500,7 +500,7 @@ MUST NOT match any shapes:</p>
 </pre></div>
 </div>
 <div class="section" id="id-attribute">
-<span id="id5"></span><h3>17.5.1. <code class="docutils literal notranslate"><span class="pre">id</span></code> attribute<a class="headerlink" href="#id-attribute" title="Permalink to this headline">¶</a></h3>
+<span id="id5"></span><h3><a href="#id-attribute">17.5.1. <code class="docutils literal notranslate"><span class="pre">id</span></code> attribute</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">id</span></code> attribute of a shape returns an object that contains information
 about the shape ID of a shape. When used as a string, <code class="docutils literal notranslate"><span class="pre">id</span></code> contains the
 absolute <a class="reference internal" href="lexical-structure.html#shape-id"><span class="std std-ref">shape ID</span></a> of a shape.</p>
@@ -558,7 +558,7 @@ than 20 characters:</p>
 </dl>
 </div>
 <div class="section" id="service-attribute">
-<span id="id6"></span><h3>17.5.2. <code class="docutils literal notranslate"><span class="pre">service</span></code> attribute<a class="headerlink" href="#service-attribute" title="Permalink to this headline">¶</a></h3>
+<span id="id6"></span><h3><a href="#service-attribute">17.5.2. <code class="docutils literal notranslate"><span class="pre">service</span></code> attribute</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">service</span></code> attribute is an object that is available for service shapes.
 The following selector matches all service shapes:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[service]
@@ -592,7 +592,7 @@ property that starts with <code class="docutils literal notranslate"><span class
 </dl>
 </div>
 <div class="section" id="trait-attribute">
-<span id="id7"></span><h3>17.5.3. <code class="docutils literal notranslate"><span class="pre">trait</span></code> attribute<a class="headerlink" href="#trait-attribute" title="Permalink to this headline">¶</a></h3>
+<span id="id7"></span><h3><a href="#trait-attribute">17.5.3. <code class="docutils literal notranslate"><span class="pre">trait</span></code> attribute</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">trait</span></code> attribute returns an object that contains every trait applied
 to a shape. The <code class="docutils literal notranslate"><span class="pre">trait</span></code> attribute supports the following properties:</p>
 <dl class="docutils">
@@ -668,7 +668,7 @@ a string comparator.</p>
 </div>
 </div>
 <div class="section" id="node-attribute">
-<span id="id8"></span><h3>17.5.4. Node attribute<a class="headerlink" href="#node-attribute" title="Permalink to this headline">¶</a></h3>
+<span id="id8"></span><h3><a href="#node-attribute">17.5.4. Node attribute</a></h3>
 <p>A <em>node attribute</em> is created by retrieving nested values from a <code class="docutils literal notranslate"><span class="pre">trait</span></code>
 attribute. The node value created from a trait is defined in <a class="reference internal" href="traits.html#trait-node-values"><span class="std std-ref">Trait node values</span></a>.
 A node that contains a string, number, or boolean value is converted to a
@@ -726,7 +726,7 @@ empty value is returned.</p>
 </dl>
 </div>
 <div class="section" id="projection-attribute">
-<span id="id9"></span><h3>17.5.5. Projection attribute<a class="headerlink" href="#projection-attribute" title="Permalink to this headline">¶</a></h3>
+<span id="id9"></span><h3><a href="#projection-attribute">17.5.5. Projection attribute</a></h3>
 <p>A <em>projection</em> is created using the <code class="docutils literal notranslate"><span class="pre">(keys)</span></code> or <code class="docutils literal notranslate"><span class="pre">(values)</span></code> property of
 a <a class="reference internal" href="#trait-attribute"><span class="std std-ref">trait attribute</span></a> or
 <a class="reference internal" href="#node-attribute"><span class="std std-ref">node attribute</span></a>.</p>
@@ -742,7 +742,7 @@ used when the contents of a projection are known to have a single value.</dd>
 projection, and the results are returned in a new projection.</dd>
 </dl>
 <div class="section" id="comparisons-to-non-projections">
-<span id="projection-comparisons"></span><h4>17.5.5.1. Comparisons to non-projections<a class="headerlink" href="#comparisons-to-non-projections" title="Permalink to this headline">¶</a></h4>
+<span id="projection-comparisons"></span><h4><a href="#comparisons-to-non-projections">17.5.5.1. Comparisons to non-projections</a></h4>
 <p>When a projection is compared against a value that is not also a projection,
 the comparison matches if any value in the projection satisfies the
 comparator assertion against the other value.</p>
@@ -753,7 +753,7 @@ contains a value that is the string literal value <code class="docutils literal 
 </div>
 </div>
 <div class="section" id="comparisons-to-projections">
-<h4>17.5.5.2. Comparisons to projections<a class="headerlink" href="#comparisons-to-projections" title="Permalink to this headline">¶</a></h4>
+<h4><a href="#comparisons-to-projections">17.5.5.2. Comparisons to projections</a></h4>
 <p>When a projection is compared against another projection using a
 <a class="reference internal" href="#string-comparators"><span class="std std-ref">string comparator</span></a> or <a class="reference internal" href="#numeric-comparators"><span class="std std-ref">numeric comparator</span></a>,
 the comparison matches if any value in the left projection satisfies the
@@ -860,7 +860,7 @@ $service(*)
 </div>
 </div>
 <div class="section" id="projection-comparators">
-<span id="id10"></span><h4>17.5.5.3. Projection comparators<a class="headerlink" href="#projection-comparators" title="Permalink to this headline">¶</a></h4>
+<span id="id10"></span><h4><a href="#projection-comparators">17.5.5.3. Projection comparators</a></h4>
 <p>Projection comparators are used to compare projections to test if they are
 equal, not equal, a subset, or a proper subset to another projection. With
 the exception of the <code class="docutils literal notranslate"><span class="pre">{!=}</span></code> comparator, projection comparators match if and
@@ -906,12 +906,12 @@ projection.</td>
 </div>
 </div>
 <div class="section" id="scoped-attribute-selectors">
-<span id="id11"></span><h2>17.6. Scoped attribute selectors<a class="headerlink" href="#scoped-attribute-selectors" title="Permalink to this headline">¶</a></h2>
+<span id="id11"></span><h2><a href="#scoped-attribute-selectors">17.6. Scoped attribute selectors</a></h2>
 <p>A <a class="reference internal" href="#grammar-token-selector_scoped_attr"><code class="xref std std-token docutils literal notranslate"><span class="pre">scoped</span> <span class="pre">attribute</span> <span class="pre">selector</span></code></a> is similar to an
 attribute selector, but it allows multiple complex comparisons to be made
 against a scoped attribute.</p>
 <div class="section" id="context-values">
-<h3>17.6.1. Context values<a class="headerlink" href="#context-values" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#context-values">17.6.1. Context values</a></h3>
 <p>The first part of a scoped attribute selector is the attribute that is scoped
 for the expression, followed by <code class="docutils literal notranslate"><span class="pre">:</span></code>. The scoped attribute is accessed using
 a <a class="reference internal" href="#grammar-token-selector_context_value"><code class="xref std std-token docutils literal notranslate"><span class="pre">context</span> <span class="pre">value</span></code></a> in the form of
@@ -946,7 +946,7 @@ an entry in its <code class="docutils literal notranslate"><span class="pre">tag
 </div>
 </div>
 <div class="section" id="and-logic">
-<h3>17.6.2. And-logic<a class="headerlink" href="#and-logic" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#and-logic">17.6.2. And-logic</a></h3>
 <p>Scoped attribute selector assertions can be combined together using
 <em>and</em> statements with <code class="docutils literal notranslate"><span class="pre">&amp;&amp;</span></code>. All assertions MUST match in order for
 the selector to match.</p>
@@ -959,7 +959,7 @@ set <code class="docutils literal notranslate"><span class="pre">failWhenMissing
 </div>
 </div>
 <div class="section" id="matching-multiple-values">
-<h3>17.6.3. Matching multiple values<a class="headerlink" href="#matching-multiple-values" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#matching-multiple-values">17.6.3. Matching multiple values</a></h3>
 <p>Like non-scoped selectors, multiple values can be provided using a comma
 separated list. One or more resolved attribute values MUST match one or more
 provided values.</p>
@@ -973,7 +973,7 @@ where the <code class="docutils literal notranslate"><span class="pre">in</span>
 </div>
 </div>
 <div class="section" id="case-insensitive-comparisons">
-<h3>17.6.4. Case insensitive comparisons<a class="headerlink" href="#case-insensitive-comparisons" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#case-insensitive-comparisons">17.6.4. Case insensitive comparisons</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">i</span></code> token used before <code class="docutils literal notranslate"><span class="pre">&amp;&amp;</span></code> or the closing <code class="docutils literal notranslate"><span class="pre">]</span></code> makes a comparison
 case-insensitive.</p>
 <p>The following selector matches on the <code class="docutils literal notranslate"><span class="pre">httpApiKeyAuth</span></code> trait using
@@ -993,14 +993,14 @@ uses a case-insensitive comparison on <code class="docutils literal notranslate"
 </div>
 </div>
 <div class="section" id="neighbors">
-<h2>17.7. Neighbors<a class="headerlink" href="#neighbors" title="Permalink to this headline">¶</a></h2>
+<h2><a href="#neighbors">17.7. Neighbors</a></h2>
 <p>Neighbor selectors yield shapes that are connected to the current shape.
 Most selectors are used to determine if a shape matches some criteria,
 meaning the selector yields zero or exactly one shape. However, neighbor
 selectors yield zero or more shapes by traversing the relationships of
 a shape.</p>
 <div class="section" id="forward-undirected-neighbor">
-<h3>17.7.1. Forward undirected neighbor<a class="headerlink" href="#forward-undirected-neighbor" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#forward-undirected-neighbor">17.7.1. Forward undirected neighbor</a></h3>
 <p>A <a class="reference internal" href="#grammar-token-selector_forward_undirected_neighbor"><code class="xref std std-token docutils literal notranslate"><span class="pre">forward</span> <span class="pre">undirected</span> <span class="pre">neighbor</span></code></a>
 (<code class="docutils literal notranslate"><span class="pre">&gt;</span></code>) yields every shape that is connected to the current shape. For
 example, the following selector matches the key and value members of
@@ -1015,7 +1015,7 @@ selector yields strings that are targeted by list members:</p>
 </div>
 </div>
 <div class="section" id="forward-directed-neighbors">
-<h3>17.7.2. Forward directed neighbors<a class="headerlink" href="#forward-directed-neighbors" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#forward-directed-neighbors">17.7.2. Forward directed neighbors</a></h3>
 <p>The forward undirected neighbor selector (<code class="docutils literal notranslate"><span class="pre">&gt;</span></code>) is an <em>undirected</em> edge
 traversal. Sometimes, a directed edge traversal is necessary. For example,
 the following selector matches the &quot;bound&quot;, &quot;input&quot;, &quot;output&quot;, and &quot;error&quot;
@@ -1047,7 +1047,7 @@ applied to it (that is, a trait that is marked with the
 </div>
 </div>
 <div class="section" id="forward-recursive-neighbors">
-<h3>17.7.3. Forward recursive neighbors<a class="headerlink" href="#forward-recursive-neighbors" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#forward-recursive-neighbors">17.7.3. Forward recursive neighbors</a></h3>
 <p>The forward recursive neighbor selector (<code class="docutils literal notranslate"><span class="pre">~&gt;</span></code>) yields all shapes that are
 recursively connected in the closure of another shape. The shapes yielded
 by this selector are equivalent to yielding every shape connected to the
@@ -1066,7 +1066,7 @@ trait:</p>
 </div>
 </div>
 <div class="section" id="reverse-undirected-neighbor">
-<h3>17.7.4. Reverse undirected neighbor<a class="headerlink" href="#reverse-undirected-neighbor" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#reverse-undirected-neighbor">17.7.4. Reverse undirected neighbor</a></h3>
 <p>A <em>reverse undirected neighbor</em> yields all of the shapes that have a
 relationship that points to the current shape.</p>
 <p>The following selector matches strings that are targeted by members of lists:</p>
@@ -1086,7 +1086,7 @@ is preferred over a reverse neighbor traversal when possible.</p>
 </div>
 </div>
 <div class="section" id="reverse-directed-neighbor">
-<h3>17.7.5. Reverse directed neighbor<a class="headerlink" href="#reverse-directed-neighbor" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#reverse-directed-neighbor">17.7.5. Reverse directed neighbor</a></h3>
 <p>A <em>reverse directed neighbor</em> yields all of the shapes that have a
 relationship of a specific type that points to the current shape.</p>
 <p>For example, shapes marked with the <a class="reference internal" href="stream-traits.html#streaming-trait"><span class="std std-ref">streaming trait</span></a> can only
@@ -1107,7 +1107,7 @@ to any shapes:</p>
 </div>
 </div>
 <div class="section" id="relationships">
-<span id="selector-relationships"></span><h3>17.7.6. Relationships<a class="headerlink" href="#relationships" title="Permalink to this headline">¶</a></h3>
+<span id="selector-relationships"></span><h3><a href="#relationships">17.7.6. Relationships</a></h3>
 <p>The table below lists the labeled directed relationships from each shape.</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
@@ -1242,7 +1242,7 @@ no shapes.</p>
 </div>
 </div>
 <div class="section" id="functions">
-<h2>17.8. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<h2><a href="#functions">17.8. Functions</a></h2>
 <p>Functions are used to filter and yield shapes using a variadic argument
 list of selectors separated by a comma (<code class="docutils literal notranslate"><span class="pre">,</span></code>). Functions always start with
 a colon (<code class="docutils literal notranslate"><span class="pre">:</span></code>).</p>
@@ -1252,7 +1252,7 @@ a colon (<code class="docutils literal notranslate"><span class="pre">:</span></
 evaluated, an unknown function yields no shapes.</p>
 </div>
 <div class="section" id="test">
-<span id="test-function"></span><h3>17.8.1. <code class="docutils literal notranslate"><span class="pre">:test</span></code><a class="headerlink" href="#test" title="Permalink to this headline">¶</a></h3>
+<span id="test-function"></span><h3><a href="#test">17.8.1. <code class="docutils literal notranslate"><span class="pre">:test</span></code></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">:test</span></code> function is used to test if a shape is matched by any of the
 provided predicate selectors. The <code class="docutils literal notranslate"><span class="pre">:test</span></code> function stops testing predicates
 and yields the current shape as soon as the first predicate yields a shape.</p>
@@ -1275,7 +1275,7 @@ no documentation:</p>
 </div>
 </div>
 <div class="section" id="is">
-<h3>17.8.2. <code class="docutils literal notranslate"><span class="pre">:is</span></code><a class="headerlink" href="#is" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#is">17.8.2. <code class="docutils literal notranslate"><span class="pre">:is</span></code></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">:is</span></code> function passes the current shape to each selector and
 yields the shapes yielded by each selector.</p>
 <p>The following selector yields string and number shapes:</p>
@@ -1301,7 +1301,7 @@ SHOULD update to use <code class="docutils literal notranslate"><span class="pre
 </div>
 </div>
 <div class="section" id="not">
-<span id="not-function"></span><h3>17.8.3. <code class="docutils literal notranslate"><span class="pre">:not</span></code><a class="headerlink" href="#not" title="Permalink to this headline">¶</a></h3>
+<span id="not-function"></span><h3><a href="#not">17.8.3. <code class="docutils literal notranslate"><span class="pre">:not</span></code></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">:not</span></code> function is used to filter out shapes. This function MUST be
 provided a <strong>single</strong> predicate selector argument. If the predicate
 selector yields any shapes when given the current shape as input, then
@@ -1334,7 +1334,7 @@ trait applied to it:</p>
 </div>
 </div>
 <div class="section" id="variables">
-<span id="selector-variables"></span><h2>17.9. Variables<a class="headerlink" href="#variables" title="Permalink to this headline">¶</a></h2>
+<span id="selector-variables"></span><h2><a href="#variables">17.9. Variables</a></h2>
 <p>Variables are used to store eagerly computed, named intermediate results that
 can be accessed later in a selector. Variables are useful for caching
 results that are computed multiples times in a selector or for capturing
@@ -1356,7 +1356,7 @@ variable. Attempting to get a variable that does not exist yields no shapes.</p>
 <p>Variables can also be accessed inside of <a class="reference internal" href="#scoped-attribute-selectors"><span class="std std-ref">scoped attribute selectors</span></a>
 from shapes using the <code class="docutils literal notranslate"><span class="pre">var</span></code> attribute.</p>
 <div class="section" id="var-attribute">
-<span id="id12"></span><h3>17.9.1. <code class="docutils literal notranslate"><span class="pre">var</span></code> attribute<a class="headerlink" href="#var-attribute" title="Permalink to this headline">¶</a></h3>
+<span id="id12"></span><h3><a href="#var-attribute">17.9.1. <code class="docutils literal notranslate"><span class="pre">var</span></code> attribute</a></h3>
 <p>A <em>var attribute</em> is an object accessible from a shape that provides
 access to the named <a class="reference internal" href="#selector-variables"><span class="std std-ref">variables</span></a> currently in scope.
 Variables are accessed by providing the variable name after <code class="docutils literal notranslate"><span class="pre">var</span></code>. The
@@ -1426,7 +1426,7 @@ and <code class="docutils literal notranslate"><span class="pre">MyService</span
 </div>
 </div>
 <div class="section" id="grammar">
-<h2>17.10. Grammar<a class="headerlink" href="#grammar" title="Permalink to this headline">¶</a></h2>
+<h2><a href="#grammar">17.10. Grammar</a></h2>
 <p>Selectors are defined by the following <a class="reference external" href="https://tools.ietf.org/html/rfc5234">ABNF</a> grammar.</p>
 <div class="note admonition">
 <p class="first admonition-title">Lexical note</p>

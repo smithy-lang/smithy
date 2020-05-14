@@ -115,7 +115,7 @@
                     
                     
   <div class="section" id="aws-iam-traits">
-<span id="id1"></span><h1>AWS IAM traits<a class="headerlink" href="#aws-iam-traits" title="Permalink to this headline">¶</a></h1>
+<span id="id1"></span><h1><a href="#aws-iam-traits">AWS IAM traits</a></h1>
 <p>IAM Policy Traits are used to describe the permission structure of a service
 in relation to AWS IAM. Services integrated with AWS IAM define resource types,
 actions, and condition keys that IAM users can use to construct IAM policies.</p>
@@ -141,7 +141,7 @@ more information, see <a class="reference internal" href="#deriving-condition-ke
 </ul>
 </div>
 <div class="section" id="aws-iam-actionpermissiondescription-trait">
-<span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#actionPermissionDescription</span></code> trait<a class="headerlink" href="#aws-iam-actionpermissiondescription-trait" title="Permalink to this headline">¶</a></h2>
+<span id="id2"></span><h2><a href="#aws-iam-actionpermissiondescription-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#actionPermissionDescription</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>A brief description of what granting the user permission to invoke an
@@ -190,7 +190,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="aws-iam-conditionkeys-trait">
-<span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-conditionkeys-trait" title="Permalink to this headline">¶</a></h2>
+<span id="id3"></span><h2><a href="#aws-iam-conditionkeys-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeys</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Applies condition keys, by name, to a resource or operation.</dd>
@@ -304,7 +304,7 @@ without being defined on the service.</p>
 </div>
 </div>
 <div class="section" id="aws-iam-defineconditionkeys-trait">
-<span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#defineConditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-defineconditionkeys-trait" title="Permalink to this headline">¶</a></h2>
+<span id="id4"></span><h2><a href="#aws-iam-defineconditionkeys-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#defineConditionKeys</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Defines the set of condition keys that appear within a service in
@@ -420,7 +420,7 @@ JSON</div>
 defined on the service.</p>
 </div>
 <div class="section" id="condition-key-types">
-<span id="id5"></span><h3>Condition Key Types<a class="headerlink" href="#condition-key-types" title="Permalink to this headline">¶</a></h3>
+<span id="id5"></span><h3><a href="#condition-key-types">Condition Key Types</a></h3>
 <p>The following table describes the available types a condition key can have.
 Condition keys in IAM policies can be evaluated with <a class="reference external" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html">condition operators</a>.</p>
 <table border="1" class="colwidths-given docutils">
@@ -481,7 +481,7 @@ Condition keys in IAM policies can be evaluated with <a class="reference externa
 </div>
 </div>
 <div class="section" id="aws-iam-disableconditionkeyinference-trait">
-<span id="id6"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code> trait<a class="headerlink" href="#aws-iam-disableconditionkeyinference-trait" title="Permalink to this headline">¶</a></h2>
+<span id="id6"></span><h2><a href="#aws-iam-disableconditionkeyinference-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Declares that the condition keys of a resource should not be inferred.</dd>
@@ -569,7 +569,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="aws-iam-requiredactions-trait">
-<span id="id7"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#requiredActions</span></code> trait<a class="headerlink" href="#aws-iam-requiredactions-trait" title="Permalink to this headline">¶</a></h2>
+<span id="id7"></span><h2><a href="#aws-iam-requiredactions-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#requiredActions</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Other actions that the invoker must be authorized to perform when
@@ -666,7 +666,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="deriving-condition-keys">
-<span id="id8"></span><h2>Deriving Condition Keys<a class="headerlink" href="#deriving-condition-keys" title="Permalink to this headline">¶</a></h2>
+<span id="id8"></span><h2><a href="#deriving-condition-keys">Deriving Condition Keys</a></h2>
 <p>Smithy will automatically derive condition key information for a service, as
 well as its resources and operations.</p>
 <p>A resource's condition keys include those that are inferred from their

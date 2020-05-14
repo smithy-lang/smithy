@@ -114,7 +114,7 @@
                     
                     
   <div class="section" id="http-protocol-compliance-tests">
-<span id="id1"></span><h1>HTTP Protocol Compliance Tests<a class="headerlink" href="#http-protocol-compliance-tests" title="Permalink to this headline">¶</a></h1>
+<span id="id1"></span><h1><a href="#http-protocol-compliance-tests">HTTP Protocol Compliance Tests</a></h1>
 <p>Smithy is a protocol-agnostic IDL that tries to abstract the serialization
 format of request and response messages sent between a client and server.
 Protocol specifications define the serialization format of a protocol, and
@@ -139,7 +139,7 @@ implement a protocol specification.</p>
 </ul>
 </div>
 <div class="section" id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<h2><a href="#overview">Overview</a></h2>
 <p>This specification defines two traits in the <code class="docutils literal notranslate"><span class="pre">smithy.test</span></code> namespace that
 are used to make assertions about client and server protocol implementations.</p>
 <dl class="docutils">
@@ -157,7 +157,7 @@ implementation could generate JUnit test cases to assert that the
 expectations defined in a model match the behavior of a generated client
 or server.</p>
 <div class="section" id="parameter-format">
-<h3>Parameter format<a class="headerlink" href="#parameter-format" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#parameter-format">Parameter format</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">params</span></code> property used in both the <code class="docutils literal notranslate"><span class="pre">httpRequestTests</span></code> trait and
 <code class="docutils literal notranslate"><span class="pre">httpResponseTests</span></code> trait test cases represents parameters that are used
 to serialize HTTP requests and responses. In order to compare implementation
@@ -175,7 +175,7 @@ with the <a class="reference internal" href="core/behavior-traits.html#idempoten
 </div>
 </div>
 <div class="section" id="httprequesttests">
-<span id="httprequesttests-trait"></span><h2>httpRequestTests<a class="headerlink" href="#httprequesttests" title="Permalink to this headline">¶</a></h2>
+<span id="httprequesttests-trait"></span><h2><a href="#httprequesttests">httpRequestTests</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>The <code class="docutils literal notranslate"><span class="pre">httpRequestTests</span></code> trait is used to define how an HTTP request is
@@ -331,7 +331,7 @@ the serialization formats used by clients or servers.</td>
 </tbody>
 </table>
 <div class="section" id="http-request-example">
-<h3>HTTP request example<a class="headerlink" href="#http-request-example" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#http-request-example">HTTP request example</a></h3>
 <p>The following example defines a protocol compliance test for a JSON protocol
 that uses <a class="reference internal" href="core/http-traits.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a>.</p>
 <div class="sphinx-tabs docutils container">
@@ -449,7 +449,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="httpresponsetests">
-<span id="httpresponsetests-trait"></span><h2>httpResponseTests<a class="headerlink" href="#httpresponsetests" title="Permalink to this headline">¶</a></h2>
+<span id="httpresponsetests-trait"></span><h2><a href="#httpresponsetests">httpResponseTests</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>The <code class="docutils literal notranslate"><span class="pre">httpResponseTests</span></code> trait is used to define how an HTTP response
@@ -558,7 +558,7 @@ the serialization formats used by clients or servers.</td>
 </tbody>
 </table>
 <div class="section" id="http-response-example">
-<h3>HTTP response example<a class="headerlink" href="#http-response-example" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#http-response-example">HTTP response example</a></h3>
 <p>The following example defines a protocol compliance test for a JSON protocol
 that uses <a class="reference internal" href="core/http-traits.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a>.</p>
 <div class="sphinx-tabs docutils container">
@@ -651,7 +651,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="http-error-response-example">
-<h3>HTTP error response example<a class="headerlink" href="#http-error-response-example" title="Permalink to this headline">¶</a></h3>
+<h3><a href="#http-error-response-example">HTTP error response example</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpResponseTests</span></code> trait can be applied to error structures to define
 how an error HTTP response is serialized. Client protocol compliance test
 implementations SHOULD ensure that each error with the <code class="docutils literal notranslate"><span class="pre">httpResponseTests</span></code>
