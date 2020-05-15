@@ -1,5 +1,11 @@
 # Smithy Changelog
 
+## 0.9.10 (2020-05-15)
+
+### Bug Fixes
+
+* Fix issue where `contentHandling` was not set to `CONVERT_TO_TEXT` on CORS preflight requests ([#432](https://github.com/awslabs/smithy/pull/432))
+
 ## 0.9.9 (2020-04-01)
 
 ### Bug Fixes

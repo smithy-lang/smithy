@@ -151,12 +151,12 @@ The following example ``build.gradle.kts`` will build a Smithy model using a
         }
 
         dependencies {
-            implementation("software.amazon.smithy:smithy-model:0.9.9")
+            implementation("software.amazon.smithy:smithy-model:0.9.10")
 
             // These are just examples of dependencies. This model has a dependency on
             // a "common" model package and uses the external AWS traits.
             implementation("com.foo.baz:foo-model-internal-common:1.0.0")
-            implementation("software.amazon.smithy:smithy-aws-traits:0.9.9")
+            implementation("software.amazon.smithy:smithy-aws-traits:0.9.10")
         }
 
 
@@ -193,7 +193,7 @@ build that uses the "external" projection.
                 mavenCentral()
             }
             dependencies {
-                classpath("software.amazon.smithy:smithy-aws-traits:0.9.9")
+                classpath("software.amazon.smithy:smithy-aws-traits:0.9.10")
 
                 // Take a dependency on the internal model package. This
                 // dependency *must* be a buildscript only dependency to ensure
@@ -217,12 +217,12 @@ build that uses the "external" projection.
         }
 
         dependencies {
-            implementation("software.amazon.smithy:smithy-model:0.9.9")
+            implementation("software.amazon.smithy:smithy-model:0.9.10")
 
             // Any dependencies that the projected model needs must be (re)declared
             // here. For example, let's assume that the smithy-aws-traits package is
             // needed in the projected model too.
-            implementation("software.amazon.smithy:smithy-aws-traits:0.9.9")
+            implementation("software.amazon.smithy:smithy-aws-traits:0.9.10")
         }
 
 
@@ -328,7 +328,7 @@ The above Smithy plugin also requires a ``buildscript`` dependency in
 
                 // This dependency is required in order to apply the "openapi"
                 // plugin in smithy-build.json
-                classpath("software.amazon.smithy:smithy-openapi:0.9.9")
+                classpath("software.amazon.smithy:smithy-openapi:0.9.10")
             }
         }
 
