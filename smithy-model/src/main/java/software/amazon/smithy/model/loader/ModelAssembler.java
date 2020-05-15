@@ -477,8 +477,10 @@ public final class ModelAssembler {
         try {
             return doAssemble(visitor);
         } catch (SourceException e) {
-            visitor.onError(ValidationEvent.fromSourceException(e));
-            return visitor.onEnd();
+            ValidatedResult<Model> modelResult = visitor.onEnd();
+            List<ValidationEvent> events = new ArrayList<>(modelResult.getValidationEvents());
+            events.add(ValidationEvent.fromSourceException(e));
+            return new ValidatedResult<>(modelResult.getResult().orElse(null), events);
         }
     }
 
