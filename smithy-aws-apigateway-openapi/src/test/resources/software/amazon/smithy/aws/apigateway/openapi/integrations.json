@@ -166,7 +166,8 @@
             },
             "traits": {
                 "smithy.api#error": "client",
-                "smithy.api#httpError": 302
+                "smithy.api#httpError": 302,
+                "smithy.api#suppress": ["HttpResponseCodeSemantics"]
             }
         },
         "smithy.example#OperationInput": {
@@ -199,14 +200,5 @@
                 }
             }
         }
-    },
-    "metadata": {
-        "suppressions": [
-            {
-                "ids": ["HttpResponseCodeSemantics"],
-                "shapes": ["smithy.example#Redirect"],
-                "reason": "model redirect as error"
-            }
-        ]
     }
 }

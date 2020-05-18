@@ -481,4 +481,16 @@ public class ModelAssemblerTest {
 
         assertFalse(result.isBroken());
     }
+
+    @Test
+    public void canHandleBadSuppressions() {
+        String document = "namespace foo.baz\n"
+                + "@idempotent\n" // < this is invalid
+                + "string MyString\n";
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addUnparsedModel("foo.smithy", document)
+                .putMetadata("suppressions", Node.parse("[{}]"))
+                .assemble();
+        assertTrue(result.isBroken());
+    }
 }

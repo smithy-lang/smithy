@@ -179,18 +179,18 @@ Suppressions
 ------------
 
 Suppressions are used to suppress specific validation events.
-Suppressions are created using the :ref:`suppression-trait` and
+Suppressions are created using the :ref:`suppress-trait` and
 :ref:`suppressions metadata <suppressions-metadata>`.
 
 
-.. _suppression-trait:
+.. _suppress-trait:
 
-``suppression`` trait
+``suppress`` trait
 =====================
 
 Summary
-    The suppression trait is used to suppress validation events(s) for a
-    specific shape. Each value in the ``suppression`` trait is a
+    The suppress trait is used to suppress validation events(s) for a
+    specific shape. Each value in the ``suppress`` trait is a
     validation event ID to suppress for the shape.
 Trait selector
     ``*``
@@ -208,7 +208,7 @@ for the ``smithy.example#MyString`` shape:
 
         namespace smithy.example
 
-        @suppression(["Foo", "Bar"])
+        @suppress(["Foo", "Bar"])
         string MyString
 
 
