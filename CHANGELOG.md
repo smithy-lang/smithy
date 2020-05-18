@@ -1,5 +1,11 @@
 # Smithy Changelog
 
+## 1.0.2 (2020-05-18)
+
+### Bug Fixes
+
+* Fix an issue that would squash exceptions thrown for invalid suppressions. ([#440](https://github.com/awslabs/smithy/pull/440))
+
 ## 1.0.1 (2020-05-13)
 
 ### Features
