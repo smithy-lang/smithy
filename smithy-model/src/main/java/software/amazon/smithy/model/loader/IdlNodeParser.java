@@ -104,6 +104,7 @@ final class IdlNodeParser {
     }
 
     static ObjectNode parseObjectNode(IdlModelParser parser) {
+        parser.increaseNestingLevel();
         SourceLocation location = parser.currentLocation();
         Map<StringNode, Node> entries = new LinkedHashMap<>();
         parser.expect('{');
@@ -132,6 +133,7 @@ final class IdlNodeParser {
         }
 
         parser.expect('}');
+        parser.decreaseNestingLevel();
         return new ObjectNode(entries, location);
     }
 
@@ -144,6 +146,7 @@ final class IdlNodeParser {
     }
 
     private static ArrayNode parseArrayNode(IdlModelParser parser) {
+        parser.increaseNestingLevel();
         SourceLocation location = parser.currentLocation();
         List<Node> items = new ArrayList<>();
         parser.expect('[');
@@ -166,6 +169,7 @@ final class IdlNodeParser {
         }
 
         parser.expect(']');
+        parser.decreaseNestingLevel();
         return new ArrayNode(items, location);
     }
 }
