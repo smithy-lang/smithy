@@ -72,6 +72,9 @@ import software.amazon.smithy.utils.StringUtils;
 
 final class IdlModelParser {
 
+    /** Only allow nesting up to 250 arrays/objects in node values. */
+    private static final int MAX_NESTING_LEVEL = 250;
+
     private static final String PUT_KEY = "put";
     private static final String CREATE_KEY = "create";
     private static final String READ_KEY = "read";
@@ -111,6 +114,7 @@ final class IdlModelParser {
     private String namespace;
     private String definedVersion;
     private TraitEntry pendingDocumentationComment;
+    private int nestingLevel;
 
     /** Map of shape aliases to their targets. */
     private final Map<String, ShapeId> useShapes = new HashMap<>();
@@ -909,5 +913,15 @@ final class IdlModelParser {
 
     int position() {
         return position;
+    }
+
+    void increaseNestingLevel() {
+        if (++nestingLevel >= MAX_NESTING_LEVEL) {
+            throw syntax("Node value nesting too deep");
+        }
+    }
+
+    void decreaseNestingLevel() {
+        nestingLevel--;
     }
 }

@@ -16,10 +16,12 @@
 package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
 import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
@@ -27,6 +29,7 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.validation.ValidatedResultException;
 
 public class IdlModelLoaderTest {
     @Test
@@ -93,5 +96,24 @@ public class IdlModelLoaderTest {
 
         assertThat(shape.findTrait(ShapeId.from("smithy.example#bar")), not(Optional.empty()));
         assertThat(shape.findTrait(ShapeId.from("smithy.example.b#baz")), not(Optional.empty()));
+    }
+
+    @Test
+    public void limitsRecursion() {
+        StringBuilder nodeBuilder = new StringBuilder("metadata foo = ");
+        for (int i = 0; i < 251; i++) {
+            nodeBuilder.append('[');
+        }
+        nodeBuilder.append("true");
+        for (int i = 0; i < 251; i++) {
+            nodeBuilder.append(']');
+        }
+        nodeBuilder.append("\n");
+
+        ValidatedResultException e = Assertions.assertThrows(ValidatedResultException.class, () -> {
+            Model.assembler().addUnparsedModel("/foo.smithy", nodeBuilder.toString()).assemble().unwrap();
+        });
+
+        assertThat(e.getMessage(), containsString("Node value nesting too deep"));
     }
 }
