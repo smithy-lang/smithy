@@ -349,4 +349,23 @@ public class OpenApiConverterTest {
 
         assertThat(config.getExtensions().getMember("hello"), not(Optional.empty()));
     }
+
+    // The input structure needs a synthesized content structure. Since the
+    // path property is a "parameter" the synthesized structure must not list
+    // it as required because it is not part of the payload.
+    @Test
+    public void properlyRemovesRequiredPropertiesFromSynthesizedInput() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("service-with-required-path.json"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example.rest#RestService"));
+        OpenApi result = OpenApiConverter.create().config(config).convert(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("service-with-required-path.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
 }

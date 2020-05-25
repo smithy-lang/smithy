@@ -1,5 +1,12 @@
 # Smithy Changelog
 
+## 1.0.3 (TBD)
+
+### Bug Fixes
+
+* Fix an issue with the OpenAPI conversion where synthesized structure inputs reference required properties that
+  were removed. ([#443](https://github.com/awslabs/smithy/pull/443))
+
 ## 1.0.2 (2020-05-18)
 
 ### Bug Fixes

@@ -1,0 +1,59 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "example.rest#RestService": {
+            "type": "service",
+            "version": "2006-03-01",
+            "operations": [
+                {
+                    "target": "example.rest#PutDocumentPayload"
+                }
+            ],
+            "traits": {
+                "aws.protocols#restJson1": {}
+            }
+        },
+        "example.rest#PutDocumentPayload": {
+            "type": "operation",
+            "input": {
+                "target": "example.rest#PutDocumentPayloadInput"
+            },
+            "output": {
+                "target": "example.rest#PutDocumentPayloadOutput"
+            },
+            "traits": {
+                "smithy.api#idempotent": {},
+                "smithy.api#http": {
+                    "uri": "/payload/{path}",
+                    "method": "PUT"
+                }
+            }
+        },
+        "example.rest#PutDocumentPayloadInput": {
+            "type": "structure",
+            "members": {
+                "path": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
+                    }
+                },
+                "foo": {
+                    "target": "smithy.api#String"
+                },
+                "baz": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Baz",
+                        "smithy.api#required": {}
+                    }
+                }
+            }
+        },
+        "example.rest#PutDocumentPayloadOutput": {
+            "type": "structure",
+            "members": {}
+        }
+    }
+}

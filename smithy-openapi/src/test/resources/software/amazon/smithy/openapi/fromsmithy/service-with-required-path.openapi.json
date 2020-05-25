@@ -1,0 +1,58 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "RestService",
+        "version": "2006-03-01"
+    },
+    "paths": {
+        "/payload/{path}": {
+            "put": {
+                "operationId": "PutDocumentPayload",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PutDocumentPayloadRequestContent"
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "path",
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "X-Baz",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "PutDocumentPayload 200 response"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "PutDocumentPayloadRequestContent": {
+                "type": "object",
+                "properties": {
+                    "foo": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
