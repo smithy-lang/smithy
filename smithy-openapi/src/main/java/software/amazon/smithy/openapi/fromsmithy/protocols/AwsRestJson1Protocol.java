@@ -66,22 +66,27 @@ public final class AwsRestJson1Protocol extends AbstractRestProtocol<RestJson1Tr
         ShapeId container = bindings.get(0).getMember().getContainer();
         StructureShape containerShape = context.getModel().expectShape(container, StructureShape.class);
 
-        // Create a schema from the original shape and remove unnecessary members.
-        Schema.Builder schemaBuilder = context.getJsonSchemaConverter()
-                .convertShape(containerShape)
-                .getRootSchema()
-                .toBuilder();
-
+        // Path parameters of requests are handled in "parameters" and headers are
+        // handled in headers, so this method must ensure that only members that
+        // are sent in the document payload are present in the structure when it is
+        // converted to OpenAPI. This ensures that any path parameters are removed
+        // before converting the structure to a synthesized JSON schema object.
+        // Doing this sanitation after converting the shape to JSON schema might
+        // result in things like "required" properties pointing to members that
+        // don't exist.
         Set<String> documentMemberNames = bindings.stream()
                 .map(HttpBinding::getMemberName)
                 .collect(Collectors.toSet());
 
+        // Remove non-document members.
+        StructureShape.Builder containerShapeBuilder = containerShape.toBuilder();
         for (String memberName : containerShape.getAllMembers().keySet()) {
             if (!documentMemberNames.contains(memberName)) {
-                schemaBuilder.removeProperty(memberName);
+                containerShapeBuilder.removeMember(memberName);
             }
         }
 
-        return schemaBuilder.build();
+        StructureShape cleanedShape = containerShapeBuilder.build();
+        return context.getJsonSchemaConverter().convertShape(cleanedShape).getRootSchema();
     }
 }
