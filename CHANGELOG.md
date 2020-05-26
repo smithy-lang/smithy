@@ -1,9 +1,10 @@
 # Smithy Changelog
 
-## 1.0.3 (TBD)
+## 1.0.3 (2020-05-26)
 
 ### Bug Fixes
 
+* Prevent parsing overly deep Node values ([#442](https://github.com/awslabs/smithy/pull/442))
 * Fix an issue with the OpenAPI conversion where synthesized structure inputs reference required properties that
   were removed. ([#443](https://github.com/awslabs/smithy/pull/443))
 
@@ -21,7 +22,7 @@
 * Updated the IDL grammar to include many previously enforced parsing rules. ([#434](https://github.com/awslabs/smithy/pull/434))
 * Added the `select` command to the CLI to print out shapes from a model that match a selector. ([#430](https://github.com/awslabs/smithy/pull/430))
 * Added the `ast` command to the CLI to convert 0 or more Smithy models into a JSON AST. ([#435](https://github.com/awslabs/smithy/pull/435))
-* Added a Dockerfile for building Smithy as a Docker image. ([#427](https://github.com/awslabs/smithy/pull/427)) 
+* Added a Dockerfile for building Smithy as a Docker image. ([#427](https://github.com/awslabs/smithy/pull/427))
 
 ### Optimizations
 
@@ -169,7 +170,7 @@ reference lookups. ([#287](https://github.com/awslabs/smithy/pull/287))
 
 ### Breaking changes
 
-All changes listed in this heading and any sub-headings are breaking changes. 
+All changes listed in this heading and any sub-headings are breaking changes.
 
 * The `BooleanTrait` abstract class in `smithy-model` was renamed `AnnotationTrait`. ([#381](https://github.com/awslabs/smithy/pull/381))
 * The traits in the `aws.apigateway` namespace have moved from `smithy-aws-traits` to the
