@@ -167,5 +167,25 @@ texinfo_documents = [
 
 html_favicon = "../themes/smithy/static/favicon.png"
 
+
+# Load the version number from ../VERSION
+def __load_version():
+    with open('../../VERSION', 'r') as file:
+        return file.read().replace('\n', '')
+
+# We use the __smithy_version__ placeholder in documentation to represent
+# the current Smithy library version number. This is found and replaced
+# using a source-read pre-processor so that the generated documentation
+# always references the current VERSION.
+smithy_version = __load_version()
+smithy_version_placeholder = "__smithy_version__"
+
+
 def setup(sphinx):
     sphinx.add_lexer("smithy", SmithyLexer(startinline=True))
+    sphinx.connect('source-read', source_read_handler)
+    print("Finding and replacing '" + smithy_version_placeholder + "' with '" + smithy_version + "'")
+
+# Rewrites __smithy_version__ to the version found in ../VERSION
+def source_read_handler(app, docname, source):
+    source[0] = source[0].replace(smithy_version_placeholder, smithy_version)
