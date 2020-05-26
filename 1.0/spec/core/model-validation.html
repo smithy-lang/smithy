@@ -129,7 +129,7 @@ own standards and best practices.</p>
 </li>
 <li><a class="reference internal" href="#severity" id="id8">Severity</a></li>
 <li><a class="reference internal" href="#suppressions" id="id9">Suppressions</a><ul>
-<li><a class="reference internal" href="#suppression-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">suppression</span></code> trait</a></li>
+<li><a class="reference internal" href="#suppress-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">suppress</span></code> trait</a></li>
 <li><a class="reference internal" href="#suppression-metadata" id="id11">Suppression metadata</a></li>
 </ul>
 </li>
@@ -293,14 +293,14 @@ DANGER validation events indicate that a model is invalid.</dd>
 <div class="section" id="suppressions">
 <span id="suppression-definition"></span><h2><a href="#suppressions">19.4. Suppressions</a></h2>
 <p>Suppressions are used to suppress specific validation events.
-Suppressions are created using the <a class="reference internal" href="#suppression-trait"><span class="std std-ref">suppression trait</span></a> and
+Suppressions are created using the <a class="reference internal" href="#suppress-trait"><span class="std std-ref">suppress trait</span></a> and
 <a class="reference internal" href="#suppressions-metadata"><span class="std std-ref">suppressions metadata</span></a>.</p>
-<div class="section" id="suppression-trait">
-<span id="id2"></span><h3><a href="#suppression-trait">19.4.1. <code class="docutils literal notranslate"><span class="pre">suppression</span></code> trait</a></h3>
+<div class="section" id="suppress-trait">
+<span id="id2"></span><h3><a href="#suppress-trait">19.4.1. <code class="docutils literal notranslate"><span class="pre">suppress</span></code> trait</a></h3>
 <dl class="docutils">
 <dt>Summary</dt>
-<dd>The suppression trait is used to suppress validation events(s) for a
-specific shape. Each value in the <code class="docutils literal notranslate"><span class="pre">suppression</span></code> trait is a
+<dd>The suppress trait is used to suppress validation events(s) for a
+specific shape. Each value in the <code class="docutils literal notranslate"><span class="pre">suppress</span></code> trait is a
 validation event ID to suppress for the shape.</dd>
 <dt>Trait selector</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">*</span></code></dd>
@@ -321,7 +321,7 @@ Smithy</div>
 
 <span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="nd">@suppression</span>([<span class="s2">&quot;Foo&quot;</span>, <span class="s2">&quot;Bar&quot;</span>])
+<span class="nd">@suppress</span>([<span class="s2">&quot;Foo&quot;</span>, <span class="s2">&quot;Bar&quot;</span>])
 <span class="kd">string</span><span class="nc"> MyString</span>
 </pre></div>
 </div>
@@ -591,7 +591,7 @@ traits.</p>
 </li>
 <li><a class="reference internal" href="#severity">19.3. Severity</a></li>
 <li><a class="reference internal" href="#suppressions">19.4. Suppressions</a><ul>
-<li><a class="reference internal" href="#suppression-trait">19.4.1. <code class="docutils literal notranslate"><span class="pre">suppression</span></code> trait</a></li>
+<li><a class="reference internal" href="#suppress-trait">19.4.1. <code class="docutils literal notranslate"><span class="pre">suppress</span></code> trait</a></li>
 <li><a class="reference internal" href="#suppression-metadata">19.4.2. Suppression metadata</a></li>
 </ul>
 </li>
