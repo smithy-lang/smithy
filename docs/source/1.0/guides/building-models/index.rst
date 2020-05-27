@@ -1,3 +1,5 @@
+.. _building-models:
+
 ======================
 Building Smithy Models
 ======================

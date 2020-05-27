@@ -349,6 +349,12 @@ The above Smithy plugin also requires a ``buildscript`` dependency in
             }
         }
 
+Complete Examples
+=================
 
+For several complete examples, see the `examples directory`_ of the Smithy
+Gradle plugin repository.
+
+.. _examples directory: https://github.com/awslabs/smithy-gradle-plugin/tree/master/examples
 .. _Smithy Gradle plugin: https://github.com/awslabs/smithy-gradle-plugin/
 .. _Gradle: https://gradle.org/

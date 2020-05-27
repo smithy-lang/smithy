@@ -681,6 +681,49 @@ service.
             }
         }
 
+Building the Model
+==================
+
+Now that you have a model, you'll want to build it and generate things from it.
+Building the model creates projections of the model, applies plugins to
+generate artifacts, runs validation, and creates a JAR that contains the
+filtered projection. The `Smithy Gradle Plugin`_ is the best way to get started
+building a Smithy model. First, create a ``smithy-build.json`` file:
+
+.. code-block:: json
+
+    {
+        "version": "1.0"
+    }
+
+Then create a new ``build.gradle.kts`` file:
+
+.. code-block:: kotlin
+
+    plugins {
+        id("software.amazon.smithy").version("0.5.1")
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation("software.amazon.smithy:smithy-model:[1.0, 2.0[")
+    }
+
+    configure<software.amazon.smithy.gradle.SmithyExtension> {
+        // Uncomment this to use a custom projection when building the JAR.
+        // projection = "foo"
+    }
+
+    // Uncomment to disable creating a JAR.
+    //tasks["jar"].enabled = false
+
+Finally, copy the weather model to ``model/weather.smithy`` and
+then run ``gradle build`` (make sure you have `gradle installed`_).
+
 Next steps
 ==========
 
@@ -689,14 +732,63 @@ That's it! We just created a simple, read-only, ``Weather`` service.
 1. Try adding a "create" lifecycle operation to ``City``.
 2. Try adding a "delete" lifecycle operation to ``City``.
 3. Try adding :ref:`HTTP binding traits <http-traits>` to the API.
+4. Try adding :ref:`tags <tags-trait>` to shapes and filtering them out with
+   :ref:`excludeShapesByTag <excludeShapesByTag-transform>`.
 
 There's plenty more to explore in Smithy. The
 :ref:`Smithy specification <specification>` can teach you everything you need
-to know about Smithy.
-
+to know about Smithy models. :ref:`Building Smithy Models <building-models>`
+can teach you more about the build process, including how to use
+transformations, projections, plugins, and more. For more sample build
+configurations, see the `examples directory`_ of the Smithy Gradle plugin
+repository.
 
 Complete example
 ================
+
+If you followed all the steps in this guide, you should have three files, laid
+out like so::
+
+    .
+    ├── build.gradle.kts
+    ├── model
+    │   └── weather.smithy
+    └── smithy-build.json
+
+The ``smithy-build.json`` should have the following contents:
+
+.. code-block:: json
+
+    {
+        "version": "1.0"
+    }
+
+The ``build.gradle.kts`` should have the following contents:
+
+.. code-block:: kotlin
+
+    plugins {
+        id("software.amazon.smithy").version("0.5.1")
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation("software.amazon.smithy:smithy-model:__smithy_version__")
+    }
+
+    configure<software.amazon.smithy.gradle.SmithyExtension> {
+        // Uncomment this to use a custom projection when building the JAR.
+        // projection = "foo"
+    }
+
+    // Uncomment to disable creating a JAR.
+    //tasks["jar"].enabled = false
+
+Finally, the complete ``weather.smithy`` model should look like:
 
 .. tabs::
 
@@ -1095,4 +1187,7 @@ Complete example
             }
         }
 
+.. _examples directory: https://github.com/awslabs/smithy-gradle-plugin/tree/master/examples
 .. _Tagged union: https://en.wikipedia.org/wiki/Tagged_union
+.. _Smithy Gradle Plugin: https://github.com/awslabs/smithy-gradle-plugin/
+.. _gradle installed: https://gradle.org/install/

@@ -243,7 +243,7 @@ Applies the transforms defined in the given projection names.
         }
 
 
-.. excludeShapesByTag-transform:
+.. _excludeShapesByTag-transform:
 
 excludeShapesByTag
 ------------------
