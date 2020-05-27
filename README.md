@@ -58,9 +58,20 @@ plugins {
 }
 ```
 
-Find out more about building artifacts of your Smithy model in the [Building
-Smithy Models][building] guide.
+Finally, create your first model `model/main.smithy`:
 
+```
+namespace com.example
+
+service ExampleService {
+    version: "2020-05-27"
+}
+```
+
+Find out more about building artifacts of your Smithy model in the [Building
+Smithy Models][building] guide. For more examples, see the
+[examples directory](https://github.com/awslabs/smithy-gradle-plugin/tree/master/examples)
+of the Smithy Gradle Plugin repository.
 
 # License
 

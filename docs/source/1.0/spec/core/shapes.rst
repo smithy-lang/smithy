@@ -837,7 +837,7 @@ The following example defines a union shape with several members:
             "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyUnion": {
-                    "type": "structure",
+                    "type": "union",
                     "members": {
                         "i32": {
                             "target": "smithy.api#Integer"
