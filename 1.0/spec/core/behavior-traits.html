@@ -120,11 +120,12 @@
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#idempotencytoken-trait" id="id6"><code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait</a></li>
-<li><a class="reference internal" href="#idempotent-trait" id="id7"><code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait</a></li>
-<li><a class="reference internal" href="#readonly-trait" id="id8"><code class="docutils literal notranslate"><span class="pre">readonly</span></code> trait</a></li>
-<li><a class="reference internal" href="#retryable-trait" id="id9"><code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait</a></li>
-<li><a class="reference internal" href="#paginated-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait</a></li>
+<li><a class="reference internal" href="#idempotencytoken-trait" id="id7"><code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait</a></li>
+<li><a class="reference internal" href="#idempotent-trait" id="id8"><code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait</a></li>
+<li><a class="reference internal" href="#readonly-trait" id="id9"><code class="docutils literal notranslate"><span class="pre">readonly</span></code> trait</a></li>
+<li><a class="reference internal" href="#retryable-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait</a></li>
+<li><a class="reference internal" href="#paginated-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpchecksumrequired-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait</a></li>
 </ul>
 </div>
 <div class="section" id="idempotencytoken-trait">
@@ -769,6 +770,38 @@ presence, absence, or contents of a continuation token.</p>
 </ol>
 </div>
 </div>
+<div class="section" id="httpchecksumrequired-trait">
+<span id="id6"></span><h2><a href="#httpchecksumrequired-trait">11.6. <code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Indicates that an operation requires a checksum in its HTTP request. By
+default, the checksum used for a service is a MD5 checksum passed in the
+Content-MD5 header.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
+<dt>Value type</dt>
+<dd>Annotation trait.</dd>
+<dt>See</dt>
+<dd><span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc1864.html"><strong>RFC 1864</strong></a></dd>
+</dl>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@httpChecksumRequired</span>
+<span class="kd">operation</span><span class="nc"> PutSomething</span> {
+    <span class="nl">input:</span> <span class="vc">PutSomethingInput</span>,
+    <span class="nl">output:</span> <span class="vc">PutSomethingOutput</span>
+}
+</pre></div>
+</div>
+</div>
+</div>
+</div>
 </div>
 
 
@@ -803,6 +836,7 @@ presence, absence, or contents of a continuation token.</p>
 <li><a class="reference internal" href="#continuation-tokens">11.5.3. Continuation tokens</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#httpchecksumrequired-trait">11.6. <code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait</a></li>
 </ul>
 </li>
 </ul>

@@ -129,8 +129,9 @@ language (IDL). By reading this tutorial, you will learn:</p>
 <li><a class="reference internal" href="#defining-operations" id="id5">Defining operations</a></li>
 <li><a class="reference internal" href="#listing-resources" id="id6">Listing resources</a></li>
 <li><a class="reference internal" href="#non-lifecycle-operations" id="id7">Non-Lifecycle Operations</a></li>
-<li><a class="reference internal" href="#next-steps" id="id8">Next steps</a></li>
-<li><a class="reference internal" href="#complete-example" id="id9">Complete example</a></li>
+<li><a class="reference internal" href="#building-the-model" id="id8">Building the Model</a></li>
+<li><a class="reference internal" href="#next-steps" id="id9">Next steps</a></li>
+<li><a class="reference internal" href="#complete-example" id="id10">Complete example</a></li>
 </ul>
 </div>
 <div class="section" id="what-is-smithy">
@@ -878,6 +879,44 @@ JSON</div>
 </div>
 </div>
 </div>
+<div class="section" id="building-the-model">
+<h2><a href="#building-the-model">Building the Model</a></h2>
+<p>Now that you have a model, you'll want to build it and generate things from it.
+Building the model creates projections of the model, applies plugins to
+generate artifacts, runs validation, and creates a JAR that contains the
+filtered projection. The <a class="reference external" href="https://github.com/awslabs/smithy-gradle-plugin/">Smithy Gradle Plugin</a> is the best way to get started
+building a Smithy model. First, create a <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> file:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Then create a new <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code> file:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span> <span class="p">{</span>
+    <span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="n">version</span><span class="p">(</span><span class="s">&quot;0.5.1&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">repositories</span> <span class="p">{</span>
+    <span class="n">mavenLocal</span><span class="p">()</span>
+    <span class="n">mavenCentral</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="n">dependencies</span> <span class="p">{</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:[1.0, 2.0[&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">configure</span><span class="p">&lt;</span><span class="n">software</span><span class="p">.</span><span class="n">amazon</span><span class="p">.</span><span class="n">smithy</span><span class="p">.</span><span class="n">gradle</span><span class="p">.</span><span class="n">SmithyExtension</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="c1">// Uncomment this to use a custom projection when building the JAR.</span>
+    <span class="c1">// projection = &quot;foo&quot;</span>
+<span class="p">}</span>
+
+<span class="c1">// Uncomment to disable creating a JAR.</span>
+<span class="c1">//tasks[&quot;jar&quot;].enabled = false</span>
+</pre></div>
+</div>
+<p>Finally, copy the weather model to <code class="docutils literal notranslate"><span class="pre">model/weather.smithy</span></code> and
+then run <code class="docutils literal notranslate"><span class="pre">gradle</span> <span class="pre">build</span></code> (make sure you have <a class="reference external" href="https://gradle.org/install/">gradle installed</a>).</p>
+</div>
 <div class="section" id="next-steps">
 <h2><a href="#next-steps">Next steps</a></h2>
 <p>That's it! We just created a simple, read-only, <code class="docutils literal notranslate"><span class="pre">Weather</span></code> service.</p>
@@ -885,13 +924,58 @@ JSON</div>
 <li>Try adding a &quot;create&quot; lifecycle operation to <code class="docutils literal notranslate"><span class="pre">City</span></code>.</li>
 <li>Try adding a &quot;delete&quot; lifecycle operation to <code class="docutils literal notranslate"><span class="pre">City</span></code>.</li>
 <li>Try adding <a class="reference internal" href="1.0/spec/core/http-traits.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a> to the API.</li>
+<li>Try adding <a class="reference internal" href="1.0/spec/core/documentation-traits.html#tags-trait"><span class="std std-ref">tags</span></a> to shapes and filtering them out with
+<a class="reference internal" href="1.0/guides/building-models/build-config.html#excludeshapesbytag-transform"><span class="std std-ref">excludeShapesByTag</span></a>.</li>
 </ol>
 <p>There's plenty more to explore in Smithy. The
 <a class="reference internal" href="1.0/spec/index.html#specification"><span class="std std-ref">Smithy specification</span></a> can teach you everything you need
-to know about Smithy.</p>
+to know about Smithy models. <a class="reference internal" href="1.0/guides/building-models/index.html#building-models"><span class="std std-ref">Building Smithy Models</span></a>
+can teach you more about the build process, including how to use
+transformations, projections, plugins, and more. For more sample build
+configurations, see the <a class="reference external" href="https://github.com/awslabs/smithy-gradle-plugin/tree/master/examples">examples directory</a> of the Smithy Gradle plugin
+repository.</p>
 </div>
 <div class="section" id="complete-example">
 <h2><a href="#complete-example">Complete example</a></h2>
+<p>If you followed all the steps in this guide, you should have three files, laid
+out like so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>.
+├── build.gradle.kts
+├── model
+│   └── weather.smithy
+└── smithy-build.json
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> should have the following contents:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code> should have the following contents:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span> <span class="p">{</span>
+    <span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="n">version</span><span class="p">(</span><span class="s">&quot;0.5.1&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">repositories</span> <span class="p">{</span>
+    <span class="n">mavenLocal</span><span class="p">()</span>
+    <span class="n">mavenCentral</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="n">dependencies</span> <span class="p">{</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.0.2&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">configure</span><span class="p">&lt;</span><span class="n">software</span><span class="p">.</span><span class="n">amazon</span><span class="p">.</span><span class="n">smithy</span><span class="p">.</span><span class="n">gradle</span><span class="p">.</span><span class="n">SmithyExtension</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="c1">// Uncomment this to use a custom projection when building the JAR.</span>
+    <span class="c1">// projection = &quot;foo&quot;</span>
+<span class="p">}</span>
+
+<span class="c1">// Uncomment to disable creating a JAR.</span>
+<span class="c1">//tasks[&quot;jar&quot;].enabled = false</span>
+</pre></div>
+</div>
+<p>Finally, the complete <code class="docutils literal notranslate"><span class="pre">weather.smithy</span></code> model should look like:</p>
 <div class="sphinx-tabs docutils container">
 <div class="ui top attached tabular menu sphinx-menu docutils container">
 <div class="active item sphinx-data-tab-U21pdGh5 docutils container">
@@ -1333,6 +1417,7 @@ JSON</div>
 <li><a class="reference internal" href="#defining-operations">Defining operations</a></li>
 <li><a class="reference internal" href="#listing-resources">Listing resources</a></li>
 <li><a class="reference internal" href="#non-lifecycle-operations">Non-Lifecycle Operations</a></li>
+<li><a class="reference internal" href="#building-the-model">Building the Model</a></li>
 <li><a class="reference internal" href="#next-steps">Next steps</a></li>
 <li><a class="reference internal" href="#complete-example">Complete example</a></li>
 </ul>
