@@ -710,7 +710,7 @@ Then create a new ``build.gradle.kts`` file:
     }
 
     dependencies {
-        implementation("software.amazon.smithy:smithy-model:[1.0, 2.0[")
+        implementation("software.amazon.smithy:smithy-model:__smithy_version__")
     }
 
     configure<software.amazon.smithy.gradle.SmithyExtension> {
