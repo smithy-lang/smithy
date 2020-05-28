@@ -47,6 +47,17 @@
           }
         ]
       }
+    },
+    "/4": {
+      "get": {
+        "operationId": "UnauthenticatedOperation",
+        "responses": {
+          "200": {
+            "description": "UnauthenticatedOperation response"
+          }
+        },
+        "security": []
+      }
     }
   },
   "components": {
