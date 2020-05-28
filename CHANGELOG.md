@@ -1,5 +1,12 @@
 # Smithy Changelog
 
+## 1.0.4 (TBD)
+
+### Features
+
+* Ensure that when a property is removed from a JSON schema object, that a corresponding "required"
+  entry is also removed.
+
 ## 1.0.3 (2020-05-26)
 
 ### Bug Fixes
