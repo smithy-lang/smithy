@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.jsonschema;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -562,7 +563,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
 
         private Integer maxProperties;
         private Integer minProperties;
-        private Collection<String> required = ListUtils.of();
+        private Collection<String> required = new ArrayList<>();
         private Map<String, Schema> properties = new HashMap<>();
         private Schema additionalProperties;
         private Schema propertyNames;
@@ -688,7 +689,11 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         }
 
         public Builder required(Collection<String> required) {
-            this.required = required == null ? ListUtils.of() : required;
+            if (required == null) {
+                this.required.clear();
+            } else {
+                this.required = new ArrayList<>(required);
+            }
             return this;
         }
 
@@ -709,6 +714,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
 
         public Builder removeProperty(String key) {
             properties.remove(key);
+            required.remove(key);
             return this;
         }
 
