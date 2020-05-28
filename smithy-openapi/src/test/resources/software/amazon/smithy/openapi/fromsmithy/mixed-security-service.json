@@ -13,6 +13,9 @@
                 },
                 {
                     "target": "smithy.example#Operation3"
+                },
+                {
+                    "target": "smithy.example#UnauthenticatedOperation"
                 }
             ],
             "traits": {
@@ -58,6 +61,16 @@
                     "smithy.api#httpBasicAuth",
                     "aws.auth#sigv4"
                 ]
+            }
+        },
+        "smithy.example#UnauthenticatedOperation": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/4",
+                    "method": "GET"
+                },
+                "smithy.api#auth": []
             }
         }
     }

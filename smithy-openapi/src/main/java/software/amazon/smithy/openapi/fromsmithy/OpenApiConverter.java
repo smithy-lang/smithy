@@ -42,6 +42,7 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.AuthTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.TitleTrait;
 import software.amazon.smithy.model.traits.Trait;
@@ -495,6 +496,14 @@ public final class OpenApiConverter {
         ServiceIndex serviceIndex = context.getModel().getKnowledge(ServiceIndex.class);
         Map<ShapeId, Trait> serviceSchemes = serviceIndex.getEffectiveAuthSchemes(service);
         Map<ShapeId, Trait> operationSchemes = serviceIndex.getEffectiveAuthSchemes(service, shape);
+
+        // If the operation explicitly removes authentication, ensure that "security" is set to an empty
+        // list as opposed to simply being unset as unset will result in the operation inheriting global
+        // configuration.
+        if (shape.getTrait(AuthTrait.class).map(trait -> trait.getValues().isEmpty()).orElse(false)) {
+            builder.security(Collections.emptyList());
+            return;
+        }
 
         // Add a security requirement for the operation if it differs from the service.
         if (!operationSchemes.equals(serviceSchemes)) {
