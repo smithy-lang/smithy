@@ -1,11 +1,23 @@
 # Smithy Changelog
 
-## 1.0.4 (TBD)
+## 1.0.4 (2020-05-29)
 
 ### Features
 
 * Ensure that when a property is removed from a JSON schema object, that a corresponding "required"
-  entry is also removed.
+  entry is also removed. ([#452](https://github.com/awslabs/smithy/pull/452))
+* Added the (unstable) `@httpChecksumRequired` trait to indicate an operation requires a checksum
+  in its HTTP request. ([#433](https://github.com/awslabs/smithy/pull/433), [#453](https://github.com/awslabs/smithy/pull/453))
+
+### Bug Fixes
+
+* Fixed a bug in OpenApi conversion where removing authentication for an operation would result
+  in the operation inheriting the global "security" configuration instead of having it set to none. ([#451](https://github.com/awslabs/smithy/pull/451/))
+
+### Documentation
+
+* Added examples of building models to various guides. ([#449](https://github.com/awslabs/smithy/pull/449))
+* Fixed various documentation issues. ([#449](https://github.com/awslabs/smithy/pull/449))
 
 ## 1.0.3 (2020-05-26)
 
