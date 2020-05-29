@@ -1,5 +1,5 @@
 /* Based on https://github.com/smasue/pygments */
-.highlight { color: #A9B7C6; background-color: #333; border-radius: 3px; }
+.highlight { color: #A9B7C6; background-color: #222; border-radius: 3px; }
 .highlight .hll { background-color: #49483e; }
 .highlight .c { color: #75715e; }
 .highlight .err { color: #960050; background-color: #1e0010; }

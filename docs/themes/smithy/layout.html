@@ -69,8 +69,9 @@
         <div class="header-flex width-wrapper">
             <div class="site-logo">
                 <a href="{{ pathto(master_doc) }}">
-                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span><span class="version-text">{{ version }}</span>
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
                 </a>
+                <span class="version-text">{{ version }}</span>
             </div>
             <ul id="page-navigation">
                 <li class="site-page first"><a href="{{ pathto('quickstart') }}">Quick Start</a></li>
@@ -127,10 +128,10 @@
                             {% if prev or next %}
                             <section class="next-previous">
                                 {% if prev %}
-                                <a href="{{ prev.link|e }}" title="{{ _('previous chapter')}}" class="previous-page clearfix hidden-xs">Prev</a>
+                                <a href="{{ prev.link|e }}" title="{{ _('previous chapter')}}" class="previous-page clearfix hidden-xs">← Prev</a>
                                 {% endif %}
                                 {%- if next and next.title != '&lt;no title&gt;' %}
-                                <a href="{{ next.link|e }}" title="{{ _('next chapter')}}" class="next-page clearfix">Next</a>
+                                <a href="{{ next.link|e }}" title="{{ _('next chapter')}}" class="next-page clearfix">Next →</a>
                                 {%- endif %}
                             </section>
                             {% endif %}
