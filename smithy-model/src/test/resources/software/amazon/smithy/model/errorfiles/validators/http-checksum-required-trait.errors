@@ -2,3 +2,8 @@
 [ERROR] ns.foo#InvalidOutput: Trait `httpChecksumRequired` cannot be applied to `ns.foo#InvalidOutput`. This trait may only be applied to shapes that match the following selector: operation | TraitTarget
 [ERROR] ns.foo#InvalidError: Trait `httpChecksumRequired` cannot be applied to `ns.foo#InvalidError`. This trait may only be applied to shapes that match the following selector: operation | TraitTarget
 [ERROR] ns.foo#InvalidStructure$Body: Trait `httpChecksumRequired` cannot be applied to `ns.foo#InvalidStructure$Body`. This trait may only be applied to shapes that match the following selector: operation | TraitTarget
+[WARNING] ns.foo#InvalidError: This shape applies a trait that is unstable: smithy.api#httpChecksumRequired | UnstableTrait
+[WARNING] ns.foo#InvalidInput: This shape applies a trait that is unstable: smithy.api#httpChecksumRequired | UnstableTrait
+[WARNING] ns.foo#InvalidOutput: This shape applies a trait that is unstable: smithy.api#httpChecksumRequired | UnstableTrait
+[WARNING] ns.foo#InvalidStructure$Body: This shape applies a trait that is unstable: smithy.api#httpChecksumRequired | UnstableTrait
+[WARNING] ns.foo#ValidOperation: This shape applies a trait that is unstable: smithy.api#httpChecksumRequired | UnstableTrait
