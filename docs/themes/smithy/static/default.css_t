@@ -117,7 +117,12 @@ h7 {
 }
 
 #splash h1 {
-  display: none;
+  color: #fff;
+  padding: 0;
+  margin: 0 0 1rem;
+  font-size: 1.7em;
+  border: none;
+  font-weight: bold;
 }
 
 .splash-highlight {
@@ -128,8 +133,13 @@ h7 {
   color: #24292e
 }
 
+#splash .splash-column:first-child {
+  padding-right: 10%;
+  text-align: center;
+}
+
 .headline {
-  font-weight: bold;
+  font-weight: 400;
   color: #fff;
   font-size: 2.1em;
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
@@ -149,7 +159,7 @@ h7 {
   border-radius: 6px;
   padding: 12px;
   text-align: center;
-  margin: 2em 0 1em 0;
+  margin: 2em auto 1em auto;
   font-weight: 500;
   width: 160px;
   color: #fff;
