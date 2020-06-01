@@ -2,7 +2,7 @@
 
 html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-  background-color: #f7f7f5;
+  background-color: #fff;
 }
 
 /* Base scaffolding taken from Markswatch theme */
@@ -17,7 +17,7 @@ body {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
-  background-color: #f7f7f5;
+  background-color: #fff;
 }
 
 /* Utility class used in things like hidden form fields */
@@ -104,28 +104,45 @@ h7 {
 /* ----- Landing page ------ */
 
 #splash {
-  padding: 2em 0;
-  background: #382e2e;
+  padding: 3em 0 2em 0;
   color: #fff;
   margin-bottom: 1em;
+  background-color: #382e2e;
+  background-size: 1700px;
+  /*
+   * Generated from https://www.heropatterns.com/, by Steve Schoger
+   * https://creativecommons.org/licenses/by/4.0/
+   */
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='12' viewBox='0 0 40 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 6.172L6.172 0h5.656L0 11.828V6.172zm40 5.656L28.172 0h5.656L40 6.172v5.656zM6.172 12l12-12h3.656l12 12h-5.656L20 3.828 11.828 12H6.172zm12 0L20 10.172 21.828 12h-3.656z' fill='%23fefefe' fill-opacity='0.025' fill-rule='evenodd'/%3E%3C/svg%3E");
 }
 
 #splash h1 {
-  display: none;
+  color: #fff;
+  padding: 0;
+  margin: 0 0 1rem;
+  font-size: 1.7em;
+  border: none;
+  font-weight: bold;
 }
 
 .splash-highlight {
-  color: #eee8d5;
+  color: #FFF896;
 }
 
 #splash .highlight-smithy {
   color: #24292e
 }
 
+#splash .splash-column:first-child {
+  padding-right: 10%;
+  text-align: center;
+}
+
 .headline {
-  font-weight: bold;
+  font-weight: 400;
   color: #fff;
   font-size: 2.1em;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
 }
 
 @media (max-width: 600px) {
@@ -141,12 +158,21 @@ h7 {
   display: inline-block;
   border-radius: 6px;
   padding: 12px;
-  color: #8c5954;
   text-align: center;
-  margin: 2em 0 1em 0;
+  margin: 2em auto 1em auto;
   font-weight: 500;
-  background: #f7f7f5;
   width: 160px;
+  color: #fff;
+  background: #007682;
+  box-shadow: 6px 6px 0 #283D3B;
+  text-transform: uppercase;
+}
+
+.splash-link:hover {
+  text-decoration: none;
+  color: #007682;
+  background: #fff;
+  box-shadow: 2px 2px 0 #007682;
 }
 
 .splash-link-small {
@@ -179,7 +205,7 @@ h7 {
 
 .splash-column h2,
 .faq h2 {
-  color: #8c5954;
+  color: #C44536;
   font-weight: bold;
   padding: 0;
   font-size: 1.5em;
@@ -189,7 +215,7 @@ h7 {
 
 .faq .faq-heading {
   text-align: center;
-  color: ;
+  color: #C44536;
   margin: 2rem 0;
   font-size: 2em;
 }
@@ -215,7 +241,7 @@ h7 {
 
 #page-container {
   padding: 3rem 2rem 2rem 2em;
-  background: #f7f7f5;
+  background: #fff;
   flex: 1;
 }
 
@@ -227,7 +253,7 @@ h7 {
 
 #landing-container {
   min-height: 500px;
-  background: #f7f7f5;
+  background: #fff;
 }
 
 #page-container li > p.first:last-child,
@@ -260,12 +286,13 @@ hr {
 /* ----- Anchors ------ */
 
 a {
-  color: #005cc5;
+  color: #00818e;;
   text-decoration: none;
 }
 
 a:hover, .reference.external:hover {
   text-decoration: underline;
+  color: #00818e;;
 }
 
 .reference.external {
@@ -292,8 +319,9 @@ a:hover, .reference.external:hover {
 header {
   display: block;
   width: 100%;
-  background-color: #8c5954;
   flex: none;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
 }
 
 .header-flex {
@@ -302,17 +330,17 @@ header {
 }
 
 .site-logo {
-  height: 26px;
-  line-height: normal;
   position: relative;
-  margin-top: 9px;
+  margin-top: 6px;
 }
 
 .site-logo a {
-  color: #fff;
+  border-radius: 6px;
+  padding: 3px 6px;
+  color: #C44536;
   font-weight: 500;
   font-size: 22px;
-  line-height: 22px;
+  display: block;
 }
 
 .site-logo a:hover {
@@ -321,25 +349,26 @@ header {
 
 .site-logo .logo-text {
   font-weight: 700;
-  padding-left: 35px;
+  padding-left: 6px;
 }
 
 .site-logo .version-text {
   font-weight: 300;
-  padding-left: 6px;
   font-size: 12px;
-  vertical-align: super;
+  position: absolute;
+  right: -14px;
+  top: 4px;
+  color: #C44536;
 }
 
 .site-logo .logo-icon {
+  color: transparent;
+  text-shadow: 0 0 0 #fff;
+  font-size: 18px;
+  vertical-align: text-bottom;
   padding: 2px 3px 2px 4px;
   border-radius: 6px;
-  color: transparent;
-  text-shadow: 0 0 0 #8c5954;
-  position: absolute;
-  top: 1px;
-  font-size: 18px;
-  background: #eee8d5;
+  background-color: #C44536;
 }
 
 #page-navigation {
@@ -361,13 +390,11 @@ header {
 #page-navigation .site-page a {
   display: block;
   padding: 0 1em;
-  color: #fff;
-  border-radius: 12px;
+  color: #444;
 }
 
 #page-navigation .site-page a:hover {
-  color: #8c5954;
-  background: #f7f7f5;
+  color: #00818e;;
   text-decoration: none;
 }
 
@@ -378,9 +405,8 @@ header {
 
 #page-navigation .site-search .search-input {
   padding: 0 1em;
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.2);
-  border: solid 1px rgba(23, 30, 38, 0.2);
+  color: #111;
+  border: solid 1px #999;
   border-radius: 3px;
   width: 180px;
   font-size: 0.9em;
@@ -390,7 +416,7 @@ header {
 #page-navigation .site-search button {
   border: none;
   padding: 5px 10px;
-  background-color: #f7f7f5;
+  background-color: #fff;
   color: #777;
 }
 
@@ -412,7 +438,7 @@ footer {
 }
 
 .faq h2 {
-  color: #8c5954;
+  color: #C44536;
   border-bottom: none;
 }
 
@@ -455,7 +481,7 @@ table.field-list {
 }
 
 table.field-list th {
-  background-color: #f7f7f5;
+  background-color: #fff;
   color: #24292e;
   border-right: 1px solid #e8e8e8;
   min-width: 0;
@@ -501,7 +527,7 @@ pre {
   padding: 1em;
   overflow: auto;
   line-height: 1.45;
-  background-color: #333;
+  background-color: #222;
   border-radius: 3px;
   font-size: 1em;
   color: #A9B7C6;
@@ -614,7 +640,7 @@ table.highlighttable pre {
 
 .topic-title {
   font-weight: 300;
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.6);
 }
 
 /* -------- Document ---------- */
@@ -652,7 +678,7 @@ table.highlighttable pre {
 
 #right-column > .column-body > .sidebar > ul > li > a {
   font-weight: bold;
-  color: #8c5954;
+  color: #772E25;
 }
 
 #right-column > .column-body > .sidebar > ul > li > ul {
@@ -688,6 +714,10 @@ table.highlighttable pre {
   display: block;
 }
 
+#right-column a:hover {
+  color: #00818e;;
+}
+
 #right-column a code {
   color: rgba(0, 0, 0, 0.87);
 }
@@ -719,7 +749,7 @@ table.highlighttable pre {
 }
 
 .side-column a.current {
-  border-left: 2px solid #8c5954;
+  border-left: 2px solid #772E25;
   font-weight: bold;
 }
 
@@ -779,7 +809,7 @@ div.seealso {
 }
 
 div.admonition tt.xref, div.admonition a tt {
-  border-bottom: 1px solid #f7f7f5;
+  border-bottom: 1px solid #fff;
 }
 
 div.admonition p.last {
@@ -837,23 +867,23 @@ dt:target, .highlighted {
 
 .relations a {
   display: block;
-  color: #8c5954;
+  color: #C44536;
   border-radius: 2px;
-  border: 1px solid #8c5954;
+  border: 1px solid #C44536;
   padding: 0.8rem 1em;
   transition: background .25s, color 0.25s;
 }
 
 .relations a:hover {
   color: #fff;
-  background: #8c5954;
+  background: #C44536;
   text-decoration: none;
 }
 
 .next-previous {
   font-size: 0.8em;
   text-align: right;
-  margin-bottom: 0.5em;
+  margin-bottom: 1em;
 }
 
 #right-column .next-previous a {
@@ -861,7 +891,7 @@ dt:target, .highlighted {
   padding-right: 2em;
   text-transform: uppercase;
   font-weight: bold;
-  color: #666;
+  color: #00818e;;
 }
 
 /* -------- toctree --------- */
