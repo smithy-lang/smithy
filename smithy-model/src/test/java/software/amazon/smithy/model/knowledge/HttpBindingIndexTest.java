@@ -29,6 +29,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.pattern.UriPattern;
 import software.amazon.smithy.model.shapes.ListShape;
+import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -327,6 +328,28 @@ public class HttpBindingIndexTest {
         assertThat(index.determineTimestampFormat(
                 member, HttpBinding.Location.HEADER, TimestampFormatTrait.Format.EPOCH_SECONDS),
                    equalTo(TimestampFormatTrait.Format.HTTP_DATE));
+    }
+
+    @Test
+    public void prefixHeadersLocationUsesHttpDateTimestampFormat() {
+        MemberShape key = MemberShape.builder()
+                .id("foo.bar#Baz$key")
+                .target("smithy.api#String")
+                .build();
+        MemberShape value = MemberShape.builder()
+                .id("foo.bar#Baz$value")
+                .target("smithy.api#Timestamp")
+                .build();
+        Model model = Model.assembler()
+                .addShape(value)
+                .addShape(MapShape.builder().addMember(key).addMember(value).id("foo.bar#Baz").build())
+                .assemble()
+                .unwrap();
+        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+
+        assertThat(index.determineTimestampFormat(
+                value, HttpBinding.Location.PREFIX_HEADERS, TimestampFormatTrait.Format.EPOCH_SECONDS),
+                equalTo(TimestampFormatTrait.Format.HTTP_DATE));
     }
 
     @Test

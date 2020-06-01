@@ -242,6 +242,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
                 .orElseGet(() -> {
                     // Determine the format based on the location.
                     switch (location) {
+                        case PREFIX_HEADERS:
                         case HEADER:
                             return TimestampFormatTrait.Format.HTTP_DATE;
                         case QUERY:
