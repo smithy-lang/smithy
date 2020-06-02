@@ -63,7 +63,6 @@ final class SmithyBuildImpl {
     private final Function<String, Optional<ProjectionTransformer>> transformFactory;
     private final Function<String, Optional<SmithyBuildPlugin>> pluginFactory;
     private final Model model;
-    private final Path importBasePath;
     private final ClassLoader pluginClassLoader;
     private final Set<Path> sources;
     private final Predicate<String> projectionFilter;
@@ -99,11 +98,6 @@ final class SmithyBuildImpl {
             // Default the output directory to the current working directory + "./build/smithy"
             outputDirectory = Paths.get(".").toAbsolutePath().normalize().resolve("build").resolve("smithy");
         }
-
-        // Use the base path of the configuration or get the current working directory.
-        importBasePath = builder.importBasePath != null
-                ? builder.importBasePath
-                : Paths.get(".").toAbsolutePath().normalize();
 
         // Create the transformers for each projection.
         config.getProjections().forEach((projectionName, projectionConfig) -> {
@@ -267,7 +261,7 @@ final class SmithyBuildImpl {
         if (!config.getImports().isEmpty()) {
             LOGGER.fine(() -> "Merging the following imports into the loaded model: " + config.getImports());
             ModelAssembler assembler = modelAssemblerSupplier.get().addModel(model);
-            config.getImports().forEach(path -> assembler.addImport(importBasePath.resolve(path)));
+            config.getImports().forEach(assembler::addImport);
             resolvedModel = assembler.assemble().unwrap();
         }
 
@@ -283,7 +277,7 @@ final class SmithyBuildImpl {
                     "Merging the following `%s` projection imports into the loaded model: %s",
                     projectionName, projection.getImports()));
             ModelAssembler assembler = modelAssemblerSupplier.get().addModel(resolvedModel);
-            projection.getImports().forEach(path -> assembler.addImport(importBasePath.resolve(path)));
+            projection.getImports().forEach(assembler::addImport);
             ValidatedResult<Model> resolvedResult = assembler.assemble();
 
             // Fail if the model can't be merged with the imports.

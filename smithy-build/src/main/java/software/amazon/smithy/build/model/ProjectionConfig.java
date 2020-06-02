@@ -25,11 +25,12 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * ProjectionConfig stored in a {@link SmithyBuildConfig}.
  */
-public final class ProjectionConfig {
+public final class ProjectionConfig implements ToSmithyBuilder<ProjectionConfig> {
     private final boolean isAbstract;
     private final List<String> imports;
     private final List<TransformConfig> transforms;
@@ -48,6 +49,15 @@ public final class ProjectionConfig {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    @Override
+    public Builder toBuilder() {
+        return builder()
+                .imports(imports)
+                .plugins(plugins)
+                .transforms(transforms)
+                .setAbstract(isAbstract);
     }
 
     /**
@@ -79,6 +89,8 @@ public final class ProjectionConfig {
     public List<String> getImports() {
         return imports;
     }
+
+
 
     /**
      * Builds a {@link ProjectionConfig}.

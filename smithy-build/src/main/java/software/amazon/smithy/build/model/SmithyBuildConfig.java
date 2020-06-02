@@ -45,12 +45,10 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
     private final String outputDirectory;
     private final Map<String, ProjectionConfig> projections;
     private final Map<String, ObjectNode> plugins;
-    private final Path importBasePath;
 
     private SmithyBuildConfig(Builder builder) {
         SmithyBuilder.requiredState("version", builder.version);
         version = builder.version;
-        importBasePath = builder.importBasePath;
         outputDirectory = builder.outputDirectory;
         imports = ListUtils.copyOf(builder.imports);
         projections = MapUtils.copyOf(builder.projections);
@@ -110,14 +108,12 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
 
     @Override
     public Builder toBuilder() {
-        Builder builder = builder()
+        return builder()
                 .version(version)
                 .outputDirectory(outputDirectory)
                 .imports(imports)
                 .projections(projections)
                 .plugins(plugins);
-        builder.importBasePath = importBasePath;
-        return builder;
     }
 
     /**
@@ -168,15 +164,6 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
     }
 
     /**
-     * Gets the base path of where the config file was loaded from.
-     *
-     * @return Returns the optionally present base path.
-     */
-    public Optional<Path> getImportBasePath() {
-        return Optional.ofNullable(importBasePath);
-    }
-
-    /**
      * Builder used to create a {@link SmithyBuildConfig}.
      */
     public static final class Builder implements SmithyBuilder<SmithyBuildConfig> {
@@ -185,7 +172,6 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
         private final Map<String, ObjectNode> plugins = new LinkedHashMap<>();
         private String version;
         private String outputDirectory;
-        private Path importBasePath;
 
         Builder() {}
 
@@ -212,7 +198,6 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
          * @return Returns the updated builder.
          */
         public Builder load(Path config) {
-            importBasePath = config.getParent();
             return merge(ConfigLoader.load(config));
         }
 
@@ -228,9 +213,6 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
             imports.addAll(config.getImports());
             projections.putAll(config.getProjections());
             plugins.putAll(config.getPlugins());
-            if (config.importBasePath != null) {
-                importBasePath = config.importBasePath;
-            }
             return this;
         }
 
