@@ -50,6 +50,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
+import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
@@ -197,6 +198,7 @@ public class SmithyBuildTest {
     public void loadsImports() throws Exception {
         SmithyBuildConfig config = SmithyBuildConfig.builder()
                 .load(Paths.get(getClass().getResource("imports/smithy-build.json").toURI()))
+                .load(Paths.get(getClass().getResource("otherimports/smithy-build.json").toURI()))
                 .outputDirectory(outputDirectory.toString())
                 .build();
         SmithyBuild builder = new SmithyBuild(config);
@@ -210,6 +212,10 @@ public class SmithyBuildTest {
                            .getTrait(SensitiveTrait.class).isPresent());
         assertFalse(resultA.getShape(ShapeId.from("com.foo#String")).get()
                            .getTrait(DocumentationTrait.class).isPresent());
+        assertTrue(resultA.getShape(ShapeId.from("com.foo#String")).get()
+                .getTrait(TagsTrait.class).isPresent());
+        assertThat(resultA.getShape(ShapeId.from("com.foo#String")).get()
+                .getTrait(TagsTrait.class).get().getValues().get(0), equalTo("multi-import"));
 
         assertTrue(resultB.getShape(ShapeId.from("com.foo#String")).get()
                            .getTrait(SensitiveTrait.class).isPresent());
@@ -217,6 +223,10 @@ public class SmithyBuildTest {
                            .getTrait(DocumentationTrait.class).isPresent());
         assertThat(resultB.getShape(ShapeId.from("com.foo#String")).get()
                            .getTrait(DocumentationTrait.class).get().getValue(), equalTo("b.json"));
+        assertTrue(resultB.getShape(ShapeId.from("com.foo#String")).get()
+                .getTrait(TagsTrait.class).isPresent());
+        assertThat(resultB.getShape(ShapeId.from("com.foo#String")).get()
+                .getTrait(TagsTrait.class).get().getValues().get(0), equalTo("multi-import"));
 
         assertTrue(resultC.getShape(ShapeId.from("com.foo#String")).get()
                            .getTrait(SensitiveTrait.class).isPresent());
@@ -224,6 +234,10 @@ public class SmithyBuildTest {
                            .getTrait(DocumentationTrait.class).isPresent());
         assertThat(resultC.getShape(ShapeId.from("com.foo#String")).get()
                            .getTrait(DocumentationTrait.class).get().getValue(), equalTo("c.json"));
+        assertTrue(resultC.getShape(ShapeId.from("com.foo#String")).get()
+                .getTrait(TagsTrait.class).isPresent());
+        assertThat(resultC.getShape(ShapeId.from("com.foo#String")).get()
+                .getTrait(TagsTrait.class).get().getValues().get(0), equalTo("multi-import"));
     }
 
     @Test

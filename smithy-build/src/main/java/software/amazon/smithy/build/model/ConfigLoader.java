@@ -16,9 +16,12 @@
 package software.amazon.smithy.build.model;
 
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.loader.ModelSyntaxException;
@@ -41,7 +44,7 @@ final class ConfigLoader {
     static SmithyBuildConfig load(Path path) {
         try {
             String content = IoUtils.readUtf8File(path);
-            return load(loadWithJson(path, content).expectObjectNode());
+            return load(path.getParent(), loadWithJson(path, content).expectObjectNode());
         } catch (ModelSyntaxException e) {
             throw new SmithyBuildException(e);
         }
@@ -51,9 +54,31 @@ final class ConfigLoader {
         return Node.parseJsonWithComments(contents, path.toString()).accept(new VariableExpander());
     }
 
-    private static SmithyBuildConfig load(ObjectNode node) {
+    private static SmithyBuildConfig load(Path baseImportPath, ObjectNode node) {
         NodeMapper mapper = new NodeMapper();
-        return mapper.deserialize(node, SmithyBuildConfig.class);
+        return resolveImports(baseImportPath, mapper.deserialize(node, SmithyBuildConfig.class));
+    }
+
+    private static SmithyBuildConfig resolveImports(Path baseImportPath, SmithyBuildConfig config) {
+        List<String> imports = config.getImports().stream()
+                .map(importPath -> baseImportPath.resolve(importPath).toString())
+                .collect(Collectors.toList());
+
+        Map<String, ProjectionConfig> projections = config.getProjections().entrySet().stream()
+                .map(entry -> Pair.of(entry.getKey(), resolveProjectionImports(baseImportPath, entry.getValue())))
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+
+        return config.toBuilder()
+                .imports(imports)
+                .projections(projections)
+                .build();
+    }
+
+    private static ProjectionConfig resolveProjectionImports(Path baseImportPath, ProjectionConfig config) {
+        List<String> imports = config.getImports().stream()
+                .map(importPath -> baseImportPath.resolve(importPath).toString())
+                .collect(Collectors.toList());
+        return config.toBuilder().imports(imports).build();
     }
 
     /**

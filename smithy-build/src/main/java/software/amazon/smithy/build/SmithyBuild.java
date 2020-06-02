@@ -43,7 +43,6 @@ public final class SmithyBuild {
     public static final String VERSION = "1.0";
 
     SmithyBuildConfig config;
-    Path importBasePath;
     Path outputDirectory;
     Function<String, Optional<ProjectionTransformer>> transformFactory;
     Function<String, Optional<SmithyBuildPlugin>> pluginFactory;
@@ -170,7 +169,6 @@ public final class SmithyBuild {
      */
     public SmithyBuild config(SmithyBuildConfig config) {
         this.config = config;
-        config.getImportBasePath().ifPresent(this::importBasePath);
         return this;
     }
 
@@ -197,14 +195,8 @@ public final class SmithyBuild {
         return this;
     }
 
-    /**
-     * Sets the base path for where imports are found.
-     *
-     * @param importBasePath Base path to look for imports.
-     * @return Returns the builder.
-     */
+    @Deprecated
     public SmithyBuild importBasePath(Path importBasePath) {
-        this.importBasePath = importBasePath;
         return this;
     }
 

@@ -1,0 +1,11 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "com.foo#String": {
+            "type": "apply",
+            "traits": {
+                "smithy.api#tags": ["multi-import"]
+            }
+        }
+    }
+}
