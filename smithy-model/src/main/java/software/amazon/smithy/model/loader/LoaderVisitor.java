@@ -49,6 +49,7 @@ import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
@@ -436,7 +437,13 @@ final class LoaderVisitor {
 
     private void finalizeShapeTargets() {
         // Run any finalizers used for things like forward reference resolution.
-        for (ForwardReferenceResolver resolver : forwardReferenceResolvers) {
+        // Do this through a copy to handle forward references that generate more
+        // forward references, like when a Prelude trait is applied to a shape that
+        // is defined in another file.
+        List<ForwardReferenceResolver> resolvers = ListUtils.copyOf(forwardReferenceResolvers);
+        forwardReferenceResolvers.clear();
+
+        for (ForwardReferenceResolver resolver : resolvers) {
             // First, resolve to a shape in the current namespace if one exists.
             if (!hasDefinedShape(resolver.expectedId)) {
                 // Next resolve to a prelude shape if one exists and is public.
@@ -450,7 +457,10 @@ final class LoaderVisitor {
             resolver.consumer.accept(resolver.expectedId);
         }
 
-        forwardReferenceResolvers.clear();
+        // Resolve any new forward references created.
+        if (!forwardReferenceResolvers.isEmpty()) {
+            finalizeShapeTargets();
+        }
     }
 
     private void finalizePendingTraits() {
