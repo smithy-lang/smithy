@@ -1,5 +1,15 @@
 # Smithy Changelog
 
+## 1.0.5 (2020-06-05)
+
+### Bug Fixes
+
+* Fixed a bug in loading IDL files where resolving a forward reference that needed another
+  forward reference would throw an exception. ([#458](https://github.com/awslabs/smithy/pull/458))
+* Fixed a bug where smithy-build imports were not resolved relative to their `smithy-build.json`. ([#457](https://github.com/awslabs/smithy/pull/457))  
+* Fixed a bug where the `PREFIX_HEADERS` HTTP binding location would not default its timestamp
+  format to `HTTP_DATE`. ([#456](https://github.com/awslabs/smithy/pull/456))
+
 ## 1.0.4 (2020-05-29)
 
 ### Features
