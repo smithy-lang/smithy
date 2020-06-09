@@ -428,6 +428,68 @@ Let's define the operation used to "read" a ``City``.
             }
         }
 
+And define the operation used to "read" a ``Forecast``.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @readonly
+        operation GetForecast {
+            input: GetForecastInput,
+            output: GetForecastOutput
+        }
+
+        // "cityId" provides the only identifier for the resource since
+        // a Forecast doesn't have its own.
+        structure GetForecastInput {
+            @required
+            cityId: CityId,
+        }
+
+        structure GetForecastOutput {
+            chanceOfRain: Float
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "example.weather#GetForecast": {
+                    "type": "operation",
+                    "input": {
+                        "target": "example.weather#GetForecastInput"
+                    },
+                    "output": {
+                        "target": "example.weather#GetForecastOutput"
+                    },
+                    "traits": {
+                        "smithy.api#readonly": true
+                    }
+                },
+                "example.weather#GetForecastInput": {
+                    "type": "structure",
+                    "members": {
+                        "cityId": {
+                            "target": "example.weather#CityId",
+                            "traits": {
+                                "smithy.api#required": true
+                            }
+                        }
+                    }
+                },
+                "example.weather#GetForecastOutput": {
+                    "type": "structure",
+                    "members": {
+                        "chanceOfRain": {
+                            "target": "smithy.api#Float"
+                        }
+                    }
+                }
+            }
+        }
+
 .. admonition:: Review
     :class: tip
 
