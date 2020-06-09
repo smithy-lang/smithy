@@ -332,7 +332,7 @@ Syntactic shape IDs in the IDL
 ==============================
 
 Unquoted string values that are not object keys in the Smithy IDL are
-considered shape IDs and are resolved to absolute shape IDs using the
+considered lexical shape IDs and are resolved to absolute shape IDs using the
 process defined in :ref:`relative-shape-id`. Values that are not meant to be
 shape IDs MUST be quoted.
 
@@ -349,10 +349,11 @@ literal value of ``"client"``, causing the model to be invalid:
 
     string client
 
-Object keys in the IDL are not treated as shape IDs. Consider the following
-:ref:`metadata <metadata>` definition. The object key remains the same literal
-string value of ``String`` while the value is treated as a shape ID and
-resolves to the string literal ``"smithy.api#String"``.
+Object keys in the IDL are not treated as shape IDs. :ref:`Metadata <metadata>`
+is used to apply arbitrary information to a model, and it often consists of
+objects. In the following metadata example, the object key remains the same
+literal string value of ``String`` while the value is treated as a shape ID
+and resolves to the string literal ``"smithy.api#String"``.
 
 .. tabs::
 

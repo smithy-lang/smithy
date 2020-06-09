@@ -117,7 +117,12 @@
                     
   <div class="section" id="shapes">
 <span id="id1"></span><h1><a href="#shapes">3. Shapes</a></h1>
-<p><em>Shapes</em> are instances of <em>types</em> that describe the structure of an API.</p>
+<p><em>Shapes</em> are named data definitions that describe the structure of an API.
+Shapes have a <em>type</em> that represents the type of values that a shape
+represents. Types like <code class="docutils literal notranslate"><span class="pre">string</span></code>, <code class="docutils literal notranslate"><span class="pre">structure</span></code>, and <code class="docutils literal notranslate"><span class="pre">operation</span></code> represent
+the kinds of shapes that can be used in a model, while shapes like
+<code class="docutils literal notranslate"><span class="pre">MyString</span></code>, <code class="docutils literal notranslate"><span class="pre">MyStructure</span></code>, and <code class="docutils literal notranslate"><span class="pre">MyOperation</span></code> define a referenceable
+instance of a type.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
@@ -1275,13 +1280,15 @@ provided in any format (e.g., <code class="docutils literal notranslate"><span c
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#service-operations"><span class="std std-ref">operations</span></a></td>
 <td>[<a class="reference internal" href="lexical-structure.html#shape-id"><span class="std std-ref">Shape ID</span></a>]</td>
-<td>Binds a list of operations to the service. Each element in the list is
-a shape ID that MUST target an operation.</td>
+<td>Binds a set of <code class="docutils literal notranslate"><span class="pre">operation</span></code> shapes to the service. Each
+element in the given list is a shape ID that MUST target an
+<a class="reference internal" href="#operation"><span class="std std-ref">operation</span></a>.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#service-resources"><span class="std std-ref">resources</span></a></td>
 <td>[<a class="reference internal" href="lexical-structure.html#shape-id"><span class="std std-ref">Shape ID</span></a>]</td>
-<td>Binds a list of resources to the service. Each element in the list is
-a shape ID that MUST target a resource.</td>
+<td>Binds a set of <code class="docutils literal notranslate"><span class="pre">resource</span></code> shapes to the service. Each element in
+the given list is a shape ID that MUST target a
+<a class="reference internal" href="#resource"><span class="std std-ref">resource</span></a>.</td>
 </tr>
 </tbody>
 </table>
@@ -1475,13 +1482,15 @@ the following grammar:</p>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td><a class="reference internal" href="#operation-input"><span class="std std-ref">input</span></a></td>
-<td>The optional input structure of the operation.</td>
+<td>The optional input <a class="reference internal" href="#structure"><span class="std std-ref">structure</span></a> of the operation.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#operation-output"><span class="std std-ref">output</span></a></td>
-<td>The optional output structure of the operation.</td>
+<td>The optional output <a class="reference internal" href="#structure"><span class="std std-ref">structure</span></a> of the operation.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#operation-errors"><span class="std std-ref">errors</span></a></td>
-<td>The optional list of errors the operation can return.</td>
+<td>Defines the errors that an operation can return using a set of
+shape IDs that MUST target <a class="reference internal" href="#structure"><span class="std std-ref">structure</span></a> shapes that
+are marked with the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>.</td>
 </tr>
 </tbody>
 </table>
@@ -1620,13 +1629,13 @@ JSON</div>
 </div>
 <div class="section" id="operation-errors">
 <span id="id22"></span><h4><a href="#operation-errors">3.5.2.3. Operation errors</a></h4>
-<p>The errors of an operation is an optional array of shape IDs that MUST
-target structure shapes that are marked with the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>. Errors
-defined on an operation are errors that can potentially occur when calling
-an operation.</p>
+<p>The optional <code class="docutils literal notranslate"><span class="pre">errors</span></code> property of an operation represent the errors that
+can potentially occur when calling the operation. This property is a set
+of shape IDs that MUST target <a class="reference internal" href="#structure"><span class="std std-ref">structure</span></a> shapes that are
+marked with the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>.</p>
 <p>The following example defines an operation shape that accepts no input,
 returns no output, and can potentially return the
-<code class="docutils literal notranslate"><span class="pre">NotFound</span></code> or <code class="docutils literal notranslate"><span class="pre">BadRequest</span></code> error structures.</p>
+<code class="docutils literal notranslate"><span class="pre">NotFound</span></code> or <code class="docutils literal notranslate"><span class="pre">BadRequest</span></code> errors.</p>
 <div class="sphinx-tabs docutils container">
 <div class="ui top attached tabular menu sphinx-menu docutils container">
 <div class="active item sphinx-data-tab-U21pdGh5 docutils container">

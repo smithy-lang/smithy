@@ -4,7 +4,12 @@
 Shapes
 ======
 
-*Shapes* are instances of *types* that describe the structure of an API.
+*Shapes* are named data definitions that describe the structure of an API.
+Shapes have a *type* that represents the type of values that a shape
+represents. Types like ``string``, ``structure``, and ``operation`` represent
+the kinds of shapes that can be used in a model, while shapes like
+``MyString``, ``MyStructure``, and ``MyOperation`` define a referenceable
+instance of a type.
 
 .. contents:: Table of contents
     :depth: 1
@@ -999,12 +1004,14 @@ The service shape supports the following members:
         provided in any format (e.g., ``2017-02-11``, ``2.0``, etc).
     * - :ref:`operations <service-operations>`
       - [:ref:`shape-id`]
-      - Binds a list of operations to the service. Each element in the list is
-        a shape ID that MUST target an operation.
+      - Binds a set of ``operation`` shapes to the service. Each
+        element in the given list is a shape ID that MUST target an
+        :ref:`operation <operation>`.
     * - :ref:`resources <service-resources>`
       - [:ref:`shape-id`]
-      - Binds a list of resources to the service. Each element in the list is
-        a shape ID that MUST target a resource.
+      - Binds a set of ``resource`` shapes to the service. Each element in
+        the given list is a shape ID that MUST target a
+        :ref:`resource <resource>`.
 
 The following example defines a service with no operations or resources.
 
@@ -1175,11 +1182,13 @@ An operation supports the following members:
     * - Type
       - Description
     * - :ref:`input <operation-input>`
-      - The optional input structure of the operation.
+      - The optional input :ref:`structure <structure>` of the operation.
     * - :ref:`output <operation-output>`
-      - The optional output structure of the operation.
+      - The optional output :ref:`structure <structure>` of the operation.
     * - :ref:`errors <operation-errors>`
-      - The optional list of errors the operation can return.
+      - Defines the errors that an operation can return using a set of
+        shape IDs that MUST target :ref:`structure <structure>` shapes that
+        are marked with the :ref:`error-trait`.
 
 The following example defines an operation shape that accepts an input
 structure named ``Input``, returns an output structure named ``Output``, and
@@ -1294,14 +1303,14 @@ structure named ``Output``:
 Operation errors
 ----------------
 
-The errors of an operation is an optional array of shape IDs that MUST
-target structure shapes that are marked with the :ref:`error-trait`. Errors
-defined on an operation are errors that can potentially occur when calling
-an operation.
+The optional ``errors`` property of an operation represent the errors that
+can potentially occur when calling the operation. This property is a set
+of shape IDs that MUST target :ref:`structure <structure>` shapes that are
+marked with the :ref:`error-trait`.
 
 The following example defines an operation shape that accepts no input,
 returns no output, and can potentially return the
-``NotFound`` or ``BadRequest`` error structures.
+``NotFound`` or ``BadRequest`` errors.
 
 .. tabs::
 
