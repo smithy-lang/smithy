@@ -5,7 +5,7 @@ This package is the Smithy website, specification, and project documentation.
 
 ## Building
 
-The Smithy docs are built using [Sphinx](https://www.sphinx-doc.org/en/stable),
+The Smithy docs are built using [Sphinx](https://www.sphinx-doc.org/en/master),
 which requires python.
 
 Once you have python installed, you need to install the dependencies and local
