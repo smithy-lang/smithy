@@ -115,14 +115,14 @@
         "example.weather#GetCityOutput": {
             "type": "structure",
             "members": {
-                "coordinates": {
-                    "target": "example.weather#CityCoordinates",
+                "name": {
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": {}
                     }
                 },
-                "name": {
-                    "target": "smithy.api#String",
+                "coordinates": {
+                    "target": "example.weather#CityCoordinates",
                     "traits": {
                         "smithy.api#required": {}
                     }
@@ -183,13 +183,13 @@
                         "smithy.api#required": {}
                     }
                 },
-                "high": {
+                "low": {
                     "target": "smithy.api#Integer",
                     "traits": {
                         "smithy.api#required": {}
                     }
                 },
-                "low": {
+                "high": {
                     "target": "smithy.api#Integer",
                     "traits": {
                         "smithy.api#required": {}
@@ -208,8 +208,8 @@
             "traits": {
                 "smithy.api#paginated": {
                     "inputToken": "nextToken",
-                    "items": "items",
                     "outputToken": "nextToken",
+                    "items": "items",
                     "pageSize": "pageSize"
                 },
                 "smithy.api#readonly": {}
@@ -232,14 +232,14 @@
         "example.weather#ListCitiesOutput": {
             "type": "structure",
             "members": {
+                "nextToken": {
+                    "target": "smithy.api#String"
+                },
                 "items": {
                     "target": "example.weather#CitySummaries",
                     "traits": {
                         "smithy.api#required": {}
                     }
-                },
-                "nextToken": {
-                    "target": "smithy.api#String"
                 }
             }
         },

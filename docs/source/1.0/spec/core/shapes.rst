@@ -809,6 +809,12 @@ Traits can be applied to structure members:
             }
         }
 
+New members added to existing structures SHOULD be added to the end of the
+structure. This ensures that programming languages that require a specific
+data structure layout or alignment for code generated from Smithy models are
+able to maintain backward compatibility.
+
+
 .. _union:
 
 Union
@@ -860,6 +866,11 @@ The following example defines a union shape with several members:
                 }
             }
         }
+
+New members added to existing unions SHOULD be added to the end of the
+union. This ensures that programming languages that require a specific
+data structure layout or alignment for code generated from Smithy models are
+able to maintain backward compatibility.
 
 
 .. _default-values:

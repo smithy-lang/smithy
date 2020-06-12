@@ -20,6 +20,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -96,6 +97,19 @@ public class ObjectNodeTest {
         assertTrue(node.containsMember("foo"));
         assertTrue(node.containsMember("baz"));
         assertTrue(node.containsMember("bam"));
+    }
+
+    @Test
+    public void membersAreOrdered() {
+        ObjectNode node = ObjectNode.objectNodeBuilder()
+                .withMember("foo", "bar")
+                .withMember("baz", true)
+                .withMember("bam", false)
+                .build();
+
+        assertThat(node.getMembers().values(),
+                   contains(node.expectMember("foo"), node.expectMember("baz"), node.expectBooleanMember("bam")));
+        assertThat(node.getStringMap().keySet(), contains("foo", "baz", "bam"));
     }
 
     @Test

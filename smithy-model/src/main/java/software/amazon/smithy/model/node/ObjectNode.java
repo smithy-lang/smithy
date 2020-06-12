@@ -19,7 +19,6 @@ import static java.lang.String.format;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -221,7 +220,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
     public Map<String, Node> getStringMap() {
         Map<String, Node> map = stringMap;
         if (map == null) {
-            map = new HashMap<>(nodeMap.size());
+            map = new LinkedHashMap<>(nodeMap.size());
             for (Map.Entry<StringNode, Node> entry : nodeMap.entrySet()) {
                 map.put(entry.getKey().getValue(), entry.getValue());
             }

@@ -250,8 +250,6 @@ public final class ModelSerializer {
             ObjectNode result = createTypedNode(shape);
             result = result.withMember("members", members.entrySet().stream()
                     .map(entry -> Pair.of(entry.getKey(), entry.getValue().accept(this)))
-                    // Sort by key to ensure a consistent member order.
-                    .sorted(Comparator.comparing(Pair::getLeft))
                     .collect(ObjectNode.collectStringKeys(Pair::getLeft, Pair::getRight)));
             return withTraits(shape, result);
         }
