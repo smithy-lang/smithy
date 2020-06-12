@@ -16,7 +16,10 @@
 package software.amazon.smithy.model.shapes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Assertions;
@@ -74,5 +77,25 @@ public class StructureShapeTest {
                 .build();
 
         assertThat(shape.members(), hasSize(2));
+        // Members are ordered.
+        assertThat(shape.members(), contains(shape.getMember("foo").get(), shape.getMember("baz").get()));
+        assertThat(shape.getAllMembers().keySet(), contains("foo", "baz"));
+    }
+
+    @Test
+    public void memberOrderMattersForEqualComparison() {
+        StructureShape a = StructureShape.builder()
+                .id("ns.foo#bar")
+                .addMember("foo", ShapeId.from("ns.foo#bam"))
+                .addMember("baz", ShapeId.from("ns.foo#bam"))
+                .build();
+
+        StructureShape b = StructureShape.builder()
+                .id("ns.foo#bar")
+                .addMember("baz", ShapeId.from("ns.foo#bam"))
+                .addMember("foo", ShapeId.from("ns.foo#bam"))
+                .build();
+
+        assertThat(a, not(equalTo(b)));
     }
 }

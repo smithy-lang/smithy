@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -83,10 +84,10 @@ final class LoaderVisitor {
     private final List<ForwardReferenceResolver> forwardReferenceResolvers = new ArrayList<>();
 
     /** Shapes that have yet to be built. */
-    private final Map<ShapeId, AbstractShapeBuilder> pendingShapes = new HashMap<>();
+    private final Map<ShapeId, AbstractShapeBuilder> pendingShapes = new LinkedHashMap<>();
 
     /** Built shapes to add to the Model. Keys are not allowed to conflict with pendingShapes. */
-    private final Map<ShapeId, Shape> builtShapes = new HashMap<>();
+    private final Map<ShapeId, Shape> builtShapes = new LinkedHashMap<>();
 
     /** Built trait definitions. */
     private final Map<ShapeId, TraitDefinition> builtTraitDefinitions = new HashMap<>();

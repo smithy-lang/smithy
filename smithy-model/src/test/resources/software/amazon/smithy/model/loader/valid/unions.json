@@ -75,42 +75,42 @@
         "com.foo#I": {
             "type": "union",
             "members": {
-                "baz": {
-                    "target": "com.foo#H"
-                },
                 "foo": {
                     "target": "com.foo#E"
+                },
+                "baz": {
+                    "target": "com.foo#H"
                 }
             }
         },
         "com.foo#J": {
             "type": "union",
             "members": {
-                "baz": {
-                    "target": "com.foo#H"
-                },
                 "foo": {
                     "target": "com.foo#E",
                     "traits": {
                         "smithy.api#deprecated": {}
                     }
+                },
+                "baz": {
+                    "target": "com.foo#H"
                 }
             }
         },
         "com.foo#K": {
             "type": "union",
             "members": {
-                "baz": {
-                    "target": "com.foo#H",
-                    "traits": {
-                        "smithy.api#deprecated": {}
-                    }
-                },
                 "foo": {
                     "target": "com.foo#E",
                     "traits": {
                         "smithy.api#deprecated": {},
                         "smithy.api#since": "2.0"
+                    }
+                },
+                "baz": {
+                    "target": "com.foo#H",
+                    "traits": {
+                        "smithy.api#deprecated": {}
                     }
                 }
             }
@@ -118,17 +118,17 @@
         "com.foo#L": {
             "type": "union",
             "members": {
-                "baz": {
-                    "target": "com.foo#H",
-                    "traits": {
-                        "smithy.api#deprecated": {}
-                    }
-                },
                 "foo": {
                     "target": "com.foo#E",
                     "traits": {
                         "smithy.api#deprecated": {},
                         "smithy.api#since": "2.0"
+                    }
+                },
+                "baz": {
+                    "target": "com.foo#H",
+                    "traits": {
+                        "smithy.api#deprecated": {}
                     }
                 }
             }
@@ -136,17 +136,17 @@
         "com.foo#M": {
             "type": "union",
             "members": {
-                "baz": {
-                    "target": "com.foo#H",
-                    "traits": {
-                        "smithy.api#deprecated": {}
-                    }
-                },
                 "foo": {
                     "target": "com.foo#E",
                     "traits": {
                         "smithy.api#deprecated": {},
                         "smithy.api#since": "2.0"
+                    }
+                },
+                "baz": {
+                    "target": "com.foo#H",
+                    "traits": {
+                        "smithy.api#deprecated": {}
                     }
                 }
             },

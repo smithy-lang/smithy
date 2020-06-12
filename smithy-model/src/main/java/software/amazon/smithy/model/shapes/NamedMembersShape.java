@@ -18,19 +18,22 @@ package software.amazon.smithy.model.shapes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
 import java.util.function.Consumer;
 
 /**
  * Abstract classes shared by structure and union shapes.
+ *
+ * <p>The order of members in structures and unions are the same as the
+ * order that they are defined in the model.
  */
 abstract class NamedMembersShape extends Shape {
 
     private final Map<String, MemberShape> members;
+    private volatile List<String> memberNames;
 
     NamedMembersShape(NamedMembersShape.Builder<?, ?> builder) {
         super(builder, false);
@@ -38,7 +41,7 @@ abstract class NamedMembersShape extends Shape {
 
         // Copy the members to make them immutable and ensure that each
         // member has a valid ID that is prefixed with the shape ID.
-        members = Collections.unmodifiableMap(new TreeMap<>(builder.members));
+        members = Collections.unmodifiableMap(new LinkedHashMap<>(builder.members));
 
         members.forEach((key, value) -> {
             ShapeId expected = getId().withMember(key);
@@ -60,12 +63,19 @@ abstract class NamedMembersShape extends Shape {
     }
 
     /**
-     * Returns a list of member names.
+     * Returns an ordered list of member names based on the order they are
+     * defined in the model.
      *
-     * @return Returns list of member names.
+     * @return Returns an immutable list of member names.
      */
     public List<String> getMemberNames() {
-        return new ArrayList<>(members.keySet());
+        List<String> names = memberNames;
+        if (names == null) {
+            names = Collections.unmodifiableList(new ArrayList<>(members.keySet()));
+            memberNames = names;
+        }
+
+        return names;
     }
 
     /**
@@ -85,7 +95,13 @@ abstract class NamedMembersShape extends Shape {
 
     @Override
     public boolean equals(Object other) {
-        return super.equals(other) && members.equals(((NamedMembersShape) other).members);
+        if (!super.equals(other)) {
+            return false;
+        }
+
+        // Members are ordered, so do a test on the ordering and their values.
+        NamedMembersShape b = (NamedMembersShape) other;
+        return getMemberNames().equals(b.getMemberNames()) && members.equals(b.members);
     }
 
     /**
@@ -95,7 +111,7 @@ abstract class NamedMembersShape extends Shape {
      */
     abstract static class Builder<B extends Builder, S extends NamedMembersShape> extends AbstractShapeBuilder<B, S> {
 
-        Map<String, MemberShape> members = new HashMap<>();
+        Map<String, MemberShape> members = new LinkedHashMap<>();
 
         /**
          * Replaces the members of the builder.

@@ -6,6 +6,7 @@ software.amazon.smithy.diff.evaluators.AddedShape
 software.amazon.smithy.diff.evaluators.AddedTraitDefinition
 software.amazon.smithy.diff.evaluators.ChangedEnumTrait
 software.amazon.smithy.diff.evaluators.ChangedLengthTrait
+software.amazon.smithy.diff.evaluators.ChangedMemberOrder
 software.amazon.smithy.diff.evaluators.ChangedMemberTarget
 software.amazon.smithy.diff.evaluators.ChangedMetadata
 software.amazon.smithy.diff.evaluators.ChangedOperationInput
