@@ -1,9 +1,9 @@
 [ERROR] ns.foo#InalidOperationInputOutputErrorBadTypes: operation shape `error` relationships must target a structure shape, but found (integer: `ns.foo#Integer`) | Target
 [ERROR] ns.foo#InalidOperationInputOutputErrorBadTypes: operation shape `input` relationships must target a structure shape, but found (integer: `ns.foo#Integer`) | Target
 [ERROR] ns.foo#InalidOperationInputOutputErrorBadTypes: operation shape `output` relationships must target a structure shape, but found (integer: `ns.foo#Integer`) | Target
-[ERROR] ns.foo#InalidOperationInputOutputErrorNotFound: operation shape has a `error` relationship to an unresolved shape `ns.foo#NotFound` | Target
-[ERROR] ns.foo#InalidOperationInputOutputErrorNotFound: operation shape has a `input` relationship to an unresolved shape `ns.foo#NotFound` | Target
-[ERROR] ns.foo#InalidOperationInputOutputErrorNotFound: operation shape has a `output` relationship to an unresolved shape `ns.foo#NotFound` | Target
+[ERROR] ns.foo#InalidOperationInputOutputErrorNotFound: operation shape has an `error` relationship to an unresolved shape `ns.foo#NotFound` | Target
+[ERROR] ns.foo#InalidOperationInputOutputErrorNotFound: operation shape has an `input` relationship to an unresolved shape `ns.foo#NotFound` | Target
+[ERROR] ns.foo#InalidOperationInputOutputErrorNotFound: operation shape has an `output` relationship to an unresolved shape `ns.foo#NotFound` | Target
 [ERROR] ns.foo#InvalidListMemberMember$member: Members cannot target member shapes, but found (member: `ns.foo#ValidInput$integer`) | Target
 [ERROR] ns.foo#InvalidListMemberReference$member: member shape targets an unresolved shape `ns.foo#NotFound` | Target
 [ERROR] ns.foo#InvalidListMemberResource$member: Members cannot target resource shapes, but found (resource: `ns.foo#MyResource`) | Target
@@ -14,7 +14,7 @@
 [ERROR] ns.foo#InvalidOperationBadErrorTraits: Operation output targets an invalid structure `ns.foo#ValidError` that is marked with the `error` trait. | Target
 [ERROR] ns.foo#InvalidResourceBindingReference: resource shape has a `resource` relationship to an unresolved shape `ns.foo#NotFound` | Target
 [ERROR] ns.foo#InvalidResourceBindingType: resource shape `resource` relationships must target a resource shape, but found (integer: `ns.foo#Integer`) | Target
-[ERROR] ns.foo#InvalidResourceIdentifierReference: resource shape has a `identifier` relationship to an unresolved shape `ns.foo#NotFound` | Target
+[ERROR] ns.foo#InvalidResourceIdentifierReference: resource shape has an `identifier` relationship to an unresolved shape `ns.foo#NotFound` | Target
 [ERROR] ns.foo#InvalidResourceIdentifierType: resource shape `identifier` relationships must target a string shape, but found (integer: `ns.foo#Integer`) | Target
 [ERROR] ns.foo#InvalidResourceLifecycle: Resource create lifecycle operation must target an operation, but found (integer: `ns.foo#Integer`) | Target
 [ERROR] ns.foo#InvalidResourceLifecycle: Resource delete lifecycle operation must target an operation, but found (integer: `ns.foo#Integer`) | Target

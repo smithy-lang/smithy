@@ -1,0 +1,4 @@
+[ERROR] ns.foo#InvalidList1$member: member shape targets an unresolved shape `ns.foo#d`. Did you mean ns.foo#a, ns.foo#b, ns.foo#c? | Target
+[ERROR] ns.foo#InvalidList2$member: member shape targets an unresolved shape `ns.foo#dd`. Did you mean ns.foo#a, ns.foo#ab, ns.foo#b, ns.foo#c? | Target
+[ERROR] ns.foo#InvalidList3$member: member shape targets an unresolved shape `ns.foo#acb`. Did you mean ns.foo#ab? | Target
+[ERROR] ns.foo#Operation: operation shape has an `input` relationship to an unresolved shape `ns.foo#abcd`. Did you mean ns.foo#abc? | Target
