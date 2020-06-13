@@ -1,0 +1,49 @@
+{
+    "smithy": "1.0",
+    "metadata": {
+        "suppressions": [
+            {"id":  "UnreferencedShape", "namespace":  "ns.foo"}
+        ]
+    },
+    "shapes": {
+        "ns.foo#a": {
+            "type": "string"
+        },
+        "ns.foo#b": {
+            "type": "string"
+        },
+        "ns.foo#c": {
+            "type": "string"
+        },
+        "ns.foo#ab": {
+            "type": "string"
+        },
+        "ns.foo#abc": {
+            "type": "string"
+        },
+        "ns.foo#InvalidList1": {
+            "type": "list",
+            "member": {
+                "target": "ns.foo#d"
+            }
+        },
+        "ns.foo#InvalidList2": {
+            "type": "list",
+            "member": {
+                "target": "ns.foo#dd"
+            }
+        },
+        "ns.foo#InvalidList3": {
+            "type": "list",
+            "member": {
+                "target": "ns.foo#acb"
+            }
+        },
+        "ns.foo#Operation": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#abcd"
+            }
+        }
+    }
+}
