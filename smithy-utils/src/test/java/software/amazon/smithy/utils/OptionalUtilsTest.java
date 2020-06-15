@@ -40,7 +40,6 @@ public class OptionalUtilsTest {
     @Test
     public void streamIsEmpty() {
         assertThat(OptionalUtils.stream(Optional.empty()).count(), equalTo(0L));
-
     }
 
     @Test

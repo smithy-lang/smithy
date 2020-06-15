@@ -28,11 +28,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
@@ -68,9 +68,10 @@ import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.SimpleParser;
 import software.amazon.smithy.utils.StringUtils;
 
-final class IdlModelParser {
+final class IdlModelParser extends SimpleParser {
 
     /** Only allow nesting up to 250 arrays/objects in node values. */
     private static final int MAX_NESTING_LEVEL = 250;
@@ -105,16 +106,10 @@ final class IdlModelParser {
     }
 
     private final String filename;
-    private final String model;
     private final LoaderVisitor visitor;
-    private final int length;
-    private int position = 0;
-    private int line = 1;
-    private int column = 1;
     private String namespace;
     private String definedVersion;
     private TraitEntry pendingDocumentationComment;
-    private int nestingLevel;
 
     /** Map of shape aliases to their targets. */
     private final Map<String, ShapeId> useShapes = new HashMap<>();
@@ -133,10 +128,9 @@ final class IdlModelParser {
     }
 
     IdlModelParser(String filename, String model, LoaderVisitor visitor) {
+        super(model, MAX_NESTING_LEVEL);
         this.filename = filename;
         this.visitor = visitor;
-        this.model = model;
-        this.length = model.length();
     }
 
     void parse() {
@@ -146,8 +140,37 @@ final class IdlModelParser {
         parseShapeSection();
     }
 
+    /**
+     * Overrides whitespace parsing to handle comments.
+     */
+    @Override
+    public void ws() {
+        while (!eof()) {
+            char c = peek();
+            if (c == '/') {
+                if (peekDocComment()) {
+                    parseDocComment();
+                } else {
+                    parseComment();
+                }
+            } else if (!(c == ' ' || c == '\t' || c == '\r' || c == '\n')) {
+                break;
+            } else {
+                skip();
+            }
+        }
+    }
+
+    @Override
+    public ModelSyntaxException syntax(String message) {
+        String formatted = format(
+                "Parse error at line %d, column %d near `%s`: %s",
+                line(), column(), peekDebugMessage(), message);
+        return new ModelSyntaxException(formatted, filename, line(), column());
+    }
+
     private void parseControlSection() {
-        while (charPeek() == '$') {
+        while (peek() == '$') {
             expect('$');
             ws();
             String key = IdlNodeParser.parseNodeObjectKey(this);
@@ -193,7 +216,7 @@ final class IdlModelParser {
     }
 
     private void parseMetadataSection() {
-        while (charPeek() == 'm') {
+        while (peek() == 'm') {
             expect('m');
             expect('e');
             expect('t');
@@ -214,7 +237,7 @@ final class IdlModelParser {
     }
 
     private void parseShapeSection() {
-        if (charPeek() == 'n') {
+        if (peek() == 'n') {
             expect('n');
             expect('a');
             expect('m');
@@ -225,7 +248,12 @@ final class IdlModelParser {
             expect('c');
             expect('e');
             ws();
-            namespace = IdlShapeIdParser.parseNamespace(this);
+
+            // Parse the namespace.
+            int start = position();
+            ParserUtils.consumeNamespace(this);
+            namespace = sliceFrom(start);
+
             br();
             // Clear out any erroneous documentation comments.
             clearPendingDocs();
@@ -233,7 +261,7 @@ final class IdlModelParser {
             parseUseSection();
             parseShapeStatements();
         } else if (!eof()) {
-            if (!IdlShapeIdParser.isIdentifierStart(charPeek())) {
+            if (!ParserUtils.isIdentifierStart(peek())) {
                 throw syntax("Expected a namespace definition, but found unexpected syntax");
             } else {
                 throw syntax("A namespace must be defined before a use statement or shapes");
@@ -242,16 +270,16 @@ final class IdlModelParser {
     }
 
     private void parseUseSection() {
-        while (charPeek() == 'u' && charPeek(1) == 's') {
+        while (peek() == 'u' && peek(1) == 's') {
             expect('u');
             expect('s');
             expect('e');
             ws();
 
-            int start = position;
-            IdlShapeIdParser.consumeNamespace(this);
+            int start = position();
+            ParserUtils.consumeNamespace(this);
             expect('#');
-            IdlShapeIdParser.consumeIdentifier(this);
+            ParserUtils.consumeIdentifier(this);
             String lexeme = sliceFrom(start);
             br();
             // Clear out any erroneous documentation comments.
@@ -270,7 +298,7 @@ final class IdlModelParser {
     private void parseShapeStatements() {
         while (!eof()) {
             ws();
-            if (charPeek() == 'a') {
+            if (peek() == 'a') {
                 parseApplyStatement();
             } else {
                 boolean docsOnly = pendingDocumentationComment != null;
@@ -314,7 +342,7 @@ final class IdlModelParser {
         SourceLocation location = currentLocation();
 
         // Do a check here to give better parsing error messages.
-        String shapeType = IdlShapeIdParser.parseIdentifier(this);
+        String shapeType = ParserUtils.parseIdentifier(this);
         if (!SHAPE_TYPES.contains(shapeType)) {
             switch (shapeType) {
                 case "use":
@@ -406,7 +434,7 @@ final class IdlModelParser {
     }
 
     private ShapeId parseShapeName() {
-        String name = IdlShapeIdParser.parseIdentifier(this);
+        String name = ParserUtils.parseIdentifier(this);
 
         if (useShapes.containsKey(name)) {
             throw syntax(String.format(
@@ -440,19 +468,19 @@ final class IdlModelParser {
         clearPendingDocs();
         ws();
 
-        if (charPeek() != '}') {
+        if (peek() != '}') {
             // Remove the parsed member from the remaining set to detect
             // when duplicates are found, or when members are missing.
             remaining.remove(parseMember(id, remaining));
             while (!eof()) {
                 ws();
-                if (charPeek() == ',') {
+                if (peek() == ',') {
                     expect(',');
                     // A comma clears out any previously captured documentation
                     // comments that may have been found when parsing the member.
                     clearPendingDocs();
                     ws();
-                    if (charPeek() == '}') {
+                    if (peek() == '}') {
                         // Trailing comma: "," "}"
                         break;
                     }
@@ -484,7 +512,7 @@ final class IdlModelParser {
         // Parse optional member traits.
         List<TraitEntry> memberTraits = parseDocsAndTraits();
         SourceLocation memberLocation = currentLocation();
-        String memberName = IdlShapeIdParser.parseIdentifier(this);
+        String memberName = ParserUtils.parseIdentifier(this);
 
         // Only enforce "allowedMembers" if it isn't empty.
         if (!requiredMembers.isEmpty() && !requiredMembers.contains(memberName)) {
@@ -497,7 +525,7 @@ final class IdlModelParser {
         ShapeId memberId = parent.withMember(memberName);
         MemberShape.Builder memberBuilder = MemberShape.builder().id(memberId).source(memberLocation);
         SourceLocation targetLocation = currentLocation();
-        String target = IdlShapeIdParser.parseShapeId(this);
+        String target = ParserUtils.parseShapeId(this);
         visitor.onShape(memberBuilder);
         onShapeTarget(target, targetLocation, memberBuilder::target);
         addTraits(memberId, memberTraits);
@@ -601,7 +629,7 @@ final class IdlModelParser {
     // "//" *(not_newline)
     private void parseComment() {
         expect('/');
-        notNewline();
+        consumeRemainingCharactersOnLine();
     }
 
     private void parseDocComment() {
@@ -615,7 +643,7 @@ final class IdlModelParser {
     }
 
     private boolean peekDocComment() {
-        return charPeek() == '/' && charPeek(1) == '/' && charPeek(2) == '/';
+        return peek() == '/' && peek(1) == '/' && peek(2) == '/';
     }
 
     // documentation_comment = "///" *(not_newline)
@@ -624,11 +652,11 @@ final class IdlModelParser {
         expect('/');
         expect('/');
         // Skip a leading space, if present.
-        if (charPeek() == ' ') {
+        if (peek() == ' ') {
             skip();
         }
         int start = position();
-        notNewline();
+        consumeRemainingCharactersOnLine();
         br();
         return StringUtils.stripEnd(sliceFrom(start), " \t\r\n");
     }
@@ -642,7 +670,7 @@ final class IdlModelParser {
         ws();
 
         SourceLocation location = currentLocation();
-        String name = IdlShapeIdParser.parseShapeId(this);
+        String name = ParserUtils.parseShapeId(this);
         ws();
 
         TraitEntry traitEntry = IdlTraitParser.parseTraitValue(this);
@@ -743,81 +771,33 @@ final class IdlModelParser {
         });
     }
 
-    boolean eof() {
-        return position >= length;
+    SourceLocation currentLocation() {
+        return new SourceLocation(filename, line(), column());
     }
 
-    void ws() {
-        while (!eof()) {
-            char c = charPeek();
-            if (c == '/') {
-                if (peekDocComment()) {
-                    parseDocComment();
-                } else {
-                    parseComment();
-                }
-            } else if (!(c == ' ' || c == '\t' || c == '\r' || c == '\n')) {
-                break;
-            } else {
-                skip();
-            }
-        }
-    }
-
-    private void sp() {
-        while (!eof()) {
-            char c = charPeek();
-            if (!(c == ' ' || c == '\t')) {
-                break;
-            }
-            skip();
-        }
-    }
-
-    private void br() {
-        sp();
-
-        // EOF can also be considered a line break to end a file.
-        if (eof()) {
-            return;
-        }
-
-        char c = charPeek();
-        if (c == '\n') {
-            skip();
-        } else if (c == '\r') {
-            skip();
-            if (charPeek() == '\n') {
-                skip();
-            }
+    NumberNode parseNumberNode() {
+        SourceLocation location = currentLocation();
+        String lexeme = ParserUtils.parseNumber(this);
+        if (lexeme.contains("e") || lexeme.contains(".")) {
+            return new NumberNode(Double.valueOf(lexeme), location);
         } else {
-            throw syntax("Expected a line break");
-        }
-    }
-
-    private void notNewline() {
-        while (!eof()) {
-            char c = charPeek();
-            if (c == '\r' || c == '\n') {
-                break;
-            }
-            skip();
+            return new NumberNode(Long.parseLong(lexeme), location);
         }
     }
 
     private String peekDebugMessage() {
-        StringBuilder result = new StringBuilder(length);
+        StringBuilder result = new StringBuilder(expression().length());
 
-        char c = charPeek();
+        char c = peek();
 
         // Try to read an entire identifier for context (16 char max) if that's what's being peeked.
-        if (c == ' ' || IdlShapeIdParser.isIdentifierStart(c) || IdlShapeIdParser.isDigit(c)) {
+        if (c == ' ' || ParserUtils.isIdentifierStart(c) || ParserUtils.isDigit(c)) {
             if (c == ' ') {
                 result.append(' ');
             }
             for (int i = c == ' ' ? 1 : 0; i < 16; i++) {
-                c = charPeek(i);
-                if (IdlShapeIdParser.isIdentifierStart(c) || IdlShapeIdParser.isDigit(c)) {
+                c = peek(i);
+                if (ParserUtils.isIdentifierStart(c) || ParserUtils.isDigit(c)) {
                     result.append(c);
                 } else {
                     break;
@@ -828,7 +808,7 @@ final class IdlModelParser {
 
         // Take two characters for context.
         for (int i = 0; i < 2; i++) {
-            char peek = charPeek(i);
+            char peek = peek(i);
             if (peek == Character.MIN_VALUE) {
                 result.append("[EOF]");
                 break;
@@ -837,91 +817,5 @@ final class IdlModelParser {
         }
 
         return result.toString();
-    }
-
-    char charPeek() {
-        return charPeek(0);
-    }
-
-    char charPeek(int offset) {
-        return position + offset >= length
-               ? Character.MIN_VALUE
-               : model.charAt(position + offset);
-    }
-
-    char expect(char token) {
-        if (charPeek() == token) {
-            skip();
-            return token;
-        }
-
-        throw syntax(String.format("Expected: '%s', but found '%s'", token, peekSingleCharForMessage()));
-    }
-
-    String peekSingleCharForMessage() {
-        char peek = charPeek();
-        return peek == Character.MIN_VALUE ? "[EOF]" : String.valueOf(peek);
-    }
-
-    SourceLocation currentLocation() {
-        return new SourceLocation(filename, line, column);
-    }
-
-    ModelSyntaxException syntax(String message) {
-        String formatted = format(
-                "Parse error at line %d, column %d near `%s`: %s",
-                line, column, peekDebugMessage(), message);
-        return new ModelSyntaxException(formatted, filename, line, column);
-    }
-
-    String sliceFrom(int start) {
-        return model.substring(start, position);
-    }
-
-    int consumeUntilNoLongerMatches(Predicate<Character> predicate) {
-        int startPosition = position;
-        while (!eof()) {
-            char peekedChar = charPeek();
-            if (!predicate.test(peekedChar)) {
-                break;
-            }
-            skip();
-        }
-
-        return position - startPosition;
-    }
-
-    void skip() {
-        switch (model.charAt(position)) {
-            case '\r':
-                if (charPeek(1) == '\n') {
-                    position++;
-                }
-                line++;
-                column = 1;
-                break;
-            case '\n':
-                line++;
-                column = 1;
-                break;
-            default:
-                column++;
-        }
-
-        position++;
-    }
-
-    int position() {
-        return position;
-    }
-
-    void increaseNestingLevel() {
-        if (++nestingLevel >= MAX_NESTING_LEVEL) {
-            throw syntax("Node value nesting too deep");
-        }
-    }
-
-    void decreaseNestingLevel() {
-        nestingLevel--;
     }
 }

@@ -24,6 +24,8 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.validation.linters.EmitEachSelectorValidator;
+import software.amazon.smithy.utils.SimpleParser;
 
 /**
  * Selector attribute values are the data model of selectors.
@@ -177,5 +179,17 @@ public interface AttributeValue {
      */
     static AttributeValue projection(Collection<AttributeValue> values) {
         return new AttributeValueImpl.Projection(values);
+    }
+
+    /**
+     * Uses the given parser to parse a scoped attribute production.
+     *
+     * @param parser Parser to consume.
+     * @return Returns the list of validated scoped attribute path segments.
+     * @throws RuntimeException if the parser does not contain a valid scoped attribute production.
+     * @see EmitEachSelectorValidator for an example of how this is used.
+     */
+    static List<String> parseScopedAttribute(SimpleParser parser) {
+        return SelectorParser.parseScopedValuePath(parser);
     }
 }

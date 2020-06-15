@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Represents a contained pattern.
@@ -188,9 +189,6 @@ public class SmithyPattern {
 
         public enum Type { LITERAL, LABEL, GREEDY_LABEL }
 
-        private static final java.util.regex.Pattern LABEL_PATTERN = java.util.regex.Pattern.compile(
-                "^[a-zA-Z0-9_]+$");
-
         private final String asString;
         private final String content;
         private final Type segmentType;
@@ -220,10 +218,9 @@ public class SmithyPattern {
                 }
             } else if (content.isEmpty()) {
                 throw new InvalidPatternException("Empty label declaration in pattern.");
-            } else if (!LABEL_PATTERN.matcher(content).matches()) {
+            } else if (!ShapeId.isValidIdentifier(content)) {
                 throw new InvalidPatternException(
-                        "Invalid label name in pattern: '" + content + "'. Labels must satisfy the "
-                                + "following regular expression: " + LABEL_PATTERN.pattern());
+                        "Invalid label name in pattern: '" + content + "'. Labels must contain value identifiers.");
             }
         }
 

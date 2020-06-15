@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.logging.Logger;
+import software.amazon.smithy.model.loader.ParserUtils;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.NumberShape;
@@ -31,13 +32,14 @@ import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.SimpleShape;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.SimpleParser;
 
 /**
  * Parses a selector expression.
  */
-final class Parser {
+final class SelectorParser extends SimpleParser {
 
-    private static final Logger LOGGER = Logger.getLogger(Parser.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SelectorParser.class.getName());
     private static final Set<Character> BREAK_TOKENS = SetUtils.of(',', ']', ')');
     private static final Set<String> REL_TYPES = new HashSet<>();
 
@@ -48,20 +50,15 @@ final class Parser {
         }
     }
 
-    private final String expression;
-    private final int length;
-    private int position = 0;
-
-    private Parser(String selector) {
-        expression = selector;
-        length = expression.length();
+    private SelectorParser(String selector) {
+        super(selector);
     }
 
     static Selector parse(String selector) {
-        return new WrappedSelector(selector, new Parser(selector).expression());
+        return new WrappedSelector(selector, new SelectorParser(selector).parse());
     }
 
-    private List<InternalSelector> expression() {
+    List<InternalSelector> parse() {
         return recursiveParse();
     }
 
@@ -75,7 +72,7 @@ final class Parser {
         ws();
 
         // Parse until a break token: ",", "]", and ")".
-        while (position != length && !BREAK_TOKENS.contains(expression.charAt(position))) {
+        while (!eof() && !BREAK_TOKENS.contains(peek())) {
             selectors.add(createSelector());
             // Always skip ws after calling createSelector.
             ws();
@@ -88,47 +85,47 @@ final class Parser {
         ws();
 
         // Require at least one selector.
-        switch (charPeek()) {
+        switch (peek()) {
             case ':': // function
-                position++;
+                skip();
                 return parseSelectorFunction();
             case '[': // attribute
-                position++;
-                if (charPeek() == '@') {
-                    position++;
+                skip();
+                if (peek() == '@') {
+                    skip();
                     return parseScopedAttribute();
                 } else {
                     return parseAttribute();
                 }
             case '>': // forward undirected neighbor
-                position++;
+                skip();
                 return new ForwardNeighborSelector(ListUtils.of());
             case '<': // reverse [un]directed neighbor
-                position++;
-                if (charPeek() == '-') { // reverse directed neighbor (<-[X, Y, Z]-)
-                    position++;
+                skip();
+                if (peek() == '-') { // reverse directed neighbor (<-[X, Y, Z]-)
+                    skip();
                     expect('[');
                     return parseSelectorDirectedReverseNeighbor();
                 } else { // reverse undirected neighbor (<)
                     return new ReverseNeighborSelector(ListUtils.of());
                 }
             case '~': // ~>
-                position++;
+                skip();
                 expect('>');
                 return new RecursiveNeighborSelector();
             case '-': // forward directed neighbor
-                position++;
+                skip();
                 expect('[');
                 return parseSelectorForwardDirectedNeighbor();
             case '*': // Any shape
-                position++;
+                skip();
                 return InternalSelector.IDENTITY;
             case '$': // variable
-                position++;
+                skip();
                 return parseVariable();
             default:
-                if (validIdentifierStart(charPeek())) {
-                    String identifier = parseIdentifier();
+                if (ParserUtils.isIdentifierStart(peek())) {
+                    String identifier = ParserUtils.parseIdentifier(this);
                     switch (identifier) {
                         case "number":
                             return new ShapeTypeCategorySelector(NumberShape.class);
@@ -141,72 +138,32 @@ final class Parser {
                                     .orElseThrow(() -> syntax("Unknown shape type: " + identifier));
                             return new ShapeTypeSelector(shape);
                     }
+                } else if (peek() == Character.MIN_VALUE) {
+                    throw syntax("Unexpected selector EOF");
                 } else {
-                    char c = charPeek();
-                    if (c == Character.MIN_VALUE) {
-                        throw syntax("Unexpected selector EOF");
-                    } else {
-                        throw syntax("Unexpected selector character: " + charPeek());
-                    }
+                    throw syntax("Unexpected selector character: " + peek());
                 }
         }
     }
 
-    private void ws() {
-        for (; position < length; position++) {
-            char c = expression.charAt(position);
-            if (c != ' ' && c != '\t' && c != '\r' && c != '\n') {
-                break;
-            }
-        }
-    }
-
-    private char charPeek() {
-        return position == length ? Character.MIN_VALUE : expression.charAt(position);
-    }
-
-    private char expect(char token) {
-        if (charPeek() == token) {
-            position++;
-            return token;
-        }
-
-        throw syntax("Expected: '" + token + "'");
-    }
-
-    private char expect(char... tokens) {
-        for (char token : tokens) {
-            if (charPeek() == token) {
-                position++;
-                return token;
-            }
-        }
-
-        StringBuilder message = new StringBuilder("Expected one of the following tokens:");
-        for (char c : tokens) {
-            message.append(' ').append('\'').append(c).append('\'');
-        }
-
-        throw syntax(message.toString());
-    }
-
-    private SelectorSyntaxException syntax(String message) {
-        return new SelectorSyntaxException(message, expression, position);
+    @Override
+    public SelectorSyntaxException syntax(String message) {
+        return new SelectorSyntaxException(message, expression(), position(), line(), column());
     }
 
     private InternalSelector parseVariable() {
         ws();
 
-        if (charPeek() == '{') {
-            position++;
+        if (peek() == '{') {
+            skip();
             ws();
-            String variableName = parseIdentifier();
+            String variableName = ParserUtils.parseIdentifier(this);
             ws();
             expect('}');
             return new VariableGetSelector(variableName);
         }
 
-        String name = parseIdentifier();
+        String name = ParserUtils.parseIdentifier(this);
         ws();
         expect('(');
         ws();
@@ -240,14 +197,14 @@ final class Parser {
         do {
             // Requires at least one relationship type.
             ws();
-            next = parseIdentifier();
+            next = ParserUtils.parseIdentifier(this);
             relationships.add(next);
 
             // Tolerate unknown relationships, but log a warning.
             if (!REL_TYPES.contains(next)) {
                 LOGGER.warning(String.format(
                         "Unknown relationship type '%s' found near %s. Expected one of: %s",
-                        next, position - next.length(), REL_TYPES));
+                        next, position() - next.length(), REL_TYPES));
             }
 
             ws();
@@ -258,14 +215,15 @@ final class Parser {
     }
 
     private InternalSelector parseSelectorFunction() {
-        int functionPosition = position;
-        String name = parseIdentifier();
+        int functionPosition = position();
+        String name = ParserUtils.parseIdentifier(this);
         List<InternalSelector> selectors = parseSelectorFunctionArgs();
         switch (name) {
             case "not":
                 if (selectors.size() != 1) {
                     throw new SelectorSyntaxException(
-                            "The :not function requires a single selector argument", expression, functionPosition);
+                            "The :not function requires a single selector argument",
+                            expression(), functionPosition, line(), column());
                 }
                 return new NotSelector(selectors.get(0));
             case "test":
@@ -273,10 +231,11 @@ final class Parser {
             case "is":
                 return IsSelector.of(selectors);
             case "each":
-                LOGGER.warning("The `:each` selector function has been renamed to `:is`: " + expression);
+                LOGGER.warning("The `:each` selector function has been renamed to `:is`: " + expression());
                 return IsSelector.of(selectors);
             default:
-                LOGGER.warning(String.format("Unknown function name `%s` found in selector: %s", name, expression));
+                LOGGER.warning(String.format("Unknown function name `%s` found in selector: %s",
+                                             name, expression()));
                 return (context, shape, next) -> true;
         }
     }
@@ -315,9 +274,9 @@ final class Parser {
 
     private boolean parseCaseInsensitiveToken() {
         ws();
-        boolean insensitive = charPeek() == 'i';
+        boolean insensitive = peek() == 'i';
         if (insensitive) {
-            position++;
+            skip();
             ws();
         }
         return insensitive;
@@ -350,16 +309,16 @@ final class Parser {
                 comparator = AttributeComparator.EXISTS;
                 break;
             case '>':
-                if (charPeek() == '=') { // >=
-                    position++;
+                if (peek() == '=') { // >=
+                    skip();
                     comparator = AttributeComparator.GTE;
                 } else { // >
                     comparator = AttributeComparator.GT;
                 }
                 break;
             case '<':
-                if (charPeek() == '=') { // <=
-                    position++;
+                if (peek() == '=') { // <=
+                    skip();
                     comparator = AttributeComparator.LTE;
                 } else { // <
                     comparator = AttributeComparator.LT;
@@ -368,7 +327,7 @@ final class Parser {
             case '{': // projection comparators
                 char nextSet = expect('<', '=', '!');
                 if (nextSet == '<') {
-                    if (charPeek() == '<') {
+                    if (peek() == '<') {
                         expect('<'); // {<<}
                         comparator = AttributeComparator.PROPER_SUBSET;
                     } else { // {<}
@@ -407,7 +366,7 @@ final class Parser {
         assertions.add(parseScopedAssertion());
         ws();
 
-        while (charPeek() == '&') {
+        while (peek() == '&') {
             expect('&');
             expect('&');
             ws();
@@ -420,15 +379,15 @@ final class Parser {
 
     private ScopedAttributeSelector.Assertion parseScopedAssertion() {
         ScopedAttributeSelector.ScopedFactory lhs = parseScopedValue();
-        char next = charPeek();
-        position++;
+        char next = peek();
+        skip();
         AttributeComparator comparator = parseComparator(next);
 
         List<ScopedAttributeSelector.ScopedFactory> rhs = new ArrayList<>();
         rhs.add(parseScopedValue());
 
-        while (charPeek() == ',') {
-            position++;
+        while (peek() == ',') {
+            skip();
             rhs.add(parseScopedValue());
         }
 
@@ -438,19 +397,12 @@ final class Parser {
 
     private ScopedAttributeSelector.ScopedFactory parseScopedValue() {
         ws();
-        if (charPeek() == '@') {
-            position++;
-            expect('{');
-            // parse at least one path segment, followed by any number of
-            // comma separated segments.
-            List<String> path = new ArrayList<>();
-            path.add(parseSelectorPathSegment());
-            path.addAll(parseSelectorPath());
-            expect('}');
+        if (peek() == '@') {
+            List<String> path = parseScopedValuePath(this);
             ws();
             return value -> value.getPath(path);
         } else {
-            String parsedValue = parseAttributeValue();
+            String parsedValue = parseAttributeValue(this);
             ws();
             return value -> AttributeValue.literal(parsedValue);
         }
@@ -460,75 +412,78 @@ final class Parser {
         ws();
 
         // '[@:' binds the current shape as the context.
-        if (charPeek() == ':') {
+        if (peek() == ':') {
             return AttributeValue::shape;
         }
 
         List<String> path = new ArrayList<>();
         // Parse the top-level namespace key.
-        path.add(parseIdentifier());
+        path.add(ParserUtils.parseIdentifier(this));
 
         // It is optionally followed by "|" delimited path keys.
-        path.addAll(parseSelectorPath());
+        path.addAll(parseSelectorPath(this));
 
         return (shape, variables) -> AttributeValue.shape(shape, variables).getPath(path);
     }
 
-    // Can be a shape_id, quoted string, number, or function key.
-    private List<String> parseSelectorPath() {
-        ws();
-
-        if (charPeek() != '|') {
-            return Collections.emptyList();
-        }
-
-        List<String> result = new ArrayList<>();
-        do {
-            position++; // skip '|'
-            result.add(parseSelectorPathSegment());
-        } while (charPeek() == '|');
-
-        return result;
-    }
-
-    private String parseSelectorPathSegment() {
-        ws();
-        // Handle function properties enclosed in "(" identifier ")".
-        if (charPeek() == '(') {
-            position++;
-            String propertyName = parseIdentifier();
-            expect(')');
-            return "(" + propertyName + ")";
-        } else {
-            return parseAttributeValue();
-        }
-    }
-
     private List<String> parseAttributeValues() {
         List<String> result = new ArrayList<>();
-        result.add(parseAttributeValue());
+        result.add(parseAttributeValue(this));
         ws();
 
-        while (charPeek() == ',') {
-            position++;
-            result.add(parseAttributeValue());
+        while (peek() == ',') {
+            skip();
+            result.add(parseAttributeValue(this));
             ws();
         }
 
         return result;
     }
 
-    private String parseAttributeValue() {
-        ws();
+    /*
+     * The following methods are static methods that aren't coupled to the
+     * SelectorParser, but rather a SimpleParser. This allows the AttributeValue#parseScopedAttribute
+     * method to accept a SimpleParser and then use this method to perform the actual
+     * parsing of a scoped attribute value.
+     *
+     * This is used to parse scoped attribute values from EmitEachSelector message
+     * templates.
+     */
 
-        switch (charPeek()) {
+    static List<String> parseScopedValuePath(SimpleParser parser) {
+        parser.expect('@');
+        parser.expect('{');
+        // parse at least one path segment, followed by any number of
+        // comma separated segments.
+        List<String> path = new ArrayList<>();
+        path.add(parseSelectorPathSegment(parser));
+        path.addAll(parseSelectorPath(parser));
+        parser.expect('}');
+        return path;
+    }
+
+    private static String parseSelectorPathSegment(SimpleParser parser) {
+        parser.ws();
+        // Handle function properties enclosed in "(" identifier ")".
+        if (parser.peek() == '(') {
+            parser.skip();
+            String propertyName = ParserUtils.parseIdentifier(parser);
+            parser.expect(')');
+            return "(" + propertyName + ")";
+        } else {
+            return parseAttributeValue(parser);
+        }
+    }
+
+    private static String parseAttributeValue(SimpleParser parser) {
+        parser.ws();
+
+        switch (parser.peek()) {
             case '\'':
-                return consumeInside('\'');
+                return consumeInside(parser, '\'');
             case '"':
-                return consumeInside('"');
+                return consumeInside(parser, '"');
             case '-':
-                position++;
-                return parseNumber(true);
             case '0':
             case '1':
             case '2':
@@ -539,115 +494,43 @@ final class Parser {
             case '7':
             case '8':
             case '9':
-                return parseNumber(false);
+                return ParserUtils.parseNumber(parser);
             default:
-                return parseShapeId();
+                return ParserUtils.parseRootShapeId(parser);
         }
     }
 
-    private String consumeInside(char c) {
-        int i = ++position;
-        while (i < length) {
-            if (expression.charAt(i) == c) {
-                String result = expression.substring(position, i);
-                position = i + 1;
-                ws();
+    private static String consumeInside(SimpleParser parser, char c) {
+        parser.skip(); // skip the opening character.
+        int start = parser.position();
+
+        while (!parser.eof()) {
+            if (parser.peek() == c) {
+                String result = parser.sliceFrom(start);
+                parser.skip();
+                parser.ws();
                 return result;
             }
-            i++;
+            parser.skip();
         }
-        throw syntax("Expected " + c + " to close " + expression.substring(position));
+
+        throw parser.syntax("Expected " + c + " to close " + parser.sliceFrom(start));
     }
 
-    private String parseIdentifier() {
-        StringBuilder builder = new StringBuilder();
-        char current = charPeek();
+    // Can be a shape_id, quoted string, number, or function key.
+    private static List<String> parseSelectorPath(SimpleParser parser) {
+        parser.ws();
 
-        // needs at least one character
-        if (!validIdentifierStart(current)) {
-            throw syntax("Invalid attribute start character `" + current + "`");
+        if (parser.peek() != '|') {
+            return Collections.emptyList();
         }
 
-        builder.append(current);
-        position++;
+        List<String> result = new ArrayList<>();
+        do {
+            parser.skip(); // skip '|'
+            result.add(parseSelectorPathSegment(parser));
+        } while (parser.peek() == '|');
 
-        current = charPeek();
-        while (validIdentifierInner(current)) {
-            builder.append(current);
-            position++;
-            current = charPeek();
-        }
-
-        return builder.toString();
-    }
-
-    private boolean validIdentifierStart(char c) {
-        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
-    }
-
-    private boolean validIdentifierInner(char c) {
-        return validIdentifierStart(c) || (c >= '0' && c <= '9');
-    }
-
-    private String parseShapeId() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(parseIdentifier());
-
-        if (charPeek() == '.') {
-            do {
-                position++;
-                builder.append('.').append(parseIdentifier());
-            } while (charPeek() == '.');
-            // "." is only allowed in the namespace part, so it must be followed by a "#".
-            expect('#');
-            builder.append('#').append(parseIdentifier());
-        } else if (charPeek() == '#') { // a shape id with no namespace dots, but with a namespace.
-            position++;
-            builder.append('#').append(parseIdentifier());
-        }
-
-        // Note that members are not supported in this production!
-        return builder.toString();
-    }
-
-    private String parseNumber(boolean negative) {
-        StringBuilder result = new StringBuilder();
-
-        if (negative) {
-            result.append('-');
-        }
-
-        addSimpleNumberToBuilder(result);
-
-        // Consume the fraction part.
-        if (charPeek() == '.') {
-            result.append('.');
-            position++;
-            addSimpleNumberToBuilder(result);
-        }
-
-        // Consume the exponent, if present.
-        if (charPeek() == 'e') {
-            result.append('e');
-            position++;
-            if (charPeek() == '-' || charPeek() == '+') {
-                result.append(charPeek());
-                position++;
-            }
-            addSimpleNumberToBuilder(result);
-        }
-
-        return result.toString();
-    }
-
-    private void addSimpleNumberToBuilder(StringBuilder result) {
-        // Require at least one numeric value.
-        result.append(expect('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'));
-
-        // Consume all numbers after the first number.
-        while (Character.isDigit(charPeek())) {
-            result.append(charPeek());
-            position++;
-        }
+        return result;
     }
 }

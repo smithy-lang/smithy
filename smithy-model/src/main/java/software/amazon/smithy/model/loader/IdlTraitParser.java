@@ -32,7 +32,7 @@ final class IdlTraitParser {
     // trait_statements = *(ws trait)
     static List<IdlModelParser.TraitEntry> parseTraits(IdlModelParser parser) {
         List<IdlModelParser.TraitEntry> entries = new ArrayList<>();
-        while (parser.charPeek() == '@') {
+        while (parser.peek() == '@') {
             entries.add(parseTraitValue(parser));
             parser.ws();
         }
@@ -43,10 +43,10 @@ final class IdlTraitParser {
     static IdlModelParser.TraitEntry parseTraitValue(IdlModelParser parser) {
         // "@" shape_id
         parser.expect('@');
-        String id = IdlShapeIdParser.parseShapeId(parser);
+        String id = ParserUtils.parseShapeId(parser);
 
         // No (): it's an annotation trait.
-        if (parser.charPeek() != '(') {
+        if (parser.peek() != '(') {
             return new IdlModelParser.TraitEntry(id, new NullNode(parser.currentLocation()), true);
         }
 
@@ -54,7 +54,7 @@ final class IdlTraitParser {
         parser.ws();
 
         // (): it's also an annotation trait.
-        if (parser.charPeek() == ')') {
+        if (parser.peek() == ')') {
             parser.expect(')');
             return new IdlModelParser.TraitEntry(id, new NullNode(parser.currentLocation()), true);
         }
@@ -69,7 +69,7 @@ final class IdlTraitParser {
 
     private static Node parseTraitValueBody(IdlModelParser parser) {
         SourceLocation keyLocation = parser.currentLocation();
-        char c = parser.charPeek();
+        char c = parser.peek();
         switch (c) {
             case '{':
             case '[':
@@ -85,11 +85,11 @@ final class IdlTraitParser {
                 return parseTraitValueBodyIdentifierOrQuotedString(parser, keyLocation, key, false);
             } default: {
                 // Parser numbers.
-                if (c == '-' || IdlShapeIdParser.isDigit(c)) {
-                    return IdlNumberParser.parse(parser);
+                if (c == '-' || ParserUtils.isDigit(c)) {
+                    return parser.parseNumberNode();
                 } else {
                     // Parse unquoted strings or possibly a structured trait.
-                    String key = IdlShapeIdParser.parseIdentifier(parser);
+                    String key = ParserUtils.parseIdentifier(parser);
                     return parseTraitValueBodyIdentifierOrQuotedString(parser, keyLocation, key, true);
                 }
             }
@@ -105,7 +105,7 @@ final class IdlTraitParser {
         parser.ws();
 
         // If the next character is ':', this it's a KVP.
-        if (parser.charPeek() == ':') {
+        if (parser.peek() == ':') {
             parser.expect(':');
             parser.ws();
             return parseStructuredTrait(parser, new StringNode(key, location));
@@ -124,14 +124,14 @@ final class IdlTraitParser {
         entries.put(startingKey, firstValue);
         parser.ws();
 
-        while (!parser.eof() && parser.charPeek() != ')') {
+        while (!parser.eof() && parser.peek() != ')') {
             parser.expect(',');
             parser.ws();
-            if (parser.charPeek() == ')') {
+            if (parser.peek() == ')') {
                 break;
             }
-            char c = parser.charPeek();
-            if (IdlShapeIdParser.isIdentifierStart(c) || c == '"') {
+            char c = parser.peek();
+            if (ParserUtils.isIdentifierStart(c) || c == '"') {
                 parseTraitStructureKvp(parser, entries);
             } else {
                 throw parser.syntax("Unexpected object key character: '" + c + '\'');

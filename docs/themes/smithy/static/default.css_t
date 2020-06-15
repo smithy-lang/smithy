@@ -133,6 +133,11 @@ h7 {
   color: #24292e
 }
 
+/* Make the code block on the homepage have the right size */
+#splash pre {
+  font-size: 1em;
+}
+
 #splash .splash-column:first-child {
   padding-right: 10%;
   text-align: center;
@@ -529,7 +534,7 @@ pre {
   line-height: 1.45;
   background-color: #222;
   border-radius: 3px;
-  font-size: 1em;
+  font-size: 14px;
   color: #A9B7C6;
   overflow-x: auto
   white-space: pre;

@@ -21,6 +21,9 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 
+/**
+ * TODO: Rewrite the formatter parser to use a custom {@link SimpleParser}.
+ */
 final class CodeFormatter {
     private static final Pattern NAME_PATTERN = Pattern.compile("^[a-z]+[a-zA-Z0-9_.#$]*$");
     private static final Set<Character> VALID_FORMATTER_CHARS = SetUtils.of(

@@ -25,7 +25,7 @@ final class IdlTextParser {
     // quoted_text = DQUOTE *quoted_char DQUOTE
     static String parseQuotedString(IdlModelParser parser) {
         parser.expect('"');
-        if (parser.charPeek() == '"') { // open and closed string.
+        if (parser.peek() == '"') { // open and closed string.
             parser.skip();
             return ""; // ""
         } else { // "
@@ -38,8 +38,8 @@ final class IdlTextParser {
         int start = parser.position();
 
         while (!parser.eof()) {
-            char next = parser.charPeek();
-            if (next == '"' && (!triple || (parser.charPeek(1) == '"' && parser.charPeek(2) == '"'))) {
+            char next = parser.peek();
+            if (next == '"' && (!triple || (parser.peek(1) == '"' && parser.peek(2) == '"'))) {
                 break;
             }
             parser.skip();

@@ -37,7 +37,7 @@ final class IdlNodeParser {
     private IdlNodeParser() {}
 
     static Node parseNode(IdlModelParser parser) {
-        char c = parser.charPeek();
+        char c = parser.peek();
         switch (c) {
             case '{':
                 return parseObjectNode(parser);
@@ -62,10 +62,10 @@ final class IdlNodeParser {
             case '8':
             case '9':
             case '-':
-                return IdlNumberParser.parse(parser);
+                return parser.parseNumberNode();
             default: {
                 SourceLocation location = parser.currentLocation();
-                return parseNodeTextWithKeywords(parser, location, IdlShapeIdParser.parseShapeId(parser));
+                return parseNodeTextWithKeywords(parser, location, ParserUtils.parseShapeId(parser));
             }
         }
     }
@@ -90,9 +90,9 @@ final class IdlNodeParser {
     }
 
     static boolean peekTextBlock(IdlModelParser parser) {
-        return parser.charPeek() == '"'
-               && parser.charPeek(1) == '"'
-               && parser.charPeek(2) == '"';
+        return parser.peek() == '"'
+               && parser.peek(1) == '"'
+               && parser.peek(2) == '"';
     }
 
     static Node parseTextBlock(IdlModelParser parser) {
@@ -111,7 +111,7 @@ final class IdlNodeParser {
         parser.ws();
 
         while (!parser.eof()) {
-            char c = parser.charPeek();
+            char c = parser.peek();
             if (c == '}') {
                 break;
             } else {
@@ -123,7 +123,7 @@ final class IdlNodeParser {
                 Node value = parseNode(parser);
                 entries.put(new StringNode(key, keyLocation), value);
                 parser.ws();
-                if (parser.charPeek() == ',') {
+                if (parser.peek() == ',') {
                     parser.skip();
                     parser.ws();
                 } else {
@@ -138,10 +138,10 @@ final class IdlNodeParser {
     }
 
     static String parseNodeObjectKey(IdlModelParser parser) {
-        if (parser.charPeek() == '"') {
+        if (parser.peek() == '"') {
             return IdlTextParser.parseQuotedString(parser);
         } else {
-            return IdlShapeIdParser.parseIdentifier(parser);
+            return ParserUtils.parseIdentifier(parser);
         }
     }
 
@@ -153,13 +153,13 @@ final class IdlNodeParser {
         parser.ws();
 
         while (!parser.eof()) {
-            char c = parser.charPeek();
+            char c = parser.peek();
             if (c == ']') {
                 break;
             } else {
                 items.add(parseNode(parser));
                 parser.ws();
-                if (parser.charPeek() == ',') {
+                if (parser.peek() == ',') {
                     parser.skip();
                     parser.ws();
                 } else {
