@@ -114,6 +114,6 @@ public class IdlModelLoaderTest {
             Model.assembler().addUnparsedModel("/foo.smithy", nodeBuilder.toString()).assemble().unwrap();
         });
 
-        assertThat(e.getMessage(), containsString("Node value nesting too deep"));
+        assertThat(e.getMessage(), containsString("Parser exceeded the maximum allowed depth of"));
     }
 }

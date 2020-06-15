@@ -21,6 +21,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
+import software.amazon.smithy.model.loader.ParserUtils;
 import software.amazon.smithy.model.loader.Prelude;
 
 /**
@@ -96,12 +97,12 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
             char c = namespace.charAt(position);
             if (start) {
                 start = false;
-                if (!isValidIdentifierStart(c)) {
+                if (!ParserUtils.isIdentifierStart(c)) {
                     return false;
                 }
             } else if (c == '.') {
                 start = true;
-            } else if (!isValidIdentifierAfterStart(c)) {
+            } else if (!ParserUtils.isValidIdentifierCharacter(c)) {
                 return false;
             }
         }
@@ -120,25 +121,17 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
             return false;
         }
 
-        if (!isValidIdentifierStart(identifier.charAt(0))) {
+        if (!ParserUtils.isIdentifierStart(identifier.charAt(0))) {
             return false;
         }
 
         for (int i = 1; i < identifier.length(); i++) {
-            if (!isValidIdentifierAfterStart(identifier.charAt(i))) {
+            if (!ParserUtils.isValidIdentifierCharacter(identifier.charAt(i))) {
                 return false;
             }
         }
 
         return true;
-    }
-
-    private static boolean isValidIdentifierStart(char c) {
-        return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_';
-    }
-
-    private static boolean isValidIdentifierAfterStart(char c) {
-        return isValidIdentifierStart(c) || (c >= '0' && c <= '9');
     }
 
     /**

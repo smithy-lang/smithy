@@ -377,7 +377,6 @@ final class AttributeValueImpl {
      */
     static final class Traits implements AttributeValue {
         private final Shape shape;
-        private String messageString;
 
         Traits(Shape shape) {
             this.shape = Objects.requireNonNull(shape);
@@ -386,20 +385,6 @@ final class AttributeValueImpl {
         @Override
         public String toString() {
             return "";
-        }
-
-        @Override
-        public String toMessageString() {
-            String str = messageString;
-            if (str == null) {
-                // Returns a sorted, comma separated list of absolute trait shape IDs.
-                str = shape.getAllTraits().keySet().stream()
-                        .map(ShapeId::toString)
-                        .sorted()
-                        .collect(Collectors.joining(", "));
-                messageString = str;
-            }
-            return str;
         }
 
         @Override

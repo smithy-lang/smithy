@@ -42,7 +42,7 @@ public interface Selector {
      * @return Returns the parsed {@link Selector}.
      */
     static Selector parse(String expression) {
-        return Parser.parse(expression);
+        return SelectorParser.parse(expression);
     }
 
     /**

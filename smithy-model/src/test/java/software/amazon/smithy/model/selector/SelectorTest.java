@@ -238,7 +238,7 @@ public class SelectorTest {
     public void requiresValidAttribute() {
         Throwable thrown = Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse("[id=-]"));
 
-        assertThat(thrown.getMessage(), containsString("Syntax error at character 5 of 6, near `]`"));
+        assertThat(thrown.getMessage(), containsString("Syntax error at line 1 column 6, near `]`"));
     }
 
     @Test
@@ -321,7 +321,7 @@ public class SelectorTest {
                 SelectorSyntaxException.class,
                 () -> Selector.parse("[id%=100]"));
 
-        assertThat(e.getMessage(), containsString("Expected one of the following tokens"));
+        assertThat(e.getMessage(), containsString("Found '%', but expected one of the following tokens"));
     }
 
     @Test

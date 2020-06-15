@@ -309,9 +309,18 @@ Configuration
          - Description
        * - selector
          - ``string``
-         - **Required**. A valid :ref:`selector <selectors>`. Each shape in
-           the model that is returned from the selector with emit a validation
-           event.
+         - **Required**. A valid :ref:`selector <selectors>`. A validation
+           event is emitted for each shape in the model that matches the
+           ``selector``.
+       * - :ref:`bindToTrait <emit-each-bind-to-trait>`
+         - ``string``
+         - An optional string that MUST be a valid :ref:`shape ID <shape-id>`
+           that targets a :ref:`trait definition <trait-shapes>`.
+           A validation event is only emitted for shapes that have this trait.
+       * - :ref:`messageTemplate <emit-each-message-template>`
+         - ``string``
+         - A custom template that is expanded for each matching shape and
+           assigned as the message for the emitted validation event.
 
 The following example detects if a shape is missing documentation with the
 following constraints:
@@ -391,6 +400,207 @@ as lifecycle 'read' or 'delete' that has a shape name that does not start with
             }
         }
     ]
+
+
+.. _emit-each-bind-to-trait:
+
+Binding events to traits
+------------------------
+
+The ``bindToTrait`` property contains a :ref:`shape ID <shape-id>` that MUST
+reference a :ref:`trait definition <trait-shapes>` shape. When set, this
+property causes the ``EmitEachSelector`` validator to only emit validation
+events for shapes that have the referenced trait. The contextual location of
+where the violation occurred in the model SHOULD point to the location where
+the trait is applied to the matched shape.
+
+Consider the following model:
+
+.. code-block:: smithy
+
+    metadata validators = [
+        {
+            name: "EmitEachSelector",
+            id: "DocumentedString",
+            configuration: {
+                // matches all shapes
+                selector: "*",
+                // Only emitted for shapes with the documentation
+                // trait, and each event points to where the
+                // trait is defined.
+                bindToTrait: documentation
+            }
+        }
+    ]
+
+    namespace smithy.example
+
+    @documentation("Hello")
+    string A // <-- Emits an event
+
+    string B // <-- Does not emit an event
+
+The ``DocumentedString`` validator will only emit an event for
+``smithy.example#A`` because ``smithy.example#B`` does not have the
+:ref:`documentation-trait`.
+
+
+.. _emit-each-message-template:
+
+Message templates
+-----------------
+
+A ``messageTemplate`` is used to create more granular error messages. The
+template consists of literal spans and :token:`selector context value <selector_context_value>`
+templates (for example, ``@{id}``). A selector context value MAY be escaped
+by placing a ``@`` before a ``@`` character (for example, ``@@`` expands to
+``@``). ``@`` characters in the message template that are not escaped MUST
+form a valid ``selector_context_value`` production.
+
+For each shaped matched by the ``selector`` of an ``EmitEachSelector``, a
+:ref:`selector attribute <selector-attributes>` is created from the shape
+along with all of the :ref:`selector variables <selector-variables>` that were
+assigned when the shape was matched. Each ``selector_context_value`` in the
+template is then expanded by retrieving nested properties from the shape
+using a pipe-delimited path (for example, ``@{id|name}`` expands to the
+name of the matching shape's :ref:`shape ID <id-attribute>`).
+
+Consider the following model:
+
+.. code-block:: smithy
+
+    metadata validators = [
+        {
+            name: "EmitEachSelector",
+            configuration: {
+                selector: "[trait|documentation]",
+                messageTemplate: """
+                    This shape has a name of @{id|name} and a @@documentation \
+                    trait of "@{trait|documentation}"."""
+            }
+        }
+    ]
+
+    namespace smithy.example
+
+    @documentation("Hello")
+    string A
+
+    @documentation("Goodbye")
+    string B
+
+The above selector will emit two validation events:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 20 80
+
+    * - Shape ID
+      - Expanded message
+    * - ``smithy.example#A``
+      - This shape has a name of A and a @documentation trait of "Hello".
+    * - ``smithy.example#B``
+      - This shape has a name of B and a @documentation trait of "Goodbye".
+
+:ref:`Selector variables <selector-variables>` can be used in the selector
+to make message templates more descriptive. Consider the following example:
+
+.. code-block:: smithy
+
+    metadata validators = [
+        {
+            name: "EmitEachSelector",
+            id: "UnstableTrait",
+            configuration: {
+                selector: """
+                      $matches(-[trait]-> [trait|unstable])
+                      ${matches}""",
+                messageTemplate: "This shape applies traits(s) that are unstable: @{var|matches|id}"
+            }
+        }
+    ]
+
+    namespace smithy.example
+
+    @trait
+    @unstable
+    structure doNotUseMe {}
+
+    @doNotUseMe
+    string A
+
+The above selector will emit the following validation event:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 20 80
+
+    * - Shape ID
+      - Expanded message
+    * - ``smithy.example#A``
+      - This shape applies traits(s) that are unstable: [smithy.example#doNotUseMe]
+
+
+Variable message formatting
+---------------------------
+
+Different types of variables expand to different kinds of strings in message
+templates.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 20 80
+
+    * - Attribute
+      - Expansion
+    * - empty values
+      - An empty value expands to nothingness [#comparison]_. Empty values are
+        created when a selector context value attempts to access a variable
+        or nested property that does not exist.
+
+        Consider the following message template: ``Hello, @{foo}.``. Because
+        ``foo`` is not a valid selector attribute, the message expands to:
+
+        .. code-block:: none
+
+            Hello, .
+    * - :ref:`id <id-attribute>`
+      - Expands to the absolute :ref:`shape ID <shape-id>` of a shape
+        [#comparison]_.
+    * - literal values
+      - Literal values are created when descending into nested properties of
+        an ``id``, ``service``, or projection attribute. A literal string is
+        expanded to the the contents of the string with no wrapping quotes.
+        A literal integer is expanded to the string representation of the
+        number. [#comparison]_
+    * - :ref:`node <node-attribute>`
+      - A JSON formatted string representation of a trait or nested property
+        of a trait. The JSON is *not* pretty-printed, meaning there is no
+        indentation or newlines inserted into the JSON output for formatting.
+        For example, a template of ``@{trait|tags}`` applied to a shape with
+        a :ref:`tags-trait` that contains "a" and "b" would expand to:
+
+        .. code-block:: none
+
+            ["a","b"]
+    * - :ref:`projection <projection-attribute>`
+      - Expands to a list that starts with ``[`` and ends with ``]``. Each
+        shape in the projection is inserted into the list using variable
+        message formatting. Subsequent shapes are separated from the previous
+        shape by a comma followed by a space. If a variable projection
+        (for example, ``@{var|foo}``) contains two shape IDs,
+        ``smithy.example#A`` and ``smithy.example#B``, the attribute expands
+        to:
+
+        .. code-block:: none
+
+            [smithy.example#A, smithy.example#B]
+    * - :ref:`service <service-attribute>`
+      - Expands to the absolute shape ID of a service shape [#comparison]_.
+    * - :ref:`trait <trait-attribute>`
+      -  Expands to nothingness [#comparison]_.
+
+.. [#comparison] This is the same behavior that is used when the attribute is used in a :ref:`string comparison <string-comparators>`.
 
 
 .. _EmitNoneSelector:

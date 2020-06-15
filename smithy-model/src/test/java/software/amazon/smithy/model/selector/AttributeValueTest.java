@@ -18,6 +18,7 @@ import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.SimpleParser;
 
 public class AttributeValueTest {
     @Test
@@ -260,7 +261,7 @@ public class AttributeValueTest {
         AttributeValue service = AttributeValue.shape(serviceShape, MapUtils.of()).getProperty("trait");
 
         assertThat(service.toString(), equalTo(""));
-        assertThat(service.toMessageString(), equalTo("smithy.api#documentation, smithy.api#tags"));
+        assertThat(service.toMessageString(), equalTo(""));
         assertThat(service.getPath(ListUtils.of("tags")).toMessageString(), equalTo("[\"hi\"]"));
         assertThat(service.getPath(ListUtils.of("smithy.api#tags")).toMessageString(), equalTo("[\"hi\"]"));
         assertThat(service.getPath(ListUtils.of("documentation")).toString(), equalTo("hi"));
@@ -300,5 +301,12 @@ public class AttributeValueTest {
         assertThat(attr.getProperty("var").toMessageString(), equalTo(""));
         assertThat(attr.getPath(ListUtils.of("var", "a")).getProperty("id").toMessageString(),
                    equalTo("[foo.baz#Foo2, foo.baz#Foo3]"));
+    }
+
+    @Test
+    public void canParseScopedSelectorFromParser() {
+        SimpleParser parser = new SimpleParser("@{var|bar|baz}");
+
+        assertThat(AttributeValue.parseScopedAttribute(parser), contains("var", "bar", "baz"));
     }
 }
