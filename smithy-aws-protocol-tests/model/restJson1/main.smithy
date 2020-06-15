@@ -56,5 +56,14 @@ service RestJson {
         JsonLists,
         JsonMaps,
         JsonBlobs,
+
+        // Documents
+        InlineDocument,
+        InlineDocumentAsPayload,
+        ExactDocumentInHeader,
+        ExactDocumentInQuery,
+        ExactDocumentInPayload,
+        ExactStringDocumentAsPayload,
+        ExactBlobDocumentAsPayload,
     ]
 }

@@ -1,5 +1,17 @@
 {
     "smithy": "1.0",
+    "metadata": {
+        "validators": [
+            {
+                "id": "AwsInlineDocumentNotSupported",
+                "name": "EmitEachSelector",
+                "message": "This service uses a protocol that does not support inline documents. Either change protocols, or convert the inline document to an @exactDocument string/blob.",
+                "configuration": {
+                    "selector": ":test(service:test([trait|aws.protocols#restXml], [trait|aws.protocols#awsQuery], [trait|aws.protocols#ec2Query]) ~> document)"
+                }
+            }
+        ]
+    },
     "shapes": {
         "aws.protocols#restJson1": {
             "type": "structure",

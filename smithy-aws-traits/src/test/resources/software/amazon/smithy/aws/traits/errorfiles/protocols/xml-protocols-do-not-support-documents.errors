@@ -1,0 +1,2 @@
+[DANGER] smithy.example#InvalidExample: This service uses a protocol that does not support inline documents. Either change protocols, or convert the inline document to an @exactDocument string/blob. | AwsInlineDocumentNotSupported
+[SUPPRESSED] smithy.example#InvalidExample: This shape applies a trait that is deprecated: aws.protocols#awsQuery | DeprecatedTrait

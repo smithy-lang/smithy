@@ -226,6 +226,11 @@ The following example defines a video/quicktime blob:
         @mediaType("video/quicktime")
         blob VideoData
 
+.. seealso::
+
+    Refer to the :ref:`exactDocument-trait` for information on how to
+    embed nested documents inside of ``string`` and ``blob`` shapes.
+
 
 .. _timestampFormat-trait:
 
@@ -275,5 +280,7 @@ Smithy defines the following built-in timestamp formats:
     a timestamp differs from the default protocol format. Using this trait too
     liberally can cause other tooling to improperly interpret the timestamp.
 
-See :ref:`timestamp-serialization-format` for information on how to
-determine the serialization format of a timestamp.
+.. seealso::
+
+    Refer to :ref:`timestamp-serialization-format` for information on how to
+    determine the serialization format of a timestamp.

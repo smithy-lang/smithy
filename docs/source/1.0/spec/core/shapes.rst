@@ -394,16 +394,99 @@ by tooling to represent a timestamp.
 Document types
 ==============
 
-A document type represents a protocol-specific untyped value. Documents
-are useful when interacting with data that has no predefined schema,
-uses a schema language that is not compatible with Smithy, or if the schema
-that defines the data is specified and versioned outside of the
-Smithy model.
+A document type represents protocol-agnostic open content that is accessed
+like JSON data. Open content is useful for modeling unstructured data that
+has no schema, data that can’t be modeled using rigid types, or data that has
+a schema that evolves outside of the purview of a Smithy model.
 
-.. note::
+.. rubric:: Inline document serialization
 
-    * Not all protocols support document types
-    * The serialization format of a document is protocol-specific.
+Document types are *inline documents* because they are serialized using the
+same format as their surroundings and require no additional encoding or
+escaping. The serialization format of an inline document is an implementation
+detail; changing the protocol of a service SHOULD NOT change the features and
+functionality of a document type abstraction exposed used in code generated
+from a Smithy model.
+
+Documents can also be defined using the :ref:`exactDocument-trait`. This
+trait indicates that a ``string`` or ``blob`` shape contains a nested document
+that can be lazily parsed into a document abstraction.
+
+.. rubric:: Code generation and implementation
+
+Smithy implementations that generate code for document types MUST provide
+structured access to documents through JSON-like abstractions, allowing
+developers to interact with documents as lists, maps, strings, numbers,
+booleans, and nulls. Additional functionality is allowed, though the
+aforementioned access patterns are required. Implementations MUST NOT provide
+access to the bytes of an inline document because its serialization format
+is an implementation detail.
+
+The following non-normative example shows how an inline document type could be
+exposed in Java:
+
+.. code-block:: java
+
+    /**
+     * An inline Smithy document type.
+     */
+    interface Document {
+        /**
+         * Gets the value of the document as a {@code bool},
+         * {@code String}, {@link Number}, {@code null},
+         * {@code List<Object>}, or {@code Map<String, Object>}.
+         *
+         * @return Returns the document as one of a fixed set of Java types.
+         */
+        Object asObject();
+
+        /**
+         * Gets the document as a {@code Map} if it is a map.
+         *
+         * @return Returns the map value.
+         * @throws RuntimeException if the document is not a map.
+         */
+        Map<String, Object> asMap();
+
+        /**
+         * Gets the document as a {@code List} if it is a list.
+         *
+         * @return Returns the list value.
+         * @throws RuntimeException if the document is not a list.
+         */
+        List<Object> asList();
+
+        /**
+         * Gets the document as a {@code String} if it is a string.
+         *
+         * @return Returns the string value.
+         * @throws RuntimeException if the document is not a string.
+         */
+        String asString();
+
+        /**
+         * Gets the document as a {@code Number} if it is a number.
+         *
+         * @return Returns the number value.
+         * @throws RuntimeException if the document is not a number.
+         */
+        Number asNumber();
+
+        /**
+         * Gets the document as a {@code bool} if it is a bool.
+         *
+         * @return Returns the bool value.
+         * @throws RuntimeException if the document is not a bool.
+         */
+        bool asBool();
+
+        /**
+         * Checks if the document is a {@code null} value.
+         *
+         * @return Returns true if the document is a null value.
+         */
+        bool isNull();
+    }
 
 
 .. _aggregate-types:
