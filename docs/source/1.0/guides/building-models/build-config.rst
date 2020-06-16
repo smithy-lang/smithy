@@ -1,6 +1,6 @@
-=================
-Using SmithyBuild
-=================
+============
+smithy-build
+============
 
 Building a Smithy model requires constructing a configuration file,
 ``smithy-build.json``. This file is used to describe how a model is created
@@ -26,7 +26,7 @@ The configuration file accepts the following properties:
       - Description
     * - version
       - ``string``
-      - **Required.** Defines the version of SmithyBuild. Set to `1.0`.
+      - **Required.** Defines the version of smithy-build. Set to `1.0`.
     * - outputDirectory
       - ``string``
       - The location where projections are written. Each
@@ -141,9 +141,9 @@ A projection accepts the following configuration:
       - ``map<string, object>``
       - Defines the plugins to apply to the model when building this
         projection. Plugins are a mapping of plugin names to an arbitrary
-        plugin configuration object. SmithyBuild will attempt to resolve
+        plugin configuration object. smithy-build will attempt to resolve
         plugin names using `Java SPI`_ to locate and instance of ``software.amazon.smithy.build.SmithyBuildPlugin``
-        that returns a matching name when calling ``getName``. SmithyBuild will
+        that returns a matching name when calling ``getName``. smithy-build will
         emit a warning when a plugin cannot be resolved.
 
 
@@ -152,7 +152,7 @@ A projection accepts the following configuration:
 Projection artifacts
 --------------------
 
-SmithyBuild will write artifacts for each projection inside of
+smithy-build will write artifacts for each projection inside of
 `outputDirectory`.
 
 * The model that is projected is placed inside of ``${outputDirectory}/${projectionName}/model/model.json``.
@@ -944,12 +944,12 @@ projection settings are not merged in any way.
 
 Plugin names MUST match the following pattern: ``^[A-Za-z0-9\-_.]+$``.
 
-SmithyBuild will attempt to resolve plugin names using `Java SPI`_
+smithy-build will attempt to resolve plugin names using `Java SPI`_
 to locate an instance of ``software.amazon.smithy.build.SmithyBuildPlugin``
-that matches the given plugin name (via ``matchesPluginName``). SmithyBuild
+that matches the given plugin name (via ``matchesPluginName``). smithy-build
 will log a warning when a plugin cannot be resolved.
 
-SmithyBuild DOES NOT attempt to automatically download and install plugins.
+smithy-build DOES NOT attempt to automatically download and install plugins.
 Plugins MUST be available in the Java class path or module path in order for
 them to be discovered.
 
