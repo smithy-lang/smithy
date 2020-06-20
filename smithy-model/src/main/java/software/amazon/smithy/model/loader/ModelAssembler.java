@@ -517,9 +517,9 @@ public final class ModelAssembler {
 
         shapes.forEach(visitor::onShape);
         metadata.forEach(visitor::onMetadata);
-        pendingTraits.forEach(pendingTrait -> {
+        for (PendingTrait pendingTrait : pendingTraits) {
             visitor.onTrait(pendingTrait.id, pendingTrait.trait);
-        });
+        }
 
         for (Model model : mergeModels) {
             mergeModelIntoVisitor(model, visitor);

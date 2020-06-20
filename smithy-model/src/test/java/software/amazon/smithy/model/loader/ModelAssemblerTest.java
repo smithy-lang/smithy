@@ -58,8 +58,6 @@ import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.traits.SuppressTrait;
-import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -95,21 +93,16 @@ public class ModelAssemblerTest {
     @Test
     public void addsExplicitTraits() {
         StringShape shape = StringShape.builder().id("ns.foo#Bar").build();
-
-        Node node = Node.fromStrings("validator");
-        TraitFactory provider = TraitFactory.createServiceFactory();
-        Optional<Trait> trait = provider.createTrait(
-                ShapeId.from("smithy.api#suppress"), shape.toShapeId(), node);
-
-        SuppressTrait suppress = (SuppressTrait) trait.get();
+        SuppressTrait trait = SuppressTrait.builder().build();
         ValidatedResult<Model> result = new ModelAssembler()
                 .addShape(shape)
-                .addTrait(shape.toShapeId(), suppress)
+                .addTrait(shape.toShapeId(), trait)
                 .assemble();
 
         assertThat(result.getValidationEvents(), empty());
         Shape resultShape = result.unwrap().getShape(ShapeId.from("ns.foo#Bar")).get();
         assertTrue(resultShape.findTrait("smithy.api#suppress").isPresent());
+        assertTrue(resultShape.getTrait(SuppressTrait.class).isPresent());
     }
 
     @Test
