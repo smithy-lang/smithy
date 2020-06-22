@@ -40,6 +40,8 @@ import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -113,6 +115,7 @@ public final class ModelAssembler {
     private final List<Node> documentNodes = new ArrayList<>();
     private final List<Model> mergeModels = new ArrayList<>();
     private final List<AbstractShapeBuilder<?, ?>> shapes = new ArrayList<>();
+    private final List<PendingTrait> pendingTraits = new ArrayList<>();
     private final Map<String, Node> metadata = new HashMap<>();
     private final Map<String, Object> properties = new HashMap<>();
     private boolean disablePrelude;
@@ -142,6 +145,7 @@ public final class ModelAssembler {
         assembler.documentNodes.addAll(documentNodes);
         assembler.mergeModels.addAll(mergeModels);
         assembler.shapes.addAll(shapes);
+        assembler.pendingTraits.addAll(pendingTraits);
         assembler.metadata.putAll(metadata);
         assembler.disablePrelude = disablePrelude;
         assembler.properties.putAll(properties);
@@ -173,6 +177,7 @@ public final class ModelAssembler {
      */
     public ModelAssembler reset() {
         shapes.clear();
+        pendingTraits.clear();
         metadata.clear();
         mergeModels.clear();
         inputStreamModels.clear();
@@ -366,6 +371,19 @@ public final class ModelAssembler {
     }
 
     /**
+     * Explicitly adds a trait to a shape in the assembled model.
+     *
+     * @param target Shape to add the trait to.
+     * @param trait Trait to add.
+     * @return Returns the assembler.
+     */
+    public ModelAssembler addTrait(ShapeId target, Trait trait) {
+        PendingTrait pendingTrait = new PendingTrait(target, trait);
+        this.pendingTraits.add(pendingTrait);
+        return this;
+    }
+
+    /**
      * Merges a loaded model into the model assembler.
      *
      * @param model Model to merge in.
@@ -499,6 +517,9 @@ public final class ModelAssembler {
 
         shapes.forEach(visitor::onShape);
         metadata.forEach(visitor::onMetadata);
+        for (PendingTrait pendingTrait : pendingTraits) {
+            visitor.onTrait(pendingTrait.id, pendingTrait.trait);
+        }
 
         for (Model model : mergeModels) {
             mergeModelIntoVisitor(model, visitor);
@@ -545,5 +566,16 @@ public final class ModelAssembler {
         List<Validator> copiedValidators = new ArrayList<>(validatorFactory.loadBuiltinValidators());
         copiedValidators.addAll(validators);
         return copiedValidators;
+    }
+
+    private static final class PendingTrait {
+        final ShapeId id;
+        final Trait trait;
+
+        // A pending trait that's already created.
+        PendingTrait(ShapeId id, Trait trait) {
+            this.id = id;
+            this.trait = trait;
+        }
     }
 }
