@@ -1,12 +1,5 @@
 $version: "1.0"
 
-metadata suppressions = [
-    {
-        id: "UnreferencedShape",
-        namespace: "aws.protocoltests.json",
-    },
-]
-
 namespace aws.protocoltests.json
 
 use aws.api#service
