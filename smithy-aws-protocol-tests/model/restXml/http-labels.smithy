@@ -26,15 +26,15 @@ apply HttpRequestWithLabels @httpRequestTests([
         documentation: "Sends a GET request that uses URI label bindings",
         protocol: restXml,
         method: "GET",
-        uri: "/HttpRequestWithLabels/string/1/2/3/4.0/5.0/true/2019-12-16T23%3A48%3A18Z",
+        uri: "/HttpRequestWithLabels/string/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z",
         body: "",
         params: {
             string: "string",
             short: 1,
             integer: 2,
             long: 3,
-            float: 4.0,
-            double: 5.0,
+            float: 4.1,
+            double: 5.1,
             boolean: true,
             timestamp: 1576540098
         }
