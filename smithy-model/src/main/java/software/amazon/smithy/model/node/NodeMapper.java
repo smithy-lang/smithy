@@ -96,7 +96,7 @@ public final class NodeMapper {
                     ? ""
                     : " " + node.getSourceLocation().toString().trim();
             return format("Deserialization error at %s%s: unable to find setter method for `%s` on %s",
-                        getNormalizedPointer(pointer), location, property, into.getCanonicalName());
+                    getNormalizedPointer(pointer), location, property, into.getCanonicalName());
         }
     }
 
