@@ -192,6 +192,10 @@ that affect serialization:
     * - :ref:`timestampFormat <timestampFormat-trait>`
       - Defines a custom timestamp serialization format.
 
+.. important::
+
+    This protocol does not support :ref:`inline document types <document-type>`.
+
 
 ------------
 Content-Type

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -30,11 +30,16 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class ProtocolDefinitionTrait extends AbstractTrait implements ToSmithyBuilder<ProtocolDefinitionTrait> {
 
     public static final ShapeId ID = ShapeId.from("smithy.api#protocolDefinition");
+    private static final String NO_INLINE_DOCUMENT_SUPPORT = "noInlineDocumentSupport";
+    private static final String TRAITS = "traits";
+
     private final List<ShapeId> traits;
+    private final boolean noInlineDocumentSupport;
 
     public ProtocolDefinitionTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
         traits = ListUtils.copyOf(builder.traits);
+        noInlineDocumentSupport = builder.noInlineDocumentSupport;
     }
 
     /**
@@ -47,6 +52,15 @@ public final class ProtocolDefinitionTrait extends AbstractTrait implements ToSm
         return traits;
     }
 
+    /**
+     * Checks if this protocol does not support inline documents.
+     *
+     * @return Returns true if inline documents are not supported.
+     */
+    public boolean getNoInlineDocumentSupport() {
+        return noInlineDocumentSupport;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -57,17 +71,27 @@ public final class ProtocolDefinitionTrait extends AbstractTrait implements ToSm
             return Node.objectNode();
         }
 
+        ObjectNode.Builder builder = Node.objectNodeBuilder();
+
         ArrayNode ids = traits.stream()
                 .map(ShapeId::toString)
                 .map(Node::from)
                 .collect(ArrayNode.collect());
+        builder.withMember(TRAITS, ids);
 
-        return Node.objectNode().withMember("traits", ids);
+        if (noInlineDocumentSupport) {
+            builder.withMember(NO_INLINE_DOCUMENT_SUPPORT, true);
+        }
+
+        return builder.build();
     }
 
     @Override
     public Builder toBuilder() {
-        return builder().sourceLocation(getSourceLocation()).traits(traits);
+        return builder()
+                .sourceLocation(getSourceLocation())
+                .traits(traits)
+                .noInlineDocumentSupport(noInlineDocumentSupport);
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -79,17 +103,19 @@ public final class ProtocolDefinitionTrait extends AbstractTrait implements ToSm
         public ProtocolDefinitionTrait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
             ObjectNode objectNode = value.expectObjectNode();
-            objectNode.getArrayMember("traits").ifPresent(traits -> {
-                for (String string : Node.loadArrayOfString("traits", traits)) {
+            objectNode.getArrayMember(TRAITS).ifPresent(traits -> {
+                for (String string : Node.loadArrayOfString(TRAITS, traits)) {
                     builder.addTrait(ShapeId.from(string));
                 }
             });
+            builder.noInlineDocumentSupport(objectNode.getBooleanMemberOrDefault(NO_INLINE_DOCUMENT_SUPPORT));
             return builder.build();
         }
     }
 
     public static final class Builder extends AbstractTraitBuilder<ProtocolDefinitionTrait, Builder> {
         private final List<ShapeId> traits = new ArrayList<>();
+        private boolean noInlineDocumentSupport;
 
         @Override
         public ProtocolDefinitionTrait build() {
@@ -104,6 +130,11 @@ public final class ProtocolDefinitionTrait extends AbstractTrait implements ToSm
 
         public Builder addTrait(ShapeId trait) {
             traits.add(trait);
+            return this;
+        }
+
+        public Builder noInlineDocumentSupport(boolean noInlineDocumentSupport) {
+            this.noInlineDocumentSupport = noInlineDocumentSupport;
             return this;
         }
     }

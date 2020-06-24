@@ -41,6 +41,12 @@ Value type
            in order to successfully use the protocol. Each shape MUST exist
            and MUST be a trait. Code generators SHOULD ensure that they
            support each listed trait.
+       * - noInlineDocumentSupport
+         - ``boolean``
+         - If set to ``true``, indicates that this protocol does not support
+           :ref:`document <document-type>` shapes. A service that uses such
+           a protocol MUST NOT contain any document shapes in their service
+           closure.
 
 Smithy is protocol agnostic, which means it focuses on the interfaces and
 abstractions that are provided to end-users rather than how the data is sent
@@ -275,5 +281,7 @@ Smithy defines the following built-in timestamp formats:
     a timestamp differs from the default protocol format. Using this trait too
     liberally can cause other tooling to improperly interpret the timestamp.
 
-See :ref:`timestamp-serialization-format` for information on how to
-determine the serialization format of a timestamp.
+.. seealso::
+
+    Refer to :ref:`timestamp-serialization-format` for information on how to
+    determine the serialization format of a timestamp.

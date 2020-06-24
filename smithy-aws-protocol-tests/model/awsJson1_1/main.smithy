@@ -23,6 +23,7 @@ service JsonProtocol {
         EmptyOperation,
         KitchenSinkOperation,
         OperationWithOptionalInputOutput,
+        PutAndGetInlineDocuments
     ],
 }
 
