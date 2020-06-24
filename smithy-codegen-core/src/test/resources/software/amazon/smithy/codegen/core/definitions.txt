@@ -1,0 +1,10 @@
+{
+  "types": {
+    "t1": "t1val",
+    "t2": "t2val"
+  },
+  "tags": {
+    "tag1": "tag1val",
+    "tag2": "tag2val"
+  }
+}
