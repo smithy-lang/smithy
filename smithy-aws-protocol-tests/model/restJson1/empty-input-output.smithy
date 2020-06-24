@@ -94,7 +94,7 @@ apply EmptyInputAndEmptyOutput @httpResponseTests([
         documentation: "Empty output serializes no payload",
         protocol: restJson1,
         code: 200,
-        body: "{}",
+        body: "",
         bodyMediaType: "application/json"
     },
 ])
