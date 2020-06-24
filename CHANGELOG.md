@@ -1,5 +1,25 @@
 # Smithy Changelog
 
+## 1.0.6 (2020-06-24)
+
+### Features
+
+* Update `structure` and `union` shapes so member order is maintained as part of the contract. ([#465](https://github.com/awslabs/smithy/pull/465))
+* Add validation for `document` types in protocols. ([#474](https://github.com/awslabs/smithy/pull/474))
+* Provide suggestions for invalid Shape ID targets if a close match is found. ([#466](https://github.com/awslabs/smithy/pull/466))
+* Added message templates and trait binding to the `EmitEachSelector`. ([#467](https://github.com/awslabs/smithy/pull/467))
+* Added ability to add traits directly to the `ModelAssembler`. ([#470](https://github.com/awslabs/smithy/pull/470))
+* Convert `awsJson1_1` protocol tests to Smithy IDL. ([#472](https://github.com/awslabs/smithy/pull/472))
+* Update decimal values in protocol tests. ([#471](https://github.com/awslabs/smithy/pull/471)) 
+
+### Documentation
+
+* Update quick start guide with more examples. ([#462](https://github.com/awslabs/smithy/pull/462))
+
+### Bug Fixes
+
+* Fixed issues allowing `document` types in `@httpHeader` and `@httpPrefixHeaders` traits. ([#474](https://github.com/awslabs/smithy/pull/474))
+
 ## 1.0.5 (2020-06-05)
 
 ### Bug Fixes
