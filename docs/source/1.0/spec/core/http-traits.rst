@@ -500,9 +500,7 @@ Serialization rules:
   as a separate HTTP header either by concatenating the values with a comma on a
   single line or by serializing each header value on its own line.
 * boolean values are serialized as ``true`` or ``false``.
-* blob values are base-64 encoded.
-* string values with a :ref:`mediaType-trait` of "application/json" or that
-  end in "+json" are base-64 encoded.
+* string values with a :ref:`mediaType-trait` are base64 encoded.
 * timestamp values are serialized using the ``http-date``
   format as defined in the ``IMF-fixdate`` production of
   :rfc:`7231#section-7.1.1.1`.
@@ -688,9 +686,11 @@ Trait selector
     .. code-block:: none
 
         structure > member
-        :test(> map > member[id|member=value] > :test(simpleType, collection > member > simpleType))
+        :test(> map > member[id|member=value] > :test(
+            boolean, number, string, timestamp,
+            collection > member > :test(boolean, number, string, timestamp)))
 
-    *Structure member that targets a map of simple types or a map of lists/sets of simple types*
+    *Structure member that targets a map of specific simple types or a map of lists/sets of specific simple types*
 Value type
     ``string`` value that defines the prefix to prepend to each header field
     name stored in the targeted map member. For example, given a prefix value
@@ -762,9 +762,11 @@ Summary
 Trait selector
     .. code-block:: none
 
-        structure > :test(member > :test(simpleType, collection > member > simpleType))
+        structure > member
+        :test(> simpleType:not(document),
+              > collection > member > simpleType:not(document)))
 
-    *Structure members that target simple types or lists/sets of simple types*
+    *Structure members that target non-document simple types or collections of non-document simple types*
 Value type
     ``string`` value defining the name of the query string parameter. The
     query string value MUST NOT be empty. This trait is ignored when
@@ -786,7 +788,7 @@ Serialization rules:
 * Multiple members of a structure MUST NOT case-sensitively target the same
   query string parameter.
 * boolean values are serialized as ``true`` or ``false``.
-* blob values are base-64 encoded when serialized in the query string.
+* blob values are base64 encoded when serialized in the query string.
 * timestamp values are serialized as an :rfc:`3339`
   ``date-time`` string (e.g., ``1990-12-31T23:59:60Z``).
 * :ref:`list` members are serialized by adding multiple query string parameters

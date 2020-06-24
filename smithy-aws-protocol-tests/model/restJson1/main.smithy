@@ -56,5 +56,9 @@ service RestJson {
         JsonLists,
         JsonMaps,
         JsonBlobs,
+
+        // Documents
+        InlineDocument,
+        InlineDocumentAsPayload,
     ]
 }

@@ -56,4 +56,8 @@ See
             }
         }
 
+.. important::
+
+    This protocol does not support :ref:`inline document types <document-type>`.
+
 *TODO: Add specifications, protocol examples, etc.*

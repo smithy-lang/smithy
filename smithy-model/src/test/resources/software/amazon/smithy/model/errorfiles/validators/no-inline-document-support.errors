@@ -1,0 +1,1 @@
+[ERROR] smithy.example#FooService: This service uses the `smithy.example#noDocuments` protocol which does not support inline document types, but the following document types were found in the closure of the service: [smithy.example#InlineDocument | NoInlineDocumentSupport

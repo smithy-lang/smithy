@@ -85,6 +85,9 @@ structure protocolDefinition {
     /// Defines a list of traits that protocol implementations must
     /// understand in order to successfully use the protocol.
     traits: TraitShapeIdList,
+
+    /// Set to true if inline documents are not supported by this protocol.
+    noInlineDocumentSupport: PrimitiveBoolean,
 }
 
 @private
@@ -476,7 +479,10 @@ structure http {
 structure httpLabel {}
 
 /// Binds an operation input structure member to a query string parameter.
-@trait(selector: "structure > :test(member > :test(simpleType, collection > member > simpleType))",
+@trait(selector: """
+        structure > member
+        :test(> simpleType:not(document),
+              > collection > member > simpleType:not(document)))""",
         conflicts: [httpLabel, httpHeader, httpPrefixHeaders, httpPayload])
 @length(min: 1)
 @tags(["diff.error.const"])
@@ -494,7 +500,9 @@ string httpHeader
 /// Binds a map of key-value pairs to prefixed HTTP headers.
 @trait(selector: """
         structure > member
-        :test(> map > member[id|member=value] > :test(simpleType, collection > member > simpleType))""",
+        :test(> map > member[id|member=value] > :test(
+              boolean, number, string, timestamp,
+              collection > member > :test(boolean, number, string, timestamp)))""",
         structurallyExclusive: "member",
         conflicts: [httpLabel, httpQuery, httpHeader, httpPayload])
 @tags(["diff.error.const"])
