@@ -1,0 +1,42 @@
+{
+  "smithyTrace": "1.0",
+  "artifact": {
+    "id": "",
+    "version": "",
+    "type": "",
+    "typeVersion": "",
+    "homepage": "",
+    "timestamp": ""
+  },
+  "definitions": {
+    "types": {
+      "TYPE": "Class, interface (including annotation type), or enum declaration"
+    },
+    "tags": {
+      "service": "Service client"
+    }
+  },
+  "shapes": {
+    "example.weather#CityId": [
+      {
+        "type": "",
+        "id": "",
+        "tags": [""]
+      }
+    ],
+    "example.weather#CitySummaries": [
+      {
+        "type": "",
+        "id": "",
+        "tags": [""]
+      }
+    ],
+    "example.weather#CitySummary": [
+      {
+        "type": "",
+        "id": "",
+        "tags": [""]
+      }
+    ]
+  }
+}
