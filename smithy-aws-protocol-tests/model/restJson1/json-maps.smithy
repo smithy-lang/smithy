@@ -49,13 +49,35 @@ apply JsonMaps @httpRequestTests([
                 }
             }
         }
-    }
+    },
+    {
+        id: "RestJsonSerializesNullMapValues",
+        documentation: "Serializes null JSON map values",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/JsonMaps",
+        body: """
+            {
+                "myMap": {
+                    "foo": null
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            myMap: {
+                "foo": null
+            }
+        }
+    },
 ])
 
 apply JsonMaps @httpResponseTests([
     {
         id: "RestJsonJsonMaps",
-        documentation: "Serializes JSON maps",
+        documentation: "Deserializes JSON maps",
         protocol: restJson1,
         code: 200,
         body: """
@@ -83,7 +105,28 @@ apply JsonMaps @httpResponseTests([
                 }
             }
         }
-    }
+    },
+    {
+        id: "RestJsonDeserializesNullMapValues",
+        documentation: "Deserializes null JSON map values",
+        protocol: restJson1,
+        code: 200,
+        body: """
+            {
+                "myMap": {
+                    "foo": null
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            myMap: {
+                "foo": null
+            }
+        }
+    },
 ])
 
 structure JsonMapsInputOutput {
