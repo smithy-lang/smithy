@@ -35,10 +35,10 @@ public class TraceFile {
     private Definitions definitions; //Optional
     private Map<ShapeId, List<ShapeLink>> shapes;
 
-    private final String smithyTraceText = "smithyTrace";
-    private final String artifactText = "artifact";
-    private final String definitionsText = "definitions";
-    private final String shapesText = "shapes";
+    public final String smithyTraceText = "smithyTrace";
+    public final String artifactText = "artifact";
+    public final String definitionsText = "definitions";
+    public final String shapesText = "shapes";
 
     private final SourceLocation sl = new SourceLocation("");
 
@@ -57,7 +57,7 @@ public class TraceFile {
         InputStream stream = new FileInputStream(new File(filename));
         ObjectNode node = (ObjectNode) Node.parse(stream);
 
-        //instantiating artifactMetadata and shapes
+        //instantiate on parsing
         artifactMetadata = new ArtifactMetadata();
         shapes = new HashMap<>();
 
@@ -66,6 +66,7 @@ public class TraceFile {
         //throws error if there's no artifactText
         artifactMetadata.fromJsonNode(node.expectObjectMember(artifactText));
         //throws error if no shape or shape incorrectly formatted
+
         parseShapeObject(node);
         parseDefinitionsObject(node);
     }
@@ -98,8 +99,9 @@ public class TraceFile {
      * @see ShapeLink
      */
     private void parseShapeObject(ObjectNode node) {
-        //throws error if doesn't find shapeText
+        //throws error if doesn't find shapeText or if shape map is empty
         Map<StringNode, Node> shapeMap = node.expectObjectMember(shapesText).getMembers();
+        if(shapeMap.isEmpty()) throw new TraceFileParsingException(this.getClass().getSimpleName(), shapesText);
 
         for(StringNode key: shapeMap.keySet()){
             ShapeId shapeId = ShapeId.from(key.getValue());
@@ -128,7 +130,12 @@ public class TraceFile {
      * @throws IOException if there is an error writing to fileName
      */
     public void writeTraceFile(String fileName) throws IOException {
-        Map<StringNode, Node> nodesMap= new HashMap<>();
+        Map<StringNode, Node> nodesMap = new HashMap<>();
+
+        //error checking
+        if(smithyTrace == null) throw new TraceFileWritingException(this.getClass().getSimpleName(), smithyTraceText);
+        if(artifactMetadata == null) throw new TraceFileWritingException(this.getClass().getSimpleName(), artifactText);
+        if(shapes == null) throw new TraceFileWritingException(this.getClass().getSimpleName(), shapesText);
 
         nodesMap.put(new StringNode(smithyTraceText, sl), new StringNode(smithyTrace, sl));
         nodesMap.put(new StringNode(artifactText, sl), artifactMetadata.toJsonNode());
@@ -149,8 +156,11 @@ public class TraceFile {
      */
     private void shapeObjectToJson(Map<StringNode, Node> nodesMap) {
         Map<StringNode, Node> shapeMap = new HashMap<>();
+        if(shapes.keySet().isEmpty()) throw new TraceFileWritingException(this.getClass().getSimpleName(), shapesText);
+
         for(ShapeId key: shapes.keySet()){
             List<Node> shapeLinkList = new ArrayList<>();
+            if(shapes.get(key).isEmpty()) throw new TraceFileWritingException(this.getClass().getSimpleName(), key.toString());
             for(ShapeLink link: shapes.get(key)){
                 shapeLinkList.add(link.toJsonNode());
             }

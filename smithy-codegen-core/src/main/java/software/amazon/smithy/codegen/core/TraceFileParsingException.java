@@ -1,11 +1,11 @@
 package software.amazon.smithy.codegen.core;
 
 /**
- * Exception encountered during trace file deserialization.
+ * Exception encountered during trace file parsing.
  */
 public class TraceFileParsingException extends RuntimeException {
     public TraceFileParsingException(String className, String varText) {
-        super(className + "'s " + varText + " node is missing or incorrectly" +
-                "formatted, make sure ArtifactMetadata has a child called\"" + varText + "\"");
+        super("Trace file or "+ className + " parsing failed." + className + "'s " + varText + " node is missing or incorrectly" +
+                "formatted, make sure " + className + " has a child called\"" + varText + "\"");
     }
 }

@@ -42,6 +42,9 @@ public class ShapeLink {
 
     private final SourceLocation sl = new SourceLocation("");
 
+    /**
+     * Default constructor for ShapeLink
+     */
     public ShapeLink(){
         tags = new ArrayList<>();
     }
@@ -69,7 +72,7 @@ public class ShapeLink {
      */
     private String fromJsonNodeStringHelper(String text, ObjectNode node){
         return node.getStringMember(text)
-                .orElseThrow(()-> new TraceFileParsingException("ShapeLink", text))
+                .orElseThrow(()-> new TraceFileParsingException(this.getClass().getSimpleName(), text))
                 .getValue();
     }
 
@@ -82,7 +85,7 @@ public class ShapeLink {
      */
     private Number fromJsonNodeNumberHelper(String text, ObjectNode node){
         return node.getNumberMember(text)
-                .orElseThrow(()-> new TraceFileParsingException("ShapeLink", text))
+                .orElseThrow(()-> new TraceFileParsingException(this.getClass().getSimpleName(), text))
                 .getValue();
     }
 
@@ -95,7 +98,7 @@ public class ShapeLink {
      */
     private void setTagsFromJson(ObjectNode node) {
         ArrayNode arrayNode = node.getArrayMember(tagsText)
-                .orElseThrow(()-> new TraceFileParsingException("ShapeLink", tagsText));
+                .orElseThrow(()-> new TraceFileParsingException(this.getClass().getSimpleName(), tagsText));
         for (Node value : arrayNode) {
             StringNode next = value.expectStringNode("shapes->ShapeIds->tags->list of tags level of JSON in " +
                     "trace file is formatted incorrectly, tags must be Strings - see example for correct formatting");
@@ -107,13 +110,13 @@ public class ShapeLink {
      *
      * @return returns an ObjectNode that contains the StringNodes with the information
      * from a ShapeLink
-     * @throws AssertionError if id or type is not defined when the method is called
+     * @throws TraceFileWritingException if id or type is not defined when the method is called
      */
     public ObjectNode toJsonNode(){
         Map<StringNode, Node> nodes= new HashMap<>();
 
-        assert id!=null: " ShapeLink id must be defined before calling toJsonNode";
-        assert type!=null: " ShapeLink type must be defined before calling toJsonNode";
+        if(id==null) throw new TraceFileWritingException(this.getClass().getSimpleName(), idText);
+        if(type==null) throw new TraceFileWritingException(this.getClass().getSimpleName(), typeText);
 
         nodes.put(new StringNode(idText, sl), new StringNode(id, sl));
         nodes.put(new StringNode(typeText, sl),new StringNode(type, sl));
@@ -141,50 +144,98 @@ public class ShapeLink {
         return new ArrayNode(elements, sl);
     }
 
+    /**
+     * Gets this ShapeLink's type
+     * @return this ShapeLink's type
+     */
     public String getType() {
         return type;
     }
 
+    /**
+     * Sets this ShapeLink's type
+     * @param type represents type of this ShapeLink
+     */
     public void setType(String type) {
         this.type = type;
     }
 
+    /**
+     * Gets this ShapeLink's id
+     * @return this ShapeLink's id
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Sets this ShapeLink's Id
+     * @param id represents id of this ShapeLink
+     */
     public void setId(String id) {
         this.id = id;
     }
 
+    /**
+     * Gets this ShapeLink's tags in an optional container
+     * @return Optional container holding this ShapeLink's list of tags
+     */
     public Optional<List<String>> getTags() {
         return Optional.ofNullable(tags);
     }
 
+    /**
+     * Sets this ShapeLink's tags list
+     * @param tags a list of tags to assign to this ShapeLink
+     */
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
 
+    /**
+     * Gets this ShapeLink's file in an optional container
+     * @return Optional container holding this ShapeLink's file
+     */
     public Optional<String> getFile() {
         return Optional.ofNullable(file);
     }
 
+    /**
+     * Sets this ShapeLink's file
+     * @param file represents file where this ShapeLink was generated from
+     */
     public void setFile(String file) {
         this.file = file;
     }
 
+    /**
+     * Gets this ShapeLink's line number in an optional container
+     * @return Optional container holding this ShapeLink's line number
+     */
     public Optional<Integer> getLine() {
         return Optional.ofNullable(line);
     }
 
+    /**
+     * Sets this ShapeLink's line number
+     * @param line represents link number of this ShapeLink
+     */
     public void setLine(Integer line) {
         this.line = line;
     }
 
+    /**
+     * Gets this ShapeLink's column number in an optional container
+     * @return Optional container holding this ShapeLink's column number
+     */
     public Optional<Integer> getColumn() {
         return Optional.ofNullable(column);
     }
 
+    /**
+     * Sets this ShapeLink's column number
+     * @param column represents column number of this ShapeLink
+     */
     public void setColumn(Integer column) {
         this.column = column;
     }

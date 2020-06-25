@@ -1,0 +1,87 @@
+{
+  "smithyTrace": "1.0",
+  "artifact": {
+    "id": "software.amazon.awssdk.services:snowball:2.10.79",
+    "type": "Java",
+    "typeVersion": "1.8",
+    "homepage": "https://github.com/aws/aws-sdk-java-v2/",
+    "timestamp": "2020-03-05T23:20:50.52Z"
+  },
+  "definitions": {
+    "types": {
+      "TYPE": "Class, interface (including annotation type), or enum declaration",
+      "FIELD": "Field declaration (includes enum constants)",
+      "METHOD": "Method declaration"
+    },
+    "tags": {
+      "service": "Service client",
+      "request": "AWS SDK request type",
+      "response": "AWS SDK response type",
+      "requestBuilder": "AWS SDK request builder",
+      "responseBuilder": "AWS SDK response builder"
+    }
+  },
+  "shapes": {
+    "com.amazonaws.snowball#Snowball": [
+      {
+        "type": "TYPE",
+        "id": "software.amazon.awssdk.services.snowball.SnowballClient",
+        "tags": ["service"]
+      }
+    ],
+    "com.amazonaws.snowball#ListClusters": [
+      {
+        "type": "METHOD",
+        "id": "software.amazon.awssdk.services.snowball.SnowballClient#listClusterJobs"
+      }
+    ],
+    "com.amazonaws.snowball#ListClustersRequest": [
+      {
+        "type": "TYPE",
+        "id": "software.amazon.awssdk.services.snowball.model.ListClusterJobsRequest$Builder",
+        "tags": ["requestBuilder"]
+      },
+      {
+        "type": "TYPE",
+        "id": "software.amazon.awssdk.services.snowball.model.ListClusterJobsRequest",
+        "tags": ["request"]
+      }
+    ],
+    "com.amazonaws.snowball#ListClustersRequest$ClusterId": [
+      {
+        "type": "METHOD",
+        "id": "software.amazon.awssdk.services.snowball.model.ListClusterJobsRequest$Builder#clusterId",
+        "tags": ["requestBuilder"]
+      },
+      {
+        "type": "METHOD",
+        "id": "software.amazon.awssdk.services.snowball.model.ListClusterJobsRequest#clusterId",
+        "tags": ["request"]
+      }
+    ],
+    "com.amazonaws.snowball#ListClustersRequest$NextToken": [
+      {
+        "type": "METHOD",
+        "id": "software.amazon.awssdk.services.snowball.model.ListClusterJobsRequest$Builder#nextToken",
+        "tags": ["requestBuilder"]
+      },
+      {
+        "type": "METHOD",
+        "id": "software.amazon.awssdk.services.snowball.model.ListClusterJobsRequest#nextToken",
+        "tags": ["request"]
+      }
+    ],
+    "com.amazonaws.snowball#ListClustersResponse": [
+      {
+        "type": "TYPE",
+        "id": "software.amazon.awssdk.services.snowball.model.ListClusterJobsResponse$Builder",
+        "tags": ["responseBuilder"]
+      },
+      {
+        "type": "TYPE",
+        "id": "software.amazon.awssdk.services.snowball.model.ListClusterJobsResponse",
+        "tags": ["response"]
+      }
+    ]
+  }
+}

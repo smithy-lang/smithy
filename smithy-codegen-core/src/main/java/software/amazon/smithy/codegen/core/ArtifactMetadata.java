@@ -52,16 +52,16 @@ public class ArtifactMetadata {
      *
      * @return an ObjectNode with that contains StringNodes representing the trace file
      * metadata
-     * @throws AssertionError if id, version, type or timestamp is not defined when the method is called
+     * @throws TraceFileWritingException if id, version, type or timestamp is not defined when the method is called
      */
     public ObjectNode toJsonNode(){
         Map<StringNode, Node> nodes= new HashMap<>();
 
         //error handling
-        assert id!=null: " ArtifactMetadata id must be defined before calling toJsonNode";
-        assert version!=null: " ArtifactMetadata version must be defined before calling toJsonNode";
-        assert type!=null: " ArtifactMetadata type must be defined before calling toJsonNode";
-        assert timestamp!=null: " ArtifactMetadata timestamp must be defined before calling toJsonNode";
+        if(id==null) throw new TraceFileWritingException(this.getClass().getSimpleName(), idText);
+        if(version==null) throw new TraceFileWritingException(this.getClass().getSimpleName(), versionText);
+        if(type==null) throw new TraceFileWritingException(this.getClass().getSimpleName(), typeText);
+        if(timestamp==null) throw new TraceFileWritingException(this.getClass().getSimpleName(), timestampText);
 
         //using empty string for source filename
         nodes.put(new StringNode(idText, sl), new StringNode(id, sl));
@@ -101,7 +101,7 @@ public class ArtifactMetadata {
      */
     private String fromJsonNodeHelper(String text, ObjectNode jsonNode){
         return jsonNode.getStringMember(text)
-                .orElseThrow(()-> new TraceFileParsingException("ArtifactMetadata", text))
+                .orElseThrow(()-> new TraceFileParsingException(this.getClass().getSimpleName(), text))
                 .getValue();
     }
 

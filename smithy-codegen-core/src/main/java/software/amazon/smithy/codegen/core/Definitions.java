@@ -90,8 +90,12 @@ public class Definitions {
      */
     public void fromJsonNode(ObjectNode node){
         Map<StringNode, Node> typesNode = node.getObjectMember(typeText)
-                .orElseThrow(()-> new TraceFileParsingException("Definitions", typeText))
+                .orElseThrow(()-> new TraceFileParsingException(this.getClass().getSimpleName(), typeText))
                 .getMembers();
+
+        //throw an error if tags node is empty or if type nodes is empty
+        if(typesNode.isEmpty()) throw new TraceFileParsingException(this.getClass().getSimpleName(), typeText);
+
         for(StringNode keyNode: typesNode.keySet()){
             StringNode valueNode = typesNode.get(keyNode).expectStringNode("Types -> List of Types - level of Json" +
                     "in trace file is incorrect, types must be Strings -- see example for correct formatting");
@@ -99,8 +103,12 @@ public class Definitions {
         }
 
         Map<StringNode, Node> tagsNode = node.getObjectMember(tagsText)
-                .orElseThrow(()-> new TraceFileParsingException("Definitions", typeText))
+                .orElseThrow(()-> new TraceFileParsingException(this.getClass().getSimpleName(), typeText))
                 .getMembers();
+
+        //throw an error if tags node is empty or if type nodes is empty
+        if(tagsNode.isEmpty()) throw new TraceFileParsingException(this.getClass().getSimpleName(), tagsText);
+
         for(StringNode keyNode: tagsNode.keySet()){
             StringNode valueNode = tagsNode.get(keyNode).expectStringNode("Tags -> List of Tags - level of Json" +
                     "in trace file is incorrect, Tags must be Strings -- see example for correct formatting");
@@ -120,7 +128,7 @@ public class Definitions {
         InputStream stream = new FileInputStream(new File(filename));
         return Node.parse(stream)
                 .asObjectNode()
-                .orElseThrow(()-> new TraceFileParsingException("Definitions", typeText + " or " + tagsText));
+                .orElseThrow(()-> new TraceFileParsingException(this.getClass().getSimpleName(), typeText + " or " + tagsText));
     }
 
     /**
@@ -128,12 +136,12 @@ public class Definitions {
      *
      * @return an ObjectNode that contains two ObjectNode children; one contains the tag map structure the
      * other contains the type map structure.
-     * @throws AssertionError if types or tags is not defined when the method is called
+     * @throws TraceFileWritingException if types or tags is not defined when the method is called
      */
     public ObjectNode toJsonNode(){
         //error handling
-        assert types!=null: " Definition's type must be defined before calling toJsonNode";
-        assert tags!=null: " Definition's tags must be defined before calling toJsonNode";
+        if(types==null || types.isEmpty()) throw new TraceFileWritingException(this.getClass().getSimpleName(), typeText);
+        if(tags==null || tags.isEmpty()) throw new TraceFileWritingException(this.getClass().getSimpleName(), tagsText);
 
         ObjectNode typesObjectNode = toJsonNodeHelper(types);
         ObjectNode tagsObjectNode = toJsonNodeHelper(tags);
