@@ -256,6 +256,11 @@ string NonEmptyString
 @trait(selector: "resource:test(-[put]->)")
 structure noReplace {}
 
+/// Indicates that a blob or string shape contains an exact document.
+@trait(selector: ":is(blob, string)[trait|mediaType]", conflicts: [streaming])
+@tags(["diff.error.const"])
+structure exactDocument {}
+
 /// Describes the contents of a blob shape using a media type as defined by
 /// RFC 6838 (e.g., "video/quicktime").
 @trait(selector: ":is(blob, string)")

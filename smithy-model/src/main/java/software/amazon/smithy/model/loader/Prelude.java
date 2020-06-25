@@ -47,6 +47,7 @@ import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.EventHeaderTrait;
 import software.amazon.smithy.model.traits.EventPayloadTrait;
+import software.amazon.smithy.model.traits.ExactDocumentTrait;
 import software.amazon.smithy.model.traits.ExamplesTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.HostLabelTrait;
@@ -157,6 +158,7 @@ public final class Prelude {
             EventHeaderTrait.ID,
             EventPayloadTrait.ID,
             ExamplesTrait.ID,
+            ExactDocumentTrait.ID,
             ExternalDocumentationTrait.ID,
             HostLabelTrait.ID,
             HttpChecksumRequiredTrait.ID,

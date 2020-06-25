@@ -232,6 +232,11 @@ The following example defines a video/quicktime blob:
         @mediaType("video/quicktime")
         blob VideoData
 
+.. seealso::
+
+    Refer to the :ref:`exactDocument-trait` for information on how to
+    embed nested documents inside of ``string`` and ``blob`` shapes.
+
 
 .. _timestampFormat-trait:
 

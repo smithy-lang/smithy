@@ -285,7 +285,7 @@ Shapes that are simple types are defined using the following grammar:
       - Represents an instant in time with no UTC offset or timezone. The
         serialization of a timestamp is determined by a
         :ref:`protocol <protocolDefinition-trait>`.
-    * - document
+    * - :ref:`document <document-type>`
       - A protocol-specific untyped value.
 
 The following example defines a shape for each simple type in the
@@ -394,16 +394,33 @@ by tooling to represent a timestamp.
 Document types
 ==============
 
-A document type represents a protocol-specific untyped value. Documents
-are useful when interacting with data that has no predefined schema,
-uses a schema language that is not compatible with Smithy, or if the schema
-that defines the data is specified and versioned outside of the
+A document type represents protocol-agnostic open content that is accessed
+like JSON data. Open content is useful for modeling unstructured data that
+has no schema, data that can't be modeled using rigid types, or data that has
+a schema that evolves outside of the purview of a Smithy model.
+
+.. rubric:: Inline document serialization
+
+Document types are *inline documents* because they are serialized using the
+same format as their surroundings and require no additional encoding or
+escaping. The serialization format of an inline document is an implementation
+detail; changing the protocol of a service SHOULD NOT change the features and
+functionality of a document type abstraction used in code generated from a
 Smithy model.
 
-.. note::
+Documents can also be defined using the :ref:`exactDocument-trait`. This
+trait indicates that a ``blob`` or ``string`` shape contains a nested document
+that can be lazily parsed into a document abstraction.
 
-    * Not all protocols support document types
-    * The serialization format of a document is protocol-specific.
+.. rubric:: Code generation and implementation
+
+Smithy implementations that generate code for document types MUST provide
+structured access to documents through JSON-like abstractions, allowing
+developers to interact with documents as lists, maps, strings, numbers,
+booleans, and nulls. Additional functionality is allowed, though the
+aforementioned access patterns are required. Implementations MUST NOT provide
+access to the underlying bytes of an inline document because its serialization
+format is an implementation detail.
 
 
 .. _aggregate-types:
