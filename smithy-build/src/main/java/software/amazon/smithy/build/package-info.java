@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,14 +13,8 @@
  * permissions and limitations under the License.
  */
 
-description = "This module is a library used to validate Smithy models, create filtered " +
-        "projections of a model, and generate build artifacts."
-extra["displayName"] = "Smithy :: Build"
-extra["moduleName"] = "software.amazon.smithy.build"
-
-dependencies {
-    api(project(":smithy-utils"))
-    api(project(":smithy-model"))
-
-    implementation("com.google.code.findbugs:jsr305:3.0.2")
-}
+/**
+ * Defines integration points for Smithy code generators.
+ */
+@javax.annotation.ParametersAreNonnullByDefault
+package software.amazon.smithy.build;
