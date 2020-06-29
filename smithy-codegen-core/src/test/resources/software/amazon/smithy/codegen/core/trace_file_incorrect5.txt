@@ -9,10 +9,12 @@
     "timestamp": "2020-03-05T23:20:50.52Z"
   },
   "definitions": {
-    "types": {
-      "TYPE": "Class, interface (including annotation type), or enum declaration",
-      "FIELD": "Field declaration (includes enum constants)",
-      "METHOD": "Method declaration"
+    "tags": {
+      "service": "Service client",
+      "request": "AWS SDK request type",
+      "response": "AWS SDK response type",
+      "requestBuilder": "AWS SDK request builder",
+      "responseBuilder": "AWS SDK response builder"
     }
   },
   "shapes": {

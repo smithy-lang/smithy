@@ -91,7 +91,7 @@ public class TraceFile implements ToNode, FromNode, ValidateRequirements {
             definitions = nodeMapper.deserialize(node.expectObjectMember(definitionsText), Definitions.class);
             definitions.validateRequiredFields();
         }
-        
+
         //error checking
         validateRequiredFields();
     }

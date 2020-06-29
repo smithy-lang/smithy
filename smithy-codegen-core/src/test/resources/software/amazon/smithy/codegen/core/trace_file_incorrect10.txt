@@ -2,6 +2,7 @@
   "smithyTrace": "1.0",
   "artifact": {
     "id": "software.amazon.awssdk.services:snowball:2.10.79",
+    "version": "2.10.79",
     "type": "Java",
     "typeVersion": "1.8",
     "homepage": "https://github.com/aws/aws-sdk-java-v2/",
@@ -24,14 +25,12 @@
   "shapes": {
     "com.amazonaws.snowball#Snowball": [
       {
-        "type": "TYPE",
         "id": "software.amazon.awssdk.services.snowball.SnowballClient",
         "tags": ["service"]
       }
     ],
     "com.amazonaws.snowball#ListClusters": [
       {
-        "type": "METHOD",
         "id": "software.amazon.awssdk.services.snowball.SnowballClient#listClusterJobs"
       }
     ],

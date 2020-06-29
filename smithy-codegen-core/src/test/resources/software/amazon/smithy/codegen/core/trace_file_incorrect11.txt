@@ -3,6 +3,7 @@
   "artifact": {
     "id": "software.amazon.awssdk.services:snowball:2.10.79",
     "version": "2.10.79",
+    "type": "Java",
     "typeVersion": "1.8",
     "homepage": "https://github.com/aws/aws-sdk-java-v2/",
     "timestamp": "2020-03-05T23:20:50.52Z"
@@ -32,13 +33,11 @@
     "com.amazonaws.snowball#ListClusters": [
       {
         "type": "METHOD",
-        "id": "software.amazon.awssdk.services.snowball.SnowballClient#listClusterJobs"
       }
     ],
     "com.amazonaws.snowball#ListClustersRequest": [
       {
         "type": "TYPE",
-        "id": "software.amazon.awssdk.services.snowball.model.ListClusterJobsRequest$Builder",
         "tags": ["requestBuilder"]
       },
       {
