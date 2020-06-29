@@ -1,12 +1,11 @@
 package software.amazon.smithy.codegen.core;
 
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.node.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -29,7 +28,7 @@ import java.util.Optional;
  * </ul>
  *
  */
-public class ArtifactMetadata {
+public class ArtifactMetadata implements ToNode, FromNode, ValidateRequirements{
     private String id;
     private String version;
     private String timestamp;
@@ -44,7 +43,7 @@ public class ArtifactMetadata {
     public final String homepageText = "homepage";
     public final String timestampText = "timestamp";
 
-    private final SourceLocation sl = new SourceLocation("");
+    private NodeMapper nodeMapper = new NodeMapper();
 
     /**
      * Converts the metadata contained in ArtifactMetadata's instance variables
@@ -52,27 +51,24 @@ public class ArtifactMetadata {
      *
      * @return an ObjectNode with that contains StringNodes representing the trace file
      * metadata
-     * @throws TraceFileWritingException if id, version, type or timestamp is not defined when the method is called
      */
-    public ObjectNode toJsonNode(){
+    @Override
+    public ObjectNode toNode(){
         Map<StringNode, Node> nodes= new HashMap<>();
 
         //error handling
-        if(id==null) throw new TraceFileWritingException(this.getClass().getSimpleName(), idText);
-        if(version==null) throw new TraceFileWritingException(this.getClass().getSimpleName(), versionText);
-        if(type==null) throw new TraceFileWritingException(this.getClass().getSimpleName(), typeText);
-        if(timestamp==null) throw new TraceFileWritingException(this.getClass().getSimpleName(), timestampText);
+        validateRequiredFields();
 
-        //using empty string for source filename
-        nodes.put(new StringNode(idText, sl), new StringNode(id, sl));
-        nodes.put(new StringNode(versionText, sl), new StringNode(version, sl));
-        nodes.put(new StringNode(typeText, sl),new StringNode(type, sl));
-        if(typeVersion!=null) nodes.put(new StringNode(typeVersionText, sl), new StringNode(typeVersion, sl));
-        if(homepage!=null) nodes.put(new StringNode(homepageText, sl), new StringNode(homepage, sl));
-        nodes.put(new StringNode(timestampText, sl),new StringNode(timestamp, sl));
+        Map<String, String> toSerialize = new HashMap<>();
 
-        //create and return ObjectNode that contains the StringNodes
-        return new ObjectNode(nodes, sl);
+        toSerialize.put(idText,id);
+        toSerialize.put(versionText, version);
+        toSerialize.put(typeText,type);
+        toSerialize.put(timestampText, timestamp);
+        if(typeVersion!=null) toSerialize.put(typeVersionText, typeVersion);
+        if(homepage!=null) toSerialize.put(homepageText, homepage);
+
+        return nodeMapper.serialize(toSerialize).expectObjectNode();
     }
 
     /**
@@ -81,30 +77,41 @@ public class ArtifactMetadata {
      *
      * @param jsonNode an ObjectNode that contains all children of the artifact tag in the trace file
      */
-    public void fromJsonNode(ObjectNode jsonNode){
-        id = fromJsonNodeHelper(idText, jsonNode);
-        version = fromJsonNodeHelper(versionText, jsonNode);
-        timestamp = fromJsonNodeHelper(timestampText, jsonNode);
-        type = fromJsonNodeHelper(typeText, jsonNode);
-        if(jsonNode.containsMember(typeVersionText))
-            typeVersion = fromJsonNodeHelper(typeVersionText, jsonNode);
-        if(jsonNode.containsMember(homepageText))
-            homepage = fromJsonNodeHelper(homepageText, jsonNode);
+    @Override
+    public void fromNode(Node jsonNode){
+        //cast to objectNode
+        ObjectNode node = jsonNode.expectObjectNode();
+
+        //error handling during deserialization
+        nodeMapper.setWhenMissingSetter(NodeMapper.WhenMissing.FAIL);
+
+        id = nodeMapper.deserialize(node.expectStringMember(idText), String.class);
+        version = nodeMapper.deserialize(node.expectStringMember(versionText), String.class);
+        timestamp = nodeMapper.deserialize(node.expectStringMember(timestampText), String.class);
+        type = nodeMapper.deserialize(node.expectStringMember(typeText), String.class);
+
+        if(node.containsMember(typeVersionText))
+            typeVersion = nodeMapper.deserialize(node.expectStringMember(typeVersionText), String.class);
+        if(node.containsMember(homepageText))
+            homepage = nodeMapper.deserialize(node.expectStringMember(homepageText), String.class);
+
+        //error handling
+        validateRequiredFields();
     }
+
 
     /**
-     * Helper method for fromJsonNode that converts from a StringNode to a String
-     * @param text text corresponding to metadata parameter to extract
-     * @param jsonNode ObjectNode for artifact section of trace file
-     * @return a string representing the value of the metadata extracted from jsonNode
-     * @throws TraceFileParsingException if any required metadata tags are missing or incorrectly formatted
+     * Checks if all of the ArtifactMetadata's required fields are not null.
+     *
+     * @throws NullPointerException if any of the required fields are null
      */
-    private String fromJsonNodeHelper(String text, ObjectNode jsonNode){
-        return jsonNode.getStringMember(text)
-                .orElseThrow(()-> new TraceFileParsingException(this.getClass().getSimpleName(), text))
-                .getValue();
+    @Override
+    public void validateRequiredFields() {
+        Objects.requireNonNull(id);
+        Objects.requireNonNull(version);
+        Objects.requireNonNull(type);
+        Objects.requireNonNull(timestamp);
     }
-
 
     /**
      * Gets this ArtifactMetadata's id

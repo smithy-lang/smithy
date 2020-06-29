@@ -3,11 +3,15 @@ package software.amazon.smithy.codegen.core;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.ObjectNode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class ShapeLinkTest {
 
     @Test
-    void toJsonNode() {
+    void toNode() {
         ShapeLink shapeLink = new ShapeLink();
+        shapeLink.setTags(new ArrayList<>());
 
         shapeLink.setType("type");
         shapeLink.setId("id");
@@ -16,7 +20,7 @@ class ShapeLinkTest {
         shapeLink.setLine(1);
         shapeLink.setColumn(2);
 
-        ObjectNode node = shapeLink.toJsonNode();
+        ObjectNode node = shapeLink.toNode();
 
         assert node.getStringMember(shapeLink.typeText).get().getValue().equals("type");
         assert node.getNumberMember(shapeLink.lineText).get().getValue().equals(1);
@@ -30,8 +34,9 @@ class ShapeLinkTest {
     }
 
     @Test
-    void fromJsonNode() {
+    void fromNode() {
         ShapeLink shapeLink = new ShapeLink();
+        shapeLink.setTags(new ArrayList<>());
 
         shapeLink.setType("type");
         shapeLink.setId("id");
@@ -40,11 +45,11 @@ class ShapeLinkTest {
         shapeLink.setLine(1);
         shapeLink.setColumn(2);
 
-        ObjectNode node = shapeLink.toJsonNode();
+        ObjectNode node = shapeLink.toNode();
 
         ShapeLink shapeLink2 = new ShapeLink();
-        //testing fromJsonNode
-        shapeLink2.fromJsonNode(node);
+        //testing fromNode
+        shapeLink2.fromNode(node);
 
         assert shapeLink.getColumn().equals(shapeLink2.getColumn());
         assert shapeLink.getId().equals(shapeLink2.getId());

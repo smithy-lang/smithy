@@ -25,7 +25,7 @@ import java.util.*;
  * </ul>
  *
  */
-public class ShapeLink {
+public class ShapeLink implements ToNode, FromNode, ValidateRequirements{
     private String type;
     private String id;
     private List<String> tags; //optional
@@ -40,108 +40,63 @@ public class ShapeLink {
     public final String lineText = "line";
     public final String columnText = "column";
 
-    private final SourceLocation sl = new SourceLocation("");
-
-    /**
-     * Default constructor for ShapeLink
-     */
-    public ShapeLink(){
-        tags = new ArrayList<>();
-    }
+    private NodeMapper nodeMapper = new NodeMapper();
 
     /**
      * Instantiates ShapeLink instance variables by extracting data from an ObjectNode
      *
-     * @param node an ObjectNode that represents the a single ShapeLink
+     * @param jsonNode an ObjectNode that represents the a single ShapeLink
      */
-    public void fromJsonNode(ObjectNode node) {
-        type = fromJsonNodeStringHelper(typeText, node);
-        id = fromJsonNodeStringHelper(idText, node);
-        if(node.containsMember(tagsText)) setTagsFromJson(node);
-        if(node.containsMember(fileText)) file = fromJsonNodeStringHelper(fileText, node);
-        if(node.containsMember(lineText)) line = (Integer) fromJsonNodeNumberHelper(lineText, node);
-        if(node.containsMember(columnText)) column = (Integer) fromJsonNodeNumberHelper(columnText, node);
+    @Override
+    public void fromNode(Node jsonNode) {
+        ObjectNode node = jsonNode.expectObjectNode();
+
+        type = nodeMapper.deserialize(node.expectStringMember(typeText), String.class);
+        id = nodeMapper.deserialize(node.expectStringMember(idText), String.class);
+
+        if(node.containsMember(tagsText)) tags = nodeMapper.deserializeCollection(node.expectArrayMember(tagsText), List.class, String.class);
+        if(node.containsMember(fileText)) file = nodeMapper.deserialize(node.expectStringMember(fileText), String.class);
+        if(node.containsMember(lineText)) line = nodeMapper.deserialize(node.expectNumberMember(lineText), Integer.class);
+        if(node.containsMember(columnText)) column = nodeMapper.deserialize(node.expectNumberMember(columnText), Integer.class);
+
+        //error handling - required objects should not be null after parsing
+        validateRequiredFields();
     }
 
-    /**
-     * Helper method for fromJsonNode that converts from a StringNode to a String
-     * @param text text corresponding to ShapeLink parameter to extract
-     * @param node ObjectNode for ShapeLink section of trace file
-     * @return a string representing the value of the ShapeLink data extracted from node
-     * @throws TraceFileParsingException if any required tags are missing or incorrectly formatted
-     */
-    private String fromJsonNodeStringHelper(String text, ObjectNode node){
-        return node.getStringMember(text)
-                .orElseThrow(()-> new TraceFileParsingException(this.getClass().getSimpleName(), text))
-                .getValue();
-    }
-
-    /**
-     * Helper method for fromJsonNode that converts from a NumberNode to a String
-     * @param text text corresponding to ShapeLink parameter to extract
-     * @param node ObjectNode for ShapeLink section of trace file
-     * @return a Number representing the value of the ShapeLink data extracted from node
-     * @throws TraceFileParsingException if any required tags are missing or incorrectly formatted
-     */
-    private Number fromJsonNodeNumberHelper(String text, ObjectNode node){
-        return node.getNumberMember(text)
-                .orElseThrow(()-> new TraceFileParsingException(this.getClass().getSimpleName(), text))
-                .getValue();
-    }
-
-    /**
-     * Helper method for fromJsonNode that converts an ArrayNode into the list of
-     * tags
-     *
-     * @param node and ObjectNode that represents the information for a single
-     *             ShapeLink object
-     */
-    private void setTagsFromJson(ObjectNode node) {
-        ArrayNode arrayNode = node.getArrayMember(tagsText)
-                .orElseThrow(()-> new TraceFileParsingException(this.getClass().getSimpleName(), tagsText));
-        for (Node value : arrayNode) {
-            StringNode next = value.expectStringNode("shapes->ShapeIds->tags->list of tags level of JSON in " +
-                    "trace file is formatted incorrectly, tags must be Strings - see example for correct formatting");
-            tags.add(next.getValue());
-        }
-    }
     /**
      * Converts instance variables into an ObjectNode for writing out a ShapeLink
      *
      * @return returns an ObjectNode that contains the StringNodes with the information
      * from a ShapeLink
-     * @throws TraceFileWritingException if id or type is not defined when the method is called
      */
-    public ObjectNode toJsonNode(){
+    @Override
+    public ObjectNode toNode(){
         Map<StringNode, Node> nodes= new HashMap<>();
 
-        if(id==null) throw new TraceFileWritingException(this.getClass().getSimpleName(), idText);
-        if(type==null) throw new TraceFileWritingException(this.getClass().getSimpleName(), typeText);
+        //error handling - required objects should not be null
+       validateRequiredFields();
 
-        nodes.put(new StringNode(idText, sl), new StringNode(id, sl));
-        nodes.put(new StringNode(typeText, sl),new StringNode(type, sl));
+        Map<String, Object> toSerialize = new HashMap<>();
 
-        if(tags!=null && !tags.isEmpty()) nodes.put(new StringNode(tagsText, sl), getJsonFromTags());
-        if(file!=null) nodes.put(new StringNode(fileText, sl), new StringNode(file, sl));
-        if(line!=null) nodes.put(new StringNode(lineText, sl), new NumberNode(line, sl));
-        if(column!=null) nodes.put(new StringNode(columnText, sl), new NumberNode(column, sl));
+        toSerialize.put(idText,id);
+        toSerialize.put(typeText, type);
+        if(tags!=null) toSerialize.put(tagsText,tags);
+        if(file!=null) toSerialize.put(fileText,file);
+        if(line!=null) toSerialize.put(lineText,line);
+        if(column!=null) toSerialize.put(columnText, column);
 
-        return new ObjectNode(nodes, sl);
+        return nodeMapper.serialize(toSerialize).expectObjectNode();
     }
 
     /**
-     * Helper method for toJsonNode that converts the list of tags into an ArrayNode
+     * Checks if all of the ShapeLink's required fields are not null.
      *
-     * @return an ArrayNode containing the list of tags
+     * @throws NullPointerException if any of the required fields are null
      */
-    private ArrayNode getJsonFromTags() {
-        List<Node> elements = new ArrayList<>();
-
-        for(String tag: tags){
-            elements.add(new StringNode(tag, sl));
-        }
-
-        return new ArrayNode(elements, sl);
+    @Override
+    public void validateRequiredFields() {
+        Objects.requireNonNull(id);
+        Objects.requireNonNull(type);
     }
 
     /**

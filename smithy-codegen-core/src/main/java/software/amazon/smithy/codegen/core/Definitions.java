@@ -1,9 +1,7 @@
 package software.amazon.smithy.codegen.core;
 
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.node.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,6 +10,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Class that defines the acceptable values that can be used in ShapeLink objects.
@@ -29,21 +28,76 @@ import java.util.Map;
  *     generator could be "requestBuilder" to indicate that a class is used as a builder for a request.
  * </p>
  */
-public class Definitions {
+public class Definitions implements ToNode, FromNode, ValidateRequirements {
     private Map<String, String> tags;
     private Map<String, String> types;
 
     public final String typeText = "types";
     public final String tagsText = "tags";
 
-    private final SourceLocation sl = new SourceLocation("");
+    private NodeMapper nodeMapper = new NodeMapper();
+
 
     /**
-     * Default constructor for definitions, instantiates empty HashMaps for tags and types
+     * Converts an ObjectNode that represents the definitions section of the
+     * trace file into the types maps and tags map instance variable
+     *
+     * @param jsonNode ObjectNode that contains the JSON data inside the definitions tag of
+     *             the trace file
+     * @throws software.amazon.smithy.model.node.ExpectationNotMetException if the values associated with definition's
+     * type or tag nodes are missing or incorrectly formatted
      */
-    public Definitions(){
-        tags = new HashMap<>();
-        types = new HashMap<>();
+    @Override
+    public void fromNode(Node jsonNode){
+        ObjectNode node = jsonNode.expectObjectNode();
+
+        types = nodeMapper.deserializeMap(node.expectObjectMember(typeText), Map.class, String.class);
+        tags = nodeMapper.deserializeMap(node.expectObjectMember(tagsText), Map.class, String.class);
+
+        //error handling
+        validateRequiredFields();
+    }
+
+    /**
+     * Parses a definitions file and converts it into a definitions object. This is useful
+     * in the scenario when the user is provided the definitions specification and must create
+     * the trace file from that definitions specification.
+     * @param filename a definitions file URI - see example
+     * @throws FileNotFoundException if the definitions file path is not found
+     * @return ObjectNode corresponding to parsed URI
+     */
+    public ObjectNode fromDefinitionsFile(URI filename) throws FileNotFoundException {
+        InputStream stream = new FileInputStream(new File(filename));
+        return Node.parse(stream).expectObjectNode();
+    }
+
+    /**
+     * Converts the types and tags Maps into a single ObjectNode.
+     *
+     * @return an ObjectNode that contains two ObjectNode children; one contains the tag map structure the
+     * other contains the type map structure.
+     */
+    @Override
+    public ObjectNode toNode(){
+        //error handling
+        validateRequiredFields();
+
+        Map<String, Map<String, String>> toSerialize = new HashMap<>();
+        toSerialize.put(typeText, types);
+        toSerialize.put(tagsText, tags);
+
+        return nodeMapper.serialize(toSerialize).expectObjectNode();
+    }
+
+    /**
+     * Checks if all of the objects required fields are not null.
+     *
+     * @throws NullPointerException if any of the required fields are null
+     */
+    @Override
+    public void validateRequiredFields() {
+        Objects.requireNonNull(types);
+        Objects.requireNonNull(tags);
     }
 
     /**
@@ -76,95 +130,5 @@ public class Definitions {
      */
     public void setTypes(Map<String, String> types) {
         this.types = types;
-    }
-
-    /**
-     * Converts an ObjectNode that represents the definitions section of the
-     * trace file into the types maps and tags map instance variable
-     *
-     * @param node ObjectNode that contains the JSON data inside the definitions tag of
-     *             the trace file
-     * @throws TraceFileParsingException if definition's type or tag nodes are missing or incorrectly formatted
-     * @throws software.amazon.smithy.model.node.ExpectationNotMetException if the values associated with definition's
-     * type or tag nodes are missing or incorrectly formatted
-     */
-    public void fromJsonNode(ObjectNode node){
-        Map<StringNode, Node> typesNode = node.getObjectMember(typeText)
-                .orElseThrow(()-> new TraceFileParsingException(this.getClass().getSimpleName(), typeText))
-                .getMembers();
-
-        //throw an error if tags node is empty or if type nodes is empty
-        if(typesNode.isEmpty()) throw new TraceFileParsingException(this.getClass().getSimpleName(), typeText);
-
-        for(StringNode keyNode: typesNode.keySet()){
-            StringNode valueNode = typesNode.get(keyNode).expectStringNode("Types -> List of Types - level of Json" +
-                    "in trace file is incorrect, types must be Strings -- see example for correct formatting");
-            types.put(keyNode.getValue(), valueNode.getValue());
-        }
-
-        Map<StringNode, Node> tagsNode = node.getObjectMember(tagsText)
-                .orElseThrow(()-> new TraceFileParsingException(this.getClass().getSimpleName(), typeText))
-                .getMembers();
-
-        //throw an error if tags node is empty or if type nodes is empty
-        if(tagsNode.isEmpty()) throw new TraceFileParsingException(this.getClass().getSimpleName(), tagsText);
-
-        for(StringNode keyNode: tagsNode.keySet()){
-            StringNode valueNode = tagsNode.get(keyNode).expectStringNode("Tags -> List of Tags - level of Json" +
-                    "in trace file is incorrect, Tags must be Strings -- see example for correct formatting");
-            tags.put(keyNode.getValue(), valueNode.getValue());
-        }
-    }
-
-    /**
-     * Parses a definitions file and converts it into a definitions object. This is useful
-     * in the scenario when the user is provided the definitions specification and must create
-     * the trace file from that definitions specification.
-     * @param filename a definitions file URI - see example
-     * @throws FileNotFoundException if the definitions file path is not found
-     * @return ObjectNode corresponding to parsed URI
-     */
-    public ObjectNode fromDefinitionsFile(URI filename) throws FileNotFoundException {
-        InputStream stream = new FileInputStream(new File(filename));
-        return Node.parse(stream)
-                .asObjectNode()
-                .orElseThrow(()-> new TraceFileParsingException(this.getClass().getSimpleName(), typeText + " or " + tagsText));
-    }
-
-    /**
-     * Converts the types and tags Maps into a single ObjectNode.
-     *
-     * @return an ObjectNode that contains two ObjectNode children; one contains the tag map structure the
-     * other contains the type map structure.
-     * @throws TraceFileWritingException if types or tags is not defined when the method is called
-     */
-    public ObjectNode toJsonNode(){
-        //error handling
-        if(types==null || types.isEmpty()) throw new TraceFileWritingException(this.getClass().getSimpleName(), typeText);
-        if(tags==null || tags.isEmpty()) throw new TraceFileWritingException(this.getClass().getSimpleName(), tagsText);
-
-        ObjectNode typesObjectNode = toJsonNodeHelper(types);
-        ObjectNode tagsObjectNode = toJsonNodeHelper(tags);
-
-        Map<StringNode, Node> typesTagsMap = new HashMap<>();
-        typesTagsMap.put(new StringNode(typeText, sl), typesObjectNode);
-        typesTagsMap.put(new StringNode(tagsText, sl), tagsObjectNode);
-
-        return new ObjectNode(typesTagsMap, sl);
-    }
-
-    /**
-     * Helper method for toJsonNode that converts either the tags or types Maps into a single
-     * ObjectNode.
-     *
-     * @param myMap either the tags or types Map to be converted.
-     * @return an ObjectNode that contains the ObjectNode representation of the inputted map.
-     */
-    private ObjectNode toJsonNodeHelper(Map<String, String> myMap) {
-        Map<StringNode, Node> nodesObject= new HashMap<>();
-        for(String mapKey: myMap.keySet()) {
-            nodesObject.put(new StringNode(mapKey, sl), new StringNode(myMap.get(mapKey), sl));
-        }
-        return new ObjectNode(nodesObject, sl);
     }
 }

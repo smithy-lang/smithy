@@ -1,10 +1,9 @@
 package software.amazon.smithy.codegen.core;
 
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.node.ArrayNode;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.node.*;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 import java.io.*;
@@ -29,7 +28,7 @@ import java.util.*;
  * </p>
  *
  */
-public class TraceFile {
+public class TraceFile implements ToNode, FromNode, ValidateRequirements {
     private String smithyTrace;
     private ArtifactMetadata artifactMetadata;
     private Definitions definitions; //Optional
@@ -40,7 +39,8 @@ public class TraceFile {
     public final String definitionsText = "definitions";
     public final String shapesText = "shapes";
 
-    private final SourceLocation sl = new SourceLocation("");
+    private NodeMapper nodeMapper = new NodeMapper();
+    private SourceLocation sl = new SourceLocation("");
 
 
     /**
@@ -56,117 +56,159 @@ public class TraceFile {
     public void parseTraceFile(URI filename) throws FileNotFoundException {
         InputStream stream = new FileInputStream(new File(filename));
         ObjectNode node = (ObjectNode) Node.parse(stream);
+        fromNode(node);
+    }
 
-        //instantiate on parsing
-        artifactMetadata = new ArtifactMetadata();
+    /**
+     * Converts ObjectNode into TraceFile.
+     *
+     * @param jsonNode an ObjectNode that represents the entire trace file.
+     */
+    @Override
+    public void fromNode(Node jsonNode){
+        //throw error if trace file top level is incorrectly formatted
+        ObjectNode node = jsonNode.expectObjectNode();
+
+        nodeMapper.setWhenMissingSetter(NodeMapper.WhenMissing.FAIL);
+
+        //parse trace
+        smithyTrace = nodeMapper.deserialize(node.expectStringMember(smithyTraceText),String.class);
+
+        //parse metadata
+        artifactMetadata = nodeMapper.deserialize(node.expectObjectMember(artifactText), ArtifactMetadata.class);
+
+        //parse shapes
         shapes = new HashMap<>();
-
-        //throws error if there is no smithyTraceText
-        smithyTrace = node.expectStringMember(smithyTraceText).getValue();
-        //throws error if there's no artifactText
-        artifactMetadata.fromJsonNode(node.expectObjectMember(artifactText));
-        //throws error if no shape or shape incorrectly formatted
-
-        parseShapeObject(node);
-        parseDefinitionsObject(node);
-    }
-
-    /**
-     * Helper method for parseTraceFile.
-     * Parses the Definition object from the trace file node if the
-     * trace file contains a definitions object.
-     *
-     * @param node  an ObjectNode that contains the entire trace file
-     * @see ObjectNode
-     * @see Definitions
-     */
-    private void parseDefinitionsObject(ObjectNode node) {
-        if(node.containsMember(definitionsText)){
-            definitions = new Definitions();
-            definitions.fromJsonNode(node.expectObjectMember(definitionsText));
-        }
-    }
-
-    /**
-     * Helper method for parseTraceFile.
-     * Parses the shapes map from the trace file node. Iterates over all shapeIds in the node.
-     * For each shapeId, iterates over all ShapeLinks and constructs a list of ShapeLink objects,
-     * then puts adds the shapeId and its corresponding list to the shapes map.
-     *
-     * @param node an ObjectNode that contains the entire trace file
-     * @see ObjectNode
-     * @see ShapeId
-     * @see ShapeLink
-     */
-    private void parseShapeObject(ObjectNode node) {
-        //throws error if doesn't find shapeText or if shape map is empty
         Map<StringNode, Node> shapeMap = node.expectObjectMember(shapesText).getMembers();
-        if(shapeMap.isEmpty()) throw new TraceFileParsingException(this.getClass().getSimpleName(), shapesText);
-
         for(StringNode key: shapeMap.keySet()){
             ShapeId shapeId = ShapeId.from(key.getValue());
-            List<ShapeLink> linkList = new ArrayList<>();
-
-            ArrayNode arrayNode = shapeMap.get(key).expectArrayNode("ShapeID -> List<ShapeLink> level of JSON is " +
-                    "incorrectly formatted in trace file - see example");
-
-            for (Node value : arrayNode) {
-                ShapeLink shapeLink = new ShapeLink();
-                ObjectNode next = value.expectObjectNode("List<ShapeLink> level of JSON is incorrectly formatted" +
-                        "in trace file - see example");
-                shapeLink.fromJsonNode(next);
-                linkList.add(shapeLink);
-            }
-
-            shapes.put(shapeId, linkList);
+            List<ShapeLink> list = nodeMapper.deserializeCollection(shapeMap.get(key), ArrayList.class, ShapeLink.class);
+            shapes.put(shapeId, list);
         }
+
+        //parse definitions
+        if(node.containsMember(definitionsText)) {
+            definitions = nodeMapper.deserialize(node.expectObjectMember(definitionsText), Definitions.class);
+            definitions.validateRequiredFields();
+        }
+        
+        //error checking
+        validateRequiredFields();
     }
 
     /**
-     * Writes the TraceFile instance variables to a single JSON ObjectNode
+     * Writes the TraceFile JSON ObjectNode
      * to construct a trace file.
      *
      * @param fileName absolute or relative path to write the trace file
      * @throws IOException if there is an error writing to fileName
      */
     public void writeTraceFile(String fileName) throws IOException {
-        Map<StringNode, Node> nodesMap = new HashMap<>();
-
-        //error checking
-        if(smithyTrace == null) throw new TraceFileWritingException(this.getClass().getSimpleName(), smithyTraceText);
-        if(artifactMetadata == null) throw new TraceFileWritingException(this.getClass().getSimpleName(), artifactText);
-        if(shapes == null) throw new TraceFileWritingException(this.getClass().getSimpleName(), shapesText);
-
-        nodesMap.put(new StringNode(smithyTraceText, sl), new StringNode(smithyTrace, sl));
-        nodesMap.put(new StringNode(artifactText, sl), artifactMetadata.toJsonNode());
-        if(definitions!=null)  nodesMap.put(new StringNode(definitionsText, sl), definitions.toJsonNode());
-        shapeObjectToJson(nodesMap);
-
         BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-
-        writer.write(Node.prettyPrintJson(new ObjectNode(nodesMap, sl), "  "));
+        writer.write(Node.prettyPrintJson(toNode(), "  "));
         writer.close();
     }
 
     /**
-     * Helper method for writeTraceFile that converts the shapes Map to an ObjectNode
-     * by iterating over the contents of shapes and calling ShapeLink's toJsonNode method.
+     * Converts TraceFile instance variables into an
+     * ObjectNode.
      *
-     * @param nodesMap a map of the top level of the trace file
+     * @return ObjectNode representation of a TraceFile.
      */
-    private void shapeObjectToJson(Map<StringNode, Node> nodesMap) {
-        Map<StringNode, Node> shapeMap = new HashMap<>();
-        if(shapes.keySet().isEmpty()) throw new TraceFileWritingException(this.getClass().getSimpleName(), shapesText);
+    @Override
+    public ObjectNode toNode(){
+        //error checking
+        validateRequiredFields();
 
-        for(ShapeId key: shapes.keySet()){
-            List<Node> shapeLinkList = new ArrayList<>();
-            if(shapes.get(key).isEmpty()) throw new TraceFileWritingException(this.getClass().getSimpleName(), key.toString());
-            for(ShapeLink link: shapes.get(key)){
-                shapeLinkList.add(link.toJsonNode());
+        Map<String, Object> toSerialize = new HashMap<>();
+        toSerialize.put(smithyTraceText,smithyTrace);
+        toSerialize.put(artifactText, artifactMetadata);
+        if(definitions!=null)  toSerialize.put(definitionsText, definitions);
+        toSerialize.put(shapesText,shapes);
+
+        return nodeMapper.serialize(toSerialize).expectObjectNode();
+    }
+
+    /**
+     * Finds invalid types and tags and either removes them or throws an error depending on
+     * whether toThrow is true or false.
+     *
+     * @throws ExpectationNotMetException if a type or tag in shapes is not in definitions.
+     */
+    public void validateTypesAndTags(){
+        Objects.requireNonNull(shapes);
+        Objects.requireNonNull(definitions);
+
+        for(ShapeId list: shapes.keySet()){
+            Iterator<ShapeLink> i = shapes.get(list).iterator();
+            while(i.hasNext()){
+                ShapeLink link = i.next();
+                if(!definitions.getTypes().containsKey(link.getType())){
+                    throw new ExpectationNotMetException(list.toString() + " contains types that aren't in definitions.", sl);
+                }
+                else{
+                    Optional<List<String>> tags = link.getTags();
+                    if(tags.isPresent()){
+                        Iterator<String> iter = tags.get().iterator();
+                        while(iter.hasNext()){
+                            String next = iter.next();
+                            if(!definitions.getTags().containsKey(next)){
+                                throw new ExpectationNotMetException(list.toString() + " " + next + " is a tag that isn't in definitions.", sl);
+                            }
+                        }
+                    }
+                }
             }
-            shapeMap.put(new StringNode(key.toString(), sl), new ArrayNode(shapeLinkList, sl));
         }
-        nodesMap.put(new StringNode(shapesText, sl), new ObjectNode(shapeMap, sl));
+    }
+
+    /**
+     * Parses model and determines whether the trace file object meets the specs of the model by checking if
+     * the trace file contains all the shape Ids in the model and the model contains all the ShapeIDs in the trace file.
+     *
+     * @param modelResourceName the model name to validate the trace file against. Model should be in the
+     *                          resources file.
+     * @throws ExpectationNotMetException if model contains a ShapeID not in TraceFile or TraceFile contains a ShapeID
+     * not in model.
+     */
+    public void validateModel(String modelResourceName){
+        Model model = Model.assembler()
+                .addImport(getClass().getResource(modelResourceName))
+                .assemble()
+                .unwrap();
+
+        //error check - shapes must be non-null to use this method
+        Objects.requireNonNull(shapes);
+
+        //model contains all the shapeIds in shapes.keySet()
+        for(ShapeId id: shapes.keySet()){
+            model.expectShape(id);
+        }
+
+        //shapes.keySet() contains all the shapeIds in model
+        for(Shape shape: model.toSet()){
+            ShapeId id = shape.getId();
+            if(!shapes.containsKey(id))
+                throw new ExpectationNotMetException("shapes does not contain" + id.toString() + " but model does", sl);
+        }
+    }
+
+    /**
+     * Checks if all of the objects required fields are not null.
+     *
+     * @throws NullPointerException if any of the required fields are null
+     */
+    @Override
+    public void validateRequiredFields() {
+        Objects.requireNonNull(smithyTrace);
+        Objects.requireNonNull(artifactMetadata);
+        Objects.requireNonNull(shapes);
+        artifactMetadata.validateRequiredFields();
+        for(ShapeId shapeId: shapes.keySet()){
+            for(ShapeLink link: shapes.get(shapeId)){
+              link.validateRequiredFields();
+            }
+        }
     }
 
     /**

@@ -5,6 +5,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -13,8 +14,11 @@ import static org.hamcrest.Matchers.equalTo;
 class DefinitionsTest {
 
     @Test
-    void toJsonNode() {
+    void toNode() {
         Definitions definitions1 = new Definitions();
+
+        definitions1.setTags(new HashMap<>());
+        definitions1.setTypes(new HashMap<>());
 
         Map<String, String> typesMap = definitions1.getTypes();
         Map<String, String> tagsMap = definitions1.getTags();
@@ -24,7 +28,7 @@ class DefinitionsTest {
         tagsMap.put("tag1", "tag1val");
         tagsMap.put("tag2", "tag2val");
 
-        ObjectNode node = definitions1.toJsonNode();
+        ObjectNode node = definitions1.toNode();
 
         assert node.containsMember(definitions1.typeText);
         assert node.containsMember(definitions1.tagsText);
@@ -59,8 +63,11 @@ class DefinitionsTest {
     }
 
     @Test
-    void fromJsonNode() {
+    void fromNode() {
         Definitions definitions1 = new Definitions();
+
+        definitions1.setTags(new HashMap<>());
+        definitions1.setTypes(new HashMap<>());
 
         Map<String, String> typesMap = definitions1.getTypes();
         Map<String, String> tagsMap = definitions1.getTags();
@@ -70,12 +77,13 @@ class DefinitionsTest {
         tagsMap.put("tag1", "tag1val");
         tagsMap.put("tag2", "tag2val");
 
-        ObjectNode node = definitions1.toJsonNode();
+        ObjectNode node = definitions1.toNode();
 
         Definitions definitions2 = new Definitions();
-        definitions2.fromJsonNode(node);
+        definitions2.fromNode(node);
 
-        assertThat(definitions1, equalTo(definitions2));
+        assertThat(definitions1.getTags(), equalTo(definitions2.getTags()));
+        assertThat(definitions1.getTypes(), equalTo(definitions2.getTypes()));
     }
 
     @Test
