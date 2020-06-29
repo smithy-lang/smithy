@@ -50,7 +50,6 @@ public class TraceFile implements ToNode, FromNode, ValidateRequirements {
      *
      * @param filename  the absolute or relative path of tracefile
      * @throws FileNotFoundException if filename is not found for reading
-     * @throws software.amazon.smithy.model.node.ExpectationNotMetException
      * if smithyTrace, artifactMetadata, ShapeLink are not found or not structure correctly
      */
     public void parseTraceFile(URI filename) throws FileNotFoundException {

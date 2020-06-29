@@ -40,12 +40,10 @@ public class Definitions implements ToNode, FromNode, ValidateRequirements {
 
     /**
      * Converts an ObjectNode that represents the definitions section of the
-     * trace file into the types maps and tags map instance variable
+     * trace file into a types maps and tags map
      *
      * @param jsonNode ObjectNode that contains the JSON data inside the definitions tag of
      *             the trace file
-     * @throws software.amazon.smithy.model.node.ExpectationNotMetException if the values associated with definition's
-     * type or tag nodes are missing or incorrectly formatted
      */
     @Override
     public void fromNode(Node jsonNode){
