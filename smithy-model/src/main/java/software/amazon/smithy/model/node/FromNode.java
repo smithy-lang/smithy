@@ -23,6 +23,7 @@ public interface FromNode {
     /**
      * Converts a {@link Node} to the object implementing the interface.
      *
+     * @param node node to convert into object
      */
     void fromNode(Node node);
 }

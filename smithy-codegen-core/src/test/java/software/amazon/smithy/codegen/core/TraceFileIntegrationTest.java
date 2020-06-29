@@ -1,16 +1,15 @@
 package software.amazon.smithy.codegen.core;
 
-import org.junit.jupiter.api.Test;
-
-
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelSyntaxException;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +38,7 @@ public class TraceFileIntegrationTest {
     }
 
     @Test
-    void correctSingleChildParseWrite() throws IOException, URISyntaxException{
+    void correctSingleChildParseWrite() throws IOException, URISyntaxException {
         TraceFile traceFile = new TraceFile();
         traceFile.parseTraceFile(getClass().getResource("trace_file.txt").toURI());
         //deleting additional shapeLink objects
@@ -95,7 +94,7 @@ public class TraceFileIntegrationTest {
                 .assemble()
                 .unwrap();
 
-        for(Shape shape: model.toSet()){
+        for (Shape shape : model.toSet()) {
             traceFile.getShapes().put(shape.getId(), new ArrayList<>());
         }
         traceFile.validateModel("weather-service.smithy");
@@ -117,7 +116,7 @@ public class TraceFileIntegrationTest {
     }
 
     @Test
-    void incorrectWriteNoArtifactMetadata(){
+    void incorrectWriteNoArtifactMetadata() {
         Assertions.assertThrows(NullPointerException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file.txt").toURI());
@@ -128,7 +127,7 @@ public class TraceFileIntegrationTest {
     }
 
     @Test
-    void incorrectWriteNoShapes(){
+    void incorrectWriteNoShapes() {
         Assertions.assertThrows(NullPointerException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file.txt").toURI());
@@ -140,7 +139,7 @@ public class TraceFileIntegrationTest {
 
     //Definitions specific writing integration tests
     @Test
-    void incorrectWriteNoDefinitionsTags(){
+    void incorrectWriteNoDefinitionsTags() {
         Assertions.assertThrows(NullPointerException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file.txt").toURI());
@@ -151,7 +150,7 @@ public class TraceFileIntegrationTest {
     }
 
     @Test
-    void incorrectWriteNoDefinitionsTypes(){
+    void incorrectWriteNoDefinitionsTypes() {
         Assertions.assertThrows(NullPointerException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file.txt").toURI());
@@ -163,7 +162,7 @@ public class TraceFileIntegrationTest {
 
     //ArtifactMetadata specific writing integration tests
     @Test
-    void incorrectWriteNoArtifactId(){
+    void incorrectWriteNoArtifactId() {
         Assertions.assertThrows(NullPointerException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file.txt").toURI());
@@ -174,7 +173,7 @@ public class TraceFileIntegrationTest {
     }
 
     @Test
-    void incorrectWriteNoArtifactVersion(){
+    void incorrectWriteNoArtifactVersion() {
         Assertions.assertThrows(NullPointerException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file.txt").toURI());
@@ -185,7 +184,7 @@ public class TraceFileIntegrationTest {
     }
 
     @Test
-    void incorrectWriteNoArtifactType(){
+    void incorrectWriteNoArtifactType() {
         Assertions.assertThrows(NullPointerException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file.txt").toURI());
@@ -196,7 +195,7 @@ public class TraceFileIntegrationTest {
     }
 
     @Test
-    void incorrectWriteNoArtifactTimeStamp(){
+    void incorrectWriteNoArtifactTimeStamp() {
         Assertions.assertThrows(NullPointerException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file.txt").toURI());
@@ -208,13 +207,13 @@ public class TraceFileIntegrationTest {
 
     //ShapeLink specific writing integration tests
     @Test
-    void incorrectWriteNoShapeLinkType(){
+    void incorrectWriteNoShapeLinkType() {
         Assertions.assertThrows(NullPointerException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file.txt").toURI());
             //set to null before writing and parsing again
-            for(ShapeId id: traceFile.getShapes().keySet()){
-                for(ShapeLink link: traceFile.getShapes().get(id)){
+            for (ShapeId id : traceFile.getShapes().keySet()) {
+                for (ShapeLink link : traceFile.getShapes().get(id)) {
                     link.setType(null);
                 }
             }
@@ -223,13 +222,13 @@ public class TraceFileIntegrationTest {
     }
 
     @Test
-    void incorrectWriteNoShapeLinkId(){
+    void incorrectWriteNoShapeLinkId() {
         Assertions.assertThrows(NullPointerException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file.txt").toURI());
             //set to null before writing and parsing again
-            for(ShapeId id: traceFile.getShapes().keySet()){
-                for(ShapeLink link: traceFile.getShapes().get(id)){
+            for (ShapeId id : traceFile.getShapes().keySet()) {
+                for (ShapeLink link : traceFile.getShapes().get(id)) {
                     link.setId(null);
                 }
             }
@@ -251,22 +250,24 @@ public class TraceFileIntegrationTest {
     }
 
     @Test
-    void incorrectParseNoArtifactMetadata(){
+    void incorrectParseNoArtifactMetadata() {
         Assertions.assertThrows(ExpectationNotMetException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file_incorrect2.txt").toURI());
-        });    }
+        });
+    }
 
     @Test
-    void incorrectParseNoShapes(){
+    void incorrectParseNoShapes() {
         Assertions.assertThrows(ExpectationNotMetException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file_incorrect3.txt").toURI());
-        });    }
+        });
+    }
 
     //Definitions specific parsing integration tests
     @Test
-    void incorrectParseNoDefinitionsTags(){
+    void incorrectParseNoDefinitionsTags() {
         Assertions.assertThrows(NullPointerException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file_incorrect4.txt").toURI());
@@ -274,7 +275,7 @@ public class TraceFileIntegrationTest {
     }
 
     @Test
-    void incorrectParseNoDefinitionsTypes(){
+    void incorrectParseNoDefinitionsTypes() {
         Assertions.assertThrows(NullPointerException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file_incorrect5.txt").toURI());
@@ -283,7 +284,7 @@ public class TraceFileIntegrationTest {
 
     //ArtifactMetadata specific parsing integration tests
     @Test
-    void incorrectParseNoArtifactId(){
+    void incorrectParseNoArtifactId() {
         Assertions.assertThrows(NullPointerException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file_incorrect6.txt").toURI());
@@ -291,7 +292,7 @@ public class TraceFileIntegrationTest {
     }
 
     @Test
-    void incorrectParseNoArtifactVersion(){
+    void incorrectParseNoArtifactVersion() {
         Assertions.assertThrows(NullPointerException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file_incorrect7.txt").toURI());
@@ -300,7 +301,7 @@ public class TraceFileIntegrationTest {
     }
 
     @Test
-    void incorrectParseNoArtifactType(){
+    void incorrectParseNoArtifactType() {
         Assertions.assertThrows(NullPointerException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file_incorrect8.txt").toURI());
@@ -308,7 +309,7 @@ public class TraceFileIntegrationTest {
     }
 
     @Test
-    void incorrectParseNoArtifactTimeStamp(){
+    void incorrectParseNoArtifactTimeStamp() {
         Assertions.assertThrows(NullPointerException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file_incorrect9.txt").toURI());
@@ -317,7 +318,7 @@ public class TraceFileIntegrationTest {
 
     //ShapeLink specific parsing integration tests
     @Test
-    void incorrectParseNoShapeLinkType(){
+    void incorrectParseNoShapeLinkType() {
         Assertions.assertThrows(NullPointerException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file_incorrect10.txt").toURI());
@@ -325,7 +326,7 @@ public class TraceFileIntegrationTest {
     }
 
     @Test
-    void incorrectParseNoShapeLinkId(){
+    void incorrectParseNoShapeLinkId() {
         Assertions.assertThrows(ModelSyntaxException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file_incorrect11.txt").toURI());
@@ -338,7 +339,7 @@ public class TraceFileIntegrationTest {
     -with an invalid tag
      */
     @Test
-    void incorrectValidateTypesOrTagsBadType(){
+    void incorrectValidateTypesOrTagsBadType() {
         Assertions.assertThrows(ExpectationNotMetException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file.txt").toURI());
@@ -348,7 +349,7 @@ public class TraceFileIntegrationTest {
     }
 
     @Test
-    void incorrectValidateTypesOrTagsBadTag(){
+    void incorrectValidateTypesOrTagsBadTag() {
         Assertions.assertThrows(ExpectationNotMetException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file.txt").toURI());
@@ -362,7 +363,7 @@ public class TraceFileIntegrationTest {
      */
 
     @Test
-    void incorrectValidateModel(){
+    void incorrectValidateModel() {
         Assertions.assertThrows(ExpectationNotMetException.class, () -> {
             TraceFile traceFile = new TraceFile();
             traceFile.parseTraceFile(getClass().getResource("trace_file_weather.txt").toURI());
