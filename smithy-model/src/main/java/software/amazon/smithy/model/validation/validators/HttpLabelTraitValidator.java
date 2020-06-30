@@ -104,9 +104,6 @@ public final class HttpLabelTraitValidator extends AbstractValidator {
                     MemberShape member = pair.getLeft();
                     HttpLabelTrait trait = pair.getRight();
                     labels.remove(member.getMemberName());
-                    if (member.isOptional()) {
-                        events.add(error(member, trait, "Members with the `httpLabel` trait must be required."));
-                    }
 
                     // Emit an error if the member is not a valid label.
                     if (!http.getUri().getLabel(member.getMemberName()).isPresent()) {
