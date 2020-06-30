@@ -239,7 +239,7 @@ explicitly on the operation.
 
         namespace smithy.example
 
-        @collection @readonly
+        @readonly
         @paginated(inputToken: "nextToken", outputToken: "nextToken",
                    pageSize: "maxResults", items: "foos")
         operation GetFoos {
@@ -278,7 +278,6 @@ explicitly on the operation.
                     },
                     "traits": {
                         "smithy.api#readonly": {},
-                        "smithy.api#collection": {},
                         "smithy.api#paginated": {
                             "inputToken": "nextToken",
                             "outputToken": "nextToken",
@@ -342,7 +341,7 @@ settings from a service.
             operations: [GetFoos],
         }
 
-        @collection @readonly @paginated(items: "foos")
+        @readonly @paginated(items: "foos")
         operation GetFoos {
             input: GetFoosInput,
             output: GetFoosOutput
@@ -374,7 +373,6 @@ settings from a service.
                     },
                     "traits": {
                         "smithy.api#readonly": {},
-                        "smithy.api#collection": {},
                         "smithy.api#paginated": {
                             "items": "foos"
                         }

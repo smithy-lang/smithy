@@ -1973,7 +1973,6 @@ The following snippet defines the ``CreateForecast`` operation.
         output: CreateForecastOutput
     }
 
-    @collection
     operation CreateForecast {
         input: CreateForecastInput,
         output: CreateForecastOutput
@@ -2097,7 +2096,7 @@ For example:
 
 .. code-block:: smithy
 
-    @collection @readonly @paginated
+    @readonly @paginated
     operation ListForecasts {
         input: ListForecastsInput,
         output: ListForecastsOutput
