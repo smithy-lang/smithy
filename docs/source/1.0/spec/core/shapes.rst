@@ -1637,7 +1637,7 @@ of an operation provide values for the identifiers of a resource.
 - Child resources MUST provide identifier bindings for all of its parent's
   identifiers.
 - Identifier bindings are only formed on input structure members that are
-  marked as :ref:`required-trait`.
+  marked as :ref:`required <required-trait>`.
 - Resource operations MUST form a valid *instance operation* or
   *collection operation*.
 
