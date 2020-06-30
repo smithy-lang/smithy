@@ -43,7 +43,7 @@ import software.amazon.smithy.model.node.ToNode;
  * Each key is the name of the tag, and each value is the description of the tag.
  * Tags are used to provide semantics to links. Tools that evaluate trace models
  * use these tags to inform their analysis. For example, a tag for an AWS SDK code
- * generator could be "requestBuilder" to indicate that a class is used as a builder for a request.
+ * generator could be "requestBuilder" to indicate that a class is used as a builder for a request. 
  * </p>
  */
 public class Definitions implements ToNode, FromNode, ValidateRequirements {
