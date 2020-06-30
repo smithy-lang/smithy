@@ -575,9 +575,9 @@ Summary
 Trait selector
     .. code-block:: none
 
-        structure > :test(member > :test(string, number, boolean, timestamp))
+        structure > member[trait|required] :test(> :test(string, number, boolean, timestamp))
 
-    *Structure members that target any simple type other than blobs*
+    *Required structure members that target a string, number, boolean, or timestamp*
 Value type
     Annotation trait.
 Conflicts with

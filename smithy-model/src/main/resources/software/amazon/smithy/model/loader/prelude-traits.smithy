@@ -473,7 +473,7 @@ structure http {
 }
 
 /// Binds an operation input structure member to an HTTP label.
-@trait(selector: "structure > :test(member > :test(string, number, boolean, timestamp))",
+@trait(selector: "structure > member[trait|required] :test(> :test(string, number, boolean, timestamp))",
         conflicts: [httpHeader, httpQuery, httpPrefixHeaders, httpPayload])
 @tags(["diff.error.const"])
 structure httpLabel {}
