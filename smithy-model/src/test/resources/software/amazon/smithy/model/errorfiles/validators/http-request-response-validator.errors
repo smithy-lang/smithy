@@ -20,7 +20,6 @@
 [ERROR] ns.foo#L: Operation URI, `/k`, conflicts with other operation URIs in the same service: [`ns.foo#K` (/k)] | HttpUriConflict
 [DANGER] ns.foo#MInput$a: httpHeader cannot be set to `Authorization` | HttpHeaderTrait
 [ERROR] ns.foo#NInput$a: This `a` structure member is marked with the `httpLabel` trait, but no corresponding `http` URI label could be found when used as the input of the `ns.foo#N` operation. | HttpLabelTrait
-[ERROR] ns.foo#OInput$a: Members with the `httpLabel` trait must be required. | HttpLabelTrait
 [ERROR] ns.foo#PInput$a: The `a` structure member corresponds to a greedy label when used as the input of the `ns.foo#P` operation. This member targets (integer: `ns.foo#Integer`), but greedy labels must target string shapes. | HttpLabelTrait
 [ERROR] ns.foo#RInput$b: `httpHeader` binding of `x-foo` conflicts with the `httpPrefixHeaders` binding of `ns.foo#RInput$a` to ``. `httpHeader` bindings must not case-insensitively start with any `httpPrefixHeaders` bindings. | HttpPrefixHeadersTrait
 [NOTE] ns.foo#BadError: The structure shape is not connected to from any service shape. | UnreferencedShape
@@ -28,4 +27,5 @@
 [ERROR] ns.foo#GInput$b: Trait `httpHeader` cannot be applied to `ns.foo#GInput$b`. This trait may only be applied to shapes that match the following selector: structure > :test(member > :test(boolean, number, string, timestamp, collection > member > :test(boolean, number, string, timestamp))) | TraitTarget
 [ERROR] ns.foo#GOutput$b: Trait `httpHeader` cannot be applied to `ns.foo#GOutput$b`. This trait may only be applied to shapes that match the following selector: structure > :test(member > :test(boolean, number, string, timestamp, collection > member > :test(boolean, number, string, timestamp))) | TraitTarget
 [ERROR] ns.foo#HInput$a: Trait `httpHeader` cannot be applied to `ns.foo#HInput$a`. This trait may only be applied to shapes that match the following selector: structure > :test(member > :test(boolean, number, string, timestamp, collection > member > :test(boolean, number, string, timestamp))) | TraitTarget
-[ERROR] ns.foo#EInput$label2: Trait `httpLabel` cannot be applied to `ns.foo#EInput$label2`. This trait may only be applied to shapes that match the following selector: structure > :test(member > :test(string, number, boolean, timestamp)) | TraitTarget
+[ERROR] ns.foo#EInput$label2: Trait `httpLabel` cannot be applied to `ns.foo#EInput$label2`. This trait may only be applied to shapes that match the following selector: structure > member[trait|required] :test(> :test(string, number, boolean, timestamp)) | TraitTarget
+[ERROR] ns.foo#OInput$a: Trait `httpLabel` cannot be applied to `ns.foo#OInput$a`. This trait may only be applied to shapes that match the following selector: structure > member[trait|required] :test(> :test(string, number, boolean, timestamp)) | TraitTarget
