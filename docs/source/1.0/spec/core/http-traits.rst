@@ -120,9 +120,9 @@ request URI and labels which are used to insert named components into the
 request URI.
 
 The resolved absolute URI of an operation is formed by combining the URI of
-the operation with the endpoint of the service. (Endpoints are currently not
-modeled in Smithy, but rather supplied externally). For example, given a
-service endpoint of ``https://example.com/v1`` and an operation pattern of
+the operation with the endpoint of the service. (that is, the host and any 
+base URL of where the service is deployed). For example, given a service 
+endpoint of ``https://example.com/v1`` and an operation pattern of
 ``/myresource``, the resolved absolute URI of the operation is
 ``https://example.com/v1/myresource``.
 
