@@ -98,7 +98,7 @@ apply EmptyInputAndEmptyOutput @httpResponseTests([
         bodyMediaType: "application/json"
     },
     {
-        id: "RestJsonEmptyInputAndEmptyOutput",
+        id: "RestJsonEmptyInputAndEmptyJSONObjectOutput",
         documentation: "Empty output deserializes no payload",
         protocol: restJson1,
         code: 200,
