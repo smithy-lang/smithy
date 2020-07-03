@@ -59,6 +59,8 @@ current namespace in exactly the same same way as
     the :ref:`documentation-trait` as "Documentation").
 
 
+.. _apply-statement:
+
 Apply statement
 ===============
 

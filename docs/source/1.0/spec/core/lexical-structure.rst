@@ -4,18 +4,35 @@
 Smithy IDL lexical structure
 ============================
 
-This document defines the ABNF_ grammar and syntax for defining models using
-the *Smithy interface definition language* (IDL).
-
-Smithy models are defined using either the Smithy IDL or the
-:ref:`JSON abstract syntax tree <json-ast>` (AST). The IDL is the preferred
-format for authoring and reading models, while the JSON format is preferred
-for tooling and integrations.
+Smithy models are defined using either the Smithy interface definition language
+(IDL) or the :ref:`JSON abstract syntax tree <json-ast>` (AST). This document
+defines the ABNF_ grammar and syntax for defining models with the Smithy IDL.
 
 .. contents:: Table of contents
     :depth: 2
     :local:
     :backlinks: none
+
+
+.. _semantic-model:
+
+--------------
+Semantic model
+--------------
+
+Smithy's *semantic model* is a higher-level abstraction than the IDL or
+JSON AST. It provides a map of :ref:`model metadata <metadata>` and a map of
+absolute :ref:`shape IDs <shape-id>` to :ref:`shapes <shapes>`. In this sense,
+the JSON AST format much more closely resembles the semantic model than the
+IDL (with the primary exceptions being :ref:`apply statements <apply-statement>`
+are inlined directly inside shape definitions and all of the files that define
+the model are :ref:`merged together <merging-models>`).
+
+The IDL is essentially a specialized syntax that makes it easier to read
+and author the equivalent JSON AST. Higher-level syntactic features of the
+IDL that are not present in the AST are not part of the semantic model, and
+these IDL features SHOULD be transformed into the JSON AST equivalent when
+parsing the IDL to populate the semantic model.
 
 
 .. _smithy-idl-abnf:
@@ -77,9 +94,9 @@ Documentation comment
 ---------------------
 
 Documentation comments are a special kind of comment that provide
-documentation for shapes. A documentation comment is formed when three
-forward slashes (``"///"``) appear as the first non-whitespace characters
-on a line.
+:ref:`documentation <documentation-trait>` for shapes. A documentation
+comment is formed when three forward slashes (``"///"``) appear as the
+first non-whitespace characters on a line.
 
 .. productionlist:: smithy
     documentation_comment:"///" *`not_newline` `br`
@@ -89,11 +106,6 @@ forward slashes is considered the contents of the line. If the text starts
 with a space (" "), the leading space is removed from the content.
 Successive documentation comments are combined together using a newline
 ("\\n") to form the documentation of a shape.
-
-.. note::
-
-    Documentation comments are syntactic sugar equivalent to applying the
-    :ref:`documentation-trait`.
 
 The following Smithy IDL example,
 
@@ -135,6 +147,8 @@ is equivalent to the following JSON AST model:
         }
     }
 
+.. rubric:: Placement
+
 Documentation comments are only treated as shape documentation when the
 comment appears immediately before a shape, and documentation comments MUST
 appear **before** any :ref:`traits <traits>` applied to the shape in order
@@ -160,6 +174,12 @@ Documentation comments can also be applied to members of a shape.
         foo: String,
     }
 
+.. rubric:: Semantic model
+
+Documentation comments are syntactic sugar equivalent to applying the
+:ref:`documentation-trait`, and this difference is inconsequential
+in the :ref:`semantic model <semantic-model>`.
+
 
 .. _control-statement:
 
@@ -168,14 +188,21 @@ Control section
 ---------------
 
 The *control section* of a model contains :token:`control statements <control_statement>`
-that apply metadata to a *specific file*. Control statements, if defined,
-MUST appear at the beginning of a Smithy file before any other statements.
+that apply parser directives to a *specific IDL file*. Because control
+statements influence parsing, they MUST appear at the beginning of a file
+before any other statements.
 
 .. productionlist:: smithy
     control_section   :*(`control_statement`)
     control_statement :"$" `ws` `node_object_key` `ws` ":" `ws` `node_value` `br`
 
-Implementations MUST ignore unknown control statements.
+The :ref:`version <smithy-version>` statement is currently the only control
+statement defined in the Smithy IDL. Implementations MUST ignore unknown
+control statements.
+
+.. rubric:: Semantic model
+
+Control statements are not part of the :ref:`semantic model <semantic-model>`.
 
 
 .. _smithy-version:
@@ -333,12 +360,44 @@ Syntactic shape IDs in the IDL
 
 Unquoted string values that are not object keys in the Smithy IDL are
 considered lexical shape IDs and are resolved to absolute shape IDs using the
-process defined in :ref:`relative-shape-id`. Values that are not meant to be
-shape IDs MUST be quoted.
+process defined in :ref:`relative-shape-id`.
 
-For example, the following model resolves the value of the :ref:`error-trait`
-to the shape ID ``"smithy.example#client"`` rather than using the string
-literal value of ``"client"``, causing the model to be invalid:
+The following model defines a list that references a string shape defined
+in another namespace.
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    use smithy.other#MyString
+
+    list MyList {
+        member: MyString
+    }
+
+The above model is equivalent to the following JSON AST model:
+
+.. code-block:: json
+
+    {
+        "smithy": "1.0",
+        "shapes": {
+            "smithy.example#MyList": {
+                "type": "list",
+                "members": {
+                    "target": "smithy.other#MyString"
+                }
+            }
+        }
+    }
+
+.. rubric:: Use quotes for literal strings
+
+Values in the IDL that are not meant to be shape IDs MUST be quoted. The
+following model is syntactically valid but semantically incorrect because
+it resolves the value of the :ref:`error-trait` to the shape ID
+``"smithy.example#client"`` rather than using the string literal value of
+``"client"``:
 
 .. code-block:: smithy
 
@@ -349,28 +408,62 @@ literal value of ``"client"``, causing the model to be invalid:
 
     string client
 
-Object keys in the IDL are not treated as shape IDs. :ref:`Metadata <metadata>`
-is used to apply arbitrary information to a model, and it often consists of
-objects. In the following metadata example, the object key remains the same
-literal string value of ``String`` while the value is treated as a shape ID
-and resolves to the string literal ``"smithy.api#String"``.
+The above example is equivalent to the following incorrect JSON AST:
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: smithy
-
-        metadata foo = {
-            String: String,
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "metadata": {
-                "String": "smithy.api#String"
+    {
+        "smithy": "1.0",
+        "shapes": {
+            "smithy.example#Error": {
+                "type": "structure",
+                "traits": {
+                    "smithy.api#error": "smithy.example#client"
+                }
+            },
+            "smithy.example#client": {
+                "type": "string"
             }
         }
+    }
+
+.. rubric:: Object keys
+
+Object keys in the IDL are not treated as shape IDs. The following example
+defines a :ref:`metadata <metadata>` object (arbitrary information about
+the model), and when loaded into the :ref:`semantic model <semantic-model>`,
+the object key ``String`` remains the same literal string value of
+``String`` while the value is treated as a shape ID and resolves to the
+string literal ``"smithy.api#String"``.
+
+.. code-block:: smithy
+
+    metadata foo = {
+        String: String,
+    }
+
+The above example is equivalent to the following JSON AST:
+
+.. code-block:: json
+
+    {
+        "smithy": "1.0",
+        "metadata": {
+            "String": "smithy.api#String"
+        }
+    }
+
+.. rubric:: Semantic model
+
+Syntactic shape IDs in the IDL are syntactic sugar for defining
+fully-qualified shape IDs inside of strings, and this difference
+is inconsequential in the :ref:`semantic model <semantic-model>`.
+A syntactic shape ID SHOULD be resolved to a string that contains a
+fully-qualified shape ID when parsing the model. The difference 
+between a string and shape ID MUST NOT be a concern that traits
+need to worry about handling when they are loaded nor is this
+difference exposed in other parts of the specification like
+:ref:`selectors <selectors>`.
 
 
 .. _node-values:
@@ -390,9 +483,7 @@ and trailing commas.
                :/ `node_object`
                :/ `number`
                :/ `node_keywords`
-               :/ `shape_id`
-               :/ `text_block`
-               :/ `quoted_text`
+               :/ `node_string_value`
 
 .. rubric:: Array node
 
@@ -485,7 +576,11 @@ The following example defines a complex object metadata entry:
 String values
 -------------
 
+A ``node_value`` can contain ``node_string_value`` productions that all
+define strings.
+
 .. productionlist:: smithy
+    node_string_value   :`shape_id` / `text_block` / `quoted_text`
     quoted_text         :DQUOTE *`quoted_char` DQUOTE
     quoted_char         :%x20-21        ; space - "!"
                         :/ %x23-5B        ; "#" - "["
@@ -500,10 +595,20 @@ String values
     text_block          :`three_dquotes` `br` *`quoted_char` `three_dquotes`
     three_dquotes       :DQUOTE DQUOTE DQUOTE
 
+.. rubric:: New lines
+
 New lines in strings are normalized from CR (\u000D) and CRLF (\u000D\u000A)
 to LF (\u000A). This ensures that strings defined in a Smithy model are
 equivalent across platforms. If a literal ``\r`` is desired, it can be added
 a string value using the Unicode escape ``\u000d``.
+
+.. rubric:: String equivalence
+
+The ``node_string_value`` production defines several productions used to
+define strings, and in order for these productions to work in concert with
+the :ref:`JSON AST format <json-ast>`, each of these production MUST be
+treated like equivalent string values when loaded into the
+:ref:`semantic model <semantic-model>`.
 
 
 .. _string-escape-characters:
@@ -560,16 +665,15 @@ Any other sequence following a backslash is an error.
 Text blocks
 ===========
 
-A text block is a string literal that can span multiple lines and
-automatically removes any incidental whitespace. A text block is opened with
-three double quotes ("""), followed by a newline, zero or more content
-characters, and closed with three double quotes.
+A text block is a string literal that can span multiple lines and automatically
+removes any incidental whitespace. Smithy text blocks are heavily inspired by
+text blocks defined in `JEP 355 <https://openjdk.java.net/jeps/355>`_.
 
-*Smithy text blocks are heavily based on text blocks defined in* `JEP 355 <https://openjdk.java.net/jeps/355>`_
-
-Text blocks differentiate *incidental whitespace* from
-*significant whitespace*. Smithy will re-indent the content of a text block by
-removing all incidental whitespace.
+A text block is opened with three double quotes ("""), followed by a newline,
+zero or more content characters, and closed with three double quotes.
+Text blocks differentiate *incidental whitespace* from *significant whitespace*.
+Smithy will re-indent the content of a text block by removing all incidental
+whitespace.
 
 .. code-block:: smithy
 
