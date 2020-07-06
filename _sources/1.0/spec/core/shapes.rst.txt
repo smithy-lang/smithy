@@ -809,6 +809,12 @@ Traits can be applied to structure members:
             }
         }
 
+New members added to existing structures SHOULD be added to the end of the
+structure. This ensures that programming languages that require a specific
+data structure layout or alignment for code generated from Smithy models are
+able to maintain backward compatibility.
+
+
 .. _union:
 
 Union
@@ -860,6 +866,11 @@ The following example defines a union shape with several members:
                 }
             }
         }
+
+New members added to existing unions SHOULD be added to the end of the
+union. This ensures that programming languages that require a specific
+data structure layout or alignment for code generated from Smithy models are
+able to maintain backward compatibility.
 
 
 .. _default-values:
@@ -1626,7 +1637,7 @@ of an operation provide values for the identifiers of a resource.
 - Child resources MUST provide identifier bindings for all of its parent's
   identifiers.
 - Identifier bindings are only formed on input structure members that are
-  marked as :ref:`required-trait`.
+  marked as :ref:`required <required-trait>`.
 - Resource operations MUST form a valid *instance operation* or
   *collection operation*.
 
@@ -1962,7 +1973,6 @@ The following snippet defines the ``CreateForecast`` operation.
         output: CreateForecastOutput
     }
 
-    @collection
     operation CreateForecast {
         input: CreateForecastInput,
         output: CreateForecastOutput
@@ -2086,7 +2096,7 @@ For example:
 
 .. code-block:: smithy
 
-    @collection @readonly @paginated
+    @readonly @paginated
     operation ListForecasts {
         input: ListForecastsInput,
         output: ListForecastsOutput

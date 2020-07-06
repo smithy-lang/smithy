@@ -1052,6 +1052,10 @@ JSON</div>
 </div>
 </div>
 </div>
+<p>New members added to existing structures SHOULD be added to the end of the
+structure. This ensures that programming languages that require a specific
+data structure layout or alignment for code generated from Smithy models are
+able to maintain backward compatibility.</p>
 </div>
 <div class="section" id="union">
 <span id="id12"></span><h3><a href="#union">3.4.6. Union</a></h3>
@@ -1113,6 +1117,10 @@ JSON</div>
 </div>
 </div>
 </div>
+<p>New members added to existing unions SHOULD be added to the end of the
+union. This ensures that programming languages that require a specific
+data structure layout or alignment for code generated from Smithy models are
+able to maintain backward compatibility.</p>
 </div>
 <div class="section" id="default-values">
 <span id="id13"></span><h3><a href="#default-values">3.4.7. Default values</a></h3>
@@ -1998,7 +2006,7 @@ of an operation provide values for the identifiers of a resource.</p>
 <li>Child resources MUST provide identifier bindings for all of its parent's
 identifiers.</li>
 <li>Identifier bindings are only formed on input structure members that are
-marked as <a class="reference internal" href="constraint-traits.html#required-trait"><span class="std std-ref">required trait</span></a>.</li>
+marked as <a class="reference internal" href="constraint-traits.html#required-trait"><span class="std std-ref">required</span></a>.</li>
 <li>Resource operations MUST form a valid <em>instance operation</em> or
 <em>collection operation</em>.</li>
 </ul>
@@ -2317,7 +2325,6 @@ identifiers created by the service.</p>
     <span class="nl">output:</span> <span class="vc">CreateForecastOutput</span>
 }
 
-<span class="nd">@collection</span>
 <span class="kd">operation</span><span class="nc"> CreateForecast</span> {
     <span class="nl">input:</span> <span class="vc">CreateForecastInput</span>,
     <span class="nl">output:</span> <span class="vc">CreateForecastOutput</span>
@@ -2417,7 +2424,7 @@ being listed.</li>
 <li>List operations SHOULD be <a class="reference internal" href="behavior-traits.html#paginated-trait"><span class="std std-ref">paginated</span></a>.</li>
 </ul>
 <p>For example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@collection</span> <span class="nd">@readonly</span> <span class="nd">@paginated</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@readonly</span> <span class="nd">@paginated</span>
 <span class="kd">operation</span><span class="nc"> ListForecasts</span> {
     <span class="nl">input:</span> <span class="vc">ListForecastsInput</span>,
     <span class="nl">output:</span> <span class="vc">ListForecastsOutput</span>

@@ -27,6 +27,10 @@ Trait selector
 Value type
     Annotation trait.
 
+.. important::
+
+    This protocol does not support :ref:`inline document types <document-type>`.
+
 .. tabs::
 
     .. code-tab:: smithy

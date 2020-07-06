@@ -161,6 +161,13 @@ in order to successfully use the protocol. Each shape MUST exist
 and MUST be a trait. Code generators SHOULD ensure that they
 support each listed trait.</td>
 </tr>
+<tr class="row-odd"><td>noInlineDocumentSupport</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>If set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, indicates that this protocol does not support
+<a class="reference internal" href="shapes.html#document-type"><span class="std std-ref">document</span></a> shapes. A service that uses such
+a protocol MUST NOT contain any document shapes in their service
+closure.</td>
+</tr>
 </tbody>
 </table>
 </dd>
@@ -416,8 +423,11 @@ with decimal precision (for example, <code class="docutils literal notranslate">
 a timestamp differs from the default protocol format. Using this trait too
 liberally can cause other tooling to improperly interpret the timestamp.</p>
 </div>
-<p>See <a class="reference internal" href="shapes.html#timestamp-serialization-format"><span class="std std-ref">Timestamp serialization format</span></a> for information on how to
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Refer to <a class="reference internal" href="shapes.html#timestamp-serialization-format"><span class="std std-ref">Timestamp serialization format</span></a> for information on how to
 determine the serialization format of a timestamp.</p>
+</div>
 </div>
 </div>
 

@@ -74,8 +74,8 @@
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="Model linters" href="../model-linters.html" />
-    <link rel="prev" title="Using SmithyBuild" href="build-config.html" />
+    <link rel="next" title="smithy-build" href="build-config.html" />
+    <link rel="prev" title="Building Smithy Models" href="index.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   </head><body>
@@ -272,12 +272,12 @@ Kotlin</div>
 <span class="p">}</span>
 
 <span class="n">dependencies</span> <span class="p">{</span>
-    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.0.5&quot;</span><span class="p">)</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.0.6&quot;</span><span class="p">)</span>
 
     <span class="c1">// These are just examples of dependencies. This model has a dependency on</span>
     <span class="c1">// a &quot;common&quot; model package and uses the external AWS traits.</span>
     <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;com.foo.baz:foo-model-internal-common:1.0.0&quot;</span><span class="p">)</span>
-    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.0.5&quot;</span><span class="p">)</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.0.6&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -315,7 +315,7 @@ Kotlin</div>
         <span class="n">mavenCentral</span><span class="p">()</span>
     <span class="p">}</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.0.5&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.0.6&quot;</span><span class="p">)</span>
 
         <span class="c1">// Take a dependency on the internal model package. This</span>
         <span class="c1">// dependency *must* be a buildscript only dependency to ensure</span>
@@ -339,12 +339,12 @@ Kotlin</div>
 <span class="p">}</span>
 
 <span class="n">dependencies</span> <span class="p">{</span>
-    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.0.5&quot;</span><span class="p">)</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.0.6&quot;</span><span class="p">)</span>
 
     <span class="c1">// Any dependencies that the projected model needs must be (re)declared</span>
     <span class="c1">// here. For example, let&#39;s assume that the smithy-aws-traits package is</span>
     <span class="c1">// needed in the projected model too.</span>
-    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.0.5&quot;</span><span class="p">)</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.0.6&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -484,7 +484,7 @@ Kotlin</div>
 
         <span class="c1">// This dependency is required in order to apply the &quot;openapi&quot;</span>
         <span class="c1">// plugin in smithy-build.json</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.0.5&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.0.6&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -504,9 +504,9 @@ Gradle plugin repository.</p>
                     
                     <section class="relations">
                         
-                        <a href="build-config.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Using SmithyBuild</a>
+                        <a href="index.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Building Smithy Models</a>
                         
-                        <a href="../model-linters.html" title="next chapter" class="next-page clearfix">Model linters →</a>
+                        <a href="build-config.html" title="next chapter" class="next-page clearfix">smithy-build →</a>
                     </section>
                     
                 </article><aside id="right-column" class="side-column hidden-sm">
@@ -515,9 +515,9 @@ Gradle plugin repository.</p>
                             
                             <section class="next-previous">
                                 
-                                <a href="build-config.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
+                                <a href="index.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
                                 
-                                <a href="../model-linters.html" title="next chapter" class="next-page clearfix">Next →</a>
+                                <a href="build-config.html" title="next chapter" class="next-page clearfix">Next →</a>
                             </section>
                             
                             <ul>

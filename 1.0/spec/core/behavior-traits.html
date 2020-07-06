@@ -390,7 +390,7 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="nd">@collection</span> <span class="nd">@readonly</span>
+<span class="nd">@readonly</span>
 <span class="nd">@paginated</span>(<span class="nl">inputToken:</span> <span class="s2">&quot;nextToken&quot;</span>, <span class="nl">outputToken:</span> <span class="s2">&quot;nextToken&quot;</span>,
            <span class="nl">pageSize:</span> <span class="s2">&quot;maxResults&quot;</span>, <span class="nl">items:</span> <span class="s2">&quot;foos&quot;</span>)
 <span class="kd">operation</span><span class="nc"> GetFoos</span> {
@@ -430,7 +430,6 @@ JSON</div>
             <span class="p">},</span>
             <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;smithy.api#readonly&quot;</span><span class="p">:</span> <span class="p">{},</span>
-                <span class="nt">&quot;smithy.api#collection&quot;</span><span class="p">:</span> <span class="p">{},</span>
                 <span class="nt">&quot;smithy.api#paginated&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;inputToken&quot;</span><span class="p">:</span> <span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
                     <span class="nt">&quot;outputToken&quot;</span><span class="p">:</span> <span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
@@ -503,7 +502,7 @@ JSON</div>
     <span class="nl">operations:</span> [<span class="vc">GetFoos</span>],
 }
 
-<span class="nd">@collection</span> <span class="nd">@readonly</span> <span class="nd">@paginated</span>(<span class="nl">items:</span> <span class="s2">&quot;foos&quot;</span>)
+<span class="nd">@readonly</span> <span class="nd">@paginated</span>(<span class="nl">items:</span> <span class="s2">&quot;foos&quot;</span>)
 <span class="kd">operation</span><span class="nc"> GetFoos</span> {
     <span class="nl">input:</span> <span class="vc">GetFoosInput</span>,
     <span class="nl">output:</span> <span class="vc">GetFoosOutput</span>
@@ -536,7 +535,6 @@ JSON</div>
             <span class="p">},</span>
             <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;smithy.api#readonly&quot;</span><span class="p">:</span> <span class="p">{},</span>
-                <span class="nt">&quot;smithy.api#collection&quot;</span><span class="p">:</span> <span class="p">{},</span>
                 <span class="nt">&quot;smithy.api#paginated&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;items&quot;</span><span class="p">:</span> <span class="s2">&quot;foos&quot;</span>
                 <span class="p">}</span>

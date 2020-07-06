@@ -123,11 +123,11 @@ structure and layout of an API, while traits provide refinement and style.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#applying-traits-to-shapes" id="id8">Applying traits to shapes</a></li>
-<li><a class="reference internal" href="#trait-values" id="id9">Trait values</a></li>
-<li><a class="reference internal" href="#defining-trait-shapes" id="id10">Defining trait shapes</a></li>
-<li><a class="reference internal" href="#trait-node-values" id="id11">Trait node values</a></li>
-<li><a class="reference internal" href="#trait-conflict-resolution" id="id12">Trait conflict resolution</a></li>
+<li><a class="reference internal" href="#applying-traits-to-shapes" id="id9">Applying traits to shapes</a></li>
+<li><a class="reference internal" href="#trait-values" id="id10">Trait values</a></li>
+<li><a class="reference internal" href="#defining-trait-shapes" id="id11">Defining trait shapes</a></li>
+<li><a class="reference internal" href="#trait-node-values" id="id12">Trait node values</a></li>
+<li><a class="reference internal" href="#trait-conflict-resolution" id="id13">Trait conflict resolution</a></li>
 </ul>
 </div>
 <div class="section" id="applying-traits-to-shapes">
@@ -182,7 +182,7 @@ current namespace in exactly the same same way as
 the <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a> as &quot;Documentation&quot;).</p>
 </div>
 <div class="section" id="apply-statement">
-<h3><a href="#apply-statement">5.1.1. Apply statement</a></h3>
+<span id="id2"></span><h3><a href="#apply-statement">5.1.1. Apply statement</a></h3>
 <p>Traits can be applied to shapes outside of a shape's definition using the
 <code class="docutils literal notranslate"><span class="pre">apply</span></code> statement. This can be useful for allowing different teams within
 the same organization to independently own different facets of a model.
@@ -256,7 +256,7 @@ member and do not conflict.</p>
 </div>
 </div>
 <div class="section" id="trait-values">
-<span id="id2"></span><h2><a href="#trait-values">5.2. Trait values</a></h2>
+<span id="id3"></span><h2><a href="#trait-values">5.2. Trait values</a></h2>
 <p>The value that can be provided for a trait depends on its type. A value for a
 trait is defined in the IDL by enclosing the value in parenthesis. Trait values
 can only appear immediately before a shape.</p>
@@ -296,8 +296,8 @@ members.</p>
 <p>Traits that are a <code class="docutils literal notranslate"><span class="pre">structure</span></code>, <code class="docutils literal notranslate"><span class="pre">union</span></code>, or <code class="docutils literal notranslate"><span class="pre">map</span></code> are defined using
 a special syntax that places key-value pairs inside of the trait
 parenthesis. Wrapping braces, &quot;{&quot; and &quot;}&quot;, are not permitted.</p>
-<div class="literal-block-wrapper docutils container" id="id6">
-<div class="code-block-caption"><span class="caption-text">Example</span><a class="headerlink" href="#id6" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Example</span><a class="headerlink" href="#id7" title="Permalink to this code">¶</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@structuredTrait</span>(<span class="nl">foo:</span> <span class="s2">&quot;bar&quot;</span>, <span class="nl">baz:</span> <span class="s2">&quot;bam&quot;</span>)
 </pre></div>
 </div>
@@ -465,8 +465,8 @@ JSON</div>
 <h3><a href="#list-and-set-trait-values">5.2.3. List and set trait values</a></h3>
 <p>Traits that are a <code class="docutils literal notranslate"><span class="pre">list</span></code> or <code class="docutils literal notranslate"><span class="pre">set</span></code> shape are defined inside
 of brackets (<code class="docutils literal notranslate"><span class="pre">[</span></code>) and (<code class="docutils literal notranslate"><span class="pre">]</span></code>) using a <a class="reference internal" href="lexical-structure.html#grammar-token-node_array"><code class="xref std std-token docutils literal notranslate"><span class="pre">node_array</span></code></a> production.</p>
-<div class="literal-block-wrapper docutils container" id="id7">
-<div class="code-block-caption"><span class="caption-text">Example</span><a class="headerlink" href="#id7" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">Example</span><a class="headerlink" href="#id8" title="Permalink to this code">¶</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@tags</span>([<span class="s2">&quot;a&quot;</span>, <span class="s2">&quot;b&quot;</span>])
 </pre></div>
 </div>
@@ -581,7 +581,7 @@ to a shape. Members and references within a model MUST NOT refer to
 trait shapes.</p>
 </div>
 <div class="section" id="trait-shape-properties">
-<span id="id3"></span><h3><a href="#trait-shape-properties">5.3.1. Trait shape properties</a></h3>
+<span id="id4"></span><h3><a href="#trait-shape-properties">5.3.1. Trait shape properties</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">smithy.api#trait</span></code> trait is a structure that supports the following
 members:</p>
 <table border="1" class="colwidths-given docutils">
@@ -738,7 +738,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="trait-node-values">
-<span id="id4"></span><h2><a href="#trait-node-values">5.4. Trait node values</a></h2>
+<span id="id5"></span><h2><a href="#trait-node-values">5.4. Trait node values</a></h2>
 <p>The value provided for a trait MUST be compatible with the <code class="docutils literal notranslate"><span class="pre">shape</span></code> defined
 for the trait. The following table defines each shape type that is available
 to target from trait shapes and how values for those shapes are defined
@@ -838,7 +838,7 @@ compatible with the corresponding shape.</td>
 shape being validated.</p>
 </div>
 <div class="section" id="trait-conflict-resolution">
-<span id="id5"></span><h2><a href="#trait-conflict-resolution">5.5. Trait conflict resolution</a></h2>
+<span id="id6"></span><h2><a href="#trait-conflict-resolution">5.5. Trait conflict resolution</a></h2>
 <p>Trait conflict resolution is used when the same trait is applied multiple
 times to a shape. Duplicate traits applied to shapes are allowed in the
 following cases:</p>

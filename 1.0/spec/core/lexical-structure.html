@@ -117,41 +117,54 @@
                     
   <div class="section" id="smithy-idl-lexical-structure">
 <span id="lexical-structure"></span><h1><a href="#smithy-idl-lexical-structure">2. Smithy IDL lexical structure</a></h1>
-<p>This document defines the <a class="reference external" href="https://tools.ietf.org/html/rfc5234">ABNF</a> grammar and syntax for defining models using
-the <em>Smithy interface definition language</em> (IDL).</p>
-<p>Smithy models are defined using either the Smithy IDL or the
-<a class="reference internal" href="json-ast.html#json-ast"><span class="std std-ref">JSON abstract syntax tree</span></a> (AST). The IDL is the preferred
-format for authoring and reading models, while the JSON format is preferred
-for tooling and integrations.</p>
+<p>Smithy models are defined using either the Smithy interface definition language
+(IDL) or the <a class="reference internal" href="json-ast.html#json-ast"><span class="std std-ref">JSON abstract syntax tree</span></a> (AST). This document
+defines the <a class="reference external" href="https://tools.ietf.org/html/rfc5234">ABNF</a> grammar and syntax for defining models with the Smithy IDL.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#smithy-idl-abnf" id="id12">Smithy IDL ABNF</a></li>
-<li><a class="reference internal" href="#lexical-notes" id="id13">Lexical notes</a><ul>
-<li><a class="reference internal" href="#comments" id="id14">Comments</a></li>
+<li><a class="reference internal" href="#semantic-model" id="id13">Semantic model</a></li>
+<li><a class="reference internal" href="#smithy-idl-abnf" id="id14">Smithy IDL ABNF</a></li>
+<li><a class="reference internal" href="#lexical-notes" id="id15">Lexical notes</a><ul>
+<li><a class="reference internal" href="#comments" id="id16">Comments</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#control-section" id="id15">Control section</a><ul>
-<li><a class="reference internal" href="#version-statement" id="id16">Version statement</a></li>
+<li><a class="reference internal" href="#control-section" id="id17">Control section</a><ul>
+<li><a class="reference internal" href="#version-statement" id="id18">Version statement</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#shape-id" id="id17">Shape ID</a><ul>
-<li><a class="reference internal" href="#shape-id-abnf" id="id18">Shape ID ABNF</a></li>
-<li><a class="reference internal" href="#shape-id-member-names" id="id19">Shape ID member names</a></li>
-<li><a class="reference internal" href="#shape-id-conflicts" id="id20">Shape ID conflicts</a></li>
-<li><a class="reference internal" href="#syntactic-shape-ids-in-the-idl" id="id21">Syntactic shape IDs in the IDL</a></li>
+<li><a class="reference internal" href="#shape-id" id="id19">Shape ID</a><ul>
+<li><a class="reference internal" href="#shape-id-abnf" id="id20">Shape ID ABNF</a></li>
+<li><a class="reference internal" href="#shape-id-member-names" id="id21">Shape ID member names</a></li>
+<li><a class="reference internal" href="#shape-id-conflicts" id="id22">Shape ID conflicts</a></li>
+<li><a class="reference internal" href="#syntactic-shape-ids-in-the-idl" id="id23">Syntactic shape IDs in the IDL</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#node-values" id="id22">Node values</a></li>
-<li><a class="reference internal" href="#string-values" id="id23">String values</a><ul>
-<li><a class="reference internal" href="#string-escape-characters" id="id24">String escape characters</a></li>
-<li><a class="reference internal" href="#text-blocks" id="id25">Text blocks</a></li>
+<li><a class="reference internal" href="#node-values" id="id24">Node values</a></li>
+<li><a class="reference internal" href="#string-values" id="id25">String values</a><ul>
+<li><a class="reference internal" href="#string-escape-characters" id="id26">String escape characters</a></li>
+<li><a class="reference internal" href="#text-blocks" id="id27">Text blocks</a></li>
 </ul>
 </li>
 </ul>
 </div>
+<div class="section" id="semantic-model">
+<span id="id1"></span><h2><a href="#semantic-model">2.1. Semantic model</a></h2>
+<p>Smithy's <em>semantic model</em> is a higher-level abstraction than the IDL or
+JSON AST. It provides a map of <a class="reference internal" href="model-metadata.html#metadata"><span class="std std-ref">model metadata</span></a> and a map of
+absolute <a class="reference internal" href="#shape-id"><span class="std std-ref">shape IDs</span></a> to <a class="reference internal" href="shapes.html#shapes"><span class="std std-ref">shapes</span></a>. In this sense,
+the JSON AST format much more closely resembles the semantic model than the
+IDL (with the primary exceptions being <a class="reference internal" href="traits.html#apply-statement"><span class="std std-ref">apply statements</span></a>
+are inlined directly inside shape definitions and all of the files that define
+the model are <a class="reference internal" href="merging-models.html#merging-models"><span class="std std-ref">merged together</span></a>).</p>
+<p>The IDL is essentially a specialized syntax that makes it easier to read
+and author the equivalent JSON AST. Higher-level syntactic features of the
+IDL that are not present in the AST are not part of the semantic model, and
+these IDL features SHOULD be transformed into the JSON AST equivalent when
+parsing the IDL to populate the semantic model.</p>
+</div>
 <div class="section" id="smithy-idl-abnf">
-<span id="id1"></span><h2><a href="#smithy-idl-abnf">2.1. Smithy IDL ABNF</a></h2>
+<span id="id2"></span><h2><a href="#smithy-idl-abnf">2.2. Smithy IDL ABNF</a></h2>
 <p>The Smithy IDL is defined by the following ABNF:</p>
 <pre>
 <strong id="grammar-token-idl">idl</strong> =
@@ -162,7 +175,7 @@ for tooling and integrations.</p>
 </pre>
 </div>
 <div class="section" id="lexical-notes">
-<h2><a href="#lexical-notes">2.2. Lexical notes</a></h2>
+<h2><a href="#lexical-notes">2.3. Lexical notes</a></h2>
 <p>Smithy models MUST be encoded using UTF-8 and SHOULD use Unix style
 line endings (<code class="docutils literal notranslate"><span class="pre">\n</span></code>). The Smithy ABNF is whitespace sensitive.
 Whitespace is controlled using the following productions:</p>
@@ -180,7 +193,7 @@ Whitespace is controlled using the following productions:</p>
     %x0A / %x0D.0A ; \n and \r\n
 </pre>
 <div class="section" id="comments">
-<span id="id2"></span><h3><a href="#comments">2.2.1. Comments</a></h3>
+<span id="id3"></span><h3><a href="#comments">2.3.1. Comments</a></h3>
 <p>Comments can occur at any place in the IDL between tokens where whitespace
 (<a class="reference internal" href="#grammar-token-ws"><code class="xref std std-token docutils literal notranslate"><span class="pre">ws</span></code></a>) can occur. Comments in Smithy are defined using two forward
 slashes followed by any character. A newline terminates a comment.</p>
@@ -191,8 +204,8 @@ slashes followed by any character. A newline terminates a comment.</p>
 <strong id="grammar-token-not_newline">not_newline</strong> =
      %x09 / %x20-10FFFF ; Any character except newline
 </pre>
-<div class="literal-block-wrapper docutils container" id="id11">
-<div class="code-block-caption"><span class="caption-text">Example</span><a class="headerlink" href="#id11" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">Example</span><a class="headerlink" href="#id12" title="Permalink to this code">¶</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">// This is a comment</span>
 <span class="kd">namespace</span><span class="nc"> com.foo</span> <span class="c">// This is also a comment</span>
 
@@ -202,11 +215,11 @@ slashes followed by any character. A newline terminates a comment.</p>
 </div>
 </div>
 <div class="section" id="documentation-comment">
-<span id="id3"></span><h4><a href="#documentation-comment">2.2.1.1. Documentation comment</a></h4>
+<span id="id4"></span><h4><a href="#documentation-comment">2.3.1.1. Documentation comment</a></h4>
 <p>Documentation comments are a special kind of comment that provide
-documentation for shapes. A documentation comment is formed when three
-forward slashes (<code class="docutils literal notranslate"><span class="pre">&quot;///&quot;</span></code>) appear as the first non-whitespace characters
-on a line.</p>
+<a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation</span></a> for shapes. A documentation
+comment is formed when three forward slashes (<code class="docutils literal notranslate"><span class="pre">&quot;///&quot;</span></code>) appear as the
+first non-whitespace characters on a line.</p>
 <pre>
 <strong id="grammar-token-documentation_comment">documentation_comment</strong> =
     &quot;///&quot; *<a class="reference internal" href="#grammar-token-not_newline"><code class="xref docutils literal notranslate"><span class="pre">not_newline</span></code></a> <a class="reference internal" href="#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a>
@@ -216,11 +229,6 @@ forward slashes is considered the contents of the line. If the text starts
 with a space (&quot; &quot;), the leading space is removed from the content.
 Successive documentation comments are combined together using a newline
 (&quot;\n&quot;) to form the documentation of a shape.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Documentation comments are syntactic sugar equivalent to applying the
-<a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a>.</p>
-</div>
 <p>The following Smithy IDL example,</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
@@ -257,6 +265,7 @@ Successive documentation comments are combined together using a newline
 <span class="p">}</span>
 </pre></div>
 </div>
+<p class="rubric">Placement</p>
 <p>Documentation comments are only treated as shape documentation when the
 comment appears immediately before a shape, and documentation comments MUST
 appear <strong>before</strong> any <a class="reference internal" href="traits.html#traits"><span class="std std-ref">traits</span></a> applied to the shape in order
@@ -277,14 +286,19 @@ documentation comment comes before the traits applied to a shape:</p>
 }
 </pre></div>
 </div>
+<p class="rubric">Semantic model</p>
+<p>Documentation comments are syntactic sugar equivalent to applying the
+<a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a>, and this difference is inconsequential
+in the <a class="reference internal" href="#semantic-model"><span class="std std-ref">semantic model</span></a>.</p>
 </div>
 </div>
 </div>
 <div class="section" id="control-section">
-<span id="control-statement"></span><h2><a href="#control-section">2.3. Control section</a></h2>
+<span id="control-statement"></span><h2><a href="#control-section">2.4. Control section</a></h2>
 <p>The <em>control section</em> of a model contains <a class="reference internal" href="#grammar-token-control_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">control</span> <span class="pre">statements</span></code></a>
-that apply metadata to a <em>specific file</em>. Control statements, if defined,
-MUST appear at the beginning of a Smithy file before any other statements.</p>
+that apply parser directives to a <em>specific IDL file</em>. Because control
+statements influence parsing, they MUST appear at the beginning of a file
+before any other statements.</p>
 <pre>
 <strong id="grammar-token-control_section">control_section</strong> =
     *(<a class="reference internal" href="#grammar-token-control_statement"><code class="xref docutils literal notranslate"><span class="pre">control_statement</span></code></a>)
@@ -292,9 +306,13 @@ MUST appear at the beginning of a Smithy file before any other statements.</p>
 <strong id="grammar-token-control_statement">control_statement</strong> =
     &quot;$&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-node_object_key"><code class="xref docutils literal notranslate"><span class="pre">node_object_key</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a> <a class="reference internal" href="#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a>
 </pre>
-<p>Implementations MUST ignore unknown control statements.</p>
+<p>The <a class="reference internal" href="#smithy-version"><span class="std std-ref">version</span></a> statement is currently the only control
+statement defined in the Smithy IDL. Implementations MUST ignore unknown
+control statements.</p>
+<p class="rubric">Semantic model</p>
+<p>Control statements are not part of the <a class="reference internal" href="#semantic-model"><span class="std std-ref">semantic model</span></a>.</p>
 <div class="section" id="version-statement">
-<span id="smithy-version"></span><h3><a href="#version-statement">2.3.1. Version statement</a></h3>
+<span id="smithy-version"></span><h3><a href="#version-statement">2.4.1. Version statement</a></h3>
 <p>The Smithy specification is versioned using a <code class="docutils literal notranslate"><span class="pre">major</span></code> . <code class="docutils literal notranslate"><span class="pre">minor</span></code>
 versioning scheme. A version requirement is specified for a model file using
 the <code class="docutils literal notranslate"><span class="pre">$version</span></code> control statement. When no version number is specified in
@@ -369,7 +387,7 @@ supported by the tool loading the models.</p>
 </div>
 </div>
 <div class="section" id="shape-id">
-<span id="id4"></span><h2><a href="#shape-id">2.4. Shape ID</a></h2>
+<span id="id5"></span><h2><a href="#shape-id">2.5. Shape ID</a></h2>
 <p>A <em class="dfn">shape ID</em> is used to refer to shapes and traits in the model.
 Shape IDs adhere to the following syntax:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>com.foo.baz#ShapeName$memberName
@@ -389,7 +407,7 @@ member name are separated by the &quot;<code class="docutils literal notranslate
 present.</dd>
 </dl>
 <div class="section" id="shape-id-abnf">
-<span id="id5"></span><h3><a href="#shape-id-abnf">2.4.1. Shape ID ABNF</a></h3>
+<span id="id6"></span><h3><a href="#shape-id-abnf">2.5.1. Shape ID ABNF</a></h3>
 <p>Shape IDs are formally defined by the following ABNF:</p>
 <pre>
 <strong id="grammar-token-shape_id">shape_id</strong> =
@@ -412,7 +430,7 @@ present.</dd>
 </pre>
 </div>
 <div class="section" id="shape-id-member-names">
-<span id="id6"></span><h3><a href="#shape-id-member-names">2.4.2. Shape ID member names</a></h3>
+<span id="id7"></span><h3><a href="#shape-id-member-names">2.5.2. Shape ID member names</a></h3>
 <p>A <a class="reference internal" href="shapes.html#member"><span class="std std-ref">member</span></a> of an <a class="reference internal" href="shapes.html#aggregate-types"><span class="std std-ref">aggregate shape</span></a> can be
 referenced in a shape ID by appending a dollar sign (<code class="docutils literal notranslate"><span class="pre">$</span></code>) followed by the
 appropriate member name. Member names for each shape are defined as follows:</p>
@@ -457,7 +475,7 @@ appropriate member name. Member names for each shape are defined as follows:</p>
 </table>
 </div>
 <div class="section" id="shape-id-conflicts">
-<span id="id7"></span><h3><a href="#shape-id-conflicts">2.4.3. Shape ID conflicts</a></h3>
+<span id="id8"></span><h3><a href="#shape-id-conflicts">2.5.3. Shape ID conflicts</a></h3>
 <p>While shape IDs used within a model are case-sensitive, no two shapes in
 the model can have the same case-insensitive shape ID. For example,
 <code class="docutils literal notranslate"><span class="pre">com.Foo#baz</span></code> and <code class="docutils literal notranslate"><span class="pre">com.foo#baz</span></code> are not allowed in the same model. This
@@ -465,14 +483,41 @@ property also extends to member names: <code class="docutils literal notranslate
 <code class="docutils literal notranslate"><span class="pre">com.foo#Baz$Bar</span></code> are not allowed on the same structure.</p>
 </div>
 <div class="section" id="syntactic-shape-ids-in-the-idl">
-<span id="syntactic-shape-ids"></span><h3><a href="#syntactic-shape-ids-in-the-idl">2.4.4. Syntactic shape IDs in the IDL</a></h3>
+<span id="syntactic-shape-ids"></span><h3><a href="#syntactic-shape-ids-in-the-idl">2.5.4. Syntactic shape IDs in the IDL</a></h3>
 <p>Unquoted string values that are not object keys in the Smithy IDL are
 considered lexical shape IDs and are resolved to absolute shape IDs using the
-process defined in <a class="reference internal" href="shapes.html#relative-shape-id"><span class="std std-ref">Relative shape ID resolution</span></a>. Values that are not meant to be
-shape IDs MUST be quoted.</p>
-<p>For example, the following model resolves the value of the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>
-to the shape ID <code class="docutils literal notranslate"><span class="pre">&quot;smithy.example#client&quot;</span></code> rather than using the string
-literal value of <code class="docutils literal notranslate"><span class="pre">&quot;client&quot;</span></code>, causing the model to be invalid:</p>
+process defined in <a class="reference internal" href="shapes.html#relative-shape-id"><span class="std std-ref">Relative shape ID resolution</span></a>.</p>
+<p>The following model defines a list that references a string shape defined
+in another namespace.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">use</span><span class="nc"> smithy.other#MyString</span>
+
+<span class="kd">list</span><span class="nc"> MyList</span> {
+    <span class="nl">member:</span> <span class="vc">MyString</span>
+}
+</pre></div>
+</div>
+<p>The above model is equivalent to the following JSON AST model:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyList&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.other#MyString&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p class="rubric">Use quotes for literal strings</p>
+<p>Values in the IDL that are not meant to be shape IDs MUST be quoted. The
+following model is syntactically valid but semantically incorrect because
+it resolves the value of the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a> to the shape ID
+<code class="docutils literal notranslate"><span class="pre">&quot;smithy.example#client&quot;</span></code> rather than using the string literal value of
+<code class="docutils literal notranslate"><span class="pre">&quot;client&quot;</span></code>:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
 <span class="nd">@error</span>(<span class="vc">client</span>) <span class="c">// &lt;-- This MUST be &quot;client&quot;</span>
@@ -481,30 +526,36 @@ literal value of <code class="docutils literal notranslate"><span class="pre">&q
 <span class="kd">string</span><span class="nc"> client</span>
 </pre></div>
 </div>
-<p>Object keys in the IDL are not treated as shape IDs. <a class="reference internal" href="model-metadata.html#metadata"><span class="std std-ref">Metadata</span></a>
-is used to apply arbitrary information to a model, and it often consists of
-objects. In the following metadata example, the object key remains the same
-literal string value of <code class="docutils literal notranslate"><span class="pre">String</span></code> while the value is treated as a shape ID
-and resolves to the string literal <code class="docutils literal notranslate"><span class="pre">&quot;smithy.api#String&quot;</span></code>.</p>
-<div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
+<p>The above example is equivalent to the following incorrect JSON AST:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#Error&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#error&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#client&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#client&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
 </div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<p class="rubric">Object keys</p>
+<p>Object keys in the IDL are not treated as shape IDs. The following example
+defines a <a class="reference internal" href="model-metadata.html#metadata"><span class="std std-ref">metadata</span></a> object (arbitrary information about
+the model), and when loaded into the <a class="reference internal" href="#semantic-model"><span class="std std-ref">semantic model</span></a>,
+the object key <code class="docutils literal notranslate"><span class="pre">String</span></code> remains the same literal string value of
+<code class="docutils literal notranslate"><span class="pre">String</span></code> while the value is treated as a shape ID and resolves to the
+string literal <code class="docutils literal notranslate"><span class="pre">&quot;smithy.api#String&quot;</span></code>.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> foo </span><span class="nd">=</span> {
     <span class="nl">String:</span> <span class="vc">String</span>,
 }
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<p>The above example is equivalent to the following JSON AST:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -513,12 +564,20 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+<p class="rubric">Semantic model</p>
+<p>Syntactic shape IDs in the IDL are syntactic sugar for defining
+fully-qualified shape IDs inside of strings, and this difference
+is inconsequential in the <a class="reference internal" href="#semantic-model"><span class="std std-ref">semantic model</span></a>.
+A syntactic shape ID SHOULD be resolved to a string that contains a
+fully-qualified shape ID when parsing the model. The difference
+between a string and shape ID MUST NOT be a concern that traits
+need to worry about handling when they are loaded nor is this
+difference exposed in other parts of the specification like
+<a class="reference internal" href="selectors.html#selectors"><span class="std std-ref">selectors</span></a>.</p>
 </div>
 </div>
 <div class="section" id="node-values">
-<span id="id8"></span><h2><a href="#node-values">2.5. Node values</a></h2>
+<span id="id9"></span><h2><a href="#node-values">2.6. Node values</a></h2>
 <p><em>Node values</em> are analogous to JSON values. Node values are used to define
 <a class="reference internal" href="model-metadata.html#metadata"><span class="std std-ref">metadata</span></a> and <a class="reference internal" href="traits.html#trait-values"><span class="std std-ref">trait values</span></a>.
 Smithy's node values have many advantages over JSON: comments,
@@ -530,9 +589,7 @@ and trailing commas.</p>
   / <a class="reference internal" href="#grammar-token-node_object"><code class="xref docutils literal notranslate"><span class="pre">node_object</span></code></a>
   / <a class="reference internal" href="#grammar-token-number"><code class="xref docutils literal notranslate"><span class="pre">number</span></code></a>
   / <a class="reference internal" href="#grammar-token-node_keywords"><code class="xref docutils literal notranslate"><span class="pre">node_keywords</span></code></a>
-  / <a class="reference internal" href="#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a>
-  / <a class="reference internal" href="#grammar-token-text_block"><code class="xref docutils literal notranslate"><span class="pre">text_block</span></code></a>
-  / <a class="reference internal" href="#grammar-token-quoted_text"><code class="xref docutils literal notranslate"><span class="pre">quoted_text</span></code></a>
+  / <a class="reference internal" href="#grammar-token-node_string_value"><code class="xref docutils literal notranslate"><span class="pre">node_string_value</span></code></a>
 </pre>
 <p class="rubric">Array node</p>
 <pre>
@@ -646,8 +703,13 @@ values are defined.</p>
 </div>
 </div>
 <div class="section" id="string-values">
-<h2><a href="#string-values">2.6. String values</a></h2>
+<h2><a href="#string-values">2.7. String values</a></h2>
+<p>A <code class="docutils literal notranslate"><span class="pre">node_value</span></code> can contain <code class="docutils literal notranslate"><span class="pre">node_string_value</span></code> productions that all
+define strings.</p>
 <pre>
+<strong id="grammar-token-node_string_value">node_string_value</strong> =
+    <a class="reference internal" href="#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a> / <a class="reference internal" href="#grammar-token-text_block"><code class="xref docutils literal notranslate"><span class="pre">text_block</span></code></a> / <a class="reference internal" href="#grammar-token-quoted_text"><code class="xref docutils literal notranslate"><span class="pre">quoted_text</span></code></a>
+
 <strong id="grammar-token-quoted_text">quoted_text</strong> =
     DQUOTE *<a class="reference internal" href="#grammar-token-quoted_char"><code class="xref docutils literal notranslate"><span class="pre">quoted_char</span></code></a> DQUOTE
 
@@ -679,12 +741,19 @@ values are defined.</p>
 <strong id="grammar-token-three_dquotes">three_dquotes</strong> =
     DQUOTE DQUOTE DQUOTE
 </pre>
+<p class="rubric">New lines</p>
 <p>New lines in strings are normalized from CR (u000D) and CRLF (u000Du000A)
 to LF (u000A). This ensures that strings defined in a Smithy model are
 equivalent across platforms. If a literal <code class="docutils literal notranslate"><span class="pre">\r</span></code> is desired, it can be added
 a string value using the Unicode escape <code class="docutils literal notranslate"><span class="pre">\u000d</span></code>.</p>
+<p class="rubric">String equivalence</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">node_string_value</span></code> production defines several productions used to
+define strings, and in order for these productions to work in concert with
+the <a class="reference internal" href="json-ast.html#json-ast"><span class="std std-ref">JSON AST format</span></a>, each of these production MUST be
+treated like equivalent string values when loaded into the
+<a class="reference internal" href="#semantic-model"><span class="std std-ref">semantic model</span></a>.</p>
 <div class="section" id="string-escape-characters">
-<span id="id9"></span><h3><a href="#string-escape-characters">2.6.1. String escape characters</a></h3>
+<span id="id10"></span><h3><a href="#string-escape-characters">2.7.1. String escape characters</a></h3>
 <p>The Smithy IDL supports escape sequences only within quoted strings.  The following
 escape sequences are allowed:</p>
 <table border="1" class="colwidths-given docutils">
@@ -745,15 +814,15 @@ escape sequences are allowed:</p>
 <p>Any other sequence following a backslash is an error.</p>
 </div>
 <div class="section" id="text-blocks">
-<span id="id10"></span><h3><a href="#text-blocks">2.6.2. Text blocks</a></h3>
-<p>A text block is a string literal that can span multiple lines and
-automatically removes any incidental whitespace. A text block is opened with
-three double quotes (&quot;&quot;&quot;), followed by a newline, zero or more content
-characters, and closed with three double quotes.</p>
-<p><em>Smithy text blocks are heavily based on text blocks defined in</em> <a class="reference external" href="https://openjdk.java.net/jeps/355">JEP 355</a></p>
-<p>Text blocks differentiate <em>incidental whitespace</em> from
-<em>significant whitespace</em>. Smithy will re-indent the content of a text block by
-removing all incidental whitespace.</p>
+<span id="id11"></span><h3><a href="#text-blocks">2.7.2. Text blocks</a></h3>
+<p>A text block is a string literal that can span multiple lines and automatically
+removes any incidental whitespace. Smithy text blocks are heavily inspired by
+text blocks defined in <a class="reference external" href="https://openjdk.java.net/jeps/355">JEP 355</a>.</p>
+<p>A text block is opened with three double quotes (&quot;&quot;&quot;), followed by a newline,
+zero or more content characters, and closed with three double quotes.
+Text blocks differentiate <em>incidental whitespace</em> from <em>significant whitespace</em>.
+Smithy will re-indent the content of a text block by removing all incidental
+whitespace.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">    &lt;div&gt;</span>
 <span class="s2">        &lt;p&gt;Hello!&lt;/p&gt;</span>
@@ -790,7 +859,7 @@ not including a trailing new line:</p>
 </pre></div>
 </div>
 <div class="section" id="incidental-white-space-removal">
-<span id="incidental-whitespace"></span><h4><a href="#incidental-white-space-removal">2.6.2.1. Incidental white space removal</a></h4>
+<span id="incidental-whitespace"></span><h4><a href="#incidental-white-space-removal">2.7.2.1. Incidental white space removal</a></h4>
 <p>Smithy will re-indent the content of a text block by removing all
 incidental whitespace using the following algorithm:</p>
 <ol class="arabic">
@@ -856,7 +925,7 @@ left margin):</p>
 </ol>
 </div>
 <div class="section" id="significant-trailing-line">
-<h4><a href="#significant-trailing-line">2.6.2.2. Significant trailing line</a></h4>
+<h4><a href="#significant-trailing-line">2.7.2.2. Significant trailing line</a></h4>
 <p>The last line of text block content is used when determining the common
 whitespace prefix.</p>
 <p>Consider the following example:</p>
@@ -890,7 +959,7 @@ is equivalent to the following:</p>
 </div>
 </div>
 <div class="section" id="escapes-in-text-blocks">
-<h4><a href="#escapes-in-text-blocks">2.6.2.3. Escapes in text blocks</a></h4>
+<h4><a href="#escapes-in-text-blocks">2.7.2.3. Escapes in text blocks</a></h4>
 <p>Text blocks support all of the <a class="reference internal" href="#string-escape-characters"><span class="std std-ref">string escape characters</span></a>
 of other strings. The use of three double quotes allows unescaped double quotes
 (&quot;) to appear in text blocks. The following text block is interpreted as
@@ -969,32 +1038,33 @@ example is interpreted as <code class="docutils literal notranslate"><span class
                             
                             <ul>
 <li><a class="reference internal" href="#">2. Smithy IDL lexical structure</a><ul>
-<li><a class="reference internal" href="#smithy-idl-abnf">2.1. Smithy IDL ABNF</a></li>
-<li><a class="reference internal" href="#lexical-notes">2.2. Lexical notes</a><ul>
-<li><a class="reference internal" href="#comments">2.2.1. Comments</a><ul>
-<li><a class="reference internal" href="#documentation-comment">2.2.1.1. Documentation comment</a></li>
+<li><a class="reference internal" href="#semantic-model">2.1. Semantic model</a></li>
+<li><a class="reference internal" href="#smithy-idl-abnf">2.2. Smithy IDL ABNF</a></li>
+<li><a class="reference internal" href="#lexical-notes">2.3. Lexical notes</a><ul>
+<li><a class="reference internal" href="#comments">2.3.1. Comments</a><ul>
+<li><a class="reference internal" href="#documentation-comment">2.3.1.1. Documentation comment</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#control-section">2.3. Control section</a><ul>
-<li><a class="reference internal" href="#version-statement">2.3.1. Version statement</a></li>
+<li><a class="reference internal" href="#control-section">2.4. Control section</a><ul>
+<li><a class="reference internal" href="#version-statement">2.4.1. Version statement</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#shape-id">2.4. Shape ID</a><ul>
-<li><a class="reference internal" href="#shape-id-abnf">2.4.1. Shape ID ABNF</a></li>
-<li><a class="reference internal" href="#shape-id-member-names">2.4.2. Shape ID member names</a></li>
-<li><a class="reference internal" href="#shape-id-conflicts">2.4.3. Shape ID conflicts</a></li>
-<li><a class="reference internal" href="#syntactic-shape-ids-in-the-idl">2.4.4. Syntactic shape IDs in the IDL</a></li>
+<li><a class="reference internal" href="#shape-id">2.5. Shape ID</a><ul>
+<li><a class="reference internal" href="#shape-id-abnf">2.5.1. Shape ID ABNF</a></li>
+<li><a class="reference internal" href="#shape-id-member-names">2.5.2. Shape ID member names</a></li>
+<li><a class="reference internal" href="#shape-id-conflicts">2.5.3. Shape ID conflicts</a></li>
+<li><a class="reference internal" href="#syntactic-shape-ids-in-the-idl">2.5.4. Syntactic shape IDs in the IDL</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#node-values">2.5. Node values</a></li>
-<li><a class="reference internal" href="#string-values">2.6. String values</a><ul>
-<li><a class="reference internal" href="#string-escape-characters">2.6.1. String escape characters</a></li>
-<li><a class="reference internal" href="#text-blocks">2.6.2. Text blocks</a><ul>
-<li><a class="reference internal" href="#incidental-white-space-removal">2.6.2.1. Incidental white space removal</a></li>
-<li><a class="reference internal" href="#significant-trailing-line">2.6.2.2. Significant trailing line</a></li>
-<li><a class="reference internal" href="#escapes-in-text-blocks">2.6.2.3. Escapes in text blocks</a></li>
+<li><a class="reference internal" href="#node-values">2.6. Node values</a></li>
+<li><a class="reference internal" href="#string-values">2.7. String values</a><ul>
+<li><a class="reference internal" href="#string-escape-characters">2.7.1. String escape characters</a></li>
+<li><a class="reference internal" href="#text-blocks">2.7.2. Text blocks</a><ul>
+<li><a class="reference internal" href="#incidental-white-space-removal">2.7.2.1. Incidental white space removal</a></li>
+<li><a class="reference internal" href="#significant-trailing-line">2.7.2.2. Significant trailing line</a></li>
+<li><a class="reference internal" href="#escapes-in-text-blocks">2.7.2.3. Escapes in text blocks</a></li>
 </ul>
 </li>
 </ul>
