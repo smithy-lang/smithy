@@ -83,7 +83,7 @@ apply EmptyInputAndEmptyOutput @httpRequestTests([
         protocol: restJson1,
         method: "POST",
         uri: "/EmptyInputAndEmptyOutput",
-        body: "{}",
+        body: "",
         bodyMediaType: "application/json"
     },
 ])
@@ -95,6 +95,14 @@ apply EmptyInputAndEmptyOutput @httpResponseTests([
         protocol: restJson1,
         code: 200,
         body: "",
+        bodyMediaType: "application/json"
+    },
+    {
+        id: "RestJsonEmptyInputAndEmptyJsonObjectOutput",
+        documentation: "Empty output serializes no payload",
+        protocol: restJson1,
+        code: 200,
+        body: "{}",
         bodyMediaType: "application/json"
     },
 ])
