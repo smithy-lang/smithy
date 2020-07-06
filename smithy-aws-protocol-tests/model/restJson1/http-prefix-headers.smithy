@@ -76,20 +76,6 @@ apply HttpPrefixHeaders @httpResponseTests([
             }
         }
     },
-    {
-        id: "RestJsonHttpPrefixHeadersAreNotPresent",
-        documentation: "No prefix headers are serialized because the value is empty",
-        protocol: restJson1,
-        code: 200,
-        body: "",
-        headers: {
-            "X-Foo": "Foo"
-        },
-        params: {
-            foo: "Foo",
-            fooMap: {}
-        }
-    },
 ])
 
 structure HttpPrefixHeadersInputOutput {
