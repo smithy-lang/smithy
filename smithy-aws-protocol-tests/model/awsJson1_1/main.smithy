@@ -26,6 +26,7 @@ service JsonProtocol {
         PutAndGetInlineDocuments,
         JsonEnums,
         NullOperation,
+        GreetingWithErrors,
     ],
 }
 
