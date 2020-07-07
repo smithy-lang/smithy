@@ -44,10 +44,7 @@ Smithy IDL ABNF
 The Smithy IDL is defined by the following ABNF:
 
 .. productionlist:: smithy
-    idl:`ws`
-       :/ `control_section`
-       :/ `metadata_section`
-       :/ `shape_section`
+    idl:`ws` `control_section` `metadata_section` `shape_section`
 
 
 -------------
