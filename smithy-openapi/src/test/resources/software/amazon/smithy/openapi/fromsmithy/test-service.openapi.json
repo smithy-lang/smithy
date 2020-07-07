@@ -203,6 +203,7 @@
         "oneOf": [
           {
             "type": "object",
+            "title": "a",
             "properties": {
               "a": {
                 "type": "string"
@@ -214,6 +215,7 @@
           },
           {
             "type": "object",
+            "title": "b",
             "properties": {
               "b": {
                 "type": "string"

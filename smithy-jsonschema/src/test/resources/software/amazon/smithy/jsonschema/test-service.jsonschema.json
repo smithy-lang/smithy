@@ -114,6 +114,7 @@
       "oneOf": [
         {
           "type": "object",
+          "title": "a",
           "required": [
             "a"
           ],
@@ -125,6 +126,7 @@
         },
         {
           "type": "object",
+          "title": "b",
           "required": [
             "b"
           ],
