@@ -195,6 +195,7 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
                     String memberName = converter.toPropertyName(member);
                     schemas.add(Schema.builder()
                             .type("object")
+                            .title(memberName)
                             .required(ListUtils.of(memberName))
                             .putProperty(memberName, createRef(member))
                             .build());
