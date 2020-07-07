@@ -61,13 +61,6 @@ New lines are represented using ``Line Feed``, ``U+000A``.
 All files SHOULD end with a new line.
 
 
-One namespace per file
-----------------------
-
-Source model files SHOULD include only a single namespace. Multiple namespaces
-MAY appear when representing a model as a single build artifact.
-
-
 Model file structure
 ====================
 
