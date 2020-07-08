@@ -42,6 +42,7 @@ apply JsonEnums @httpRequestTests([
                       "zero": "0"
                   }
               }""",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         bodyMediaType: "application/json",
         params: {
             fooEnum1: "Foo",
@@ -81,6 +82,7 @@ apply JsonEnums @httpResponseTests([
                       "zero": "0"
                   }
               }""",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         bodyMediaType: "application/json",
         params: {
             fooEnum1: "Foo",

@@ -32,7 +32,7 @@ apply PutAndGetInlineDocuments @httpRequestTests([
                   "inlineDocument": {"foo": "bar"}
               }""",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/json"},
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -55,7 +55,7 @@ apply PutAndGetInlineDocuments @httpResponseTests([
                 "inlineDocument": {"foo": "bar"}
             }""",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/json"},
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             inlineDocument: {
                 foo: "bar"
