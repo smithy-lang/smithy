@@ -31,6 +31,9 @@ apply HttpPayloadTraits @httpRequestTests([
         headers: {
             "X-Foo": "Foo"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             foo: "Foo",
             blob: "blobby blob blob"
@@ -110,6 +113,9 @@ apply HttpPayloadTraitsWithMediaType @httpRequestTests([
             "X-Foo": "Foo",
             "Content-Type": "text/plain"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             foo: "Foo",
             blob: "blobby blob blob"
@@ -170,6 +176,9 @@ apply HttpPayloadWithStructure @httpRequestTests([
         headers: {
             "Content-Type": "application/json"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             nested: {
                 greeting: "hello",

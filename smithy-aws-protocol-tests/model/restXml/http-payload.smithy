@@ -31,6 +31,9 @@ apply HttpPayloadTraits @httpRequestTests([
         headers: {
             "X-Foo": "Foo"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             foo: "Foo",
             blob: "blobby blob blob"
@@ -110,6 +113,9 @@ apply HttpPayloadTraitsWithMediaType @httpRequestTests([
             "X-Foo": "Foo",
             "Content-Type": "text/plain"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             foo: "Foo",
             blob: "blobby blob blob"
@@ -171,6 +177,9 @@ apply HttpPayloadWithStructure @httpRequestTests([
         headers: {
             "Content-Type": "application/xml"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             nested: {
                 greeting: "hello",
@@ -236,6 +245,9 @@ apply HttpPayloadWithXmlName @httpRequestTests([
         headers: {
             "Content-Type": "application/xml"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             nested: {
                 name: "Phreddy"
@@ -296,6 +308,9 @@ apply HttpPayloadWithXmlNamespace @httpRequestTests([
         headers: {
             "Content-Type": "application/xml"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             nested: {
                 name: "Phreddy"
@@ -359,6 +374,9 @@ apply HttpPayloadWithXmlNamespaceAndPrefix @httpRequestTests([
         headers: {
             "Content-Type": "application/xml"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             nested: {
                 name: "Phreddy"
