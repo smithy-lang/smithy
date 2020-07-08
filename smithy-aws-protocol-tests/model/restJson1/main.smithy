@@ -45,6 +45,11 @@ service RestJson {
         HttpPayloadTraitsWithMediaType,
         HttpPayloadWithStructure,
 
+        // @streaming tests
+        StreamingTraits,
+        StreamingTraitsRequireLength,
+        StreamingTraitsWithMediaType,
+
         // Errors
         GreetingWithErrors,
 
