@@ -15,6 +15,7 @@ use smithy.test#httpResponseTests
         protocol: awsJson1_1,
         body: "{}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             string: null
         },
@@ -32,6 +33,7 @@ use smithy.test#httpResponseTests
                 }
             }""",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
           stringMap: {
               "foo": null
@@ -51,6 +53,7 @@ use smithy.test#httpResponseTests
                 ]
             }""",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
           stringList: [null]
         },
@@ -69,6 +72,7 @@ use smithy.test#httpResponseTests
                 "string": null
             }""",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {},
     },
     {
@@ -83,6 +87,7 @@ use smithy.test#httpResponseTests
                 }
             }""",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
           stringMap: {
               "foo": null
@@ -101,6 +106,7 @@ use smithy.test#httpResponseTests
                 ]
             }""",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
           stringList: [null]
         },
