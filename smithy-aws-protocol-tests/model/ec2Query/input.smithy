@@ -25,6 +25,9 @@ apply SimpleInputParams @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: """
               Action=SimpleInputParams
               &Version=2020-01-08
@@ -45,6 +48,9 @@ apply SimpleInputParams @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: """
               Action=SimpleInputParams
               &Version=2020-01-08
@@ -65,6 +71,9 @@ apply SimpleInputParams @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: """
               Action=SimpleInputParams
               &Version=2020-01-08
@@ -83,6 +92,9 @@ apply SimpleInputParams @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: """
               Action=SimpleInputParams
               &Version=2020-01-08
@@ -101,6 +113,9 @@ apply SimpleInputParams @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: """
               Action=SimpleInputParams
               &Version=2020-01-08
@@ -119,6 +134,9 @@ apply SimpleInputParams @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: """
               Action=SimpleInputParams
               &Version=2020-01-08
@@ -137,6 +155,9 @@ apply SimpleInputParams @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: """
               Action=SimpleInputParams
               &Version=2020-01-08
@@ -155,6 +176,9 @@ apply SimpleInputParams @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: """
               Action=SimpleInputParams
               &Version=2020-01-08
@@ -173,6 +197,9 @@ apply SimpleInputParams @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: """
               Action=SimpleInputParams
               &Version=2020-01-08
@@ -191,6 +218,9 @@ apply SimpleInputParams @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: """
               Action=SimpleInputParams
               &Version=2020-01-08
@@ -241,6 +271,9 @@ apply QueryTimestamps @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: """
               Action=QueryTimestamps
               &Version=2020-01-08
@@ -285,6 +318,9 @@ apply NestedStructures @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: """
               Action=NestedStructures
               &Version=2020-01-08
@@ -330,6 +366,9 @@ apply QueryIdempotencyTokenAutoFill @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: """
               Action=QueryIdempotencyTokenAutoFill
               &Version=2020-01-08
@@ -345,6 +384,9 @@ apply QueryIdempotencyTokenAutoFill @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
+        requireHeaders: [
+            "Content-Length"
+        ],
         body: """
               Action=QueryIdempotencyTokenAutoFill
               &Version=2020-01-08
