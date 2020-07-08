@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -14,6 +14,18 @@
  */
 
 package software.amazon.smithy.codegen.core;
+
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
+import software.amazon.smithy.model.node.FromNode;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeMapper;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,18 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.node.ExpectationNotMetException;
-import software.amazon.smithy.model.node.FromNode;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NodeMapper;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Class that represents the contents of a Smithy trace file.
@@ -68,6 +68,9 @@ public class TraceFile implements ToNode, FromNode, ValidateRequirements {
     public static final String ARTIFACT_TEXT = "artifact";
     public static final String DEFINITIONS_TEXT = "definitions";
     public static final String SHAPES_TEXT = "shapes";
+
+    public static final String SMITHY_TRACE_VERSION = "1.0";
+
     private String smithyTrace;
     private ArtifactMetadata artifactMetadata;
     private Definitions definitions; //Optional
@@ -75,6 +78,20 @@ public class TraceFile implements ToNode, FromNode, ValidateRequirements {
     private NodeMapper nodeMapper = new NodeMapper();
     private SourceLocation sl = new SourceLocation("");
 
+    /**
+     * Default constructor for TraceFile for use when parsing.
+     */
+    public TraceFile() {
+    }
+
+    private TraceFile(String smithyTrace, Definitions definitions, ArtifactMetadata artifactMetadata,
+                      Map<ShapeId, List<ShapeLink>> shapes) {
+
+        this.smithyTrace = smithyTrace;
+        this.definitions = definitions;
+        this.artifactMetadata = artifactMetadata;
+        this.shapes = shapes;
+    }
 
     /**
      * Parses and validates the trace file passed in as filename
@@ -320,5 +337,130 @@ public class TraceFile implements ToNode, FromNode, ValidateRequirements {
      */
     public void setShapes(Map<ShapeId, List<ShapeLink>> shapes) {
         this.shapes = shapes;
+    }
+
+    /**
+     * Builder for constructing TraceFile's from scratch.
+     */
+    public static class TraceFileBuilder {
+
+        private String smithyTrace;
+        private Definitions definitions;
+        private ArtifactMetadata artifactMetadata;
+        private Map<ShapeId, List<ShapeLink>> shapes;
+
+        /**
+         * Constructor for builder with all required parameters.
+         * SmithyTrace is automatically set.
+         *
+         * @param artifactMetadata ArtifactMetadata for TraceFile
+         * @param shapes           Map of ShapeId to Lists of ShapeLinks
+         */
+        public TraceFileBuilder(ArtifactMetadata artifactMetadata, Map<ShapeId, List<ShapeLink>> shapes) {
+            this.smithyTrace = SMITHY_TRACE_VERSION;
+            this.artifactMetadata = artifactMetadata;
+            this.shapes = shapes;
+        }
+
+        /**
+         * Constructor for builder that sets SmithTrace and
+         * instantiates the shapes map.
+         */
+        public TraceFileBuilder() {
+            this.shapes = new HashMap<>();
+            this.smithyTrace = SMITHY_TRACE_VERSION;
+        }
+
+        /**
+         * @param smithyTrace Trace file version number.
+         * @return This builder.
+         */
+        public TraceFileBuilder setSmithyTrace(String smithyTrace) {
+            this.smithyTrace = smithyTrace;
+            return this;
+        }
+
+        /**
+         * @param definitions Trace file definitions.
+         * @return This builder.
+         */
+        public TraceFileBuilder setDefinitions(Definitions definitions) {
+            this.definitions = definitions;
+            return this;
+        }
+
+        /**
+         * @param artifactMetadata Trace file ArtifactMetadata.
+         * @return This builder.
+         */
+        public TraceFileBuilder setArtifactMetadata(ArtifactMetadata artifactMetadata) {
+            this.artifactMetadata = artifactMetadata;
+            return this;
+        }
+
+        /**
+         * Adds a ShapeLink to this ShapeId in the TraceFile's shapes map.
+         *
+         * @param id   ShapeId
+         * @param link ShapeLink corresponding to ShapeId
+         * @return This builder.
+         */
+        public TraceFileBuilder addShapeLink(ShapeId id, ShapeLink link) {
+            if (!this.shapes.containsKey(id)) {
+                this.shapes.put(id, new ArrayList<>());
+            }
+            this.shapes.get(id).add(link);
+            return this;
+        }
+
+        /**
+         * Adds a ShapeLink to this ShapeId in the TraceFile's shapes map.
+         *
+         * @param idString ShapeId represented as a string.
+         * @param link     ShapeLink corresponding to ShapeId
+         * @return This builder.
+         */
+        public TraceFileBuilder addShapeLink(String idString, ShapeLink link) {
+            return addShapeLink(ShapeId.from(idString), link);
+        }
+
+        /**
+         * Adds a list of ShapeLinks to this ShapeId in the TraceFile's shapes map.
+         *
+         * @param id       ShapeId.
+         * @param linkList List of ShapeLinks corresponding to a ShapeId.
+         * @return This builder.
+         */
+        public TraceFileBuilder addShapeLinkList(ShapeId id, List<ShapeLink> linkList) {
+            this.shapes.put(id, linkList);
+            return this;
+        }
+
+        /**
+         * Adds a list of ShapeLinks to this ShapeId in the TraceFile's shapes map.
+         *
+         * @param idString ShapeId as a String.
+         * @param linkList List of ShapeLinks corresponding to a ShapeId.
+         * @return This builder.
+         */
+        public TraceFileBuilder addShapeLinkList(String idString, List<ShapeLink> linkList) {
+            return addShapeLinkList(ShapeId.from(idString), linkList);
+        }
+
+        /**
+         * @param shapes shapes map for TraceFile.
+         * @return This builder.
+         */
+        public TraceFileBuilder setShapes(Map<ShapeId, List<ShapeLink>> shapes) {
+            this.shapes = shapes;
+            return this;
+        }
+
+        /**
+         * @return The TraceFile.
+         */
+        public TraceFile build() {
+            return new TraceFile(smithyTrace, definitions, artifactMetadata, shapes);
+        }
     }
 }

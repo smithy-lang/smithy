@@ -18,10 +18,119 @@ import java.util.Map;
 
 public class TraceFileIntegrationTest {
     /* Correct TraceFile use tests
+    -Test creating, parsing, validating and writing a TraceFile from scratch.
     -Test parse and write functionality combined on a correct trace file
     -Test parse and write functionality with nodes with single children instead of arrays of children
     -Test parse and write functionality combined on a correct trace file without the optional definitions section
      */
+
+    @Test
+    void correctWriteTraceFileFromScratch() throws IOException, URISyntaxException {
+        /*
+        Building ArtifactMetadata - this builder uses setTimestampAsNow, but you can also use a different
+        builder constructor to specify a custom timestamp.
+        The required fields are id, version, type, timestamp.
+         */
+        String id = "software.amazon.awssdk.services:snowball:2.10.79";
+        String version = "2.10.79";
+        String type = "Java";
+        String typeVersion = "1.8";
+        String homepage = "https://github.com/aws/aws-sdk-java-v2/";
+        ArtifactMetadata artifactMetadata = new ArtifactMetadata.ArtifactMetadataBuilder(id, version, type)
+                .setTimestampAsNow()
+                .setHomepage(homepage)
+                .setTypeVersion(typeVersion)
+                .build();
+
+        /*
+        Building Definitions - this example uses addTag and addType to add individual key value pairs.
+        There's another builder constructor that allows you to add the entire tags/types Map<String,String> without
+        having to add them individually.
+         */
+        Definitions definitions = new Definitions.DefinitionsBuilder()
+                .addTag("service", "Service client")
+                .addTag("request", "AWS SDK request type")
+                .addTag("requestBuilder", "AWS SDK request builder")
+                .addType("TYPE", "Class, interface (including annotation type), or enum declaration")
+                .build();
+
+        /*
+        Building TraceFile - build the trace file by passing the different objects to the builder
+        You can either construct the shapes map yourself, and add it to TraceFile, or you can add each shape
+        individually as shown below.
+        SmithyTrace is a constant in my code set to 1.0 for this version, so you don't have to worry about
+        setting it.
+         */
+        TraceFile.TraceFileBuilder traceFileBuilder = new TraceFile.TraceFileBuilder()
+                .setArtifactMetadata(artifactMetadata)
+                .setDefinitions(definitions);
+
+        //adding one ShapeLink to TraceFile
+        type = "TYPE";
+        id = "software.amazon.awssdk.services.snowball.SnowballClient";
+        traceFileBuilder.addShapeLink("com.amazonaws.snowball#Snowball",
+                new ShapeLink.ShapeLinkBuilder(type, id)
+                        .addTag("service")
+                        .build());
+
+        //adding multiple ShapeLinks for the same ShapeId; can also add a List<ShapeLink>
+        type = "TYPE";
+        id = "software.amazon.awssdk.services.snowball.model.ListClusterJobsRequest$Builder";
+        traceFileBuilder.addShapeLink("com.amazonaws.snowball#ListClustersRequest",
+                new ShapeLink.ShapeLinkBuilder(type, id)
+                        .addTag("requestBuilder")
+                        .build());
+        type = "TYPE";
+        id = "software.amazon.awssdk.services.snowball.model.ListClusterJobsRequest";
+        traceFileBuilder.addShapeLink("com.amazonaws.snowball#ListClustersRequest",
+                new ShapeLink.ShapeLinkBuilder(type, id)
+                        .addTag("request")
+                        .build());
+
+        //finally, build the TraceFile
+        TraceFile traceFile = traceFileBuilder.build();
+
+        /*
+        After creating a TraceFile, you may want to validate it.
+        1) You can validate whether all your types/tags in ShapeLink are in the definitions object
+        2) You can validate whether all your TraceFile matches your model by checking if all the ShapeIds
+        in a model file are in the TraceFile and all the ShapeIds in a model file are in the TraceFile
+        3) You can make sure you remembered to add all the required fields; this check is also performed
+        during writing so it is probably unnecessary;
+         */
+
+        //types/tags validation
+        traceFile.validateTypesAndTags();
+
+        //model validation, see the correctValidateModel test for another example, I don't have the actual model for
+        //this trace file, so cannot validate it.
+        //traceFile.validateModel("Your model resource path here");
+
+        //required fields validation
+        traceFile.validateRequiredFields();
+
+        /*
+        Then write the TraceFile, just specify path/filename string.
+         */
+
+        traceFile.writeTraceFile(getClass().getResource("trace_file_output.txt").getFile());
+
+        /*
+        Then parse the trace file, specify the files URI for parsing
+        Parsing fills all required fields and checks that they're filled
+         */
+
+        TraceFile traceFile2 = new TraceFile();
+        traceFile2.parseTraceFile(getClass().getResource("trace_file_output.txt").toURI());
+
+
+        //few assorted checks
+        assert traceFile2.getDefinitions().get().getTypes().containsKey("TYPE");
+        assert traceFile2.getShapes().containsKey(ShapeId.from("com.amazonaws.snowball#ListClustersRequest"));
+        assert traceFile2.getShapes().get(ShapeId.from("com.amazonaws.snowball#ListClustersRequest")).size() == 2;
+        assert traceFile2.getArtifactMetadata().getType().equals("Java");
+    }
+
     @Test
     void correctParseWrite() throws IOException, URISyntaxException {
         TraceFile traceFile = new TraceFile();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,6 +15,12 @@
 
 package software.amazon.smithy.codegen.core;
 
+import software.amazon.smithy.model.node.FromNode;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeMapper;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.ToNode;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,12 +29,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
-import software.amazon.smithy.model.node.FromNode;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NodeMapper;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.ToNode;
 
 /**
  * Class that defines the acceptable values that can be used in ShapeLink objects.
@@ -47,12 +47,19 @@ import software.amazon.smithy.model.node.ToNode;
  * </p>
  */
 public class Definitions implements ToNode, FromNode, ValidateRequirements {
-    public final String typeText = "types";
-    public final String tagsText = "tags";
+    public static final String TYPE_TEXT = "types";
+    public static final String TAGS_TEXT = "tags";
     private Map<String, String> tags;
     private Map<String, String> types;
     private NodeMapper nodeMapper = new NodeMapper();
 
+    public Definitions() {
+    }
+
+    private Definitions(Map<String, String> tags, Map<String, String> types) {
+        this.tags = tags;
+        this.types = types;
+    }
 
     /**
      * Converts an ObjectNode that represents the definitions section of the
@@ -65,8 +72,8 @@ public class Definitions implements ToNode, FromNode, ValidateRequirements {
     public void fromNode(Node jsonNode) {
         ObjectNode node = jsonNode.expectObjectNode();
 
-        types = nodeMapper.deserializeMap(node.expectObjectMember(typeText), Map.class, String.class);
-        tags = nodeMapper.deserializeMap(node.expectObjectMember(tagsText), Map.class, String.class);
+        types = nodeMapper.deserializeMap(node.expectObjectMember(TYPE_TEXT), Map.class, String.class);
+        tags = nodeMapper.deserializeMap(node.expectObjectMember(TAGS_TEXT), Map.class, String.class);
 
         //error handling
         validateRequiredFields();
@@ -98,8 +105,8 @@ public class Definitions implements ToNode, FromNode, ValidateRequirements {
         validateRequiredFields();
 
         Map<String, Map<String, String>> toSerialize = new HashMap<>();
-        toSerialize.put(typeText, types);
-        toSerialize.put(tagsText, tags);
+        toSerialize.put(TYPE_TEXT, types);
+        toSerialize.put(TAGS_TEXT, tags);
 
         return nodeMapper.serialize(toSerialize).expectObjectNode();
     }
@@ -149,5 +156,61 @@ public class Definitions implements ToNode, FromNode, ValidateRequirements {
      */
     public void setTypes(Map<String, String> types) {
         this.types = types;
+    }
+
+    public static class DefinitionsBuilder {
+
+        private Map<String, String> tags;
+        private Map<String, String> types;
+
+        /**
+         * Constructs DefinitionsBuilder with all required objects.
+         *
+         * @param tags  Map of tag keys and values.
+         * @param types Map of type keys and values.
+         */
+        public DefinitionsBuilder(Map<String, String> tags, Map<String, String> types) {
+            this.tags = tags;
+            this.types = types;
+        }
+
+        /**
+         * Instantiates Definition's tags and types maps.
+         */
+        public DefinitionsBuilder() {
+            this.tags = new HashMap<>();
+            this.types = new HashMap<>();
+        }
+
+        /**
+         * Adds the tag's key, value pair to the tags map.
+         *
+         * @param key   Key of tag.
+         * @param value Value of tag.
+         * @return This builder.
+         */
+        public DefinitionsBuilder addTag(String key, String value) {
+            this.tags.put(key, value);
+            return this;
+        }
+
+        /**
+         * Adds the type's key, value pair to the tags map.
+         *
+         * @param key   Key of type.
+         * @param value Value of type.
+         * @return This builder.
+         */
+        public DefinitionsBuilder addType(String key, String value) {
+            this.types.put(key, value);
+            return this;
+        }
+
+        /**
+         * @return Definitions object from this builder.
+         */
+        public Definitions build() {
+            return new Definitions(tags, types);
+        }
     }
 }

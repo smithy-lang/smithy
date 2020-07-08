@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,16 +15,20 @@
 
 package software.amazon.smithy.codegen.core;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
 import software.amazon.smithy.model.node.FromNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.TimeZone;
 
 /**
  * Class that defines information about an artifact that was created from a model for the trace file.
@@ -46,12 +50,12 @@ import software.amazon.smithy.model.node.ToNode;
  * </ul>
  */
 public class ArtifactMetadata implements ToNode, FromNode, ValidateRequirements {
-    public final String idText = "id";
-    public final String versionText = "version";
-    public final String typeText = "type";
-    public final String typeVersionText = "typeVersion";
-    public final String homepageText = "homepage";
-    public final String timestampText = "timestamp";
+    public static final String ID_TEXT = "id";
+    public static final String VERSION_TEXT = "version";
+    public static final String TYPE_TEXT = "type";
+    public static final String TYPE_VERSION_TEXT = "typeVersion";
+    public static final String HOMEPAGE_TEXT = "homepage";
+    public static final String TIMESTAMP_TEXT = "timestamp";
     private String id;
     private String version;
     private String timestamp;
@@ -59,6 +63,19 @@ public class ArtifactMetadata implements ToNode, FromNode, ValidateRequirements 
     private String typeVersion; //optional
     private String homepage; //optional
     private NodeMapper nodeMapper = new NodeMapper();
+
+    public ArtifactMetadata() {
+    }
+
+    private ArtifactMetadata(String id, String version, String timestamp, String type, String typeVersion,
+                             String homepage) {
+        this.id = id;
+        this.version = version;
+        this.timestamp = timestamp;
+        this.type = type;
+        this.typeVersion = typeVersion;
+        this.homepage = homepage;
+    }
 
     /**
      * Converts the metadata contained in ArtifactMetadata's variables into an ObjectNode.
@@ -73,15 +90,15 @@ public class ArtifactMetadata implements ToNode, FromNode, ValidateRequirements 
 
         Map<String, String> toSerialize = new HashMap<>();
 
-        toSerialize.put(idText, id);
-        toSerialize.put(versionText, version);
-        toSerialize.put(typeText, type);
-        toSerialize.put(timestampText, timestamp);
+        toSerialize.put(ID_TEXT, id);
+        toSerialize.put(VERSION_TEXT, version);
+        toSerialize.put(TYPE_TEXT, type);
+        toSerialize.put(TIMESTAMP_TEXT, timestamp);
         if (typeVersion != null) {
-            toSerialize.put(typeVersionText, typeVersion);
+            toSerialize.put(TYPE_VERSION_TEXT, typeVersion);
         }
         if (homepage != null) {
-            toSerialize.put(homepageText, homepage);
+            toSerialize.put(HOMEPAGE_TEXT, homepage);
         }
 
         return nodeMapper.serialize(toSerialize).expectObjectNode();
@@ -101,22 +118,21 @@ public class ArtifactMetadata implements ToNode, FromNode, ValidateRequirements 
         //error handling during deserialization
         nodeMapper.setWhenMissingSetter(NodeMapper.WhenMissing.FAIL);
 
-        id = nodeMapper.deserialize(node.expectStringMember(idText), String.class);
-        version = nodeMapper.deserialize(node.expectStringMember(versionText), String.class);
-        timestamp = nodeMapper.deserialize(node.expectStringMember(timestampText), String.class);
-        type = nodeMapper.deserialize(node.expectStringMember(typeText), String.class);
+        id = nodeMapper.deserialize(node.expectStringMember(ID_TEXT), String.class);
+        version = nodeMapper.deserialize(node.expectStringMember(VERSION_TEXT), String.class);
+        timestamp = nodeMapper.deserialize(node.expectStringMember(TIMESTAMP_TEXT), String.class);
+        type = nodeMapper.deserialize(node.expectStringMember(TYPE_TEXT), String.class);
 
-        if (node.containsMember(typeVersionText)) {
-            typeVersion = nodeMapper.deserialize(node.expectStringMember(typeVersionText), String.class);
+        if (node.containsMember(TYPE_VERSION_TEXT)) {
+            typeVersion = nodeMapper.deserialize(node.expectStringMember(TYPE_VERSION_TEXT), String.class);
         }
-        if (node.containsMember(homepageText)) {
-            homepage = nodeMapper.deserialize(node.expectStringMember(homepageText), String.class);
+        if (node.containsMember(HOMEPAGE_TEXT)) {
+            homepage = nodeMapper.deserialize(node.expectStringMember(HOMEPAGE_TEXT), String.class);
         }
 
         //error handling
         validateRequiredFields();
     }
-
 
     /**
      * Checks if all of the ArtifactMetadata's required fields are not null.
@@ -239,5 +255,86 @@ public class ArtifactMetadata implements ToNode, FromNode, ValidateRequirements 
      */
     public void setHomepage(String homepage) {
         this.homepage = homepage;
+    }
+
+    public static class ArtifactMetadataBuilder {
+
+        private String id;
+        private String version;
+        private String timestamp;
+        private String type;
+        private String typeVersion;
+        private String homepage;
+
+        /**
+         * Constructor for builder with all required fields.
+         *
+         * @param id        ArtifactMetadata's id.
+         * @param version   ArtifactMetadata's version.
+         * @param timestamp ArtifactMetadata's timestamp.
+         * @param type      ArtifactMetadata's type.
+         */
+        public ArtifactMetadataBuilder(String id, String version, String timestamp, String type) {
+            this.id = id;
+            this.version = version;
+            this.timestamp = timestamp;
+            this.type = type;
+        }
+
+        /**
+         * Constructor for builder with all required fields except timestamp which can
+         * later be set with the setTimestampAsNow method.
+         *
+         * @param id      ArtifactMetadata's id.
+         * @param version ArtifactMetadata's version..
+         * @param type    ArtifactMetadata's type.
+         */
+        public ArtifactMetadataBuilder(String id, String version, String type) {
+            this.id = id;
+            this.version = version;
+            this.type = type;
+        }
+
+        /**
+         * Sets the timestamp as the current time in RFC 3339 format.
+         *
+         * @return This builder.
+         */
+        public ArtifactMetadataBuilder setTimestampAsNow() {
+            //set timestamp based on current time
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            this.timestamp = dateFormat.format(new Date());
+            return this;
+        }
+
+        /**
+         * Sets this builder's typeVersion.
+         *
+         * @param typeVersion typeVersion of ArtifactMetadata.
+         * @return This builder.
+         */
+        public ArtifactMetadataBuilder setTypeVersion(String typeVersion) {
+            this.typeVersion = typeVersion;
+            return this;
+        }
+
+        /**
+         * Sets this builder's homepage.
+         *
+         * @param homepage homepage of ArtifactMetadata.
+         * @return This builder.
+         */
+        public ArtifactMetadataBuilder setHomepage(String homepage) {
+            this.homepage = homepage;
+            return this;
+        }
+
+        /**
+         * @return The ArtifactMetadata object corresponding to this builder.
+         */
+        public ArtifactMetadata build() {
+            return new ArtifactMetadata(id, version, timestamp, type, typeVersion, homepage);
+        }
     }
 }

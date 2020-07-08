@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,17 +15,18 @@
 
 package software.amazon.smithy.codegen.core;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
 import software.amazon.smithy.model.node.FromNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Class that defines a link between the Smithy {@link software.amazon.smithy.model.shapes.Shape} and
@@ -48,12 +49,12 @@ import software.amazon.smithy.model.node.ToNode;
  * </ul>
  */
 public class ShapeLink implements ToNode, FromNode, ValidateRequirements {
-    public final String typeText = "type";
-    public final String idText = "id";
-    public final String tagsText = "tags";
-    public final String fileText = "file";
-    public final String lineText = "line";
-    public final String columnText = "column";
+    public static final String TYPE_TEXT = "type";
+    public static final String ID_TEXT = "id";
+    public static final String TAGS_TEXT = "tags";
+    public static final String FILE_TEXT = "file";
+    public static final String LINE_TEXT = "line";
+    public static final String COLUMN_TEXT = "column";
     private String type;
     private String id;
     private List<String> tags; //optional
@@ -61,6 +62,18 @@ public class ShapeLink implements ToNode, FromNode, ValidateRequirements {
     private Integer line; //optional
     private Integer column; //optional
     private NodeMapper nodeMapper = new NodeMapper();
+
+    public ShapeLink() {
+    }
+
+    private ShapeLink(String type, String id, List<String> tags, String file, Integer line, Integer column) {
+        this.type = type;
+        this.id = id;
+        this.tags = tags;
+        this.file = file;
+        this.line = line;
+        this.column = column;
+    }
 
     /**
      * Instantiates ShapeLink instance variables by extracting data from an ObjectNode.
@@ -71,20 +84,20 @@ public class ShapeLink implements ToNode, FromNode, ValidateRequirements {
     public void fromNode(Node jsonNode) {
         ObjectNode node = jsonNode.expectObjectNode();
 
-        type = nodeMapper.deserialize(node.expectStringMember(typeText), String.class);
-        id = nodeMapper.deserialize(node.expectStringMember(idText), String.class);
+        type = nodeMapper.deserialize(node.expectStringMember(TYPE_TEXT), String.class);
+        id = nodeMapper.deserialize(node.expectStringMember(ID_TEXT), String.class);
 
-        if (node.containsMember(tagsText)) {
-            tags = nodeMapper.deserializeCollection(node.expectArrayMember(tagsText), List.class, String.class);
+        if (node.containsMember(TAGS_TEXT)) {
+            tags = nodeMapper.deserializeCollection(node.expectArrayMember(TAGS_TEXT), List.class, String.class);
         }
-        if (node.containsMember(fileText)) {
-            file = nodeMapper.deserialize(node.expectStringMember(fileText), String.class);
+        if (node.containsMember(FILE_TEXT)) {
+            file = nodeMapper.deserialize(node.expectStringMember(FILE_TEXT), String.class);
         }
-        if (node.containsMember(lineText)) {
-            line = nodeMapper.deserialize(node.expectNumberMember(lineText), Integer.class);
+        if (node.containsMember(LINE_TEXT)) {
+            line = nodeMapper.deserialize(node.expectNumberMember(LINE_TEXT), Integer.class);
         }
-        if (node.containsMember(columnText)) {
-            column = nodeMapper.deserialize(node.expectNumberMember(columnText), Integer.class);
+        if (node.containsMember(COLUMN_TEXT)) {
+            column = nodeMapper.deserialize(node.expectNumberMember(COLUMN_TEXT), Integer.class);
         }
 
         //error handling - required objects should not be null after parsing
@@ -104,19 +117,19 @@ public class ShapeLink implements ToNode, FromNode, ValidateRequirements {
 
         Map<String, Object> toSerialize = new HashMap<>();
 
-        toSerialize.put(idText, id);
-        toSerialize.put(typeText, type);
+        toSerialize.put(ID_TEXT, id);
+        toSerialize.put(TYPE_TEXT, type);
         if (tags != null) {
-            toSerialize.put(tagsText, tags);
+            toSerialize.put(TAGS_TEXT, tags);
         }
         if (file != null) {
-            toSerialize.put(fileText, file);
+            toSerialize.put(FILE_TEXT, file);
         }
         if (line != null) {
-            toSerialize.put(lineText, line);
+            toSerialize.put(LINE_TEXT, line);
         }
         if (column != null) {
-            toSerialize.put(columnText, column);
+            toSerialize.put(COLUMN_TEXT, column);
         }
 
         return nodeMapper.serialize(toSerialize).expectObjectNode();
@@ -239,5 +252,88 @@ public class ShapeLink implements ToNode, FromNode, ValidateRequirements {
      */
     public void setColumn(Integer column) {
         this.column = column;
+    }
+
+    public static class ShapeLinkBuilder {
+
+        private String type;
+        private String id;
+        private List<String> tags;
+        private String file;
+        private Integer line;
+        private Integer column;
+
+        /**
+         * Constructs ShapeLink with required fields.
+         *
+         * @param type Type of ShapeLink.
+         * @param id   Id of ShapeLink.
+         */
+        public ShapeLinkBuilder(String type, String id) {
+            this.type = type;
+            this.id = id;
+        }
+
+        /**
+         * Sets tags list of a ShapeLink.
+         *
+         * @param tags list of tags.
+         * @return This builder.
+         */
+        public ShapeLinkBuilder setTags(List<String> tags) {
+            this.tags = tags;
+            return this;
+        }
+
+        /**
+         * Adds a tag to the tags list of a ShapeLink.
+         *
+         * @param tag tag to add.
+         * @return This builder.
+         */
+        public ShapeLinkBuilder addTag(String tag) {
+            if (tags == null) {
+                tags = new ArrayList<>();
+            }
+            tags.add(tag);
+            return this;
+        }
+
+        /**
+         * Sets File of a ShapeLink.
+         *
+         * @param file File.
+         * @return This builder.
+         */
+        public ShapeLinkBuilder setFile(String file) {
+            this.file = file;
+            return this;
+        }
+
+        /**
+         * Sets line of a ShapeLink.
+         *
+         * @param line Line number in artifact file.
+         * @return This builder.
+         */
+        public ShapeLinkBuilder setLine(Integer line) {
+            this.line = line;
+            return this;
+        }
+
+        /**
+         * Sets tags list of a ShapeLink.
+         *
+         * @param column Column number in artifact file.
+         * @return This builder.
+         */
+        public ShapeLinkBuilder setColumn(Integer column) {
+            this.column = column;
+            return this;
+        }
+
+        public ShapeLink build() {
+            return new ShapeLink(type, id, tags, file, line, column);
+        }
     }
 }

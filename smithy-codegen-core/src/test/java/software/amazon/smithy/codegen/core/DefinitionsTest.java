@@ -30,30 +30,30 @@ class DefinitionsTest {
 
         ObjectNode node = definitions1.toNode();
 
-        assert node.containsMember(definitions1.typeText);
-        assert node.containsMember(definitions1.tagsText);
-        assert node.getObjectMember(definitions1.typeText)
+        assert node.containsMember(Definitions.TYPE_TEXT);
+        assert node.containsMember(Definitions.TAGS_TEXT);
+        assert node.getObjectMember(Definitions.TYPE_TEXT)
                 .get()
                 .getMember("t1")
                 .get()
                 .expectStringNode()
                 .getValue()
                 .equals("t1val");
-        assert node.getObjectMember(definitions1.typeText)
+        assert node.getObjectMember(Definitions.TYPE_TEXT)
                 .get()
                 .getMember("t2")
                 .get()
                 .expectStringNode()
                 .getValue()
                 .equals("t2val");
-        assert node.getObjectMember(definitions1.tagsText)
+        assert node.getObjectMember(Definitions.TAGS_TEXT)
                 .get()
                 .getMember("tag1")
                 .get()
                 .expectStringNode()
                 .getValue()
                 .equals("tag1val");
-        assert node.getObjectMember(definitions1.tagsText)
+        assert node.getObjectMember(Definitions.TAGS_TEXT)
                 .get()
                 .getMember("tag2")
                 .get()
@@ -91,30 +91,30 @@ class DefinitionsTest {
         Definitions definitions1 = new Definitions();
         ObjectNode node = definitions1.fromDefinitionsFile(getClass().getResource("definitions.txt").toURI());
 
-        assert node.containsMember(definitions1.typeText);
-        assert node.containsMember(definitions1.tagsText);
-        assert node.getObjectMember(definitions1.typeText)
+        assert node.containsMember(Definitions.TYPE_TEXT);
+        assert node.containsMember(Definitions.TAGS_TEXT);
+        assert node.getObjectMember(Definitions.TYPE_TEXT)
                 .get()
                 .getMember("t1")
                 .get()
                 .expectStringNode()
                 .getValue()
                 .equals("t1val");
-        assert node.getObjectMember(definitions1.typeText)
+        assert node.getObjectMember(Definitions.TYPE_TEXT)
                 .get()
                 .getMember("t2")
                 .get()
                 .expectStringNode()
                 .getValue()
                 .equals("t2val");
-        assert node.getObjectMember(definitions1.tagsText)
+        assert node.getObjectMember(Definitions.TAGS_TEXT)
                 .get()
                 .getMember("tag1")
                 .get()
                 .expectStringNode()
                 .getValue()
                 .equals("tag1val");
-        assert node.getObjectMember(definitions1.tagsText)
+        assert node.getObjectMember(Definitions.TAGS_TEXT)
                 .get()
                 .getMember("tag2")
                 .get()

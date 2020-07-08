@@ -15,10 +15,10 @@ class ArtifactMetadataTest {
 
         ObjectNode node = am.toNode();
 
-        assert node.getStringMember(am.idText).get().getValue().equals("a");
-        assert node.getStringMember(am.versionText).get().getValue().equals("b");
-        assert node.getStringMember(am.typeText).get().getValue().equals("c");
-        assert node.getStringMember(am.timestampText).get().getValue().equals("d");
+        assert node.getStringMember(ArtifactMetadata.ID_TEXT).get().getValue().equals("a");
+        assert node.getStringMember(ArtifactMetadata.VERSION_TEXT).get().getValue().equals("b");
+        assert node.getStringMember(ArtifactMetadata.TYPE_TEXT).get().getValue().equals("c");
+        assert node.getStringMember(ArtifactMetadata.TIMESTAMP_TEXT).get().getValue().equals("d");
     }
 
     @Test

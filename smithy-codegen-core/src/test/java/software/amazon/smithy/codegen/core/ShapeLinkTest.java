@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.ObjectNode;
 
 import java.util.ArrayList;
-import java.util.List;
 
 class ShapeLinkTest {
 
@@ -22,9 +21,9 @@ class ShapeLinkTest {
 
         ObjectNode node = shapeLink.toNode();
 
-        assert node.getStringMember(shapeLink.typeText).get().getValue().equals("type");
-        assert node.getNumberMember(shapeLink.lineText).get().getValue().equals(1);
-        assert node.getArrayMember(shapeLink.tagsText)
+        assert node.getStringMember(ShapeLink.TYPE_TEXT).get().getValue().equals("type");
+        assert node.getNumberMember(ShapeLink.LINE_TEXT).get().getValue().equals(1);
+        assert node.getArrayMember(ShapeLink.TAGS_TEXT)
                 .get()
                 .get(0)
                 .get()
