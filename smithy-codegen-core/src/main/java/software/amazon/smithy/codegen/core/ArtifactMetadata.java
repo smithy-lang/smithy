@@ -15,12 +15,6 @@
 
 package software.amazon.smithy.codegen.core;
 
-import software.amazon.smithy.model.node.FromNode;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NodeMapper;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.ToNode;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,6 +23,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TimeZone;
+
+import software.amazon.smithy.model.node.FromNode;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeMapper;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.ToNode;
 
 /**
  * Class that defines information about an artifact that was created from a model for the trace file.

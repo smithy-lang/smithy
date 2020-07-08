@@ -15,18 +15,18 @@
 
 package software.amazon.smithy.codegen.core;
 
-import software.amazon.smithy.model.node.FromNode;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NodeMapper;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.ToNode;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
+import software.amazon.smithy.model.node.FromNode;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeMapper;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.ToNode;
 
 /**
  * Class that defines a link between the Smithy {@link software.amazon.smithy.model.shapes.Shape} and

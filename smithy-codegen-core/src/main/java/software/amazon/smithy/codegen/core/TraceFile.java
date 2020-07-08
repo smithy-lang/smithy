@@ -15,18 +15,6 @@
 
 package software.amazon.smithy.codegen.core;
 
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.node.ExpectationNotMetException;
-import software.amazon.smithy.model.node.FromNode;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NodeMapper;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -45,6 +33,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
+import software.amazon.smithy.model.node.FromNode;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeMapper;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Class that represents the contents of a Smithy trace file.
