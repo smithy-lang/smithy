@@ -12,6 +12,7 @@ use smithy.test#httpResponseTests
         protocol: awsJson1_1,
         documentation: "Serializes string shapes",
         body: "{\"String\":\"abc xyz\"}",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         bodyMediaType: "application/json",
         requireHeaders: [
             "Content-Length"
@@ -28,6 +29,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes string shapes with jsonvalue trait",
         body: "{\"JsonValue\":\"{\\\"string\\\":\\\"value\\\",\\\"number\\\":1234.5,\\\"boolTrue\\\":true,\\\"boolFalse\\\":false,\\\"array\\\":[1,2,3,4],\\\"object\\\":{\\\"key\\\":\\\"value\\\"},\\\"null\\\":null}\"}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -43,6 +45,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes integer shapes",
         body: "{\"Integer\":1234}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -58,6 +61,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes long shapes",
         body: "{\"Long\":999999999999}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -73,6 +77,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes float shapes",
         body: "{\"Float\":1234.5}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -88,6 +93,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes double shapes",
         body: "{\"Double\":1234.5}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -103,6 +109,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes blob shapes",
         body: "{\"Blob\":\"YmluYXJ5LXZhbHVl\"}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -118,6 +125,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes boolean shapes (true)",
         body: "{\"Boolean\":true}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -133,6 +141,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes boolean shapes (false)",
         body: "{\"Boolean\":false}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -148,6 +157,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes timestamp shapes",
         body: "{\"Timestamp\":946845296}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -163,6 +173,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes timestamp shapes with iso8601 timestampFormat",
         body: "{\"Iso8601Timestamp\":\"2000-01-02T20:34:56Z\"}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -178,6 +189,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes timestamp shapes with httpdate timestampFormat",
         body: "{\"HttpdateTimestamp\":\"Sun, 02 Jan 2000 20:34:56 GMT\"}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -193,6 +205,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes timestamp shapes with unixTimestamp timestampFormat",
         body: "{\"UnixTimestamp\":946845296}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -208,6 +221,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes list shapes",
         body: "{\"ListOfStrings\":[\"abc\",\"mno\",\"xyz\"]}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -227,6 +241,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes empty list shapes",
         body: "{\"ListOfStrings\":[]}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -242,6 +257,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes list of map shapes",
         body: "{\"ListOfMapsOfStrings\":[{\"foo\":\"bar\"},{\"abc\":\"xyz\"},{\"red\":\"blue\"}]}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -267,6 +283,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes list of structure shapes",
         body: "{\"ListOfStructs\":[{\"Value\":\"abc\"},{\"Value\":\"mno\"},{\"Value\":\"xyz\"}]}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -292,6 +309,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes list of recursive structure shapes",
         body: "{\"RecursiveList\":[{\"RecursiveList\":[{\"RecursiveList\":[{\"Integer\":123}]}]}]}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -319,6 +337,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes map shapes",
         body: "{\"MapOfStrings\":{\"abc\":\"xyz\",\"mno\":\"hjk\"}}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -337,6 +356,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes empty map shapes",
         body: "{\"MapOfStrings\":{}}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -352,6 +372,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes map of list shapes",
         body: "{\"MapOfListsOfStrings\":{\"abc\":[\"abc\",\"xyz\"],\"mno\":[\"xyz\",\"abc\"]}}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -376,6 +397,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes map of structure shapes",
         body: "{\"MapOfStructs\":{\"key1\":{\"Value\":\"value-1\"},\"key2\":{\"Value\":\"value-2\"}}}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -398,6 +420,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes map of recursive structure shapes",
         body: "{\"RecursiveMap\":{\"key1\":{\"RecursiveMap\":{\"key2\":{\"RecursiveMap\":{\"key3\":{\"Boolean\":false}}}}}}}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -425,6 +448,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes structure shapes",
         body: "{\"SimpleStruct\":{\"Value\":\"abc\"}}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -442,6 +466,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes structure members with locationName traits",
         body: "{\"StructWithLocationName\":{\"RenamedMember\":\"some-value\"}}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -459,6 +484,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes empty structure shapes",
         body: "{\"SimpleStruct\":{}}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -474,6 +500,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes structure which have no members",
         body: "{\"EmptyStruct\":{}}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -489,6 +516,7 @@ use smithy.test#httpResponseTests
         documentation: "Serializes recursive structure shapes",
         body: "{\"String\":\"top-value\",\"Boolean\":false,\"RecursiveStruct\":{\"String\":\"nested-value\",\"Boolean\":true,\"RecursiveList\":[{\"String\":\"string-only\"},{\"RecursiveStruct\":{\"MapOfStrings\":{\"color\":\"red\",\"size\":\"large\"}}}]}}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
@@ -524,6 +552,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses operations with empty JSON bodies",
         body: "{}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         code: 200,
     },
     {
@@ -532,6 +561,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses string shapes",
         body: "{\"String\":\"string-value\"}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             String: "string-value",
         },
@@ -543,6 +573,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses integer shapes",
         body: "{\"Integer\":1234}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             Integer: 1234,
         },
@@ -554,6 +585,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses long shapes",
         body: "{\"Long\":1234567890123456789}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             Long: 1234567890123456789,
         },
@@ -565,6 +597,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses float shapes",
         body: "{\"Float\":1234.5}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             Float: 1234.5,
         },
@@ -576,6 +609,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses double shapes",
         body: "{\"Double\":123456789.12345679}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             Double: 123456789.12345679,
         },
@@ -587,6 +621,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses boolean shapes (true)",
         body: "{\"Boolean\":true}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             Boolean: true,
         },
@@ -598,6 +633,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses boolean (false)",
         body: "{\"Boolean\":false}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             Boolean: false,
         },
@@ -609,6 +645,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses blob shapes",
         body: "{\"Blob\":\"YmluYXJ5LXZhbHVl\"}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             Blob: "binary-value",
         },
@@ -620,6 +657,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses timestamp shapes",
         body: "{\"Timestamp\":946845296}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             Timestamp: 946845296,
         },
@@ -631,6 +669,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses iso8601 timestamps",
         body: "{\"Iso8601Timestamp\":\"2000-01-02T20:34:56.000Z\"}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             Iso8601Timestamp: 946845296,
         },
@@ -642,6 +681,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses httpdate timestamps",
         body: "{\"HttpdateTimestamp\":\"Sun, 02 Jan 2000 20:34:56.000 GMT\"}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             HttpdateTimestamp: 946845296,
         },
@@ -653,6 +693,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses list shapes",
         body: "{\"ListOfStrings\":[\"abc\",\"mno\",\"xyz\"]}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             ListOfStrings: [
                 "abc",
@@ -668,6 +709,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses list of map shapes",
         body: "{\"ListOfMapsOfStrings\":[{\"size\":\"large\"},{\"color\":\"red\"}]}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             ListOfMapsOfStrings: [
                 {
@@ -686,6 +728,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses list of list shapes",
         body: "{\"ListOfLists\":[[\"abc\",\"mno\",\"xyz\"],[\"hjk\",\"qrs\",\"tuv\"]]}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             ListOfLists: [
                 [
@@ -708,6 +751,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses list of structure shapes",
         body: "{\"ListOfStructs\":[{\"Value\":\"value-1\"},{\"Value\":\"value-2\"}]}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             ListOfStructs: [
                 {
@@ -726,6 +770,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses list of recursive structure shapes",
         body: "{\"RecursiveList\":[{\"RecursiveList\":[{\"RecursiveList\":[{\"String\":\"value\"}]}]}]}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             RecursiveList: [
                 {
@@ -749,6 +794,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses map shapes",
         body: "{\"MapOfStrings\":{\"size\":\"large\",\"color\":\"red\"}}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             MapOfStrings: {
                 size: "large",
@@ -763,6 +809,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses map of list shapes",
         body: "{\"MapOfListsOfStrings\":{\"sizes\":[\"large\",\"small\"],\"colors\":[\"red\",\"green\"]}}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             MapOfListsOfStrings: {
                 sizes: [
@@ -783,6 +830,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses map of map shapes",
         body: "{\"MapOfMaps\":{\"sizes\":{\"large\":\"L\",\"medium\":\"M\"},\"colors\":{\"red\":\"R\",\"blue\":\"B\"}}}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             MapOfMaps: {
                 sizes: {
@@ -803,6 +851,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses map of structure shapes",
         body: "{\"MapOfStructs\":{\"size\":{\"Value\":\"small\"},\"color\":{\"Value\":\"red\"}}}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             MapOfStructs: {
                 size: {
@@ -821,6 +870,7 @@ use smithy.test#httpResponseTests
         documentation: "Parses map of recursive structure shapes",
         body: "{\"RecursiveMap\":{\"key-1\":{\"RecursiveMap\":{\"key-2\":{\"RecursiveMap\":{\"key-3\":{\"String\":\"value\"}}}}}}}",
         bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
             RecursiveMap: {
                 "key-1": {
@@ -846,6 +896,7 @@ use smithy.test#httpResponseTests
         bodyMediaType: "application/json",
         headers: {
             "X-Amzn-Requestid": "amazon-uniq-request-id",
+            "Content-Type": "application/x-amz-json-1.1"
         },
         code: 200,
     },
