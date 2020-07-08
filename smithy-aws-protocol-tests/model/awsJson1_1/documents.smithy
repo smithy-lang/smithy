@@ -33,6 +33,9 @@ apply PutAndGetInlineDocuments @httpRequestTests([
               }""",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             inlineDocument: {
                 foo: "bar"

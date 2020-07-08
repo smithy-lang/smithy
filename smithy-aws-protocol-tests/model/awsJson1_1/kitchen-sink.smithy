@@ -13,6 +13,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes string shapes",
         body: "{\"String\":\"abc xyz\"}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             String: "abc xyz",
         },
@@ -25,6 +28,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes string shapes with jsonvalue trait",
         body: "{\"JsonValue\":\"{\\\"string\\\":\\\"value\\\",\\\"number\\\":1234.5,\\\"boolTrue\\\":true,\\\"boolFalse\\\":false,\\\"array\\\":[1,2,3,4],\\\"object\\\":{\\\"key\\\":\\\"value\\\"},\\\"null\\\":null}\"}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             JsonValue: "{\"string\":\"value\",\"number\":1234.5,\"boolTrue\":true,\"boolFalse\":false,\"array\":[1,2,3,4],\"object\":{\"key\":\"value\"},\"null\":null}",
         },
@@ -37,6 +43,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes integer shapes",
         body: "{\"Integer\":1234}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             Integer: 1234,
         },
@@ -49,6 +58,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes long shapes",
         body: "{\"Long\":999999999999}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             Long: 999999999999,
         },
@@ -61,6 +73,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes float shapes",
         body: "{\"Float\":1234.5}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             Float: 1234.5,
         },
@@ -73,6 +88,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes double shapes",
         body: "{\"Double\":1234.5}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             Double: 1234.5,
         },
@@ -85,6 +103,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes blob shapes",
         body: "{\"Blob\":\"YmluYXJ5LXZhbHVl\"}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             Blob: "binary-value",
         },
@@ -97,6 +118,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes boolean shapes (true)",
         body: "{\"Boolean\":true}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             Boolean: true,
         },
@@ -109,6 +133,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes boolean shapes (false)",
         body: "{\"Boolean\":false}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             Boolean: false,
         },
@@ -121,6 +148,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes timestamp shapes",
         body: "{\"Timestamp\":946845296}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             Timestamp: 946845296,
         },
@@ -133,6 +163,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes timestamp shapes with iso8601 timestampFormat",
         body: "{\"Iso8601Timestamp\":\"2000-01-02T20:34:56Z\"}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             Iso8601Timestamp: 946845296,
         },
@@ -145,6 +178,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes timestamp shapes with httpdate timestampFormat",
         body: "{\"HttpdateTimestamp\":\"Sun, 02 Jan 2000 20:34:56 GMT\"}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             HttpdateTimestamp: 946845296,
         },
@@ -157,6 +193,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes timestamp shapes with unixTimestamp timestampFormat",
         body: "{\"UnixTimestamp\":946845296}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             UnixTimestamp: 946845296,
         },
@@ -169,6 +208,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes list shapes",
         body: "{\"ListOfStrings\":[\"abc\",\"mno\",\"xyz\"]}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             ListOfStrings: [
                 "abc",
@@ -185,6 +227,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes empty list shapes",
         body: "{\"ListOfStrings\":[]}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             ListOfStrings: [],
         },
@@ -197,6 +242,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes list of map shapes",
         body: "{\"ListOfMapsOfStrings\":[{\"foo\":\"bar\"},{\"abc\":\"xyz\"},{\"red\":\"blue\"}]}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             ListOfMapsOfStrings: [
                 {
@@ -219,6 +267,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes list of structure shapes",
         body: "{\"ListOfStructs\":[{\"Value\":\"abc\"},{\"Value\":\"mno\"},{\"Value\":\"xyz\"}]}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             ListOfStructs: [
                 {
@@ -241,6 +292,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes list of recursive structure shapes",
         body: "{\"RecursiveList\":[{\"RecursiveList\":[{\"RecursiveList\":[{\"Integer\":123}]}]}]}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             RecursiveList: [
                 {
@@ -265,6 +319,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes map shapes",
         body: "{\"MapOfStrings\":{\"abc\":\"xyz\",\"mno\":\"hjk\"}}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             MapOfStrings: {
                 abc: "xyz",
@@ -280,6 +337,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes empty map shapes",
         body: "{\"MapOfStrings\":{}}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             MapOfStrings: {},
         },
@@ -292,6 +352,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes map of list shapes",
         body: "{\"MapOfListsOfStrings\":{\"abc\":[\"abc\",\"xyz\"],\"mno\":[\"xyz\",\"abc\"]}}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             MapOfListsOfStrings: {
                 abc: [
@@ -313,6 +376,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes map of structure shapes",
         body: "{\"MapOfStructs\":{\"key1\":{\"Value\":\"value-1\"},\"key2\":{\"Value\":\"value-2\"}}}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             MapOfStructs: {
                 key1: {
@@ -332,6 +398,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes map of recursive structure shapes",
         body: "{\"RecursiveMap\":{\"key1\":{\"RecursiveMap\":{\"key2\":{\"RecursiveMap\":{\"key3\":{\"Boolean\":false}}}}}}}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             RecursiveMap: {
                 key1: {
@@ -356,6 +425,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes structure shapes",
         body: "{\"SimpleStruct\":{\"Value\":\"abc\"}}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             SimpleStruct: {
                 Value: "abc",
@@ -370,6 +442,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes structure members with locationName traits",
         body: "{\"StructWithLocationName\":{\"RenamedMember\":\"some-value\"}}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             StructWithLocationName: {
                 Value: "some-value",
@@ -384,6 +459,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes empty structure shapes",
         body: "{\"SimpleStruct\":{}}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             SimpleStruct: {},
         },
@@ -396,6 +474,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes structure which have no members",
         body: "{\"EmptyStruct\":{}}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             EmptyStruct: {},
         },
@@ -408,6 +489,9 @@ use smithy.test#httpResponseTests
         documentation: "Serializes recursive structure shapes",
         body: "{\"String\":\"top-value\",\"Boolean\":false,\"RecursiveStruct\":{\"String\":\"nested-value\",\"Boolean\":true,\"RecursiveList\":[{\"String\":\"string-only\"},{\"RecursiveStruct\":{\"MapOfStrings\":{\"color\":\"red\",\"size\":\"large\"}}}]}}",
         bodyMediaType: "application/json",
+        requireHeaders: [
+            "Content-Length"
+        ],
         params: {
             String: "top-value",
             Boolean: false,
