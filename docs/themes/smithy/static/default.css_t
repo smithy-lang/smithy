@@ -39,10 +39,26 @@ blockquote {
 }
 
 .width-wrapper  {
-  max-width: 1120px;
+  max-width: 1140px;
   margin: auto;
   position: relative;
   padding: 0 1em;
+}
+
+.figure {
+  background-color: #eee;
+  border-radius: 4px;
+  padding: 3px;
+  margin-bottom: 1.5em;
+}
+
+.figure img {
+  display: block;
+  background-color: #fff;
+}
+
+.figure .caption {
+  padding: 1em 1em 0 1em;
 }
 
 /* ----- Headings ------ */
@@ -91,12 +107,12 @@ h5 {
 }
 
 h6 {
-  font-size: 1em;
+  font-size: 1.1em;
   font-weight: bold;
 }
 
 h7 {
-  font-size: 0.85em;
+  font-size: 1em;
   font-weight: bold;
 }
 
@@ -117,7 +133,7 @@ h7 {
 }
 
 #splash h1 {
-  color: #fff;
+  color: #dda15e;
   padding: 0;
   margin: 0 0 1rem;
   font-size: 1.7em;
@@ -532,28 +548,19 @@ pre {
   padding: 1em;
   overflow: auto;
   line-height: 1.45;
-  background-color: #222;
+  background-color: #fff;
   border-radius: 3px;
-  font-size: 14px;
-  color: #A9B7C6;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  color: #222;
   overflow-x: auto
   white-space: pre;
   word-break: normal;
   word-wrap: normal;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
 }
 
 code, pre {
   font-family: {{ theme_code_font }};
-}
-
-pre a {
-  color: #A5C25C;
-  text-decoration: underline;
-}
-
-pre a:hover {
-  color: #A5C25C;
 }
 
 /* Hacky but fixes links inside of grammars */
@@ -561,6 +568,9 @@ pre a code.xref {
   font-size: 100%;
 }
 
+.productionlist strong {
+  font-size: 1.15em;
+}
 
 /* ----- Tables with line numbers (..code directives) ------ */
 
@@ -660,8 +670,9 @@ table.highlighttable pre {
 
 .column-body {
   position: sticky;
-  top: 30px;
   overflow: auto;
+  top: 30px;
+  height: calc(100vh - 30px); /* 30px is == top */
 }
 
 #document-body {
@@ -761,14 +772,17 @@ table.highlighttable pre {
 /* -- admonitions ----------------------------------------------------------- */
 
 .rubric {
-  margin: 2em 0 1em 0;
+  margin: 1.15em 0;
   font-weight: bold;
+  font-size: 1.15em;
 }
 
 .admonition {
   margin: 20px 0;
-  padding: 1em 0.8em;
-  border-bottom: 1px solid #ddd;
+  padding: 0 2em;
+  border-width: 0 0 0 6px;
+  border-style: solid;
+  border-color: #ccc;
 }
 
 .admonition dt {
@@ -780,37 +794,41 @@ table.highlighttable pre {
 }
 
 .admonition-title {
-  margin: 0px 0 1em;
-  padding: 0;
+  margin: 0;
+  padding: 0 0.5em 0 0;
   font-size: 1em;
-  line-height: 1.1;
   font-weight: bold;
-  color: rgba(0, 0, 0, 0.6)
+  color: rgba(0, 0, 0, 0.6);
+  float: left;
+}
+
+.admonition-title:after {
+  content: ": ";
 }
 
 .admonition.danger,
 .admonition.error {
-  background-color: #f8d7da;
+  border-color: #f8d7da;
 }
 
 .admonition.important,
 .admonition.warning,
 .admonition.attention,
 .admonition.caution {
-  background-color: #f6eab7;
+  border-color: #f6eab7;
 }
 
 .admonition.note,
 .admonition.hint {
-  background-color: #ddecfc;
+  border-color: #ddecfc;
 }
 
 .admonition.tip {
-  background-color: #dff6da;
+  border-color: #dff6da;
 }
 
 div.seealso {
-  background-color: #eee;
+  border: none;
 }
 
 div.admonition tt.xref, div.admonition a tt {

@@ -35,6 +35,7 @@ class HTMLTranslator(SphinxHTMLTranslator):
     # Make production lists use ABNF and not BNF notation.
     def visit_productionlist(self, node):
         # type: (nodes.Node) -> None
+        node.get('classes', []).append("productionlist")
         self.body.append(self.starttag(node, 'pre'))
         lastname = None
         for production in node:
