@@ -1,6 +1,7 @@
 # doc builds
 docs/smithy.egg-info
 docs/dist
+docs/src
 *.pyc
 
 # Eclipse
