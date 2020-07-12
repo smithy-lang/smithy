@@ -6,9 +6,8 @@ Prelude model
 
 All Smithy models automatically include a *prelude*. The prelude defines
 various simple shapes and every trait defined in the core specification.
-Shapes defined in the prelude can be referenced from within any namespace
-using a relative shape ID.
-
+When using the :ref:`IDL <idl>`, shapes defined in the prelude can be
+referenced from within any namespace using a relative shape ID.
 
 .. tip::
 

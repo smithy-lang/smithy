@@ -74,7 +74,7 @@ used in all Smithy models, including boxed and unboxed shapes.
 
 Summary
     Indicates that a structure shape represents an error. All shapes
-    referenced by the :ref:`errors list of an operation <operation-errors>`
+    referenced by the :ref:`errors list of an operation <operation>`
     MUST be targeted with this trait.
 Trait selector
     ``structure``

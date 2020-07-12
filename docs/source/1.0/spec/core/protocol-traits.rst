@@ -44,9 +44,8 @@ Value type
        * - noInlineDocumentSupport
          - ``boolean``
          - If set to ``true``, indicates that this protocol does not support
-           :ref:`document <document-type>` shapes. A service that uses such
-           a protocol MUST NOT contain any document shapes in their service
-           closure.
+           ``document`` type shapes. A service that uses such a protocol
+           MUST NOT contain any ``document`` shapes in their service closure.
 
 Smithy is protocol agnostic, which means it focuses on the interfaces and
 abstractions that are provided to end-users rather than how the data is sent
@@ -248,11 +247,12 @@ Trait selector
 Value type
     ``string``
 
-The serialization format of a timestamp shape is normally dictated by the
-:ref:`protocol <protocolDefinition-trait>` of a service. In order to
-interoperate with other web services or frameworks, it is sometimes
-necessary to use a specific serialization format that differs from the
-protocol.
+By default, the serialization format of a timestamp is implicitly determined by
+the :ref:`protocol <protocolDefinition-trait>` of a service; however, the
+serialization format can be explicitly configured in some protocols to
+override the default format using the ``timestampFormat`` trait.
+
+.. rubric:: Timestamp formats
 
 Smithy defines the following built-in timestamp formats:
 
@@ -275,13 +275,17 @@ Smithy defines the following built-in timestamp formats:
         00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970,
         with decimal precision (for example, ``1515531081.1234``).
 
+.. rubric:: Resolving timestamp formats
+
+The following steps are taken to determine the serialization format of a
+:ref:`member <member>` that targets a timestamp:
+
+1. Use the ``timestampFormat`` trait of the member, if present.
+2. Use the ``timestampFormat`` trait of the shape, if present.
+3. Use the default format of the protocol.
+
 .. important::
 
     This trait SHOULD NOT be used unless the intended serialization format of
     a timestamp differs from the default protocol format. Using this trait too
     liberally can cause other tooling to improperly interpret the timestamp.
-
-.. seealso::
-
-    Refer to :ref:`timestamp-serialization-format` for information on how to
-    determine the serialization format of a timestamp.

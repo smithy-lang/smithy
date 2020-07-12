@@ -68,7 +68,7 @@ Smithy supports the following types:
       - An instant in time with no UTC offset or timezone. The
         serialization of a timestamp is determined by a
         :ref:`protocol <protocolDefinition-trait>`.
-    * - :ref:`document <document-type>`
+    * - document type
       - An untyped JSON-like value.
     * - :ref:`list`
       - Homogeneous collection of values
@@ -132,7 +132,7 @@ weather service.
 .. admonition:: What's that syntax?
     :class: note
 
-    Smithy models are defined using either the :ref:`Smithy IDL <lexical-structure>`
+    Smithy models are defined using either the :ref:`Smithy IDL <idl>`
     or the :ref:`JSON AST <json-ast>`. The JSON AST representation of a model
     is typically an artifact created by build tools to make them easier to
     use by other tooling.
@@ -652,7 +652,7 @@ calls to retrieve the entire list of results. It's usually a good idea to add
 pagination to an API that lists resources because it can help prevent
 operational issues in the future if the list grows to an unpredicted size.
 
-The ``CitySummary`` structure defines a :ref:`reference <referencing-resources>`
+The ``CitySummary`` structure defines a :ref:`reference <references-trait>`
 to a ``City`` resource. This gives tooling a better understanding of the
 relationships in your service.
 
