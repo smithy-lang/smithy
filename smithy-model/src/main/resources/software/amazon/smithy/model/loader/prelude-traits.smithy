@@ -219,7 +219,7 @@ string jsonName
 
 /// Serializes an object property as an XML attribute rather than a nested XML element.
 @trait(selector: "structure > :test(member > :test(boolean, number, string, timestamp))",
-        conflicts: ["xmlNamespace"])
+        conflicts: [xmlNamespace])
 @tags(["diff.error.const"])
 structure xmlAttribute {}
 
@@ -235,7 +235,7 @@ structure xmlFlattened {}
 string xmlName
 
 /// Adds an xmlns namespace definition URI to an XML element.
-@trait(conflicts: ["xmlAttribute"])
+@trait(conflicts: [xmlAttribute])
 @tags(["diff.error.const"])
 structure xmlNamespace {
     /// The namespace URI for scoping this XML element.
