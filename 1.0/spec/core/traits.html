@@ -23,60 +23,14 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/sphinx_tabs/tabs.js"></script>
     <script type="text/javascript" src="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
-    <script type="text/javascript">
-        function _scroll(subjectId) {
-            var subjectElement = $(subjectId);
-            var actualSubjectHeight = subjectElement.height();
-            var startingPosition = subjectElement[0].getBoundingClientRect().top;
-            return function() {
-                var availableHeight = $(window).height() - startingPosition;
-                // Subtract the scroll position to account for sticky movement.
-                availableHeight += Math.min($(window).scrollTop(), 40);
-                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
-                if (subjectElement.css("height") !== cappedHeight) {
-                    subjectElement.css("height", cappedHeight);
-                }
-            };
-        }
-
-        // Scroll and resize the the columns when scrolled.
-        $(function() {
-            var rightScroll = _scroll("#right-column > .column-body");
-            var scrollFn = function() {
-                rightScroll.call(this, arguments);
-            };
-            scrollFn();
-            $(window).scroll(scrollFn);
-            $(window).resize(scrollFn);
-        });
-
-        // Scroll spy to change highlighted navigation element.
-        $(function() {
-            var section = document.querySelectorAll(".section");
-            var sections = {};
-            var i = 0;
-            Array.prototype.forEach.call(section, function(e) {
-                sections[e.id] = e.offsetTop;
-            });
-            var scrollSpy = function() {
-                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
-                for (i in sections) {
-                    if (sections[i] <= scrollPosition) {
-                        $('#right-column .current').removeClass('current');
-                        $("#right-column a[href='#" + i + "']").addClass('current');
-                    }
-                }
-            };
-            $(window).scroll(scrollSpy);
-            scrollSpy();
-        });
-    </script>
+    <script type="text/javascript" src="../../../_static/smithy.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="6. Constraint traits" href="constraint-traits.html" />
     <link rel="prev" title="4. Prelude model" href="prelude-model.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="smithy-version" content="1.0">
 
   </head><body>
     <header>
@@ -190,7 +144,7 @@ For example, a service team could own the Smithy model that defines the
 shapes and traits of the API, and a documentation team could own a Smithy
 model that applies documentation traits to the shapes.</p>
 <p>Apply statements are formed using the following grammar:</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-apply_statement">apply_statement</strong> =
     &quot;apply&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-trait"><code class="xref docutils literal notranslate"><span class="pre">trait</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a>
 </pre>
@@ -260,7 +214,7 @@ member and do not conflict.</p>
 <p>The value that can be provided for a trait depends on its type. A value for a
 trait is defined in the IDL by enclosing the value in parenthesis. Trait values
 can only appear immediately before a shape.</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-trait_statements">trait_statements</strong> =
      *(<a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-trait"><code class="xref docutils literal notranslate"><span class="pre">trait</span></code></a>) <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a>
 

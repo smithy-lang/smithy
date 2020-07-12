@@ -23,60 +23,14 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/sphinx_tabs/tabs.js"></script>
     <script type="text/javascript" src="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
-    <script type="text/javascript">
-        function _scroll(subjectId) {
-            var subjectElement = $(subjectId);
-            var actualSubjectHeight = subjectElement.height();
-            var startingPosition = subjectElement[0].getBoundingClientRect().top;
-            return function() {
-                var availableHeight = $(window).height() - startingPosition;
-                // Subtract the scroll position to account for sticky movement.
-                availableHeight += Math.min($(window).scrollTop(), 40);
-                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
-                if (subjectElement.css("height") !== cappedHeight) {
-                    subjectElement.css("height", cappedHeight);
-                }
-            };
-        }
-
-        // Scroll and resize the the columns when scrolled.
-        $(function() {
-            var rightScroll = _scroll("#right-column > .column-body");
-            var scrollFn = function() {
-                rightScroll.call(this, arguments);
-            };
-            scrollFn();
-            $(window).scroll(scrollFn);
-            $(window).resize(scrollFn);
-        });
-
-        // Scroll spy to change highlighted navigation element.
-        $(function() {
-            var section = document.querySelectorAll(".section");
-            var sections = {};
-            var i = 0;
-            Array.prototype.forEach.call(section, function(e) {
-                sections[e.id] = e.offsetTop;
-            });
-            var scrollSpy = function() {
-                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
-                for (i in sections) {
-                    if (sections[i] <= scrollPosition) {
-                        $('#right-column .current').removeClass('current');
-                        $("#right-column a[href='#" + i + "']").addClass('current');
-                    }
-                }
-            };
-            $(window).scroll(scrollSpy);
-            scrollSpy();
-        });
-    </script>
+    <script type="text/javascript" src="../../../_static/smithy.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="4. Prelude model" href="prelude-model.html" />
     <link rel="prev" title="2. Smithy IDL lexical structure" href="lexical-structure.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="smithy-version" content="1.0">
 
   </head><body>
     <header>
@@ -138,7 +92,7 @@ instance of a type.</p>
 <p>The shape section of the IDL is used to define shapes and apply traits to
 shapes. It comes after any <a class="reference internal" href="lexical-structure.html#grammar-token-control_section"><code class="xref std std-token docutils literal notranslate"><span class="pre">control</span> <span class="pre">statements</span></code></a> and
 <a class="reference internal" href="model-metadata.html#grammar-token-metadata_section"><code class="xref std std-token docutils literal notranslate"><span class="pre">metadata</span> <span class="pre">statements</span></code></a>.</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-shape_section">shape_section</strong> =
     [<a class="reference internal" href="#grammar-token-namespace_statement"><code class="xref docutils literal notranslate"><span class="pre">namespace_statement</span></code></a> [<a class="reference internal" href="#grammar-token-use_section"><code class="xref docutils literal notranslate"><span class="pre">use_section</span></code></a>] [<a class="reference internal" href="#grammar-token-shape_statements"><code class="xref docutils literal notranslate"><span class="pre">shape_statements</span></code></a>]]
 </pre>
@@ -149,7 +103,7 @@ logically grouping shapes in a way that makes them reusable alongside other
 models without naming conflicts.</p>
 <p id="namespace-statement">Shapes can only be defined if a namespace is declared, and only a single
 namespace can appear in an IDL model file.</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-namespace_statement">namespace_statement</strong> =
     &quot;namespace&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-namespace"><code class="xref docutils literal notranslate"><span class="pre">namespace</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a>
 </pre>
@@ -191,7 +145,7 @@ JSON</div>
 <span id="use-statement"></span><h3><a href="#referring-to-shapes">3.1.2. Referring to shapes</a></h3>
 <p>The <em>use section</em> of the IDL is used to import shapes into the current
 namespace so that they can be referred to using a relative shape.</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-use_section">use_section</strong> =
     *(<a class="reference internal" href="#grammar-token-use_statement"><code class="xref docutils literal notranslate"><span class="pre">use_statement</span></code></a>)
 
@@ -304,7 +258,7 @@ to.</p>
 <div class="section" id="defining-shapes">
 <h2><a href="#defining-shapes">3.2. Defining shapes</a></h2>
 <p>Shape statements are used to define shapes.</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-shape_statements">shape_statements</strong> =
     *(<a class="reference internal" href="#grammar-token-shape_statement"><code class="xref docutils literal notranslate"><span class="pre">shape_statement</span></code></a> / <a class="reference internal" href="traits.html#grammar-token-apply_statement"><code class="xref docutils literal notranslate"><span class="pre">apply_statement</span></code></a>)
 
@@ -369,7 +323,7 @@ initialisms are capitalized.</p>
 <span id="id4"></span><h2><a href="#simple-types">3.3. Simple types</a></h2>
 <p><em>Simple types</em> are types that do not contain nested types or shape references.
 Shapes that are simple types are defined using the following grammar:</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-simple_shape_statement">simple_shape_statement</strong> =
     <a class="reference internal" href="#grammar-token-simple_type_name"><code class="xref docutils literal notranslate"><span class="pre">simple_type_name</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>
 
@@ -635,7 +589,7 @@ JSON</div>
 </div>
 </div>
 <p>All shapes that contain members use following ABNF to define members:</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-shape_members">shape_members</strong> =
     <a class="reference internal" href="#grammar-token-empty_shape_members"><code class="xref docutils literal notranslate"><span class="pre">empty_shape_members</span></code></a> / <a class="reference internal" href="#grammar-token-populated_shape_members"><code class="xref docutils literal notranslate"><span class="pre">populated_shape_members</span></code></a>
 
@@ -657,7 +611,7 @@ JSON</div>
 <p>The <em class="dfn">list</em> type represents a homogeneous collection of values. A list
 statement requires that a <a class="reference internal" href="#member"><span class="std std-ref">member</span></a> named <code class="docutils literal notranslate"><span class="pre">member</span></code> is defined
 in its body. Lists are defined using the following grammar:</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-list_statement">list_statement</strong> =
     &quot;list&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-shape_members"><code class="xref docutils literal notranslate"><span class="pre">shape_members</span></code></a>
 </pre>
@@ -751,7 +705,7 @@ JSON</div>
 values. A set statement requires that a <a class="reference internal" href="#member"><span class="std std-ref">member</span></a> named
 <code class="docutils literal notranslate"><span class="pre">member</span></code> is defined in its body. Sets are defined using the following
 grammar:</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-set_statement">set_statement</strong> =
     &quot;set&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-shape_members"><code class="xref docutils literal notranslate"><span class="pre">shape_members</span></code></a>
 </pre>
@@ -843,7 +797,7 @@ homogeneous values. A map cannot contain duplicate keys. A map statement
 requires that a <code class="docutils literal notranslate"><span class="pre">key</span></code> and <code class="docutils literal notranslate"><span class="pre">value</span></code> <a class="reference internal" href="#member"><span class="std std-ref">member</span></a> are defined in
 its body. The <code class="docutils literal notranslate"><span class="pre">key</span></code> member of a map MUST target a <code class="docutils literal notranslate"><span class="pre">string</span></code> shape.</p>
 <p>Maps are defined using the following grammar:</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-map_statement">map_statement</strong> =
     &quot;map&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-shape_members"><code class="xref docutils literal notranslate"><span class="pre">shape_members</span></code></a>
 </pre>
@@ -949,7 +903,7 @@ JSON</div>
 heterogeneous members. A member name maps to exactly one structure
 <a class="reference internal" href="#member"><span class="std std-ref">member</span></a> definition. A structure is defined using the
 following grammar:</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-structure_statement">structure_statement</strong> =
     &quot;structure&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-shape_members"><code class="xref docutils literal notranslate"><span class="pre">shape_members</span></code></a>
 </pre>
@@ -1062,7 +1016,7 @@ able to maintain backward compatibility.</p>
 <p>The union type represents a <a class="reference external" href="https://en.wikipedia.org/wiki/Tagged_union">tagged union data structure</a> that can take
 on several different, but fixed, types. Only one type can be used at any
 one time. A union is defined using the following grammar:</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-union_statement">union_statement</strong> =
     &quot;union&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-shape_members"><code class="xref docutils literal notranslate"><span class="pre">shape_members</span></code></a>
 </pre>
@@ -1263,7 +1217,7 @@ JSON</div>
 operations together. The <a class="reference internal" href="#resource"><span class="std std-ref">resources</span></a> and
 <a class="reference internal" href="#operation"><span class="std std-ref">operations</span></a> of an API are bound within the closure of a
 service. A service shape is defined by the following grammar:</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-service_statement">service_statement</strong> =
     &quot;service&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-node_object"><code class="xref docutils literal notranslate"><span class="pre">node_object</span></code></a>
 </pre>
@@ -1473,7 +1427,7 @@ fully-qualified path from the service to the shape.</p>
 an API operation. Operation shapes are bound to <a class="reference internal" href="#resource"><span class="std std-ref">resource</span></a>
 shapes and <a class="reference internal" href="#service"><span class="std std-ref">service</span></a> shapes. An operation shape is defined by
 the following grammar:</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-operation_statement">operation_statement</strong> =
     &quot;operation&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-node_object"><code class="xref docutils literal notranslate"><span class="pre">node_object</span></code></a>
 </pre>
@@ -1689,7 +1643,7 @@ JSON</div>
 <span id="id23"></span><h3><a href="#resource">3.5.3. Resource</a></h3>
 <p>Smithy defines a <em class="dfn">resource</em> as an entity with an identity that has a
 set of operations. A resource shape is defined by the following grammar:</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-resource_statement">resource_statement</strong> =
     &quot;resource&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="lexical-structure.html#grammar-token-node_object"><code class="xref docutils literal notranslate"><span class="pre">node_object</span></code></a>
 </pre>

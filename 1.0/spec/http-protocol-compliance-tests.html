@@ -23,60 +23,14 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/sphinx_tabs/tabs.js"></script>
     <script type="text/javascript" src="../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
-    <script type="text/javascript">
-        function _scroll(subjectId) {
-            var subjectElement = $(subjectId);
-            var actualSubjectHeight = subjectElement.height();
-            var startingPosition = subjectElement[0].getBoundingClientRect().top;
-            return function() {
-                var availableHeight = $(window).height() - startingPosition;
-                // Subtract the scroll position to account for sticky movement.
-                availableHeight += Math.min($(window).scrollTop(), 40);
-                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
-                if (subjectElement.css("height") !== cappedHeight) {
-                    subjectElement.css("height", cappedHeight);
-                }
-            };
-        }
-
-        // Scroll and resize the the columns when scrolled.
-        $(function() {
-            var rightScroll = _scroll("#right-column > .column-body");
-            var scrollFn = function() {
-                rightScroll.call(this, arguments);
-            };
-            scrollFn();
-            $(window).scroll(scrollFn);
-            $(window).resize(scrollFn);
-        });
-
-        // Scroll spy to change highlighted navigation element.
-        $(function() {
-            var section = document.querySelectorAll(".section");
-            var sections = {};
-            var i = 0;
-            Array.prototype.forEach.call(section, function(e) {
-                sections[e.id] = e.offsetTop;
-            });
-            var scrollSpy = function() {
-                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
-                for (i in sections) {
-                    if (sections[i] <= scrollPosition) {
-                        $('#right-column .current').removeClass('current');
-                        $("#right-column a[href='#" + i + "']").addClass('current');
-                    }
-                }
-            };
-            $(window).scroll(scrollSpy);
-            scrollSpy();
-        });
-    </script>
+    <script type="text/javascript" src="../../_static/smithy.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="MQTT Protocol Bindings" href="mqtt.html" />
     <link rel="prev" title="21. JSON AST" href="core/json-ast.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="smithy-version" content="1.0">
 
   </head><body>
     <header>

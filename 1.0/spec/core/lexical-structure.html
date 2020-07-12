@@ -23,60 +23,14 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/sphinx_tabs/tabs.js"></script>
     <script type="text/javascript" src="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
-    <script type="text/javascript">
-        function _scroll(subjectId) {
-            var subjectElement = $(subjectId);
-            var actualSubjectHeight = subjectElement.height();
-            var startingPosition = subjectElement[0].getBoundingClientRect().top;
-            return function() {
-                var availableHeight = $(window).height() - startingPosition;
-                // Subtract the scroll position to account for sticky movement.
-                availableHeight += Math.min($(window).scrollTop(), 40);
-                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
-                if (subjectElement.css("height") !== cappedHeight) {
-                    subjectElement.css("height", cappedHeight);
-                }
-            };
-        }
-
-        // Scroll and resize the the columns when scrolled.
-        $(function() {
-            var rightScroll = _scroll("#right-column > .column-body");
-            var scrollFn = function() {
-                rightScroll.call(this, arguments);
-            };
-            scrollFn();
-            $(window).scroll(scrollFn);
-            $(window).resize(scrollFn);
-        });
-
-        // Scroll spy to change highlighted navigation element.
-        $(function() {
-            var section = document.querySelectorAll(".section");
-            var sections = {};
-            var i = 0;
-            Array.prototype.forEach.call(section, function(e) {
-                sections[e.id] = e.offsetTop;
-            });
-            var scrollSpy = function() {
-                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
-                for (i in sections) {
-                    if (sections[i] <= scrollPosition) {
-                        $('#right-column .current').removeClass('current');
-                        $("#right-column a[href='#" + i + "']").addClass('current');
-                    }
-                }
-            };
-            $(window).scroll(scrollSpy);
-            scrollSpy();
-        });
-    </script>
+    <script type="text/javascript" src="../../../_static/smithy.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="3. Shapes" href="shapes.html" />
     <link rel="prev" title="1. Introduction" href="intro.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="smithy-version" content="1.0">
 
   </head><body>
     <header>
@@ -166,7 +120,7 @@ parsing the IDL to populate the semantic model.</p>
 <div class="section" id="smithy-idl-abnf">
 <span id="id2"></span><h2><a href="#smithy-idl-abnf">2.2. Smithy IDL ABNF</a></h2>
 <p>The Smithy IDL is defined by the following ABNF:</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-idl">idl</strong> =
     <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-control_section"><code class="xref docutils literal notranslate"><span class="pre">control_section</span></code></a> <a class="reference internal" href="model-metadata.html#grammar-token-metadata_section"><code class="xref docutils literal notranslate"><span class="pre">metadata_section</span></code></a> <a class="reference internal" href="shapes.html#grammar-token-shape_section"><code class="xref docutils literal notranslate"><span class="pre">shape_section</span></code></a>
 </pre>
@@ -176,7 +130,7 @@ parsing the IDL to populate the semantic model.</p>
 <p>Smithy models MUST be encoded using UTF-8 and SHOULD use Unix style
 line endings (<code class="docutils literal notranslate"><span class="pre">\n</span></code>). The Smithy ABNF is whitespace sensitive.
 Whitespace is controlled using the following productions:</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-ws">ws</strong> =
     *(<a class="reference internal" href="#grammar-token-sp"><code class="xref docutils literal notranslate"><span class="pre">sp</span></code></a> / <a class="reference internal" href="#grammar-token-newline"><code class="xref docutils literal notranslate"><span class="pre">newline</span></code></a> / <a class="reference internal" href="#grammar-token-line_comment"><code class="xref docutils literal notranslate"><span class="pre">line_comment</span></code></a>) ; whitespace
 
@@ -194,7 +148,7 @@ Whitespace is controlled using the following productions:</p>
 <p>Comments can occur at any place in the IDL between tokens where whitespace
 (<a class="reference internal" href="#grammar-token-ws"><code class="xref std std-token docutils literal notranslate"><span class="pre">ws</span></code></a>) can occur. Comments in Smithy are defined using two forward
 slashes followed by any character. A newline terminates a comment.</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-line_comment">line_comment</strong> =
      &quot;//&quot; *<a class="reference internal" href="#grammar-token-not_newline"><code class="xref docutils literal notranslate"><span class="pre">not_newline</span></code></a> <a class="reference internal" href="#grammar-token-newline"><code class="xref docutils literal notranslate"><span class="pre">newline</span></code></a>
 
@@ -217,7 +171,7 @@ slashes followed by any character. A newline terminates a comment.</p>
 <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation</span></a> for shapes. A documentation
 comment is formed when three forward slashes (<code class="docutils literal notranslate"><span class="pre">&quot;///&quot;</span></code>) appear as the
 first non-whitespace characters on a line.</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-documentation_comment">documentation_comment</strong> =
     &quot;///&quot; *<a class="reference internal" href="#grammar-token-not_newline"><code class="xref docutils literal notranslate"><span class="pre">not_newline</span></code></a> <a class="reference internal" href="#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a>
 </pre>
@@ -296,7 +250,7 @@ in the <a class="reference internal" href="#semantic-model"><span class="std std
 that apply parser directives to a <em>specific IDL file</em>. Because control
 statements influence parsing, they MUST appear at the beginning of a file
 before any other statements.</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-control_section">control_section</strong> =
     *(<a class="reference internal" href="#grammar-token-control_statement"><code class="xref docutils literal notranslate"><span class="pre">control_statement</span></code></a>)
 
@@ -318,7 +272,7 @@ Because this can lead to unexpected parsing errors, models SHOULD always
 include a version.</p>
 <p>The value provided in a version control statement is a string that MUST
 adhere to the following ABNF:</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-version_string">version_string</strong> =
     1*DIGIT [ &quot;.&quot; 1*DIGIT ]
 </pre>
@@ -406,7 +360,7 @@ present.</dd>
 <div class="section" id="shape-id-abnf">
 <span id="id6"></span><h3><a href="#shape-id-abnf">2.5.1. Shape ID ABNF</a></h3>
 <p>Shape IDs are formally defined by the following ABNF:</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-shape_id">shape_id</strong> =
     <a class="reference internal" href="#grammar-token-root_shape_id"><code class="xref docutils literal notranslate"><span class="pre">root_shape_id</span></code></a> [<a class="reference internal" href="#grammar-token-shape_id_member"><code class="xref docutils literal notranslate"><span class="pre">shape_id_member</span></code></a>]
 
@@ -580,7 +534,7 @@ difference exposed in other parts of the specification like
 Smithy's node values have many advantages over JSON: comments,
 unquoted keys, unquoted strings, single quoted strings, long strings,
 and trailing commas.</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-node_value">node_value</strong> =
     <a class="reference internal" href="#grammar-token-node_array"><code class="xref docutils literal notranslate"><span class="pre">node_array</span></code></a>
   / <a class="reference internal" href="#grammar-token-node_object"><code class="xref docutils literal notranslate"><span class="pre">node_object</span></code></a>
@@ -589,7 +543,7 @@ and trailing commas.</p>
   / <a class="reference internal" href="#grammar-token-node_string_value"><code class="xref docutils literal notranslate"><span class="pre">node_string_value</span></code></a>
 </pre>
 <p class="rubric">Array node</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-node_array">node_array</strong> =
     <a class="reference internal" href="#grammar-token-empty_node_array"><code class="xref docutils literal notranslate"><span class="pre">empty_node_array</span></code></a> / <a class="reference internal" href="#grammar-token-populated_node_array"><code class="xref docutils literal notranslate"><span class="pre">populated_node_array</span></code></a>
 
@@ -608,7 +562,7 @@ and trailing commas.</p>
     &quot;,&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a>
 </pre>
 <p class="rubric">Object node</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-node_object">node_object</strong> =
     <a class="reference internal" href="#grammar-token-empty_node_object"><code class="xref docutils literal notranslate"><span class="pre">empty_node_object</span></code></a> / <a class="reference internal" href="#grammar-token-populated_node_object"><code class="xref docutils literal notranslate"><span class="pre">populated_node_object</span></code></a>
 
@@ -627,7 +581,7 @@ and trailing commas.</p>
     <a class="reference internal" href="#grammar-token-quoted_text"><code class="xref docutils literal notranslate"><span class="pre">quoted_text</span></code></a> / <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>
 </pre>
 <p class="rubric">Number node</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-number">number</strong> =
     [<a class="reference internal" href="#grammar-token-minus"><code class="xref docutils literal notranslate"><span class="pre">minus</span></code></a>] <a class="reference internal" href="#grammar-token-int"><code class="xref docutils literal notranslate"><span class="pre">int</span></code></a> [<a class="reference internal" href="#grammar-token-frac"><code class="xref docutils literal notranslate"><span class="pre">frac</span></code></a>] [<a class="reference internal" href="#grammar-token-exp"><code class="xref docutils literal notranslate"><span class="pre">exp</span></code></a>]
 
@@ -660,7 +614,7 @@ and trailing commas.</p>
 </pre>
 <p class="rubric">Node keywords</p>
 <p>Several keywords are used when parsing <a class="reference internal" href="#grammar-token-node_value"><code class="xref std std-token docutils literal notranslate"><span class="pre">node_value</span></code></a>.</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-node_keywords">node_keywords</strong> =
      &quot;true&quot; / &quot;false&quot; / &quot;null&quot;
 </pre>
@@ -703,7 +657,7 @@ values are defined.</p>
 <h2><a href="#string-values">2.7. String values</a></h2>
 <p>A <code class="docutils literal notranslate"><span class="pre">node_value</span></code> can contain <code class="docutils literal notranslate"><span class="pre">node_string_value</span></code> productions that all
 define strings.</p>
-<pre>
+<pre class="productionlist">
 <strong id="grammar-token-node_string_value">node_string_value</strong> =
     <a class="reference internal" href="#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a> / <a class="reference internal" href="#grammar-token-text_block"><code class="xref docutils literal notranslate"><span class="pre">text_block</span></code></a> / <a class="reference internal" href="#grammar-token-quoted_text"><code class="xref docutils literal notranslate"><span class="pre">quoted_text</span></code></a>
 
