@@ -746,8 +746,8 @@ orphaned shapes.
 excludeMetadata
 ---------------
 
-Removes :ref:`metadata` key-value pairs from a model if the key is in the
-provided ``keys`` list.
+Removes model :ref:`metadata <metadata>` key-value pairs from a model if the
+key is in the provided ``keys`` list.
 
 .. list-table::
     :header-rows: 1
@@ -786,8 +786,8 @@ provided ``keys`` list.
 includeMetadata
 ---------------
 
-Removes :ref:`metadata` key-value pairs from a model if the key is not in
-the provided ``keys`` list.
+Removes model :ref:`metadata <metadata>` key-value pairs from a model if the
+key is not in the provided ``keys`` list.
 
 .. list-table::
     :header-rows: 1

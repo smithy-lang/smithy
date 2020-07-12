@@ -670,7 +670,7 @@ Serialization rules:
 #. When a string or blob member is referenced, the raw value is serialized
    as the body of the message.
 #. When a :ref:`structure <structure>`, :ref:`union <union>`, or
-   :ref:`document <document-type>` is targeted, the shape value is serialized
+   document type is targeted, the shape value is serialized
    as a :ref:`protocol-specific <protocolDefinition-trait>` document that is
    sent as the body of the message.
 

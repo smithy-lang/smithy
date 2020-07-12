@@ -10,6 +10,7 @@ help:
 	@echo "  openhtml    to preview the built index.html"
 
 install:
+	pip install -r requirements.txt .
 	pip install -e .
 
 clean:

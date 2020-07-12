@@ -26,6 +26,8 @@ from smithy.lexer import SmithyLexer
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx_tabs.tabs',
+              # We use redirects to be able to change page names.
+              'sphinxcontrib.redirects',
               'smithy']
 
 # Add any paths that contain templates here, relative to this directory.

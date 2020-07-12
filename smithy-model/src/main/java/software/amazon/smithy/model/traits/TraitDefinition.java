@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
-import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -158,12 +157,6 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
 
         public Builder addConflict(String trait) {
             Objects.requireNonNull(trait);
-
-            // Use absolute trait names.
-            if (!trait.contains("#")) {
-                trait = Prelude.NAMESPACE + "#" + trait;
-            }
-
             return addConflict(ShapeId.from(trait));
         }
 

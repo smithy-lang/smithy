@@ -11,8 +11,6 @@ parser.
 
 * Smithy JSON models can be merged together with other JSON models or other
   Smithy IDL models using the rules defined in :ref:`merging-models`.
-* Unless specified otherwise, the same constraints and logic is used to load
-  JSON models that is used to load Smithy IDL models.
 * All shape IDs in the JSON AST MUST be absolute shape IDs that contain a
   namespace. One of the main drivers of the simplicity of the the JSON AST
   over the Smithy IDL is that relative and forward references never need to
@@ -165,7 +163,7 @@ example defines a shape for each simple type:
 List and set shapes
 -------------------
 
-:ref:`list` and :ref:`set` shapes have a required ``member`` property
+:ref:`list` and :ref:`set <set>` shapes have a required ``member`` property
 that is an :ref:`AST member <ast-member>`.
 
 The following example defines a list with a string member:
@@ -618,14 +616,16 @@ The following example defines an operation, its input, output, and errors:
     }
 
 
+.. _ast-apply:
+
 --------------
 AST apply type
 --------------
 
 Traits can be applied to shapes outside of their definition by setting
 ``type`` to ``apply``. The ``apply`` type does not actually define a shape
-for the shape ID; the shape ID MUST reference a shape or member of a shape.
-The ``apply`` type allows only the ``traits`` property.
+for the shape ID; the shape ID MUST reference a shape to which traits are
+applied. The ``apply`` type allows only the ``traits`` property.
 
 .. code-block:: json
 
