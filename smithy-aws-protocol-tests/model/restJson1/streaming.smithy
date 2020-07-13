@@ -87,6 +87,7 @@ structure StreamingTraitsInputOutput {
     @httpHeader("X-Foo")
     foo: String,
 
+    @httpPayload
     blob: StreamingBlob,
 }
 
@@ -178,6 +179,7 @@ structure StreamingTraitsRequireLengthInputOutput {
     @httpHeader("X-Foo")
     foo: String,
 
+    @httpPayload
     blob: FiniteStreamingBlob,
 }
 
@@ -236,6 +238,7 @@ structure StreamingTraitsWithMediaTypeInputOutput {
     @httpHeader("X-Foo")
     foo: String,
 
+    @httpPayload
     blob: StreamingTextPlainBlob,
 }
 
