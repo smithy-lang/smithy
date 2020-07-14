@@ -76,6 +76,7 @@
             "application/xml": "#set ($root=$input.path('$')) <stage>$root.name</stage> ",
             "application/json": "#set ($root=$input.path('$')) { \"stage\": \"$root.name\", \"user-id\": \"$root.key\" }"
           },
+          "passthroughBehavior": "never",
           "responses": {
             "302": {
               "statusCode": "302",
@@ -169,6 +170,7 @@
             "application/xml": "#set ($root=$input.path('$')) <stage>$root.name</stage> ",
             "application/json": "#set ($root=$input.path('$')) { \"stage\": \"$root.name\", \"user-id\": \"$root.key\" }"
           },
+          "passthroughBehavior": "when_no_match",
           "responses": {
             "302": {
               "statusCode": "302",
