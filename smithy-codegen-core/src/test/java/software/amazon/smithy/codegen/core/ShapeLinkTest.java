@@ -1,60 +1,91 @@
 package software.amazon.smithy.codegen.core;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 
 import java.util.ArrayList;
+import java.util.Optional;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 class ShapeLinkTest {
 
     @Test
-    void toNode() {
-        ShapeLink shapeLink = new ShapeLink();
-        shapeLink.setTags(new ArrayList<>());
+    void assertsToNodeWorksWithAllFields() {
+        ShapeLink shapeLink = ShapeLink.builder()
+                .addTag("tag")
+                .file("file")
+                .id("id")
+                .type("type")
+                .line(1)
+                .column(2)
+                .build();
 
-        shapeLink.setType("type");
-        shapeLink.setId("id");
-        shapeLink.getTags().get().add("tag");
-        shapeLink.setFile("file");
-        shapeLink.setLine(1);
-        shapeLink.setColumn(2);
 
         ObjectNode node = shapeLink.toNode();
 
-        assert node.getStringMember(ShapeLink.TYPE_TEXT).get().getValue().equals("type");
-        assert node.getNumberMember(ShapeLink.LINE_TEXT).get().getValue().equals(1);
-        assert node.getArrayMember(ShapeLink.TAGS_TEXT)
-                .get()
-                .get(0)
-                .get()
-                .expectStringNode()
-                .getValue()
-                .equals("tag");
+        assertThat(node.getStringMember(ShapeLink.TYPE_TEXT).get().getValue(), equalTo("type"));
+        assertThat(node.getNumberMember(ShapeLink.LINE_TEXT).get().getValue(), equalTo(1));
+        assertThat(node.getArrayMember(ShapeLink.TAGS_TEXT)
+                        .get()
+                        .get(0)
+                        .get()
+                        .expectStringNode()
+                        .getValue()
+                , equalTo("tag"));
     }
 
     @Test
-    void fromNode() {
-        ShapeLink shapeLink = new ShapeLink();
-        shapeLink.setTags(new ArrayList<>());
+    void assertsFromNodeWorksWithAllFields() {
+        ArrayList<String> tags = new ArrayList<>();
+        tags.add("tag");
 
-        shapeLink.setType("type");
-        shapeLink.setId("id");
-        shapeLink.getTags().get().add("tag");
-        shapeLink.setFile("file");
-        shapeLink.setLine(1);
-        shapeLink.setColumn(2);
+        Node node = ObjectNode.objectNodeBuilder()
+                .withMember(ShapeLink.ID_TEXT, "id")
+                .withMember(ShapeLink.TYPE_TEXT, "type")
+                .withOptionalMember(ShapeLink.TAGS_TEXT, Optional.of(tags).map(Node::fromStrings))
+                .withOptionalMember(ShapeLink.FILE_TEXT, Optional.of("file").map(Node::from))
+                .withOptionalMember(ShapeLink.LINE_TEXT, Optional.of(1).map(Node::from))
+                .withOptionalMember(ShapeLink.COLUMN_TEXT, Optional.of(2).map(Node::from))
+                .build();
 
-        ObjectNode node = shapeLink.toNode();
+        ShapeLink shapeLink2 = ShapeLink.createFromNode(node);
 
-        ShapeLink shapeLink2 = new ShapeLink();
-        //testing fromNode
-        shapeLink2.fromNode(node);
-
-        assert shapeLink.getColumn().equals(shapeLink2.getColumn());
-        assert shapeLink.getId().equals(shapeLink2.getId());
-        assert shapeLink.getFile().equals(shapeLink2.getFile());
-        assert shapeLink.getTags().equals(shapeLink2.getTags());
-        assert shapeLink.getId().equals(shapeLink2.getId());
-        assert shapeLink.getType().equals(shapeLink2.getType());
+        assertThat(Optional.of(2), equalTo(shapeLink2.getColumn()));
+        assertThat(Optional.of(1), equalTo(shapeLink2.getLine()));
+        assertThat("id", equalTo(shapeLink2.getId()));
+        assertThat(Optional.of("file"), equalTo(shapeLink2.getFile()));
+        assertThat(Optional.of(tags), equalTo(shapeLink2.getTags()));
+        assertThat("type", equalTo(shapeLink2.getType()));
     }
+
+    @Test
+    void assertBuildThrowsWithoutRequiredTypesField() {
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            ShapeLink.builder()
+                    .addTag("tag")
+                    .file("file")
+                    .id("id")
+                    .line(1)
+                    .column(2)
+                    .build();
+        });
+    }
+
+    @Test
+    void assertBuildThrowsWithoutRequiredIdField() {
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            ShapeLink.builder()
+                    .addTag("tag")
+                    .file("file")
+                    .line(1)
+                    .type("type")
+                    .column(2)
+                    .build();
+        });
+    }
+
 }

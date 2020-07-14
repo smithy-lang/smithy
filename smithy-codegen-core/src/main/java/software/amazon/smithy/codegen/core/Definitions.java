@@ -22,13 +22,14 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
-import software.amazon.smithy.model.node.FromNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Class that defines the acceptable values that can be used in ShapeLink objects.
@@ -46,37 +47,27 @@ import software.amazon.smithy.model.node.ToNode;
  * generator could be "requestBuilder" to indicate that a class is used as a builder for a request.
  * </p>
  */
-public class Definitions implements ToNode, FromNode, ValidateRequirements {
+public final class Definitions implements ToNode, ToSmithyBuilder<Definitions> {
     public static final String TYPE_TEXT = "types";
     public static final String TAGS_TEXT = "tags";
+
     private Map<String, String> tags;
     private Map<String, String> types;
-    private NodeMapper nodeMapper = new NodeMapper();
 
-    public Definitions() {
-    }
-
-    private Definitions(Map<String, String> tags, Map<String, String> types) {
-        this.tags = tags;
-        this.types = types;
+    private Definitions(Builder builder) {
+        tags = SmithyBuilder.requiredState(TAGS_TEXT, MapUtils.copyOf(builder.tags));
+        types = SmithyBuilder.requiredState(TYPE_TEXT, MapUtils.copyOf(builder.types));
     }
 
     /**
      * Converts an ObjectNode that represents the definitions section of the
      * trace file into a types maps and tags map.
      *
-     * @param jsonNode ObjectNode that contains the JSON data inside the definitions tag of
-     *                 the trace file
+     * @param value ObjectNode that contains the JSON data inside the definitions tag of
+     *              the trace file
      */
-    @Override
-    public void fromNode(Node jsonNode) {
-        ObjectNode node = jsonNode.expectObjectNode();
-
-        types = nodeMapper.deserializeMap(node.expectObjectMember(TYPE_TEXT), Map.class, String.class);
-        tags = nodeMapper.deserializeMap(node.expectObjectMember(TAGS_TEXT), Map.class, String.class);
-
-        //error handling
-        validateRequiredFields();
+    public static Definitions createFromNode(Node value) {
+        return new NodeMapper().deserialize(value, Definitions.class);
     }
 
     /**
@@ -85,12 +76,16 @@ public class Definitions implements ToNode, FromNode, ValidateRequirements {
      * the trace file from that definitions specification.
      *
      * @param filename a definitions file URI - see example
-     * @return ObjectNode corresponding to parsed URI
+     * @return Definitions corresponding to parsed URI
      * @throws FileNotFoundException if the definitions file path is not found
      */
-    public ObjectNode fromDefinitionsFile(URI filename) throws FileNotFoundException {
+    public static Definitions createFromFile(URI filename) throws FileNotFoundException {
         InputStream stream = new FileInputStream(new File(filename));
-        return Node.parse(stream).expectObjectNode();
+        return createFromNode(Node.parse(stream).expectObjectNode());
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -101,25 +96,10 @@ public class Definitions implements ToNode, FromNode, ValidateRequirements {
      */
     @Override
     public ObjectNode toNode() {
-        //error handling
-        validateRequiredFields();
-
-        Map<String, Map<String, String>> toSerialize = new HashMap<>();
-        toSerialize.put(TYPE_TEXT, types);
-        toSerialize.put(TAGS_TEXT, tags);
-
-        return nodeMapper.serialize(toSerialize).expectObjectNode();
-    }
-
-    /**
-     * Checks if all of the Definition's required fields are not null.
-     *
-     * @throws NullPointerException if any of the required fields are null
-     */
-    @Override
-    public void validateRequiredFields() {
-        Objects.requireNonNull(types);
-        Objects.requireNonNull(tags);
+        return ObjectNode.objectNodeBuilder()
+                .withMember(TAGS_TEXT, ObjectNode.fromStringMap(tags))
+                .withMember(TYPE_TEXT, ObjectNode.fromStringMap(types))
+                .build();
     }
 
     /**
@@ -132,15 +112,6 @@ public class Definitions implements ToNode, FromNode, ValidateRequirements {
     }
 
     /**
-     * Sets this Definition's Tags Map.
-     *
-     * @param tags tags map for definitions
-     */
-    public void setTags(Map<String, String> tags) {
-        this.tags = tags;
-    }
-
-    /**
      * Gets this Definition's Types Map.
      *
      * @return this Definition's Type's Map
@@ -150,36 +121,37 @@ public class Definitions implements ToNode, FromNode, ValidateRequirements {
     }
 
     /**
-     * Sets this Definition's Types Map.
+     * Take this object and create a builder that contains all of the
+     * current property values of this object.
      *
-     * @param types types Map for Definitions
+     * @return a builder for type T
      */
-    public void setTypes(Map<String, String> types) {
-        this.types = types;
+    @Override
+    public SmithyBuilder<Definitions> toBuilder() {
+        return builder()
+                .tags(tags)
+                .types(types);
     }
 
-    public static class DefinitionsBuilder {
-
+    public static final class Builder implements SmithyBuilder<Definitions> {
         private Map<String, String> tags;
         private Map<String, String> types;
 
         /**
-         * Constructs DefinitionsBuilder with all required objects.
-         *
-         * @param tags  Map of tag keys and values.
-         * @param types Map of type keys and values.
+         * @return Definitions object from this builder.
          */
-        public DefinitionsBuilder(Map<String, String> tags, Map<String, String> types) {
-            this.tags = tags;
-            this.types = types;
+        public Definitions build() {
+            return new Definitions(this);
         }
 
-        /**
-         * Instantiates Definition's tags and types maps.
-         */
-        public DefinitionsBuilder() {
-            this.tags = new HashMap<>();
-            this.types = new HashMap<>();
+        public Builder tags(Map<String, String> tags) {
+            this.tags = tags;
+            return this;
+        }
+
+        public Builder types(Map<String, String> types) {
+            this.types = types;
+            return this;
         }
 
         /**
@@ -189,7 +161,10 @@ public class Definitions implements ToNode, FromNode, ValidateRequirements {
          * @param value Value of tag.
          * @return This builder.
          */
-        public DefinitionsBuilder addTag(String key, String value) {
+        public Builder addTag(String key, String value) {
+            if (this.tags == null) {
+                this.tags = new HashMap<>();
+            }
             this.tags.put(key, value);
             return this;
         }
@@ -201,16 +176,14 @@ public class Definitions implements ToNode, FromNode, ValidateRequirements {
          * @param value Value of type.
          * @return This builder.
          */
-        public DefinitionsBuilder addType(String key, String value) {
+        public Builder addType(String key, String value) {
+            if (this.types == null) {
+                this.types = new HashMap<>();
+            }
             this.types.put(key, value);
             return this;
         }
 
-        /**
-         * @return Definitions object from this builder.
-         */
-        public Definitions build() {
-            return new Definitions(tags, types);
-        }
     }
+
 }
