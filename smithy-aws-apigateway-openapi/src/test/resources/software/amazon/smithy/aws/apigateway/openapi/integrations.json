@@ -32,6 +32,7 @@
                     },
                     "cacheNamespace": "cache namespace",
                     "cacheKeyParameters": [],
+                    "passThroughBehavior": "never",
                     "responses": {
                         "2\\d{2}": {
                             "statusCode": "200",
@@ -112,6 +113,7 @@
                         "integration.request.path.stage": "method.request.querystring.version",
                         "integration.request.querystring.provider": "method.request.querystring.vendor"
                     },
+                    "passThroughBehavior": "when_no_match",
                     "responses": {
                         "2\\d{2}": {
                             "statusCode": "200",

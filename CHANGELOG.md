@@ -1,5 +1,12 @@
 # Smithy Changelog
 
+## 1.0.7 (TBD)
+
+### Bug Fixes
+
+* Fixed a bug where `passthroughBehavior` was misspelled as `passThroughBehavior`
+  in APIGateway OpenAPI output for integrations and mock integrations.
+
 ## 1.0.6 (2020-06-24)
 
 ### Features
