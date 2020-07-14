@@ -18,6 +18,7 @@ package software.amazon.smithy.aws.apigateway.openapi;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
@@ -54,6 +55,8 @@ final class AddIntegrations implements ApiGatewayMapper {
     private static final String DEFAULT_KEY = "default";
     private static final String STATUS_CODE_KEY = "statusCode";
     private static final String RESPONSE_PARAMETERS_KEY = "responseParameters";
+    private static final String PASSTHROUGH_BEHAVIOR = "passthroughBehavior";
+    private static final String INCORRECT_PASSTHROUGH_BEHAVIOR = "passThroughBehavior";
 
     @Override
     public List<ApiGatewayConfig.ApiType> getApiTypes() {
@@ -98,13 +101,23 @@ final class AddIntegrations implements ApiGatewayMapper {
             OperationShape shape,
             Trait integration
     ) {
+        ObjectNode integrationNode;
         if (integration instanceof MockIntegrationTrait) {
-            return integration.toNode().expectObjectNode().withMember("type", Node.from("mock"));
+            integrationNode = integration.toNode().expectObjectNode().withMember("type", Node.from("mock"));
         } else if (integration instanceof IntegrationTrait) {
-            return ((IntegrationTrait) integration).toExpandedNode(context.getService(), shape);
+            integrationNode = ((IntegrationTrait) integration).toExpandedNode(context.getService(), shape);
         } else {
             throw new OpenApiException("Unexpected integration trait: " + integration);
         }
+
+        // Fix a naming issue where the Smithy trait uses a different casing for "passthroughBehavior"
+        Optional<Node> passthroughBehavior = integrationNode.getMember(INCORRECT_PASSTHROUGH_BEHAVIOR);
+        if (passthroughBehavior.isPresent()) {
+            integrationNode = integrationNode
+                    .withoutMember(INCORRECT_PASSTHROUGH_BEHAVIOR)
+                    .withMember(PASSTHROUGH_BEHAVIOR, passthroughBehavior.get());
+        }
+        return integrationNode;
     }
 
     private ObjectNode updateIntegrationWithCors(
