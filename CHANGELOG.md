@@ -5,7 +5,9 @@
 ### Bug Fixes
 
 * Fixed a bug where `passthroughBehavior` was misspelled as `passThroughBehavior`
-  in APIGateway OpenAPI output for integrations and mock integrations.
+  in APIGateway OpenAPI output for integrations and mock integrations. ([#495](https://github.com/awslabs/smithy/pull/495))
+* Fixed a bug where only the last line in a multiline doc comment on a
+  member would be successfully parsed. ([#498](https://github.com/awslabs/smithy/pull/498))
 
 ## 1.0.6 (2020-06-24)
 
