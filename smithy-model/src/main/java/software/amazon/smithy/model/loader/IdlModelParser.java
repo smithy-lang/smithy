@@ -658,6 +658,7 @@ final class IdlModelParser extends SimpleParser {
         int start = position();
         consumeRemainingCharactersOnLine();
         br();
+        sp();
         return StringUtils.stripEnd(sliceFrom(start), " \t\r\n");
     }
 

@@ -29,6 +29,8 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.DocumentationTrait;
+import software.amazon.smithy.model.traits.StringTrait;
 import software.amazon.smithy.model.validation.ValidatedResultException;
 
 public class IdlModelLoaderTest {
@@ -115,5 +117,18 @@ public class IdlModelLoaderTest {
         });
 
         assertThat(e.getMessage(), containsString("Parser exceeded the maximum allowed depth of"));
+    }
+
+    @Test
+    public void handlesMultilineDocComments() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("multiline-comments.smithy"))
+                .assemble()
+                .unwrap();
+
+        Shape shape = model.expectShape(ShapeId.from("smithy.example#MyStruct$myMember"));
+        String docs = shape.getTrait(DocumentationTrait.class).map(StringTrait::getValue).orElse("");
+
+        assertThat(docs, equalTo("This is the first line.\nThis is the second line."));
     }
 }
