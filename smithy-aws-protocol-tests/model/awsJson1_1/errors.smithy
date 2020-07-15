@@ -37,6 +37,9 @@ apply InvalidGreeting @httpResponseTests([
         id: "AwsJson11InvalidGreetingError",
         documentation: "Parses simple JSON errors",
         protocol: awsJson1_1,
+        params: {
+            Message: "Hi"
+        },
         code: 400,
         headers: {
             "Content-Type": "application/x-amz-json-1.1"
@@ -46,7 +49,7 @@ apply InvalidGreeting @httpResponseTests([
                   "__type": "InvalidGreeting",
                   "Message": "Hi"
               }""",
-        bodyMediaType: "application/json"
+        bodyMediaType: "application/json",
     },
 ])
 
@@ -67,6 +70,12 @@ apply ComplexError @httpResponseTests([
         id: "AwsJson11ComplexError",
         documentation: "Parses a complex error with no message member",
         protocol: awsJson1_1,
+        params: {
+            TopLevel: "Top level",
+            Nested: {
+                Foo: "bar"
+            }
+        },
         code: 400,
         headers: {
             "Content-Type": "application/x-amz-json-1.1"
