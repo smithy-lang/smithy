@@ -203,7 +203,7 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
 
     /**
      * Parses model and determines whether the trace file object meets the specs of the model by checking if
-     * the trace file contains all the shape Ids in the model and the model contains all the ShapeIDs in the trace file.
+     * the trace file contains all the ShapeIds in the model and the model contains all the ShapeIDs in the trace file.
      *
      * @param modelResourceName the model name to validate the trace file against. Model should be in the
      *                          resources file.
