@@ -15,6 +15,20 @@
 
 package software.amazon.smithy.codegen.core;
 
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.ArrayNode;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,25 +48,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.node.ArrayNode;
-import software.amazon.smithy.model.node.ExpectationNotMetException;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.MapUtils;
-import software.amazon.smithy.utils.SmithyBuilder;
-import software.amazon.smithy.utils.ToSmithyBuilder;
-
 /**
  * Class that represents the contents of a Smithy trace file.
  * TraceFile's require a smithyTrace file version number, {@link ArtifactMetadata}, and
  * {@link Map} from {@link ShapeId} to a List of {@link ShapeLink} objects. TraceFile's
- * optionally have a {@link Definitions} object.
+ * optionally have a {@link ArtifactDefinitions} object.
  * <p>
  * TraceFile handles parsing, serialization and deserialization of a Smithy trace file.
  * </p>
@@ -74,7 +74,7 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
 
     private String smithyTrace;
     private ArtifactMetadata artifactMetadata;
-    private Definitions definitions; //Optional
+    private ArtifactDefinitions artifactDefinitions; //Optional
     private Map<ShapeId, List<ShapeLink>> shapes;
     private SourceLocation sl = new SourceLocation("");
 
@@ -82,7 +82,7 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
         smithyTrace = SmithyBuilder.requiredState(SMITHY_TRACE_TEXT, builder.smithyTrace);
         artifactMetadata = SmithyBuilder.requiredState(ARTIFACT_TEXT, builder.artifactMetadata);
         shapes = SmithyBuilder.requiredState(SHAPES_TEXT, MapUtils.copyOf(builder.shapes));
-        definitions = builder.definitions;
+        artifactDefinitions = builder.artifactDefinitions;
     }
 
     /**
@@ -120,7 +120,7 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
 
         //parse definitions
         if (node.containsMember(DEFINITIONS_TEXT)) {
-            builder.definitions(Definitions.createFromNode(node.expectObjectMember(DEFINITIONS_TEXT)));
+            builder.definitions(ArtifactDefinitions.createFromNode(node.expectObjectMember(DEFINITIONS_TEXT)));
         }
 
         return builder.build();
@@ -163,7 +163,7 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
         return ObjectNode.objectNodeBuilder()
                 .withMember(SMITHY_TRACE_TEXT, smithyTrace)
                 .withMember(ARTIFACT_TEXT, artifactMetadata)
-                .withOptionalMember(DEFINITIONS_TEXT, getDefinitions())
+                .withOptionalMember(DEFINITIONS_TEXT, getArtifactDefinitions())
                 .withMember(SHAPES_TEXT, shapesBuilder.build())
                 .build();
     }
@@ -175,27 +175,27 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
      * @throws ExpectationNotMetException if a type or tag in shapes is not in definitions.
      */
     public void validateTypesAndTags() {
-        Objects.requireNonNull(shapes);
-        Objects.requireNonNull(definitions);
+        //The optional ArtifactDefinitions must be non-null to call this method
+        Objects.requireNonNull(artifactDefinitions);
+
+        //for each entry in the shapes map
         for (Map.Entry<ShapeId, List<ShapeLink>> entry : shapes.entrySet()) {
-            Iterator<ShapeLink> i = entry.getValue().iterator();
-            while (i.hasNext()) {
-                ShapeLink link = i.next();
-                if (!definitions.getTypes().containsKey(link.getType())) {
+            //for each ShapeLink in entry's List<ShapeLink>
+            for (ShapeLink link : entry.getValue()) {
+                //checking if link's type is in artifactDefinitions
+                if (!artifactDefinitions.getTypes().containsKey(link.getType())) {
                     throw new ExpectationNotMetException(entry.getKey().toString()
                             + " contains types that aren't in definitions.", sl);
-                } else {
-                    Optional<List<String>> tags = link.getTags();
-                    if (tags.isPresent()) {
-                        Iterator<String> iter = tags.get().iterator();
-                        while (iter.hasNext()) {
-                            String next = iter.next();
-                            if (!definitions.getTags().containsKey(next)) {
-                                throw new ExpectationNotMetException(entry.getKey().toString() + " " + next
-                                        + " is a tag that isn't in definitions.", sl);
-                            }
+                }
+
+                //checking if link's tags are all in artifactDefinitions
+                Optional<List<String>> tags = link.getTags();
+                if (tags.isPresent()) {
+                    for (String tag : tags.get())
+                        if (!artifactDefinitions.getTags().containsKey(tag)) {
+                            throw new ExpectationNotMetException(entry.getKey().toString() + " " + tag
+                                    + " is a tag that isn't in definitions.", sl);
                         }
-                    }
                 }
             }
         }
@@ -254,8 +254,8 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
      * @return an Optional Definitions container that contains this TraceFile's Definition
      * or isEmpty if Definition's has not been set.
      */
-    public Optional<Definitions> getDefinitions() {
-        return Optional.ofNullable(definitions);
+    public Optional<ArtifactDefinitions> getArtifactDefinitions() {
+        return Optional.ofNullable(artifactDefinitions);
     }
 
     /**
@@ -279,7 +279,7 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
         return builder()
                 .artifact(artifactMetadata)
                 .smithyTrace(smithyTrace)
-                .definitions(definitions)
+                .definitions(artifactDefinitions)
                 .shapes(shapes);
     }
 
@@ -289,7 +289,7 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
     public static final class Builder implements SmithyBuilder<TraceFile> {
 
         private String smithyTrace = SMITHY_TRACE_VERSION;
-        private Definitions definitions;
+        private ArtifactDefinitions artifactDefinitions;
         private ArtifactMetadata artifactMetadata;
         private Map<ShapeId, List<ShapeLink>> shapes = new HashMap<>();
 
@@ -310,11 +310,11 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
         }
 
         /**
-         * @param definitions Trace file definitions.
+         * @param artifactDefinitions Trace file definitions.
          * @return This builder.
          */
-        public Builder definitions(Definitions definitions) {
-            this.definitions = definitions;
+        public Builder definitions(ArtifactDefinitions artifactDefinitions) {
+            this.artifactDefinitions = artifactDefinitions;
             return this;
         }
 

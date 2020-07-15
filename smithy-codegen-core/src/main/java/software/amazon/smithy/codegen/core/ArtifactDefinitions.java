@@ -47,14 +47,14 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * generator could be "requestBuilder" to indicate that a class is used as a builder for a request.
  * </p>
  */
-public final class Definitions implements ToNode, ToSmithyBuilder<Definitions> {
+public final class ArtifactDefinitions implements ToNode, ToSmithyBuilder<ArtifactDefinitions> {
     public static final String TYPE_TEXT = "types";
     public static final String TAGS_TEXT = "tags";
 
     private Map<String, String> tags;
     private Map<String, String> types;
 
-    private Definitions(Builder builder) {
+    private ArtifactDefinitions(Builder builder) {
         tags = SmithyBuilder.requiredState(TAGS_TEXT, MapUtils.copyOf(builder.tags));
         types = SmithyBuilder.requiredState(TYPE_TEXT, MapUtils.copyOf(builder.types));
     }
@@ -66,8 +66,8 @@ public final class Definitions implements ToNode, ToSmithyBuilder<Definitions> {
      * @param value ObjectNode that contains the JSON data inside the definitions tag of
      *              the trace file
      */
-    public static Definitions createFromNode(Node value) {
-        return new NodeMapper().deserialize(value, Definitions.class);
+    public static ArtifactDefinitions createFromNode(Node value) {
+        return new NodeMapper().deserialize(value, ArtifactDefinitions.class);
     }
 
     /**
@@ -79,7 +79,7 @@ public final class Definitions implements ToNode, ToSmithyBuilder<Definitions> {
      * @return Definitions corresponding to parsed URI
      * @throws FileNotFoundException if the definitions file path is not found
      */
-    public static Definitions createFromFile(URI filename) throws FileNotFoundException {
+    public static ArtifactDefinitions createFromFile(URI filename) throws FileNotFoundException {
         InputStream stream = new FileInputStream(new File(filename));
         return createFromNode(Node.parse(stream).expectObjectNode());
     }
@@ -127,21 +127,21 @@ public final class Definitions implements ToNode, ToSmithyBuilder<Definitions> {
      * @return a builder for type T
      */
     @Override
-    public SmithyBuilder<Definitions> toBuilder() {
+    public SmithyBuilder<ArtifactDefinitions> toBuilder() {
         return builder()
                 .tags(tags)
                 .types(types);
     }
 
-    public static final class Builder implements SmithyBuilder<Definitions> {
+    public static final class Builder implements SmithyBuilder<ArtifactDefinitions> {
         private Map<String, String> tags;
         private Map<String, String> types;
 
         /**
          * @return Definitions object from this builder.
          */
-        public Definitions build() {
-            return new Definitions(this);
+        public ArtifactDefinitions build() {
+            return new ArtifactDefinitions(this);
         }
 
         public Builder tags(Map<String, String> tags) {

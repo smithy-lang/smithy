@@ -11,21 +11,21 @@ import java.net.URISyntaxException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-class DefinitionsTest {
+class ArtifactDefinitionsTest {
     @Test
     void assertsToNodeWorksWithCorrectFields() {
-        Definitions definitions = Definitions.builder()
+        ArtifactDefinitions artifactDefinitions = ArtifactDefinitions.builder()
                 .addType("t1", "t1val")
                 .addType("t2", "t2val")
                 .addTag("tag1", "tag1val")
                 .addTag("tag2", "tag2val")
                 .build();
 
-        ObjectNode node = definitions.toNode();
+        ObjectNode node = artifactDefinitions.toNode();
 
         ObjectNode builtNode = ObjectNode.objectNodeBuilder()
-                .withMember(Definitions.TAGS_TEXT, ObjectNode.fromStringMap(definitions.getTags()))
-                .withMember(Definitions.TYPE_TEXT, ObjectNode.fromStringMap(definitions.getTypes()))
+                .withMember(ArtifactDefinitions.TAGS_TEXT, ObjectNode.fromStringMap(artifactDefinitions.getTags()))
+                .withMember(ArtifactDefinitions.TYPE_TEXT, ObjectNode.fromStringMap(artifactDefinitions.getTypes()))
                 .build();
 
         Assertions.assertDoesNotThrow(() -> Node.assertEquals(node, builtNode));
@@ -33,7 +33,7 @@ class DefinitionsTest {
 
     @Test
     void assertsFromNodeWorksWithCorrectFields() {
-        Definitions definitions = Definitions.builder()
+        ArtifactDefinitions artifactDefinitions = ArtifactDefinitions.builder()
                 .addType("t1", "t1val")
                 .addType("t2", "t2val")
                 .addTag("tag1", "tag1val")
@@ -41,35 +41,35 @@ class DefinitionsTest {
                 .build();
 
         ObjectNode node = ObjectNode.objectNodeBuilder()
-                .withMember(Definitions.TAGS_TEXT, ObjectNode.fromStringMap(definitions.getTags()))
-                .withMember(Definitions.TYPE_TEXT, ObjectNode.fromStringMap(definitions.getTypes()))
+                .withMember(ArtifactDefinitions.TAGS_TEXT, ObjectNode.fromStringMap(artifactDefinitions.getTags()))
+                .withMember(ArtifactDefinitions.TYPE_TEXT, ObjectNode.fromStringMap(artifactDefinitions.getTypes()))
                 .build();
 
-        Definitions definitions2 = Definitions.createFromNode(node);
+        ArtifactDefinitions artifactDefinitions2 = ArtifactDefinitions.createFromNode(node);
 
-        assertThat(definitions.getTags(), equalTo(definitions2.getTags()));
-        assertThat(definitions.getTypes(), equalTo(definitions2.getTypes()));
+        assertThat(artifactDefinitions.getTags(), equalTo(artifactDefinitions2.getTags()));
+        assertThat(artifactDefinitions.getTypes(), equalTo(artifactDefinitions2.getTypes()));
     }
 
     @Test
     void assertsFromDefinitionsFileWorksWithRequiredFields() throws URISyntaxException, FileNotFoundException {
-        Definitions definitions = Definitions.createFromFile(getClass().getResource("definitions.json").toURI());
+        ArtifactDefinitions artifactDefinitions = ArtifactDefinitions.createFromFile(getClass().getResource("definitions.json").toURI());
 
-        Definitions definitions2 = Definitions.builder()
+        ArtifactDefinitions artifactDefinitions2 = ArtifactDefinitions.builder()
                 .addType("t1", "t1val")
                 .addType("t2", "t2val")
                 .addTag("tag1", "tag1val")
                 .addTag("tag2", "tag2val")
                 .build();
 
-        assertThat(definitions.getTags(), equalTo(definitions2.getTags()));
-        assertThat(definitions.getTypes(), equalTo(definitions2.getTypes()));
+        assertThat(artifactDefinitions.getTags(), equalTo(artifactDefinitions2.getTags()));
+        assertThat(artifactDefinitions.getTypes(), equalTo(artifactDefinitions2.getTypes()));
     }
 
     @Test
     void assertBuildThrowsWithoutRequiredTypesField() {
         Assertions.assertThrows(NullPointerException.class, () -> {
-            Definitions.builder()
+            ArtifactDefinitions.builder()
                     .addTag("tag1", "tag1val")
                     .addTag("tag2", "tag2val")
                     .build();
@@ -79,7 +79,7 @@ class DefinitionsTest {
     @Test
     void assertBuildThrowsWithoutRequiredTagsField() {
         Assertions.assertThrows(NullPointerException.class, () -> {
-            Definitions.builder()
+            ArtifactDefinitions.builder()
                     .addType("t1", "t1val")
                     .addType("t2", "t2val")
                     .build();
