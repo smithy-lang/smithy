@@ -324,7 +324,7 @@ structure NullAndEmptyHeadersIO {
     c: StringList,
 }
 
-/// The example tests how timestamp request and response headers are serialized.
+/// This example tests how timestamp request and response headers are serialized.
 @http(uri: "/TimestampFormatHeaders", method: "POST")
 operation TimestampFormatHeaders {
     input: TimestampFormatHeadersIO,
@@ -413,3 +413,57 @@ structure TimestampFormatHeadersIO {
     @httpHeader("X-targetDateTime")
     targetDateTime: DateTime,
 }
+
+/// This example ensures that mediaType strings are base64 encoded in headers.
+@readonly
+@http(uri: "/MediaTypeHeader", method: "GET")
+operation MediaTypeHeader {
+    input: MediaTypeHeaderInput,
+    output: MediaTypeHeaderOutput
+}
+
+apply MediaTypeHeader @httpRequestTests([
+    {
+        id: "MediaTypeHeaderInputBase64",
+        documentation: "Headers that target strings with a mediaType are base64 encoded",
+        protocol: restJson1,
+        method: "GET",
+        uri: "/MediaTypeHeader",
+        headers: {
+            "X-Json": "dHJ1ZQ=="
+        },
+        body: "",
+        params: {
+            json: "true"
+        }
+    },
+])
+
+apply MediaTypeHeader @httpResponseTests([
+    {
+        id: "MediaTypeHeaderOutputBase64",
+        documentation: "Headers that target strings with a mediaType are base64 encoded",
+        protocol: restJson1,
+        code: 200,
+        headers: {
+            "X-Json": "dHJ1ZQ=="
+        },
+        body: "",
+        params: {
+            json: "true"
+        }
+    },
+])
+
+structure MediaTypeHeaderInput {
+    @httpHeader("X-Json")
+    json: JsonValue,
+}
+
+structure MediaTypeHeaderOutput {
+    @httpHeader("X-Json")
+    json: JsonValue,
+}
+
+@mediaType("application/json")
+string JsonValue

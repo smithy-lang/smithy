@@ -209,8 +209,8 @@ following document:
 -------------------
 
 Summary
-    Describes the contents of a blob or string shape using a media type as
-    defined by :rfc:`6838` (e.g., "video/quicktime").
+    Describes the contents of a blob or string shape using a design-time
+    media type as defined by :rfc:`6838` (for example, ``application/json``).
 Trait selector
     ``:is(blob, string)``
 
@@ -218,18 +218,53 @@ Trait selector
 Value type
     ``string``
 
-The ``mediaType`` can be used in tools for documentation, validation,
-automated conversion or encoding in code, automatically determining an
-appropriate Content-Type for an HTTP-based protocol, etc.
-
-The following example defines a video/quicktime blob:
+The following example defines a ``video/quicktime`` blob:
 
 .. tabs::
 
     .. code-tab:: smithy
 
+        namespace smithy.example
+
         @mediaType("video/quicktime")
         blob VideoData
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#VideoData": {
+                    "type": "blob",
+                    "traits": {
+                        "smithy.api#mediaType": "video/quicktime"
+                    }
+                }
+            }
+        }
+
+.. rubric:: Use cases
+
+The primary function of the ``mediaType`` trait is to send open content
+data over the wire inside of values that are isolated from the rest of
+a payload using exact representations of customer provided data. While the
+model does define the serialization format of values able to be stored in a
+shape at design-time using a media type, models are not required to define
+any kind of schema for the shape.
+
+The ``mediaType`` trait can be used to aid tools in documentation,
+validation, special-cased helpers to serialize and deserialize media type
+contents in code, assigning a fixed Content-Type when using
+:ref:`HTTP bindings <http-traits>`, etc.
+
+.. rubric:: Comparisons to document types
+
+The serialization format of a shape marked with the ``@mediaType`` trait is
+an important part of its contract. In contrast, document types are
+serialized in a protocol-agnostic way and can only express data types as
+granular as the JSON-type system. Design-time media types are preferred over
+document types when the exact bytes of a value are required for an
+application to function.
 
 
 .. _timestampFormat-trait:
