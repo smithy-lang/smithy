@@ -92,6 +92,7 @@ apply ComplexError @httpResponseTests([
     },
     {
         id: "AwsJson10EmptyComplexError",
+        documentation: "Parses a complex error with an empty body",
         protocol: awsJson1_0,
         code: 400,
         headers: {
