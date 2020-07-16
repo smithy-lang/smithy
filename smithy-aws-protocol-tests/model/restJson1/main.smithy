@@ -23,6 +23,7 @@ service RestJson {
         NullAndEmptyHeadersClient,
         NullAndEmptyHeadersServer,
         TimestampFormatHeaders,
+        MediaTypeHeader,
 
         // @httpLabel tests
         HttpRequestWithLabels,
