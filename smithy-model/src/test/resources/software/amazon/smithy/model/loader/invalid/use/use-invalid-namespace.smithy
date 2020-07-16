@@ -3,4 +3,4 @@ $version: "1.0"
 
 namespace smithy.example
 
-use _$#Bar
+use a$#Bar

@@ -147,20 +147,35 @@ public final class ParserUtils {
      * Expects and skips over a Smithy identifier production.
      *
      * <pre>
-     *     identifier = (ALPHA / "_") *(ALPHA / DIGIT / "_")
+     *     identifier       = identifier_start *identifier_chars
+     *     identifier_start = *"_" ALPHA
+     *     identifier_chars = ALPHA / DIGIT / "_"
      * </pre>
      *
      * @param parser Parser to consume tokens from.
      */
     public static void consumeIdentifier(SimpleParser parser) {
-        // (ALPHA / "_")
-        if (!isIdentifierStart(parser.peek())) {
-            throw parser.syntax("Expected a valid identifier character, but found '"
-                                + parser.peekSingleCharForMessage() + '\'');
+        // Parse identifier_start
+        char c = parser.peek();
+        if (c == '_') {
+            parser.consumeUntilNoLongerMatches(next -> next == '_');
+            if (!ParserUtils.isValidIdentifierCharacter(parser.peek())) {
+                throw invalidIdentifier(parser);
+            }
+        } else if (!isAlphabetic(c)) {
+            throw invalidIdentifier(parser);
         }
 
-        // *(ALPHA / DIGIT / "_")
+        // Skip the first character since it's known to be valid.
+        parser.skip();
+
+        // Parse identifier_chars
         parser.consumeUntilNoLongerMatches(ParserUtils::isValidIdentifierCharacter);
+    }
+
+    private static RuntimeException invalidIdentifier(SimpleParser parser) {
+        throw parser.syntax("Expected a valid identifier character, but found '"
+                            + parser.peekSingleCharForMessage() + '\'');
     }
 
     /**
@@ -180,7 +195,7 @@ public final class ParserUtils {
      * @return Returns true if the character can start an identifier.
      */
     public static boolean isIdentifierStart(char c) {
-        return c == '_' || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+        return c == '_' ||  isAlphabetic(c);
     }
 
     /**
@@ -191,5 +206,16 @@ public final class ParserUtils {
      */
     public static boolean isDigit(char c) {
         return c >= '0' && c <= '9';
+    }
+
+    /**
+     * Returns true if the given character is an alphabetic character
+     * A-Z, a-z. This is a stricter version of {@link Character#isAlphabetic}.
+     *
+     * @param c Character to check.
+     * @return Returns true if the character is an alphabetic character.
+     */
+    public static boolean isAlphabetic(char c) {
+        return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
     }
 }
