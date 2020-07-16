@@ -85,29 +85,29 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
     public static boolean isValidNamespace(CharSequence namespace) {
         if (namespace == null) {
             return false;
-        }
-
-        // Shortcut for prelude namespaces.
-        if (namespace.equals(Prelude.NAMESPACE)) {
+        } else if (namespace.equals(Prelude.NAMESPACE)) {
+            // Shortcut for prelude namespaces.
             return true;
         }
 
-        boolean start = true;
-        for (int position = 0; position < namespace.length(); position++) {
-            char c = namespace.charAt(position);
-            if (start) {
-                start = false;
-                if (!ParserUtils.isIdentifierStart(c)) {
-                    return false;
-                }
-            } else if (c == '.') {
-                start = true;
-            } else if (!ParserUtils.isValidIdentifierCharacter(c)) {
-                return false;
-            }
+        int length = namespace.length();
+        if (length == 0) {
+            return false;
         }
 
-        return !start;
+        int position = 0;
+        while (true) {
+            position = parseIdentifier(namespace, position);
+            if (position == -1) { // Bad: did not parse a valid identifier.
+                return false;
+            } else if (position == length) { // Good: parsed and reached the end.
+                return true;
+            } else if (namespace.charAt(position) != '.') { // Bad: invalid character.
+                return false;
+            } else if (++position >= length) { // Bad: trailing '.'
+                return false;
+            } // continue parsing after '.', expecting an identifier.
+        }
     }
 
     /**
@@ -117,21 +117,40 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
      * @return Returns true if this is a valid identifier.
      */
     public static boolean isValidIdentifier(CharSequence identifier) {
-        if (identifier == null || identifier.length() == 0) {
-            return false;
+        return parseIdentifier(identifier, 0) == identifier.length();
+    }
+
+    private static int parseIdentifier(CharSequence identifier, int offset) {
+        if (identifier == null || identifier.length() <= offset) {
+            return -1;
         }
 
-        if (!ParserUtils.isIdentifierStart(identifier.charAt(0))) {
-            return false;
-        }
-
-        for (int i = 1; i < identifier.length(); i++) {
-            if (!ParserUtils.isValidIdentifierCharacter(identifier.charAt(i))) {
-                return false;
+        // Parse the required identifier_start production.
+        char startingChar = identifier.charAt(offset);
+        if (startingChar == '_') {
+            while (identifier.charAt(offset) == '_') {
+                offset++;
             }
+            if (!ParserUtils.isValidIdentifierCharacter(identifier.charAt(offset))) {
+                return -1;
+            }
+            offset++;
+        } else if (!ParserUtils.isAlphabetic(startingChar)) {
+            return -1;
         }
 
-        return true;
+        // Parse the optional identifier_chars production.
+        while (offset < identifier.length()) {
+            if (!ParserUtils.isValidIdentifierCharacter(identifier.charAt(offset))) {
+                // Return the position of the character that stops the identifier.
+                // This is either an invalid case (e.g., isValidIdentifier), or
+                // just the marker needed for isValidNamespace to find '.'.
+                return offset;
+            }
+            offset++;
+        }
+
+        return offset;
     }
 
     /**

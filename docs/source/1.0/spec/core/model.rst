@@ -445,7 +445,9 @@ Shape IDs are formally defined by the following ABNF:
     root_shape_id          :`absolute_root_shape_id` / `identifier`
     absolute_root_shape_id :`namespace` "#" `identifier`
     namespace              :`identifier` *("." `identifier`)
-    identifier             :(ALPHA / "_") *(ALPHA / DIGIT / "_")
+    identifier             :identifier_start *identifier_chars
+    identifier_start       :*"_" ALPHA
+    identifier_chars       :ALPHA / DIGIT / "_"
     shape_id_member        :"$" `identifier`
 
 .. rubric:: Best practices for defining shape names

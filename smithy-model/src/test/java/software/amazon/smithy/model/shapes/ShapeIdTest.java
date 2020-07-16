@@ -170,7 +170,6 @@ public class ShapeIdTest {
                 { "Mixed.case#name", false},
                 { "_foo.baz#name", false},
                 { "__foo.baz#name", false},
-                { "a._.b#name", false},
 
                 // invalid namespaces
                 { "#name", true},
@@ -179,6 +178,8 @@ public class ShapeIdTest {
                 { ".name.space#name", true},
                 { "name-space#name", true},
                 { "1namespace.foo#name", true},
+                { "a._.b#name", true},
+                { "a.____.b#name", true},
 
                 // valid shape names
                 { "ns.foo#shapename", false},
