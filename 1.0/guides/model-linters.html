@@ -107,8 +107,8 @@ Kotlin</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-S290bGlu active docutils container">
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span> <span class="p">{</span>
-    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.0.6&quot;</span><span class="p">)</span>
-    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.0.6&quot;</span><span class="p">)</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.0.7&quot;</span><span class="p">)</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.0.7&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -485,7 +485,7 @@ be provided.</p>
 </div>
 <div class="section" id="stutteredshapename">
 <span id="id5"></span><h3><a href="#stutteredshapename">StutteredShapeName</a></h3>
-<p>Validators that <a class="reference internal" href="../spec/core/shapes.html#structure"><span class="std std-ref">Structure</span></a> member names and <a class="reference internal" href="../spec/core/shapes.html#union"><span class="std std-ref">Union</span></a> member
+<p>Validators that <a class="reference internal" href="../spec/core/model.html#structure"><span class="std std-ref">Structure</span></a> member names and <a class="reference internal" href="../spec/core/model.html#union"><span class="std std-ref">Union</span></a> member
 names do not stutter their shape names.</p>
 <p>As an example, if a structure named &quot;Table&quot; contained a member named
 &quot;TableName&quot;, then this validator would emit a WARNING event.</p>
@@ -558,7 +558,7 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">[&quot;
 that SHOULD be paginated. A <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> event is emitted when an
 operation is found that matches one of these prefixes, the operation
 has output, and the output contains at least one top-level member
-that targets a <a class="reference internal" href="../spec/core/shapes.html#list"><span class="std std-ref">List</span></a>. Defaults to <code class="docutils literal notranslate"><span class="pre">[&quot;describe&quot;,</span> <span class="pre">&quot;get&quot;]</span></code></td>
+that targets a <a class="reference internal" href="../spec/core/model.html#list"><span class="std std-ref">List</span></a>. Defaults to <code class="docutils literal notranslate"><span class="pre">[&quot;describe&quot;,</span> <span class="pre">&quot;get&quot;]</span></code></td>
 </tr>
 <tr class="row-even"><td>inputMembersRequirePagination</td>
 <td>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</td>

@@ -83,21 +83,17 @@ to call ``CreateTable`` on a table that already exists will return an error.
 --------------------
 
 Summary
-    Defines the :ref:`resource` shapes that are referenced by a string shape
-    or a structure shape and the members of the structure that provide values
-    for the :ref:`identifiers <resource-identifiers>` of the resource.
-
-    References provide the ability for tooling to *dereference* a resource
-    reference at runtime. For example, if a client receives a response from a
-    service that contains references, the client could provide functionality
-    to resolve references by name, allowing the end-user to invoke operations
-    on a specific referenced resource.
+    Defines a design-time reference to :ref:`resource` shapes. Resource
+    references allow tooling to understand the relationships between
+    resources and how to dereference the location of a resource.
 Trait selector
     ``:is(structure, string)``
 
     *Any structure or string*
 Value type
     ``list`` of ``Reference`` structures
+
+.. rubric:: ``Reference`` structure
 
 The ``references`` trait is a list of ``Reference`` structures that contain
 the following members:
@@ -141,12 +137,66 @@ the following members:
         contain a link relation as defined in :rfc:`5988#section-4` (i.e.,
         this value SHOULD contain either a `standard link relation`_ or URI).
 
+.. rubric:: Runtime resolution of references
+
 References MAY NOT be resolvable at runtime in the following circumstances:
 
 #. The members that make up the ``ids`` are not present in a structure at
    runtime (e.g., a member is not marked as :ref:`required-trait`)
 #. The targeted resource and/or service shape is not part of the model
 #. The reference is bound to a specific service that is unknown to the tool
+
+.. rubric:: Implicit identifier mappings example
+
+The following example creates a reference to a ``HistoricalForecast`` resource
+(a resource that requires the "forecastId" and "historicalId" identifiers):
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    resource HistoricalForecast {
+        identifiers: {
+            forecastId: ForecastId,
+            historicalId: HistoricalForecastId,
+        }
+    }
+
+    @references([{resource: HistoricalForecast}])
+    structure HistoricalReference {
+        forecastId: ForecastId,
+        historicalId: HistoricalForecastId
+    }
+
+Notice that in the above example, the identifiers of the resource were not
+explicitly mapped to structure members. This is because the targeted structure
+contains members with names that match the names of the identifiers of the
+``HistoricalForecast`` resource.
+
+.. rubric:: Explicit identifier mappings example
+
+Explicit mappings between identifier names and structure member names can be
+defined if needed. For example:
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    @references([
+        {
+            resource: HistoricalForecast,
+            ids: {
+                forecastId: "customForecastId",
+                historicalId: "customHistoricalId"
+            }
+        }
+    ])
+    structure AnotherHistoricalReference {
+        customForecastId: String,
+        customHistoricalId: String,
+    }
+
+.. rubric:: Additional examples
 
 The following example defines several references:
 
@@ -181,6 +231,23 @@ The following example defines several references:
             @required
             objectKey: ObjectKey,
         }
+
+.. rubric:: References on string shapes
+
+A reference can be formed on a string shape for resources that have one
+identifier. References applied to a string shape MUST omit the "ids"
+property in the reference.
+
+.. code-block:: smithy
+
+    resource SimpleResource {
+        identifiers: {
+            foo: String,
+        }
+    }
+
+    @references([{resource: SimpleResource}])
+    string SimpleResourceReference
 
 
 .. _implicit-ids:

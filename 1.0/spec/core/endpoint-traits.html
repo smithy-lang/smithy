@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>16. Endpoint Traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    <title>13. Endpoint Traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
     
     <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -27,8 +27,8 @@
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="17. Selectors" href="selectors.html" />
-    <link rel="prev" title="15. XML binding traits" href="xml-traits.html" />
+    <link rel="next" title="14. Selectors" href="selectors.html" />
+    <link rel="prev" title="12. XML binding traits" href="xml-traits.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="smithy-version" content="1.0">
 
@@ -70,7 +70,7 @@
                     
                     
   <div class="section" id="endpoint-traits">
-<span id="id1"></span><h1><a href="#endpoint-traits">16. Endpoint Traits</a></h1>
+<span id="id1"></span><h1><a href="#endpoint-traits">13. Endpoint Traits</a></h1>
 <p>Smithy provides various endpoint binding traits that can be used to configure
 request endpoints.</p>
 <div class="contents local topic" id="table-of-contents">
@@ -81,7 +81,7 @@ request endpoints.</p>
 </ul>
 </div>
 <div class="section" id="endpoint-trait">
-<span id="id2"></span><h2><a href="#endpoint-trait">16.1. <code class="docutils literal notranslate"><span class="pre">endpoint</span></code> trait</a></h2>
+<span id="id2"></span><h2><a href="#endpoint-trait">13.1. <code class="docutils literal notranslate"><span class="pre">endpoint</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Configures a custom operation endpoint.</dd>
@@ -183,7 +183,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="labels">
-<span id="endpoint-labels"></span><h3><a href="#labels">16.1.1. Labels</a></h3>
+<span id="endpoint-labels"></span><h3><a href="#labels">13.1.1. Labels</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> patterns MAY contain label placeholders. <em class="dfn">Labels</em> consist
 of label name characters surrounded by open and closed braces (for example,
 &quot;{label_name}&quot; is a label and <code class="docutils literal notranslate"><span class="pre">label_name</span></code> is the label name). Every label
@@ -394,7 +394,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="client-behavior">
-<span id="endpoint-clientbehavior"></span><h3><a href="#client-behavior">16.1.2. Client Behavior</a></h3>
+<span id="endpoint-clientbehavior"></span><h3><a href="#client-behavior">13.1.2. Client Behavior</a></h3>
 <p>If an API operation is decorated with an endpoint trait, a client MUST expand
 the <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> template and prepend the expanded value to the client's
 endpoint host prior to its use. Clients MUST fail when expanding a
@@ -491,7 +491,7 @@ header will contain the value <code class="docutils literal notranslate"><span c
 </div>
 </div>
 <div class="section" id="hostlabel-trait">
-<span id="id3"></span><h2><a href="#hostlabel-trait">16.2. <code class="docutils literal notranslate"><span class="pre">hostLabel</span></code> trait</a></h2>
+<span id="id3"></span><h2><a href="#hostlabel-trait">13.2. <code class="docutils literal notranslate"><span class="pre">hostLabel</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Binds a top-level operation input structure member to a label in the
@@ -581,9 +581,9 @@ JSON</div>
                     
                     <section class="relations">
                         
-                        <a href="xml-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 15. XML binding traits</a>
+                        <a href="xml-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 12. XML binding traits</a>
                         
-                        <a href="selectors.html" title="next chapter" class="next-page clearfix">17. Selectors →</a>
+                        <a href="selectors.html" title="next chapter" class="next-page clearfix">14. Selectors →</a>
                     </section>
                     
                 </article><aside id="right-column" class="side-column hidden-sm">
@@ -598,13 +598,13 @@ JSON</div>
                             </section>
                             
                             <ul>
-<li><a class="reference internal" href="#">16. Endpoint Traits</a><ul>
-<li><a class="reference internal" href="#endpoint-trait">16.1. <code class="docutils literal notranslate"><span class="pre">endpoint</span></code> trait</a><ul>
-<li><a class="reference internal" href="#labels">16.1.1. Labels</a></li>
-<li><a class="reference internal" href="#client-behavior">16.1.2. Client Behavior</a></li>
+<li><a class="reference internal" href="#">13. Endpoint Traits</a><ul>
+<li><a class="reference internal" href="#endpoint-trait">13.1. <code class="docutils literal notranslate"><span class="pre">endpoint</span></code> trait</a><ul>
+<li><a class="reference internal" href="#labels">13.1.1. Labels</a></li>
+<li><a class="reference internal" href="#client-behavior">13.1.2. Client Behavior</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#hostlabel-trait">16.2. <code class="docutils literal notranslate"><span class="pre">hostLabel</span></code> trait</a></li>
+<li><a class="reference internal" href="#hostlabel-trait">13.2. <code class="docutils literal notranslate"><span class="pre">hostLabel</span></code> trait</a></li>
 </ul>
 </li>
 </ul>

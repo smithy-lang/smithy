@@ -44,9 +44,8 @@ Value type
        * - noInlineDocumentSupport
          - ``boolean``
          - If set to ``true``, indicates that this protocol does not support
-           :ref:`document <document-type>` shapes. A service that uses such
-           a protocol MUST NOT contain any document shapes in their service
-           closure.
+           ``document`` type shapes. A service that uses such a protocol
+           MUST NOT contain any ``document`` shapes in their service closure.
 
 Smithy is protocol agnostic, which means it focuses on the interfaces and
 abstractions that are provided to end-users rather than how the data is sent
@@ -210,8 +209,8 @@ following document:
 -------------------
 
 Summary
-    Describes the contents of a blob or string shape using a media type as
-    defined by :rfc:`6838` (e.g., "video/quicktime").
+    Describes the contents of a blob or string shape using a design-time
+    media type as defined by :rfc:`6838` (for example, ``application/json``).
 Trait selector
     ``:is(blob, string)``
 
@@ -219,18 +218,53 @@ Trait selector
 Value type
     ``string``
 
-The ``mediaType`` can be used in tools for documentation, validation,
-automated conversion or encoding in code, automatically determining an
-appropriate Content-Type for an HTTP-based protocol, etc.
-
-The following example defines a video/quicktime blob:
+The following example defines a ``video/quicktime`` blob:
 
 .. tabs::
 
     .. code-tab:: smithy
 
+        namespace smithy.example
+
         @mediaType("video/quicktime")
         blob VideoData
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#VideoData": {
+                    "type": "blob",
+                    "traits": {
+                        "smithy.api#mediaType": "video/quicktime"
+                    }
+                }
+            }
+        }
+
+.. rubric:: Use cases
+
+The primary function of the ``mediaType`` trait is to send open content
+data over the wire inside of values that are isolated from the rest of
+a payload using exact representations of customer provided data. While the
+model does define the serialization format of values able to be stored in a
+shape at design-time using a media type, models are not required to define
+any kind of schema for the shape.
+
+The ``mediaType`` trait can be used to aid tools in documentation,
+validation, special-cased helpers to serialize and deserialize media type
+contents in code, assigning a fixed Content-Type when using
+:ref:`HTTP bindings <http-traits>`, etc.
+
+.. rubric:: Comparisons to document types
+
+The serialization format of a shape marked with the ``@mediaType`` trait is
+an important part of its contract. In contrast, document types are
+serialized in a protocol-agnostic way and can only express data types as
+granular as the JSON-type system. Design-time media types are preferred over
+document types when the exact bytes of a value are required for an
+application to function.
 
 
 .. _timestampFormat-trait:
@@ -248,11 +282,12 @@ Trait selector
 Value type
     ``string``
 
-The serialization format of a timestamp shape is normally dictated by the
-:ref:`protocol <protocolDefinition-trait>` of a service. In order to
-interoperate with other web services or frameworks, it is sometimes
-necessary to use a specific serialization format that differs from the
-protocol.
+By default, the serialization format of a timestamp is implicitly determined by
+the :ref:`protocol <protocolDefinition-trait>` of a service; however, the
+serialization format can be explicitly configured in some protocols to
+override the default format using the ``timestampFormat`` trait.
+
+.. rubric:: Timestamp formats
 
 Smithy defines the following built-in timestamp formats:
 
@@ -275,13 +310,17 @@ Smithy defines the following built-in timestamp formats:
         00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970,
         with decimal precision (for example, ``1515531081.1234``).
 
+.. rubric:: Resolving timestamp formats
+
+The following steps are taken to determine the serialization format of a
+:ref:`member <member>` that targets a timestamp:
+
+1. Use the ``timestampFormat`` trait of the member, if present.
+2. Use the ``timestampFormat`` trait of the shape, if present.
+3. Use the default format of the protocol.
+
 .. important::
 
     This trait SHOULD NOT be used unless the intended serialization format of
     a timestamp differs from the default protocol format. Using this trait too
     liberally can cause other tooling to improperly interpret the timestamp.
-
-.. seealso::
-
-    Refer to :ref:`timestamp-serialization-format` for information on how to
-    determine the serialization format of a timestamp.

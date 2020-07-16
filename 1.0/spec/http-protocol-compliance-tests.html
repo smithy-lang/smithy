@@ -28,7 +28,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="MQTT Protocol Bindings" href="mqtt.html" />
-    <link rel="prev" title="21. JSON AST" href="core/json-ast.html" />
+    <link rel="prev" title="17. JSON AST" href="core/json-ast.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="smithy-version" content="1.0">
 
@@ -118,7 +118,7 @@ or server.</p>
 to serialize HTTP requests and responses. In order to compare implementation
 specific results against the expected result of each test case across
 different programming languages, parameters are defined in the same format
-specified in <a class="reference internal" href="core/traits.html#trait-node-values"><span class="std std-ref">Trait node values</span></a> with the following additional
+specified in <a class="reference internal" href="core/model.html#trait-node-values"><span class="std std-ref">Trait node values</span></a> with the following additional
 constraints:</p>
 <ul class="simple">
 <li>Timestamp values must be converted to a Unix timestamp represented
@@ -164,7 +164,7 @@ that support the following members:</p>
 <td><strong>Required</strong>. The identifier of the test case. This identifier can
 be used by protocol test implementations to filter out unsupported
 test cases by ID, to generate test case names, etc. The provided
-<code class="docutils literal notranslate"><span class="pre">id</span></code> MUST match Smithy's <a class="reference internal" href="core/lexical-structure.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">identifier</span></code></a> ABNF. No two
+<code class="docutils literal notranslate"><span class="pre">id</span></code> MUST match Smithy's <a class="reference internal" href="core/model.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">identifier</span></code></a> ABNF. No two
 <code class="docutils literal notranslate"><span class="pre">httpRequestTests</span></code> test cases can share the same ID.</td>
 </tr>
 <tr class="row-odd"><td>protocol</td>
@@ -438,7 +438,7 @@ structures that support the following members:</p>
 <td><strong>Required</strong>. The identifier of the test case. This identifier can
 be used by protocol test implementations to filter out unsupported
 test cases by ID, to generate test case names, etc. The provided
-<code class="docutils literal notranslate"><span class="pre">id</span></code> MUST match Smithy's <a class="reference internal" href="core/lexical-structure.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">identifier</span></code></a> ABNF. No two
+<code class="docutils literal notranslate"><span class="pre">id</span></code> MUST match Smithy's <a class="reference internal" href="core/model.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">identifier</span></code></a> ABNF. No two
 <code class="docutils literal notranslate"><span class="pre">httpResponseTests</span></code> test cases can share the same ID.</td>
 </tr>
 <tr class="row-odd"><td>protocol</td>
@@ -703,7 +703,7 @@ JSON</div>
                     
                     <section class="relations">
                         
-                        <a href="core/json-ast.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 21. JSON AST</a>
+                        <a href="core/json-ast.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 17. JSON AST</a>
                         
                         <a href="mqtt.html" title="next chapter" class="next-page clearfix">MQTT Protocol Bindings →</a>
                     </section>

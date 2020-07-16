@@ -45,20 +45,61 @@ blockquote {
   padding: 0 1em;
 }
 
-.figure {
+/* text-figure looks just like figures */
+
+.figure,
+.text-figure {
   background-color: #eee;
   border-radius: 4px;
   padding: 3px;
   margin-bottom: 1.5em;
 }
 
-.figure img {
+.figure img,
+.text-figure pre {
   display: block;
   background-color: #fff;
+  margin-bottom: 0;
 }
 
 .figure .caption {
   padding: 1em 1em 0 1em;
+}
+
+.text-figure .code-block-caption {
+  padding: 0.5em;
+  text-align: center;
+  font-size: 85%;
+}
+
+/* ----- Anchors ------ */
+
+a {
+  color: #00818e;;
+  text-decoration: none;
+}
+
+a:hover, .reference.external:hover {
+  text-decoration: underline;
+  color: #00818e;;
+}
+
+.reference.external {
+  text-decoration: underline dotted #ccc;
+}
+
+.headerlink {
+  visibility: none;
+  margin-left: 1em;
+  font-size: 18px;
+  vertical-align: super;
+  line-height: 0;
+  opacity: 0;
+  transition: opacity .25s;
+}
+
+*:hover > .headerlink {
+  opacity: 1;
 }
 
 /* ----- Headings ------ */
@@ -74,8 +115,12 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a, h7 a {
   color: #000;
 }
 
+h1 a:hover, h2 a:hover, h3 a:hover, h4 a:hover, h5 a:hover, h6 a:hover, h7 a:hover {
+  text-decoration: none;
+}
+
 h1, h2, h3, h4, h5, h6, h7 {
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #aaa;
   padding-bottom: 0.3em;
 }
 
@@ -133,7 +178,7 @@ h7 {
 }
 
 #splash h1 {
-  color: #dda15e;
+  color: #fff;
   padding: 0;
   margin: 0 0 1rem;
   font-size: 1.7em;
@@ -301,37 +346,6 @@ hr {
   margin: 24px 0;
   background-color: #e1e4e8;
   border: 0;
-}
-
-
-/* ----- Anchors ------ */
-
-a {
-  color: #00818e;;
-  text-decoration: none;
-}
-
-a:hover, .reference.external:hover {
-  text-decoration: underline;
-  color: #00818e;;
-}
-
-.reference.external {
-  text-decoration: underline dotted #ccc;
-}
-
-.headerlink {
-  visibility: none;
-  margin-left: 1em;
-  font-size: 18px;
-  vertical-align: super;
-  line-height: 0;
-  opacity: 0;
-  transition: opacity .25s;
-}
-
-*:hover > .headerlink {
-  opacity: 1;
 }
 
 
@@ -568,6 +582,11 @@ pre a code.xref {
   font-size: 100%;
 }
 
+.text-figure pre {
+    line-height: 1;
+    font-size: 70%;
+}
+
 .productionlist strong {
   font-size: 1.15em;
 }
@@ -612,7 +631,6 @@ table.highlighttable pre {
 }
 
 .code-block-caption .caption-text {
-  font-style: italic;
   color: #666;
 }
 
@@ -779,7 +797,7 @@ table.highlighttable pre {
 
 .admonition {
   margin: 20px 0;
-  padding: 0 2em;
+  padding: 0 0 0 1em;
   border-width: 0 0 0 6px;
   border-style: solid;
   border-color: #ccc;
@@ -795,7 +813,7 @@ table.highlighttable pre {
 
 .admonition-title {
   margin: 0;
-  padding: 0 0.5em 0 0;
+  padding: 0 8px 0 0;
   font-size: 1em;
   font-weight: bold;
   color: rgba(0, 0, 0, 0.6);
@@ -803,7 +821,15 @@ table.highlighttable pre {
 }
 
 .admonition-title:after {
-  content: ": ";
+  content: ":";
+}
+
+.admonition-title + ul,
+.admonition-title + ol,
+.admonition-title + pre,
+.admonition-title + div,
+.admonition-title + dl {
+  clear: left;
 }
 
 .admonition.danger,
@@ -828,7 +854,7 @@ table.highlighttable pre {
 }
 
 div.seealso {
-  border: none;
+  border-color: #ccc;
 }
 
 div.admonition tt.xref, div.admonition a tt {
@@ -940,7 +966,6 @@ dt:target, .highlighted {
 }
 
 .caption-text {
-  font-weight: 300;
   color: #222;
 }
 

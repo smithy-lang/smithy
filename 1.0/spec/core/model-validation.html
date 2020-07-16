@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>19. Model validation &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    <title>15. Model validation &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
     
     <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -27,8 +27,8 @@
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="20. Merging models" href="merging-models.html" />
-    <link rel="prev" title="18. Model metadata" href="model-metadata.html" />
+    <link rel="next" title="16. Smithy IDL" href="idl.html" />
+    <link rel="prev" title="14. Selectors" href="selectors.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="smithy-version" content="1.0">
 
@@ -70,7 +70,7 @@
                     
                     
   <div class="section" id="model-validation">
-<span id="validation"></span><h1><a href="#model-validation">19. Model validation</a></h1>
+<span id="validation"></span><h1><a href="#model-validation">15. Model validation</a></h1>
 <p>Smithy provides a customizable validation system that can be used by
 API designers and organizations to ensure that their APIs adhere to their
 own standards and best practices.</p>
@@ -96,7 +96,7 @@ own standards and best practices.</p>
 </ul>
 </div>
 <div class="section" id="introduction">
-<h2><a href="#introduction">19.1. Introduction</a></h2>
+<h2><a href="#introduction">15.1. Introduction</a></h2>
 <p>APIs require a great deal of care and discipline to ensure that they provide
 a coherent interface to customers, particularly after an API is released and
 new features are added. This specification defines metadata that is used to
@@ -111,7 +111,7 @@ their enforcement. This validation standard allows the same level of
 conformity and rigor to be applied to Smithy models and API definitions.</p>
 </div>
 <div class="section" id="validators">
-<span id="validator-definition"></span><h2><a href="#validators">19.2. Validators</a></h2>
+<span id="validator-definition"></span><h2><a href="#validators">15.2. Validators</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">validators</span></code> metadata property contains an array of validator
 objects that are used to constrain a model. Each object in the
 <code class="docutils literal notranslate"><span class="pre">validators</span></code> array supports the following properties:</p>
@@ -209,7 +209,7 @@ configuration properties are provided.</td>
 </pre></div>
 </div>
 <div class="section" id="missing-validators">
-<span id="id1"></span><h3><a href="#missing-validators">19.2.1. Missing validators</a></h3>
+<span id="id1"></span><h3><a href="#missing-validators">15.2.1. Missing validators</a></h3>
 <p>The actual implementation of a validator is defined in code and is
 not defined in the Smithy model itself. If a Smithy implementation does not
 have an implementation for a specific validator by name, the Smithy
@@ -222,7 +222,7 @@ severity of WARNING.</p>
 </div>
 </div>
 <div class="section" id="severity">
-<span id="severity-definition"></span><h2><a href="#severity">19.3. Severity</a></h2>
+<span id="severity-definition"></span><h2><a href="#severity">15.3. Severity</a></h2>
 <p>When a model is in violation of a validator, a <em>validation event</em> is emitted.
 This validation event contains metadata about the violation, including the
 optional shape that was in violation, the validator ID, and the severity of
@@ -246,12 +246,12 @@ DANGER validation events indicate that a model is invalid.</dd>
 </dl>
 </div>
 <div class="section" id="suppressions">
-<span id="suppression-definition"></span><h2><a href="#suppressions">19.4. Suppressions</a></h2>
+<span id="suppression-definition"></span><h2><a href="#suppressions">15.4. Suppressions</a></h2>
 <p>Suppressions are used to suppress specific validation events.
 Suppressions are created using the <a class="reference internal" href="#suppress-trait"><span class="std std-ref">suppress trait</span></a> and
 <a class="reference internal" href="#suppressions-metadata"><span class="std std-ref">suppressions metadata</span></a>.</p>
 <div class="section" id="suppress-trait">
-<span id="id2"></span><h3><a href="#suppress-trait">19.4.1. <code class="docutils literal notranslate"><span class="pre">suppress</span></code> trait</a></h3>
+<span id="id2"></span><h3><a href="#suppress-trait">15.4.1. <code class="docutils literal notranslate"><span class="pre">suppress</span></code> trait</a></h3>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>The suppress trait is used to suppress validation events(s) for a
@@ -284,7 +284,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="suppression-metadata">
-<span id="suppressions-metadata"></span><h3><a href="#suppression-metadata">19.4.2. Suppression metadata</a></h3>
+<span id="suppressions-metadata"></span><h3><a href="#suppression-metadata">15.4.2. Suppression metadata</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">suppressions</span></code> metadata property contains an array of suppression objects
 that are used to suppress validation events for the entire model or for an
 entire namespace.</p>
@@ -348,12 +348,12 @@ ID of <code class="docutils literal notranslate"><span class="pre">OverlyBroadVa
 </div>
 </div>
 <div class="section" id="built-in-validators">
-<h2><a href="#built-in-validators">19.5. Built-in validators</a></h2>
+<h2><a href="#built-in-validators">15.5. Built-in validators</a></h2>
 <p>Smithy provides built-in validators that can be used in any model in
 the <code class="docutils literal notranslate"><span class="pre">validators</span></code> metadata property. Implementations MAY support
 additional validators.</p>
 <div class="section" id="emiteachselector">
-<span id="id3"></span><h3><a href="#emiteachselector">19.5.1. EmitEachSelector</a></h3>
+<span id="id3"></span><h3><a href="#emiteachselector">15.5.1. EmitEachSelector</a></h3>
 <p>Emits a validation event for each shape that matches the given
 <a class="reference internal" href="selectors.html#selectors"><span class="std std-ref">selector</span></a>.</p>
 <dl class="docutils">
@@ -385,8 +385,8 @@ event is emitted for each shape in the model that matches the
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#emit-each-bind-to-trait"><span class="std std-ref">bindToTrait</span></a></td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>An optional string that MUST be a valid <a class="reference internal" href="lexical-structure.html#shape-id"><span class="std std-ref">shape ID</span></a>
-that targets a <a class="reference internal" href="traits.html#trait-shapes"><span class="std std-ref">trait definition</span></a>.
+<td>An optional string that MUST be a valid <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape ID</span></a>
+that targets a <a class="reference internal" href="model.html#trait-shapes"><span class="std std-ref">trait definition</span></a>.
 A validation event is only emitted for shapes that have this trait.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#emit-each-message-template"><span class="std std-ref">messageTemplate</span></a></td>
@@ -473,9 +473,9 @@ as lifecycle 'read' or 'delete' that has a shape name that does not start with
 </pre></div>
 </div>
 <div class="section" id="binding-events-to-traits">
-<span id="emit-each-bind-to-trait"></span><h4><a href="#binding-events-to-traits">19.5.1.1. Binding events to traits</a></h4>
-<p>The <code class="docutils literal notranslate"><span class="pre">bindToTrait</span></code> property contains a <a class="reference internal" href="lexical-structure.html#shape-id"><span class="std std-ref">shape ID</span></a> that MUST
-reference a <a class="reference internal" href="traits.html#trait-shapes"><span class="std std-ref">trait definition</span></a> shape. When set, this
+<span id="emit-each-bind-to-trait"></span><h4><a href="#binding-events-to-traits">15.5.1.1. Binding events to traits</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">bindToTrait</span></code> property contains a <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape ID</span></a> that MUST
+reference a <a class="reference internal" href="model.html#trait-shapes"><span class="std std-ref">trait definition</span></a> shape. When set, this
 property causes the <code class="docutils literal notranslate"><span class="pre">EmitEachSelector</span></code> validator to only emit validation
 events for shapes that have the referenced trait. The contextual location of
 where the violation occurred in the model SHOULD point to the location where
@@ -509,7 +509,7 @@ the trait is applied to the matched shape.</p>
 <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a>.</p>
 </div>
 <div class="section" id="message-templates">
-<span id="emit-each-message-template"></span><h4><a href="#message-templates">19.5.1.2. Message templates</a></h4>
+<span id="emit-each-message-template"></span><h4><a href="#message-templates">15.5.1.2. Message templates</a></h4>
 <p>A <code class="docutils literal notranslate"><span class="pre">messageTemplate</span></code> is used to create more granular error messages. The
 template consists of literal spans and <a class="reference internal" href="selectors.html#grammar-token-selector_context_value"><code class="xref std std-token docutils literal notranslate"><span class="pre">selector</span> <span class="pre">context</span> <span class="pre">value</span></code></a>
 templates (for example, <code class="docutils literal notranslate"><span class="pre">&#64;{id}</span></code>). A selector context value MAY be escaped
@@ -609,7 +609,7 @@ to make message templates more descriptive. Consider the following example:</p>
 </table>
 </div>
 <div class="section" id="variable-message-formatting">
-<h4><a href="#variable-message-formatting">19.5.1.3. Variable message formatting</a></h4>
+<h4><a href="#variable-message-formatting">15.5.1.3. Variable message formatting</a></h4>
 <p>Different types of variables expand to different kinds of strings in message
 templates.</p>
 <table border="1" class="colwidths-given docutils">
@@ -635,7 +635,7 @@ or nested property that does not exist.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="selectors.html#id-attribute"><span class="std std-ref">id</span></a></td>
-<td>Expands to the absolute <a class="reference internal" href="lexical-structure.html#shape-id"><span class="std std-ref">shape ID</span></a> of a shape
+<td>Expands to the absolute <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape ID</span></a> of a shape
 <a class="footnote-reference" href="#comparison" id="id5">[1]</a>.</td>
 </tr>
 <tr class="row-even"><td>literal values</td>
@@ -686,7 +686,7 @@ to:</p>
 </div>
 </div>
 <div class="section" id="emitnoneselector">
-<span id="id9"></span><h3><a href="#emitnoneselector">19.5.2. EmitNoneSelector</a></h3>
+<span id="id9"></span><h3><a href="#emitnoneselector">15.5.2. EmitNoneSelector</a></h3>
 <p>Emits a validation event if no shape in the model matches the given
 <a class="reference internal" href="selectors.html#selectors"><span class="std std-ref">selector</span></a>.</p>
 <dl class="docutils">
@@ -744,9 +744,9 @@ traits.</p>
                     
                     <section class="relations">
                         
-                        <a href="model-metadata.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 18. Model metadata</a>
+                        <a href="selectors.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 14. Selectors</a>
                         
-                        <a href="merging-models.html" title="next chapter" class="next-page clearfix">20. Merging models →</a>
+                        <a href="idl.html" title="next chapter" class="next-page clearfix">16. Smithy IDL →</a>
                     </section>
                     
                 </article><aside id="right-column" class="side-column hidden-sm">
@@ -755,32 +755,32 @@ traits.</p>
                             
                             <section class="next-previous">
                                 
-                                <a href="model-metadata.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
+                                <a href="selectors.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
                                 
-                                <a href="merging-models.html" title="next chapter" class="next-page clearfix">Next →</a>
+                                <a href="idl.html" title="next chapter" class="next-page clearfix">Next →</a>
                             </section>
                             
                             <ul>
-<li><a class="reference internal" href="#">19. Model validation</a><ul>
-<li><a class="reference internal" href="#introduction">19.1. Introduction</a></li>
-<li><a class="reference internal" href="#validators">19.2. Validators</a><ul>
-<li><a class="reference internal" href="#missing-validators">19.2.1. Missing validators</a></li>
+<li><a class="reference internal" href="#">15. Model validation</a><ul>
+<li><a class="reference internal" href="#introduction">15.1. Introduction</a></li>
+<li><a class="reference internal" href="#validators">15.2. Validators</a><ul>
+<li><a class="reference internal" href="#missing-validators">15.2.1. Missing validators</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#severity">19.3. Severity</a></li>
-<li><a class="reference internal" href="#suppressions">19.4. Suppressions</a><ul>
-<li><a class="reference internal" href="#suppress-trait">19.4.1. <code class="docutils literal notranslate"><span class="pre">suppress</span></code> trait</a></li>
-<li><a class="reference internal" href="#suppression-metadata">19.4.2. Suppression metadata</a></li>
+<li><a class="reference internal" href="#severity">15.3. Severity</a></li>
+<li><a class="reference internal" href="#suppressions">15.4. Suppressions</a><ul>
+<li><a class="reference internal" href="#suppress-trait">15.4.1. <code class="docutils literal notranslate"><span class="pre">suppress</span></code> trait</a></li>
+<li><a class="reference internal" href="#suppression-metadata">15.4.2. Suppression metadata</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#built-in-validators">19.5. Built-in validators</a><ul>
-<li><a class="reference internal" href="#emiteachselector">19.5.1. EmitEachSelector</a><ul>
-<li><a class="reference internal" href="#binding-events-to-traits">19.5.1.1. Binding events to traits</a></li>
-<li><a class="reference internal" href="#message-templates">19.5.1.2. Message templates</a></li>
-<li><a class="reference internal" href="#variable-message-formatting">19.5.1.3. Variable message formatting</a></li>
+<li><a class="reference internal" href="#built-in-validators">15.5. Built-in validators</a><ul>
+<li><a class="reference internal" href="#emiteachselector">15.5.1. EmitEachSelector</a><ul>
+<li><a class="reference internal" href="#binding-events-to-traits">15.5.1.1. Binding events to traits</a></li>
+<li><a class="reference internal" href="#message-templates">15.5.1.2. Message templates</a></li>
+<li><a class="reference internal" href="#variable-message-formatting">15.5.1.3. Variable message formatting</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#emitnoneselector">19.5.2. EmitNoneSelector</a></li>
+<li><a class="reference internal" href="#emitnoneselector">15.5.2. EmitNoneSelector</a></li>
 </ul>
 </li>
 </ul>

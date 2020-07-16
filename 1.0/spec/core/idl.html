@@ -1,0 +1,2219 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>16. Smithy IDL &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/tabs.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script type="text/javascript" src="../../../_static/smithy.js"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="17. JSON AST" href="json-ast.html" />
+    <link rel="prev" title="15. Model validation" href="model-validation.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="smithy-version" content="1.0">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                </a>
+                <span class="version-text">1.0</span>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../index.html">Specifications</a></li>
+                <li class="site-page"><a href="../../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article id="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="../index.html" >Specifications</a></li>
+                    <li><a href="index.html" accesskey="U">Smithy specification</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="smithy-idl">
+<span id="idl"></span><h1><a href="#smithy-idl">16. Smithy IDL</a></h1>
+<p>Smithy models are defined using either the Smithy interface definition language
+(IDL) or the <a class="reference internal" href="json-ast.html#json-ast"><span class="std std-ref">JSON abstract syntax tree</span></a> (AST). This document
+defines the <a class="reference external" href="https://tools.ietf.org/html/rfc5234">ABNF</a> grammar and syntax for defining models with the Smithy IDL.</p>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#smithy-idl-overview" id="id12">Smithy IDL overview</a></li>
+<li><a class="reference internal" href="#lexical-notes" id="id13">Lexical notes</a></li>
+<li><a class="reference internal" href="#smithy-idl-abnf" id="id14">Smithy IDL ABNF</a></li>
+<li><a class="reference internal" href="#comments" id="id15">Comments</a></li>
+<li><a class="reference internal" href="#control-section" id="id16">Control section</a></li>
+<li><a class="reference internal" href="#metadata-section" id="id17">Metadata section</a></li>
+<li><a class="reference internal" href="#shape-section" id="id18">Shape section</a></li>
+<li><a class="reference internal" href="#node-values" id="id19">Node values</a></li>
+</ul>
+</div>
+<div class="section" id="smithy-idl-overview">
+<h2><a href="#smithy-idl-overview">16.1. Smithy IDL overview</a></h2>
+<p>The Smithy IDL is made up of 3, ordered sections, each of which is optional:</p>
+<ol class="arabic simple">
+<li><strong>Control section</strong>; defines parser directives like which version of the
+IDL to use.</li>
+<li><strong>Metadata section</strong>; applies metadata to the entire model.</li>
+<li><strong>Shape section</strong>; where shapes and traits are defined. A namespace MUST
+be defined before any shapes or traits can be defined.
+<a class="reference internal" href="#grammar-token-use_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">use_statement</span></code></a>s can be defined after a namespace and before shapes
+or traits to refer to shapes in other namespaces using a shorter name.</li>
+</ol>
+<p>The following example defines a model file with each section:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">// (1) Control section</span>
+<span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+
+<span class="c">// (2) Metadata section</span>
+<span class="kd">metadata</span><span class="nc"> foo </span><span class="nd">=</span> <span class="s2">&quot;bar&quot;</span>
+
+<span class="c">// (3) Shape section</span>
+<span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">use</span><span class="nc"> smithy.other.namespace#MyString</span>
+
+<span class="kd">structure</span><span class="nc"> MyStructure</span> {
+    <span class="nd">@required</span>
+    <span class="nl">foo:</span> <span class="vc">MyString</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;foo&quot;</span><span class="p">:</span> <span class="s2">&quot;bar&quot;</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyStructure&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;foo&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.other.namespace#MyString&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="lexical-notes">
+<h2><a href="#lexical-notes">16.2. Lexical notes</a></h2>
+<p>Smithy models MUST be encoded using UTF-8 and SHOULD use Unix style
+line endings (<code class="docutils literal notranslate"><span class="pre">\n</span></code>). The Smithy ABNF is whitespace sensitive.</p>
+</div>
+<div class="section" id="smithy-idl-abnf">
+<span id="id1"></span><h2><a href="#smithy-idl-abnf">16.3. Smithy IDL ABNF</a></h2>
+<p>The Smithy IDL is defined by the following ABNF:</p>
+<pre class="productionlist">
+<strong id="grammar-token-idl">idl</strong> =
+    <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-control_section"><code class="xref docutils literal notranslate"><span class="pre">control_section</span></code></a> <a class="reference internal" href="#grammar-token-metadata_section"><code class="xref docutils literal notranslate"><span class="pre">metadata_section</span></code></a> <a class="reference internal" href="#grammar-token-shape_section"><code class="xref docutils literal notranslate"><span class="pre">shape_section</span></code></a>
+</pre>
+<p class="rubric">Whitespace</p>
+<pre class="productionlist">
+<strong id="grammar-token-ws">ws</strong> =
+    *(<a class="reference internal" href="#grammar-token-sp"><code class="xref docutils literal notranslate"><span class="pre">sp</span></code></a> / <a class="reference internal" href="#grammar-token-newline"><code class="xref docutils literal notranslate"><span class="pre">newline</span></code></a> / <a class="reference internal" href="#grammar-token-comment"><code class="xref docutils literal notranslate"><span class="pre">comment</span></code></a>) ; whitespace
+
+<strong id="grammar-token-sp">sp</strong> =
+    *(%x20  / %x09) ; &quot; &quot; and \t
+
+<strong id="grammar-token-br">br</strong> =
+    <a class="reference internal" href="#grammar-token-sp"><code class="xref docutils literal notranslate"><span class="pre">sp</span></code></a> (<a class="reference internal" href="#grammar-token-comment"><code class="xref docutils literal notranslate"><span class="pre">comment</span></code></a> / <a class="reference internal" href="#grammar-token-newline"><code class="xref docutils literal notranslate"><span class="pre">newline</span></code></a>) <a class="reference internal" href="#grammar-token-sp"><code class="xref docutils literal notranslate"><span class="pre">sp</span></code></a> ; break
+
+<strong id="grammar-token-newline">newline</strong> =
+    %x0A / %x0D.0A ; \n and \r\n
+</pre>
+<p class="rubric">Comments</p>
+<pre class="productionlist">
+<strong id="grammar-token-comment">comment</strong> =
+     <a class="reference internal" href="#grammar-token-documentation_comment"><code class="xref docutils literal notranslate"><span class="pre">documentation_comment</span></code></a> / <a class="reference internal" href="#grammar-token-comment"><code class="xref docutils literal notranslate"><span class="pre">comment</span></code></a>
+
+<strong id="grammar-token-documentation_comment">documentation_comment</strong> =
+    &quot;///&quot; *<a class="reference internal" href="#grammar-token-not_newline"><code class="xref docutils literal notranslate"><span class="pre">not_newline</span></code></a> <a class="reference internal" href="#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a>
+
+<strong id="grammar-token-line_comment">line_comment</strong> =
+     &quot;//&quot; *<a class="reference internal" href="#grammar-token-not_newline"><code class="xref docutils literal notranslate"><span class="pre">not_newline</span></code></a> <a class="reference internal" href="#grammar-token-newline"><code class="xref docutils literal notranslate"><span class="pre">newline</span></code></a>
+
+<strong id="grammar-token-not_newline">not_newline</strong> =
+     %x09 / %x20-10FFFF ; Any character except newline
+</pre>
+<p class="rubric">Control</p>
+<pre class="productionlist">
+<strong id="grammar-token-control_section">control_section</strong> =
+    *(<a class="reference internal" href="#grammar-token-control_statement"><code class="xref docutils literal notranslate"><span class="pre">control_statement</span></code></a>)
+
+<strong id="grammar-token-control_statement">control_statement</strong> =
+    &quot;$&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-node_object_key"><code class="xref docutils literal notranslate"><span class="pre">node_object_key</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a> <a class="reference internal" href="#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a>
+</pre>
+<p class="rubric">Metadata</p>
+<pre class="productionlist">
+<strong id="grammar-token-metadata_section">metadata_section</strong> =
+    *(<a class="reference internal" href="#grammar-token-metadata_statement"><code class="xref docutils literal notranslate"><span class="pre">metadata_statement</span></code></a>)
+
+<strong id="grammar-token-metadata_statement">metadata_statement</strong> =
+    &quot;metadata&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-node_object_key"><code class="xref docutils literal notranslate"><span class="pre">node_object_key</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> &quot;=&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a> <a class="reference internal" href="#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a>
+</pre>
+<p class="rubric">Node values</p>
+<pre class="productionlist">
+<strong id="grammar-token-node_value">node_value</strong> =
+    <a class="reference internal" href="#grammar-token-node_array"><code class="xref docutils literal notranslate"><span class="pre">node_array</span></code></a>
+  / <a class="reference internal" href="#grammar-token-node_object"><code class="xref docutils literal notranslate"><span class="pre">node_object</span></code></a>
+  / <a class="reference internal" href="#grammar-token-number"><code class="xref docutils literal notranslate"><span class="pre">number</span></code></a>
+  / <a class="reference internal" href="#grammar-token-node_keywords"><code class="xref docutils literal notranslate"><span class="pre">node_keywords</span></code></a>
+  / <a class="reference internal" href="#grammar-token-node_string_value"><code class="xref docutils literal notranslate"><span class="pre">node_string_value</span></code></a>
+
+<strong id="grammar-token-node_array">node_array</strong> =
+    <a class="reference internal" href="#grammar-token-empty_node_array"><code class="xref docutils literal notranslate"><span class="pre">empty_node_array</span></code></a> / <a class="reference internal" href="#grammar-token-populated_node_array"><code class="xref docutils literal notranslate"><span class="pre">populated_node_array</span></code></a>
+
+<strong id="grammar-token-empty_node_array">empty_node_array</strong> =
+    &quot;[&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> &quot;]&quot;
+
+<strong id="grammar-token-populated_node_array">populated_node_array</strong> =
+    &quot;[&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a>
+         *(<a class="reference internal" href="#grammar-token-comma"><code class="xref docutils literal notranslate"><span class="pre">comma</span></code></a> <a class="reference internal" href="#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a>)
+         <a class="reference internal" href="#grammar-token-trailing_comma"><code class="xref docutils literal notranslate"><span class="pre">trailing_comma</span></code></a> &quot;]&quot;
+
+<strong id="grammar-token-trailing_comma">trailing_comma</strong> =
+    [<a class="reference internal" href="#grammar-token-comma"><code class="xref docutils literal notranslate"><span class="pre">comma</span></code></a>]
+
+<strong id="grammar-token-comma">comma</strong> =
+    &quot;,&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a>
+
+<strong id="grammar-token-node_object">node_object</strong> =
+    <a class="reference internal" href="#grammar-token-empty_node_object"><code class="xref docutils literal notranslate"><span class="pre">empty_node_object</span></code></a> / <a class="reference internal" href="#grammar-token-populated_node_object"><code class="xref docutils literal notranslate"><span class="pre">populated_node_object</span></code></a>
+
+<strong id="grammar-token-empty_node_object">empty_node_object</strong> =
+    &quot;{&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> &quot;}&quot;
+
+<strong id="grammar-token-populated_node_object">populated_node_object</strong> =
+    &quot;{&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-node_object_kvp"><code class="xref docutils literal notranslate"><span class="pre">node_object_kvp</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a>
+         *(<a class="reference internal" href="#grammar-token-comma"><code class="xref docutils literal notranslate"><span class="pre">comma</span></code></a> <a class="reference internal" href="#grammar-token-node_object_kvp"><code class="xref docutils literal notranslate"><span class="pre">node_object_kvp</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a>)
+         <a class="reference internal" href="#grammar-token-trailing_comma"><code class="xref docutils literal notranslate"><span class="pre">trailing_comma</span></code></a> &quot;}&quot;
+
+<strong id="grammar-token-node_object_kvp">node_object_kvp</strong> =
+    <a class="reference internal" href="#grammar-token-node_object_key"><code class="xref docutils literal notranslate"><span class="pre">node_object_key</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>
+
+<strong id="grammar-token-node_object_key">node_object_key</strong> =
+    <a class="reference internal" href="#grammar-token-quoted_text"><code class="xref docutils literal notranslate"><span class="pre">quoted_text</span></code></a> / <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>
+
+<strong id="grammar-token-number">number</strong> =
+    [<a class="reference internal" href="#grammar-token-minus"><code class="xref docutils literal notranslate"><span class="pre">minus</span></code></a>] <a class="reference internal" href="#grammar-token-int"><code class="xref docutils literal notranslate"><span class="pre">int</span></code></a> [<a class="reference internal" href="#grammar-token-frac"><code class="xref docutils literal notranslate"><span class="pre">frac</span></code></a>] [<a class="reference internal" href="#grammar-token-exp"><code class="xref docutils literal notranslate"><span class="pre">exp</span></code></a>]
+
+<strong id="grammar-token-decimal_point">decimal_point</strong> =
+    %x2E ; .
+
+<strong id="grammar-token-digit1_9">digit1_9</strong> =
+    %x31-39 ; 1-9
+
+<strong id="grammar-token-e">e</strong> =
+    %x65 / %x45 ; e E
+
+<strong id="grammar-token-exp">exp</strong> =
+    <a class="reference internal" href="#grammar-token-e"><code class="xref docutils literal notranslate"><span class="pre">e</span></code></a> [<a class="reference internal" href="#grammar-token-minus"><code class="xref docutils literal notranslate"><span class="pre">minus</span></code></a> / <a class="reference internal" href="#grammar-token-plus"><code class="xref docutils literal notranslate"><span class="pre">plus</span></code></a>] 1*DIGIT
+
+<strong id="grammar-token-frac">frac</strong> =
+    <a class="reference internal" href="#grammar-token-decimal_point"><code class="xref docutils literal notranslate"><span class="pre">decimal_point</span></code></a> 1*DIGIT
+
+<strong id="grammar-token-int">int</strong> =
+    <a class="reference internal" href="#grammar-token-zero"><code class="xref docutils literal notranslate"><span class="pre">zero</span></code></a> / (<a class="reference internal" href="#grammar-token-digit1_9"><code class="xref docutils literal notranslate"><span class="pre">digit1_9</span></code></a> *DIGIT)
+
+<strong id="grammar-token-minus">minus</strong> =
+    %x2D ; -
+
+<strong id="grammar-token-plus">plus</strong> =
+    %x2B ; +
+
+<strong id="grammar-token-zero">zero</strong> =
+    %x30 ; 0
+
+<strong id="grammar-token-node_keywords">node_keywords</strong> =
+     &quot;true&quot; / &quot;false&quot; / &quot;null&quot;
+
+<strong id="grammar-token-node_string_value">node_string_value</strong> =
+    <a class="reference internal" href="model.html#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a> / <a class="reference internal" href="#grammar-token-text_block"><code class="xref docutils literal notranslate"><span class="pre">text_block</span></code></a> / <a class="reference internal" href="#grammar-token-quoted_text"><code class="xref docutils literal notranslate"><span class="pre">quoted_text</span></code></a>
+
+<strong id="grammar-token-quoted_text">quoted_text</strong> =
+    DQUOTE *<a class="reference internal" href="#grammar-token-quoted_char"><code class="xref docutils literal notranslate"><span class="pre">quoted_char</span></code></a> DQUOTE
+
+<strong id="grammar-token-quoted_char">quoted_char</strong> =
+    %x20-21        ; space - &quot;!&quot;
+  / %x23-5B        ; &quot;#&quot; - &quot;[&quot;
+  / %x5D-10FFFF    ; &quot;]&quot;+
+  / <a class="reference internal" href="#grammar-token-escaped_char"><code class="xref docutils literal notranslate"><span class="pre">escaped_char</span></code></a>
+  / <a class="reference internal" href="#grammar-token-preserved_double"><code class="xref docutils literal notranslate"><span class="pre">preserved_double</span></code></a>
+
+<strong id="grammar-token-escaped_char">escaped_char</strong> =
+    <a class="reference internal" href="#grammar-token-escape"><code class="xref docutils literal notranslate"><span class="pre">escape</span></code></a> (<a class="reference internal" href="#grammar-token-escape"><code class="xref docutils literal notranslate"><span class="pre">escape</span></code></a> / &quot;'&quot; / DQUOTE / &quot;b&quot; / &quot;f&quot; / &quot;n&quot; / &quot;r&quot; / &quot;t&quot; / &quot;/&quot; / <a class="reference internal" href="#grammar-token-unicode_escape"><code class="xref docutils literal notranslate"><span class="pre">unicode_escape</span></code></a>)
+
+<strong id="grammar-token-unicode_escape">unicode_escape</strong> =
+    &quot;u&quot; <a class="reference internal" href="#grammar-token-hex"><code class="xref docutils literal notranslate"><span class="pre">hex</span></code></a> <a class="reference internal" href="#grammar-token-hex"><code class="xref docutils literal notranslate"><span class="pre">hex</span></code></a> <a class="reference internal" href="#grammar-token-hex"><code class="xref docutils literal notranslate"><span class="pre">hex</span></code></a> <a class="reference internal" href="#grammar-token-hex"><code class="xref docutils literal notranslate"><span class="pre">hex</span></code></a>
+
+<strong id="grammar-token-hex">hex</strong> =
+     DIGIT / %x41-46 / %x61-66
+
+<strong id="grammar-token-preserved_double">preserved_double</strong> =
+    <a class="reference internal" href="#grammar-token-escape"><code class="xref docutils literal notranslate"><span class="pre">escape</span></code></a> (%x20-21 / %x23-5B / %x5D-10FFFF)
+
+<strong id="grammar-token-escape">escape</strong> =
+    %x5C ; backslash
+
+<strong id="grammar-token-text_block">text_block</strong> =
+    <a class="reference internal" href="#grammar-token-three_dquotes"><code class="xref docutils literal notranslate"><span class="pre">three_dquotes</span></code></a> <a class="reference internal" href="#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a> *<a class="reference internal" href="#grammar-token-quoted_char"><code class="xref docutils literal notranslate"><span class="pre">quoted_char</span></code></a> <a class="reference internal" href="#grammar-token-three_dquotes"><code class="xref docutils literal notranslate"><span class="pre">three_dquotes</span></code></a>
+
+<strong id="grammar-token-three_dquotes">three_dquotes</strong> =
+    DQUOTE DQUOTE DQUOTE
+</pre>
+<p class="rubric">Shapes</p>
+<pre class="productionlist">
+<strong id="grammar-token-shape_section">shape_section</strong> =
+    [<a class="reference internal" href="#grammar-token-namespace_statement"><code class="xref docutils literal notranslate"><span class="pre">namespace_statement</span></code></a> [<a class="reference internal" href="#grammar-token-use_section"><code class="xref docutils literal notranslate"><span class="pre">use_section</span></code></a>] [<a class="reference internal" href="#grammar-token-shape_statements"><code class="xref docutils literal notranslate"><span class="pre">shape_statements</span></code></a>]]
+
+<strong id="grammar-token-namespace_statement">namespace_statement</strong> =
+    &quot;namespace&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="model.html#grammar-token-namespace"><code class="xref docutils literal notranslate"><span class="pre">namespace</span></code></a> <a class="reference internal" href="#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a>
+
+<strong id="grammar-token-use_section">use_section</strong> =
+    *(<a class="reference internal" href="#grammar-token-use_statement"><code class="xref docutils literal notranslate"><span class="pre">use_statement</span></code></a>)
+
+<strong id="grammar-token-use_statement">use_statement</strong> =
+    &quot;use&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="model.html#grammar-token-absolute_root_shape_id"><code class="xref docutils literal notranslate"><span class="pre">absolute_root_shape_id</span></code></a> <a class="reference internal" href="#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a>
+
+<strong id="grammar-token-shape_statements">shape_statements</strong> =
+    *(<a class="reference internal" href="#grammar-token-shape_statement"><code class="xref docutils literal notranslate"><span class="pre">shape_statement</span></code></a> / <a class="reference internal" href="#grammar-token-apply_statement"><code class="xref docutils literal notranslate"><span class="pre">apply_statement</span></code></a>)
+
+<strong id="grammar-token-shape_statement">shape_statement</strong> =
+    <a class="reference internal" href="#grammar-token-trait_statements"><code class="xref docutils literal notranslate"><span class="pre">trait_statements</span></code></a> <a class="reference internal" href="#grammar-token-shape_body"><code class="xref docutils literal notranslate"><span class="pre">shape_body</span></code></a> <a class="reference internal" href="#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a>
+
+<strong id="grammar-token-shape_body">shape_body</strong> =
+    <a class="reference internal" href="#grammar-token-simple_shape_statement"><code class="xref docutils literal notranslate"><span class="pre">simple_shape_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-list_statement"><code class="xref docutils literal notranslate"><span class="pre">list_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-set_statement"><code class="xref docutils literal notranslate"><span class="pre">set_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-map_statement"><code class="xref docutils literal notranslate"><span class="pre">map_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-structure_statement"><code class="xref docutils literal notranslate"><span class="pre">structure_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-union_statement"><code class="xref docutils literal notranslate"><span class="pre">union_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-service_statement"><code class="xref docutils literal notranslate"><span class="pre">service_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-operation_statement"><code class="xref docutils literal notranslate"><span class="pre">operation_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-resource_statement"><code class="xref docutils literal notranslate"><span class="pre">resource_statement</span></code></a>
+
+<strong id="grammar-token-simple_shape_statement">simple_shape_statement</strong> =
+    <a class="reference internal" href="#grammar-token-simple_type_name"><code class="xref docutils literal notranslate"><span class="pre">simple_type_name</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>
+
+<strong id="grammar-token-simple_type_name">simple_type_name</strong> =
+    &quot;blob&quot; / &quot;boolean&quot; / &quot;document&quot; / &quot;string&quot;
+  / &quot;byte&quot; / &quot;short&quot; / &quot;integer&quot; / &quot;long&quot;
+  / &quot;float&quot; / &quot;double&quot; / &quot;bigInteger&quot;
+  / &quot;bigDecimal&quot; / &quot;timestamp&quot;
+
+<strong id="grammar-token-shape_members">shape_members</strong> =
+    <a class="reference internal" href="#grammar-token-empty_shape_members"><code class="xref docutils literal notranslate"><span class="pre">empty_shape_members</span></code></a> / <a class="reference internal" href="#grammar-token-populated_shape_members"><code class="xref docutils literal notranslate"><span class="pre">populated_shape_members</span></code></a>
+
+<strong id="grammar-token-empty_shape_members">empty_shape_members</strong> =
+    &quot;{&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> &quot;}&quot;
+
+<strong id="grammar-token-populated_shape_members">populated_shape_members</strong> =
+    &quot;{&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-shape_member_kvp"><code class="xref docutils literal notranslate"><span class="pre">shape_member_kvp</span></code></a>
+    *(<a class="reference internal" href="#grammar-token-comma"><code class="xref docutils literal notranslate"><span class="pre">comma</span></code></a> <a class="reference internal" href="#grammar-token-shape_member_kvp"><code class="xref docutils literal notranslate"><span class="pre">shape_member_kvp</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a>) <a class="reference internal" href="#grammar-token-trailing_comma"><code class="xref docutils literal notranslate"><span class="pre">trailing_comma</span></code></a> &quot;}&quot;
+
+<strong id="grammar-token-shape_member_kvp">shape_member_kvp</strong> =
+    <a class="reference internal" href="#grammar-token-trait_statements"><code class="xref docutils literal notranslate"><span class="pre">trait_statements</span></code></a> <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="model.html#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a>
+
+<strong id="grammar-token-list_statement">list_statement</strong> =
+    &quot;list&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-shape_members"><code class="xref docutils literal notranslate"><span class="pre">shape_members</span></code></a>
+
+<strong id="grammar-token-set_statement">set_statement</strong> =
+    &quot;set&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-shape_members"><code class="xref docutils literal notranslate"><span class="pre">shape_members</span></code></a>
+
+<strong id="grammar-token-map_statement">map_statement</strong> =
+    &quot;map&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-shape_members"><code class="xref docutils literal notranslate"><span class="pre">shape_members</span></code></a>
+
+<strong id="grammar-token-structure_statement">structure_statement</strong> =
+    &quot;structure&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-shape_members"><code class="xref docutils literal notranslate"><span class="pre">shape_members</span></code></a>
+
+<strong id="grammar-token-union_statement">union_statement</strong> =
+    &quot;union&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-shape_members"><code class="xref docutils literal notranslate"><span class="pre">shape_members</span></code></a>
+
+<strong id="grammar-token-service_statement">service_statement</strong> =
+    &quot;service&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-node_object"><code class="xref docutils literal notranslate"><span class="pre">node_object</span></code></a>
+
+<strong id="grammar-token-operation_statement">operation_statement</strong> =
+    &quot;operation&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-node_object"><code class="xref docutils literal notranslate"><span class="pre">node_object</span></code></a>
+
+<strong id="grammar-token-resource_statement">resource_statement</strong> =
+    &quot;resource&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-node_object"><code class="xref docutils literal notranslate"><span class="pre">node_object</span></code></a>
+</pre>
+<p class="rubric">Traits</p>
+<pre class="productionlist">
+<strong id="grammar-token-trait_statements">trait_statements</strong> =
+     *(<a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-trait"><code class="xref docutils literal notranslate"><span class="pre">trait</span></code></a>) <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a>
+
+<strong id="grammar-token-trait">trait</strong> =
+    &quot;&#64;&quot; <a class="reference internal" href="model.html#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a> [<a class="reference internal" href="#grammar-token-trait_body"><code class="xref docutils literal notranslate"><span class="pre">trait_body</span></code></a>]
+
+<strong id="grammar-token-trait_body">trait_body</strong> =
+    &quot;(&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-trait_body_value"><code class="xref docutils literal notranslate"><span class="pre">trait_body_value</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> &quot;)&quot;
+
+<strong id="grammar-token-trait_body_value">trait_body_value</strong> =
+    <a class="reference internal" href="#grammar-token-trait_structure"><code class="xref docutils literal notranslate"><span class="pre">trait_structure</span></code></a> / <a class="reference internal" href="#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>
+
+<strong id="grammar-token-trait_structure">trait_structure</strong> =
+    <a class="reference internal" href="#grammar-token-trait_structure_kvp"><code class="xref docutils literal notranslate"><span class="pre">trait_structure_kvp</span></code></a> *(<a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-comma"><code class="xref docutils literal notranslate"><span class="pre">comma</span></code></a> <a class="reference internal" href="#grammar-token-trait_structure_kvp"><code class="xref docutils literal notranslate"><span class="pre">trait_structure_kvp</span></code></a>)
+
+<strong id="grammar-token-trait_structure_kvp">trait_structure_kvp</strong> =
+    <a class="reference internal" href="#grammar-token-node_object_key"><code class="xref docutils literal notranslate"><span class="pre">node_object_key</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>
+
+<strong id="grammar-token-apply_statement">apply_statement</strong> =
+    &quot;apply&quot; <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="model.html#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a> <a class="reference internal" href="#grammar-token-ws"><code class="xref docutils literal notranslate"><span class="pre">ws</span></code></a> <a class="reference internal" href="#grammar-token-trait"><code class="xref docutils literal notranslate"><span class="pre">trait</span></code></a> <a class="reference internal" href="#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a>
+</pre>
+<p class="rubric">Shape ID</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Refer to <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">Shape ID</span></a> for the ABNF grammar of shape IDs.</p>
+</div>
+</div>
+<div class="section" id="comments">
+<span id="id2"></span><h2><a href="#comments">16.4. Comments</a></h2>
+<p>A <a class="reference internal" href="#grammar-token-comment"><code class="xref std std-token docutils literal notranslate"><span class="pre">comment</span></code></a> can appear at any place between tokens where
+whitespace (<a class="reference internal" href="#grammar-token-ws"><code class="xref std std-token docutils literal notranslate"><span class="pre">ws</span></code></a>) can appear. Comments in Smithy are defined using two
+forward slashes followed by any character. A newline terminates a comment.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">// This is a comment</span>
+<span class="kd">namespace</span><span class="nc"> com.foo</span> <span class="c">// This is also a comment</span>
+
+<span class="c">// Another comment</span>
+<span class="kd">string</span><span class="nc"> MyString</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Three forward slashes can be used to define the documentation of a shape
+using a special <a class="reference internal" href="#documentation-comment"><span class="std std-ref">documentation comment</span></a>.</p>
+</div>
+</div>
+<div class="section" id="control-section">
+<span id="control-statement"></span><h2><a href="#control-section">16.5. Control section</a></h2>
+<p>The <a class="reference internal" href="#grammar-token-control_section"><code class="xref std std-token docutils literal notranslate"><span class="pre">control</span> <span class="pre">section</span></code></a> of a model contains
+<a class="reference internal" href="#grammar-token-control_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">control</span> <span class="pre">statements</span></code></a> that apply parser directives
+to a <em>specific IDL file</em>. Because control statements influence parsing, they
+MUST appear at the beginning of a file before any other statements and have
+no effect on the <a class="reference internal" href="model.html#semantic-model"><span class="std std-ref">semantic model</span></a></p>
+<p>The <a class="reference internal" href="#smithy-version"><span class="std std-ref">version</span></a> statement is currently the only control
+statement defined in the Smithy IDL. Implementations MUST ignore unknown
+control statements.</p>
+<div class="section" id="version-statement">
+<span id="smithy-version"></span><h3><a href="#version-statement">16.5.1. Version statement</a></h3>
+<p>The Smithy specification is versioned using a <code class="docutils literal notranslate"><span class="pre">major</span></code> . <code class="docutils literal notranslate"><span class="pre">minor</span></code>
+versioning scheme. A version requirement is specified for a model file using
+the <code class="docutils literal notranslate"><span class="pre">$version</span></code> control statement. When no version number is specified in
+the IDL, an implementation SHOULD assume that the model can be loaded.
+Because this can lead to unexpected parsing errors, models SHOULD always
+include a version.</p>
+<p>The value provided in a version control statement is a string that MUST
+adhere to the following ABNF:</p>
+<pre class="productionlist">
+<strong id="grammar-token-version_string">version_string</strong> =
+    1*DIGIT [ &quot;.&quot; 1*DIGIT ]
+</pre>
+<p>The following example sets the version to <code class="docutils literal notranslate"><span class="pre">1</span></code>, meaning that tooling MUST
+support a version greater than or equal to <code class="docutils literal notranslate"><span class="pre">1.0</span></code> and less than <code class="docutils literal notranslate"><span class="pre">2.0</span></code>:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>A minor version SHOULD be provided when a model depends on a feature released
+in a minor update of the specification. The following example sets the
+version requirement of a file to <code class="docutils literal notranslate"><span class="pre">1.1</span></code>, meaning that tooling MUST support a
+version greater than or equal to <code class="docutils literal notranslate"><span class="pre">1.1</span></code> and less than <code class="docutils literal notranslate"><span class="pre">2.0</span></code>:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.1&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.1&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p class="rubric">Version compatibility</p>
+<p>A single version statement can appear in a model file, but different versions
+MAY be encountered when merging multiple model files together. Multiple
+versions are supported if and only if all of the version statements are
+supported by the tool loading the models.</p>
+</div>
+</div>
+<div class="section" id="metadata-section">
+<span id="id3"></span><h2><a href="#metadata-section">16.6. Metadata section</a></h2>
+<p>The <a class="reference internal" href="#grammar-token-metadata_section"><code class="xref std std-token docutils literal notranslate"><span class="pre">metadata</span> <span class="pre">section</span></code></a> is used to apply untyped
+<a class="reference internal" href="model.html#metadata"><span class="std std-ref">metadata</span></a> to the entire model. A <a class="reference internal" href="#grammar-token-metadata_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">metadata_statement</span></code></a>
+consists of the metadata key to set, followed by <code class="docutils literal notranslate"><span class="pre">=</span></code>, followed by the
+<a class="reference internal" href="#grammar-token-node_value"><code class="xref std std-token docutils literal notranslate"><span class="pre">node</span> <span class="pre">value</span></code></a> to assign to the key.</p>
+<p>The following example defines metadata in the model:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> greeting </span><span class="nd">=</span> <span class="s2">&quot;hello&quot;</span>
+<span class="kd">metadata</span><span class="nc"> &quot;stringList&quot; </span><span class="nd">=</span> [<span class="s2">&quot;a&quot;</span>, <span class="s2">&quot;b&quot;</span>, <span class="s2">&quot;c&quot;</span>]
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;greeting&quot;</span><span class="p">:</span> <span class="s2">&quot;hello&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;stringList&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="shape-section">
+<h2><a href="#shape-section">16.7. Shape section</a></h2>
+<p>The <a class="reference internal" href="#grammar-token-shape_section"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">section</span></code></a> of the IDL is used to define
+shapes and apply traits to shapes.</p>
+<div class="section" id="namespaces">
+<span id="id4"></span><h3><a href="#namespaces">16.7.1. Namespaces</a></h3>
+<p>Shapes can only be defined after a namespace is declared. A namespace is
+declared using a <a class="reference internal" href="#grammar-token-namespace_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">namespace</span> <span class="pre">statement</span></code></a>. Only
+one namespace can appear per file.</p>
+<p>The following example defines a string shape named <code class="docutils literal notranslate"><span class="pre">MyString</span></code> in the
+<code class="docutils literal notranslate"><span class="pre">smithy.example</span></code> namespace:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">string</span><span class="nc"> MyString</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyString&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="referring-to-shapes">
+<span id="use-statement"></span><h3><a href="#referring-to-shapes">16.7.2. Referring to shapes</a></h3>
+<p>The <a class="reference internal" href="#grammar-token-use_section"><code class="xref std std-token docutils literal notranslate"><span class="pre">use</span> <span class="pre">section</span></code></a> of the IDL is used to import shapes
+into the current namespace so that they can be referred to using a
+<a class="reference internal" href="#relative-shape-id"><span class="std std-ref">relative shape ID</span></a>. The <a class="reference internal" href="#grammar-token-use_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">use_statement</span></code></a>s
+that make up this section have no effect on the <a class="reference internal" href="model.html#semantic-model"><span class="std std-ref">semantic model</span></a>.</p>
+<p>The following example uses <code class="docutils literal notranslate"><span class="pre">smithy.example#Foo</span></code> and <code class="docutils literal notranslate"><span class="pre">smithy.example#Baz</span></code>
+so that they can be referred to using only <code class="docutils literal notranslate"><span class="pre">Foo</span></code> and <code class="docutils literal notranslate"><span class="pre">Baz</span></code>.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.hello</span>
+
+<span class="kd">use</span><span class="nc"> smithy.example#Foo</span>
+<span class="kd">use</span><span class="nc"> smithy.example#Baz</span>
+
+<span class="kd">map</span><span class="nc"> MyMap</span> {
+    <span class="c">// Resolves to smithy.example#Foo</span>
+    <span class="nl">key:</span> <span class="vc">Foo</span>,
+    <span class="c">// Resolves to smithy.example#Baz</span>
+    <span class="nl">value:</span> <span class="vc">Baz</span>,
+}
+</pre></div>
+</div>
+<p>A use statement can refer to <a class="reference internal" href="model.html#traits"><span class="std std-ref">traits</span></a> too. The following example
+uses the <code class="docutils literal notranslate"><span class="pre">smithy.example#test</span></code> and <code class="docutils literal notranslate"><span class="pre">smithy.example#anotherTrait</span></code>
+traits so that they can be applied using relative shape IDs:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.hello</span>
+
+<span class="kd">use</span><span class="nc"> smithy.example#test</span>
+<span class="kd">use</span><span class="nc"> smithy.example#anotherTrait</span>
+
+<span class="nd">@test</span> <span class="c">// &lt;-- Resolves to smithy.example#test</span>
+<span class="kd">string</span><span class="nc"> MyString</span>
+</pre></div>
+</div>
+<p class="rubric">Use statement validation</p>
+<ol class="arabic simple">
+<li>A shape cannot be defined in a file with the same name as one of the
+shapes imported with a <code class="docutils literal notranslate"><span class="pre">use</span></code> statement.</li>
+<li>Shapes IDs with members names cannot be imported with a use statement.</li>
+</ol>
+<div class="section" id="relative-shape-id-resolution">
+<span id="relative-shape-id"></span><h4><a href="#relative-shape-id-resolution">16.7.2.1. Relative shape ID resolution</a></h4>
+<p>Relative shape IDs are resolved using the following process:</p>
+<ol class="arabic simple">
+<li>If a <a class="reference internal" href="#grammar-token-use_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">use_statement</span></code></a> has imported a shape with the same name,
+the shape ID resolves to the imported shape ID.</li>
+<li>If a shape is defined in the same namespace as the shape with the same name,
+the namespace of the shape resolves to the <em>current namespace</em>.</li>
+<li>If a shape is defined in the <a class="reference internal" href="prelude-model.html#prelude"><span class="std std-ref">prelude</span></a> with the same name,
+the namespace resolves to <code class="docutils literal notranslate"><span class="pre">smithy.api</span></code>.</li>
+<li>If a relative shape ID does not satisfy one of the above cases, the shape
+ID is invalid, and the namespace is inherited from the <em>current namespace</em>.</li>
+</ol>
+<p>The following example Smithy model contains comments above each member of
+the shape named <code class="docutils literal notranslate"><span class="pre">MyStructure</span></code> that describes the shape the member resolves
+to.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">use</span><span class="nc"> foo.baz#Bar</span>
+
+<span class="kd">string</span><span class="nc"> MyString</span>
+
+<span class="kd">structure</span><span class="nc"> MyStructure</span> {
+    <span class="c">// Resolves to smithy.example#MyString</span>
+    <span class="c">// There is a shape named MyString defined in the same namespace.</span>
+    <span class="nl">a:</span> <span class="vc">MyString</span>,
+
+    <span class="c">// Resolves to smithy.example#MyString</span>
+    <span class="c">// Absolute shape IDs do not perform namespace resolution.</span>
+    <span class="nl">b:</span> <span class="vc">smithy.example#MyString</span>,
+
+    <span class="c">// Resolves to foo.baz#Bar</span>
+    <span class="c">// The &quot;use foo.baz#Bar&quot; statement imported the Bar symbol,</span>
+    <span class="c">// allowing the shape to be referenced using a relative shape ID.</span>
+    <span class="nl">c:</span> <span class="vc">Bar</span>,
+
+    <span class="c">// Resolves to smithy.api#String</span>
+    <span class="c">// No shape named String was imported through a use statement</span>
+    <span class="c">// the smithy.example namespace does not contain a shape named</span>
+    <span class="c">// String, and the prelude model contains a shape named String.</span>
+    <span class="nl">d:</span> <span class="vc">String</span>,
+
+    <span class="c">// Resolves to smithy.example#MyBoolean.</span>
+    <span class="c">// There is a shape named MyBoolean defined in the same namespace.</span>
+    <span class="c">// Forward references are supported both within the same file and</span>
+    <span class="c">// across multiple files.</span>
+    <span class="nl">e:</span> <span class="vc">MyBoolean</span>,
+
+    <span class="c">// Resolves to smithy.example#InvalidShape. A shape by this name has</span>
+    <span class="c">// not been imported through a use statement, a shape by this name</span>
+    <span class="c">// does not exist in the current namespace, and a shape by this name</span>
+    <span class="c">// does not exist in the prelude model.</span>
+    <span class="nl">f:</span> <span class="vc">InvalidShape</span>,
+}
+
+<span class="kd">boolean</span><span class="nc"> MyBoolean</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="syntactic-shape-ids">
+<span id="id5"></span><h4><a href="#syntactic-shape-ids">16.7.2.2. Syntactic shape IDs</a></h4>
+<p>Unquoted string values that are not object keys in the Smithy IDL are
+considered lexical shape IDs and are resolved to absolute shape IDs using the
+process defined in <a class="reference internal" href="#relative-shape-id"><span class="std std-ref">Relative shape ID resolution</span></a>.</p>
+<p>The following model defines a list that references a string shape defined
+in another namespace.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">use</span><span class="nc"> smithy.other#MyString</span>
+
+<span class="kd">list</span><span class="nc"> MyList</span> {
+    <span class="nl">member:</span> <span class="vc">MyString</span>
+}
+</pre></div>
+</div>
+<p>The above model is equivalent to the following JSON AST model:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyList&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.other#MyString&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p class="rubric">Use quotes for literal strings</p>
+<p>Values that are not meant to be shape IDs MUST be quoted. The following
+model is syntactically valid but semantically incorrect because
+it resolves the value of the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a> to the shape ID
+<code class="docutils literal notranslate"><span class="pre">&quot;smithy.example#client&quot;</span></code> rather than using the string literal value of
+<code class="docutils literal notranslate"><span class="pre">&quot;client&quot;</span></code>:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="nd">@error</span>(<span class="vc">client</span>) <span class="c">// &lt;-- This MUST be &quot;client&quot;</span>
+<span class="kd">structure</span><span class="nc"> Error</span>
+
+<span class="kd">string</span><span class="nc"> client</span>
+</pre></div>
+</div>
+<p>The above example is equivalent to the following incorrect JSON AST:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#Error&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#error&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#client&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#client&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p class="rubric">Object keys</p>
+<p>Object keys are not treated as shape IDs. The following example defines a
+<a class="reference internal" href="#metadata-section"><span class="std std-ref">metadata</span></a> object, and when loaded into the
+<a class="reference internal" href="model.html#semantic-model"><span class="std std-ref">semantic model</span></a>, the object key <code class="docutils literal notranslate"><span class="pre">String</span></code> remains
+the same literal string value of <code class="docutils literal notranslate"><span class="pre">String</span></code> while the value is treated as
+a shape ID and resolves to the string literal <code class="docutils literal notranslate"><span class="pre">&quot;smithy.api#String&quot;</span></code>.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> foo </span><span class="nd">=</span> {
+    <span class="nl">String:</span> <span class="vc">String</span>,
+}
+</pre></div>
+</div>
+<p>The above example is equivalent to the following JSON AST:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;String&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p class="rubric">Semantic model</p>
+<p>Syntactic shape IDs are syntactic sugar for defining fully-qualified
+shape IDs inside of strings, and this difference is inconsequential in the
+<a class="reference internal" href="model.html#semantic-model"><span class="std std-ref">semantic model</span></a>. A syntactic shape ID SHOULD be
+resolved to a string that contains a fully-qualified shape ID when parsing
+the model.</p>
+</div>
+</div>
+<div class="section" id="defining-shapes">
+<h3><a href="#defining-shapes">16.7.3. Defining shapes</a></h3>
+<p>Shapes are defined using a <a class="reference internal" href="#grammar-token-shape_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape_statement</span></code></a>.</p>
+<div class="section" id="simple-shapes">
+<span id="idl-simple"></span><h4><a href="#simple-shapes">16.7.3.1. Simple shapes</a></h4>
+<p><a class="reference internal" href="model.html#simple-types"><span class="std std-ref">Simple shapes</span></a> are defined using a
+<a class="reference internal" href="#grammar-token-simple_shape_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">simple_shape_statement</span></code></a>.</p>
+<p>The following example defines a <code class="docutils literal notranslate"><span class="pre">string</span></code> shape:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">string</span><span class="nc"> MyString</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#String&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The following example defines an <code class="docutils literal notranslate"><span class="pre">integer</span></code> shape with a <a class="reference internal" href="constraint-traits.html#range-trait"><span class="std std-ref">range trait</span></a>:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="nd">@range</span>(<span class="nl">min:</span> <span class="m">0</span>, <span class="nl">max:</span> <span class="m">1000</span>)
+<span class="kd">integer</span><span class="nc"> MaxResults</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MaxResults&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#range&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="nt">&quot;max&quot;</span><span class="p">:</span> <span class="mi">100</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="list-shapes">
+<span id="idl-list"></span><h4><a href="#list-shapes">16.7.3.2. List shapes</a></h4>
+<p>A <a class="reference internal" href="model.html#list"><span class="std std-ref">list</span></a> shape is defined using a <a class="reference internal" href="#grammar-token-list_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">list_statement</span></code></a>.</p>
+<p>The following example defines a list with a string member from the
+<a class="reference internal" href="prelude-model.html#prelude"><span class="std std-ref">prelude</span></a>:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">list</span><span class="nc"> MyList</span> {
+    <span class="nl">member:</span> <span class="vc">String</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyList&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;member&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Traits can be applied to the list shape and its member:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="nd">@length</span>(<span class="nl">min:</span> <span class="m">3</span>, <span class="nl">max:</span> <span class="m">10</span>)
+<span class="kd">list</span><span class="nc"> MyList</span> {
+    <span class="nd">@length</span>(<span class="nl">min:</span> <span class="m">1</span>, <span class="nl">max:</span> <span class="m">100</span>)
+    <span class="nl">member:</span> <span class="vc">String</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyList&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;member&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;smithy.api#length&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="nt">&quot;max&quot;</span><span class="p">:</span> <span class="mi">100</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#length&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+                    <span class="nt">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="set-shapes">
+<span id="idl-set"></span><h4><a href="#set-shapes">16.7.3.3. Set shapes</a></h4>
+<p>A <a class="reference internal" href="model.html#set"><span class="std std-ref">set</span></a> set shape is defined using a <a class="reference internal" href="#grammar-token-set_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">set_statement</span></code></a>.</p>
+<p>The following example defines a set of strings:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">set</span><span class="nc"> StringSet</span> {
+    <span class="nl">member:</span> <span class="vc">String</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#StringSet&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;set&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;member&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Traits can be applied to the set shape and its members:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="nd">@deprecated</span>
+<span class="kd">set</span><span class="nc"> StringSet</span> {
+    <span class="nd">@sensitive</span>
+    <span class="nl">member:</span> <span class="vc">String</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#StringSet&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;set&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;member&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#deprecated&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="map-shapes">
+<span id="idl-map"></span><h4><a href="#map-shapes">16.7.3.4. Map shapes</a></h4>
+<p>A <a class="reference internal" href="model.html#map"><span class="std std-ref">map</span></a> shape is defined using a <a class="reference internal" href="#grammar-token-map_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">map_statement</span></code></a>.</p>
+<p>The following example defines a map of strings to integers:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">map</span><span class="nc"> IntegerMap</span> {
+    <span class="nl">key:</span> <span class="vc">String</span>,
+    <span class="nl">value:</span> <span class="vc">Integer</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;map&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;smithy.example#IntegerMap&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;key&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Traits can be applied to the map shape and its members:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="nd">@length</span>(<span class="nl">min:</span> <span class="m">0</span>, <span class="nl">max:</span> <span class="m">100</span>)
+<span class="kd">map</span><span class="nc"> IntegerMap</span> {
+    <span class="nd">@length</span>(<span class="nl">min:</span> <span class="m">1</span>, <span class="nl">max:</span> <span class="m">10</span>)
+    <span class="nl">key:</span> <span class="vc">String</span>,
+
+    <span class="nd">@sensitive</span>
+    <span class="nl">value:</span> <span class="vc">Integer</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#IntegerMap&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;map&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;key&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;smithy.api#length&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="nt">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;smithy.api#sensitive&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#length&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="nt">&quot;max&quot;</span><span class="p">:</span> <span class="mi">100</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="structure-shapes">
+<span id="idl-structure"></span><h4><a href="#structure-shapes">16.7.3.5. Structure shapes</a></h4>
+<p>A <a class="reference internal" href="model.html#structure"><span class="std std-ref">structure</span></a> shape is defined using a
+<a class="reference internal" href="#grammar-token-structure_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">structure_statement</span></code></a>.</p>
+<p>The following example defines a structure with two members:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">structure</span><span class="nc"> MyStructure</span> {
+    <span class="nl">foo:</span> <span class="vc">String</span>,
+    <span class="nl">baz:</span> <span class="vc">Integer</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyStructure&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;foo&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;baz&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Integer&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Traits can be applied to structure members:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="cm">/// This is MyStructure.</span>
+<span class="kd">structure</span><span class="nc"> MyStructure</span> {
+    <span class="cm">/// This is documentation for `foo`.</span>
+    <span class="nd">@required</span>
+    <span class="nl">foo:</span> <span class="vc">String</span>,
+
+    <span class="cm">/// This is documentation for `baz`.</span>
+    <span class="nd">@deprecated</span>
+    <span class="nl">baz:</span> <span class="vc">Integer</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyStructure&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;foo&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;This is documentation for `foo`.&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;baz&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;This is documentation for `baz`.&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;smithy.api#deprecated&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;This is MyStructure.&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="union-shapes">
+<span id="idl-union"></span><h4><a href="#union-shapes">16.7.3.6. Union shapes</a></h4>
+<p>A <a class="reference internal" href="model.html#union"><span class="std std-ref">union</span></a> shape is defined using a <a class="reference internal" href="#grammar-token-union_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">union_statement</span></code></a>.</p>
+<p>The following example defines a union shape with several members:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">union</span><span class="nc"> MyUnion</span> {
+    <span class="nl">i32:</span> <span class="vc">Integer</span>,
+
+    <span class="nl">stringA:</span> <span class="vc">String</span>,
+
+    <span class="nd">@sensitive</span>
+    <span class="nl">stringB:</span> <span class="vc">String</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyUnion&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;union&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;i32&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Integer&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;stringA&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;stringB&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#sensitive&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="service-shape">
+<span id="idl-service"></span><h4><a href="#service-shape">16.7.3.7. Service shape</a></h4>
+<p>A service shape is defined using a <a class="reference internal" href="#grammar-token-service_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">service_statement</span></code></a> and the provided
+<a class="reference internal" href="#grammar-token-node_object"><code class="xref std std-token docutils literal notranslate"><span class="pre">node_object</span></code></a> supports the same properties defined in the
+<a class="reference internal" href="model.html#service"><span class="std std-ref">service specification</span></a>.</p>
+<p>The following example defines a service named <code class="docutils literal notranslate"><span class="pre">ModelRepository</span></code> that binds
+a resource named <code class="docutils literal notranslate"><span class="pre">Model</span></code> and an operation named <code class="docutils literal notranslate"><span class="pre">PingService</span></code>:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">service</span><span class="nc"> ModelRepository</span> {
+    <span class="nl">version:</span> <span class="s2">&quot;2020-07-13&quot;</span>,
+    <span class="nl">resources:</span> [<span class="vc">Model</span>],
+    <span class="nl">operations:</span> [<span class="vc">PingService</span>]
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#ModelRepository&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;resources&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Model&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;operations&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PingService&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="operation-shape">
+<span id="idl-operation"></span><h4><a href="#operation-shape">16.7.3.8. Operation shape</a></h4>
+<p>An operation shape is defined using an <a class="reference internal" href="#grammar-token-operation_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">operation_statement</span></code></a> and the
+provided <a class="reference internal" href="#grammar-token-node_object"><code class="xref std std-token docutils literal notranslate"><span class="pre">node_object</span></code></a> supports the same properties defined in the
+<a class="reference internal" href="model.html#operation"><span class="std std-ref">operation specification</span></a>.</p>
+<p>The following example defines an operation shape that accepts an input
+structure named <code class="docutils literal notranslate"><span class="pre">Input</span></code>, returns an output structure named <code class="docutils literal notranslate"><span class="pre">Output</span></code>, and
+can potentially return the <code class="docutils literal notranslate"><span class="pre">Unavailable</span></code> or <code class="docutils literal notranslate"><span class="pre">BadRequest</span></code>
+<a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error structures</span></a>.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">operation</span><span class="nc"> PingService</span> {
+    <span class="nl">input:</span> <span class="vc">Input</span>,
+    <span class="nl">output:</span> <span class="vc">Output</span>,
+    <span class="nl">errors:</span> [<span class="vc">Unavailable</span>, <span class="vc">BadRequest</span>]
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#PingService&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Input&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Output&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;errors&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Unavailable&quot;</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#BadRequest&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="resource-shape">
+<span id="idl-resource"></span><h4><a href="#resource-shape">16.7.3.9. Resource shape</a></h4>
+<p>A resource shape is defined using a <a class="reference internal" href="#grammar-token-resource_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">resource_statement</span></code></a> and the
+provided <a class="reference internal" href="#grammar-token-node_object"><code class="xref std std-token docutils literal notranslate"><span class="pre">node_object</span></code></a> supports the same properties defined in the
+<a class="reference internal" href="model.html#resource"><span class="std std-ref">resource specification</span></a>.</p>
+<p>The following example defines a resource shape that has a single identifier,
+and defines a <a class="reference internal" href="model.html#read-lifecycle"><span class="std std-ref">read</span></a> operation:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">resource</span><span class="nc"> Model</span> {
+    <span class="nl">identifiers:</span> {
+        <span class="nl">modelId:</span> <span class="vc">String</span>,
+    },
+    <span class="nl">read:</span> <span class="vc">GetModel</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#Model&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;resource&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;identifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;modelId&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;read&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#GetModel&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="documentation-comment">
+<span id="id6"></span><h3><a href="#documentation-comment">16.7.4. Documentation comment</a></h3>
+<p><a class="reference internal" href="#grammar-token-documentation_comment"><code class="xref std std-token docutils literal notranslate"><span class="pre">Documentation</span> <span class="pre">comments</span></code></a> are a special kind of <a class="reference internal" href="#grammar-token-comment"><code class="xref std std-token docutils literal notranslate"><span class="pre">comment</span></code></a> that provide
+<a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation</span></a> for shapes. A documentation
+comment is formed when three forward slashes (<code class="docutils literal notranslate"><span class="pre">&quot;///&quot;</span></code>) appear as the
+first non-whitespace characters on a line.</p>
+<p>Documentation comments are defined using <a class="reference external" href="https://spec.commonmark.org/">CommonMark</a>. The text after the
+forward slashes is considered the contents of the line. If the text starts
+with a space (&quot; &quot;), the leading space is removed from the content.
+Successive documentation comments are combined together using a newline
+(&quot;\n&quot;) to form the documentation of a shape.</p>
+<p>The following Smithy IDL example,</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="cm">/// This is documentation about a shape.</span>
+<span class="cm">///</span>
+<span class="cm">/// - This is a list</span>
+<span class="cm">/// - More of the list.</span>
+<span class="kd">string</span><span class="nc"> MyString</span>
+
+<span class="cm">/// This is documentation about a trait shape.</span>
+<span class="cm">///   More docs here.</span>
+<span class="nd">@trait</span>
+<span class="kd">structure</span><span class="nc"> myTrait</span> {}
+</pre></div>
+</div>
+<p>is equivalent to the following JSON AST model:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyString&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;This is documentation about a shape.\n\n- This is a list\n- More of the list.&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#myTrait&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#trait&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="nt">&quot;smithy.api#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;This is documentation about a trait shapes.\n  More docs here.&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p class="rubric">Placement</p>
+<p>Documentation comments are only treated as shape documentation when the
+comment appears immediately before a shape, and documentation comments MUST
+appear <strong>before</strong> any <a class="reference internal" href="model.html#traits"><span class="std std-ref">traits</span></a> applied to the shape in order
+for the documentation to be applied to a shape.</p>
+<p>The following example applies a documentation trait to the shape because the
+documentation comment comes before the traits applied to a shape:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="cm">/// A deprecated string.</span>
+<span class="nd">@deprecated</span>
+<span class="kd">string</span><span class="nc"> MyString</span>
+</pre></div>
+</div>
+<p>Documentation comments can also be applied to members of a shape.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="cm">/// Documentation about the structure.</span>
+<span class="kd">structure</span><span class="nc"> Example</span> {
+    <span class="cm">/// Documentation about the member.</span>
+    <span class="nd">@sensitive</span>
+    <span class="nl">foo:</span> <span class="vc">String</span>,
+}
+</pre></div>
+</div>
+<p class="rubric">Semantic model</p>
+<p>Documentation comments are syntactic sugar equivalent to applying the
+<a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a>, and this difference is inconsequential
+in the <a class="reference internal" href="model.html#semantic-model"><span class="std std-ref">semantic model</span></a>.</p>
+</div>
+<div class="section" id="applying-traits">
+<span id="idl-applying-traits"></span><h3><a href="#applying-traits">16.7.5. Applying traits</a></h3>
+<p>Trait values immediately preceding a shape definition are applied to the
+shape. The shape ID of a trait is <em>resolved</em> against <a class="reference internal" href="#grammar-token-use_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">use_statement</span></code></a>s
+and the current namespace in exactly the same same way as
+<a class="reference internal" href="#relative-shape-id"><span class="std std-ref">other shape IDs</span></a>.</p>
+<p>The following example applies the <a class="reference internal" href="documentation-traits.html#sensitive-trait"><span class="std std-ref">sensitive trait</span></a> and
+<a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a> to <code class="docutils literal notranslate"><span class="pre">MyString</span></code>:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="nd">@sensitive</span>
+<span class="nd">@documentation</span>(<span class="s2">&quot;Contains a string&quot;</span>)
+<span class="kd">string</span><span class="nc"> MyString</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyString&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;Contains a string&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;smithy.api#sensitive&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="trait-values">
+<span id="id7"></span><h4><a href="#trait-values">16.7.5.1. Trait values</a></h4>
+<p>The value that can be provided for a trait depends on its type. A value for a
+trait is defined by enclosing the value in parenthesis. Trait values can only
+appear immediately before a shape.</p>
+<p>The following example applies various traits to a structure shape and its
+members.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;An animal in the animal kingdom&quot;</span>)
+<span class="kd">structure</span><span class="nc"> Animal</span> {
+    <span class="nd">@required</span>
+    <span class="nl">name:</span> <span class="vc">smithy.api#String</span>,
+
+    <span class="nd">@length</span>(<span class="nl">min:</span> <span class="m">0</span>)
+    <span class="nd">@tags</span>([<span class="s2">&quot;internal&quot;</span>])
+    <span class="nl">age:</span> <span class="vc">smithy.api#Integer</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="structure-map-and-union-trait-values">
+<h4><a href="#structure-map-and-union-trait-values">16.7.5.2. Structure, map, and union trait values</a></h4>
+<p>Traits that are a <code class="docutils literal notranslate"><span class="pre">structure</span></code>, <code class="docutils literal notranslate"><span class="pre">union</span></code>, or <code class="docutils literal notranslate"><span class="pre">map</span></code> are defined using
+a special syntax that places key-value pairs inside of the trait
+parenthesis. Wrapping braces, &quot;{&quot; and &quot;}&quot;, are not permitted.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@structuredTrait</span>(<span class="nl">foo:</span> <span class="s2">&quot;bar&quot;</span>, <span class="nl">baz:</span> <span class="s2">&quot;bam&quot;</span>)
+</pre></div>
+</div>
+<p>Nested structure, map, and union values are defined using
+<a class="reference internal" href="#node-values"><span class="std std-ref">node value</span></a> productions:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@structuredTrait</span>(
+    <span class="nl">foo:</span> {
+        <span class="nl">bar:</span> <span class="s2">&quot;baz&quot;</span>,
+        <span class="nl">qux:</span> <span class="s2">&quot;true&quot;</span>,
+    }
+)
+</pre></div>
+</div>
+<p>Omitting a value is allowed on <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">set</span></code>, <code class="docutils literal notranslate"><span class="pre">map</span></code>, and <code class="docutils literal notranslate"><span class="pre">structure</span></code>
+traits if the shapes have no <code class="docutils literal notranslate"><span class="pre">length</span></code> constraints or <code class="docutils literal notranslate"><span class="pre">required</span></code> members.
+The following applications of the <code class="docutils literal notranslate"><span class="pre">foo</span></code> trait are equivalent:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="nd">@trait</span>
+<span class="kd">structure</span><span class="nc"> foo</span> {}
+
+<span class="nd">@foo</span>
+<span class="kd">string</span><span class="nc"> MyString1</span>
+
+<span class="nd">@foo</span>()
+<span class="kd">string</span><span class="nc"> MyString2</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#foo&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#trait&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#MyString1&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#foo&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#MyString2&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#foo&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="list-and-set-trait-values">
+<h4><a href="#list-and-set-trait-values">16.7.5.3. List and set trait values</a></h4>
+<p>Traits that are a <code class="docutils literal notranslate"><span class="pre">list</span></code> or <code class="docutils literal notranslate"><span class="pre">set</span></code> shape are defined inside
+of brackets (<code class="docutils literal notranslate"><span class="pre">[</span></code>) and (<code class="docutils literal notranslate"><span class="pre">]</span></code>) using a <a class="reference internal" href="#grammar-token-node_array"><code class="xref std std-token docutils literal notranslate"><span class="pre">node_array</span></code></a> production.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@tags</span>([<span class="s2">&quot;a&quot;</span>, <span class="s2">&quot;b&quot;</span>])
+</pre></div>
+</div>
+</div>
+<div class="section" id="other-trait-values">
+<h4><a href="#other-trait-values">16.7.5.4. Other trait values</a></h4>
+<p>All other trait values MUST adhere to the JSON type mappings defined
+in <a class="reference internal" href="model.html#trait-node-values"><span class="std std-ref">Trait node values</span></a>.</p>
+<p>The following example defines a string trait value:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;Hello&quot;</span>)
+</pre></div>
+</div>
+</div>
+<div class="section" id="apply-statement">
+<span id="id8"></span><h4><a href="#apply-statement">16.7.5.5. Apply statement</a></h4>
+<p>Traits can be applied to shapes outside of a shape's definition using an
+<a class="reference internal" href="#grammar-token-apply_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">apply_statement</span></code></a>.</p>
+<p>The following example applies the <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a> and
+<a class="reference internal" href="constraint-traits.html#length-trait"><span class="std std-ref">length trait</span></a> to the <code class="docutils literal notranslate"><span class="pre">smithy.example#MyString</span></code> shape:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">apply</span><span class="nc"> MyString</span> <span class="nd">@documentation</span>(<span class="s2">&quot;This is my string!&quot;</span>)
+<span class="kd">apply</span><span class="nc"> MyString</span> <span class="nd">@length</span>(<span class="nl">min:</span> <span class="m">1</span>, <span class="nl">max:</span> <span class="m">10</span>)
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyString&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;apply&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;This is my string!&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;smithy.api#length&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="nt">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Traits can be applied to members too:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">apply</span><span class="nc"> MyStructure$foo</span> <span class="nd">@documentation</span>(<span class="s2">&quot;Structure member documentation&quot;</span>)
+<span class="kd">apply</span><span class="nc"> MyUnion$foo</span> <span class="nd">@documentation</span>(<span class="s2">&quot;Union member documentation&quot;</span>)
+<span class="kd">apply</span><span class="nc"> MyList$member</span> <span class="nd">@documentation</span>(<span class="s2">&quot;List member documentation&quot;</span>)
+<span class="kd">apply</span><span class="nc"> MySet$member</span> <span class="nd">@documentation</span>(<span class="s2">&quot;Set member documentation&quot;</span>)
+<span class="kd">apply</span><span class="nc"> MyMap$key</span> <span class="nd">@documentation</span>(<span class="s2">&quot;Map key documentation&quot;</span>)
+<span class="kd">apply</span><span class="nc"> MyMap$value</span> <span class="nd">@documentation</span>(<span class="s2">&quot;Map key documentation&quot;</span>)
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Refer to <a class="reference internal" href="model.html#trait-conflict-resolution"><span class="std std-ref">trait conflict resolution</span></a>
+for information on how trait conflicts are resolved.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In the semantic model, applying traits outside of a shape definition is
+treated exactly the same as applying the trait inside of a shape
+definition.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="node-values">
+<span id="id9"></span><h2><a href="#node-values">16.8. Node values</a></h2>
+<p><em>Node values</em> are analogous to JSON values. Node values are used to define
+<a class="reference internal" href="model.html#metadata"><span class="std std-ref">metadata</span></a> and <a class="reference internal" href="model.html#traits"><span class="std std-ref">trait values</span></a>. Smithy's
+node values have many advantages over JSON: comments, unquoted keys, unquoted
+strings, text blocks, and trailing commas.</p>
+<p>The following example defines a complex object metadata entry using a
+node value:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> foo </span><span class="nd">=</span> {
+    <span class="nl">hello:</span> <span class="m">123</span>,
+    <span class="s2">&quot;foo&quot;</span>: <span class="s2">&quot;456&quot;</span>,
+    <span class="nl">testing:</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        Hello!</span>
+<span class="s2">        &quot;&quot;&quot;</span>,
+    <span class="nl">an_array:</span> [<span class="m">10.5</span>],
+    <span class="nl">nested-object:</span> {
+        <span class="nl">hello-there$:</span> <span class="kc">true</span>
+    }, <span class="c">// &lt;-- Trailing comma</span>
+}
+</pre></div>
+</div>
+<p class="rubric">Array node</p>
+<p>An array node is defined like a JSON array. A <a class="reference internal" href="#grammar-token-node_array"><code class="xref std std-token docutils literal notranslate"><span class="pre">node_array</span></code></a> contains
+zero or more heterogeneous <a class="reference internal" href="#grammar-token-node_value"><code class="xref std std-token docutils literal notranslate"><span class="pre">node_value</span></code></a>s. A trailing comma is allowed
+in a <code class="docutils literal notranslate"><span class="pre">node_array</span></code>.</p>
+<p>The following examples define arrays with zero, one, and two values:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">[]</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">[true]</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">&quot;hello&quot;,]</span></code></li>
+</ul>
+<p class="rubric">Object node</p>
+<p>An object node is defined like a JSON object. A <a class="reference internal" href="#grammar-token-node_object"><code class="xref std std-token docutils literal notranslate"><span class="pre">node_object</span></code></a> contains
+zero or more key value pairs of strings (a <a class="reference internal" href="#grammar-token-node_object_key"><code class="xref std std-token docutils literal notranslate"><span class="pre">node_object_key</span></code></a>) that map
+to heterogeneous <a class="reference internal" href="#grammar-token-node_value"><code class="xref std std-token docutils literal notranslate"><span class="pre">node_value</span></code></a>s. A trailing comma is allowed
+in a <code class="docutils literal notranslate"><span class="pre">node_object</span></code>.</p>
+<p>The following examples define objects with zero, one, and two key value pairs:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">{}</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">{foo:</span> <span class="pre">true}</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">{foo:</span> <span class="pre">&quot;hello&quot;,</span> <span class="pre">&quot;bar&quot;:</span> <span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">{},}</span></code></li>
+</ul>
+<p class="rubric">Number node</p>
+<p>A node <a class="reference internal" href="#grammar-token-number"><code class="xref std std-token docutils literal notranslate"><span class="pre">number</span></code></a> contains numeric data. It is defined like a JSON
+number. The following examples define several <code class="docutils literal notranslate"><span class="pre">number</span></code> values:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">0</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">0.0</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">1234</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">-1234.1234</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">1e+2</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">1.0e-10</span></code></li>
+</ul>
+<p class="rubric">Node keywords</p>
+<p>Several keywords are used when parsing <a class="reference internal" href="#grammar-token-node_value"><code class="xref std std-token docutils literal notranslate"><span class="pre">node_value</span></code></a>.</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">true</span></code>: The value is treated as a boolean <code class="docutils literal notranslate"><span class="pre">true</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">false</span></code>: The value is treated as a boolean <code class="docutils literal notranslate"><span class="pre">false</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">null</span></code>: The value is treated like a JSON <code class="docutils literal notranslate"><span class="pre">null</span></code></li>
+</ul>
+<div class="section" id="string-values">
+<h3><a href="#string-values">16.8.1. String values</a></h3>
+<p>A <code class="docutils literal notranslate"><span class="pre">node_value</span></code> can contain <a class="reference internal" href="#grammar-token-node_string_value"><code class="xref std std-token docutils literal notranslate"><span class="pre">node_string_value</span></code></a> productions that all
+define strings.</p>
+<p class="rubric">New lines</p>
+<p>New lines in strings are normalized from CR (u000D) and CRLF (u000Du000A)
+to LF (u000A). This ensures that strings defined in a Smithy model are
+equivalent across platforms. If a literal <code class="docutils literal notranslate"><span class="pre">\r</span></code> is desired, it can be added
+a string value using the Unicode escape <code class="docutils literal notranslate"><span class="pre">\u000d</span></code>.</p>
+<p class="rubric">String equivalence</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">node_string_value</span></code> production defines several productions used to
+define strings, and in order for these productions to work in concert with
+the <a class="reference internal" href="json-ast.html#json-ast"><span class="std std-ref">JSON AST format</span></a>, each of these production MUST be
+treated like equivalent string values when loaded into the
+<a class="reference internal" href="model.html#semantic-model"><span class="std std-ref">semantic model</span></a>.</p>
+</div>
+<div class="section" id="string-escape-characters">
+<span id="id10"></span><h3><a href="#string-escape-characters">16.8.2. String escape characters</a></h3>
+<p>The Smithy IDL supports escape sequences only within quoted strings.  The following
+escape sequences are allowed:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="30%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Unicode code point</th>
+<th class="head">Escape</th>
+<th class="head">Meaning</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>U+0022</td>
+<td><code class="docutils literal notranslate"><span class="pre">\&quot;</span></code></td>
+<td>double quote</td>
+</tr>
+<tr class="row-odd"><td>U+005C</td>
+<td><code class="docutils literal notranslate"><span class="pre">\\</span></code></td>
+<td>backslash</td>
+</tr>
+<tr class="row-even"><td>U+002F</td>
+<td><code class="docutils literal notranslate"><span class="pre">\/</span></code></td>
+<td>forward slash</td>
+</tr>
+<tr class="row-odd"><td>U+0008</td>
+<td><code class="docutils literal notranslate"><span class="pre">\b</span></code></td>
+<td>backspace BS</td>
+</tr>
+<tr class="row-even"><td>U+000C</td>
+<td><code class="docutils literal notranslate"><span class="pre">\f</span></code></td>
+<td>form feed FF</td>
+</tr>
+<tr class="row-odd"><td>U+000A</td>
+<td><code class="docutils literal notranslate"><span class="pre">\n</span></code></td>
+<td>line feed LF</td>
+</tr>
+<tr class="row-even"><td>U+000D</td>
+<td><code class="docutils literal notranslate"><span class="pre">\r</span></code></td>
+<td>carriage return CR</td>
+</tr>
+<tr class="row-odd"><td>U+0009</td>
+<td><code class="docutils literal notranslate"><span class="pre">\t</span></code></td>
+<td>horizontal tab HT</td>
+</tr>
+<tr class="row-even"><td>U+HHHH</td>
+<td><code class="docutils literal notranslate"><span class="pre">\uHHHH</span></code></td>
+<td>4-digit hexadecimal Unicode code point</td>
+</tr>
+<tr class="row-odd"><td><em>nothing</em></td>
+<td><code class="docutils literal notranslate"><span class="pre">\\r\n</span></code>, <code class="docutils literal notranslate"><span class="pre">\\r</span></code>, <code class="docutils literal notranslate"><span class="pre">\\n</span></code></td>
+<td>escaped new line expands to nothing</td>
+</tr>
+</tbody>
+</table>
+<p>Any other sequence following a backslash is an error.</p>
+</div>
+<div class="section" id="text-blocks">
+<span id="id11"></span><h3><a href="#text-blocks">16.8.3. Text blocks</a></h3>
+<p>A text block is a string literal that can span multiple lines and automatically
+removes any incidental whitespace. Smithy text blocks are heavily inspired by
+text blocks defined in <a class="reference external" href="https://openjdk.java.net/jeps/355">JEP 355</a>.</p>
+<p>A text block is opened with three double quotes (&quot;&quot;&quot;), followed by a newline,
+zero or more content characters, and closed with three double quotes.
+Text blocks differentiate <em>incidental whitespace</em> from <em>significant whitespace</em>.
+Smithy will re-indent the content of a text block by removing all incidental
+whitespace.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    &lt;div&gt;</span>
+<span class="s2">        &lt;p&gt;Hello!&lt;/p&gt;</span>
+<span class="s2">    &lt;/div&gt;</span>
+<span class="s2">    &quot;&quot;&quot;</span>)
+</pre></div>
+</div>
+<p>The four leading spaces in the above text block are considered insignificant
+because they are common across all lines. Because the closing delimiter
+appears on its own line, a trailing new line is added to the result. The
+content of the text block is re-indented to remove the insignificant
+whitespace, making it equivalent to the following:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;&lt;div&gt;\n    &lt;p&gt;Hello!&lt;/p&gt;\n&lt;/div&gt;\n&quot;</span>)
+</pre></div>
+</div>
+<p>The closing delimiter can be placed on the same line as content if no new line
+is desired at the end of the result. The above example could be rewritten to
+not including a trailing new line:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    &lt;div&gt;</span>
+<span class="s2">        &lt;p&gt;Hello!&lt;/p&gt;</span>
+<span class="s2">    &lt;/div&gt;&quot;&quot;&quot;</span>)
+</pre></div>
+</div>
+<p>This example is equivalent to the following:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;&lt;div&gt;\n    &lt;p&gt;Hello!&lt;/p&gt;\n&lt;/div&gt;&quot;</span>)
+</pre></div>
+</div>
+<p>The following text blocks are ill-formed:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;&quot;&quot;foo&quot;&quot;&quot;</span>  <span class="c">// missing new line following open delimiter</span>
+<span class="s2">&quot;&quot;&quot; &quot;&quot;&quot;</span>    <span class="c">// missing new line following open delimiter</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">&quot;</span>          <span class="c">// missing closing delimiter</span>
+</pre></div>
+</div>
+<div class="section" id="incidental-white-space-removal">
+<span id="incidental-whitespace"></span><h4><a href="#incidental-white-space-removal">16.8.3.1. Incidental white space removal</a></h4>
+<p>Smithy will re-indent the content of a text block by removing all
+incidental whitespace using the following algorithm:</p>
+<ol class="arabic">
+<li><p class="first">Split the content of the text block at every LF, producing a list of lines.
+The opening LF of the text block is not considered.</p>
+<p>Given the following example (&quot;.&quot; is used to represent spaces),</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">....Foo</span>
+<span class="s2">........Baz</span>
+
+<span class="s2">..</span>
+<span class="s2">....Bar</span>
+<span class="s2">....&quot;&quot;&quot;</span>)
+</pre></div>
+</div>
+<p>the following lines are produced:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s2">&quot;    Foo&quot;</span><span class="p">,</span> <span class="s2">&quot;        Baz&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="s2">&quot;    Bar&quot;</span><span class="p">,</span> <span class="s2">&quot;    &quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Compute the <em>common whitespace prefix</em> by iterating over each line,
+counting the number of leading spaces (&quot; &quot;) and taking the minimum count.
+Except for the last line of content, lines that are empty or consist wholly
+of whitespace are not considered. If the last line of content (that is, the
+line that contains the closing delimiter) appears on its own line, then
+that line's leading whitespace <strong>is</strong> considered when determining the
+common whitespace prefix, allowing the closing delimiter to determine the
+amount of indentation to remove.</p>
+<p>Using the previous example, the common whitespace prefix is four spaces.
+The empty third line and the blank fourth lines are not considered when
+computing the common whitespace. The following uses &quot;.&quot; to represent the
+common whitespace prefix:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">....Foo</span>
+<span class="s2">....    Baz</span>
+
+<span class="s2">....</span>
+<span class="s2">....Bar</span>
+<span class="s2">....&quot;&quot;&quot;</span>)
+</pre></div>
+</div>
+</li>
+<li><p class="first">Remove the common white space prefix from each line.</p>
+<p>This step produces the following values from the previous example:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s2">&quot;Foo&quot;</span><span class="p">,</span> <span class="s2">&quot;    Baz&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Bar&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Remove any trailing spaces from each line.</p>
+</li>
+<li><p class="first">Concatenate each line together, separated by LF.</p>
+<p>This step produces the following result (&quot;|&quot; is used to represent the
+left margin):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>|Foo
+|    Baz
+|
+|
+|Bar
+|
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="significant-trailing-line">
+<h4><a href="#significant-trailing-line">16.8.3.2. Significant trailing line</a></h4>
+<p>The last line of text block content is used when determining the common
+whitespace prefix.</p>
+<p>Consider the following example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    Foo</span>
+<span class="s2">        Baz</span>
+<span class="s2">    Bar</span>
+<span class="s2">&quot;&quot;&quot;</span>)
+</pre></div>
+</div>
+<p>Because the closing delimiter is at the margin and left of the rest of the
+content, the common whitespace prefix is 0 characters, resulting in the
+following equivalent string:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;    Foo\n        Baz\n    Bar\n&quot;</span>)
+</pre></div>
+</div>
+<p>If the closing delimiter is moved to the right of the content, then it has
+no bearing on the common whitespace prefix. The common whitespace prefix in
+the following example is visualized using &quot;.&quot; to represent spaces:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">....Foo</span>
+<span class="s2">....    Baz</span>
+<span class="s2">....Bar</span>
+<span class="s2">        &quot;&quot;&quot;</span>)
+</pre></div>
+</div>
+<p>Because lines are trimmed when they are added to the result, the above example
+is equivalent to the following:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;Foo\n    Baz\nBar\n&quot;</span>)
+</pre></div>
+</div>
+</div>
+<div class="section" id="escapes-in-text-blocks">
+<h4><a href="#escapes-in-text-blocks">16.8.3.3. Escapes in text blocks</a></h4>
+<p>Text blocks support all of the <a class="reference internal" href="#string-escape-characters"><span class="std std-ref">string escape characters</span></a>
+of other strings. The use of three double quotes allows unescaped double quotes
+(&quot;) to appear in text blocks. The following text block is interpreted as
+<code class="docutils literal notranslate"><span class="pre">&quot;hello!&quot;</span></code>:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">&quot;</span><span class="vc">hello</span><span class="err">!</span><span class="s2">&quot;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Three quotes can appear in a text block without being treated as the closing
+delimiter as long as one of the quotes are escaped. The following text block
+is interpreted as <code class="docutils literal notranslate"><span class="pre">foo</span> <span class="pre">&quot;&quot;&quot;\nbaz</span></code>:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">foo \&quot;&quot;&quot;</span>
+<span class="s2">baz&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>String escapes are interpreted <strong>after</strong> <a class="reference internal" href="#incidental-whitespace"><span class="std std-ref">incidental whitespace</span></a>
+is removed from a text block. The following example uses &quot;.&quot; to denote spaces:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">..&lt;div&gt;</span>
+<span class="s2">....&lt;p&gt;Hi\\n....bar&lt;/p&gt;</span>
+<span class="s2">..&lt;/div&gt;</span>
+<span class="s2">..&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Because string escapes are expanded after incidental whitespace is removed, it
+is interpreted as:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;div&gt;
+..&lt;p&gt;Hi
+....bar&lt;/p&gt;
+&lt;/div&gt;
+</pre></div>
+</div>
+<p>New lines in the text block can be escaped. This allows for long, single-line
+strings to be broken into multiple lines in the IDL. The following example
+is interpreted as <code class="docutils literal notranslate"><span class="pre">Foo</span> <span class="pre">Baz</span> <span class="pre">Bam</span></code>:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Foo \</span>
+<span class="s2">Baz \</span>
+<span class="s2">Bam&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Escaped new lines can be intermixed with unescaped newlines. The following
+example is interpreted as <code class="docutils literal notranslate"><span class="pre">Foo\nBaz</span> <span class="pre">Bam</span></code>:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Foo</span>
+<span class="s2">Baz \</span>
+<span class="s2">Bam&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="model-validation.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 15. Model validation</a>
+                        
+                        <a href="json-ast.html" title="next chapter" class="next-page clearfix">17. JSON AST →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="model-validation.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
+                                
+                                <a href="json-ast.html" title="next chapter" class="next-page clearfix">Next →</a>
+                            </section>
+                            
+                            <ul>
+<li><a class="reference internal" href="#">16. Smithy IDL</a><ul>
+<li><a class="reference internal" href="#smithy-idl-overview">16.1. Smithy IDL overview</a></li>
+<li><a class="reference internal" href="#lexical-notes">16.2. Lexical notes</a></li>
+<li><a class="reference internal" href="#smithy-idl-abnf">16.3. Smithy IDL ABNF</a></li>
+<li><a class="reference internal" href="#comments">16.4. Comments</a></li>
+<li><a class="reference internal" href="#control-section">16.5. Control section</a><ul>
+<li><a class="reference internal" href="#version-statement">16.5.1. Version statement</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#metadata-section">16.6. Metadata section</a></li>
+<li><a class="reference internal" href="#shape-section">16.7. Shape section</a><ul>
+<li><a class="reference internal" href="#namespaces">16.7.1. Namespaces</a></li>
+<li><a class="reference internal" href="#referring-to-shapes">16.7.2. Referring to shapes</a><ul>
+<li><a class="reference internal" href="#relative-shape-id-resolution">16.7.2.1. Relative shape ID resolution</a></li>
+<li><a class="reference internal" href="#syntactic-shape-ids">16.7.2.2. Syntactic shape IDs</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#defining-shapes">16.7.3. Defining shapes</a><ul>
+<li><a class="reference internal" href="#simple-shapes">16.7.3.1. Simple shapes</a></li>
+<li><a class="reference internal" href="#list-shapes">16.7.3.2. List shapes</a></li>
+<li><a class="reference internal" href="#set-shapes">16.7.3.3. Set shapes</a></li>
+<li><a class="reference internal" href="#map-shapes">16.7.3.4. Map shapes</a></li>
+<li><a class="reference internal" href="#structure-shapes">16.7.3.5. Structure shapes</a></li>
+<li><a class="reference internal" href="#union-shapes">16.7.3.6. Union shapes</a></li>
+<li><a class="reference internal" href="#service-shape">16.7.3.7. Service shape</a></li>
+<li><a class="reference internal" href="#operation-shape">16.7.3.8. Operation shape</a></li>
+<li><a class="reference internal" href="#resource-shape">16.7.3.9. Resource shape</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#documentation-comment">16.7.4. Documentation comment</a></li>
+<li><a class="reference internal" href="#applying-traits">16.7.5. Applying traits</a><ul>
+<li><a class="reference internal" href="#trait-values">16.7.5.1. Trait values</a></li>
+<li><a class="reference internal" href="#structure-map-and-union-trait-values">16.7.5.2. Structure, map, and union trait values</a></li>
+<li><a class="reference internal" href="#list-and-set-trait-values">16.7.5.3. List and set trait values</a></li>
+<li><a class="reference internal" href="#other-trait-values">16.7.5.4. Other trait values</a></li>
+<li><a class="reference internal" href="#apply-statement">16.7.5.5. Apply statement</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#node-values">16.8. Node values</a><ul>
+<li><a class="reference internal" href="#string-values">16.8.1. String values</a></li>
+<li><a class="reference internal" href="#string-escape-characters">16.8.2. String escape characters</a></li>
+<li><a class="reference internal" href="#text-blocks">16.8.3. Text blocks</a><ul>
+<li><a class="reference internal" href="#incidental-white-space-removal">16.8.3.1. Incidental white space removal</a></li>
+<li><a class="reference internal" href="#significant-trailing-line">16.8.3.2. Significant trailing line</a></li>
+<li><a class="reference internal" href="#escapes-in-text-blocks">16.8.3.3. Escapes in text blocks</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2020, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

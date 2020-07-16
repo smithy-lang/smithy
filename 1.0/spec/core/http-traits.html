@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>14. HTTP protocol binding traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    <title>11. HTTP protocol binding traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
     
     <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -27,8 +27,8 @@
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="15. XML binding traits" href="xml-traits.html" />
-    <link rel="prev" title="13. Streaming Traits" href="stream-traits.html" />
+    <link rel="next" title="12. XML binding traits" href="xml-traits.html" />
+    <link rel="prev" title="10. Streaming Traits" href="stream-traits.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="smithy-version" content="1.0">
 
@@ -70,7 +70,7 @@
                     
                     
   <div class="section" id="http-protocol-binding-traits">
-<span id="http-traits"></span><h1><a href="#http-protocol-binding-traits">14. HTTP protocol binding traits</a></h1>
+<span id="http-traits"></span><h1><a href="#http-protocol-binding-traits">11. HTTP protocol binding traits</a></h1>
 <p>Smithy provides various HTTP binding traits that can be used by protocols to
 explicitly configure HTTP request and response messages.</p>
 <p>The members of an operation input, output, and errors MUST NOT be bound to
@@ -93,7 +93,7 @@ and error structures are considered when serializing HTTP messages.</p>
 </ul>
 </div>
 <div class="section" id="http-trait">
-<span id="id1"></span><h2><a href="#http-trait">14.1. <code class="docutils literal notranslate"><span class="pre">http</span></code> trait</a></h2>
+<span id="id1"></span><h2><a href="#http-trait">11.1. <code class="docutils literal notranslate"><span class="pre">http</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Configures the HTTP bindings of an operation.</dd>
@@ -179,7 +179,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="method">
-<span id="http-method"></span><h3><a href="#method">14.1.1. method</a></h3>
+<span id="http-method"></span><h3><a href="#method">11.1.1. method</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">method</span></code> property defines the HTTP method of the operation (e.g., &quot;GET&quot;,
 &quot;PUT&quot;, &quot;POST&quot;, &quot;DELETE&quot;, &quot;PATCH&quot;, etc). Smithy will use this value literally
 and will perform no validation on the method. The <code class="docutils literal notranslate"><span class="pre">method</span></code> value SHOULD
@@ -188,7 +188,7 @@ property does not influence the safety or idempotency characteristics of an
 operation.</p>
 </div>
 <div class="section" id="uri">
-<span id="http-uri"></span><h3><a href="#uri">14.1.2. uri</a></h3>
+<span id="http-uri"></span><h3><a href="#uri">11.1.2. uri</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">uri</span></code> property defines the <em>request-target</em> of the operation in
 <em>origin-form</em> as defined in <span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc7230.html#section-5.3.1"><strong>RFC 7230#section-5.3.1</strong></a>. The URI is a simple
 pattern that Smithy uses to match HTTP requests to operations and to bind
@@ -197,7 +197,8 @@ components of the request URI to fields in the operations's input structure.
 request URI and labels which are used to insert named components into the
 request URI.</p>
 <p>The resolved absolute URI of an operation is formed by combining the URI of
-the operation with the endpoint of the service. For example, given a service
+the operation with the endpoint of the service. (that is, the host and any
+base URL of where the service is deployed). For example, given a service
 endpoint of <code class="docutils literal notranslate"><span class="pre">https://example.com/v1</span></code> and an operation pattern of
 <code class="docutils literal notranslate"><span class="pre">/myresource</span></code>, the resolved absolute URI of the operation is
 <code class="docutils literal notranslate"><span class="pre">https://example.com/v1/myresource</span></code>.</p>
@@ -220,7 +221,7 @@ properties.</li>
 </pre></div>
 </div>
 <div class="section" id="literal-character-sequences">
-<h4><a href="#literal-character-sequences">14.1.2.1. Literal character sequences</a></h4>
+<h4><a href="#literal-character-sequences">11.1.2.1. Literal character sequences</a></h4>
 <p>Patterns with no labels will match only requests containing the exact literal
 characters declared in the pattern, with the exception of trailing slashes
 which are always optional.</p>
@@ -262,7 +263,7 @@ which are always optional.</p>
 </table>
 </div>
 <div class="section" id="labels">
-<h4><a href="#labels">14.1.2.2. Labels</a></h4>
+<h4><a href="#labels">11.1.2.2. Labels</a></h4>
 <p>Patterns MAY contain label placeholders. <em class="dfn">Labels</em> consist of label name
 characters surrounded by open and closed braces (i.e., &quot;{label_name}&quot; is a
 label and <code class="docutils literal notranslate"><span class="pre">label_name</span></code> is the label name). The label name corresponds to a
@@ -362,7 +363,7 @@ is captured as <code class="docutils literal notranslate"><span class="pre">labe
 </table>
 </div>
 <div class="section" id="query-string-literals">
-<h4><a href="#query-string-literals">14.1.2.3. Query string literals</a></h4>
+<h4><a href="#query-string-literals">11.1.2.3. Query string literals</a></h4>
 <p>Components of the query string can be matched literally in the URI pattern.
 The query string portion of a pattern MUST NOT contain labels.</p>
 <p>Literals can be in the form of required keys without values. Given a pattern
@@ -451,7 +452,7 @@ is not &quot;requiredValue&quot; .</td>
 </table>
 </div>
 <div class="section" id="greedy-labels">
-<span id="id2"></span><h4><a href="#greedy-labels">14.1.2.4. Greedy labels</a></h4>
+<span id="id2"></span><h4><a href="#greedy-labels">11.1.2.4. Greedy labels</a></h4>
 <p>A <em class="dfn">greedy label</em> is a label suffixed with the <code class="docutils literal notranslate"><span class="pre">+</span></code> qualifier that can be
 used to match more than one path segment. At most, one greedy label may exist
 in any path pattern, and if present, it MUST be the last label in the pattern.
@@ -530,7 +531,7 @@ matches literal &quot;/suffix&quot;.</td>
 </table>
 </div>
 <div class="section" id="pattern-validation-and-conflict-avoidance">
-<h4><a href="#pattern-validation-and-conflict-avoidance">14.1.2.5. Pattern Validation and Conflict Avoidance</a></h4>
+<h4><a href="#pattern-validation-and-conflict-avoidance">11.1.2.5. Pattern Validation and Conflict Avoidance</a></h4>
 <p>Smithy validates the patterns within a service against each other to ensure
 that no two patterns conflict with each other for the same HTTP method. To
 prevent ambiguity when matching requests for different operations, the
@@ -575,7 +576,7 @@ empty value are considered equivalent. For example, <code class="docutils litera
 </div>
 </div>
 <div class="section" id="httperror-trait">
-<span id="id3"></span><h2><a href="#httperror-trait">14.2. <code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait</a></h2>
+<span id="id3"></span><h2><a href="#httperror-trait">11.2. <code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Defines an HTTP response code for an operation error.</dd>
@@ -610,7 +611,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="httpheader-trait">
-<span id="id4"></span><h2><a href="#httpheader-trait">14.3. <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait</a></h2>
+<span id="id4"></span><h2><a href="#httpheader-trait">11.3. <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Binds a structure member to an HTTP header.</dd>
@@ -634,7 +635,7 @@ members of the structure.</dd>
 <p>Serialization rules:</p>
 <ul class="simple">
 <li>The header field name MUST be compatible with <span class="target" id="index-2"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc7230.html#section-3.2"><strong>RFC 7230#section-3.2</strong></a>.</li>
-<li>When a <a class="reference internal" href="shapes.html#list"><span class="std std-ref">List</span></a> shape is targeted, each member of the shape is serialized
+<li>When a <a class="reference internal" href="model.html#list"><span class="std std-ref">List</span></a> shape is targeted, each member of the shape is serialized
 as a separate HTTP header either by concatenating the values with a comma on a
 single line or by serializing each header value on its own line.</li>
 <li>boolean values are serialized as <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>.</li>
@@ -651,7 +652,7 @@ Smithy models SHOULD carefully consider the maximum allowed length of each
 member that is bound to an HTTP header.</p>
 </div>
 <div class="section" id="restricted-http-headers">
-<span id="restricted-headers"></span><h3><a href="#restricted-http-headers">14.3.1. Restricted HTTP headers</a></h3>
+<span id="restricted-headers"></span><h3><a href="#restricted-http-headers">11.3.1. Restricted HTTP headers</a></h3>
 <p>Various HTTP headers are highly discouraged for the <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> and
 <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> traits.</p>
 <table border="1" class="colwidths-given docutils">
@@ -720,7 +721,7 @@ need to be modeled.</td>
 </div>
 </div>
 <div class="section" id="httplabel-trait">
-<span id="id5"></span><h2><a href="#httplabel-trait">14.4. <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait</a></h2>
+<span id="id5"></span><h2><a href="#httplabel-trait">11.4. <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Binds an operation input structure member to an HTTP label.</dd>
@@ -785,7 +786,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="httppayload-trait">
-<span id="id6"></span><h2><a href="#httppayload-trait">14.5. <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait</a></h2>
+<span id="id6"></span><h2><a href="#httppayload-trait">11.5. <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Binds a single structure member to the body of an HTTP request.</dd>
@@ -819,14 +820,14 @@ or <a class="reference internal" href="#httpprefixheaders-trait"><span class="st
 <ol class="arabic simple">
 <li>When a string or blob member is referenced, the raw value is serialized
 as the body of the message.</li>
-<li>When a <a class="reference internal" href="shapes.html#structure"><span class="std std-ref">structure</span></a>, <a class="reference internal" href="shapes.html#union"><span class="std std-ref">union</span></a>, or
-<a class="reference internal" href="shapes.html#document-type"><span class="std std-ref">document</span></a> is targeted, the shape value is serialized
+<li>When a <a class="reference internal" href="model.html#structure"><span class="std std-ref">structure</span></a>, <a class="reference internal" href="model.html#union"><span class="std std-ref">union</span></a>, or
+document type is targeted, the shape value is serialized
 as a <a class="reference internal" href="protocol-traits.html#protocoldefinition-trait"><span class="std std-ref">protocol-specific</span></a> document that is
 sent as the body of the message.</li>
 </ol>
 </div>
 <div class="section" id="httpprefixheaders-trait">
-<span id="id7"></span><h2><a href="#httpprefixheaders-trait">14.6. <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait</a></h2>
+<span id="id7"></span><h2><a href="#httpprefixheaders-trait">11.6. <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Binds a map of key-value pairs to prefixed HTTP headers.</dd>
@@ -900,7 +901,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="httpquery-trait">
-<span id="id8"></span><h2><a href="#httpquery-trait">14.7. <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait</a></h2>
+<span id="id8"></span><h2><a href="#httpquery-trait">11.7. <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Binds an operation input structure member to a query string parameter.</dd>
@@ -936,7 +937,7 @@ query string parameter.</li>
 <li>blob values are base64 encoded when serialized in the query string.</li>
 <li>timestamp values are serialized as an <span class="target" id="index-6"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3339.html"><strong>RFC 3339</strong></a>
 <code class="docutils literal notranslate"><span class="pre">date-time</span></code> string (e.g., <code class="docutils literal notranslate"><span class="pre">1990-12-31T23:59:60Z</span></code>).</li>
-<li><a class="reference internal" href="shapes.html#list"><span class="std std-ref">List</span></a> members are serialized by adding multiple query string parameters
+<li><a class="reference internal" href="model.html#list"><span class="std std-ref">List</span></a> members are serialized by adding multiple query string parameters
 to the query string using the same name. For example, given a member bound
 to <code class="docutils literal notranslate"><span class="pre">foo</span></code> that targets a list of strings with a value of <code class="docutils literal notranslate"><span class="pre">[&quot;a&quot;,</span> <span class="pre">&quot;b&quot;]</span></code>,
 the value is serialized in the query string as <code class="docutils literal notranslate"><span class="pre">foo=a&amp;foo=b</span></code>.</li>
@@ -950,7 +951,7 @@ member that is bound to an HTTP query string or path.</p>
 </div>
 </div>
 <div class="section" id="cors-trait">
-<span id="id9"></span><h2><a href="#cors-trait">14.8. <code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></h2>
+<span id="id9"></span><h2><a href="#cors-trait">11.8. <code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Defines how a service supports cross-origin resource sharing</dd>
@@ -1015,7 +1016,7 @@ such authentication schemes MUST designate a single origin from which
 cross-origin, credentialed requests will be accepted.</p>
 </div>
 <div class="section" id="serializing-http-messages">
-<h2><a href="#serializing-http-messages">14.9. Serializing HTTP messages</a></h2>
+<h2><a href="#serializing-http-messages">11.9. Serializing HTTP messages</a></h2>
 <p>The following steps are taken to serialize an HTTP request given a map of
 parameters:</p>
 <ol class="arabic simple">
@@ -1063,7 +1064,7 @@ protocol-specific document sent in the body of the response.</li>
 </ol>
 </div>
 <div class="section" id="event-streams">
-<h2><a href="#event-streams">14.10. Event streams</a></h2>
+<h2><a href="#event-streams">11.10. Event streams</a></h2>
 <p>When using <a class="reference internal" href="stream-traits.html#event-streams"><span class="std std-ref">event streams</span></a> and HTTP bindings, the
 <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload</span></a> trait MUST be applied to any input or
 output member that targets a shape marked with the <a class="reference internal" href="stream-traits.html#streaming-trait"><span class="std std-ref">streaming trait</span></a>.</p>
@@ -1184,9 +1185,9 @@ marked with the <code class="docutils literal notranslate"><span class="pre">htt
                     
                     <section class="relations">
                         
-                        <a href="stream-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 13. Streaming Traits</a>
+                        <a href="stream-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 10. Streaming Traits</a>
                         
-                        <a href="xml-traits.html" title="next chapter" class="next-page clearfix">15. XML binding traits →</a>
+                        <a href="xml-traits.html" title="next chapter" class="next-page clearfix">12. XML binding traits →</a>
                     </section>
                     
                 </article><aside id="right-column" class="side-column hidden-sm">
@@ -1201,31 +1202,31 @@ marked with the <code class="docutils literal notranslate"><span class="pre">htt
                             </section>
                             
                             <ul>
-<li><a class="reference internal" href="#">14. HTTP protocol binding traits</a><ul>
-<li><a class="reference internal" href="#http-trait">14.1. <code class="docutils literal notranslate"><span class="pre">http</span></code> trait</a><ul>
-<li><a class="reference internal" href="#method">14.1.1. method</a></li>
-<li><a class="reference internal" href="#uri">14.1.2. uri</a><ul>
-<li><a class="reference internal" href="#literal-character-sequences">14.1.2.1. Literal character sequences</a></li>
-<li><a class="reference internal" href="#labels">14.1.2.2. Labels</a></li>
-<li><a class="reference internal" href="#query-string-literals">14.1.2.3. Query string literals</a></li>
-<li><a class="reference internal" href="#greedy-labels">14.1.2.4. Greedy labels</a></li>
-<li><a class="reference internal" href="#pattern-validation-and-conflict-avoidance">14.1.2.5. Pattern Validation and Conflict Avoidance</a></li>
+<li><a class="reference internal" href="#">11. HTTP protocol binding traits</a><ul>
+<li><a class="reference internal" href="#http-trait">11.1. <code class="docutils literal notranslate"><span class="pre">http</span></code> trait</a><ul>
+<li><a class="reference internal" href="#method">11.1.1. method</a></li>
+<li><a class="reference internal" href="#uri">11.1.2. uri</a><ul>
+<li><a class="reference internal" href="#literal-character-sequences">11.1.2.1. Literal character sequences</a></li>
+<li><a class="reference internal" href="#labels">11.1.2.2. Labels</a></li>
+<li><a class="reference internal" href="#query-string-literals">11.1.2.3. Query string literals</a></li>
+<li><a class="reference internal" href="#greedy-labels">11.1.2.4. Greedy labels</a></li>
+<li><a class="reference internal" href="#pattern-validation-and-conflict-avoidance">11.1.2.5. Pattern Validation and Conflict Avoidance</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#httperror-trait">14.2. <code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait</a></li>
-<li><a class="reference internal" href="#httpheader-trait">14.3. <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait</a><ul>
-<li><a class="reference internal" href="#restricted-http-headers">14.3.1. Restricted HTTP headers</a></li>
+<li><a class="reference internal" href="#httperror-trait">11.2. <code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpheader-trait">11.3. <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait</a><ul>
+<li><a class="reference internal" href="#restricted-http-headers">11.3.1. Restricted HTTP headers</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#httplabel-trait">14.4. <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait</a></li>
-<li><a class="reference internal" href="#httppayload-trait">14.5. <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait</a></li>
-<li><a class="reference internal" href="#httpprefixheaders-trait">14.6. <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait</a></li>
-<li><a class="reference internal" href="#httpquery-trait">14.7. <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait</a></li>
-<li><a class="reference internal" href="#cors-trait">14.8. <code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></li>
-<li><a class="reference internal" href="#serializing-http-messages">14.9. Serializing HTTP messages</a></li>
-<li><a class="reference internal" href="#event-streams">14.10. Event streams</a></li>
+<li><a class="reference internal" href="#httplabel-trait">11.4. <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait</a></li>
+<li><a class="reference internal" href="#httppayload-trait">11.5. <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpprefixheaders-trait">11.6. <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpquery-trait">11.7. <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait</a></li>
+<li><a class="reference internal" href="#cors-trait">11.8. <code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></li>
+<li><a class="reference internal" href="#serializing-http-messages">11.9. Serializing HTTP messages</a></li>
+<li><a class="reference internal" href="#event-streams">11.10. Event streams</a></li>
 </ul>
 </li>
 </ul>

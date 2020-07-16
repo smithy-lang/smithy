@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>9. Protocol traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    <title>6. Protocol traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
     
     <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -27,8 +27,8 @@
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="10. Authentication traits" href="auth-traits.html" />
-    <link rel="prev" title="8. Type refinement traits" href="type-refinement-traits.html" />
+    <link rel="next" title="7. Authentication traits" href="auth-traits.html" />
+    <link rel="prev" title="5. Type refinement traits" href="type-refinement-traits.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="smithy-version" content="1.0">
 
@@ -70,7 +70,7 @@
                     
                     
   <div class="section" id="protocol-traits">
-<h1><a href="#protocol-traits">9. Protocol traits</a></h1>
+<h1><a href="#protocol-traits">6. Protocol traits</a></h1>
 <p>Serialization and protocol traits define how data is transferred over
 the wire.</p>
 <div class="contents local topic" id="table-of-contents">
@@ -83,7 +83,7 @@ the wire.</p>
 </ul>
 </div>
 <div class="section" id="protocoldefinition-trait">
-<span id="id1"></span><h2><a href="#protocoldefinition-trait">9.1. <code class="docutils literal notranslate"><span class="pre">protocolDefinition</span></code> trait</a></h2>
+<span id="id1"></span><h2><a href="#protocoldefinition-trait">6.1. <code class="docutils literal notranslate"><span class="pre">protocolDefinition</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>A meta-trait that marks a trait as a protocol definition trait. Traits
@@ -109,7 +109,7 @@ with the service.</dd>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>traits</td>
-<td>[<a class="reference internal" href="lexical-structure.html#shape-id"><span class="std std-ref">Shape ID</span></a>]</td>
+<td>[<a class="reference internal" href="model.html#shape-id"><span class="std std-ref">Shape ID</span></a>]</td>
 <td>List of shape IDs that protocol implementations MUST understand
 in order to successfully use the protocol. Each shape MUST exist
 and MUST be a trait. Code generators SHOULD ensure that they
@@ -118,9 +118,8 @@ support each listed trait.</td>
 <tr class="row-odd"><td>noInlineDocumentSupport</td>
 <td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
 <td>If set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, indicates that this protocol does not support
-<a class="reference internal" href="shapes.html#document-type"><span class="std std-ref">document</span></a> shapes. A service that uses such
-a protocol MUST NOT contain any document shapes in their service
-closure.</td>
+<code class="docutils literal notranslate"><span class="pre">document</span></code> type shapes. A service that uses such a protocol
+MUST NOT contain any <code class="docutils literal notranslate"><span class="pre">document</span></code> shapes in their service closure.</td>
 </tr>
 </tbody>
 </table>
@@ -221,7 +220,7 @@ support configuration settings.</p>
 </div>
 </div>
 <div class="section" id="jsonname-trait">
-<span id="id2"></span><h2><a href="#jsonname-trait">9.2. <code class="docutils literal notranslate"><span class="pre">jsonName</span></code> trait</a></h2>
+<span id="id2"></span><h2><a href="#jsonname-trait">6.2. <code class="docutils literal notranslate"><span class="pre">jsonName</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Allows a serialized object property name in a JSON document to differ from
@@ -294,11 +293,11 @@ following document:</p>
 </div>
 </div>
 <div class="section" id="mediatype-trait">
-<span id="id3"></span><h2><a href="#mediatype-trait">9.3. <code class="docutils literal notranslate"><span class="pre">mediaType</span></code> trait</a></h2>
+<span id="id3"></span><h2><a href="#mediatype-trait">6.3. <code class="docutils literal notranslate"><span class="pre">mediaType</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
-<dd>Describes the contents of a blob or string shape using a media type as
-defined by <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc6838.html"><strong>RFC 6838</strong></a> (e.g., &quot;video/quicktime&quot;).</dd>
+<dd>Describes the contents of a blob or string shape using a design-time
+media type as defined by <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc6838.html"><strong>RFC 6838</strong></a> (for example, <code class="docutils literal notranslate"><span class="pre">application/json</span></code>).</dd>
 <dt>Trait selector</dt>
 <dd><p class="first"><code class="docutils literal notranslate"><span class="pre">:is(blob,</span> <span class="pre">string)</span></code></p>
 <p class="last"><em>Any blob or string</em></p>
@@ -306,27 +305,63 @@ defined by <span class="target" id="index-0"></span><a class="rfc reference exte
 <dt>Value type</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
 </dl>
-<p>The <code class="docutils literal notranslate"><span class="pre">mediaType</span></code> can be used in tools for documentation, validation,
-automated conversion or encoding in code, automatically determining an
-appropriate Content-Type for an HTTP-based protocol, etc.</p>
-<p>The following example defines a video/quicktime blob:</p>
+<p>The following example defines a <code class="docutils literal notranslate"><span class="pre">video/quicktime</span></code> blob:</p>
 <div class="sphinx-tabs docutils container">
 <div class="ui top attached tabular menu sphinx-menu docutils container">
 <div class="active item sphinx-data-tab-U21pdGh5 docutils container">
 <div class="docutils container">
 Smithy</div>
 </div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@mediaType</span>(<span class="s2">&quot;video/quicktime&quot;</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="nd">@mediaType</span>(<span class="s2">&quot;video/quicktime&quot;</span>)
 <span class="kd">blob</span><span class="nc"> VideoData</span>
 </pre></div>
 </div>
 </div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#VideoData&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;blob&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#mediaType&quot;</span><span class="p">:</span> <span class="s2">&quot;video/quicktime&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
 </div>
+</div>
+</div>
+<p class="rubric">Use cases</p>
+<p>The primary function of the <code class="docutils literal notranslate"><span class="pre">mediaType</span></code> trait is to send open content
+data over the wire inside of values that are isolated from the rest of
+a payload using exact representations of customer provided data. While the
+model does define the serialization format of values able to be stored in a
+shape at design-time using a media type, models are not required to define
+any kind of schema for the shape.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">mediaType</span></code> trait can be used to aid tools in documentation,
+validation, special-cased helpers to serialize and deserialize media type
+contents in code, assigning a fixed Content-Type when using
+<a class="reference internal" href="http-traits.html#http-traits"><span class="std std-ref">HTTP bindings</span></a>, etc.</p>
+<p class="rubric">Comparisons to document types</p>
+<p>The serialization format of a shape marked with the <code class="docutils literal notranslate"><span class="pre">&#64;mediaType</span></code> trait is
+an important part of its contract. In contrast, document types are
+serialized in a protocol-agnostic way and can only express data types as
+granular as the JSON-type system. Design-time media types are preferred over
+document types when the exact bytes of a value are required for an
+application to function.</p>
 </div>
 <div class="section" id="timestampformat-trait">
-<span id="id4"></span><h2><a href="#timestampformat-trait">9.4. <code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> trait</a></h2>
+<span id="id4"></span><h2><a href="#timestampformat-trait">6.4. <code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Defines a custom timestamp serialization format.</dd>
@@ -337,11 +372,11 @@ Smithy</div>
 <dt>Value type</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
 </dl>
-<p>The serialization format of a timestamp shape is normally dictated by the
-<a class="reference internal" href="#protocoldefinition-trait"><span class="std std-ref">protocol</span></a> of a service. In order to
-interoperate with other web services or frameworks, it is sometimes
-necessary to use a specific serialization format that differs from the
-protocol.</p>
+<p>By default, the serialization format of a timestamp is implicitly determined by
+the <a class="reference internal" href="#protocoldefinition-trait"><span class="std std-ref">protocol</span></a> of a service; however, the
+serialization format can be explicitly configured in some protocols to
+override the default format using the <code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> trait.</p>
+<p class="rubric">Timestamp formats</p>
 <p>Smithy defines the following built-in timestamp formats:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
@@ -371,16 +406,19 @@ with decimal precision (for example, <code class="docutils literal notranslate">
 </tr>
 </tbody>
 </table>
+<p class="rubric">Resolving timestamp formats</p>
+<p>The following steps are taken to determine the serialization format of a
+<a class="reference internal" href="model.html#member"><span class="std std-ref">member</span></a> that targets a timestamp:</p>
+<ol class="arabic simple">
+<li>Use the <code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> trait of the member, if present.</li>
+<li>Use the <code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> trait of the shape, if present.</li>
+<li>Use the default format of the protocol.</li>
+</ol>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
 <p class="last">This trait SHOULD NOT be used unless the intended serialization format of
 a timestamp differs from the default protocol format. Using this trait too
 liberally can cause other tooling to improperly interpret the timestamp.</p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last">Refer to <a class="reference internal" href="shapes.html#timestamp-serialization-format"><span class="std std-ref">Timestamp serialization format</span></a> for information on how to
-determine the serialization format of a timestamp.</p>
 </div>
 </div>
 </div>
@@ -389,9 +427,9 @@ determine the serialization format of a timestamp.</p>
                     
                     <section class="relations">
                         
-                        <a href="type-refinement-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 8. Type refinement traits</a>
+                        <a href="type-refinement-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 5. Type refinement traits</a>
                         
-                        <a href="auth-traits.html" title="next chapter" class="next-page clearfix">10. Authentication traits →</a>
+                        <a href="auth-traits.html" title="next chapter" class="next-page clearfix">7. Authentication traits →</a>
                     </section>
                     
                 </article><aside id="right-column" class="side-column hidden-sm">
@@ -406,11 +444,11 @@ determine the serialization format of a timestamp.</p>
                             </section>
                             
                             <ul>
-<li><a class="reference internal" href="#">9. Protocol traits</a><ul>
-<li><a class="reference internal" href="#protocoldefinition-trait">9.1. <code class="docutils literal notranslate"><span class="pre">protocolDefinition</span></code> trait</a></li>
-<li><a class="reference internal" href="#jsonname-trait">9.2. <code class="docutils literal notranslate"><span class="pre">jsonName</span></code> trait</a></li>
-<li><a class="reference internal" href="#mediatype-trait">9.3. <code class="docutils literal notranslate"><span class="pre">mediaType</span></code> trait</a></li>
-<li><a class="reference internal" href="#timestampformat-trait">9.4. <code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> trait</a></li>
+<li><a class="reference internal" href="#">6. Protocol traits</a><ul>
+<li><a class="reference internal" href="#protocoldefinition-trait">6.1. <code class="docutils literal notranslate"><span class="pre">protocolDefinition</span></code> trait</a></li>
+<li><a class="reference internal" href="#jsonname-trait">6.2. <code class="docutils literal notranslate"><span class="pre">jsonName</span></code> trait</a></li>
+<li><a class="reference internal" href="#mediatype-trait">6.3. <code class="docutils literal notranslate"><span class="pre">mediaType</span></code> trait</a></li>
+<li><a class="reference internal" href="#timestampformat-trait">6.4. <code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> trait</a></li>
 </ul>
 </li>
 </ul>

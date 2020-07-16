@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>11. Behavior traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    <title>8. Behavior traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
     
     <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -27,8 +27,8 @@
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="12. Resource traits" href="resource-traits.html" />
-    <link rel="prev" title="10. Authentication traits" href="auth-traits.html" />
+    <link rel="next" title="9. Resource traits" href="resource-traits.html" />
+    <link rel="prev" title="7. Authentication traits" href="auth-traits.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="smithy-version" content="1.0">
 
@@ -70,7 +70,7 @@
                     
                     
   <div class="section" id="behavior-traits">
-<h1><a href="#behavior-traits">11. Behavior traits</a></h1>
+<h1><a href="#behavior-traits">8. Behavior traits</a></h1>
 <p>Behavior traits are used to alter the behavior of operations.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
@@ -84,7 +84,7 @@
 </ul>
 </div>
 <div class="section" id="idempotencytoken-trait">
-<span id="id1"></span><h2><a href="#idempotencytoken-trait">11.1. <code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait</a></h2>
+<span id="id1"></span><h2><a href="#idempotencytoken-trait">8.1. <code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Defines the input member of an operation that is used by the server to
@@ -130,7 +130,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="idempotent-trait">
-<span id="id2"></span><h2><a href="#idempotent-trait">11.2. <code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait</a></h2>
+<span id="id2"></span><h2><a href="#idempotent-trait">8.2. <code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Indicates that the intended effect on the server of multiple identical
@@ -167,7 +167,7 @@ idempotent.</p>
 </div>
 </div>
 <div class="section" id="readonly-trait">
-<span id="id3"></span><h2><a href="#readonly-trait">11.3. <code class="docutils literal notranslate"><span class="pre">readonly</span></code> trait</a></h2>
+<span id="id3"></span><h2><a href="#readonly-trait">8.3. <code class="docutils literal notranslate"><span class="pre">readonly</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Indicates that an operation is effectively read-only.</dd>
@@ -197,7 +197,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="retryable-trait">
-<span id="id4"></span><h2><a href="#retryable-trait">11.4. <code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait</a></h2>
+<span id="id4"></span><h2><a href="#retryable-trait">8.4. <code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Indicates that an error MAY be retried by the client.</dd>
@@ -251,7 +251,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="paginated-trait">
-<span id="pagination"></span><span id="id5"></span><h2><a href="#paginated-trait">11.5. <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait</a></h2>
+<span id="pagination"></span><span id="id5"></span><h2><a href="#paginated-trait">8.5. <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>The <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait indicates that an operation intentionally limits
@@ -508,7 +508,7 @@ member in the previously referenced structure. Paths MUST adhere to the
 following ABNF.</p>
 <pre class="productionlist">
 <strong id="grammar-token-path">path</strong> =
-    <a class="reference internal" href="lexical-structure.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> *(&quot;.&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>)
+    <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> *(&quot;.&quot; <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>)
 </pre>
 <p>The following example defines a paginated operation which uses a result
 wrapper where the output token and items are referenced by paths.</p>
@@ -628,7 +628,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="pagination-behavior">
-<h3><a href="#pagination-behavior">11.5.1. Pagination Behavior</a></h3>
+<h3><a href="#pagination-behavior">8.5.1. Pagination Behavior</a></h3>
 <ol class="arabic simple">
 <li>If an operation returns a naturally size-limited subset of data
 (e.g., a top-ten list of users sorted by rank), then the operation
@@ -652,7 +652,7 @@ newly created resources MUST appear in order on the appropriate page.</li>
 </ol>
 </div>
 <div class="section" id="client-behavior">
-<h3><a href="#client-behavior">11.5.2. Client behavior</a></h3>
+<h3><a href="#client-behavior">8.5.2. Client behavior</a></h3>
 <p>Smithy clients SHOULD provide abstractions that can be used to automatically
 iterate over paginated responses. The following steps describe the process a
 client MUST follow when iterating over paginated API calls:</p>
@@ -675,7 +675,7 @@ as they are available.</li>
 </ol>
 </div>
 <div class="section" id="continuation-tokens">
-<h3><a href="#continuation-tokens">11.5.3. Continuation tokens</a></h3>
+<h3><a href="#continuation-tokens">8.5.3. Continuation tokens</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait indicates that an operation utilizes cursor-based
 pagination. When a paginated operation truncates its output, it MUST return a
 continuation token in the operation output that can be used to get the next
@@ -724,7 +724,7 @@ presence, absence, or contents of a continuation token.</p>
 </div>
 </div>
 <div class="section" id="httpchecksumrequired-trait">
-<span id="id6"></span><h2><a href="#httpchecksumrequired-trait">11.6. <code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait</a></h2>
+<span id="id6"></span><h2><a href="#httpchecksumrequired-trait">8.6. <code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Indicates that an operation requires a checksum in its HTTP request. By
@@ -761,9 +761,9 @@ Smithy</div>
                     
                     <section class="relations">
                         
-                        <a href="auth-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 10. Authentication traits</a>
+                        <a href="auth-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 7. Authentication traits</a>
                         
-                        <a href="resource-traits.html" title="next chapter" class="next-page clearfix">12. Resource traits →</a>
+                        <a href="resource-traits.html" title="next chapter" class="next-page clearfix">9. Resource traits →</a>
                     </section>
                     
                 </article><aside id="right-column" class="side-column hidden-sm">
@@ -778,18 +778,18 @@ Smithy</div>
                             </section>
                             
                             <ul>
-<li><a class="reference internal" href="#">11. Behavior traits</a><ul>
-<li><a class="reference internal" href="#idempotencytoken-trait">11.1. <code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait</a></li>
-<li><a class="reference internal" href="#idempotent-trait">11.2. <code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait</a></li>
-<li><a class="reference internal" href="#readonly-trait">11.3. <code class="docutils literal notranslate"><span class="pre">readonly</span></code> trait</a></li>
-<li><a class="reference internal" href="#retryable-trait">11.4. <code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait</a></li>
-<li><a class="reference internal" href="#paginated-trait">11.5. <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait</a><ul>
-<li><a class="reference internal" href="#pagination-behavior">11.5.1. Pagination Behavior</a></li>
-<li><a class="reference internal" href="#client-behavior">11.5.2. Client behavior</a></li>
-<li><a class="reference internal" href="#continuation-tokens">11.5.3. Continuation tokens</a></li>
+<li><a class="reference internal" href="#">8. Behavior traits</a><ul>
+<li><a class="reference internal" href="#idempotencytoken-trait">8.1. <code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait</a></li>
+<li><a class="reference internal" href="#idempotent-trait">8.2. <code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait</a></li>
+<li><a class="reference internal" href="#readonly-trait">8.3. <code class="docutils literal notranslate"><span class="pre">readonly</span></code> trait</a></li>
+<li><a class="reference internal" href="#retryable-trait">8.4. <code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait</a></li>
+<li><a class="reference internal" href="#paginated-trait">8.5. <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait</a><ul>
+<li><a class="reference internal" href="#pagination-behavior">8.5.1. Pagination Behavior</a></li>
+<li><a class="reference internal" href="#client-behavior">8.5.2. Client behavior</a></li>
+<li><a class="reference internal" href="#continuation-tokens">8.5.3. Continuation tokens</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#httpchecksumrequired-trait">11.6. <code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpchecksumrequired-trait">8.6. <code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait</a></li>
 </ul>
 </li>
 </ul>

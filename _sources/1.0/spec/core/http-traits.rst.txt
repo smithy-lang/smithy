@@ -120,7 +120,8 @@ request URI and labels which are used to insert named components into the
 request URI.
 
 The resolved absolute URI of an operation is formed by combining the URI of
-the operation with the endpoint of the service. For example, given a service
+the operation with the endpoint of the service. (that is, the host and any 
+base URL of where the service is deployed). For example, given a service 
 endpoint of ``https://example.com/v1`` and an operation pattern of
 ``/myresource``, the resolved absolute URI of the operation is
 ``https://example.com/v1/myresource``.
@@ -670,7 +671,7 @@ Serialization rules:
 #. When a string or blob member is referenced, the raw value is serialized
    as the body of the message.
 #. When a :ref:`structure <structure>`, :ref:`union <union>`, or
-   :ref:`document <document-type>` is targeted, the shape value is serialized
+   document type is targeted, the shape value is serialized
    as a :ref:`protocol-specific <protocolDefinition-trait>` document that is
    sent as the body of the message.
 

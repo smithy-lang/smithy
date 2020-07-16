@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>8. Type refinement traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    <title>5. Type refinement traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
     
     <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -27,8 +27,8 @@
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="9. Protocol traits" href="protocol-traits.html" />
-    <link rel="prev" title="7. Documentation traits" href="documentation-traits.html" />
+    <link rel="next" title="6. Protocol traits" href="protocol-traits.html" />
+    <link rel="prev" title="4. Documentation traits" href="documentation-traits.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="smithy-version" content="1.0">
 
@@ -70,7 +70,7 @@
                     
                     
   <div class="section" id="type-refinement-traits">
-<h1><a href="#type-refinement-traits">8. Type refinement traits</a></h1>
+<h1><a href="#type-refinement-traits">5. Type refinement traits</a></h1>
 <p>Type refinement traits are traits that significantly refine, or change,
 the type of a shape.</p>
 <div class="contents local topic" id="table-of-contents">
@@ -81,13 +81,13 @@ the type of a shape.</p>
 </ul>
 </div>
 <div class="section" id="box-trait">
-<span id="id1"></span><h2><a href="#box-trait">8.1. <code class="docutils literal notranslate"><span class="pre">box</span></code> trait</a></h2>
+<span id="id1"></span><h2><a href="#box-trait">5.1. <code class="docutils literal notranslate"><span class="pre">box</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
-<dd><p class="first">Indicates that a shape is boxed. When a <a class="reference internal" href="shapes.html#member"><span class="std std-ref">member</span></a> is marked
+<dd><p class="first">Indicates that a shape is boxed. When a <a class="reference internal" href="model.html#member"><span class="std std-ref">member</span></a> is marked
 with this trait or the shape targeted by a member is marked with this
 trait, the member may or may not contain a value, and the member has no
-<a class="reference internal" href="shapes.html#default-values"><span class="std std-ref">default value</span></a>.</p>
+<a class="reference internal" href="model.html#default-values"><span class="std std-ref">default value</span></a>.</p>
 <p class="last">Boolean, byte, short, integer, long, float, and double shapes are only
 considered boxed if they are marked with the <code class="docutils literal notranslate"><span class="pre">box</span></code> trait. All other
 shapes are always considered boxed.</p>
@@ -143,11 +143,11 @@ JSON</div>
 used in all Smithy models, including boxed and unboxed shapes.</p>
 </div>
 <div class="section" id="error-trait">
-<span id="id2"></span><h2><a href="#error-trait">8.2. <code class="docutils literal notranslate"><span class="pre">error</span></code> trait</a></h2>
+<span id="id2"></span><h2><a href="#error-trait">5.2. <code class="docutils literal notranslate"><span class="pre">error</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Indicates that a structure shape represents an error. All shapes
-referenced by the <a class="reference internal" href="shapes.html#operation-errors"><span class="std std-ref">errors list of an operation</span></a>
+referenced by the <a class="reference internal" href="model.html#operation"><span class="std std-ref">errors list of an operation</span></a>
 MUST be targeted with this trait.</dd>
 <dt>Trait selector</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
@@ -155,7 +155,7 @@ MUST be targeted with this trait.</dd>
 <dd><code class="docutils literal notranslate"><span class="pre">string</span></code> that MUST be set to &quot;client&quot; or &quot;server&quot; to indicate if the
 client or server is at fault for the error.</dd>
 <dt>Conflicts with</dt>
-<dd><a class="reference internal" href="traits.html#trait-shapes"><span class="std std-ref">trait</span></a></dd>
+<dd><a class="reference internal" href="model.html#trait-shapes"><span class="std std-ref">trait</span></a></dd>
 </dl>
 <p>The following structure defines a throttling error.</p>
 <div class="sphinx-tabs docutils container">
@@ -239,9 +239,9 @@ Smithy</div>
                     
                     <section class="relations">
                         
-                        <a href="documentation-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 7. Documentation traits</a>
+                        <a href="documentation-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 4. Documentation traits</a>
                         
-                        <a href="protocol-traits.html" title="next chapter" class="next-page clearfix">9. Protocol traits →</a>
+                        <a href="protocol-traits.html" title="next chapter" class="next-page clearfix">6. Protocol traits →</a>
                     </section>
                     
                 </article><aside id="right-column" class="side-column hidden-sm">
@@ -256,9 +256,9 @@ Smithy</div>
                             </section>
                             
                             <ul>
-<li><a class="reference internal" href="#">8. Type refinement traits</a><ul>
-<li><a class="reference internal" href="#box-trait">8.1. <code class="docutils literal notranslate"><span class="pre">box</span></code> trait</a></li>
-<li><a class="reference internal" href="#error-trait">8.2. <code class="docutils literal notranslate"><span class="pre">error</span></code> trait</a></li>
+<li><a class="reference internal" href="#">5. Type refinement traits</a><ul>
+<li><a class="reference internal" href="#box-trait">5.1. <code class="docutils literal notranslate"><span class="pre">box</span></code> trait</a></li>
+<li><a class="reference internal" href="#error-trait">5.2. <code class="docutils literal notranslate"><span class="pre">error</span></code> trait</a></li>
 </ul>
 </li>
 </ul>

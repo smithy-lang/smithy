@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>13. Streaming Traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    <title>10. Streaming Traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
     
     <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -27,8 +27,8 @@
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="14. HTTP protocol binding traits" href="http-traits.html" />
-    <link rel="prev" title="12. Resource traits" href="resource-traits.html" />
+    <link rel="next" title="11. HTTP protocol binding traits" href="http-traits.html" />
+    <link rel="prev" title="9. Resource traits" href="resource-traits.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="smithy-version" content="1.0">
 
@@ -70,7 +70,7 @@
                     
                     
   <div class="section" id="streaming-traits">
-<span id="stream-traits"></span><h1><a href="#streaming-traits">13. Streaming Traits</a></h1>
+<span id="stream-traits"></span><h1><a href="#streaming-traits">10. Streaming Traits</a></h1>
 <p>A streaming shape is a shape which represents data that is not returned all at
 once. This includes both streaming binary data and event streams.</p>
 <div class="contents local topic" id="table-of-contents">
@@ -97,7 +97,7 @@ once. This includes both streaming binary data and event streams.</p>
 </ul>
 </div>
 <div class="section" id="streaming-trait">
-<span id="id1"></span><h2><a href="#streaming-trait">13.1. <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait</a></h2>
+<span id="id1"></span><h2><a href="#streaming-trait">10.1. <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd><p class="first">Indicates that the data represented by the shape needs to be streamed.</p>
@@ -149,7 +149,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="requireslength-trait">
-<span id="id2"></span><h2><a href="#requireslength-trait">13.2. <code class="docutils literal notranslate"><span class="pre">requiresLength</span></code> trait</a></h2>
+<span id="id2"></span><h2><a href="#requireslength-trait">10.2. <code class="docutils literal notranslate"><span class="pre">requiresLength</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd><p class="first">Indicates that the streaming blob MUST be finite and has a known size.</p>
@@ -183,7 +183,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="event-streams">
-<span id="id3"></span><h2><a href="#event-streams">13.3. Event streams</a></h2>
+<span id="id3"></span><h2><a href="#event-streams">10.3. Event streams</a></h2>
 <p>An event stream is an abstraction that allows multiple messages to be sent
 asynchronously between a client and server. Event streams support both duplex
 and simplex streaming. The serialization format and framing of messages sent
@@ -374,13 +374,13 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="initial-messages">
-<span id="id4"></span><h3><a href="#initial-messages">13.3.1. Initial messages</a></h3>
+<span id="id4"></span><h3><a href="#initial-messages">10.3.1. Initial messages</a></h3>
 <p>An <em>initial message</em> is comprised of the top-level input or output members
 of an operation that do not target the event stream union. Initial
 messages provide an opportunity for a client or server to provide metadata
 about an event stream before transmitting events.</p>
 <div class="section" id="initial-request">
-<span id="id5"></span><h4><a href="#initial-request">13.3.1.1. Initial-request</a></h4>
+<span id="id5"></span><h4><a href="#initial-request">10.3.1.1. Initial-request</a></h4>
 <p>An <em>initial-request</em> is an initial message that can be sent from a client to
 a server for an operation with an input event stream. The structure of an
 initial-request is the input of an operation with no value provided for the
@@ -493,7 +493,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="initial-response">
-<span id="id6"></span><h4><a href="#initial-response">13.3.1.2. Initial-response</a></h4>
+<span id="id6"></span><h4><a href="#initial-response">10.3.1.2. Initial-response</a></h4>
 <p>An <em>initial-response</em> is an initial message that can be sent from a server
 to a client for an operation with an output event stream. The structure of
 an initial-response is the output of an operation with no value provided for
@@ -595,7 +595,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="initial-message-client-and-server-behavior">
-<h4><a href="#initial-message-client-and-server-behavior">13.3.1.3. Initial message client and server behavior</a></h4>
+<h4><a href="#initial-message-client-and-server-behavior">10.3.1.3. Initial message client and server behavior</a></h4>
 <p>Initial messages, if received, MUST be provided to applications
 before event stream events.</p>
 <p>It is a backward compatible change to add an initial-request or
@@ -606,7 +606,7 @@ received for an initial message that contains only optional members.</p>
 </div>
 </div>
 <div class="section" id="client-behavior">
-<span id="event-stream-client-behavior"></span><h3><a href="#client-behavior">13.3.2. Client behavior</a></h3>
+<span id="event-stream-client-behavior"></span><h3><a href="#client-behavior">10.3.2. Client behavior</a></h3>
 <p>Clients that send or receive event streams are expected to
 provide an abstraction to end-users that allows values to be produced or
 consumed asynchronously for each named member of the targeted union. Adding
@@ -644,7 +644,7 @@ type (for example, when <code class="docutils literal notranslate"><span class="
 provided).</p>
 </div>
 <div class="section" id="event-message-serialization">
-<span id="id7"></span><h3><a href="#event-message-serialization">13.3.3. Event message serialization</a></h3>
+<span id="id7"></span><h3><a href="#event-message-serialization">10.3.3. Event message serialization</a></h3>
 <p>While the framing and serialization of an event stream is protocol-specific,
 traits can be used to influence the serialization of an event stream event.
 Structure members that are sent as part of an event stream are serialized
@@ -763,9 +763,9 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="event-stream-traits">
-<h3><a href="#event-stream-traits">13.3.4. Event stream traits</a></h3>
+<h3><a href="#event-stream-traits">10.3.4. Event stream traits</a></h3>
 <div class="section" id="eventheader-trait">
-<span id="id8"></span><h4><a href="#eventheader-trait">13.3.4.1. <code class="docutils literal notranslate"><span class="pre">eventHeader</span></code> trait</a></h4>
+<span id="id8"></span><h4><a href="#eventheader-trait">10.3.4.1. <code class="docutils literal notranslate"><span class="pre">eventHeader</span></code> trait</a></h4>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Binds a member of a structure to be serialized as an event header when
@@ -840,7 +840,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="eventpayload-trait">
-<span id="id9"></span><h4><a href="#eventpayload-trait">13.3.4.2. <code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait</a></h4>
+<span id="id9"></span><h4><a href="#eventpayload-trait">10.3.4.2. <code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait</a></h4>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Binds a member of a structure to be serialized as the payload of an
@@ -941,9 +941,9 @@ JSON</div>
                     
                     <section class="relations">
                         
-                        <a href="resource-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 12. Resource traits</a>
+                        <a href="resource-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 9. Resource traits</a>
                         
-                        <a href="http-traits.html" title="next chapter" class="next-page clearfix">14. HTTP protocol binding traits →</a>
+                        <a href="http-traits.html" title="next chapter" class="next-page clearfix">11. HTTP protocol binding traits →</a>
                     </section>
                     
                 </article><aside id="right-column" class="side-column hidden-sm">
@@ -958,21 +958,21 @@ JSON</div>
                             </section>
                             
                             <ul>
-<li><a class="reference internal" href="#">13. Streaming Traits</a><ul>
-<li><a class="reference internal" href="#streaming-trait">13.1. <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait</a></li>
-<li><a class="reference internal" href="#requireslength-trait">13.2. <code class="docutils literal notranslate"><span class="pre">requiresLength</span></code> trait</a></li>
-<li><a class="reference internal" href="#event-streams">13.3. Event streams</a><ul>
-<li><a class="reference internal" href="#initial-messages">13.3.1. Initial messages</a><ul>
-<li><a class="reference internal" href="#initial-request">13.3.1.1. Initial-request</a></li>
-<li><a class="reference internal" href="#initial-response">13.3.1.2. Initial-response</a></li>
-<li><a class="reference internal" href="#initial-message-client-and-server-behavior">13.3.1.3. Initial message client and server behavior</a></li>
+<li><a class="reference internal" href="#">10. Streaming Traits</a><ul>
+<li><a class="reference internal" href="#streaming-trait">10.1. <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait</a></li>
+<li><a class="reference internal" href="#requireslength-trait">10.2. <code class="docutils literal notranslate"><span class="pre">requiresLength</span></code> trait</a></li>
+<li><a class="reference internal" href="#event-streams">10.3. Event streams</a><ul>
+<li><a class="reference internal" href="#initial-messages">10.3.1. Initial messages</a><ul>
+<li><a class="reference internal" href="#initial-request">10.3.1.1. Initial-request</a></li>
+<li><a class="reference internal" href="#initial-response">10.3.1.2. Initial-response</a></li>
+<li><a class="reference internal" href="#initial-message-client-and-server-behavior">10.3.1.3. Initial message client and server behavior</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#client-behavior">13.3.2. Client behavior</a></li>
-<li><a class="reference internal" href="#event-message-serialization">13.3.3. Event message serialization</a></li>
-<li><a class="reference internal" href="#event-stream-traits">13.3.4. Event stream traits</a><ul>
-<li><a class="reference internal" href="#eventheader-trait">13.3.4.1. <code class="docutils literal notranslate"><span class="pre">eventHeader</span></code> trait</a></li>
-<li><a class="reference internal" href="#eventpayload-trait">13.3.4.2. <code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait</a></li>
+<li><a class="reference internal" href="#client-behavior">10.3.2. Client behavior</a></li>
+<li><a class="reference internal" href="#event-message-serialization">10.3.3. Event message serialization</a></li>
+<li><a class="reference internal" href="#event-stream-traits">10.3.4. Event stream traits</a><ul>
+<li><a class="reference internal" href="#eventheader-trait">10.3.4.1. <code class="docutils literal notranslate"><span class="pre">eventHeader</span></code> trait</a></li>
+<li><a class="reference internal" href="#eventpayload-trait">10.3.4.2. <code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait</a></li>
 </ul>
 </li>
 </ul>

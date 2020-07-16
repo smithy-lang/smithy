@@ -10,6 +10,10 @@
     
     <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
 
     
@@ -17,11 +21,13 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/tabs.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
     <script type="text/javascript" src="../../../_static/smithy.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="1. Introduction" href="intro.html" />
+    <link rel="next" title="1. The Smithy model" href="model.html" />
     <link rel="prev" title="Specifications" href="../index.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="smithy-version" content="1.0">
@@ -64,312 +70,367 @@
                     
   <div class="section" id="smithy-specification">
 <h1><a href="#smithy-specification">Smithy specification</a></h1>
+<p>This is the specification of Smithy, an interface definition language and set
+of tools used to build clients, servers, and other kinds of artifacts through
+model transformations. This specification is at version 1.0.</p>
+<div class="section" id="conventions-used-in-this-document">
+<h2><a href="#conventions-used-in-this-document">Conventions used in this document</a></h2>
+<p>The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;,
+&quot;SHOULD&quot;, &quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;, &quot;MAY&quot;, and &quot;OPTIONAL&quot; in this
+document are to be interpreted as described in <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc2119.html"><strong>RFC 2119</strong></a>.</p>
+<p>This specification makes use of the Augmented Backus-Naur Form (ABNF)
+<span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc5234.html"><strong>RFC 5234</strong></a> notation, including the <em>core rules</em> defined in Appendix B
+of that document.</p>
+<p>Readers are invited to report technical errors and ambiguities in this
+specification to the Smithy GitHub repository at <a class="reference external" href="https://github.com/awslabs/smithy">https://github.com/awslabs/smithy</a>.
+This specification is open source, so contributions are welcome.</p>
+<p class="rubric">Examples</p>
+<p>Unless declared otherwise, example Smithy models given in this specification
+are written using the <a class="reference internal" href="idl.html#idl"><span class="std std-ref">Smithy interface definition language (IDL)</span></a>
+syntax. Complementary <a class="reference internal" href="json-ast.html#json-ast"><span class="std std-ref">JSON AST</span></a> examples are provided
+alongside Smithy IDL examples where appropriate. For example:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+
+<span class="kd">metadata</span><span class="nc"> foo </span><span class="nd">=</span> <span class="s2">&quot;bar&quot;</span>
+
+<span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">use</span><span class="nc"> smithy.other.namespace#MyString</span>
+
+<span class="kd">structure</span><span class="nc"> MyStructure</span> {
+    <span class="nd">@required</span>
+    <span class="nl">foo:</span> <span class="vc">MyString</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;foo&quot;</span><span class="p">:</span> <span class="s2">&quot;bar&quot;</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyStructure&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;foo&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.other.namespace#MyString&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="table-of-contents">
+<h2><a href="#table-of-contents">Table of contents</a></h2>
 <div class="toctree-wrapper large-toctree compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="intro.html">1. Introduction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="intro.html#status-of-this-specification">1.1. Status of this specification</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro.html#requirements-notation">1.2. Requirements notation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro.html#example-models">1.3. Example models</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro.html#feedback">1.4. Feedback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model.html">1. The Smithy model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model.html#smithy-framework">1.1. Smithy framework</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.html#the-semantic-model">1.2. The semantic model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.html#model-files">1.3. Model files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="model.html#merging-model-files">1.3.1. Merging model files</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="lexical-structure.html">2. Smithy IDL lexical structure</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="lexical-structure.html#semantic-model">2.1. Semantic model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lexical-structure.html#smithy-idl-abnf">2.2. Smithy IDL ABNF</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lexical-structure.html#lexical-notes">2.3. Lexical notes</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="lexical-structure.html#comments">2.3.1. Comments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.html#metadata">1.4. Metadata</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="model.html#merging-metadata">1.4.1. Merging metadata</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="lexical-structure.html#control-section">2.4. Control section</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="lexical-structure.html#version-statement">2.4.1. Version statement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.html#node-values">1.5. Node values</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="model.html#node-value-types">1.5.1. Node value types</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="lexical-structure.html#shape-id">2.5. Shape ID</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="lexical-structure.html#shape-id-abnf">2.5.1. Shape ID ABNF</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lexical-structure.html#shape-id-member-names">2.5.2. Shape ID member names</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lexical-structure.html#shape-id-conflicts">2.5.3. Shape ID conflicts</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lexical-structure.html#syntactic-shape-ids-in-the-idl">2.5.4. Syntactic shape IDs in the IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.html#shapes">1.6. Shapes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="model.html#shape-id">1.6.1. Shape ID</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.html#shape-id-conflicts">1.6.2. Shape ID conflicts</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="lexical-structure.html#node-values">2.6. Node values</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lexical-structure.html#string-values">2.7. String values</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="lexical-structure.html#string-escape-characters">2.7.1. String escape characters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lexical-structure.html#text-blocks">2.7.2. Text blocks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.html#simple-shapes">1.7. Simple shapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.html#aggregate-shapes">1.8. Aggregate shapes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="model.html#member">1.8.1. Member</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.html#list">1.8.2. List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.html#set">1.8.3. Set</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.html#map">1.8.4. Map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.html#structure">1.8.5. Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.html#union">1.8.6. Union</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.html#default-values">1.8.7. Default values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.html#recursive-shape-definitions">1.8.8. Recursive shape definitions</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="model.html#service-shapes">1.9. Service shapes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="model.html#service">1.9.1. Service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.html#operation">1.9.2. Operation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.html#resource">1.9.3. Resource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.html#resource-identifiers">1.9.4. Resource Identifiers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.html#resource-lifecycle-operations">1.9.5. Resource lifecycle operations</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="shapes.html">3. Shapes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="shapes.html#shape-section">3.1. Shape section</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="shapes.html#namespaces">3.1.1. Namespaces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="shapes.html#referring-to-shapes">3.1.2. Referring to shapes</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="shapes.html#defining-shapes">3.2. Defining shapes</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="shapes.html#shape-names">3.2.1. Shape names</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="shapes.html#simple-types">3.3. Simple types</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="shapes.html#timestamp-serialization-format">3.3.1. Timestamp serialization format</a></li>
-<li class="toctree-l3"><a class="reference internal" href="shapes.html#document-types">3.3.2. Document types</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="shapes.html#aggregate-types">3.4. Aggregate types</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="shapes.html#member">3.4.1. Member</a></li>
-<li class="toctree-l3"><a class="reference internal" href="shapes.html#list">3.4.2. List</a></li>
-<li class="toctree-l3"><a class="reference internal" href="shapes.html#set">3.4.3. Set</a></li>
-<li class="toctree-l3"><a class="reference internal" href="shapes.html#map">3.4.4. Map</a></li>
-<li class="toctree-l3"><a class="reference internal" href="shapes.html#structure">3.4.5. Structure</a></li>
-<li class="toctree-l3"><a class="reference internal" href="shapes.html#union">3.4.6. Union</a></li>
-<li class="toctree-l3"><a class="reference internal" href="shapes.html#default-values">3.4.7. Default values</a></li>
-<li class="toctree-l3"><a class="reference internal" href="shapes.html#recursive-shape-definitions">3.4.8. Recursive shape definitions</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="shapes.html#service-types">3.5. Service types</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="shapes.html#service">3.5.1. Service</a></li>
-<li class="toctree-l3"><a class="reference internal" href="shapes.html#operation">3.5.2. Operation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="shapes.html#resource">3.5.3. Resource</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.html#traits">1.10. Traits</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="model.html#applying-traits-to-shapes">1.10.1. Applying traits to shapes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.html#trait-conflict-resolution">1.10.2. Trait conflict resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.html#trait-node-values">1.10.3. Trait node values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.html#defining-traits">1.10.4. Defining traits</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="prelude-model.html">4. Prelude model</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="prelude-model.html#prelude-shapes">4.1. Prelude shapes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prelude-model.html">2. Prelude model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="prelude-model.html#prelude-shapes">2.1. Prelude shapes</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="traits.html">5. Traits</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="traits.html#applying-traits-to-shapes">5.1. Applying traits to shapes</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="traits.html#apply-statement">5.1.1. Apply statement</a></li>
-<li class="toctree-l3"><a class="reference internal" href="traits.html#scope-of-member-traits">5.1.2. Scope of member traits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="constraint-traits.html">3. Constraint traits</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="constraint-traits.html#enum-trait">3.1. <code class="docutils literal notranslate"><span class="pre">enum</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constraint-traits.html#idref-trait">3.2. <code class="docutils literal notranslate"><span class="pre">idRef</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constraint-traits.html#length-trait">3.3. <code class="docutils literal notranslate"><span class="pre">length</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constraint-traits.html#pattern-trait">3.4. <code class="docutils literal notranslate"><span class="pre">pattern</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constraint-traits.html#private-trait">3.5. <code class="docutils literal notranslate"><span class="pre">private</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constraint-traits.html#range-trait">3.6. <code class="docutils literal notranslate"><span class="pre">range</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constraint-traits.html#required-trait">3.7. <code class="docutils literal notranslate"><span class="pre">required</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constraint-traits.html#uniqueitems-trait">3.8. <code class="docutils literal notranslate"><span class="pre">uniqueItems</span></code> trait</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="traits.html#trait-values">5.2. Trait values</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="traits.html#structure-map-and-union-trait-values">5.2.1. Structure, map, and union trait values</a></li>
-<li class="toctree-l3"><a class="reference internal" href="traits.html#annotation-traits">5.2.2. Annotation traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="traits.html#list-and-set-trait-values">5.2.3. List and set trait values</a></li>
-<li class="toctree-l3"><a class="reference internal" href="traits.html#other-trait-values">5.2.4. Other trait values</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation-traits.html">4. Documentation traits</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html#deprecated-trait">4.1. <code class="docutils literal notranslate"><span class="pre">deprecated</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html#documentation-trait">4.2. <code class="docutils literal notranslate"><span class="pre">documentation</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html#examples-trait">4.3. <code class="docutils literal notranslate"><span class="pre">examples</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html#externaldocumentation-trait">4.4. <code class="docutils literal notranslate"><span class="pre">externalDocumentation</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html#sensitive-trait">4.5. <code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html#since-trait">4.6. <code class="docutils literal notranslate"><span class="pre">since</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html#tags-trait">4.7. <code class="docutils literal notranslate"><span class="pre">tags</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html#title-trait">4.8. <code class="docutils literal notranslate"><span class="pre">title</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html#unstable-trait">4.9. <code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="traits.html#defining-trait-shapes">5.3. Defining trait shapes</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="traits.html#trait-shape-properties">5.3.1. Trait shape properties</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type-refinement-traits.html">5. Type refinement traits</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="type-refinement-traits.html#box-trait">5.1. <code class="docutils literal notranslate"><span class="pre">box</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="type-refinement-traits.html#error-trait">5.2. <code class="docutils literal notranslate"><span class="pre">error</span></code> trait</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="traits.html#trait-node-values">5.4. Trait node values</a></li>
-<li class="toctree-l2"><a class="reference internal" href="traits.html#trait-conflict-resolution">5.5. Trait conflict resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="protocol-traits.html">6. Protocol traits</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="protocol-traits.html#protocoldefinition-trait">6.1. <code class="docutils literal notranslate"><span class="pre">protocolDefinition</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="protocol-traits.html#jsonname-trait">6.2. <code class="docutils literal notranslate"><span class="pre">jsonName</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="protocol-traits.html#mediatype-trait">6.3. <code class="docutils literal notranslate"><span class="pre">mediaType</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="protocol-traits.html#timestampformat-trait">6.4. <code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> trait</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="constraint-traits.html">6. Constraint traits</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="constraint-traits.html#enum-trait">6.1. <code class="docutils literal notranslate"><span class="pre">enum</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="constraint-traits.html#idref-trait">6.2. <code class="docutils literal notranslate"><span class="pre">idRef</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="constraint-traits.html#length-trait">6.3. <code class="docutils literal notranslate"><span class="pre">length</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="constraint-traits.html#pattern-trait">6.4. <code class="docutils literal notranslate"><span class="pre">pattern</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="constraint-traits.html#private-trait">6.5. <code class="docutils literal notranslate"><span class="pre">private</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="constraint-traits.html#range-trait">6.6. <code class="docutils literal notranslate"><span class="pre">range</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="constraint-traits.html#required-trait">6.7. <code class="docutils literal notranslate"><span class="pre">required</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="constraint-traits.html#uniqueitems-trait">6.8. <code class="docutils literal notranslate"><span class="pre">uniqueItems</span></code> trait</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auth-traits.html">7. Authentication traits</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="auth-traits.html#authdefinition-trait">7.1. <code class="docutils literal notranslate"><span class="pre">authDefinition</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auth-traits.html#httpbasicauth-trait">7.2. <code class="docutils literal notranslate"><span class="pre">httpBasicAuth</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auth-traits.html#httpdigestauth-trait">7.3. <code class="docutils literal notranslate"><span class="pre">httpDigestAuth</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auth-traits.html#httpbearerauth-trait">7.4. <code class="docutils literal notranslate"><span class="pre">httpBearerAuth</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auth-traits.html#httpapikeyauth-trait">7.5. <code class="docutils literal notranslate"><span class="pre">httpApiKeyAuth</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auth-traits.html#optionalauth-trait">7.6. <code class="docutils literal notranslate"><span class="pre">optionalAuth</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auth-traits.html#auth-trait">7.7. <code class="docutils literal notranslate"><span class="pre">auth</span></code> trait</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="documentation-traits.html">7. Documentation traits</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html#deprecated-trait">7.1. <code class="docutils literal notranslate"><span class="pre">deprecated</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html#documentation-trait">7.2. <code class="docutils literal notranslate"><span class="pre">documentation</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html#examples-trait">7.3. <code class="docutils literal notranslate"><span class="pre">examples</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html#externaldocumentation-trait">7.4. <code class="docutils literal notranslate"><span class="pre">externalDocumentation</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html#sensitive-trait">7.5. <code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html#since-trait">7.6. <code class="docutils literal notranslate"><span class="pre">since</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html#tags-trait">7.7. <code class="docutils literal notranslate"><span class="pre">tags</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html#title-trait">7.8. <code class="docutils literal notranslate"><span class="pre">title</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html#unstable-trait">7.9. <code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait</a></li>
+<li class="toctree-l1"><a class="reference internal" href="behavior-traits.html">8. Behavior traits</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="behavior-traits.html#idempotencytoken-trait">8.1. <code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="behavior-traits.html#idempotent-trait">8.2. <code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="behavior-traits.html#readonly-trait">8.3. <code class="docutils literal notranslate"><span class="pre">readonly</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="behavior-traits.html#retryable-trait">8.4. <code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="behavior-traits.html#paginated-trait">8.5. <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="behavior-traits.html#pagination-behavior">8.5.1. Pagination Behavior</a></li>
+<li class="toctree-l3"><a class="reference internal" href="behavior-traits.html#client-behavior">8.5.2. Client behavior</a></li>
+<li class="toctree-l3"><a class="reference internal" href="behavior-traits.html#continuation-tokens">8.5.3. Continuation tokens</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="type-refinement-traits.html">8. Type refinement traits</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="type-refinement-traits.html#box-trait">8.1. <code class="docutils literal notranslate"><span class="pre">box</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="type-refinement-traits.html#error-trait">8.2. <code class="docutils literal notranslate"><span class="pre">error</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="behavior-traits.html#httpchecksumrequired-trait">8.6. <code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="protocol-traits.html">9. Protocol traits</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="protocol-traits.html#protocoldefinition-trait">9.1. <code class="docutils literal notranslate"><span class="pre">protocolDefinition</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="protocol-traits.html#jsonname-trait">9.2. <code class="docutils literal notranslate"><span class="pre">jsonName</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="protocol-traits.html#mediatype-trait">9.3. <code class="docutils literal notranslate"><span class="pre">mediaType</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="protocol-traits.html#timestampformat-trait">9.4. <code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> trait</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resource-traits.html">9. Resource traits</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="resource-traits.html#noreplace-trait">9.1. <code class="docutils literal notranslate"><span class="pre">noReplace</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resource-traits.html#references-trait">9.2. <code class="docutils literal notranslate"><span class="pre">references</span></code> trait</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="resource-traits.html#implicit-ids">9.2.1. Implicit ids</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="auth-traits.html">10. Authentication traits</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="auth-traits.html#authdefinition-trait">10.1. <code class="docutils literal notranslate"><span class="pre">authDefinition</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="auth-traits.html#httpbasicauth-trait">10.2. <code class="docutils literal notranslate"><span class="pre">httpBasicAuth</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="auth-traits.html#httpdigestauth-trait">10.3. <code class="docutils literal notranslate"><span class="pre">httpDigestAuth</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="auth-traits.html#httpbearerauth-trait">10.4. <code class="docutils literal notranslate"><span class="pre">httpBearerAuth</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="auth-traits.html#httpapikeyauth-trait">10.5. <code class="docutils literal notranslate"><span class="pre">httpApiKeyAuth</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="auth-traits.html#optionalauth-trait">10.6. <code class="docutils literal notranslate"><span class="pre">optionalAuth</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="auth-traits.html#auth-trait">10.7. <code class="docutils literal notranslate"><span class="pre">auth</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resource-traits.html#resourceidentifier-trait">9.3. <code class="docutils literal notranslate"><span class="pre">resourceIdentifier</span></code> trait</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="behavior-traits.html">11. Behavior traits</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="behavior-traits.html#idempotencytoken-trait">11.1. <code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="behavior-traits.html#idempotent-trait">11.2. <code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="behavior-traits.html#readonly-trait">11.3. <code class="docutils literal notranslate"><span class="pre">readonly</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="behavior-traits.html#retryable-trait">11.4. <code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="behavior-traits.html#paginated-trait">11.5. <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="behavior-traits.html#pagination-behavior">11.5.1. Pagination Behavior</a></li>
-<li class="toctree-l3"><a class="reference internal" href="behavior-traits.html#client-behavior">11.5.2. Client behavior</a></li>
-<li class="toctree-l3"><a class="reference internal" href="behavior-traits.html#continuation-tokens">11.5.3. Continuation tokens</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="behavior-traits.html#httpchecksumrequired-trait">11.6. <code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="resource-traits.html">12. Resource traits</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="resource-traits.html#noreplace-trait">12.1. <code class="docutils literal notranslate"><span class="pre">noReplace</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="resource-traits.html#references-trait">12.2. <code class="docutils literal notranslate"><span class="pre">references</span></code> trait</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="resource-traits.html#implicit-ids">12.2.1. Implicit ids</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="resource-traits.html#resourceidentifier-trait">12.3. <code class="docutils literal notranslate"><span class="pre">resourceIdentifier</span></code> trait</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="stream-traits.html">13. Streaming Traits</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="stream-traits.html#streaming-trait">13.1. <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stream-traits.html#requireslength-trait">13.2. <code class="docutils literal notranslate"><span class="pre">requiresLength</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stream-traits.html#event-streams">13.3. Event streams</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="stream-traits.html#initial-messages">13.3.1. Initial messages</a></li>
-<li class="toctree-l3"><a class="reference internal" href="stream-traits.html#client-behavior">13.3.2. Client behavior</a></li>
-<li class="toctree-l3"><a class="reference internal" href="stream-traits.html#event-message-serialization">13.3.3. Event message serialization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="stream-traits.html#event-stream-traits">13.3.4. Event stream traits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stream-traits.html">10. Streaming Traits</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="stream-traits.html#streaming-trait">10.1. <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stream-traits.html#requireslength-trait">10.2. <code class="docutils literal notranslate"><span class="pre">requiresLength</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stream-traits.html#event-streams">10.3. Event streams</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="stream-traits.html#initial-messages">10.3.1. Initial messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stream-traits.html#client-behavior">10.3.2. Client behavior</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stream-traits.html#event-message-serialization">10.3.3. Event message serialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stream-traits.html#event-stream-traits">10.3.4. Event stream traits</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="http-traits.html">14. HTTP protocol binding traits</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="http-traits.html#http-trait">14.1. <code class="docutils literal notranslate"><span class="pre">http</span></code> trait</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="http-traits.html#method">14.1.1. method</a></li>
-<li class="toctree-l3"><a class="reference internal" href="http-traits.html#uri">14.1.2. uri</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http-traits.html">11. HTTP protocol binding traits</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="http-traits.html#http-trait">11.1. <code class="docutils literal notranslate"><span class="pre">http</span></code> trait</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="http-traits.html#method">11.1.1. method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="http-traits.html#uri">11.1.2. uri</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="http-traits.html#httperror-trait">14.2. <code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http-traits.html#httpheader-trait">14.3. <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="http-traits.html#restricted-http-headers">14.3.1. Restricted HTTP headers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http-traits.html#httperror-trait">11.2. <code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http-traits.html#httpheader-trait">11.3. <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="http-traits.html#restricted-http-headers">11.3.1. Restricted HTTP headers</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="http-traits.html#httplabel-trait">14.4. <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http-traits.html#httppayload-trait">14.5. <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http-traits.html#httpprefixheaders-trait">14.6. <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http-traits.html#httpquery-trait">14.7. <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http-traits.html#cors-trait">14.8. <code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http-traits.html#serializing-http-messages">14.9. Serializing HTTP messages</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http-traits.html#event-streams">14.10. Event streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http-traits.html#httplabel-trait">11.4. <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http-traits.html#httppayload-trait">11.5. <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http-traits.html#httpprefixheaders-trait">11.6. <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http-traits.html#httpquery-trait">11.7. <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http-traits.html#cors-trait">11.8. <code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http-traits.html#serializing-http-messages">11.9. Serializing HTTP messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http-traits.html#event-streams">11.10. Event streams</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="xml-traits.html">15. XML binding traits</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="xml-traits.html#serializing-xml-shapes">15.1. Serializing XML shapes</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="xml-traits.html#structure-and-union-serialization">15.1.1. Structure and union serialization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="xml-traits.html#simple-type-serialization">15.1.2. Simple type serialization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="xml-traits.html#list-and-set-serialization">15.1.3. List and set serialization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="xml-traits.html#map-serialization">15.1.4. Map serialization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xml-traits.html">12. XML binding traits</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="xml-traits.html#serializing-xml-shapes">12.1. Serializing XML shapes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="xml-traits.html#structure-and-union-serialization">12.1.1. Structure and union serialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="xml-traits.html#simple-type-serialization">12.1.2. Simple type serialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="xml-traits.html#list-and-set-serialization">12.1.3. List and set serialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="xml-traits.html#map-serialization">12.1.4. Map serialization</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="xml-traits.html#xmlattribute-trait">15.2. <code class="docutils literal notranslate"><span class="pre">xmlAttribute</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="xml-traits.html#xmlflattened-trait">15.3. <code class="docutils literal notranslate"><span class="pre">xmlFlattened</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="xml-traits.html#xmlname-trait">15.4. <code class="docutils literal notranslate"><span class="pre">xmlName</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="xml-traits.html#xmlnamespace-trait">15.5. <code class="docutils literal notranslate"><span class="pre">xmlNamespace</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xml-traits.html#xmlattribute-trait">12.2. <code class="docutils literal notranslate"><span class="pre">xmlAttribute</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xml-traits.html#xmlflattened-trait">12.3. <code class="docutils literal notranslate"><span class="pre">xmlFlattened</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xml-traits.html#xmlname-trait">12.4. <code class="docutils literal notranslate"><span class="pre">xmlName</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xml-traits.html#xmlnamespace-trait">12.5. <code class="docutils literal notranslate"><span class="pre">xmlNamespace</span></code> trait</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="endpoint-traits.html">16. Endpoint Traits</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="endpoint-traits.html#endpoint-trait">16.1. <code class="docutils literal notranslate"><span class="pre">endpoint</span></code> trait</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="endpoint-traits.html#labels">16.1.1. Labels</a></li>
-<li class="toctree-l3"><a class="reference internal" href="endpoint-traits.html#client-behavior">16.1.2. Client Behavior</a></li>
+<li class="toctree-l1"><a class="reference internal" href="endpoint-traits.html">13. Endpoint Traits</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="endpoint-traits.html#endpoint-trait">13.1. <code class="docutils literal notranslate"><span class="pre">endpoint</span></code> trait</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endpoint-traits.html#labels">13.1.1. Labels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endpoint-traits.html#client-behavior">13.1.2. Client Behavior</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="endpoint-traits.html#hostlabel-trait">16.2. <code class="docutils literal notranslate"><span class="pre">hostLabel</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endpoint-traits.html#hostlabel-trait">13.2. <code class="docutils literal notranslate"><span class="pre">hostLabel</span></code> trait</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="selectors.html">17. Selectors</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="selectors.html#introduction">17.1. Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="selectors.html#matching-shapes-with-selectors">17.2. Matching shapes with selectors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="selectors.html#matching-shapes-by-type">17.3. Matching shapes by type</a></li>
-<li class="toctree-l2"><a class="reference internal" href="selectors.html#attribute-selectors">17.4. Attribute selectors</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#attribute-existence">17.4.1. Attribute existence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#attribute-comparison">17.4.2. Attribute comparison</a></li>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#string-comparators">17.4.3. String comparators</a></li>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#numeric-comparators">17.4.4. Numeric comparators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="selectors.html">14. Selectors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="selectors.html#introduction">14.1. Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selectors.html#matching-shapes-with-selectors">14.2. Matching shapes with selectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selectors.html#matching-shapes-by-type">14.3. Matching shapes by type</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selectors.html#attribute-selectors">14.4. Attribute selectors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#attribute-existence">14.4.1. Attribute existence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#attribute-comparison">14.4.2. Attribute comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#string-comparators">14.4.3. String comparators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#numeric-comparators">14.4.4. Numeric comparators</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="selectors.html#attributes">17.5. Attributes</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#id-attribute">17.5.1. <code class="docutils literal notranslate"><span class="pre">id</span></code> attribute</a></li>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#service-attribute">17.5.2. <code class="docutils literal notranslate"><span class="pre">service</span></code> attribute</a></li>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#trait-attribute">17.5.3. <code class="docutils literal notranslate"><span class="pre">trait</span></code> attribute</a></li>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#node-attribute">17.5.4. Node attribute</a></li>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#projection-attribute">17.5.5. Projection attribute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selectors.html#attributes">14.5. Attributes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#id-attribute">14.5.1. <code class="docutils literal notranslate"><span class="pre">id</span></code> attribute</a></li>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#service-attribute">14.5.2. <code class="docutils literal notranslate"><span class="pre">service</span></code> attribute</a></li>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#trait-attribute">14.5.3. <code class="docutils literal notranslate"><span class="pre">trait</span></code> attribute</a></li>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#node-attribute">14.5.4. Node attribute</a></li>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#projection-attribute">14.5.5. Projection attribute</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="selectors.html#scoped-attribute-selectors">17.6. Scoped attribute selectors</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#context-values">17.6.1. Context values</a></li>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#and-logic">17.6.2. And-logic</a></li>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#matching-multiple-values">17.6.3. Matching multiple values</a></li>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#case-insensitive-comparisons">17.6.4. Case insensitive comparisons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selectors.html#scoped-attribute-selectors">14.6. Scoped attribute selectors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#context-values">14.6.1. Context values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#and-logic">14.6.2. And-logic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#matching-multiple-values">14.6.3. Matching multiple values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#case-insensitive-comparisons">14.6.4. Case insensitive comparisons</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="selectors.html#neighbors">17.7. Neighbors</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#forward-undirected-neighbor">17.7.1. Forward undirected neighbor</a></li>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#forward-directed-neighbors">17.7.2. Forward directed neighbors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#forward-recursive-neighbors">17.7.3. Forward recursive neighbors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#reverse-undirected-neighbor">17.7.4. Reverse undirected neighbor</a></li>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#reverse-directed-neighbor">17.7.5. Reverse directed neighbor</a></li>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#relationships">17.7.6. Relationships</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selectors.html#neighbors">14.7. Neighbors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#forward-undirected-neighbor">14.7.1. Forward undirected neighbor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#forward-directed-neighbors">14.7.2. Forward directed neighbors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#forward-recursive-neighbors">14.7.3. Forward recursive neighbors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#reverse-undirected-neighbor">14.7.4. Reverse undirected neighbor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#reverse-directed-neighbor">14.7.5. Reverse directed neighbor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#relationships">14.7.6. Relationships</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="selectors.html#functions">17.8. Functions</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#test">17.8.1. <code class="docutils literal notranslate"><span class="pre">:test</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#is">17.8.2. <code class="docutils literal notranslate"><span class="pre">:is</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#not">17.8.3. <code class="docutils literal notranslate"><span class="pre">:not</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="selectors.html#functions">14.8. Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#test">14.8.1. <code class="docutils literal notranslate"><span class="pre">:test</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#is">14.8.2. <code class="docutils literal notranslate"><span class="pre">:is</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#not">14.8.3. <code class="docutils literal notranslate"><span class="pre">:not</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="selectors.html#variables">17.9. Variables</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html#var-attribute">17.9.1. <code class="docutils literal notranslate"><span class="pre">var</span></code> attribute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selectors.html#variables">14.9. Variables</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="selectors.html#var-attribute">14.9.1. <code class="docutils literal notranslate"><span class="pre">var</span></code> attribute</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="selectors.html#grammar">17.10. Grammar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selectors.html#grammar">14.10. Grammar</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="model-metadata.html">18. Model metadata</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="model-metadata.html#metadata-statement">18.1. Metadata statement</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model-metadata.html#merging-metadata">18.2. Merging metadata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model-validation.html">15. Model validation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model-validation.html#introduction">15.1. Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model-validation.html#validators">15.2. Validators</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="model-validation.html#missing-validators">15.2.1. Missing validators</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="model-validation.html">19. Model validation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="model-validation.html#introduction">19.1. Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model-validation.html#validators">19.2. Validators</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="model-validation.html#missing-validators">19.2.1. Missing validators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model-validation.html#severity">15.3. Severity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model-validation.html#suppressions">15.4. Suppressions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="model-validation.html#suppress-trait">15.4.1. <code class="docutils literal notranslate"><span class="pre">suppress</span></code> trait</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model-validation.html#suppression-metadata">15.4.2. Suppression metadata</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="model-validation.html#severity">19.3. Severity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model-validation.html#suppressions">19.4. Suppressions</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="model-validation.html#suppress-trait">19.4.1. <code class="docutils literal notranslate"><span class="pre">suppress</span></code> trait</a></li>
-<li class="toctree-l3"><a class="reference internal" href="model-validation.html#suppression-metadata">19.4.2. Suppression metadata</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="model-validation.html#built-in-validators">19.5. Built-in validators</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="model-validation.html#emiteachselector">19.5.1. EmitEachSelector</a></li>
-<li class="toctree-l3"><a class="reference internal" href="model-validation.html#emitnoneselector">19.5.2. EmitNoneSelector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model-validation.html#built-in-validators">15.5. Built-in validators</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="model-validation.html#emiteachselector">15.5.1. EmitEachSelector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model-validation.html#emitnoneselector">15.5.2. EmitNoneSelector</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="merging-models.html">20. Merging models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="json-ast.html">21. JSON AST</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="json-ast.html#top-level-properties">21.1. Top level properties</a></li>
-<li class="toctree-l2"><a class="reference internal" href="json-ast.html#ast-shapes">21.2. AST shapes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="json-ast.html#simple-shapes">21.3. Simple shapes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="json-ast.html#list-and-set-shapes">21.4. List and set shapes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="json-ast.html#ast-member">21.5. AST member</a></li>
-<li class="toctree-l2"><a class="reference internal" href="json-ast.html#ast-shape-reference">21.6. AST shape reference</a></li>
-<li class="toctree-l2"><a class="reference internal" href="json-ast.html#map-shape">21.7. Map shape</a></li>
-<li class="toctree-l2"><a class="reference internal" href="json-ast.html#structure-and-union-shapes">21.8. Structure and union shapes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="json-ast.html#service-shape">21.9. Service shape</a></li>
-<li class="toctree-l2"><a class="reference internal" href="json-ast.html#resource-shape">21.10. Resource shape</a></li>
-<li class="toctree-l2"><a class="reference internal" href="json-ast.html#operation-shape">21.11. Operation shape</a></li>
-<li class="toctree-l2"><a class="reference internal" href="json-ast.html#ast-apply-type">21.12. AST apply type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="idl.html">16. Smithy IDL</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="idl.html#smithy-idl-overview">16.1. Smithy IDL overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="idl.html#lexical-notes">16.2. Lexical notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="idl.html#smithy-idl-abnf">16.3. Smithy IDL ABNF</a></li>
+<li class="toctree-l2"><a class="reference internal" href="idl.html#comments">16.4. Comments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="idl.html#control-section">16.5. Control section</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="idl.html#version-statement">16.5.1. Version statement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="idl.html#metadata-section">16.6. Metadata section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="idl.html#shape-section">16.7. Shape section</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="idl.html#namespaces">16.7.1. Namespaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="idl.html#referring-to-shapes">16.7.2. Referring to shapes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="idl.html#defining-shapes">16.7.3. Defining shapes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="idl.html#documentation-comment">16.7.4. Documentation comment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="idl.html#applying-traits">16.7.5. Applying traits</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="idl.html#node-values">16.8. Node values</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="idl.html#string-values">16.8.1. String values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="idl.html#string-escape-characters">16.8.2. String escape characters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="idl.html#text-blocks">16.8.3. Text blocks</a></li>
 </ul>
 </li>
 </ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="json-ast.html">17. JSON AST</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="json-ast.html#top-level-properties">17.1. Top level properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json-ast.html#ast-shapes">17.2. AST shapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json-ast.html#simple-shapes">17.3. Simple shapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json-ast.html#list-and-set-shapes">17.4. List and set shapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json-ast.html#ast-member">17.5. AST member</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json-ast.html#ast-shape-reference">17.6. AST shape reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json-ast.html#map-shape">17.7. Map shape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json-ast.html#structure-and-union-shapes">17.8. Structure and union shapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json-ast.html#service-shape">17.9. Service shape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json-ast.html#resource-shape">17.10. Resource shape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json-ast.html#operation-shape">17.11. Operation shape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json-ast.html#ast-apply-type">17.12. AST apply type</a></li>
+</ul>
+</li>
+</ul>
+</div>
 </div>
 </div>
 
@@ -379,7 +440,7 @@
                         
                         <a href="../index.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Specifications</a>
                         
-                        <a href="intro.html" title="next chapter" class="next-page clearfix">1. Introduction →</a>
+                        <a href="model.html" title="next chapter" class="next-page clearfix">1. The Smithy model →</a>
                     </section>
                     
                 </article><aside id="right-column" class="side-column hidden-sm">
@@ -390,11 +451,15 @@
                                 
                                 <a href="../index.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
                                 
-                                <a href="intro.html" title="next chapter" class="next-page clearfix">Next →</a>
+                                <a href="model.html" title="next chapter" class="next-page clearfix">Next →</a>
                             </section>
                             
                             <ul>
-<li><a class="reference internal" href="#">Smithy specification</a></li>
+<li><a class="reference internal" href="#">Smithy specification</a><ul>
+<li><a class="reference internal" href="#conventions-used-in-this-document">Conventions used in this document</a></li>
+<li><a class="reference internal" href="#table-of-contents">Table of contents</a></li>
+</ul>
+</li>
 </ul>
 
                         </section>

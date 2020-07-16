@@ -14,7 +14,7 @@ style guide makes models easier to read.
 Model files
 ===========
 
-Smithy models SHOULD be authored using the :ref:`Smithy IDL <lexical-structure>`.
+Smithy models SHOULD be authored using the :ref:`Smithy IDL <idl>`.
 Smithy models SHOULD resemble the following example:
 
 .. code-block:: smithy

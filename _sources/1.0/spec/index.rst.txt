@@ -14,8 +14,7 @@ Smithy specification
 --------------------
 
 .. toctree::
-    :maxdepth: 2
-    :caption: Defines the core Smithy specification. Start here.
+    :maxdepth: 3
 
     core/index
 
@@ -28,7 +27,6 @@ Additional specifications
 
 .. toctree::
     :maxdepth: 1
-    :caption: Defines additional specifications.
 
     http-protocol-compliance-tests
     mqtt
@@ -42,6 +40,5 @@ AWS specifications
 
 .. toctree::
     :maxdepth: 2
-    :caption: Defines AWS specifications.
 
     aws/index

@@ -70,9 +70,9 @@
 language (IDL). By reading this tutorial, you will learn:</p>
 <ul class="simple">
 <li>How to create a Smithy model</li>
-<li>How to define <a class="reference internal" href="1.0/spec/core/shapes.html#shapes"><span class="std std-ref">shapes</span></a>, including <a class="reference internal" href="1.0/spec/core/shapes.html#service"><span class="std std-ref">Service</span></a>,
-<a class="reference internal" href="1.0/spec/core/shapes.html#resource"><span class="std std-ref">Resource</span></a>, and <a class="reference internal" href="1.0/spec/core/shapes.html#operation"><span class="std std-ref">Operation</span></a> shapes</li>
-<li>How to apply <a class="reference internal" href="1.0/spec/core/traits.html#traits"><span class="std std-ref">traits</span></a> to shapes</li>
+<li>How to define <a class="reference internal" href="1.0/spec/core/model.html#shapes"><span class="std std-ref">shapes</span></a>, including <a class="reference internal" href="1.0/spec/core/model.html#service"><span class="std std-ref">Service</span></a>,
+<a class="reference internal" href="1.0/spec/core/model.html#resource"><span class="std std-ref">Resource</span></a>, and <a class="reference internal" href="1.0/spec/core/model.html#operation"><span class="std std-ref">Operation</span></a> shapes</li>
+<li>How to apply <a class="reference internal" href="1.0/spec/core/model.html#traits"><span class="std std-ref">traits</span></a> to shapes</li>
 </ul>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
@@ -100,8 +100,8 @@ example code.</p>
 </div>
 <div class="section" id="shapes-and-traits">
 <h2><a href="#shapes-and-traits">Shapes and traits</a></h2>
-<p>Smithy models consist of shapes and traits. <a class="reference internal" href="1.0/spec/core/shapes.html#shapes"><span class="std std-ref">Shapes</span></a> are
-instances of <em>types</em>. <a class="reference internal" href="1.0/spec/core/traits.html#traits"><span class="std std-ref">Traits</span></a> are used to add more information
+<p>Smithy models consist of shapes and traits. <a class="reference internal" href="1.0/spec/core/model.html#shapes"><span class="std std-ref">Shapes</span></a> are
+instances of <em>types</em>. <a class="reference internal" href="1.0/spec/core/model.html#traits"><span class="std std-ref">Traits</span></a> are used to add more information
 to shapes that might be useful for clients, servers, or documentation.</p>
 <p>Smithy supports the following types:</p>
 <table border="1" class="colwidths-given docutils">
@@ -153,32 +153,32 @@ to shapes that might be useful for clients, servers, or documentation.</p>
 serialization of a timestamp is determined by a
 <a class="reference internal" href="1.0/spec/core/protocol-traits.html#protocoldefinition-trait"><span class="std std-ref">protocol</span></a>.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="1.0/spec/core/shapes.html#document-type"><span class="std std-ref">document</span></a></td>
+<tr class="row-even"><td>document type</td>
 <td>An untyped JSON-like value.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="1.0/spec/core/shapes.html#list"><span class="std std-ref">List</span></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="1.0/spec/core/model.html#list"><span class="std std-ref">List</span></a></td>
 <td>Homogeneous collection of values</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="1.0/spec/core/shapes.html#set"><span class="std std-ref">Set</span></a></td>
+<tr class="row-even"><td><a class="reference internal" href="1.0/spec/core/model.html#set"><span class="std std-ref">Set</span></a></td>
 <td>Unordered collection of unique homogeneous values</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="1.0/spec/core/shapes.html#map"><span class="std std-ref">Map</span></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="1.0/spec/core/model.html#map"><span class="std std-ref">Map</span></a></td>
 <td>Map data structure that maps string keys to homogeneous values</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="1.0/spec/core/shapes.html#structure"><span class="std std-ref">Structure</span></a></td>
+<tr class="row-even"><td><a class="reference internal" href="1.0/spec/core/model.html#structure"><span class="std std-ref">Structure</span></a></td>
 <td>Fixed set of named heterogeneous members</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="1.0/spec/core/shapes.html#union"><span class="std std-ref">Union</span></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="1.0/spec/core/model.html#union"><span class="std std-ref">Union</span></a></td>
 <td><a class="reference external" href="https://en.wikipedia.org/wiki/Tagged_union">Tagged union</a> data structure that can take on several different,
 but fixed, types</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="1.0/spec/core/shapes.html#service"><span class="std std-ref">Service</span></a></td>
+<tr class="row-even"><td><a class="reference internal" href="1.0/spec/core/model.html#service"><span class="std std-ref">Service</span></a></td>
 <td>Entry point of an API that aggregates resources and operations together</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="1.0/spec/core/shapes.html#operation"><span class="std std-ref">Operation</span></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="1.0/spec/core/model.html#operation"><span class="std std-ref">Operation</span></a></td>
 <td>Represents the input, output and possible errors of an API operation</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="1.0/spec/core/shapes.html#resource"><span class="std std-ref">Resource</span></a></td>
+<tr class="row-even"><td><a class="reference internal" href="1.0/spec/core/model.html#resource"><span class="std std-ref">Resource</span></a></td>
 <td>An entity with an identity, set of operations, and child resources</td>
 </tr>
 </tbody>
@@ -196,8 +196,8 @@ resource contains a single <code class="docutils literal notranslate"><span clas
 <li>This service closure contains the following operations:
 <code class="docutils literal notranslate"><span class="pre">ListCities</span></code>, <code class="docutils literal notranslate"><span class="pre">GetCity</span></code>, <code class="docutils literal notranslate"><span class="pre">GetForecast</span></code>, <code class="docutils literal notranslate"><span class="pre">GetCurrentTime</span></code>.</li>
 </ol>
-<p><code class="docutils literal notranslate"><span class="pre">Weather</span></code> is a <a class="reference internal" href="1.0/spec/core/shapes.html#service"><span class="std std-ref">Service</span></a> shape that is defined inside of a
-<a class="reference internal" href="1.0/spec/core/shapes.html#namespaces"><span class="std std-ref">namespace</span></a>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Weather</span></code> is a <a class="reference internal" href="1.0/spec/core/model.html#service"><span class="std std-ref">Service</span></a> shape that is defined inside of a
+<a class="reference internal" href="1.0/spec/core/idl.html#namespaces"><span class="std std-ref">namespace</span></a>.</p>
 <div class="sphinx-tabs docutils container">
 <div class="ui top attached tabular menu sphinx-menu docutils container">
 <div class="active item sphinx-data-tab-U21pdGh5 docutils container">
@@ -236,13 +236,13 @@ JSON</div>
 </div>
 <div class="note admonition">
 <p class="first admonition-title">What's that syntax?</p>
-<p>Smithy models are defined using either the <a class="reference internal" href="1.0/spec/core/lexical-structure.html#lexical-structure"><span class="std std-ref">Smithy IDL</span></a>
+<p>Smithy models are defined using either the <a class="reference internal" href="1.0/spec/core/idl.html#idl"><span class="std std-ref">Smithy IDL</span></a>
 or the <a class="reference internal" href="1.0/spec/core/json-ast.html#json-ast"><span class="std std-ref">JSON AST</span></a>. The JSON AST representation of a model
 is typically an artifact created by build tools to make them easier to
 use by other tooling.</p>
 <ul class="last simple">
 <li><code class="docutils literal notranslate"><span class="pre">//</span></code> is used for comments</li>
-<li><code class="docutils literal notranslate"><span class="pre">///</span></code> is used to add <a class="reference internal" href="1.0/spec/core/lexical-structure.html#documentation-comment"><span class="std std-ref">documentation</span></a>
+<li><code class="docutils literal notranslate"><span class="pre">///</span></code> is used to add <a class="reference internal" href="1.0/spec/core/idl.html#documentation-comment"><span class="std std-ref">documentation</span></a>
 to the following shape.</li>
 <li>Keywords like <code class="docutils literal notranslate"><span class="pre">service</span></code> and <code class="docutils literal notranslate"><span class="pre">structure</span></code> start the definition of a
 shape.</li>
@@ -325,12 +325,12 @@ JSON</div>
 </div>
 </div>
 <p>Because the <code class="docutils literal notranslate"><span class="pre">Weather</span></code> service contains many cities, the <code class="docutils literal notranslate"><span class="pre">City</span></code> resource
-defines an <a class="reference internal" href="1.0/spec/core/shapes.html#resource-identifiers"><span class="std std-ref">identifier</span></a>. <em>Identifiers</em> are used
+defines an <a class="reference internal" href="1.0/spec/core/model.html#resource-identifiers"><span class="std std-ref">identifier</span></a>. <em>Identifiers</em> are used
 to refer to a specific resource within a service. The &quot;identifiers&quot; property
 is a mapping of identifier names to the shape to use for that identifier. If
 the input structure of an operation uses the same names and targeted shapes
 as the <code class="docutils literal notranslate"><span class="pre">identifiers</span></code> property of the resource, the structure is
-<a class="reference internal" href="1.0/spec/core/shapes.html#implicit-identifier-bindings"><span class="std std-ref">automatically configured</span></a> to work with
+<a class="reference internal" href="1.0/spec/core/model.html#implicit-identifier-bindings"><span class="std std-ref">automatically configured</span></a> to work with
 the resource so that input members of the operation are used to provide the
 identity of the resource.</p>
 <p>Each <code class="docutils literal notranslate"><span class="pre">City</span></code> has a single <code class="docutils literal notranslate"><span class="pre">Forecast</span></code>. This can be defined by adding the
@@ -420,7 +420,7 @@ and they can also define additional identifiers.</li>
 <div class="section" id="defining-operations">
 <h2><a href="#defining-operations">Defining operations</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">create</span></code>, <code class="docutils literal notranslate"><span class="pre">read</span></code>, <code class="docutils literal notranslate"><span class="pre">update</span></code>, <code class="docutils literal notranslate"><span class="pre">delete</span></code>, and <code class="docutils literal notranslate"><span class="pre">list</span></code> properties of a
-resource are used to define the <a class="reference internal" href="1.0/spec/core/shapes.html#lifecycle-operations"><span class="std std-ref">lifecycle operations</span></a>
+resource are used to define the <a class="reference internal" href="1.0/spec/core/model.html#lifecycle-operations"><span class="std std-ref">lifecycle operations</span></a>
 of a resource. Lifecycle operations are the canonical methods used to read and
 transition the state of a resource using well-defined semantics. Defining
 lifecycle operations helps automated tooling reason about your API.</p>
@@ -649,9 +649,9 @@ has no side effects.</li>
 <div class="section" id="listing-resources">
 <h2><a href="#listing-resources">Listing resources</a></h2>
 <p>There are many <code class="docutils literal notranslate"><span class="pre">City</span></code> resources contained within the <code class="docutils literal notranslate"><span class="pre">Weather</span></code> service.
-The <a class="reference internal" href="1.0/spec/core/shapes.html#list-lifecycle"><span class="std std-ref">list lifecycle operation</span></a> can be added to the
+The <a class="reference internal" href="1.0/spec/core/model.html#list-lifecycle"><span class="std std-ref">list lifecycle operation</span></a> can be added to the
 <code class="docutils literal notranslate"><span class="pre">City</span></code> resource to list all of the cities in the service. The list operation
-is a <a class="reference internal" href="1.0/spec/core/shapes.html#collection-operations"><span class="std std-ref">collection operation</span></a>, and as such, MUST NOT
+is a <a class="reference internal" href="1.0/spec/core/model.html#collection-operations"><span class="std std-ref">collection operation</span></a>, and as such, MUST NOT
 bind the identifier of a <code class="docutils literal notranslate"><span class="pre">City</span></code> to its input structure; we are listing
 cities, so there's no way we could provide a <code class="docutils literal notranslate"><span class="pre">City</span></code> identifier.</p>
 <div class="sphinx-tabs docutils container">
@@ -807,7 +807,7 @@ the results of invoking the operation can be truncated, requiring subsequent
 calls to retrieve the entire list of results. It's usually a good idea to add
 pagination to an API that lists resources because it can help prevent
 operational issues in the future if the list grows to an unpredicted size.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">CitySummary</span></code> structure defines a <a class="reference internal" href="1.0/spec/core/shapes.html#referencing-resources"><span class="std std-ref">reference</span></a>
+<p>The <code class="docutils literal notranslate"><span class="pre">CitySummary</span></code> structure defines a <a class="reference internal" href="1.0/spec/core/resource-traits.html#references-trait"><span class="std std-ref">reference</span></a>
 to a <code class="docutils literal notranslate"><span class="pre">City</span></code> resource. This gives tooling a better understanding of the
 relationships in your service.</p>
 <p>The above example refers to <a class="reference internal" href="1.0/spec/core/prelude-model.html#prelude"><span class="std std-ref">prelude shapes</span></a> like
@@ -930,7 +930,7 @@ building a Smithy model. First, create a <code class="docutils literal notransla
 <span class="p">}</span>
 
 <span class="n">dependencies</span> <span class="p">{</span>
-    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.0.6&quot;</span><span class="p">)</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.0.7&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="n">configure</span><span class="p">&lt;</span><span class="n">software</span><span class="p">.</span><span class="n">amazon</span><span class="p">.</span><span class="n">smithy</span><span class="p">.</span><span class="n">gradle</span><span class="p">.</span><span class="n">SmithyExtension</span><span class="p">&gt;</span> <span class="p">{</span>
@@ -991,7 +991,7 @@ out like so:</p>
 <span class="p">}</span>
 
 <span class="n">dependencies</span> <span class="p">{</span>
-    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.0.6&quot;</span><span class="p">)</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.0.7&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="n">configure</span><span class="p">&lt;</span><span class="n">software</span><span class="p">.</span><span class="n">amazon</span><span class="p">.</span><span class="n">smithy</span><span class="p">.</span><span class="n">gradle</span><span class="p">.</span><span class="n">SmithyExtension</span><span class="p">&gt;</span> <span class="p">{</span>

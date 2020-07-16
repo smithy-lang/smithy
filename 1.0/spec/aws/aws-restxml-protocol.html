@@ -294,7 +294,7 @@ for the targeted shape.</td>
 </table>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">This protocol does not support <a class="reference internal" href="../core/shapes.html#document-type"><span class="std std-ref">inline document types</span></a>.</p>
+<p class="last">This protocol does not support document types.</p>
 </div>
 </div>
 <div class="section" id="content-type">
@@ -459,8 +459,8 @@ nested XML element with the name <code class="docutils literal notranslate"><spa
 members are serialized within this element, unless bound to another location
 with HTTP protocol bindings.</p>
 <p>Serialized error shapes MUST also contain an additional child element <code class="docutils literal notranslate"><span class="pre">Code</span></code>
-that contains only the <a class="reference internal" href="../core/lexical-structure.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
-<a class="reference internal" href="../core/lexical-structure.html#shape-id"><span class="std std-ref">Shape ID</span></a>. This can be used to distinguish which specific error has been
+that contains only the <a class="reference internal" href="../core/model.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
+<a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>. This can be used to distinguish which specific error has been
 serialized in the response.</p>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;ErrorResponse&gt;</span>
     <span class="nt">&lt;Error&gt;</span>

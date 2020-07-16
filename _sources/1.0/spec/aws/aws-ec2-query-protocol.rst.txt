@@ -29,7 +29,7 @@ Value type
 
 .. important::
 
-    This protocol does not support :ref:`inline document types <document-type>`.
+    This protocol does not support document types.
 
 .. tabs::
 
