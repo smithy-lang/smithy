@@ -941,7 +941,8 @@ public class SelectorTest {
                 "${\nfoo\n}\n",
                 "${a}",
                 "${a_b_c}",
-                "${_}");
+                "${_a}",
+                "${__a}");
 
         for (String expr : exprs) {
             Selector.parse(expr);
@@ -956,7 +957,9 @@ public class SelectorTest {
                 "${}",
                 "$}",
                 "${a",
-                "${*}");
+                "${*}",
+                "${_}",
+                "${__}");
 
         for (String expr : exprs) {
             Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(expr));

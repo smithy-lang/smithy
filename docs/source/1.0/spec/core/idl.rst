@@ -216,6 +216,12 @@ The Smithy IDL is defined by the following ABNF:
     trait_structure_kvp :`node_object_key` `ws` ":" `ws` `node_value`
     apply_statement :"apply" `ws` `shape_id` `ws` `trait` `br`
 
+.. rubric:: Shape ID
+
+.. seealso::
+
+    Refer to :ref:`shape-id` for the ABNF grammar of shape IDs.
+
 
 .. _comments:
 
