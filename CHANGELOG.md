@@ -1,6 +1,13 @@
 # Smithy Changelog
 
-## 1.0.7 (TBD)
+## 1.0.7 (2020-07-16)
+
+### Features
+
+* Use the `@title` trait to improve generated documentation for JSON Schema unions that use `"oneOf"`. ([#485](https://github.com/awslabs/smithy/pull/485))
+* Added and updated several protocol tests for `restJson1`. ([#490](https://github.com/awslabs/smithy/pull/490))
+* Added and updated several protocol tests for `awsJson1_1`. ([#484](https://github.com/awslabs/smithy/pull/484), [#493](https://github.com/awslabs/smithy/pull/493))
+* Added protocol tests for `awsJson1_0`. ([#496](https://github.com/awslabs/smithy/pull/496))
 
 ### Bug Fixes
 
@@ -8,6 +15,20 @@
   in APIGateway OpenAPI output for integrations and mock integrations. ([#495](https://github.com/awslabs/smithy/pull/495))
 * Fixed a bug where only the last line in a multiline doc comment on a
   member would be successfully parsed. ([#498](https://github.com/awslabs/smithy/pull/498))
+* Fixed several issues in protocol tests. ([#473](https://github.com/awslabs/smithy/pull/473), [#476](https://github.com/awslabs/smithy/pull/476),
+  [#481](https://github.com/awslabs/smithy/pull/481), [#491](https://github.com/awslabs/smithy/pull/491))
+
+### Documentation
+
+* Refactored the specification to better explain the semantic model and its representations. ([#497](https://github.com/awslabs/smithy/pull/497), [#482](https://github.com/awslabs/smithy/pull/482))
+* Clarified guidance on using `@mediaType`. ([#500](https://github.com/awslabs/smithy/pull/500))
+* Removed outdated namespace guidance. ([#487](https://github.com/awslabs/smithy/pull/487))
+* Fixed several minor issues. ([#494](https://github.com/awslabs/smithy/pull/494))
+
+### Cleanup
+
+* Disallowed problematic identifiers misusing `_`. ([#499](https://github.com/awslabs/smithy/pull/499))
+* Moved validation of members with the `@httpLabel` trait being marked required to the selector. ([#480](https://github.com/awslabs/smithy/pull/480))
 
 ## 1.0.6 (2020-06-24)
 
