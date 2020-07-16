@@ -73,7 +73,7 @@ class ArtifactDefinitionsTest {
 
     @Test
     void assertBuildThrowsWithoutRequiredTypesField() {
-        Assertions.assertThrows(NullPointerException.class, () -> {
+        Assertions.assertThrows(IllegalStateException.class, () -> {
             ArtifactDefinitions.builder()
                     .addTag("tag1", "tag1val")
                     .addTag("tag2", "tag2val")
@@ -83,7 +83,7 @@ class ArtifactDefinitionsTest {
 
     @Test
     void assertBuildThrowsWithoutRequiredTagsField() {
-        Assertions.assertThrows(NullPointerException.class, () -> {
+        Assertions.assertThrows(IllegalStateException.class, () -> {
             ArtifactDefinitions.builder()
                     .addType("t1", "t1val")
                     .addType("t2", "t2val")

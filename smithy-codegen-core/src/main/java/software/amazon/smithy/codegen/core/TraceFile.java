@@ -59,6 +59,9 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
     private TraceFile(Builder builder) {
         smithyTrace = SmithyBuilder.requiredState(SMITHY_TRACE_TEXT, builder.smithyTrace);
         artifactMetadata = SmithyBuilder.requiredState(ARTIFACT_TEXT, builder.artifactMetadata);
+        if (builder.shapes.isEmpty()) {
+            throw new IllegalStateException("TraceFile's shapes field must not be empty to build it.");
+        }
         shapes = MapUtils.copyOf(builder.shapes);
         artifactDefinitions = builder.artifactDefinitions;
     }
@@ -130,8 +133,8 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
     public void validateTypesAndTags() {
         //The optional ArtifactDefinitions must be non-null to call this method
         if (artifactDefinitions == null) {
-            throw new ExpectationNotMetException("This TraceFile's artifactDefinitions object MUST be defined" +
-                    " prior to calling validateTypesAndTags.", sl);
+            throw new ExpectationNotMetException("This TraceFile's artifactDefinitions object MUST be defined"
+                    + " prior to calling validateTypesAndTags.", sl);
         }
 
         //for each entry in the shapes map
@@ -147,11 +150,12 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
                 //checking if link's tags are all in artifactDefinitions
                 Optional<List<String>> tags = link.getTags();
                 if (tags.isPresent()) {
-                    for (String tag : tags.get())
+                    for (String tag : tags.get()) {
                         if (!artifactDefinitions.getTags().containsKey(tag)) {
                             throw new ExpectationNotMetException(entry.getKey().toString() + " " + tag
                                     + " is a tag that isn't in definitions.", sl);
                         }
+                    }
                 }
             }
         }
@@ -170,13 +174,12 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
         for (ShapeId id : shapes.keySet()) {
             model.expectShape(id);
         }
-
         //shapes.keySet() contains all the shapeIds in model, we don't care about shapes in smithy.api namespace
         for (Shape shape : model.toSet()) {
             ShapeId id = shape.getId();
-            if (!Prelude.isPublicPreludeShape(id) && !shapes.containsKey(id)) {
-                throw new ExpectationNotMetException("Shapes does not contain " + id.toString() +
-                        " but the model does. All shapes in the model MUST be present in the TraceFile.", sl);
+            if (!Prelude.isPreludeShape(id) && !shapes.containsKey(id)) {
+                throw new ExpectationNotMetException("Shapes does not contain " + id.toString()
+                        + " but the model does. All shapes in the model MUST be present in the TraceFile.", sl);
             }
         }
     }

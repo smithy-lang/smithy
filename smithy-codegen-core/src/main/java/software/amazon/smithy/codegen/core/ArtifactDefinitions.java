@@ -37,8 +37,14 @@ public final class ArtifactDefinitions implements ToNode, ToSmithyBuilder<Artifa
     private Map<String, String> types;
 
     private ArtifactDefinitions(Builder builder) {
-        tags = SmithyBuilder.requiredState(TAGS_TEXT, MapUtils.copyOf(builder.tags));
-        types = SmithyBuilder.requiredState(TYPE_TEXT, MapUtils.copyOf(builder.types));
+        if (builder.tags.isEmpty()) {
+            throw new IllegalStateException("ArtifactDefinition's Tags field must not be empty.");
+        }
+        if (builder.types.isEmpty()) {
+            throw new IllegalStateException("ArtifactDefinition's Types field must not be empty.");
+        }
+        tags = MapUtils.copyOf(builder.tags);
+        types = MapUtils.copyOf(builder.types);
     }
 
     /**

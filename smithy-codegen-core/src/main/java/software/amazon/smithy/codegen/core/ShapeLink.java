@@ -50,6 +50,9 @@ public final class ShapeLink implements ToNode, ToSmithyBuilder<ShapeLink> {
         type = SmithyBuilder.requiredState(TYPE_TEXT, builder.type);
         id = SmithyBuilder.requiredState(ID_TEXT, builder.id);
         tags = ListUtils.copyOf(builder.tags);
+        if (tags.isEmpty()) {
+            tags = null;
+        }
         file = builder.file;
         line = builder.line;
         column = builder.column;
