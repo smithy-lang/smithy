@@ -75,8 +75,8 @@ model contains :ref:`metadata <metadata>` and a graph of
 :ref:`shapes <shapes>` connected by :ref:`shape IDs <shape-id>`.
 
 .. text-figure::
-    :caption: **Figure 1.3**: The semantic model
-    :name: figure-1.3
+    :caption: **Figure 1.2**: The semantic model
+    :name: figure-1.2
 
                                           ┌───────────────┐
                                           │Semantic Model │╲
@@ -233,8 +233,8 @@ semantic model:
   using a node value.
 
 .. text-figure::
-    :caption: **Figure 1.4**: Node value types
-    :name: figure-1.4
+    :caption: **Figure 1.3**: Node value types
+    :name: figure-1.3
 
     ┌─────────────────┐                     ┌─────────────┐
     │ Semantic Model  │                     │Applied Trait│
@@ -352,8 +352,8 @@ on services and resources.
 Shapes are visualized using the following diagram:
 
 .. text-figure::
-    :caption: **Figure 1.5**: Smithy shapes
-    :name: figure-1.5
+    :caption: **Figure 1.4**: Smithy shapes
+    :name: figure-1.4
 
                                       ┌─────────────┐
                              members ╱│ «abstract»  │
