@@ -29,3 +29,4 @@ build/
 !smithy-build/src/test/resources/software/amazon/smithy/build
 */out/
 */*/out/
+/smithy-codegen-core/my_trace_file

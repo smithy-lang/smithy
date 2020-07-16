@@ -15,8 +15,15 @@
 
 package software.amazon.smithy.codegen.core;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
@@ -29,41 +36,12 @@ import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
 /**
  * Class that represents the contents of a Smithy trace file.
  * TraceFile's require a smithyTrace file version number, {@link ArtifactMetadata}, and
  * {@link Map} from {@link ShapeId} to a List of {@link ShapeLink} objects. TraceFile's
- * optionally have a {@link ArtifactDefinitions} object.
- * <p>
- * TraceFile handles parsing, serialization and deserialization of a Smithy trace file.
- * </p>
- * <p>
- * The smithyTrace {@link String} contains the Smithy trace file version number.
- * </p>
- * <p>
- * The shapes {@link Map} provides a mapping of absolute Smithy shape IDs to a list
- * of shape link objects. A single Smithy shape can be responsible for generating
- * multiple components in the target artifact.
- * </p>
+ * optionally have a {@link ArtifactDefinitions} object. TraceFile handles parsing, serialization
+ * and deserialization of a Smithy trace file.
  */
 public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
     public static final String SMITHY_TRACE_TEXT = "smithyTrace";
@@ -81,22 +59,8 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
     private TraceFile(Builder builder) {
         smithyTrace = SmithyBuilder.requiredState(SMITHY_TRACE_TEXT, builder.smithyTrace);
         artifactMetadata = SmithyBuilder.requiredState(ARTIFACT_TEXT, builder.artifactMetadata);
-        shapes = SmithyBuilder.requiredState(SHAPES_TEXT, MapUtils.copyOf(builder.shapes));
+        shapes = MapUtils.copyOf(builder.shapes);
         artifactDefinitions = builder.artifactDefinitions;
-    }
-
-    /**
-     * Parses and validates the trace file passed in as filename
-     * and instantiates smithyTrace and defintions, and fills
-     * artifactMetadata and shapes.
-     *
-     * @param filename the absolute or relative path of tracefile
-     * @throws FileNotFoundException if filename is not found for reading
-     */
-    public static TraceFile parseTraceFile(URI filename) throws FileNotFoundException {
-        InputStream stream = new FileInputStream(new File(filename));
-        ObjectNode node = (ObjectNode) Node.parse(stream);
-        return createFromNode(node);
     }
 
     /**
@@ -131,20 +95,6 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
     }
 
     /**
-     * Writes the TraceFile JSON ObjectNode
-     * to construct a trace file.
-     *
-     * @param fileName absolute or relative path to write the trace file
-     * @throws IOException if there is an error writing to fileName
-     */
-    public void writeTraceFile(String fileName) throws IOException {
-        Writer writer = new OutputStreamWriter(new FileOutputStream(new File(fileName)), StandardCharsets.UTF_8);
-        PrintWriter pw = new PrintWriter(writer);
-        pw.print(Node.prettyPrintJson(toNode(), "  "));
-        pw.close();
-    }
-
-    /**
      * Converts TraceFile instance variables into an
      * ObjectNode.
      *
@@ -169,14 +119,20 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
     }
 
     /**
-     * Finds invalid types and tags and either removes them or throws an error depending on
-     * whether toThrow is true or false.
+     * Throws an error if any ShapeLink object contains a tag or type that is not in artifactDefinition's.
+     * This method should be called after creating a TraceFile object to verify that all the types and tags
+     * in shapes have been defined in artifactDefinition's. This TraceFile's ArtifactDefinitions object
+     * MUST be defined prior to calling this method.
      *
-     * @throws ExpectationNotMetException if a type or tag in shapes is not in definitions.
+     * @throws ExpectationNotMetException if a type or tag in shapes is not in artifactDefinitions, or if
+     *                                    artifactDefinitions is not defined when the method is called.
      */
     public void validateTypesAndTags() {
         //The optional ArtifactDefinitions must be non-null to call this method
-        Objects.requireNonNull(artifactDefinitions);
+        if (artifactDefinitions == null) {
+            throw new ExpectationNotMetException("This TraceFile's artifactDefinitions object MUST be defined" +
+                    " prior to calling validateTypesAndTags.", sl);
+        }
 
         //for each entry in the shapes map
         for (Map.Entry<ShapeId, List<ShapeLink>> entry : shapes.entrySet()) {
@@ -205,17 +161,11 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
      * Parses model and determines whether the trace file object meets the specs of the model by checking if
      * the trace file contains all the ShapeIds in the model and the model contains all the ShapeIDs in the trace file.
      *
-     * @param modelResourceName the model name to validate the trace file against. Model should be in the
-     *                          resources file.
+     * @param model the Smithy model  to validate the trace file against.
      * @throws ExpectationNotMetException if model contains a ShapeID not in TraceFile or TraceFile contains a ShapeID
      *                                    not in model.
      */
-    public void validateModel(String modelResourceName) {
-        Model model = Model.assembler()
-                .addImport(getClass().getResource(modelResourceName))
-                .assemble()
-                .unwrap();
-
+    public void validateModel(Model model) {
         //model contains all the shapeIds in shapes.keySet()
         for (ShapeId id : shapes.keySet()) {
             model.expectShape(id);
@@ -224,16 +174,18 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
         //shapes.keySet() contains all the shapeIds in model, we don't care about shapes in smithy.api namespace
         for (Shape shape : model.toSet()) {
             ShapeId id = shape.getId();
-            if (!id.getNamespace().equals("smithy.api") && !shapes.containsKey(id)) {
-                throw new ExpectationNotMetException("shapes does not contain" + id.toString() + " but model does", sl);
+            if (!Prelude.isPublicPreludeShape(id) && !shapes.containsKey(id)) {
+                throw new ExpectationNotMetException("Shapes does not contain " + id.toString() +
+                        " but the model does. All shapes in the model MUST be present in the TraceFile.", sl);
             }
         }
     }
 
     /**
      * Gets this TraceFile's smithyTrace.
+     * The smithyTrace {@link String} contains the Smithy trace file version number.
      *
-     * @return a String representing trace file ID, or null if ID has not been set
+     * @return a String representing trace file ID.
      */
     public String getSmithyTrace() {
         return smithyTrace;
@@ -242,7 +194,7 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
     /**
      * Gets this TraceFile's ArtifactMetadata.
      *
-     * @return an ArtifactMetadata object, or null if ArtifactMetadata has not been set.
+     * @return an ArtifactMetadata object.
      */
     public ArtifactMetadata getArtifactMetadata() {
         return artifactMetadata;
@@ -260,9 +212,12 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
 
     /**
      * Gets this TraceFile's Shapes map.
+     * The shapes {@link Map} provides a mapping of absolute Smithy shape IDs to a list
+     * of shape link objects. A single Smithy shape can be responsible for generating
+     * multiple components in the target artifact.
      *
      * @return a Map from ShapeIDs to a list of ShapeLink's that represents the contents of the
-     * shapes tag in the trace file, or null if shapes has not been set.
+     * shapes tag in the trace file.
      */
     public Map<ShapeId, List<ShapeLink>> getShapes() {
         return shapes;
@@ -288,10 +243,10 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
      */
     public static final class Builder implements SmithyBuilder<TraceFile> {
 
+        private final Map<ShapeId, List<ShapeLink>> shapes = new HashMap<>();
         private String smithyTrace = SMITHY_TRACE_VERSION;
         private ArtifactDefinitions artifactDefinitions;
         private ArtifactMetadata artifactMetadata;
-        private Map<ShapeId, List<ShapeLink>> shapes = new HashMap<>();
 
         /**
          * @return The TraceFile.
@@ -381,7 +336,8 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
          * @return This builder.
          */
         public Builder shapes(Map<ShapeId, List<ShapeLink>> shapes) {
-            this.shapes = shapes;
+            this.shapes.clear();
+            this.shapes.putAll(shapes);
             return this;
         }
 

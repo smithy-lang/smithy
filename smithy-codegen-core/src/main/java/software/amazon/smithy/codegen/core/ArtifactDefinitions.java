@@ -15,11 +15,6 @@
 
 package software.amazon.smithy.codegen.core;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,20 +27,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
- * Class that defines the acceptable values that can be used in ShapeLink objects.
- * <p>
- * The types {@link Map} defines the set of types that can be used in a {@link ShapeLink} object.
- * Each key is the name of the type, and each value is a description of the type.
- * For programming languages, these types represent language-specific components.
- * For example, in Java, types should map to the possible values of {@link java.lang.annotation.ElementType}.
- * </p>
- * <p>
- * The tags {@link Map} defines the set of tags that can be used in a {@link ShapeLink} object.
- * Each key is the name of the tag, and each value is the description of the tag.
- * Tags are used to provide semantics to links. Tools that evaluate trace models
- * use these tags to inform their analysis. For example, a tag for an AWS SDK code
- * generator could be "requestBuilder" to indicate that a class is used as a builder for a request.
- * </p>
+ * Class that defines the acceptable values that can be used in {@link ShapeLink} objects.
  */
 public final class ArtifactDefinitions implements ToNode, ToSmithyBuilder<ArtifactDefinitions> {
     public static final String TYPE_TEXT = "types";
@@ -70,19 +52,6 @@ public final class ArtifactDefinitions implements ToNode, ToSmithyBuilder<Artifa
         return new NodeMapper().deserialize(value, ArtifactDefinitions.class);
     }
 
-    /**
-     * Parses a definitions file and converts it into a definitions object. This is useful
-     * in the scenario when the user is provided the definitions specification and must create
-     * the trace file from that definitions specification.
-     *
-     * @param filename a definitions file URI - see example
-     * @return Definitions corresponding to parsed URI
-     * @throws FileNotFoundException if the definitions file path is not found
-     */
-    public static ArtifactDefinitions createFromFile(URI filename) throws FileNotFoundException {
-        InputStream stream = new FileInputStream(new File(filename));
-        return createFromNode(Node.parse(stream).expectObjectNode());
-    }
 
     public static Builder builder() {
         return new Builder();
@@ -104,6 +73,11 @@ public final class ArtifactDefinitions implements ToNode, ToSmithyBuilder<Artifa
 
     /**
      * Gets this Definition's Tags Map.
+     * The tags {@link Map} defines the set of tags that can be used in a {@link ShapeLink} object.
+     * Each key is the name of the tag, and each value is the description of the tag.
+     * Tags are used to provide semantics to links. Tools that evaluate trace models
+     * use these tags to inform their analysis. For example, a tag for an AWS SDK code
+     * generator could be "requestBuilder" to indicate that a class is used as a builder for a request.
      *
      * @return this Definition's Tags Map
      */
@@ -113,6 +87,10 @@ public final class ArtifactDefinitions implements ToNode, ToSmithyBuilder<Artifa
 
     /**
      * Gets this Definition's Types Map.
+     * The types {@link Map} defines the set of types that can be used in a {@link ShapeLink} object.
+     * Each key is the name of the type, and each value is a description of the type.
+     * For programming languages, these types represent language-specific components.
+     * For example, in Java, types should map to the possible values of {@link java.lang.annotation.ElementType}.
      *
      * @return this Definition's Type's Map
      */
@@ -134,8 +112,8 @@ public final class ArtifactDefinitions implements ToNode, ToSmithyBuilder<Artifa
     }
 
     public static final class Builder implements SmithyBuilder<ArtifactDefinitions> {
-        private Map<String, String> tags;
-        private Map<String, String> types;
+        private final Map<String, String> tags = new HashMap<>();
+        private final Map<String, String> types = new HashMap<>();
 
         /**
          * @return Definitions object from this builder.
@@ -145,42 +123,38 @@ public final class ArtifactDefinitions implements ToNode, ToSmithyBuilder<Artifa
         }
 
         public Builder tags(Map<String, String> tags) {
-            this.tags = tags;
+            this.tags.clear();
+            this.tags.putAll(tags);
             return this;
         }
 
         public Builder types(Map<String, String> types) {
-            this.types = types;
+            this.types.clear();
+            this.types.putAll(types);
             return this;
         }
 
         /**
          * Adds the tag's key, value pair to the tags map.
          *
-         * @param key   Key of tag.
-         * @param value Value of tag.
+         * @param name        Name of tag.
+         * @param description Description of tag.
          * @return This builder.
          */
-        public Builder addTag(String key, String value) {
-            if (this.tags == null) {
-                this.tags = new HashMap<>();
-            }
-            this.tags.put(key, value);
+        public Builder addTag(String name, String description) {
+            this.tags.put(name, description);
             return this;
         }
 
         /**
          * Adds the type's key, value pair to the tags map.
          *
-         * @param key   Key of type.
-         * @param value Value of type.
+         * @param name        Key of type.
+         * @param description Value of type.
          * @return This builder.
          */
-        public Builder addType(String key, String value) {
-            if (this.types == null) {
-                this.types = new HashMap<>();
-            }
-            this.types.put(key, value);
+        public Builder addType(String name, String description) {
+            this.types.put(name, description);
             return this;
         }
 

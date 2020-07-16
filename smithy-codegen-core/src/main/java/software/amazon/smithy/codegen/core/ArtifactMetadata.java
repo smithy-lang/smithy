@@ -29,23 +29,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
- * Class that defines information about an artifact that was created from a model for the trace file.
- *
- * <p>ArtifactMetadata contains metadata that
- * can be instantiated from a {@link software.amazon.smithy.model.node.Node} or written
- * to a {@link software.amazon.smithy.model.node.Node}. ArtifactMetadata contains the
- * following information:
- * <ul>
- *     <li>id - The identifier of the artifact. For example, Java packages should use the Maven artifact ID. </li>
- *     <li>version - The version of the artifact (for example, the AWS SDK release number).</li>
- *     <li>timestamp - The RFC 3339 date and time that the artifact was created.</li>
- *     <li>type - The type of artifact. For code generation, this is the programming language. </li>
- *     <li>typeVersion (Optional) - The artifact type version, if relevant. For example, when defining
- *     trace files for Java source code, the typeVersion would be the minimum supported JDK version.
- *     Different artifacts may have different output based on the version targets (for example the ability
- *     to use more features in a newer version of a language). </li>
- *     <li>homepage (Optional) - The homepage URL of the artifact.</li>
- * </ul>
+ * Class that defines information a code-generated artifact.
  */
 public final class ArtifactMetadata implements ToNode, ToSmithyBuilder<ArtifactMetadata> {
     public static final String ID_TEXT = "id";
@@ -106,6 +90,7 @@ public final class ArtifactMetadata implements ToNode, ToSmithyBuilder<ArtifactM
 
     /**
      * Gets this ArtifactMetadata's id.
+     * The id is the identifier of the artifact. For example, Java packages should use the Maven artifact ID.
      *
      * @return ArtifactMetadata's id
      */
@@ -114,7 +99,7 @@ public final class ArtifactMetadata implements ToNode, ToSmithyBuilder<ArtifactM
     }
 
     /**
-     * Gets this ArtifactMetadata's version.
+     * Gets this ArtifactMetadata's version (for example, the AWS SDK release number).
      *
      * @return ArtifactMetadata's version
      */
@@ -124,6 +109,7 @@ public final class ArtifactMetadata implements ToNode, ToSmithyBuilder<ArtifactM
 
     /**
      * Gets this ArtifactMetadata's timestamp.
+     * The timestamp is the RFC 3339 date and time that the artifact was created.
      *
      * @return ArtifactMetadata's timestamp
      */
@@ -132,7 +118,7 @@ public final class ArtifactMetadata implements ToNode, ToSmithyBuilder<ArtifactM
     }
 
     /**
-     * Gets this ArtifactMetadata's type.
+     * Gets this ArtifactMetadata's type. For code generation, this is the programming language.
      *
      * @return ArtifactMetadata's type
      */
@@ -141,10 +127,13 @@ public final class ArtifactMetadata implements ToNode, ToSmithyBuilder<ArtifactM
     }
 
     /**
-     * Gets this ArtifactMetadata's TypeVersion in an Optional container.
+     * Gets this ArtifactMetadata's TypeVersion in an Optional container. For example, when defining
+     * trace files for Java source code, the typeVersion would be the minimum supported JDK version.
+     * Different artifacts may have different output based on the version targets (for example the ability
+     * to use more features in a newer version of a language).
      *
      * @return Optional container with type version or empty container if
-     * TypeVersion has not been set
+     * TypeVersion has not been set.
      */
     public Optional<String> getTypeVersion() {
         return Optional.ofNullable(typeVersion);
@@ -152,6 +141,7 @@ public final class ArtifactMetadata implements ToNode, ToSmithyBuilder<ArtifactM
 
     /**
      * Gets this ArtifactMetadata's Homepage in an Optional container.
+     * The homepage is the homepage URL of the artifact.
      *
      * @return Optional container with homepage or empty container if
      * homepage has not been set
