@@ -111,7 +111,7 @@ apply StreamingTraitsRequireLength @httpRequestTests([
         documentation: "Serializes a blob in the HTTP payload with a required length",
         protocol: restJson1,
         method: "POST",
-        uri: "/StreamingTraits",
+        uri: "/StreamingTraitsRequireLength",
         body: "blobby blob blob",
         headers: {
             "X-Foo": "Foo",
@@ -130,7 +130,7 @@ apply StreamingTraitsRequireLength @httpRequestTests([
         documentation: "Serializes an empty blob in the HTTP payload",
         protocol: restJson1,
         method: "POST",
-        uri: "/StreamingTraits",
+        uri: "/StreamingTraitsRequireLength",
         body: "",
         headers: {
             "X-Foo": "Foo"
