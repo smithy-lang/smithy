@@ -17,10 +17,12 @@ package software.amazon.smithy.codegen.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+import java.util.Set;
+import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.loader.Prelude;
@@ -108,8 +110,12 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
         //constructing shapes ObjectNode map
         ObjectNode.Builder shapesBuilder = ObjectNode.objectNodeBuilder();
         for (Map.Entry<ShapeId, List<ShapeLink>> entry : shapes.entrySet()) {
-            shapesBuilder.withMember(entry.getKey().toString(),
-                    entry.getValue().stream().map(ShapeLink::toNode).collect(ArrayNode.collect()));
+            String shapeId = entry.getKey().toString();
+            ArrayNode shapeListNode = entry.getValue() //get list of ShapeLinks
+                    .stream()
+                    .map(ShapeLink::toNode) //convert each ShapeLink to an ObjectNode
+                    .collect(ArrayNode.collect()); //collect each ObjectNode in an ArrayNode
+            shapesBuilder.withMember(shapeId, shapeListNode);
         }
 
         //returning ObjectNode for TraceFile
@@ -148,13 +154,11 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
                 }
 
                 //checking if link's tags are all in artifactDefinitions
-                Optional<List<String>> tags = link.getTags();
-                if (tags.isPresent()) {
-                    for (String tag : tags.get()) {
-                        if (!artifactDefinitions.getTags().containsKey(tag)) {
-                            throw new ExpectationNotMetException(entry.getKey().toString() + " " + tag
-                                    + " is a tag that isn't in definitions.", sl);
-                        }
+                List<String> tags = link.getTags();
+                for (String tag : tags) {
+                    if (!artifactDefinitions.getTags().containsKey(tag)) {
+                        throw new ExpectationNotMetException(entry.getKey().toString() + " " + tag
+                                + " is a tag that isn't in definitions.", sl);
                     }
                 }
             }
@@ -170,17 +174,41 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
      *                                    not in model.
      */
     public void validateModel(Model model) {
-        //model contains all the shapeIds in shapes.keySet()
-        for (ShapeId id : shapes.keySet()) {
-            model.expectShape(id);
-        }
-        //shapes.keySet() contains all the shapeIds in model, we don't care about shapes in smithy.api namespace
-        for (Shape shape : model.toSet()) {
-            ShapeId id = shape.getId();
-            if (!Prelude.isPreludeShape(id) && !shapes.containsKey(id)) {
-                throw new ExpectationNotMetException("Shapes does not contain " + id.toString()
-                        + " but the model does. All shapes in the model MUST be present in the TraceFile.", sl);
+        Set<ShapeId> fileShapes = new HashSet<>(shapes.keySet());
+        Set<ShapeId> fileShapesCopy = new HashSet<>(fileShapes);
+
+        Set<ShapeId> modelShapes = model.toSet().stream()
+                .filter(shape -> !Prelude.isPreludeShape(shape)) //ignore shapes in smithy.api namespace
+                .map(Shape::getId) //get ShapeId for each shape
+                .collect(Collectors.toSet()); //collect into a set of ShapeIds
+
+        //get shapes in TraceFile that aren't in model;
+        fileShapes.removeAll(modelShapes);
+        //get shapes in model that aren't in TraceFile;
+        modelShapes.removeAll(fileShapesCopy);
+
+        //if there are shapes in TraceFile not in model or vice versa
+        if (fileShapes.size() > 0 || modelShapes.size() > 0) {
+            //building the error message
+            StringBuilder errorMessageBuilder = new StringBuilder().append("Model validation failed.");
+
+            if (fileShapes.size() > 0) {
+                errorMessageBuilder.append(" The following shapes are in the TraceFile, but missing from the model: ");
+                fileShapes.stream().forEach(id -> {
+                    errorMessageBuilder.append(id.toString()).append(", ");
+                });
+                errorMessageBuilder.append(". ");
             }
+
+            if (modelShapes.size() > 0) {
+                errorMessageBuilder.append("The following shapes are in the model, but missing from the TraceFile: ");
+                modelShapes.stream().forEach(id -> {
+                    errorMessageBuilder.append(id.toString()).append(", ");
+                });
+                errorMessageBuilder.append(". ");
+            }
+
+            throw new ExpectationNotMetException(errorMessageBuilder.toString(), sl);
         }
     }
 
@@ -293,10 +321,9 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
          * @return This builder.
          */
         public Builder addShapeLink(ShapeId id, ShapeLink link) {
-            if (!this.shapes.containsKey(id)) {
-                this.shapes.put(id, new ArrayList<>());
-            }
-            this.shapes.get(id).add(link);
+            List<ShapeLink> list = this.shapes.getOrDefault(id, new ArrayList<>());
+            list.add(link);
+            this.shapes.put(id, list);
             return this;
         }
 

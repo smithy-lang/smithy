@@ -20,7 +20,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 import java.util.TimeZone;
-
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -157,7 +156,7 @@ public final class ArtifactMetadata implements ToNode, ToSmithyBuilder<ArtifactM
      * @return a builder for type T
      */
     @Override
-    public SmithyBuilder<ArtifactMetadata> toBuilder() {
+    public Builder toBuilder() {
         return builder()
                 .id(id)
                 .version(version)

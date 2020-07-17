@@ -17,7 +17,6 @@ package software.amazon.smithy.codegen.core;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -111,7 +110,7 @@ public final class ArtifactDefinitions implements ToNode, ToSmithyBuilder<Artifa
      * @return a builder for type T
      */
     @Override
-    public SmithyBuilder<ArtifactDefinitions> toBuilder() {
+    public Builder toBuilder() {
         return builder()
                 .tags(tags)
                 .types(types);

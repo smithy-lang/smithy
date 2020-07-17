@@ -1,11 +1,9 @@
 package software.amazon.smithy.codegen.core;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
 import java.util.Optional;
-
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 
@@ -59,7 +57,7 @@ class ShapeLinkTest {
         assertThat(Optional.of(1), equalTo(shapeLink2.getLine()));
         assertThat("id", equalTo(shapeLink2.getId()));
         assertThat(Optional.of("file"), equalTo(shapeLink2.getFile()));
-        assertThat(Optional.of(tags), equalTo(shapeLink2.getTags()));
+        assertThat(tags, equalTo(shapeLink2.getTags()));
         assertThat("type", equalTo(shapeLink2.getType()));
     }
 

@@ -18,7 +18,6 @@ package software.amazon.smithy.codegen.core;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -50,9 +49,6 @@ public final class ShapeLink implements ToNode, ToSmithyBuilder<ShapeLink> {
         type = SmithyBuilder.requiredState(TYPE_TEXT, builder.type);
         id = SmithyBuilder.requiredState(ID_TEXT, builder.id);
         tags = ListUtils.copyOf(builder.tags);
-        if (tags.isEmpty()) {
-            tags = null;
-        }
         file = builder.file;
         line = builder.line;
         column = builder.column;
@@ -79,14 +75,18 @@ public final class ShapeLink implements ToNode, ToSmithyBuilder<ShapeLink> {
      */
     @Override
     public ObjectNode toNode() {
-        return ObjectNode.objectNodeBuilder()
+        ObjectNode.Builder builder = ObjectNode.objectNodeBuilder()
                 .withMember(ID_TEXT, id)
                 .withMember(TYPE_TEXT, type)
-                .withOptionalMember(TAGS_TEXT, getTags().map(Node::fromStrings))
                 .withOptionalMember(FILE_TEXT, getFile().map(Node::from))
                 .withOptionalMember(LINE_TEXT, getLine().map(Node::from))
-                .withOptionalMember(COLUMN_TEXT, getColumn().map(Node::from))
-                .build();
+                .withOptionalMember(COLUMN_TEXT, getColumn().map(Node::from));
+
+        if (!tags.isEmpty()) {
+            builder.withMember(TAGS_TEXT, Node.fromStrings(tags));
+        }
+
+        return builder.build();
     }
 
     /**
@@ -114,14 +114,14 @@ public final class ShapeLink implements ToNode, ToSmithyBuilder<ShapeLink> {
     }
 
     /**
-     * Gets this ShapeLink's tags in an optional container.
+     * Gets this ShapeLink's tags list.
      * Tags defines a list of tags to apply to the trace link. Each tag MUST correspond to a tag defined in
      * the /definitions/tags property of the trace file.
      *
-     * @return Optional container holding this ShapeLink's list of tags
+     * @return This ShapeLink's list of tags
      */
-    public Optional<List<String>> getTags() {
-        return Optional.ofNullable(tags);
+    public List<String> getTags() {
+        return tags;
     }
 
     /**
@@ -162,7 +162,7 @@ public final class ShapeLink implements ToNode, ToSmithyBuilder<ShapeLink> {
      * @return a builder for type T
      */
     @Override
-    public SmithyBuilder<ShapeLink> toBuilder() {
+    public Builder toBuilder() {
         return builder()
                 .id(id)
                 .column(column)
