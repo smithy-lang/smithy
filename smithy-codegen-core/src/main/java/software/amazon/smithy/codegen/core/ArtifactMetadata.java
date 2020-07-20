@@ -61,8 +61,10 @@ public final class ArtifactMetadata implements ToNode, ToSmithyBuilder<ArtifactM
      * @param value an ObjectNode that contains all children of the artifact tag in the trace file
      * @return ArtifactMetadata produced by deserializing the node.
      */
-    public static ArtifactMetadata createFromNode(Node value) {
-        return new NodeMapper().deserialize(value, ArtifactMetadata.class);
+    public static ArtifactMetadata fromNode(Node value) {
+        NodeMapper mapper = new NodeMapper();
+        mapper.disableFromNodeForClass(ArtifactMetadata.class);
+        return mapper.deserialize(value, ArtifactMetadata.class);
     }
 
     public static Builder builder() {

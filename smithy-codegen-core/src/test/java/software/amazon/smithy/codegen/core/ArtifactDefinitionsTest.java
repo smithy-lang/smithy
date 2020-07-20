@@ -48,7 +48,7 @@ class ArtifactDefinitionsTest {
                 .withMember(ArtifactDefinitions.TYPE_TEXT, ObjectNode.fromStringMap(artifactDefinitions.getTypes()))
                 .build();
 
-        ArtifactDefinitions artifactDefinitions2 = ArtifactDefinitions.createFromNode(node);
+        ArtifactDefinitions artifactDefinitions2 = ArtifactDefinitions.fromNode(node);
 
         assertThat(artifactDefinitions.getTags(), equalTo(artifactDefinitions2.getTags()));
         assertThat(artifactDefinitions.getTypes(), equalTo(artifactDefinitions2.getTypes()));
@@ -91,7 +91,7 @@ class ArtifactDefinitionsTest {
 
     ArtifactDefinitions createFromFileHelper(URI filename) throws FileNotFoundException {
         InputStream stream = new FileInputStream(new File(filename));
-        return ArtifactDefinitions.createFromNode(Node.parse(stream).expectObjectNode());
+        return ArtifactDefinitions.fromNode(Node.parse(stream).expectObjectNode());
     }
 
 }

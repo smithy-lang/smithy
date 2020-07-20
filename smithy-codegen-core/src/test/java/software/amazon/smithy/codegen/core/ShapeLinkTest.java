@@ -51,7 +51,7 @@ class ShapeLinkTest {
                 .withOptionalMember(ShapeLink.COLUMN_TEXT, Optional.of(2).map(Node::from))
                 .build();
 
-        ShapeLink shapeLink2 = ShapeLink.createFromNode(node);
+        ShapeLink shapeLink2 = ShapeLink.fromNode(node);
 
         assertThat(Optional.of(2), equalTo(shapeLink2.getColumn()));
         assertThat(Optional.of(1), equalTo(shapeLink2.getLine()));

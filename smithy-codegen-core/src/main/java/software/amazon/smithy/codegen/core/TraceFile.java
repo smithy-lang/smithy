@@ -73,23 +73,23 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
      *
      * @param value an ObjectNode that represents the entire trace file.
      */
-    public static TraceFile createFromNode(Node value) {
+    public static TraceFile fromNode(Node value) {
         ObjectNode node = value.expectObjectNode();
         Builder builder = builder()
                 .smithyTrace(node.expectStringMember(SMITHY_TRACE_TEXT).getValue())
-                .artifact(ArtifactMetadata.createFromNode(node.expectObjectMember(ARTIFACT_TEXT)));
+                .artifact(ArtifactMetadata.fromNode(node.expectObjectMember(ARTIFACT_TEXT)));
 
         //parse shapes
         Map<StringNode, Node> shapeMap = node.expectObjectMember(SHAPES_TEXT).getMembers();
         for (Map.Entry<StringNode, Node> entry : shapeMap.entrySet()) {
             for (Node linkNode : (entry.getValue().expectArrayNode()).getElements()) {
-                builder.addShapeLink(entry.getKey().getValue(), ShapeLink.createFromNode(linkNode));
+                builder.addShapeLink(entry.getKey().getValue(), ShapeLink.fromNode(linkNode));
             }
         }
 
         //parse definitions
         if (node.containsMember(DEFINITIONS_TEXT)) {
-            builder.definitions(ArtifactDefinitions.createFromNode(node.expectObjectMember(DEFINITIONS_TEXT)));
+            builder.definitions(ArtifactDefinitions.fromNode(node.expectObjectMember(DEFINITIONS_TEXT)));
         }
 
         return builder.build();

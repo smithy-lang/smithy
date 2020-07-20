@@ -59,8 +59,10 @@ public final class ShapeLink implements ToNode, ToSmithyBuilder<ShapeLink> {
      *
      * @param value an ObjectNode that represents the a single ShapeLink
      */
-    public static ShapeLink createFromNode(Node value) {
-        return new NodeMapper().deserialize(value, ShapeLink.class);
+    public static ShapeLink fromNode(Node value) {
+        NodeMapper mapper = new NodeMapper();
+        mapper.disableFromNodeForClass(ShapeLink.class);
+        return mapper.deserialize(value, ShapeLink.class);
     }
 
     public static Builder builder() {

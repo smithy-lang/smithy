@@ -43,7 +43,7 @@ class ArtifactMetadataTest {
                 .withOptionalMember(ArtifactMetadata.HOMEPAGE_TEXT, Optional.of("homepage").map(Node::from))
                 .build();
 
-        ArtifactMetadata am2 = ArtifactMetadata.createFromNode(node);
+        ArtifactMetadata am2 = ArtifactMetadata.fromNode(node);
 
         assertThat("id", equalTo(am2.getId()));
         assertThat("version", equalTo(am2.getVersion()));

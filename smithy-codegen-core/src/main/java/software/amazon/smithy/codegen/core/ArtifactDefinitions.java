@@ -53,8 +53,10 @@ public final class ArtifactDefinitions implements ToNode, ToSmithyBuilder<Artifa
      * @param value ObjectNode that contains the JSON data inside the definitions tag of
      *              the trace file
      */
-    public static ArtifactDefinitions createFromNode(Node value) {
-        return new NodeMapper().deserialize(value, ArtifactDefinitions.class);
+    public static ArtifactDefinitions fromNode(Node value) {
+        NodeMapper mapper = new NodeMapper();
+        mapper.disableFromNodeForClass(ArtifactDefinitions.class);
+        return mapper.deserialize(value, ArtifactDefinitions.class);
     }
 
 

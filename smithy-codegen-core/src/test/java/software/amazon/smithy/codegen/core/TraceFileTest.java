@@ -288,11 +288,11 @@ class TraceFileTest {
 
     TraceFile parseTraceFileFromFile(URI filename) throws FileNotFoundException {
         InputStream stream = new FileInputStream(new File(filename));
-        return TraceFile.createFromNode(Node.parse(stream).expectObjectNode());
+        return TraceFile.fromNode(Node.parse(stream).expectObjectNode());
     }
 
     TraceFile parseTraceFileFromManifest(MockManifest manifest, String filename) {
-        return TraceFile.createFromNode(Node.parse(manifest.expectFileString(filename)));
+        return TraceFile.fromNode(Node.parse(manifest.expectFileString(filename)));
     }
 
     MockManifest writeTraceFileTestHelper(TraceFile traceFile, String fileName) throws IOException {
