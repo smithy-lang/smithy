@@ -59,14 +59,14 @@ import software.amazon.smithy.utils.StringUtils;
 final class DefaultNodeDeserializers {
 
     // Deserialize an exact type if it matches (i.e., the setter expects a Node value).
-    private static final ObjectCreatorFactory EXACT_CREATOR_FACTORY = (nodeType, targetType) -> {
+    private static final ObjectCreatorFactory EXACT_CREATOR_FACTORY = (nodeType, targetType, nodeMapper) -> {
         return Node.class.isAssignableFrom(targetType) && targetType.isAssignableFrom(nodeType.getNodeClass())
                ? (node, target, param, pointer, mapper) -> node
                : null;
     };
 
     // Creates booleans from BooleanNodes.
-    private static final ObjectCreatorFactory BOOLEAN_CREATOR_FACTORY = (nodeType, targetType) -> {
+    private static final ObjectCreatorFactory BOOLEAN_CREATOR_FACTORY = (nodeType, targetType, nodeMapper) -> {
         if (nodeType == NodeType.BOOLEAN) {
             if (targetType == Boolean.class || targetType == boolean.class || targetType == Object.class) {
                 return (node, target, param, pointer, mapper) -> node.expectBooleanNode().getValue();
@@ -76,7 +76,7 @@ final class DefaultNodeDeserializers {
     };
 
     // Null nodes always return null values.
-    private static final ObjectCreatorFactory NULL_CREATOR = (nodeType, targetType) -> {
+    private static final ObjectCreatorFactory NULL_CREATOR = (nodeType, targetType, nodeMapper) -> {
         if (nodeType == NodeType.NULL) {
             return (node, target, param, pointer, mapper) -> null;
         }
@@ -84,7 +84,7 @@ final class DefaultNodeDeserializers {
     };
 
     // String nodes can create java.land.String or a Smithy ShapeId.
-    private static final ObjectCreatorFactory STRING_CREATOR = (nodeType, into) -> {
+    private static final ObjectCreatorFactory STRING_CREATOR = (nodeType, into, nodeMapper) -> {
         if (nodeType == NodeType.STRING) {
             if (into == String.class || into == Object.class) {
                 return (node, target, param, pointer, mapper) -> node.expectStringNode().getValue();
@@ -116,7 +116,7 @@ final class DefaultNodeDeserializers {
     }
 
     // Creates numbers from NumberNodes.
-    private static final ObjectCreatorFactory NUMBER_CREATOR = (nodeType, targetType) -> {
+    private static final ObjectCreatorFactory NUMBER_CREATOR = (nodeType, targetType, nodeMapper) -> {
         if (nodeType == NodeType.NUMBER) {
             if (NUMBER_MAPPERS.containsKey(targetType)) {
                 return (node, target, param, pointer, mapper) -> {
@@ -135,7 +135,7 @@ final class DefaultNodeDeserializers {
     // Deserialize an ArrayNode into a Collection.
     private static final ObjectCreatorFactory COLLECTION_CREATOR = new ObjectCreatorFactory() {
         @Override
-        public NodeMapper.ObjectCreator getCreator(NodeType nodeType, Class<?> target) {
+        public NodeMapper.ObjectCreator getCreator(NodeType nodeType, Class<?> target, NodeMapper nodeMapper) {
             if (nodeType != NodeType.ARRAY) {
                 return null;
             }
@@ -209,7 +209,7 @@ final class DefaultNodeDeserializers {
     // Deserialize an ObjectNode into a Map.
     private static final ObjectCreatorFactory MAP_CREATOR = new ObjectCreatorFactory() {
         @Override
-        public NodeMapper.ObjectCreator getCreator(NodeType nodeType, Class<?> target) {
+        public NodeMapper.ObjectCreator getCreator(NodeType nodeType, Class<?> target, NodeMapper nodeMapper) {
             if (nodeType != NodeType.OBJECT) {
                 return null;
             }
@@ -269,21 +269,24 @@ final class DefaultNodeDeserializers {
     };
 
     // Creates an object from any type of Node using the #fromNode factory method.
-    private static final ObjectCreatorFactory FROM_NODE_CREATOR = (nodeType, target) -> {
-        for (Method method : target.getMethods()) {
-            if ((method.getName().equals("fromNode"))
-                    && target.isAssignableFrom(method.getReturnType())
-                    && method.getParameters().length == 1
-                    && Node.class.isAssignableFrom(method.getParameters()[0].getType())
-                    && Modifier.isStatic(method.getModifiers())) {
-                return (node, targetType, paramType, pointer, mapper) -> {
-                    try {
-                        return method.invoke(null, node);
-                    } catch (ReflectiveOperationException e) {
-                        String message = "Unable to deserialize Node using fromNode method: " + getCauseMessage(e);
-                        throw NodeDeserializationException.fromReflectiveContext(targetType, pointer, node, e, message);
-                    }
-                };
+    private static final ObjectCreatorFactory FROM_NODE_CREATOR = (nodeType, target, nodeMapper) -> {
+        if (!nodeMapper.getDisableFromNode().contains(target)) {
+            for (Method method : target.getMethods()) {
+                if ((method.getName().equals("fromNode"))
+                        && target.isAssignableFrom(method.getReturnType())
+                        && method.getParameters().length == 1
+                        && Node.class.isAssignableFrom(method.getParameters()[0].getType())
+                        && Modifier.isStatic(method.getModifiers())) {
+                    return (node, targetType, paramType, pointer, mapper) -> {
+                        try {
+                            return method.invoke(null, node);
+                        } catch (ReflectiveOperationException e) {
+                            String message = "Unable to deserialize Node using fromNode method: " + getCauseMessage(e);
+                            throw NodeDeserializationException
+                                    .fromReflectiveContext(targetType, pointer, node, e, message);
+                        }
+                    };
+                }
             }
         }
         return null;
@@ -439,7 +442,7 @@ final class DefaultNodeDeserializers {
 
     // Creates an object from any type of Node using the #builder factory method.
     @SuppressWarnings("unchecked")
-    private static final ObjectCreatorFactory FROM_BUILDER_CREATOR = (nodeType, target) -> {
+    private static final ObjectCreatorFactory FROM_BUILDER_CREATOR = (nodeType, target, nodeMapper) -> {
         if (nodeType != NodeType.OBJECT) {
             return null;
         }
@@ -475,7 +478,7 @@ final class DefaultNodeDeserializers {
     }
 
     // Attempts to create a Bean style POJO using a zero-value constructor.
-    private static final ObjectCreatorFactory BEAN_CREATOR = (nodeType, target) -> {
+    private static final ObjectCreatorFactory BEAN_CREATOR = (nodeType, target, nodeMapper) -> {
         if (nodeType != NodeType.OBJECT) {
             return null;
         }
@@ -511,7 +514,7 @@ final class DefaultNodeDeserializers {
     // calling toString on the variant matches the given string.
     // Mimic's Jackson's behavior when using READ_ENUMS_USING_TO_STRING
     // See https://github.com/FasterXML/jackson-databind/wiki/Deserialization-Features
-    private static final ObjectCreatorFactory ENUM_CREATOR = (nodeType, target) -> {
+    private static final ObjectCreatorFactory ENUM_CREATOR = (nodeType, target, nodeMapper) -> {
         if (nodeType != NodeType.STRING || !Enum.class.isAssignableFrom(target)) {
             return null;
         }
@@ -550,7 +553,7 @@ final class DefaultNodeDeserializers {
             File.class, File::new
     );
 
-    private static final ObjectCreatorFactory FROM_STRING = (nodeType, target) -> {
+    private static final ObjectCreatorFactory FROM_STRING = (nodeType, target, nodeMapper) -> {
         if (nodeType != NodeType.STRING || !FROM_STRING_CLASSES.containsKey(target)) {
             return null;
         }
@@ -589,9 +592,9 @@ final class DefaultNodeDeserializers {
             BEAN_CREATOR
     );
 
-    static final ObjectCreatorFactory DEFAULT_CHAIN = (nodeType, target) -> {
+    static final ObjectCreatorFactory DEFAULT_CHAIN = (nodeType, target, nodeMapper) -> {
         for (ObjectCreatorFactory factory : DEFAULT_FACTORIES) {
-            NodeMapper.ObjectCreator result = factory.getCreator(nodeType, target);
+            NodeMapper.ObjectCreator result = factory.getCreator(nodeType, target, nodeMapper);
             if (result != null) {
                 return result;
             }
@@ -602,9 +605,9 @@ final class DefaultNodeDeserializers {
     // Creates an ObjectCreatorFactory that caches the result of finding ObjectCreators.
     private static ObjectCreatorFactory cachedCreator(ObjectCreatorFactory delegate) {
         ConcurrentMap<Pair<NodeType, Class>, NodeMapper.ObjectCreator> cache = new ConcurrentHashMap<>();
-        return (nodeType, target) -> {
+        return (nodeType, target, nodeMapper) -> {
             return cache.computeIfAbsent(Pair.of(nodeType, target), pair -> {
-                return delegate.getCreator(pair.left, pair.right);
+                return delegate.getCreator(pair.left, pair.right, nodeMapper);
             });
         };
     }
