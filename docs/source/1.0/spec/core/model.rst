@@ -876,8 +876,7 @@ is marked with the :ref:`required-trait`.
 
 .. seealso::
 
-    Refer to :ref:`idl-applying-traits` for a description of how traits
-    are applied to shapes.
+    :ref:`idl-applying-traits` for a description of how to apply traits.
 
 .. rubric:: Adding new members
 
