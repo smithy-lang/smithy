@@ -412,6 +412,31 @@ public class NodeMapperTest {
     }
 
     @Test
+    public void canDisableFromNodeInsideOfClass() {
+        ObjectNode objectNode = ObjectNode.objectNodeBuilder().withMember("foo", "baz").build();
+        NodeMapper mapper = new NodeMapper();
+        mapper.disableFromNodeForClass(DisabledFromNode.class);
+        DisabledFromNode result = mapper.deserialize(objectNode,DisabledFromNode.class);
+        assertThat(result.getFoo(), equalTo("baz"));
+    }
+
+    public static final class DisabledFromNode {
+        private String foo;
+
+        public static DisabledFromNode fromNode() {
+            throw new RuntimeException("Was not meant to run!");
+        }
+
+        public String getFoo() {
+            return foo;
+        }
+
+        public void setFoo(String foo) {
+            this.foo = foo;
+        }
+    }
+
+    @Test
     public void deserializesWithFromNodeFactoryAndUnknownPropertiesWithWarning() {
         Node baz = Node.parse("{\"foo\": \"hi\", \"baz\": 10, \"inner\": {\"inner\": {\"noSetter!\": \"inn!\"}}}");
         Baz result = new NodeMapper().deserialize(baz, Baz.class);
