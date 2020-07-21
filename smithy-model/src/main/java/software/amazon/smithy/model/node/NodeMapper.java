@@ -96,7 +96,7 @@ public final class NodeMapper {
                     ? ""
                     : " " + node.getSourceLocation().toString().trim();
             return format("Deserialization error at %s%s: unable to find setter method for `%s` on %s",
-                          getNormalizedPointer(pointer), location, property, into.getCanonicalName());
+                    getNormalizedPointer(pointer), location, property, into.getCanonicalName());
         }
     }
 
@@ -164,17 +164,15 @@ public final class NodeMapper {
          *
          * @param nodeType Node type being converted.
          * @param target The class to create from the Node.
-         * @param nodeMapper The NodeMapper being used to call the ObjectCreator.
          * @return Returns the {@code ObjectCreator} or {@code null} if the factory cannot handle the given arguments.
          * @throws NodeDeserializationException when unable to create a factory.
          */
-        ObjectCreator getCreator(NodeType nodeType, Class<?> target, NodeMapper nodeMapper);
+        ObjectCreator getCreator(NodeType nodeType, Class<?> target);
     }
 
     private static final Logger LOGGER = Logger.getLogger(NodeMapper.class.getName());
     private WhenMissing whenMissing = WhenMissing.WARN;
     private final Set<Class> disableToNode = new HashSet<>();
-    private final Set<Class> disableFromNode = new HashSet<>();
     private boolean serializeNullValues = false;
     private boolean omitEmptyValues;
 
@@ -246,41 +244,6 @@ public final class NodeMapper {
      */
     public Set<Class> getDisableToNode() {
         return disableToNode;
-    }
-
-    /**
-     * Disables the use of {@code fromNode} method for a specific class
-     * when deserializing the class.
-     *
-     * <p>This method disables a specific concrete class and does not
-     * disable subclasses or implementations of an interface.
-     *
-     * <p>This is useful when using the NodeMapper inside of a {@code fromNode}
-     * implementation.
-     *
-     * @param type Class to disable the {@code fromNode} method deserialization for.
-     */
-    public void disableFromNodeForClass(Class type) {
-        disableFromNode.add(type);
-    }
-
-    /**
-     * Enables the use of the {@code FromNode} method for a specific class
-     * when deserializing the class.
-     *
-     * @param type Class to enable the {@code fromNode} method deserialization for.
-     */
-    public void enableFromNodeForClass(Class type) {
-        disableFromNode.remove(type);
-    }
-
-    /**
-     * Gets the set of classes where {@code fromNode} is disabled.
-     *
-     * @return Returns the disabled classes.
-     */
-    public Set<Class> getDisableFromNode() {
-        return disableFromNode;
     }
 
     /**
@@ -533,7 +496,7 @@ public final class NodeMapper {
         Objects.requireNonNull(mapper, "Deserialization mapper cannot be null");
 
         try {
-            ObjectCreator creator = creatorFactory.getCreator(value.getType(), into, this);
+            ObjectCreator creator = creatorFactory.getCreator(value.getType(), into);
             if (creator == null) {
                 throw createError(into, pointer, value, null, null);
             }
