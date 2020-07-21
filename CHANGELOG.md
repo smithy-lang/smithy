@@ -119,8 +119,8 @@ from Smithy `Node`s. ([#301](https://github.com/awslabs/smithy/pull/301))
 * Individual authentication schemes are now defined as individual traits that are annotated with
 [the `authDefinition` trait.](https://awslabs.github.io/smithy/1.0/spec/core/auth-traits.html#authdefinition-trait) [BC] ([#273](https://github.com/awslabs/smithy/pull/273), [#280](https://github.com/awslabs/smithy/pull/280))
   * Previously listed [authentication schemes now have trait implementations.](https://awslabs.github.io/smithy/1.0/spec/core/auth-traits.html)
-* The `smithy.api#enum` trait is now a list of enum Definitions instead of a map of string keys to
-enum Definitions to improve clarity and encourage adding more properties to Definitions. [BC] ([#326](https://github.com/awslabs/smithy/pull/326))
+* The `smithy.api#enum` trait is now a list of enum definitions instead of a map of string keys to
+enum definitions to improve clarity and encourage adding more properties to definitions. [BC] ([#326](https://github.com/awslabs/smithy/pull/326))
 * The `aws.api#streaming` trait is now applied to shapes directly instead of members. [BC] ([#340](https://github.com/awslabs/smithy/pull/340))
 * The `smithy.api#eventStream` trait has been removed. Event streams are now indicated by applying
 the `smithy.api#streaming` trait to unions. [BC] ([#365](https://github.com/awslabs/smithy/pull/365))
