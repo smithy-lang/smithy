@@ -59,7 +59,6 @@ public final class ArtifactDefinitions implements ToNode, ToSmithyBuilder<Artifa
         return mapper.deserialize(value, ArtifactDefinitions.class);
     }
 
-
     public static Builder builder() {
         return new Builder();
     }
