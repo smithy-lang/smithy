@@ -416,7 +416,7 @@ public class NodeMapperTest {
         ObjectNode objectNode = ObjectNode.objectNodeBuilder().withMember("foo", "baz").build();
         NodeMapper mapper = new NodeMapper();
         mapper.disableFromNodeForClass(DisabledFromNode.class);
-        DisabledFromNode result = mapper.deserialize(objectNode,DisabledFromNode.class);
+        DisabledFromNode result = mapper.deserialize(objectNode, DisabledFromNode.class);
         assertThat(result.getFoo(), equalTo("baz"));
     }
 
