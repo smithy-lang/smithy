@@ -1,4 +1,11 @@
 // This file defines test cases that test map query serialization.
+// Query maps have order, but not all languages have maps that
+// guarantee insertion order and those that do may choose not to
+// enforce their usage. Those languages may choose to sort entries
+// by key at serialization time, and so to facilitate that strategy
+// all maps in this file should be sorted by key. Alternatively,
+// a language implementing these tests may choose to implement a
+// query body parser that understands query maps and/or lists.
 
 $version: "1.0"
 
@@ -28,15 +35,15 @@ apply QueryMaps @httpRequestTests([
         body: """
               Action=QueryMaps
               &Version=2020-01-08
-              &MapArg.entry.1.key=foo
-              &MapArg.entry.1.value=Foo
-              &MapArg.entry.2.key=bar
-              &MapArg.entry.2.value=Bar""",
+              &MapArg.entry.1.key=bar
+              &MapArg.entry.1.value=Bar
+              &MapArg.entry.2.key=foo
+              &MapArg.entry.2.value=Foo""",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             MapArg: {
+                bar: "Bar",
                 foo: "Foo",
-                bar: "Bar"
             }
         }
     },
@@ -73,19 +80,19 @@ apply QueryMaps @httpRequestTests([
         body: """
               Action=QueryMaps
               &Version=2020-01-08
-              &ComplexMapArg.entry.1.key=foo
-              &ComplexMapArg.entry.1.value.hi=Foo
-              &ComplexMapArg.entry.2.key=bar
-              &ComplexMapArg.entry.2.value.hi=Bar""",
+              &ComplexMapArg.entry.1.key=bar
+              &ComplexMapArg.entry.1.value.hi=Bar
+              &ComplexMapArg.entry.2.key=foo
+              &ComplexMapArg.entry.2.value.hi=Foo""",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             ComplexMapArg: {
+                bar: {
+                    hi: "Bar"
+                },
                 foo: {
                     hi: "Foo",
                 },
-                bar: {
-                    hi: "Bar"
-                }
             }
         }
     },
@@ -118,15 +125,15 @@ apply QueryMaps @httpRequestTests([
         body: """
               Action=QueryMaps
               &Version=2020-01-08
-              &MapWithXmlMemberName.entry.1.K=foo
-              &MapWithXmlMemberName.entry.1.V=Foo
-              &MapWithXmlMemberName.entry.2.K=bar
-              &MapWithXmlMemberName.entry.2.V=Bar""",
+              &MapWithXmlMemberName.entry.1.K=bar
+              &MapWithXmlMemberName.entry.1.V=Bar
+              &MapWithXmlMemberName.entry.2.K=foo
+              &MapWithXmlMemberName.entry.2.V=Foo""",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             MapWithXmlMemberName: {
+                bar: "Bar",
                 foo: "Foo",
-                bar: "Bar"
             }
         }
     },
@@ -142,15 +149,15 @@ apply QueryMaps @httpRequestTests([
         body: """
               Action=QueryMaps
               &Version=2020-01-08
-              &FlattenedMap.1.key=foo
-              &FlattenedMap.1.value=Foo
-              &FlattenedMap.2.key=bar
-              &FlattenedMap.2.value=Bar""",
+              &FlattenedMap.1.key=bar
+              &FlattenedMap.1.value=Bar
+              &FlattenedMap.2.key=foo
+              &FlattenedMap.2.value=Foo""",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             FlattenedMap: {
+                bar: "Bar",
                 foo: "Foo",
-                bar: "Bar"
             }
         }
     },
@@ -166,15 +173,15 @@ apply QueryMaps @httpRequestTests([
         body: """
               Action=QueryMaps
               &Version=2020-01-08
-              &Hi.1.K=foo
-              &Hi.1.V=Foo
-              &Hi.2.K=bar
-              &Hi.2.V=Bar""",
+              &Hi.1.K=bar
+              &Hi.1.V=Bar
+              &Hi.2.K=foo
+              &Hi.2.V=Foo""",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             FlattenedMapWithXmlName: {
+                bar: "Bar",
                 foo: "Foo",
-                bar: "Bar"
             }
         }
     },
@@ -190,17 +197,17 @@ apply QueryMaps @httpRequestTests([
         body: """
               Action=QueryMaps
               &Version=2020-01-08
-              &MapOfLists.entry.1.key=foo
-              &MapOfLists.entry.1.value.member.1=A
-              &MapOfLists.entry.1.value.member.2=B
-              &MapOfLists.entry.2.key=bar
-              &MapOfLists.entry.2.value.member.1=C
-              &MapOfLists.entry.2.value.member.2=D""",
+              &MapOfLists.entry.1.key=bar
+              &MapOfLists.entry.1.value.member.1=C
+              &MapOfLists.entry.1.value.member.2=D
+              &MapOfLists.entry.2.key=foo
+              &MapOfLists.entry.2.value.member.1=A
+              &MapOfLists.entry.2.value.member.2=B""",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             MapOfLists: {
-                foo: ["A", "B"],
                 bar: ["C", "D"],
+                foo: ["A", "B"],
             }
         }
     },
