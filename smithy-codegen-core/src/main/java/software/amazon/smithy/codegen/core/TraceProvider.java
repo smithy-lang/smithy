@@ -19,10 +19,10 @@ import java.util.UUID;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.EnumTrait;
+import software.amazon.smithy.model.shapes.ShapeType;
 
 public class TraceProvider extends SymbolProviderDecorator {
-    private TraceFile.Builder traceFileBuilder = TraceFile.builder();;
+    private TraceFile.Builder traceFileBuilder = TraceFile.builder();
 
     private boolean isMetadataFilled = false;
     private boolean isDefinitionsFilled = false;
@@ -34,50 +34,6 @@ public class TraceProvider extends SymbolProviderDecorator {
      */
     public TraceProvider(SymbolProvider provider) {
         super(provider);
-    }
-
-    @Override
-    public Symbol toSymbol(Shape shape) {
-        Symbol symbol = provider.toSymbol(shape);
-
-        if (!Prelude.isPreludeShape(shape.getId())) {
-            //if metadata hasn't been filled yet
-            if (!isMetadataFilled) {
-                //if a language specific code generator has added an artifact property to our symbol
-                if (symbol.getProperty(TraceFile.ARTIFACT_TEXT).isPresent()) {
-                    traceFileBuilder.artifact(
-                            symbol.expectProperty(TraceFile.ARTIFACT_TEXT, ArtifactMetadata.class));
-                }
-                //use default ArtifactMetadata construction
-                else {
-                    traceFileBuilder.artifact(fillArtifactMetadata(symbol));
-                }
-                isMetadataFilled = true;
-            }
-
-            //if a language specific code generator has added a definitions property to our symbol
-            if (!isDefinitionsFilled && symbol.getProperty(TraceFile.DEFINITIONS_TEXT).isPresent()) {
-                traceFileBuilder.definitions(
-                        symbol.expectProperty(TraceFile.DEFINITIONS_TEXT, ArtifactDefinitions.class));
-                isDefinitionsFilled = true;
-            }
-
-            //filling the ShapeLink for this symbol
-            ShapeLink link;
-            //if a language specific code generator has added a ShapeLink property to our symbol
-            if (symbol.getProperty(TraceFile.SHAPES_TEXT).isPresent()) {
-                link = symbol.expectProperty(TraceFile.SHAPES_TEXT, ShapeLink.class);
-            }
-            else {
-                link = getShapeLink(symbol);
-            }
-            traceFileBuilder.addShapeLink(shape.getId(),link);
-        }
-        return symbol;
-    }
-
-    public TraceFile getTraceFile() {
-        return traceFileBuilder.build();
     }
 
     /**
@@ -140,10 +96,10 @@ public class TraceProvider extends SymbolProviderDecorator {
      *
      * @param symbol The {@link Symbol} to extract information from for the {@link TraceFile}'s shapes map.
      */
-    public static ShapeLink getShapeLink(Symbol symbol) {
+    public static ShapeLink getShapeLink(Symbol symbol, Shape shape) {
         //set ShapeLink's file
         ShapeLink.Builder builder = ShapeLink.builder()
-                .type(getShapeLinkType(symbol))
+                .type(getShapeLinkType(shape))
                 .id(getShapeLinkId(symbol))
                 .file(getShapeLinkFile(symbol));
 
@@ -158,24 +114,22 @@ public class TraceProvider extends SymbolProviderDecorator {
      */
     public static String getShapeLinkId(Symbol symbol) {
         return symbol.toString()
-                .replace(".", "")
-                .replace(symbol.getNamespaceDelimiter(), ".");
+                .replace("./", "")
+                .replace("/", ".");
     }
 
     /**
-     * Provides a default mapping from a symbol to type where default type values are "FIELD","ENUM", and "METHOD".
+     * Provides a default mapping from a symbol to type where default type values are "FIELD" and "METHOD".
+     * If the shape for the ShapeLink is an operation shape, then the ShapeLink is a method. Otherwise, it
+     * is a field.
      *
-     * @param symbol The symbol to extract a type from.
+     * @param shape The Shape to extract a type from.
      * @return String that contains the extracted type.
      */
-    public static String getShapeLinkType(Symbol symbol) {
+    public static String getShapeLinkType(Shape shape) {
         String type = "FIELD";
-        for (Object object : symbol.getProperties().keySet()) {
-            if (object.getClass().equals(EnumTrait.class)) {
-                type = "ENUM";
-            } else if (object.getClass().equals(Symbol.class)) {
-                type = "METHOD";
-            }
+        if (shape.getType().equals(ShapeType.OPERATION)) {
+            type = "METHOD";
         }
         return type;
     }
@@ -189,4 +143,46 @@ public class TraceProvider extends SymbolProviderDecorator {
     public static String getShapeLinkFile(Symbol symbol) {
         return symbol.getDefinitionFile();
     }
+
+    @Override
+    public Symbol toSymbol(Shape shape) {
+        Symbol symbol = provider.toSymbol(shape);
+
+        if (!Prelude.isPreludeShape(shape.getId())) {
+            //if metadata hasn't been filled yet
+            if (!isMetadataFilled) {
+                //if a language specific code generator has added an artifact property to our symbol
+                if (symbol.getProperty(TraceFile.ARTIFACT_TEXT).isPresent()) {
+                    traceFileBuilder.artifact(
+                            symbol.expectProperty(TraceFile.ARTIFACT_TEXT, ArtifactMetadata.class));
+                } else {
+                    traceFileBuilder.artifact(fillArtifactMetadata(symbol));
+                }
+                isMetadataFilled = true;
+            }
+
+            //if a language specific code generator has added a definitions property to our symbol
+            if (!isDefinitionsFilled && symbol.getProperty(TraceFile.DEFINITIONS_TEXT).isPresent()) {
+                traceFileBuilder.definitions(
+                        symbol.expectProperty(TraceFile.DEFINITIONS_TEXT, ArtifactDefinitions.class));
+                isDefinitionsFilled = true;
+            }
+
+            //filling the ShapeLink for this symbol
+            ShapeLink link;
+            //if a language specific code generator has added a ShapeLink property to our symbol
+            if (symbol.getProperty(TraceFile.SHAPES_TEXT).isPresent()) {
+                link = symbol.expectProperty(TraceFile.SHAPES_TEXT, ShapeLink.class);
+            } else {
+                link = getShapeLink(symbol, shape);
+            }
+            traceFileBuilder.addShapeLink(shape.getId(), link);
+        }
+        return symbol;
+    }
+
+    public TraceFile getTraceFile() {
+        return traceFileBuilder.build();
+    }
+
 }

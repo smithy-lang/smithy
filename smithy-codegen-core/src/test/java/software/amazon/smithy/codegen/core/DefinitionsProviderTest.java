@@ -1,14 +1,11 @@
 package software.amazon.smithy.codegen.core;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.StringShape;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -21,8 +18,8 @@ class DefinitionsProviderTest {
         tagMap.put("tag2", "tag2val");
 
         Map<String, String> typeMap = new HashMap<>();
-        tagMap.put("t1", "t1val");
-        tagMap.put("t2", "t2val");
+        typeMap.put("t1", "t1val");
+        typeMap.put("t2", "t2val");
 
         ArtifactDefinitions definitions = ArtifactDefinitions.builder()
                 .tags(tagMap)
