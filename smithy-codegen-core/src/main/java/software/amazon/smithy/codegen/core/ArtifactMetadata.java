@@ -210,7 +210,7 @@ public final class ArtifactMetadata implements ToNode, ToSmithyBuilder<ArtifactM
          */
         public Builder setTimestampAsNow() {
             //set timestamp based on current time
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm.ss'Z'");
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
             dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
             this.timestamp = dateFormat.format(new Date());
             return this;

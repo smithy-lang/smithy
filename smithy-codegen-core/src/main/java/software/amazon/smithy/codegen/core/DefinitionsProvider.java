@@ -35,9 +35,10 @@ public class DefinitionsProvider extends SymbolProviderDecorator {
     public Symbol toSymbol(Shape shape) {
         Symbol symbol = provider.toSymbol(shape);
         if (!isArtifactDefinitionsFilled) {
-            symbol.toBuilder().putProperty(TraceFile.DEFINITIONS_TEXT,definitions);
+            symbol = symbol.toBuilder().putProperty(TraceFile.DEFINITIONS_TEXT, definitions).build();
             isArtifactDefinitionsFilled = true;
         }
         return symbol;
     }
+
 }
