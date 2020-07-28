@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -371,5 +372,19 @@ public class RenameShapesTest {
             assertEquals(newMember.getId(), newMemberId);
         });
         assertFalse(result.getShape(containerId).isPresent());
+    }
+
+    @Test
+    public void transformationDoesntTriggerValidation() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("rename-with-resulting-errors.json"))
+                .assemble().unwrap();
+
+        Model result = ModelTransformer.create().renameShapes(model, Collections.singletonMap(
+                ShapeId.from("com.example.foo#string"), ShapeId.from("com.example#string")
+        ));
+
+        assertTrue(result.getShape(ShapeId.from("com.example#string")).isPresent());
+        assertTrue(result.getShape(ShapeId.from("com.example#String")).isPresent());
     }
 }

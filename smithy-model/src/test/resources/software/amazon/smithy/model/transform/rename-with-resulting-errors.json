@@ -1,0 +1,11 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "com.example#String": {
+            "type": "string"
+        },
+        "com.example.foo#string": {
+            "type": "string"
+        }
+    }
+}

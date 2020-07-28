@@ -29,6 +29,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ModelSerializer;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.utils.Pair;
 
 /**
@@ -69,9 +70,11 @@ final class RenameShapes {
         // Use visitor to traverse node and rebuild model.
         Node newModel = node.accept(new RenameShapeVisitor(toRename, renamed));
 
-        return assembler.addDocumentNode(newModel)
-                .assemble()
-                .unwrap();
+        ValidatedResult<Model> result = assembler.addDocumentNode(newModel).assemble();
+
+        // Transformers shouldn't perform validation ideally. They should only throw errors if the model
+        // can't be transformed.
+        return result.getResult().orElseGet(result::unwrap);
     }
 
     private static final class RenameShapeVisitor extends NodeVisitor.Default<Node> {
