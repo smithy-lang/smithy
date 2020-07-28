@@ -19,6 +19,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -78,7 +79,7 @@ public final class Walker {
      * @return Returns a set of connected shapes.
      */
     public Set<Shape> walkShapes(Shape shape, Predicate<Relationship> predicate) {
-        Set<Shape> result = new HashSet<>();
+        Set<Shape> result = new LinkedHashSet<>();
         Iterator<Shape> shapeIterator = iterateShapes(shape, predicate);
         while (shapeIterator.hasNext()) {
             result.add(shapeIterator.next());
