@@ -238,30 +238,27 @@ final class LoaderVisitor {
     private boolean validateOnShape(ShapeId id, FromSourceLocation source) {
         if (!hasDefinedShape(id)) {
             return true;
+        } else if (Prelude.isPreludeShape(id)) {
+            // Ignore prelude shape conflicts since it's such a common case of
+            // passing an already built model into a ModelAssembler.
+            return false;
         }
 
-        // Ignore prelude shape conflicts since it's such a common case of
-        // passing an already built model into a ModelAssembler.
-        if (!Prelude.isPreludeShape(id)) {
-            // The shape has been duplicated, so get the previously defined pending shape or built shape.
-            SourceLocation previous = Optional.<FromSourceLocation>ofNullable(pendingShapes.get(id))
-                    .orElseGet(() -> builtShapes.get(id)).getSourceLocation();
-            // Cannot ignore duplicate member definitions.
-            boolean canIgnore = !id.getMember().isPresent()
-                                // Ignore duplicate shapes defined in the same file.
-                                && previous != SourceLocation.NONE
-                                && previous.equals(source.getSourceLocation());
-            if (canIgnore) {
-                LOGGER.warning(() -> "Ignoring duplicate shape definition defined in the same file: "
-                                     + id + " defined at " + source.getSourceLocation());
-            } else {
-                String message = String.format("Duplicate shape definition for `%s` found at `%s` and `%s`",
-                                               id, previous.getSourceLocation(), source.getSourceLocation());
-                throw new SourceException(message, source);
-            }
-        }
+        // The shape has been duplicated, so get the previously defined pending shape or built shape.
+        SourceLocation previous = Optional.<FromSourceLocation>ofNullable(pendingShapes.get(id))
+                .orElseGet(() -> builtShapes.get(id)).getSourceLocation();
 
-        return false;
+        // Ignore duplicate shapes defined in the same file (this can happen
+        // when the same file is included multiple times in a model assembler).
+        if (previous != SourceLocation.NONE && previous.equals(source.getSourceLocation())) {
+            LOGGER.warning(() -> "Ignoring duplicate shape definition defined in the same file: "
+                                 + id + " defined at " + source.getSourceLocation());
+            return false;
+        } else {
+            String message = String.format("Duplicate shape definition for `%s` found at `%s` and `%s`",
+                                           id, previous.getSourceLocation(), source.getSourceLocation());
+            throw new SourceException(message, source);
+        }
     }
 
     /**
