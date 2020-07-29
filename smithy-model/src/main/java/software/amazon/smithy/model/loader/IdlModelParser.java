@@ -458,9 +458,11 @@ final class IdlModelParser extends SimpleParser {
     }
 
     private void parseMembers(ShapeId id, Set<String> requiredMembers) {
+        Set<String> definedMembers = new HashSet<>();
         Set<String> remaining = requiredMembers.isEmpty()
                 ? requiredMembers
                 : new HashSet<>(requiredMembers);
+
         ws();
         expect('{');
         // Don't keep any previous state of captured doc comments when
@@ -469,9 +471,7 @@ final class IdlModelParser extends SimpleParser {
         ws();
 
         if (peek() != '}') {
-            // Remove the parsed member from the remaining set to detect
-            // when duplicates are found, or when members are missing.
-            remaining.remove(parseMember(id, remaining));
+            parseMember(id, requiredMembers, definedMembers, remaining);
             while (!eof()) {
                 ws();
                 if (peek() == ',') {
@@ -484,15 +484,7 @@ final class IdlModelParser extends SimpleParser {
                         // Trailing comma: "," "}"
                         break;
                     }
-
-                    // Special casing to detect invalid members early on, even
-                    // after draining all the valid members. This keeps builders
-                    // from raising confusing errors about invalid members.
-                    if (remaining.isEmpty() && !requiredMembers.isEmpty()) {
-                        parseMember(id, requiredMembers);
-                    } else {
-                        remaining.remove(parseMember(id, remaining));
-                    }
+                    parseMember(id, requiredMembers, definedMembers, remaining);
                 } else {
                     // Assume '}'; break to enforce.
                     break;
@@ -508,14 +500,22 @@ final class IdlModelParser extends SimpleParser {
         expect('}');
     }
 
-    private String parseMember(ShapeId parent, Set<String> requiredMembers) {
+    private String parseMember(ShapeId parent, Set<String> required, Set<String> defined, Set<String> remaining) {
         // Parse optional member traits.
         List<TraitEntry> memberTraits = parseDocsAndTraits();
         SourceLocation memberLocation = currentLocation();
         String memberName = ParserUtils.parseIdentifier(this);
 
+        if (defined.contains(memberName)) {
+            // This is a duplicate member name.
+            throw syntax("Duplicate member of " + parent + ": '" + memberName + '\'');
+        }
+
+        defined.add(memberName);
+        remaining.remove(memberName);
+
         // Only enforce "allowedMembers" if it isn't empty.
-        if (!requiredMembers.isEmpty() && !requiredMembers.contains(memberName)) {
+        if (!required.isEmpty() && !required.contains(memberName)) {
             throw syntax("Unexpected member of " + parent + ": '" + memberName + '\'');
         }
 
