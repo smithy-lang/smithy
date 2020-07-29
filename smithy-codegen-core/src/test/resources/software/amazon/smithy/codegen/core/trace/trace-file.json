@@ -1,6 +1,6 @@
 {
   "smithyTrace": "1.0",
-  "artifact": {
+  "metadata": {
     "id": "software.amazon.awssdk.services:snowball:2.10.79",
     "version": "2.10.79",
     "type": "Java",

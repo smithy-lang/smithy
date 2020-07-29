@@ -1,4 +1,4 @@
-package software.amazon.smithy.codegen.core;
+package software.amazon.smithy.codegen.core.trace;
 
 import java.util.ArrayList;
 import java.util.Optional;
