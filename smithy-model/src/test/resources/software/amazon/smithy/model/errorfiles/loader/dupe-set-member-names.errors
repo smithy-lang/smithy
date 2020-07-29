@@ -1,1 +1,1 @@
-[ERROR] -: Duplicate shape definition for `com.foo#Set$member` found at | Model
+[ERROR] -: Parse error at line 5, column 11 near `: `: Duplicate member of com.foo#Set: 'member' | Model
