@@ -1,4 +1,4 @@
-package software.amazon.smithy.codegen.core;
+package software.amazon.smithy.codegen.core.trace;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,7 +32,7 @@ class TraceFileTest {
     @Test
     void assertWriteTraceFileFromScratchWorks() throws IOException, URISyntaxException {
         /**
-         * Building ArtifactMetadata - this builder uses setTimestampAsNow, but you can also use a different
+         * Building TraceMetadata - this builder uses setTimestampAsNow, but you can also use a different
          * builder constructor to specify a custom timestamp.
          * The required fields are id, version, type, timestamp.
          */
@@ -42,7 +42,7 @@ class TraceFileTest {
         String type = "Java";
         String typeVersion = "1.8";
         String homepage = "https://github.com/aws/aws-sdk-java-v2/";
-        ArtifactMetadata artifactMetadata = ArtifactMetadata.builder()
+        TraceMetadata traceMetadata = TraceMetadata.builder()
                 .id(id)
                 .version(version)
                 .type(type)
@@ -71,7 +71,7 @@ class TraceFileTest {
          * setting it.
          */
         TraceFile.Builder traceFileBuilder = TraceFile.builder()
-                .artifact(artifactMetadata)
+                .metadata(traceMetadata)
                 .definitions(artifactDefinitions);
 
         //adding one ShapeLink to TraceFile
@@ -127,7 +127,7 @@ class TraceFileTest {
         TraceFile traceFile2 = parseTraceFileFromManifest(manifest, filename);
 
         //few assorted checks
-        assertThat(traceFile2.getArtifactMetadata().getId(), equalTo("software.amazon.awssdk.services:snowball:2.10.79"));
+        assertThat(traceFile2.getMetadata().getId(), equalTo("software.amazon.awssdk.services:snowball:2.10.79"));
         assertThat(traceFile2.getArtifactDefinitions().get().getTags().keySet(), containsInAnyOrder("service", "request",
                 "requestBuilder"));
         assertThat(traceFile2.getShapes().get(ShapeId.from("com.amazonaws.snowball#Snowball")).get(0).getType(),
@@ -139,7 +139,7 @@ class TraceFileTest {
     void assertsParseTraceFileWorksWithCorrectTraceFile() throws URISyntaxException, FileNotFoundException {
         TraceFile traceFile = parseTraceFileFromFile(getClass().getResource("trace-file.json").toURI());
 
-        assertThat(traceFile.getArtifactMetadata().getId(), equalTo("software.amazon.awssdk.services:snowball:2.10.79"));
+        assertThat(traceFile.getMetadata().getId(), equalTo("software.amazon.awssdk.services:snowball:2.10.79"));
         assertThat(traceFile.getArtifactDefinitions().get().getTags().keySet(), containsInAnyOrder("service", "request",
                 "response", "requestBuilder", "responseBuilder"));
         assertThat(traceFile.getShapes().get(ShapeId.from("com.amazonaws.snowball#Snowball")).get(0).getType(),
@@ -153,7 +153,7 @@ class TraceFileTest {
         MockManifest manifest = writeTraceFileTestHelper(traceFile, "trace-file-output.json");
         TraceFile traceFile2 = parseTraceFileFromManifest(manifest, "trace-file-output.json");
 
-        assertThat(traceFile2.getArtifactMetadata().getId(), equalTo("software.amazon.awssdk.services:snowball:2.10.79"));
+        assertThat(traceFile2.getMetadata().getId(), equalTo("software.amazon.awssdk.services:snowball:2.10.79"));
         assertThat(traceFile2.getArtifactDefinitions().get().getTags().keySet(), containsInAnyOrder("service", "request",
                 "response", "requestBuilder", "responseBuilder"));
         assertThat(traceFile2.getShapes().get(ShapeId.from("com.amazonaws.snowball#Snowball")).get(0).getType(),
@@ -171,7 +171,7 @@ class TraceFileTest {
         MockManifest manifest = writeTraceFileTestHelper(traceFile, "trace-file-output.json");
         TraceFile traceFile2 = parseTraceFileFromManifest(manifest, "trace-file-output.json");
 
-        assertThat(traceFile.getArtifactMetadata().getId(), equalTo("software.amazon.awssdk.services:snowball:2.10.79"));
+        assertThat(traceFile.getMetadata().getId(), equalTo("software.amazon.awssdk.services:snowball:2.10.79"));
         assertThat(traceFile.getShapes().get(ShapeId.from("com.amazonaws.snowball#Snowball")).get(0).getType(),
                 equalTo("TYPE"));
         assertThat(traceFile.getSmithyTrace(), equalTo("1.0"));
@@ -254,11 +254,11 @@ class TraceFileTest {
     }
 
     @Test
-    void buildThrowsWithNoArtifactMetadata() {
+    void buildThrowsWithNoTraceMetadata() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             TraceFile traceFile = parseTraceFileFromFile(getClass().getResource("trace-file.json").toURI());
             //set to null before writing and parsing again
-            traceFile.toBuilder().artifact(null).build();
+            traceFile.toBuilder().metadata(null).build();
         });
     }
 

@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.codegen.core;
+package software.amazon.smithy.codegen.core.trace;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,27 +40,26 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Class that represents the contents of a Smithy trace file.
- * TraceFile's require a smithyTrace file version number, {@link ArtifactMetadata}, and
+ * TraceFile's require a smithyTrace file version number, {@link TraceMetadata}, and
  * {@link Map} from {@link ShapeId} to a List of {@link ShapeLink} objects. TraceFile's
  * optionally have a {@link ArtifactDefinitions} object. TraceFile handles parsing, serialization
  * and deserialization of a Smithy trace file.
  */
 public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
     public static final String SMITHY_TRACE_TEXT = "smithyTrace";
-    public static final String ARTIFACT_TEXT = "artifact";
+    public static final String METADATA_TEXT = "metadata";
     public static final String DEFINITIONS_TEXT = "definitions";
     public static final String SHAPES_TEXT = "shapes";
     public static final String SMITHY_TRACE_VERSION = "1.0";
 
     private String smithyTrace;
-    private ArtifactMetadata artifactMetadata;
+    private TraceMetadata metadata;
     private ArtifactDefinitions artifactDefinitions; //Optional
     private Map<ShapeId, List<ShapeLink>> shapes;
-    private SourceLocation sl = new SourceLocation("");
 
     private TraceFile(Builder builder) {
         smithyTrace = SmithyBuilder.requiredState(SMITHY_TRACE_TEXT, builder.smithyTrace);
-        artifactMetadata = SmithyBuilder.requiredState(ARTIFACT_TEXT, builder.artifactMetadata);
+        metadata = SmithyBuilder.requiredState(METADATA_TEXT, builder.metadata);
         if (builder.shapes.isEmpty()) {
             throw new IllegalStateException("TraceFile's shapes field must not be empty to build it.");
         }
@@ -80,7 +79,7 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
         ObjectNode node = value.expectObjectNode();
         Builder builder = builder()
                 .smithyTrace(node.expectStringMember(SMITHY_TRACE_TEXT).getValue())
-                .artifact(ArtifactMetadata.fromNode(node.expectObjectMember(ARTIFACT_TEXT)));
+                .metadata(TraceMetadata.fromNode(node.expectObjectMember(METADATA_TEXT)));
 
         //parse shapes
         Map<StringNode, Node> shapeMap = node.expectObjectMember(SHAPES_TEXT).getMembers();
@@ -124,7 +123,7 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
         //returning ObjectNode for TraceFile
         return ObjectNode.objectNodeBuilder()
                 .withMember(SMITHY_TRACE_TEXT, smithyTrace)
-                .withMember(ARTIFACT_TEXT, artifactMetadata)
+                .withMember(METADATA_TEXT, metadata)
                 .withOptionalMember(DEFINITIONS_TEXT, getArtifactDefinitions())
                 .withMember(SHAPES_TEXT, shapesBuilder.build())
                 .build();
@@ -148,7 +147,7 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
                     //checking if link's type is in artifactDefinitions
                     if (!artifactDefinitions.getTypes().containsKey(link.getType())) {
                         throw new ExpectationNotMetException(entry.getKey().toString()
-                                + " contains types that aren't in definitions.", sl);
+                                + " contains types that aren't in definitions.", SourceLocation.none());
                     }
 
                     //checking if link's tags are all in artifactDefinitions
@@ -156,7 +155,7 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
                     for (String tag : tags) {
                         if (!artifactDefinitions.getTags().containsKey(tag)) {
                             throw new ExpectationNotMetException(entry.getKey().toString() + " " + tag
-                                    + " is a tag that isn't in definitions.", sl);
+                                    + " is a tag that isn't in definitions.", SourceLocation.none());
                         }
                     }
                 }
@@ -207,7 +206,7 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
                 errorMessageBuilder.append(". ");
             }
 
-            throw new ExpectationNotMetException(errorMessageBuilder.toString(), sl);
+            throw new ExpectationNotMetException(errorMessageBuilder.toString(), SourceLocation.none());
         }
     }
 
@@ -222,12 +221,12 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
     }
 
     /**
-     * Gets this TraceFile's ArtifactMetadata.
+     * Gets this TraceFile's TraceMetadata.
      *
-     * @return an ArtifactMetadata object.
+     * @return a TraceMetadata object.
      */
-    public ArtifactMetadata getArtifactMetadata() {
-        return artifactMetadata;
+    public TraceMetadata getMetadata() {
+        return metadata;
     }
 
     /**
@@ -262,7 +261,7 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
     @Override
     public Builder toBuilder() {
         return builder()
-                .artifact(artifactMetadata)
+                .metadata(metadata)
                 .smithyTrace(smithyTrace)
                 .definitions(artifactDefinitions)
                 .shapes(shapes);
@@ -276,7 +275,7 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
         private final Map<ShapeId, List<ShapeLink>> shapes = new HashMap<>();
         private String smithyTrace = SMITHY_TRACE_VERSION;
         private ArtifactDefinitions artifactDefinitions;
-        private ArtifactMetadata artifactMetadata;
+        private TraceMetadata metadata;
 
         /**
          * @return The TraceFile.
@@ -304,11 +303,11 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
         }
 
         /**
-         * @param artifactMetadata Trace file ArtifactMetadata.
+         * @param metadata Trace file TraceMetadata.
          * @return This builder.
          */
-        public Builder artifact(ArtifactMetadata artifactMetadata) {
-            this.artifactMetadata = artifactMetadata;
+        public Builder metadata(TraceMetadata metadata) {
+            this.metadata = metadata;
             return this;
         }
 
@@ -344,7 +343,7 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
          * @param linkList List of ShapeLinks corresponding to a ShapeId.
          * @return This builder.
          */
-        public Builder addShapeLinkList(ShapeId id, List<ShapeLink> linkList) {
+        public Builder addShapeLinks(ShapeId id, List<ShapeLink> linkList) {
             this.shapes.put(id, linkList);
             return this;
         }
@@ -356,8 +355,8 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
          * @param linkList List of ShapeLinks corresponding to a ShapeId.
          * @return This builder.
          */
-        public Builder addShapeLinkList(String idString, List<ShapeLink> linkList) {
-            return addShapeLinkList(ShapeId.from(idString), linkList);
+        public Builder addShapeLinks(String idString, List<ShapeLink> linkList) {
+            return addShapeLinks(ShapeId.from(idString), linkList);
         }
 
         /**

@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.codegen.core;
+package software.amazon.smithy.codegen.core.trace;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +52,7 @@ public final class ArtifactDefinitions implements ToNode, ToSmithyBuilder<Artifa
      *
      * @param value ObjectNode that contains the JSON data inside the definitions tag of
      *              the trace file
+     * @return an ArtifactDefinitions object created from the ObjectNode.
      */
     public static ArtifactDefinitions fromNode(Node value) {
         NodeMapper mapper = new NodeMapper();
