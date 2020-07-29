@@ -320,7 +320,7 @@ final class LoaderVisitor {
         if (Prelude.isImmutablePublicPreludeShape(target)) {
             onError(ValidationEvent.builder()
                     .severity(Severity.ERROR)
-                    .eventId(Validator.MODEL_ERROR)
+                    .id(Validator.MODEL_ERROR)
                     .sourceLocation(sourceLocation)
                     .shapeId(target)
                     .message(String.format(
@@ -358,7 +358,7 @@ final class LoaderVisitor {
             metadata.put(key, mergedArray);
         } else if (!metadata.get(key).equals(value)) {
             onError(ValidationEvent.builder()
-                    .eventId(Validator.MODEL_ERROR)
+                    .id(Validator.MODEL_ERROR)
                     .severity(Severity.ERROR)
                     .sourceLocation(value)
                     .message(format(
@@ -507,7 +507,7 @@ final class LoaderVisitor {
     private void emitErrorsForEachInvalidTraitTarget(ShapeId target, List<PendingTrait> pendingTraits) {
         for (PendingTrait pendingTrait : pendingTraits) {
             onError(ValidationEvent.builder()
-                    .eventId(Validator.MODEL_ERROR)
+                    .id(Validator.MODEL_ERROR)
                     .severity(Severity.ERROR)
                     .sourceLocation(pendingTrait.value.getSourceLocation())
                     .message(format("Trait `%s` applied to unknown shape `%s`",
@@ -618,7 +618,7 @@ final class LoaderVisitor {
 
     private void onDuplicateTrait(ShapeId target, ShapeId traitName, FromSourceLocation previous, Node duplicate) {
         onError(ValidationEvent.builder()
-                .eventId(Validator.MODEL_ERROR)
+                .id(Validator.MODEL_ERROR)
                 .severity(Severity.ERROR)
                 .sourceLocation(duplicate.getSourceLocation())
                 .shapeId(target)
@@ -635,7 +635,7 @@ final class LoaderVisitor {
 
         // Fail if the trait cannot be resolved.
         onError(ValidationEvent.builder()
-                .eventId(Validator.MODEL_ERROR)
+                .id(Validator.MODEL_ERROR)
                 .severity(severity)
                 .sourceLocation(trait.value.getSourceLocation())
                 .shapeId(shapeBuilder.getId())

@@ -104,7 +104,7 @@ public final class ServiceValidator extends AbstractValidator {
         String declaration = severity == Severity.DANGER || severity == Severity.ERROR ? "must" : "should";
 
         return ValidationEvent.builder()
-                .eventId(getName())
+                .id(getName())
                 .severity(severity)
                 .shape(subject)
                 .message(String.format(

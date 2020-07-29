@@ -66,6 +66,6 @@ public abstract class AbstractValidator implements Validator {
     }
 
     private ValidationEvent createEvent(ValidationEvent.Builder builder) {
-        return builder.eventId(getName()).build();
+        return builder.id(getName()).build();
     }
 }

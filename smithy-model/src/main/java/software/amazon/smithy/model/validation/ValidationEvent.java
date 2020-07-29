@@ -56,7 +56,7 @@ public final class ValidationEvent implements Comparable<ValidationEvent>, ToNod
         this.sourceLocation = SmithyBuilder.requiredState("sourceLocation", builder.sourceLocation);
         this.message = SmithyBuilder.requiredState("message", builder.message);
         this.severity = SmithyBuilder.requiredState("severity", builder.severity);
-        this.eventId = SmithyBuilder.requiredState("eventId", builder.eventId);
+        this.eventId = SmithyBuilder.requiredState("id", builder.eventId);
         this.shapeId = builder.shapeId;
         this.suppressionReason = builder.suppressionReason;
     }
@@ -85,7 +85,7 @@ public final class ValidationEvent implements Comparable<ValidationEvent>, ToNod
     public static ValidationEvent fromSourceException(SourceException exception, String prefix) {
         // Get the message without source location since it's in the event.
         return ValidationEvent.builder()
-                .eventId(MODEL_ERROR)
+                .id(MODEL_ERROR)
                 .severity(ERROR)
                 .message(prefix + exception.getMessageWithoutLocation())
                 .sourceLocation(exception.getSourceLocation())
@@ -160,7 +160,7 @@ public final class ValidationEvent implements Comparable<ValidationEvent>, ToNod
     @Override
     public Node toNode() {
         return Node.objectNodeBuilder()
-                .withMember("id", Node.from(getEventId()))
+                .withMember("id", Node.from(getId()))
                 .withMember("severity", Node.from(getSeverity().toString()))
                 .withOptionalMember("shapeId", getShapeId().map(Object::toString).map(Node::from))
                 .withMember("message", Node.from(getMessage()))
@@ -198,8 +198,20 @@ public final class ValidationEvent implements Comparable<ValidationEvent>, ToNod
      * <p>The validation event identifier can be used to suppress events.
      *
      * @return Returns the event ID.
+     * @deprecated Use the {@code getId()} method to match the node format.
      */
     public String getEventId() {
+        return getId();
+    }
+
+    /**
+     * Returns the identifier of the validation event.
+     *
+     * <p>The validation event identifier can be used to suppress events.
+     *
+     * @return Returns the event ID.
+     */
+    public String getId() {
         return eventId;
     }
 
@@ -263,8 +275,19 @@ public final class ValidationEvent implements Comparable<ValidationEvent>, ToNod
          *
          * @param eventId Event ID.
          * @return Returns the builder.
+         * @deprecated Use the {@code id(String eventId)} setter to match the node format.
          */
         public Builder eventId(final String eventId) {
+            return id(eventId);
+        }
+
+        /**
+         * Sets the required event ID of the event.
+         *
+         * @param eventId Event ID.
+         * @return Returns the builder.
+         */
+        public Builder id(final String eventId) {
             this.eventId = Objects.requireNonNull(eventId);
             return this;
         }

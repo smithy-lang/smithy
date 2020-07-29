@@ -35,7 +35,7 @@ public final class LineValidationEventFormatter implements ValidationEventFormat
                 event.getSeverity(),
                 event.getShapeId().map(ShapeId::toString).orElse("-"),
                 message,
-                event.getEventId(),
+                event.getId(),
                 event.getSourceLocation().getFilename(),
                 event.getSourceLocation().getLine(),
                 event.getSourceLocation().getColumn());

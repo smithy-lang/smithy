@@ -45,7 +45,7 @@ final class ValidatorFromDefinitionFactory {
         } catch (RuntimeException e) {
             return ValidatedResult.fromErrors(ListUtils.of(
                     ValidationEvent.builder()
-                            .eventId(Validator.MODEL_ERROR)
+                            .id(Validator.MODEL_ERROR)
                             .sourceLocation(definition.sourceLocation)
                             .severity(Severity.ERROR)
                             .message(format("Error creating `%s` validator: %s", definition.name, e.getMessage()))

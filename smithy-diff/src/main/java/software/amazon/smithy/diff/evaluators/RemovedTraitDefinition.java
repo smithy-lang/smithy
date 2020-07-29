@@ -31,7 +31,7 @@ public final class RemovedTraitDefinition extends AbstractDiffEvaluator {
         return differences.removedShapes()
                 .filter(shape -> shape.hasTrait(TraitDefinition.class))
                 .map(shape -> ValidationEvent.builder()
-                        .eventId(getEventId())
+                        .id(getEventId())
                         .severity(Severity.ERROR)
                         .shape(shape)
                         .message(String.format("Trait definition `%s` was removed", shape.getId()))

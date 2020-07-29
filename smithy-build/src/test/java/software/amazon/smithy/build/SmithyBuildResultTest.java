@@ -37,7 +37,7 @@ public class SmithyBuildResultTest {
                         .addEvent(ValidationEvent.builder()
                                           .message("foo")
                                           .severity(Severity.ERROR)
-                                          .eventId("abc")
+                                          .id("abc")
                                           .build())
                         .build())
                 .build().anyBroken());

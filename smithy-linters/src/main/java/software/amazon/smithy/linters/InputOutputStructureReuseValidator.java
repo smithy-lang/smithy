@@ -128,7 +128,7 @@ public final class InputOutputStructureReuseValidator extends AbstractValidator 
 
     private ValidationEvent emit(Model model, ShapeId shape, String message) {
         ValidationEvent.Builder builder = ValidationEvent.builder()
-                .eventId(getName())
+                .id(getName())
                 .severity(Severity.DANGER)
                 .message(message)
                 .shapeId(shape);

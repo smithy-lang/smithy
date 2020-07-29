@@ -151,7 +151,7 @@ final class ModelValidator {
     private ValidationEvent unknownValidatorError(String name, SourceLocation location) {
         return ValidationEvent.builder()
                 // Per the spec, the eventID is "UnknownValidator_<validatorName>".
-                .eventId("UnknownValidator_" + name)
+                .id("UnknownValidator_" + name)
                 .severity(Severity.WARNING)
                 .sourceLocation(location)
                 .message("Unable to locate a validator named `" + name + "`")
@@ -199,9 +199,9 @@ final class ModelValidator {
     private String resolveReason(ValidationEvent event) {
         return event.getShapeId()
                 .flatMap(model::getShape)
-                .flatMap(shape -> matchSuppression(shape, event.getEventId()))
+                .flatMap(shape -> matchSuppression(shape, event.getId()))
                 // This is always evaluated if a reason hasn't been found.
-                .orElseGet(() -> matchWildcardNamespaceSuppressions(event.getEventId()));
+                .orElseGet(() -> matchWildcardNamespaceSuppressions(event.getId()));
     }
 
     private Optional<String> matchSuppression(Shape shape, String eventId) {

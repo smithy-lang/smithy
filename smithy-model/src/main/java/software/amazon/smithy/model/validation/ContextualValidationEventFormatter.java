@@ -53,7 +53,7 @@ public final class ContextualValidationEventFormatter implements ValidationEvent
         formatter.format("%s: %s (%s)%n",
                          event.getSeverity(),
                          event.getShapeId().map(ShapeId::toString).orElse("-"),
-                         event.getEventId());
+                         event.getId());
 
         if (event.getSourceLocation() != SourceLocation.NONE) {
             String humanReadableFilename = getHumanReadableFilename(event.getSourceLocation());

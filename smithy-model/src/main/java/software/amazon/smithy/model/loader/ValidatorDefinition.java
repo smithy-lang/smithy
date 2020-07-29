@@ -74,7 +74,7 @@ final class ValidatorDefinition {
             } else {
                 // Modify the event by changing the id, severity, or message.
                 ValidationEvent.Builder builder = event.toBuilder();
-                builder.eventId(id != null ? id : event.getEventId());
+                builder.id(id != null ? id : event.getId());
                 builder.severity(severity != null ? severity : event.getSeverity());
                 if (message != null) {
                     builder.message(message.replace("{super}", event.getMessage()));

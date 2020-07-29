@@ -24,7 +24,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public final class TestHelper {
     public static List<ValidationEvent> findEvents(List<ValidationEvent> events, String eventId) {
         return events.stream()
-                .filter(event -> event.getEventId().equals(eventId))
+                .filter(event -> event.getId().equals(eventId))
                 .collect(Collectors.toList());
     }
 

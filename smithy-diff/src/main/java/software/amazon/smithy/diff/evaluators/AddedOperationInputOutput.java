@@ -68,7 +68,7 @@ public final class AddedOperationInputOutput implements DiffEvaluator {
             if (struct.getAllMembers().values().stream().noneMatch(MemberShape::isRequired)) {
                 // This is a backward compatible change.
                 return ValidationEvent.builder()
-                        .eventId(eventId)
+                        .id(eventId)
                         .severity(Severity.NOTE)
                         .shape(operation)
                         .message(String.format(
@@ -79,7 +79,7 @@ public final class AddedOperationInputOutput implements DiffEvaluator {
 
             // This is a breaking change!
             return ValidationEvent.builder()
-                    .eventId(eventId)
+                    .id(eventId)
                     .severity(Severity.ERROR)
                     .shape(operation)
                     .message(String.format(

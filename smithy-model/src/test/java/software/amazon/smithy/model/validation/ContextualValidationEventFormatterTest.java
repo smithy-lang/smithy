@@ -22,7 +22,7 @@ public class ContextualValidationEventFormatterTest {
 
         Shape shape = model.expectShape(ShapeId.from("example.smithy#Foo"));
         ValidationEvent event = ValidationEvent.builder()
-                .eventId("foo")
+                .id("foo")
                 .severity(Severity.ERROR)
                 .message("This is the message")
                 .shape(shape)
@@ -43,7 +43,7 @@ public class ContextualValidationEventFormatterTest {
     @Test
     public void doesNotLoadSourceLocationNone() {
         ValidationEvent event = ValidationEvent.builder()
-                .eventId("foo")
+                .id("foo")
                 .severity(Severity.ERROR)
                 .message("This is the message")
                 .sourceLocation(SourceLocation.NONE)

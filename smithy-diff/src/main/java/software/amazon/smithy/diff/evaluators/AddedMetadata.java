@@ -30,7 +30,7 @@ public final class AddedMetadata extends AbstractDiffEvaluator {
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.addedMetadata()
                 .map(metadata -> ValidationEvent.builder()
-                        .eventId(getEventId())
+                        .id(getEventId())
                         .severity(Severity.NOTE)
                         .sourceLocation(metadata.getRight().getSourceLocation())
                         .message(String.format(

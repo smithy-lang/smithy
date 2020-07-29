@@ -166,7 +166,7 @@ public final class ReservedWordsValidator extends AbstractValidator {
         private ValidationEvent emit(Shape shape, String word, String reason) {
             return ValidationEvent.builder()
                     .severity(Severity.DANGER)
-                    .eventId(ValidatorService.determineValidatorName(ReservedWordsValidator.class))
+                    .id(ValidatorService.determineValidatorName(ReservedWordsValidator.class))
                     .shape(shape)
                     .message(format("The word `%s` is reserved. %s", word, reason))
                     .build();

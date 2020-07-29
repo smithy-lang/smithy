@@ -35,7 +35,7 @@ public class ValidationEventTest {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             ValidationEvent.builder()
                     .severity(Severity.ERROR)
-                    .eventId("foo")
+                    .id("foo")
                     .build();
         });
     }
@@ -45,13 +45,13 @@ public class ValidationEventTest {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             ValidationEvent.builder()
                     .message("test")
-                    .eventId("foo")
+                    .id("foo")
                     .build();
         });
     }
 
     @Test
-    public void requiresEventId() {
+    public void requiresId() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             ValidationEvent.builder()
                     .severity(Severity.ERROR)
@@ -66,7 +66,7 @@ public class ValidationEventTest {
             ValidationEvent.builder()
                     .severity(Severity.ERROR)
                     .message("test")
-                    .eventId("foo")
+                    .id("foo")
                     .suppressionReason("Some reason")
                     .build();
         });
@@ -79,13 +79,13 @@ public class ValidationEventTest {
                 .message("The message")
                 .severity(Severity.SUPPRESSED)
                 .shapeId(id)
-                .eventId("abc.foo")
+                .id("abc.foo")
                 .suppressionReason("my reason")
                 .build();
 
         assertThat(event.getSeverity(), equalTo(Severity.SUPPRESSED));
         assertThat(event.getMessage(), equalTo("The message"));
-        assertThat(event.getEventId(), equalTo("abc.foo"));
+        assertThat(event.getId(), equalTo("abc.foo"));
         assertThat(event.getSuppressionReason().get(), equalTo("my reason"));
         assertThat(event.getShapeId().get(), is(id));
         assertThat(event.getSeverity(), is(Severity.SUPPRESSED));
@@ -98,7 +98,7 @@ public class ValidationEventTest {
                 .message("The message")
                 .severity(Severity.ERROR)
                 .shape(stringShape)
-                .eventId("abc.foo")
+                .id("abc.foo")
                 .build();
 
         assertThat(event.getSourceLocation(), is(stringShape.getSourceLocation()));
@@ -111,7 +111,7 @@ public class ValidationEventTest {
                 .message("The message")
                 .severity(Severity.SUPPRESSED)
                 .shapeId(id)
-                .eventId("abc.foo")
+                .id("abc.foo")
                 .suppressionReason("my reason")
                 .build();
 
@@ -124,7 +124,7 @@ public class ValidationEventTest {
                 .message("The message")
                 .severity(Severity.SUPPRESSED)
                 .shapeId(ShapeId.from("ns.foo#baz"))
-                .eventId("abc.foo")
+                .id("abc.foo")
                 .suppressionReason("my reason")
                 .build();
         ValidationEvent other = event.toBuilder().build();
@@ -138,7 +138,7 @@ public class ValidationEventTest {
                 .message("The message")
                 .severity(Severity.SUPPRESSED)
                 .shapeId(ShapeId.from("ns.foo#bar"))
-                .eventId("abc.foo")
+                .id("abc.foo")
                 .build();
 
         assertEquals(a, a);
@@ -150,7 +150,7 @@ public class ValidationEventTest {
                 .message("The message")
                 .severity(Severity.SUPPRESSED)
                 .shapeId(ShapeId.from("ns.foo#bar"))
-                .eventId("abc.foo")
+                .id("abc.foo")
                 .build();
 
         assertNotEquals(a, "test");
@@ -162,7 +162,7 @@ public class ValidationEventTest {
                 .message("The message")
                 .severity(Severity.SUPPRESSED)
                 .shapeId(ShapeId.from("ns.foo#bar"))
-                .eventId("abc.foo")
+                .id("abc.foo")
                 .build();
         ValidationEvent b = a.toBuilder().message("other message").build();
 
@@ -176,7 +176,7 @@ public class ValidationEventTest {
                 .message("The message")
                 .severity(Severity.SUPPRESSED)
                 .shapeId(ShapeId.from("ns.foo#bar"))
-                .eventId("abc.foo")
+                .id("abc.foo")
                 .build();
         ValidationEvent b = a.toBuilder().severity(Severity.ERROR).build();
 
@@ -190,7 +190,7 @@ public class ValidationEventTest {
                 .message("The message")
                 .severity(Severity.SUPPRESSED)
                 .shapeId(ShapeId.from("ns.foo#bar"))
-                .eventId("abc.foo")
+                .id("abc.foo")
                 .suppressionReason("my reason")
                 .sourceLocation(SourceLocation.none())
                 .build();
@@ -206,7 +206,7 @@ public class ValidationEventTest {
                 .message("The message")
                 .severity(Severity.SUPPRESSED)
                 .shapeId(ShapeId.from("ns.foo#bar"))
-                .eventId("abc.foo")
+                .id("abc.foo")
                 .suppressionReason("my reason")
                 .sourceLocation(SourceLocation.none())
                 .build();
@@ -222,11 +222,11 @@ public class ValidationEventTest {
                 .message("The message")
                 .severity(Severity.SUPPRESSED)
                 .shapeId(ShapeId.from("ns.foo#bar"))
-                .eventId("abc.foo")
+                .id("abc.foo")
                 .suppressionReason("my reason")
                 .sourceLocation(SourceLocation.none())
                 .build();
-        ValidationEvent b = a.toBuilder().eventId("other.id").build();
+        ValidationEvent b = a.toBuilder().id("other.id").build();
 
         assertNotEquals(a, b);
         assertNotEquals(a.hashCode(), b.hashCode());
@@ -238,7 +238,7 @@ public class ValidationEventTest {
                 .message("The message")
                 .severity(Severity.SUPPRESSED)
                 .shapeId(ShapeId.from("ns.foo#bar"))
-                .eventId("abc.foo")
+                .id("abc.foo")
                 .suppressionReason("my reason")
                 .sourceLocation(SourceLocation.none())
                 .build();
@@ -253,7 +253,7 @@ public class ValidationEventTest {
         ValidationEvent a = ValidationEvent.builder()
                 .message("The message")
                 .severity(Severity.SUPPRESSED)
-                .eventId("abc.foo")
+                .id("abc.foo")
                 .build();
 
         assertEquals(a.toString(), "[SUPPRESSED] -: The message | abc.foo N/A:0:0");
@@ -264,7 +264,7 @@ public class ValidationEventTest {
         ValidationEvent a = ValidationEvent.builder()
                 .message("The message")
                 .severity(Severity.SUPPRESSED)
-                .eventId("abc.foo")
+                .id("abc.foo")
                 .shapeId(ShapeId.from("ns.foo#baz"))
                 .build();
 
@@ -276,7 +276,7 @@ public class ValidationEventTest {
         ValidationEvent a = ValidationEvent.builder()
                 .message("The message")
                 .severity(Severity.SUPPRESSED)
-                .eventId("abc.foo")
+                .id("abc.foo")
                 .shapeId(ShapeId.from("ns.foo#baz"))
                 .sourceLocation(new SourceLocation("file", 1, 2))
                 .build();
@@ -289,7 +289,7 @@ public class ValidationEventTest {
         ValidationEvent a = ValidationEvent.builder()
                 .message("The message")
                 .severity(Severity.SUPPRESSED)
-                .eventId("abc.foo")
+                .id("abc.foo")
                 .shapeId(ShapeId.from("ns.foo#baz"))
                 .suppressionReason("Foo baz bar")
                 .sourceLocation(new SourceLocation("file", 1, 2))
@@ -303,7 +303,7 @@ public class ValidationEventTest {
         ValidationEvent a = ValidationEvent.builder()
                 .message("The message")
                 .severity(Severity.SUPPRESSED)
-                .eventId("abc.foo")
+                .id("abc.foo")
                 .shapeId(ShapeId.from("ns.foo#baz"))
                 .sourceLocation(new SourceLocation("file", 1, 2))
                 .build();
