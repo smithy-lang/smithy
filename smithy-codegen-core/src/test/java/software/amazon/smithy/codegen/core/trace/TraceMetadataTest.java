@@ -1,4 +1,4 @@
-package software.amazon.smithy.codegen.core;
+package software.amazon.smithy.codegen.core.trace;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -9,11 +9,11 @@ import software.amazon.smithy.model.node.ObjectNode;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-class ArtifactMetadataTest {
+class TraceMetadataTest {
 
     @Test
     void assertsToNodeWorksWithRequiredFields() {
-        ArtifactMetadata am = new ArtifactMetadata.Builder()
+        TraceMetadata am = new TraceMetadata.Builder()
                 .id("a")
                 .version("b")
                 .type("c")
@@ -24,26 +24,26 @@ class ArtifactMetadataTest {
 
         ObjectNode node = am.toNode();
 
-        assertThat(node.expectStringMember(ArtifactMetadata.ID_TEXT).getValue(), equalTo("a"));
-        assertThat(node.expectStringMember(ArtifactMetadata.VERSION_TEXT).getValue(), equalTo("b"));
-        assertThat(node.expectStringMember(ArtifactMetadata.TYPE_TEXT).getValue(), equalTo("c"));
-        assertThat(node.expectStringMember(ArtifactMetadata.TIMESTAMP_TEXT).getValue(), equalTo("d"));
-        assertThat(node.expectStringMember(ArtifactMetadata.HOMEPAGE_TEXT).getValue(), equalTo("hp"));
-        assertThat(node.expectStringMember(ArtifactMetadata.TYPE_VERSION_TEXT).getValue(), equalTo("tv"));
+        assertThat(node.expectStringMember(TraceMetadata.ID_TEXT).getValue(), equalTo("a"));
+        assertThat(node.expectStringMember(TraceMetadata.VERSION_TEXT).getValue(), equalTo("b"));
+        assertThat(node.expectStringMember(TraceMetadata.TYPE_TEXT).getValue(), equalTo("c"));
+        assertThat(node.expectStringMember(TraceMetadata.TIMESTAMP_TEXT).getValue(), equalTo("d"));
+        assertThat(node.expectStringMember(TraceMetadata.HOMEPAGE_TEXT).getValue(), equalTo("hp"));
+        assertThat(node.expectStringMember(TraceMetadata.TYPE_VERSION_TEXT).getValue(), equalTo("tv"));
     }
 
     @Test
     void assertsFromNodeWorksWithRequiredFields() {
         Node node = ObjectNode.objectNodeBuilder()
-                .withMember(ArtifactMetadata.ID_TEXT, "id")
-                .withMember(ArtifactMetadata.VERSION_TEXT, "version")
-                .withMember(ArtifactMetadata.TYPE_TEXT, "type")
-                .withMember(ArtifactMetadata.TIMESTAMP_TEXT, "timestamp")
-                .withOptionalMember(ArtifactMetadata.TYPE_VERSION_TEXT, Optional.of("type").map(Node::from))
-                .withOptionalMember(ArtifactMetadata.HOMEPAGE_TEXT, Optional.of("homepage").map(Node::from))
+                .withMember(TraceMetadata.ID_TEXT, "id")
+                .withMember(TraceMetadata.VERSION_TEXT, "version")
+                .withMember(TraceMetadata.TYPE_TEXT, "type")
+                .withMember(TraceMetadata.TIMESTAMP_TEXT, "timestamp")
+                .withOptionalMember(TraceMetadata.TYPE_VERSION_TEXT, Optional.of("type").map(Node::from))
+                .withOptionalMember(TraceMetadata.HOMEPAGE_TEXT, Optional.of("homepage").map(Node::from))
                 .build();
 
-        ArtifactMetadata am2 = ArtifactMetadata.fromNode(node);
+        TraceMetadata am2 = TraceMetadata.fromNode(node);
 
         assertThat("id", equalTo(am2.getId()));
         assertThat("version", equalTo(am2.getVersion()));
@@ -56,7 +56,7 @@ class ArtifactMetadataTest {
     @Test
     void assertBuildThrowsWithoutRequiredId() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
-            ArtifactMetadata am = new ArtifactMetadata.Builder()
+            TraceMetadata am = new TraceMetadata.Builder()
                     .version("b")
                     .type("c")
                     .setTimestampAsNow()
@@ -67,7 +67,7 @@ class ArtifactMetadataTest {
     @Test
     void assertBuildThrowsWithoutRequiredVersion() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
-            ArtifactMetadata am = new ArtifactMetadata.Builder()
+            TraceMetadata am = new TraceMetadata.Builder()
                     .id("a")
                     .type("c")
                     .setTimestampAsNow()
@@ -78,7 +78,7 @@ class ArtifactMetadataTest {
     @Test
     void assertBuildThrowsWithoutRequiredType() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
-            ArtifactMetadata am = new ArtifactMetadata.Builder()
+            TraceMetadata am = new TraceMetadata.Builder()
                     .id("a")
                     .version("b")
                     .setTimestampAsNow()
@@ -89,7 +89,7 @@ class ArtifactMetadataTest {
     @Test
     void assertBuildThrowsWithoutRequiredTimestamp() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
-            ArtifactMetadata am = new ArtifactMetadata.Builder()
+            TraceMetadata am = new TraceMetadata.Builder()
                     .id("a")
                     .version("b")
                     .type("c")

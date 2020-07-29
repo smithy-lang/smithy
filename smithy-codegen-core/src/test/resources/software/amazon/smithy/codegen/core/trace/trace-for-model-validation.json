@@ -1,6 +1,6 @@
 {
   "smithyTrace": "1.0",
-  "artifact": {
+  "metadata": {
     "id": "",
     "version": "",
     "type": "",
@@ -17,10 +17,25 @@
     }
   },
   "shapes": {
-    "smithy.example#Example": [
+    "example.weather#CityId": [
       {
-        "type": "TYPE",
-        "id": ""
+        "type": "",
+        "id": "",
+        "tags": [""]
+      }
+    ],
+    "example.weather#CitySummaries": [
+      {
+        "type": "",
+        "id": "",
+        "tags": [""]
+      }
+    ],
+    "example.weather#CitySummary": [
+      {
+        "type": "",
+        "id": "",
+        "tags": [""]
       }
     ]
   }
