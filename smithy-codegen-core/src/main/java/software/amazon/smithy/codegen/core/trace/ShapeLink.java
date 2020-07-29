@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.codegen.core;
+package software.amazon.smithy.codegen.core.trace;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +58,7 @@ public final class ShapeLink implements ToNode, ToSmithyBuilder<ShapeLink> {
      * Instantiates ShapeLink instance variables by extracting data from an ObjectNode.
      *
      * @param value an ObjectNode that represents the a single ShapeLink
+     * @return a ShapeLink created from the ObjectNode
      */
     public static ShapeLink fromNode(Node value) {
         NodeMapper mapper = new NodeMapper();
