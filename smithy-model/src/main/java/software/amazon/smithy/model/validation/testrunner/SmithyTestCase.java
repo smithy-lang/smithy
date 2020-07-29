@@ -128,7 +128,7 @@ public final class SmithyTestCase {
 
         String comparedMessage = expected.getMessage().replace("\n", "\\n");
         return expected.getSeverity() == actual.getSeverity()
-               && expected.getEventId().equals(actual.getEventId())
+               && expected.getId().equals(actual.getId())
                && expected.getShapeId().equals(actual.getShapeId())
                // Normalize new lines.
                && normalizedActualMessage.startsWith(comparedMessage);
@@ -162,7 +162,7 @@ public final class SmithyTestCase {
         ValidationEvent.Builder builder = ValidationEvent.builder()
                 .severity(Severity.fromString(matcher.group("severity")).get())
                 .sourceLocation(location)
-                .eventId(matcher.group("id"))
+                .id(matcher.group("id"))
                 .message(matcher.group("message"));
 
         // A shape ID of "-" means no shape.

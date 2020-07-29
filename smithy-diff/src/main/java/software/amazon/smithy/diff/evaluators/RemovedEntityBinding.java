@@ -65,7 +65,7 @@ public final class RemovedEntityBinding extends AbstractDiffEvaluator {
                 "%s binding of `%s` was removed from %s shape, `%s`",
                 descriptor, removedShape, entity.getType(), entity.getId());
         return ValidationEvent.builder()
-                .eventId(eventId)
+                .id(eventId)
                 .severity(Severity.ERROR)
                 .shape(entity)
                 .message(message)

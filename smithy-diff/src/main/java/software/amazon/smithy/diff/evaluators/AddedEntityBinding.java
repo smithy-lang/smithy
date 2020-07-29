@@ -65,7 +65,7 @@ public final class AddedEntityBinding extends AbstractDiffEvaluator {
                 "%s binding of `%s` was added to the %s shape, `%s`",
                 descriptor, addedShape, entity.getType(), entity.getId());
         return ValidationEvent.builder()
-                .eventId(eventId)
+                .id(eventId)
                 .severity(Severity.NOTE)
                 .shape(entity)
                 .message(message)

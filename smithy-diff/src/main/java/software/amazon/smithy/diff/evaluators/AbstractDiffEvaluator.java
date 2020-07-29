@@ -75,6 +75,6 @@ public abstract class AbstractDiffEvaluator implements DiffEvaluator {
     }
 
     private ValidationEvent createEvent(ValidationEvent.Builder builder) {
-        return builder.eventId(getEventId()).build();
+        return builder.id(getEventId()).build();
     }
 }

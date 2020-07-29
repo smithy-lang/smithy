@@ -31,7 +31,7 @@ public final class AddedTraitDefinition extends AbstractDiffEvaluator {
         return differences.addedShapes()
                 .filter(shape -> shape.hasTrait(TraitDefinition.class))
                 .map(shape -> ValidationEvent.builder()
-                        .eventId(getEventId())
+                        .id(getEventId())
                         .severity(Severity.NOTE)
                         .shape(shape)
                         .message(String.format("Trait definition `%s` was added", shape.getId()))

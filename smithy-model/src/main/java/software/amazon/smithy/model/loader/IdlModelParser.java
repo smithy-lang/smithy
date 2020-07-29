@@ -189,7 +189,7 @@ final class IdlModelParser extends SimpleParser {
                 onVersion(value);
             } else {
                 visitor.onError(ValidationEvent.builder()
-                        .eventId(Validator.MODEL_ERROR)
+                        .id(Validator.MODEL_ERROR)
                         .sourceLocation(value)
                         .severity(Severity.WARNING)
                         .message(format("Unknown control statement `%s` with value `%s", key, Node.printJson(value)))

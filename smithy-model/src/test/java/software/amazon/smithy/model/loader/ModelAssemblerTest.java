@@ -132,7 +132,7 @@ public class ModelAssemblerTest {
     @Test
     public void addsExplicitValidators() {
         ValidationEvent event = ValidationEvent.builder()
-                .severity(Severity.ERROR).eventId("Foo").message("bar").build();
+                .severity(Severity.ERROR).id("Foo").message("bar").build();
         String document = "{\"smithy\": \"" + Model.MODEL_VERSION + "\"}";
         ValidatedResult<Model> result = new ModelAssembler()
                 .addUnparsedModel(SourceLocation.NONE.getFilename(), document)

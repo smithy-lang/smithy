@@ -360,7 +360,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     private ValidationEvent event(String message, Severity severity, SourceLocation sourceLocation) {
         return ValidationEvent.builder()
-                .eventId(eventId)
+                .id(eventId)
                 .severity(severity)
                 .sourceLocation(sourceLocation)
                 .shapeId(eventShapeId)

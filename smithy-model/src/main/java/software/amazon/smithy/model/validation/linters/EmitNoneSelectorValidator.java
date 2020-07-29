@@ -82,7 +82,7 @@ public final class EmitNoneSelectorValidator extends AbstractValidator {
 
         if (shapes.isEmpty()) {
             return ListUtils.of(ValidationEvent.builder()
-                    .eventId(getName())
+                    .id(getName())
                     .severity(Severity.DANGER)
                     .message("Expected at least one shape to match selector: " + config.getSelector())
                     .build());

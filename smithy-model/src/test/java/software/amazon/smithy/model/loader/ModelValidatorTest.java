@@ -35,7 +35,7 @@ public class ModelValidatorTest {
     @Test
     public void addsExplicitValidators() {
         ValidationEvent event = ValidationEvent.builder()
-                .severity(Severity.ERROR).eventId("Foo").message("bar").build();
+                .severity(Severity.ERROR).id("Foo").message("bar").build();
         String document = "{\"smithy\": \"1.0\"}";
         ValidatedResult<Model> result = new ModelAssembler()
                 .addUnparsedModel("[N/A]", document)

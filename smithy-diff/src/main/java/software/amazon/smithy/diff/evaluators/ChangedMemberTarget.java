@@ -50,7 +50,7 @@ public final class ChangedMemberTarget extends AbstractDiffEvaluator {
 
         return ValidationEvent.builder()
                 .severity(severity)
-                .eventId(getEventId())
+                .id(getEventId())
                 .shape(change.getNewShape())
                 .message(createMessage(change, oldTarget, newTarget))
                 .build();

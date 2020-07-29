@@ -31,7 +31,7 @@ public class ProjectionResultTest {
                 .addEvent(ValidationEvent.builder()
                         .message("foo")
                         .severity(Severity.ERROR)
-                        .eventId("abc")
+                        .id("abc")
                         .build())
                 .build().isBroken());
     }
@@ -44,7 +44,7 @@ public class ProjectionResultTest {
                 .addEvent(ValidationEvent.builder()
                         .message("foo")
                         .severity(Severity.DANGER)
-                        .eventId("abc")
+                        .id("abc")
                         .build())
                 .build().isBroken());
     }

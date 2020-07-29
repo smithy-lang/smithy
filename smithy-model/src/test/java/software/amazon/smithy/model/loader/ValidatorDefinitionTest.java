@@ -35,7 +35,7 @@ public class ValidatorDefinitionTest {
                                ? Optional.of(
                                        model -> model.shapes()
                                                .map(shape -> ValidationEvent.builder()
-                                                       .eventId(name)
+                                                       .id(name)
                                                        .shape(shape)
                                                        .severity(Severity.WARNING)
                                                        .message("Hello!")
@@ -48,12 +48,12 @@ public class ValidatorDefinitionTest {
                 .getValidationEvents();
 
         assertThat(events, not(empty()));
-        Assertions.assertEquals(2, events.stream().filter(e -> e.getEventId().equals("hello")).count());
-        Assertions.assertEquals(4, events.stream().filter(e -> e.getEventId().equals("custom")).count());
+        Assertions.assertEquals(2, events.stream().filter(e -> e.getId().equals("hello")).count());
+        Assertions.assertEquals(4, events.stream().filter(e -> e.getId().equals("custom")).count());
 
         // Ensure that template expansion works.
         for (ValidationEvent event : events) {
-            if (event.getEventId().equals("custom")) {
+            if (event.getId().equals("custom")) {
                 assertThat(event.getMessage(), equalTo("Test Hello!"));
             }
         }

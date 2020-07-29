@@ -50,7 +50,7 @@ public class SmithyTestCaseTest {
     @Test
     public void matchesMessageUsingPrefix() {
         ValidationEvent actual = ValidationEvent.builder()
-                .eventId("FooBar")
+                .id("FooBar")
                 .severity(Severity.DANGER)
                 .message("This is a test")
                 .build();
@@ -65,7 +65,7 @@ public class SmithyTestCaseTest {
     @Test
     public void failsWhenMessageDoesNotMatchPrefix() {
         ValidationEvent actual = ValidationEvent.builder()
-                .eventId("FooBar")
+                .id("FooBar")
                 .severity(Severity.DANGER)
                 .message("Not a test")
                 .build();
@@ -80,7 +80,7 @@ public class SmithyTestCaseTest {
     @Test
     public void matchesOnShapeId() {
         ValidationEvent actual = ValidationEvent.builder()
-                .eventId("FooBar")
+                .id("FooBar")
                 .severity(Severity.DANGER)
                 .message("abc")
                 .shapeId(ShapeId.from("foo.baz#Bar"))
@@ -95,7 +95,7 @@ public class SmithyTestCaseTest {
     @Test
     public void failsWhenShapeIdDoesNotMatch() {
         ValidationEvent actual = ValidationEvent.builder()
-                .eventId("FooBar")
+                .id("FooBar")
                 .severity(Severity.DANGER)
                 .message("abc")
                 .shapeId(ShapeId.from("foo.baz#Bar"))
@@ -111,13 +111,13 @@ public class SmithyTestCaseTest {
     @Test
     public void newlinesAreBetweenEventsWhenFormatting() {
         ValidationEvent e1 = ValidationEvent.builder()
-                .eventId("FooBar")
+                .id("FooBar")
                 .severity(Severity.DANGER)
                 .message("a")
                 .shapeId(ShapeId.from("foo.baz#Bar"))
                 .build();
         ValidationEvent e2 = ValidationEvent.builder()
-                .eventId("FooBar")
+                .id("FooBar")
                 .severity(Severity.DANGER)
                 .message("b")
                 .shapeId(ShapeId.from("foo.baz#Bar"))
