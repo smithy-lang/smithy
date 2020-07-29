@@ -150,7 +150,7 @@ public final class ModelTransformer {
             Model model,
             Map<ShapeId, ShapeId> renamed
     ) {
-        return this.renameShapes(model, renamed, Model::assembler);
+        return this.renameShapes(model, renamed, () -> Model.assembler().disableValidation());
     }
 
     /**
