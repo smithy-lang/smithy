@@ -1,5 +1,23 @@
 # Smithy Changelog
 
+## 1.0.8 (2020-07-31)
+
+### Features
+
+* Updated `Walker` to provide a stable sort for shapes. ([#511](https://github.com/awslabs/smithy/pull/511))
+* Improved support for loading `ValidationEvent`s via `NodeMapper`. ([#518](https://github.com/awslabs/smithy/pull/518), [#516](https://github.com/awslabs/smithy/pull/516))
+* Added the ability to `disableFromNode` via `NodeMapper`. ([#505](https://github.com/awslabs/smithy/pull/505))
+
+### Bug Fixes
+
+* Fixed several issues in protocol tests. ([#502](https://github.com/awslabs/smithy/pull/502), [#507](https://github.com/awslabs/smithy/pull/507))
+
+### Cleanup
+
+* Stopped raising validation errors and running validation with `RenameShapes` transformer. ([#512](https://github.com/awslabs/smithy/pull/512))
+* Simplified conflict handling for shapes. ([#514](https://github.com/awslabs/smithy/pull/514))
+* Simplified duplicate member detection and handling. ([#513](https://github.com/awslabs/smithy/pull/513))
+
 ## 1.0.7 (2020-07-16)
 
 ### Features
