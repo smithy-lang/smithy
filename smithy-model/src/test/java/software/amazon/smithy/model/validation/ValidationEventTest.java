@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -70,6 +71,21 @@ public class ValidationEventTest {
                     .suppressionReason("Some reason")
                     .build();
         });
+    }
+
+    @Test
+    public void loadsWithFromNode() {
+        ShapeId id = ShapeId.from("ns.foo#baz");
+        ValidationEvent event = ValidationEvent.fromNode(Node.parse(
+                "{\"id\": \"abc.foo\", \"severity\": \"SUPPRESSED\", \"suppressionReason\": \"my reason\", "
+                + "\"shapeId\": \"ns.foo#baz\", \"message\": \"The message\", "
+                + "\"filename\": \"/path/to/file.smithy\", \"line\": 7, \"column\": 2}"));
+
+        assertThat(event.getSeverity(), equalTo(Severity.SUPPRESSED));
+        assertThat(event.getMessage(), equalTo("The message"));
+        assertThat(event.getId(), equalTo("abc.foo"));
+        assertThat(event.getSuppressionReason().get(), equalTo("my reason"));
+        assertThat(event.getShapeId().get(), is(id));
     }
 
     @Test
