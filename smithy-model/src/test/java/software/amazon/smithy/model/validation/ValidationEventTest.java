@@ -19,6 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.junit.jupiter.api.Assertions;
@@ -56,6 +57,43 @@ public class ValidationEventTest {
             ValidationEvent.builder()
                     .severity(Severity.ERROR)
                     .message("test")
+                    .build();
+        });
+    }
+
+    @Test
+    public void acceptsStringShapeId() {
+        String id = "ns.foo#baz";
+        ValidationEvent event = ValidationEvent.builder()
+                .message("The message")
+                .severity(Severity.ERROR)
+                .shapeId("ns.foo#baz")
+                .id("abc.foo")
+                .build();
+
+        assertThat(event.getShapeId().get(), is(ShapeId.from(id)));
+    }
+
+    @Test
+    public void acceptsNullShapeId() {
+        ValidationEvent event = ValidationEvent.builder()
+                .message("The message")
+                .severity(Severity.ERROR)
+                .shapeId(null)
+                .id("abc.foo")
+                .build();
+
+        assertFalse(event.getShapeId().isPresent());
+    }
+
+    @Test
+    public void throwsOnInvalidShapeIdType() {
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            ValidationEvent.builder()
+                    .message("The message")
+                    .severity(Severity.ERROR)
+                    .shapeId(1)
+                    .id("abc.foo")
                     .build();
         });
     }

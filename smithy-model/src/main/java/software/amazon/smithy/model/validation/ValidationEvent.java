@@ -306,12 +306,20 @@ public final class ValidationEvent implements Comparable<ValidationEvent>, ToNod
         /**
          * Sets the shape ID related to the event.
          *
-         * @param toShapeId Shape ID.
-         * @param <T> Value to convert to a shape ID.
+         * @param toShapeId Shape ID. Must extend from {@code ToShapeId}, be a {@code String}, or be {@code null}.
          * @return Returns the builder.
+         * @throws RuntimeException if the toShapeId is of the wrong type.
          */
-        public <T extends ToShapeId> Builder shapeId(T toShapeId) {
-            this.shapeId = toShapeId == null ? null : toShapeId.toShapeId();
+        public Builder shapeId(Object toShapeId) {
+            if (toShapeId == null) {
+                this.shapeId = null;
+            } else if (toShapeId instanceof ToShapeId) {
+                this.shapeId = ((ToShapeId) toShapeId).toShapeId();
+            } else if (toShapeId instanceof String) {
+                this.shapeId = ShapeId.from((String) toShapeId);
+            } else {
+                throw new RuntimeException("shapeId input must either extend from ToShapeId, be a String, or be null.");
+            }
             return this;
         }
 
