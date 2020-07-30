@@ -24,6 +24,8 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -169,6 +171,35 @@ public final class ValidationEvent implements Comparable<ValidationEvent>, ToNod
                 .withMember("line", Node.from(getSourceLocation().getLine()))
                 .withMember("column", Node.from(getSourceLocation().getColumn()))
                 .build();
+    }
+
+    public static ValidationEvent fromNode(Node node) {
+        ObjectNode objectNode = node.expectObjectNode();
+
+        // A source location should always have at least a filename in the node
+        // representation of a ValidationEvent. Expect that and default the
+        // other properties.
+        SourceLocation location = new SourceLocation(
+                objectNode.expectStringMember("filename").getValue(),
+                objectNode.getNumberMemberOrDefault("line", 0).intValue(),
+                objectNode.getNumberMemberOrDefault("column", 0).intValue());
+
+        // Set required properties.
+        Builder builder = builder()
+                .id(objectNode.expectStringMember("id").getValue())
+                .severity(Severity.valueOf(objectNode.expectStringMember("severity").getValue()))
+                .message(objectNode.expectStringMember("message").getValue())
+                .sourceLocation(location);
+
+        // Set optional properties.
+        objectNode.getStringMember("suppressionReason").map(StringNode::getValue)
+                .ifPresent(builder::suppressionReason);
+        objectNode.getStringMember("shapeId")
+                .map(StringNode::getValue)
+                .map(ShapeId::from)
+                .ifPresent(builder::shapeId);
+
+        return builder.build();
     }
 
     /**
