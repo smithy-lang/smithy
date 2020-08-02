@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
@@ -41,7 +42,7 @@ public class SmithyIdlModelSerializerTest {
         }
 
         String serializedString = serialized.entrySet().iterator().next().getValue();
-        assertThat(serializedString, equalTo(IoUtils.readUtf8File(path)));
+        Assertions.assertEquals(serializedString, IoUtils.readUtf8File(path));
     }
 
     @Test

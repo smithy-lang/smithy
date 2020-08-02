@@ -163,6 +163,15 @@ public final class Model implements ToSmithyBuilder<Model> {
     }
 
     /**
+     * Gets the immutable set of {@code ShapeId} in the model.
+     *
+     * @return Returns the shape IDs.
+     */
+    public Set<ShapeId> getShapeIds() {
+        return shapeMap.keySet();
+    }
+
+    /**
      * Gets a set of shapes in the model marked with a specific trait.
      *
      * <p>The result is an exact match on trait classes and does not utilize

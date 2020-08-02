@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BlobShape;
@@ -89,6 +88,7 @@ import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.TitleTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.model.traits.UnstableTrait;
 import software.amazon.smithy.model.traits.XmlAttributeTrait;
@@ -113,27 +113,27 @@ public final class Prelude {
     /** The Smithy prelude namespace. */
     public static final String NAMESPACE = "smithy.api";
 
-    private static final List<AbstractShapeBuilder> PUBLIC_PRELUDE_SHAPES = ListUtils.of(
-            StringShape.builder().id(NAMESPACE + "#String"),
-            BlobShape.builder().id(NAMESPACE + "#Blob"),
-            BigIntegerShape.builder().id(NAMESPACE + "#BigInteger"),
-            BigDecimalShape.builder().id(NAMESPACE + "#BigDecimal"),
-            TimestampShape.builder().id(NAMESPACE + "#Timestamp"),
-            DocumentShape.builder().id(NAMESPACE + "#Document"),
-            BooleanShape.builder().id(NAMESPACE + "#Boolean").addTrait(new BoxTrait()),
-            BooleanShape.builder().id(NAMESPACE + "#PrimitiveBoolean"),
-            ByteShape.builder().id(NAMESPACE + "#Byte").addTrait(new BoxTrait()),
-            ByteShape.builder().id(NAMESPACE + "#PrimitiveByte"),
-            ShortShape.builder().id(NAMESPACE + "#Short").addTrait(new BoxTrait()),
-            ShortShape.builder().id(NAMESPACE + "#PrimitiveShort"),
-            IntegerShape.builder().id(NAMESPACE + "#Integer").addTrait(new BoxTrait()),
-            IntegerShape.builder().id(NAMESPACE + "#PrimitiveInteger"),
-            LongShape.builder().id(NAMESPACE + "#Long").addTrait(new BoxTrait()),
-            LongShape.builder().id(NAMESPACE + "#PrimitiveLong"),
-            FloatShape.builder().id(NAMESPACE + "#Float").addTrait(new BoxTrait()),
-            FloatShape.builder().id(NAMESPACE + "#PrimitiveFloat"),
-            DoubleShape.builder().id(NAMESPACE + "#Double").addTrait(new BoxTrait()),
-            DoubleShape.builder().id(NAMESPACE + "#PrimitiveDouble"));
+    private static final List<Shape> PUBLIC_PRELUDE_SHAPES = ListUtils.of(
+            StringShape.builder().id(NAMESPACE + "#String").build(),
+            BlobShape.builder().id(NAMESPACE + "#Blob").build(),
+            BigIntegerShape.builder().id(NAMESPACE + "#BigInteger").build(),
+            BigDecimalShape.builder().id(NAMESPACE + "#BigDecimal").build(),
+            TimestampShape.builder().id(NAMESPACE + "#Timestamp").build(),
+            DocumentShape.builder().id(NAMESPACE + "#Document").build(),
+            BooleanShape.builder().id(NAMESPACE + "#Boolean").addTrait(new BoxTrait()).build(),
+            BooleanShape.builder().id(NAMESPACE + "#PrimitiveBoolean").build(),
+            ByteShape.builder().id(NAMESPACE + "#Byte").addTrait(new BoxTrait()).build(),
+            ByteShape.builder().id(NAMESPACE + "#PrimitiveByte").build(),
+            ShortShape.builder().id(NAMESPACE + "#Short").addTrait(new BoxTrait()).build(),
+            ShortShape.builder().id(NAMESPACE + "#PrimitiveShort").build(),
+            IntegerShape.builder().id(NAMESPACE + "#Integer").addTrait(new BoxTrait()).build(),
+            IntegerShape.builder().id(NAMESPACE + "#PrimitiveInteger").build(),
+            LongShape.builder().id(NAMESPACE + "#Long").addTrait(new BoxTrait()).build(),
+            LongShape.builder().id(NAMESPACE + "#PrimitiveLong").build(),
+            FloatShape.builder().id(NAMESPACE + "#Float").addTrait(new BoxTrait()).build(),
+            FloatShape.builder().id(NAMESPACE + "#PrimitiveFloat").build(),
+            DoubleShape.builder().id(NAMESPACE + "#Double").addTrait(new BoxTrait()).build(),
+            DoubleShape.builder().id(NAMESPACE + "#PrimitiveDouble").build());
 
     /**
      * This list of public prelude traits is manually maintained and must match the
@@ -210,7 +210,7 @@ public final class Prelude {
 
     static {
         PUBLIC_PRELUDE_SHAPE_IDS = PUBLIC_PRELUDE_SHAPES.stream()
-                .map(AbstractShapeBuilder::getId)
+                .map(Shape::getId)
                 .collect(SetUtils.toUnmodifiableSet());
     }
 
@@ -241,16 +241,6 @@ public final class Prelude {
         return PUBLIC_PRELUDE_SHAPE_IDS.contains(toId) || PRELUDE_TRAITS.contains(toId);
     }
 
-    /**
-     * Checks if the given shape is an immutable public shape.
-     *
-     * @param id Shape to check.
-     * @return Returns true if the shape is immutable.
-     */
-    static boolean isImmutablePublicPreludeShape(ToShapeId id) {
-        return PUBLIC_PRELUDE_SHAPE_IDS.contains(id.toShapeId());
-    }
-
     // Used by the ModelAssembler to load the prelude into another visitor.
     static Model getPreludeModel() {
         return PreludeHolder.PRELUDE;
@@ -261,18 +251,17 @@ public final class Prelude {
         private static final Model PRELUDE = loadPrelude();
 
         private static Model loadPrelude() {
-            LoaderVisitor visitor = new LoaderVisitor(ModelAssembler.LazyTraitFactoryHolder.INSTANCE);
+            TraitFactory traitFactory = ModelAssembler.LazyTraitFactoryHolder.INSTANCE;
+            ModelAssembler assembler = Model.assembler()
+                    .disablePrelude()
+                    .traitFactory(traitFactory)
+                    .addImport(Prelude.class.getResource("prelude-traits.smithy"));
 
-            // Register prelude shape definitions.
-            for (AbstractShapeBuilder builder : PUBLIC_PRELUDE_SHAPES) {
-                visitor.onShape(builder);
+            for (Shape shape : PUBLIC_PRELUDE_SHAPES) {
+                assembler.addShape(shape);
             }
 
-            // Register prelude trait definitions.
-            String filename = "prelude-traits.smithy";
-
-            ModelLoader.load(filename, () -> Prelude.class.getResourceAsStream(filename), visitor);
-            Model preludeModel = visitor.onEnd().unwrap();
+            Model preludeModel = assembler.assemble().unwrap();
 
             // Sanity check to ensure that the prelude model and the tracked prelude traits are consistent.
             // TODO: Can this be moved to a build step in Gradle?
