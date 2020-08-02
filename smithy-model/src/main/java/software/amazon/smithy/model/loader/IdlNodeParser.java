@@ -84,7 +84,7 @@ final class IdlNodeParser {
                 // not be able to be resolved until after the entire model is loaded.
                 Pair<StringNode, Consumer<String>> pair = StringNode.createLazyString(text, location);
                 Consumer<String> consumer = pair.right;
-                parser.onShapeTarget(text, location, id -> consumer.accept(id.toString()));
+                parser.modelFile.addForwardReference(text, id -> consumer.accept(id.toString()));
                 return pair.left;
         }
     }

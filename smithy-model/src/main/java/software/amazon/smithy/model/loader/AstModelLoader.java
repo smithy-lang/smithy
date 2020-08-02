@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SetUtils;
@@ -84,249 +85,252 @@ enum AstModelLoader {
     private static final Set<String> SERVICE_PROPERTIES = SetUtils.of(
             TYPE, "version", "operations", "resources", TRAITS);
 
-    void load(ObjectNode model, LoaderVisitor visitor) {
-        visitor.checkForAdditionalProperties(model, null, TOP_LEVEL_PROPERTIES);
-        loadMetadata(model, visitor);
-        loadShapes(model, visitor);
+    ModelFile load(TraitFactory traitFactory, ObjectNode model) {
+        FullyResolvedModelFile modelFile = new FullyResolvedModelFile(traitFactory);
+        LoaderUtils.checkForAdditionalProperties(model, null, TOP_LEVEL_PROPERTIES, modelFile.events());
+        loadMetadata(model, modelFile);
+        loadShapes(model, modelFile);
+        return modelFile;
     }
 
-    private void loadMetadata(ObjectNode model, LoaderVisitor visitor) {
+    private void loadMetadata(ObjectNode model, FullyResolvedModelFile modelFile) {
         try {
             model.getObjectMember(METADATA).ifPresent(metadata -> {
                 for (Map.Entry<String, Node> entry : metadata.getStringMap().entrySet()) {
-                    visitor.onMetadata(entry.getKey(), entry.getValue());
+                    modelFile.putMetadata(entry.getKey(), entry.getValue());
                 }
             });
         } catch (SourceException e) {
-            visitor.onError(ValidationEvent.fromSourceException(e));
+            modelFile.events().add(ValidationEvent.fromSourceException(e));
         }
     }
 
-    private void loadShapes(ObjectNode model, LoaderVisitor visitor) {
+    private void loadShapes(ObjectNode model, FullyResolvedModelFile modelFile) {
         model.getObjectMember(SHAPES).ifPresent(shapes -> {
             for (Map.Entry<StringNode, Node> entry : shapes.getMembers().entrySet()) {
                 ShapeId id = entry.getKey().expectShapeId();
                 ObjectNode definition = entry.getValue().expectObjectNode();
                 String type = definition.expectStringMember(TYPE).getValue();
                 try {
-                    loadShape(id, type, definition, visitor);
+                    loadShape(id, type, definition, modelFile);
                 } catch (SourceException e) {
                     ValidationEvent event = ValidationEvent.fromSourceException(e).toBuilder().shapeId(id).build();
-                    visitor.onError(event);
+                    modelFile.events().add(event);
                 }
             }
         });
     }
 
-    private void loadShape(ShapeId id, String type, ObjectNode value, LoaderVisitor visitor) {
+    private void loadShape(ShapeId id, String type, ObjectNode value, FullyResolvedModelFile modelFile) {
         switch (type) {
             case "blob":
-                loadSimpleShape(id, value, BlobShape.builder(), visitor);
+                loadSimpleShape(id, value, BlobShape.builder(), modelFile);
                 break;
             case "boolean":
-                loadSimpleShape(id, value, BooleanShape.builder(), visitor);
+                loadSimpleShape(id, value, BooleanShape.builder(), modelFile);
                 break;
             case "byte":
-                loadSimpleShape(id, value, ByteShape.builder(), visitor);
+                loadSimpleShape(id, value, ByteShape.builder(), modelFile);
                 break;
             case "short":
-                loadSimpleShape(id, value, ShortShape.builder(), visitor);
+                loadSimpleShape(id, value, ShortShape.builder(), modelFile);
                 break;
             case "integer":
-                loadSimpleShape(id, value, IntegerShape.builder(), visitor);
+                loadSimpleShape(id, value, IntegerShape.builder(), modelFile);
                 break;
             case "long":
-                loadSimpleShape(id, value, LongShape.builder(), visitor);
+                loadSimpleShape(id, value, LongShape.builder(), modelFile);
                 break;
             case "float":
-                loadSimpleShape(id, value, FloatShape.builder(), visitor);
+                loadSimpleShape(id, value, FloatShape.builder(), modelFile);
                 break;
             case "double":
-                loadSimpleShape(id, value, DoubleShape.builder(), visitor);
+                loadSimpleShape(id, value, DoubleShape.builder(), modelFile);
                 break;
             case "document":
-                loadSimpleShape(id, value, DocumentShape.builder(), visitor);
+                loadSimpleShape(id, value, DocumentShape.builder(), modelFile);
                 break;
             case "bigDecimal":
-                loadSimpleShape(id, value, BigDecimalShape.builder(), visitor);
+                loadSimpleShape(id, value, BigDecimalShape.builder(), modelFile);
                 break;
             case "bigInteger":
-                loadSimpleShape(id, value, BigIntegerShape.builder(), visitor);
+                loadSimpleShape(id, value, BigIntegerShape.builder(), modelFile);
                 break;
             case "string":
-                loadSimpleShape(id, value, StringShape.builder(), visitor);
+                loadSimpleShape(id, value, StringShape.builder(), modelFile);
                 break;
             case "timestamp":
-                loadSimpleShape(id, value, TimestampShape.builder(), visitor);
+                loadSimpleShape(id, value, TimestampShape.builder(), modelFile);
                 break;
             case "list":
-                loadCollection(id, value, ListShape.builder(), visitor);
+                loadCollection(id, value, ListShape.builder(), modelFile);
                 break;
             case "set":
-                loadCollection(id, value, SetShape.builder(), visitor);
+                loadCollection(id, value, SetShape.builder(), modelFile);
                 break;
             case "map":
-                loadMap(id, value, visitor);
+                loadMap(id, value, modelFile);
                 break;
             case "resource":
-                loadResource(id, value, visitor);
+                loadResource(id, value, modelFile);
                 break;
             case "service":
-                loadService(id, value, visitor);
+                loadService(id, value, modelFile);
                 break;
             case "structure":
-                loadStructure(id, value, visitor);
+                loadStructure(id, value, modelFile);
                 break;
             case "union":
-                loadUnion(id, value, visitor);
+                loadUnion(id, value, modelFile);
                 break;
             case "operation":
-                loadOperation(id, value, visitor);
+                loadOperation(id, value, modelFile);
                 break;
             case "apply":
-                visitor.checkForAdditionalProperties(value, id, APPLY_PROPERTIES);
-                applyTraits(id, value.expectObjectMember(TRAITS), visitor);
+                LoaderUtils.checkForAdditionalProperties(value, id, APPLY_PROPERTIES, modelFile.events());
+                applyTraits(id, value.expectObjectMember(TRAITS), modelFile);
                 break;
             default:
                 throw new SourceException("Invalid shape `type`: " + type, value);
         }
     }
 
-    private void applyTraits(ShapeId id, ObjectNode traits, LoaderVisitor visitor) {
+    private void applyTraits(ShapeId id, ObjectNode traits, FullyResolvedModelFile modelFile) {
         for (Map.Entry<StringNode, Node> traitNode : traits.getMembers().entrySet()) {
             ShapeId traitId = traitNode.getKey().expectShapeId();
             // JSON AST model traits are never considered annotation traits, meaning
             // that a null value provided in the AST is not coerced in the same way
             // as an omitted value in the IDL (e.g., "@foo").
-            visitor.onTrait(id, traitId, traitNode.getValue());
+            modelFile.onTrait(id, traitId, traitNode.getValue());
         }
     }
 
-    private void applyShapeTraits(ShapeId id, ObjectNode node, LoaderVisitor visitor) {
-        node.getObjectMember(TRAITS).ifPresent(traits -> applyTraits(id, traits, visitor));
+    private void applyShapeTraits(ShapeId id, ObjectNode node, FullyResolvedModelFile modelFile) {
+        node.getObjectMember(TRAITS).ifPresent(traits -> applyTraits(id, traits, modelFile));
     }
 
-    private void loadMember(LoaderVisitor visitor, ShapeId id, ObjectNode targetNode) {
-        visitor.checkForAdditionalProperties(targetNode, id, MEMBER_PROPERTIES);
+    private void loadMember(FullyResolvedModelFile modelFile, ShapeId id, ObjectNode targetNode) {
+        LoaderUtils.checkForAdditionalProperties(targetNode, id, MEMBER_PROPERTIES, modelFile.events());
         MemberShape.Builder builder = MemberShape.builder().source(targetNode.getSourceLocation()).id(id);
         ShapeId target = targetNode.expectStringMember(TARGET).expectShapeId();
         builder.target(target);
-        applyShapeTraits(id, targetNode, visitor);
-        visitor.onShape(builder);
+        applyShapeTraits(id, targetNode, modelFile);
+        modelFile.onShape(builder);
     }
 
     private void loadCollection(
             ShapeId id,
             ObjectNode node,
-            CollectionShape.Builder builder,
-            LoaderVisitor visitor
+            CollectionShape.Builder<?, ?> builder,
+            FullyResolvedModelFile modelFile
     ) {
-        visitor.checkForAdditionalProperties(node, id, COLLECTION_PROPERTY_NAMES);
-        applyShapeTraits(id, node, visitor);
-        loadMember(visitor, id.withMember("member"), node.expectObjectMember("member"));
-        visitor.onShape(builder.id(id).source(node.getSourceLocation()));
+        LoaderUtils.checkForAdditionalProperties(node, id, COLLECTION_PROPERTY_NAMES, modelFile.events());
+        applyShapeTraits(id, node, modelFile);
+        loadMember(modelFile, id.withMember("member"), node.expectObjectMember("member"));
+        modelFile.onShape(builder.id(id).source(node.getSourceLocation()));
     }
 
-    private void loadMap(ShapeId id, ObjectNode node, LoaderVisitor visitor) {
-        visitor.checkForAdditionalProperties(node, id, MAP_PROPERTY_NAMES);
-        loadMember(visitor, id.withMember("key"), node.expectObjectMember("key"));
-        loadMember(visitor, id.withMember("value"), node.expectObjectMember("value"));
-        applyShapeTraits(id, node, visitor);
-        visitor.onShape(MapShape.builder().id(id).source(node.getSourceLocation()));
+    private void loadMap(ShapeId id, ObjectNode node, FullyResolvedModelFile modelFile) {
+        LoaderUtils.checkForAdditionalProperties(node, id, MAP_PROPERTY_NAMES, modelFile.events());
+        loadMember(modelFile, id.withMember("key"), node.expectObjectMember("key"));
+        loadMember(modelFile, id.withMember("value"), node.expectObjectMember("value"));
+        applyShapeTraits(id, node, modelFile);
+        modelFile.onShape(MapShape.builder().id(id).source(node.getSourceLocation()));
     }
 
-    private void loadOperation(ShapeId id, ObjectNode node, LoaderVisitor visitor) {
-        visitor.checkForAdditionalProperties(node, id, OPERATION_PROPERTY_NAMES);
-        applyShapeTraits(id, node, visitor);
+    private void loadOperation(ShapeId id, ObjectNode node, FullyResolvedModelFile modelFile) {
+        LoaderUtils.checkForAdditionalProperties(node, id, OPERATION_PROPERTY_NAMES, modelFile.events());
+        applyShapeTraits(id, node, modelFile);
         OperationShape.Builder builder = OperationShape.builder()
                 .id(id)
                 .source(node.getSourceLocation())
-                .addErrors(loadOptionalTargetList(visitor, id, node, "errors"));
+                .addErrors(loadOptionalTargetList(modelFile, id, node, "errors"));
 
-        loadOptionalTarget(visitor, id, node, "input").ifPresent(builder::input);
-        loadOptionalTarget(visitor, id, node, "output").ifPresent(builder::output);
-        visitor.onShape(builder);
+        loadOptionalTarget(modelFile, id, node, "input").ifPresent(builder::input);
+        loadOptionalTarget(modelFile, id, node, "output").ifPresent(builder::output);
+        modelFile.onShape(builder);
     }
 
-    private void loadResource(ShapeId id, ObjectNode node, LoaderVisitor visitor) {
-        visitor.checkForAdditionalProperties(node, id, RESOURCE_PROPERTIES);
-        applyShapeTraits(id, node, visitor);
+    private void loadResource(ShapeId id, ObjectNode node, FullyResolvedModelFile modelFile) {
+        LoaderUtils.checkForAdditionalProperties(node, id, RESOURCE_PROPERTIES, modelFile.events());
+        applyShapeTraits(id, node, modelFile);
         ResourceShape.Builder builder = ResourceShape.builder().id(id).source(node.getSourceLocation());
-        loadOptionalTarget(visitor, id, node, "put").ifPresent(builder::put);
-        loadOptionalTarget(visitor, id, node, "create").ifPresent(builder::create);
-        loadOptionalTarget(visitor, id, node, "read").ifPresent(builder::read);
-        loadOptionalTarget(visitor, id, node, "update").ifPresent(builder::update);
-        loadOptionalTarget(visitor, id, node, "delete").ifPresent(builder::delete);
-        loadOptionalTarget(visitor, id, node, "list").ifPresent(builder::list);
-        builder.operations(loadOptionalTargetList(visitor, id, node, "operations"));
-        builder.collectionOperations(loadOptionalTargetList(visitor, id, node, "collectionOperations"));
-        builder.resources(loadOptionalTargetList(visitor, id, node, "resources"));
+        loadOptionalTarget(modelFile, id, node, "put").ifPresent(builder::put);
+        loadOptionalTarget(modelFile, id, node, "create").ifPresent(builder::create);
+        loadOptionalTarget(modelFile, id, node, "read").ifPresent(builder::read);
+        loadOptionalTarget(modelFile, id, node, "update").ifPresent(builder::update);
+        loadOptionalTarget(modelFile, id, node, "delete").ifPresent(builder::delete);
+        loadOptionalTarget(modelFile, id, node, "list").ifPresent(builder::list);
+        builder.operations(loadOptionalTargetList(modelFile, id, node, "operations"));
+        builder.collectionOperations(loadOptionalTargetList(modelFile, id, node, "collectionOperations"));
+        builder.resources(loadOptionalTargetList(modelFile, id, node, "resources"));
 
         // Load identifiers and resolve forward references.
         node.getObjectMember("identifiers").ifPresent(ids -> {
             for (Map.Entry<StringNode, Node> entry : ids.getMembers().entrySet()) {
                 String name = entry.getKey().getValue();
-                ShapeId target = loadReferenceBody(visitor, id, entry.getValue());
+                ShapeId target = loadReferenceBody(modelFile, id, entry.getValue());
                 builder.addIdentifier(name, target);
             }
         });
 
-        visitor.onShape(builder);
+        modelFile.onShape(builder);
     }
 
-    private void loadService(ShapeId id, ObjectNode node, LoaderVisitor visitor) {
-        visitor.checkForAdditionalProperties(node, id, SERVICE_PROPERTIES);
-        applyShapeTraits(id, node, visitor);
+    private void loadService(ShapeId id, ObjectNode node, FullyResolvedModelFile modelFile) {
+        LoaderUtils.checkForAdditionalProperties(node, id, SERVICE_PROPERTIES, modelFile.events());
+        applyShapeTraits(id, node, modelFile);
         ServiceShape.Builder builder = new ServiceShape.Builder().id(id).source(node.getSourceLocation());
         builder.version(node.expectStringMember("version").getValue());
-        builder.operations(loadOptionalTargetList(visitor, id, node, "operations"));
-        builder.resources(loadOptionalTargetList(visitor, id, node, "resources"));
-        visitor.onShape(builder);
+        builder.operations(loadOptionalTargetList(modelFile, id, node, "operations"));
+        builder.resources(loadOptionalTargetList(modelFile, id, node, "resources"));
+        modelFile.onShape(builder);
     }
 
     private void loadSimpleShape(
-            ShapeId id, ObjectNode node, AbstractShapeBuilder builder, LoaderVisitor visitor) {
-        visitor.checkForAdditionalProperties(node, id, SIMPLE_PROPERTY_NAMES);
-        applyShapeTraits(id, node, visitor);
-        visitor.onShape(builder.id(id).source(node.getSourceLocation()));
+            ShapeId id, ObjectNode node, AbstractShapeBuilder<?, ?> builder, FullyResolvedModelFile modelFile) {
+        LoaderUtils.checkForAdditionalProperties(node, id, SIMPLE_PROPERTY_NAMES, modelFile.events());
+        applyShapeTraits(id, node, modelFile);
+        modelFile.onShape(builder.id(id).source(node.getSourceLocation()));
     }
 
-    private void loadStructure(ShapeId id, ObjectNode node, LoaderVisitor visitor) {
-        visitor.checkForAdditionalProperties(node, id, STRUCTURE_AND_UNION_PROPERTY_NAMES);
-        visitor.onShape(StructureShape.builder().id(id).source(node.getSourceLocation()));
-        finishLoadingStructOrUnionMembers(id, node, visitor);
+    private void loadStructure(ShapeId id, ObjectNode node, FullyResolvedModelFile modelFile) {
+        LoaderUtils.checkForAdditionalProperties(node, id, STRUCTURE_AND_UNION_PROPERTY_NAMES, modelFile.events());
+        modelFile.onShape(StructureShape.builder().id(id).source(node.getSourceLocation()));
+        finishLoadingStructOrUnionMembers(id, node, modelFile);
     }
 
-    private void loadUnion(ShapeId id, ObjectNode node, LoaderVisitor visitor) {
-        visitor.checkForAdditionalProperties(node, id, STRUCTURE_AND_UNION_PROPERTY_NAMES);
-        visitor.onShape(UnionShape.builder().id(id).source(node.getSourceLocation()));
-        finishLoadingStructOrUnionMembers(id, node, visitor);
+    private void loadUnion(ShapeId id, ObjectNode node, FullyResolvedModelFile modelFile) {
+        LoaderUtils.checkForAdditionalProperties(node, id, STRUCTURE_AND_UNION_PROPERTY_NAMES, modelFile.events());
+        modelFile.onShape(UnionShape.builder().id(id).source(node.getSourceLocation()));
+        finishLoadingStructOrUnionMembers(id, node, modelFile);
     }
 
-    private void finishLoadingStructOrUnionMembers(ShapeId id, ObjectNode node, LoaderVisitor visitor) {
-        applyShapeTraits(id, node, visitor);
+    private void finishLoadingStructOrUnionMembers(ShapeId id, ObjectNode node, FullyResolvedModelFile modelFile) {
+        applyShapeTraits(id, node, modelFile);
         ObjectNode memberObject = node.getObjectMember(MEMBERS).orElse(Node.objectNode());
         for (Map.Entry<String, Node> entry : memberObject.getStringMap().entrySet()) {
-            loadMember(visitor, id.withMember(entry.getKey()), entry.getValue().expectObjectNode());
+            loadMember(modelFile, id.withMember(entry.getKey()), entry.getValue().expectObjectNode());
         }
     }
 
     private Optional<ShapeId> loadOptionalTarget(
-            LoaderVisitor visitor, ShapeId id, ObjectNode node, String member) {
-        return node.getObjectMember(member).map(r -> loadReferenceBody(visitor, id, r));
+            FullyResolvedModelFile modelFile, ShapeId id, ObjectNode node, String member) {
+        return node.getObjectMember(member).map(r -> loadReferenceBody(modelFile, id, r));
     }
 
-    private ShapeId loadReferenceBody(LoaderVisitor visitor, ShapeId id, Node reference) {
+    private ShapeId loadReferenceBody(FullyResolvedModelFile modelFile, ShapeId id, Node reference) {
         ObjectNode referenceObject = reference.expectObjectNode();
-        visitor.checkForAdditionalProperties(referenceObject, id, REFERENCE_PROPERTIES);
+        LoaderUtils.checkForAdditionalProperties(referenceObject, id, REFERENCE_PROPERTIES, modelFile.events());
         return referenceObject.expectStringMember(TARGET).expectShapeId();
     }
 
-    private List<ShapeId> loadOptionalTargetList(LoaderVisitor visitor, ShapeId id, ObjectNode node, String member) {
+    private List<ShapeId> loadOptionalTargetList(
+            FullyResolvedModelFile modelFile, ShapeId id, ObjectNode node, String member) {
         return node.getArrayMember(member).map(array -> {
             List<ShapeId> ids = new ArrayList<>(array.size());
             for (Node element : array.getElements()) {
-                ids.add(loadReferenceBody(visitor, id, element));
+                ids.add(loadReferenceBody(modelFile, id, element));
             }
             return ids;
         }).orElseGet(Collections::emptyList);

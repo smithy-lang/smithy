@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
@@ -54,7 +55,10 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
+import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.traits.SuppressTrait;
@@ -452,7 +456,6 @@ public class ModelAssemblerTest {
                 .putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true)
                 .assemble();
 
-        System.out.println(result.getValidationEvents());
         assertThat(result.getValidationEvents(), not(empty()));
         assertFalse(result.isBroken());
     }
@@ -470,20 +473,6 @@ public class ModelAssemblerTest {
             assertThat(model.getShape(shapeId).get().getSourceLocation().getFilename(),
                        startsWith("jar:file:"));
         }
-    }
-
-    @Test
-    public void gracefullyParsesPartialDocuments() {
-        String document = "namespace foo.baz\n"
-                          + "@required\n" // < this trait is invalid, but that's not validated due to the syntax error
-                          + "string MyString\n"
-                          + "str"; // < syntax error here
-        ValidatedResult<Model> result = new ModelAssembler().addUnparsedModel("foo.smithy", document).assemble();
-
-        assertTrue(result.isBroken());
-        assertThat(result.getValidationEvents(Severity.ERROR), hasSize(1));
-        assertTrue(result.getResult().isPresent());
-        assertTrue(result.getResult().get().getShape(ShapeId.from("foo.baz#MyString")).isPresent());
     }
 
     @Test
@@ -509,5 +498,122 @@ public class ModelAssemblerTest {
                 .putMetadata("suppressions", Node.parse("[{}]"))
                 .assemble();
         assertTrue(result.isBroken());
+    }
+
+    @Test
+    public void detectsDuplicateTraitsWithDifferentTypes() {
+        // This test ensures that traits with different types are detected too.
+        // This is picked up by normal trait collision, but this test is a good
+        // regression test to ensure that trait specific stuff like coercion
+        // is handled correctly.
+        String document1 = "namespace foo.baz\n"
+                          + "@trait\n"
+                          + "structure myTrait {}\n";
+        String document2 = "namespace foo.baz\n"
+                          + "@trait\n"
+                          + "integer myTrait\n";
+        String document3 = "namespace foo.baz\n"
+                           + "@myTrait(10)\n"
+                           + "string MyShape\n";
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addUnparsedModel("1.smithy", document1)
+                .addUnparsedModel("2.smithy", document2)
+                .addUnparsedModel("3.smithy", document3)
+                .assemble();
+
+        assertTrue(result.isBroken());
+    }
+
+    @Test
+    public void allowsConflictingShapesThatAreEqual() {
+        // While these two shapes have different traits, the traits merge.
+        // Since they are equivalent the conflicts are allowed.
+        String document1 = "namespace foo.baz\n"
+                           + "@deprecated\n"
+                           + "structure Foo {\n"
+                           + "    foo: String,"
+                           + "}\n";
+        String document2 = "namespace foo.baz\n"
+                           + "structure Foo {\n"
+                           + "    @sensitive\n"
+                           + "    foo: String,\n"
+                           + "}\n";
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addUnparsedModel("1.smithy", document1)
+                .addUnparsedModel("2.smithy", document2)
+                .assemble();
+
+        assertFalse(result.isBroken());
+
+        // Ensure that traits across each duplicate are all merged together.
+        StructureShape shape = result.unwrap().expectShape(ShapeId.from("foo.baz#Foo"), StructureShape.class);
+        assertTrue(shape.hasTrait(DeprecatedTrait.class));
+        assertTrue(shape.getMember("foo").isPresent());
+        assertTrue(shape.getMember("foo").get().hasTrait(SensitiveTrait.class));
+    }
+
+    @Test
+    public void detectsConflictingDuplicateAggregates() {
+        // Aggregate shapes have to have the same exact members.
+        String document1 = "namespace foo.baz\n"
+                           + "structure Foo {\n"
+                           + "    foo: String,"
+                           + "}\n";
+        String document2 = "namespace foo.baz\n"
+                           + "structure Foo {}\n";
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addUnparsedModel("1.smithy", document1)
+                .addUnparsedModel("2.smithy", document2)
+                .assemble();
+
+        assertTrue(result.isBroken());
+    }
+
+    @Test
+    public void allowsDuplicateEquivalentMetadata() {
+        String document = "metadata foo = 10\n";
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addUnparsedModel("1.smithy", document)
+                .addUnparsedModel("2.smithy", document)
+                .assemble();
+
+        assertFalse(result.isBroken());
+        assertThat(result.unwrap().getMetadata().get("foo"), equalTo(Node.from(10)));
+    }
+
+    @Test
+    public void mergesConflictingMetadataArrays() {
+        String document = "metadata foo = [\"a\"]\n";
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addUnparsedModel("1.smithy", document)
+                .addUnparsedModel("2.smithy", document)
+                .assemble();
+
+        assertFalse(result.isBroken());
+        assertThat(result.unwrap().getMetadata().get("foo"), equalTo(Node.fromStrings("a", "a")));
+    }
+
+    @Test
+    public void createsDynamicTraitWhenTraitFactoryReturnsEmpty() {
+        ShapeId id = ShapeId.from("ns.foo#Test");
+        ShapeId traitId = ShapeId.from("smithy.foo#baz");
+        String document = "{\n"
+                + "\"smithy\": \"" + Model.MODEL_VERSION + "\",\n"
+                + "    \"shapes\": {\n"
+                + "        \"" + id + "\": {\n"
+                + "            \"type\": \"string\",\n"
+                + "            \"traits\": {\"" + traitId + "\": true}\n"
+                + "        }\n"
+                + "    }\n"
+                + "}";
+        Model model = new ModelAssembler()
+                .addUnparsedModel(SourceLocation.NONE.getFilename(), document)
+                .putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true)
+                .assemble()
+                .unwrap();
+
+
+        assertTrue(model.expectShape(id).findTrait(traitId).isPresent());
+        assertThat(model.expectShape(id).findTrait(traitId).get(), instanceOf(DynamicTrait.class));
     }
 }

@@ -126,7 +126,7 @@
                     "target": "example.rest#Map"
                 },
                 "stringDateTime": {
-                    "target": "smithy.api#StringDateTime"
+                    "target": "smithy.example#StringDateTime"
                 }
             }
         },
@@ -208,7 +208,7 @@
         "example.rest#Timestamp": {
             "type": "timestamp"
         },
-        "smithy.api#StringDateTime": {
+        "smithy.example#StringDateTime": {
             "type": "timestamp",
             "traits": {
                 "smithy.api#timestampFormat": "date-time"

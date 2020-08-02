@@ -149,15 +149,31 @@ together to form a valid semantic model.
 Merging model files
 ===================
 
-Implementations MUST take the following steps to merge models together to load
-the semantic model:
+Implementations MUST take the following steps when merging two or more
+model files to form a semantic model:
 
-#. Duplicate shape IDs, if found, MUST cause the model merge to fail.
-   See :ref:`shape-id-conflicts` for more information.
-#. Merge any conflicting applied traits using
-   :ref:`trait conflict resolution  <trait-conflict-resolution>`.
-#. Merge the metadata objects of both models using the steps defined
-   in :ref:`merging-metadata`.
+#. Merge the metadata objects of all model files using the steps defined in
+   :ref:`merging-metadata`.
+#. Shapes defined in a single model file are added to the semantic model as-is.
+#. Shapes with the same shape ID defined in multiple model files are
+   reconciled using the following rules:
+
+   #. All conflicting shapes MUST have the same shape type.
+   #. Conflicting :ref:`aggregate shapes <aggregate-types>` MUST contain the
+      same members that target the same shapes.
+   #. Conflicting :ref:`service shapes <service-types>` MUST contain the same
+      properties and target the same shapes.
+#. Conflicting traits defined in shape definitions or through
+   :ref:`apply statements <apply-statements>` are reconciled using
+   :ref:`trait conflict resolution <trait-conflict-resolution>`.
+
+.. note::
+
+    *The following guidance is non-normative.* Because the Smithy IDL allows
+    forward references to shapes that have not yet been defined or shapes
+    that are defined in another model file, implementations likely need to
+    defer :ref:`resolving relative shape IDs <relative-shape-id>` to
+    absolute shape IDs until *all* model files are loaded.
 
 
 .. _metadata:
@@ -484,6 +500,12 @@ a Python code generator might convert all member names to lower snake case).
 To illustrate, ``com.Foo#baz`` and ``com.foo#BAZ`` are not allowed in the
 same semantic model. This restriction also extends to member names:
 ``com.foo#Baz$bar`` and ``com.foo#Baz$BAR`` are in conflict.
+
+.. seealso::
+
+    :ref:`merging-models` for information on how conflicting shape
+    definitions for the same shape ID are handled when assembling the
+    semantic model from multiple model files.
 
 
 .. _simple-types:
@@ -2153,7 +2175,18 @@ immediately precede a shape. The following example applies the
 * Refer to the :ref:`JSON AST specification <json-ast>` for a
   description of how traits are applied in the JSON AST.
 
-.. rubric:: Applying traits externally
+.. rubric:: Scope of member traits
+
+Traits that target :ref:`members <member>` apply only in the context of
+the member shape and do not affect the shape targeted by the member. Traits
+applied to a member supersede traits applied to the shape targeted by the
+member and do not inherently conflict.
+
+
+.. _apply-statements:
+
+Applying traits externally
+--------------------------
 
 Both the IDL and JSON AST model representations allow traits to be applied
 to shapes outside of a shape's definition. This is done using an
@@ -2199,13 +2232,6 @@ The following example applies the :ref:`documentation-trait` and
     In the semantic model, applying traits outside of a shape definition is
     treated exactly the same as applying the trait inside of a shape
     definition.
-
-.. rubric:: Scope of member traits
-
-Traits that target :ref:`members <member>` apply only in the context of
-the member shape and do not affect the shape targeted by the member. Traits
-applied to a member supersede traits applied to the shape targeted by the
-member and do not inherently conflict.
 
 
 .. _trait-conflict-resolution:

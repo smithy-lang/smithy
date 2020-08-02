@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -19,6 +19,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.SourceException;
@@ -26,6 +30,7 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.utils.IoUtils;
 
 /**
@@ -39,33 +44,39 @@ final class ModelLoader {
     private ModelLoader() {}
 
     /**
-     * Loads the contents of a model into a {@code LoaderVisitor}.
+     * Loads the contents of a model into a {@code ModelFile}.
      *
      * <p>The format contained in the supplied {@code InputStream} is
      * determined based on the file extension in the provided
      * {@code filename}.
      *
+     * @param traitFactory Factory used to create traits.
+     * @param properties Bag of loading properties.
      * @param filename Filename Filename to assign to the model.
      * @param contentSupplier The supplier that provides an InputStream. The
      *   supplied {@code InputStream} is automatically closed when the loader
      *   has finished reading from it.
-     * @param visitor The visitor to update while loading.
-     * @return Returns true if the file could be loaded, and false if not.
+     * @return Returns a non-empty list of {@code ModelFile}s if model(s) could be loaded.
      * @throws SourceException if there is an error reading from the contents.
      */
-    static boolean load(String filename, Supplier<InputStream> contentSupplier, LoaderVisitor visitor) {
+    static List<ModelFile> load(
+            TraitFactory traitFactory,
+            Map<String, Object> properties,
+            String filename,
+            Supplier<InputStream> contentSupplier
+    ) {
         if (filename.endsWith(".json")) {
-            return loadParsedNode(Node.parse(contentSupplier.get(), filename), visitor);
+            return loadParsedNode(traitFactory, Node.parse(contentSupplier.get(), filename));
         } else if (filename.endsWith(".smithy")) {
-            new IdlModelParser(filename, IoUtils.toUtf8String(contentSupplier.get()), visitor).parse();
-            return true;
+            String contents = IoUtils.toUtf8String(contentSupplier.get());
+            return new IdlModelParser(traitFactory, filename, contents).parse();
         } else if (filename.endsWith(".jar")) {
-            return loadJar(filename, visitor);
+            return loadJar(traitFactory, properties, filename);
         } else if (filename.equals(SourceLocation.NONE.getFilename())) {
             // Assume it's JSON if there's a N/A filename.
-            return loadParsedNode(Node.parse(contentSupplier.get(), filename), visitor);
+            return loadParsedNode(traitFactory, Node.parse(contentSupplier.get(), filename));
         } else {
-            return false;
+            return Collections.emptyList();
         }
     }
 
@@ -75,13 +86,12 @@ final class ModelLoader {
     // Smithy JSON AST format.
     //
     // This loader supports version 1.0. Support for 0.5 and 0.4 was removed in 0.10.
-    static boolean loadParsedNode(Node node, LoaderVisitor visitor) {
+    static List<ModelFile> loadParsedNode(TraitFactory traitFactory, Node node) {
         ObjectNode model = node.expectObjectNode("Smithy documents must be an object. Found {type}.");
         StringNode version = model.expectStringMember(SMITHY);
 
-        if (visitor.isVersionSupported(version.getValue())) {
-            AstModelLoader.INSTANCE.load(model, visitor);
-            return true;
+        if (LoaderUtils.isVersionSupported(version.getValue())) {
+            return Collections.singletonList(AstModelLoader.INSTANCE.load(traitFactory, model));
         } else {
             throw new ModelSyntaxException("Unsupported Smithy version number: " + version.getValue(), version);
         }
@@ -89,32 +99,34 @@ final class ModelLoader {
 
     // Allows importing JAR files by discovering models inside of a JAR file.
     // This is similar to model discovery, but done using an explicit import.
-    private static boolean loadJar(String filename, LoaderVisitor visitor) {
+    private static List<ModelFile> loadJar(TraitFactory traitFactory, Map<String, Object> properties, String filename) {
         URL manifestUrl = ModelDiscovery.createSmithyJarManifestUrl(filename);
         LOGGER.fine(() -> "Loading Smithy model imports from JAR: " + manifestUrl);
+        List<ModelFile> result = new ArrayList<>();
 
         for (URL model : ModelDiscovery.findModels(manifestUrl)) {
             try {
                 URLConnection connection = model.openConnection();
 
-                if (visitor.hasProperty(ModelAssembler.DISABLE_JAR_CACHE)) {
+                if (properties.containsKey(ModelAssembler.DISABLE_JAR_CACHE)) {
                     connection.setUseCaches(false);
                 }
 
-                load(model.toExternalForm(), () -> {
+                List<ModelFile> innerResult = load(traitFactory, properties, model.toExternalForm(), () -> {
                     try {
                         return connection.getInputStream();
                     } catch (IOException e) {
                         throw throwIoJarException(model, e);
                     }
-                }, visitor);
+                });
 
+                result.addAll(innerResult);
             } catch (IOException e) {
                 throw throwIoJarException(model, e);
             }
         }
 
-        return true;
+        return result;
     }
 
     private static ModelImportException throwIoJarException(URL model, Throwable e) {
