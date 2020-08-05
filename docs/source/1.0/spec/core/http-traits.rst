@@ -504,7 +504,8 @@ Serialization rules:
 * string values with a :ref:`mediaType-trait` are base64 encoded.
 * timestamp values are serialized using the ``http-date``
   format as defined in the ``IMF-fixdate`` production of
-  :rfc:`7231#section-7.1.1.1`.
+  :rfc:`7231#section-7.1.1.1`. The :ref:`timestampFormat-trait` MAY be used
+  to use a custom serialization format.
 
 .. note::
 
@@ -606,7 +607,8 @@ Serialization rules:
 
 - boolean is serialized as ``true`` or ``false``.
 - timestamp values are serialized as an :rfc:`3339` string
-  (e.g., ``1990-12-31T23:59:60Z``).
+  (e.g., ``1985-04-12T23:20:50.52Z``). The :ref:`timestampFormat-trait` MAY
+  be used to use a custom serialization format.
 - Unless the label is greedy, "/" MUST be percent encoded.
 
 
@@ -791,7 +793,9 @@ Serialization rules:
 * boolean values are serialized as ``true`` or ``false``.
 * blob values are base64 encoded when serialized in the query string.
 * timestamp values are serialized as an :rfc:`3339`
-  ``date-time`` string (e.g., ``1990-12-31T23:59:60Z``).
+  ``date-time`` string (e.g., ``1985-04-12T23:20:50.52Z``). The
+  :ref:`timestampFormat-trait` MAY be used to use a custom serialization
+  format.
 * :ref:`list` members are serialized by adding multiple query string parameters
   to the query string using the same name. For example, given a member bound
   to ``foo`` that targets a list of strings with a value of ``["a", "b"]``,
