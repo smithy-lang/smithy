@@ -2,6 +2,57 @@ $version: "1.0"
 
 namespace smithy.api
 
+// ------ Prelude shapes
+
+string String
+
+blob Blob
+
+bigInteger BigInteger
+
+bigDecimal BigDecimal
+
+timestamp Timestamp
+
+document Document
+
+@box
+boolean Boolean
+
+boolean PrimitiveBoolean
+
+@box
+byte Byte
+
+byte PrimitiveByte
+
+@box
+short Short
+
+short PrimitiveShort
+
+@box
+integer Integer
+
+integer PrimitiveInteger
+
+@box
+long Long
+
+long PrimitiveLong
+
+@box
+float Float
+
+float PrimitiveFloat
+
+@box
+double Double
+
+double PrimitiveDouble
+
+// ------ Prelude traits
+
 /// Makes a shape a trait.
 @trait(selector: ":is(simpleType, list, map, set, structure, union)")
 @tags(["diff.error.add", "diff.error.remove"])
