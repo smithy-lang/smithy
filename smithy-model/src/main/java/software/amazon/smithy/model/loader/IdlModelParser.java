@@ -128,12 +128,12 @@ final class IdlModelParser extends SimpleParser {
         this.modelFile = new ForwardReferenceModelFile(traitFactory);
     }
 
-    List<ModelFile> parse() {
+    ModelFile parse() {
         ws();
         parseControlSection();
         parseMetadataSection();
         parseShapeSection();
-        return Collections.singletonList(modelFile);
+        return modelFile;
     }
 
     /**
@@ -696,8 +696,8 @@ final class IdlModelParser extends SimpleParser {
         });
     }
 
-    private Node coerceTraitValue(ShapeId traitId, Node value, boolean isAnnotation,
-            Function<ShapeId, ShapeType> typeProvider) {
+    private Node coerceTraitValue(
+            ShapeId traitId, Node value, boolean isAnnotation, Function<ShapeId, ShapeType> typeProvider) {
         if (isAnnotation && value.isNullNode()) {
             ShapeType targetType = typeProvider.apply(traitId);
             if (targetType != null) {

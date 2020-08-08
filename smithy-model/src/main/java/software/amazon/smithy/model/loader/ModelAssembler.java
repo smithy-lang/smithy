@@ -28,12 +28,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -513,7 +511,13 @@ public final class ModelAssembler {
         List<ModelFile> modelFiles = createModelFiles();
 
         try {
-            return doAssemble(modelFiles);
+            CompositeModelFile files = new CompositeModelFile(traitFactory, modelFiles);
+            TraitContainer traits = files.resolveShapes(files.shapeIds(), files::getShapeType);
+            Model model = Model.builder()
+                    .metadata(files.metadata())
+                    .addShapes(files.createShapes(traits))
+                    .build();
+            return validate(model, traits, files.events());
         } catch (SourceException e) {
             List<ValidationEvent> events = new ArrayList<>();
             events.add(ValidationEvent.fromSourceException(e));
@@ -554,21 +558,20 @@ public final class ModelAssembler {
         // Load parsed AST nodes and merge them into the assembler.
         for (Node node : documentNodes) {
             try {
-                modelFiles.addAll(ModelLoader.loadParsedNode(traitFactory, node));
+                modelFiles.add(ModelLoader.loadParsedNode(traitFactory, node));
             } catch (SourceException e) {
                 assemblerModelFile.events().add(ValidationEvent.fromSourceException(e));
             }
         }
 
         // Load model files and merge them into the assembler.
-        for (Map.Entry<String, Supplier<InputStream>> modelEntry : inputStreamModels.entrySet()) {
+        for (Map.Entry<String, Supplier<InputStream>> entry : inputStreamModels.entrySet()) {
             try {
-                List<ModelFile> loaded = ModelLoader.load(
-                        traitFactory, properties, modelEntry.getKey(), modelEntry.getValue());
-                if (loaded.isEmpty()) {
-                    LOGGER.warning(() -> "No ModelLoader was able to load " + modelEntry.getKey());
+                ModelFile loaded = ModelLoader.load(traitFactory, properties, entry.getKey(), entry.getValue());
+                if (loaded == null) {
+                    LOGGER.warning(() -> "No ModelLoader was able to load " + entry.getKey());
                 } else {
-                    modelFiles.addAll(loaded);
+                    modelFiles.add(loaded);
                 }
             } catch (SourceException e) {
                 assemblerModelFile.events().add(ValidationEvent.fromSourceException(e));
@@ -578,65 +581,29 @@ public final class ModelAssembler {
         return modelFiles;
     }
 
-    private ValidatedResult<Model> doAssemble(List<ModelFile> modelFiles) {
-        List<ValidationEvent> events = new ArrayList<>();
-        Set<ShapeId> ids = new HashSet<>();
-        MetadataContainer metadata = new MetadataContainer(events);
+    private ValidatedResult<Model> validate(Model model, TraitContainer traits, List<ValidationEvent> events) {
+        validateTraits(model.getShapeIds(), traits, events);
 
-        for (ModelFile modelFile : modelFiles) {
-            // Merge all metadata.
-            metadata.mergeWith(modelFile.metadata());
-            // Collect all known shape IDs across all modelFiles.
-            ids.addAll(modelFile.shapeIds());
+        if (disableValidation) {
+            return new ValidatedResult<>(model, events);
         }
 
-        Function<ShapeId, ShapeType> typeProvider = LoaderUtils.aggregateTypeProvider(modelFiles);
-
-        // Merge all pending traits across every model.
-        TraitContainer.TraitHashMap traitValues = new TraitContainer.TraitHashMap(traitFactory, events);
-        for (ModelFile modelFile : modelFiles) {
-            traitValues.merge(modelFile.resolveShapes(ids, typeProvider));
+        if (validatorFactory == null) {
+            validatorFactory = LazyValidatorFactoryHolder.INSTANCE;
         }
 
-        // Merge all shapes together, resolve conflicts, and warn for acceptable conflicts.
-        Map<ShapeId, Shape> shapes = new HashMap<>();
-        for (ModelFile modelFile : modelFiles) {
-            for (Shape shape : modelFile.createShapes(traitValues)) {
-                Shape previous = shapes.get(shape.getId());
-                if (previous == null) {
-                    shapes.put(shape.getId(), shape);
-                } else if (!previous.equals(shape)) {
-                    events.add(LoaderUtils.onShapeConflict(shape.getId(), shape.getSourceLocation(),
-                                                           previous.getSourceLocation()));
-                } else {
-                    LOGGER.warning(() -> "Ignoring duplicate but equivalent shape definition: " + previous.getId()
-                                         + " defined at " + shape.getSourceLocation() + " and "
-                                         + previous.getSourceLocation());
-                }
-            }
-        }
+        // Validate the model based on the explicit validators and model metadata.
+        List<ValidationEvent> mergedEvents = ModelValidator.validate(model, validatorFactory, assembleValidators());
+        mergedEvents.addAll(events);
+        return new ValidatedResult<>(model, mergedEvents);
+    }
 
-        // Find traits applied to shapes that don't exist.
-        for (Map.Entry<ShapeId, Map<ShapeId, Trait>> entry : traitValues.traits().entrySet()) {
-            ShapeId target = entry.getKey();
-            if (!ids.contains(target)) {
-                for (Trait trait : entry.getValue().values()) {
-                    events.add(ValidationEvent.builder()
-                            .id(Validator.MODEL_ERROR)
-                            .severity(Severity.ERROR)
-                            .sourceLocation(trait)
-                            .message(String.format("Trait `%s` applied to unknown shape `%s`",
-                                                  Trait.getIdiomaticTraitName(trait.toShapeId()), target))
-                            .build());
-                }
-            }
-        }
-
-        // Find trait values that weren't defined.
+    private void validateTraits(Set<ShapeId> ids, TraitContainer resolvedTraits, List<ValidationEvent> events) {
         Severity severity = areUnknownTraitsAllowed() ? Severity.WARNING : Severity.ERROR;
-        for (Map.Entry<ShapeId, Map<ShapeId, Trait>> entry : traitValues.traits().entrySet()) {
+        for (Map.Entry<ShapeId, Map<ShapeId, Trait>> entry : resolvedTraits.traits().entrySet()) {
             ShapeId target = entry.getKey();
             for (Trait trait : entry.getValue().values()) {
+                // Find trait values that weren't defined.
                 if (!ids.contains(trait.toShapeId())) {
                     events.add(ValidationEvent.builder()
                             .id(Validator.MODEL_ERROR)
@@ -648,39 +615,23 @@ public final class ModelAssembler {
                                     + "defined before it can be used in a model.", trait.toShapeId()))
                             .build());
                 }
+                // Find traits applied to shapes that don't exist.
+                if (!ids.contains(target)) {
+                    events.add(ValidationEvent.builder()
+                            .id(Validator.MODEL_ERROR)
+                            .severity(Severity.ERROR)
+                            .sourceLocation(trait)
+                            .message(String.format("Trait `%s` applied to unknown shape `%s`",
+                                                   Trait.getIdiomaticTraitName(trait.toShapeId()), target))
+                            .build());
+                }
             }
         }
-
-        for (ModelFile modelFile : modelFiles) {
-            events.addAll(modelFile.events());
-        }
-
-        Model.Builder builder = Model.builder();
-        builder.metadata(metadata.getData());
-        builder.addShapes(shapes.values());
-        Model model = builder.build();
-        return validate(model, events);
     }
 
     private boolean areUnknownTraitsAllowed() {
-        // Find trait values that weren't defined.
         Object allowUnknown = properties.get(ModelAssembler.ALLOW_UNKNOWN_TRAITS);
         return allowUnknown != null && (boolean) allowUnknown;
-    }
-
-    private ValidatedResult<Model> validate(Model model, List<ValidationEvent> modelResultEvents) {
-        if (disableValidation) {
-            return new ValidatedResult<>(model, modelResultEvents);
-        }
-
-        if (validatorFactory == null) {
-            validatorFactory = LazyValidatorFactoryHolder.INSTANCE;
-        }
-
-        // Validate the model based on the explicit validators and model metadata.
-        List<ValidationEvent> events = ModelValidator.validate(model, validatorFactory, assembleValidators());
-        events.addAll(modelResultEvents);
-        return new ValidatedResult<>(model, events);
     }
 
     private List<Validator> assembleValidators() {

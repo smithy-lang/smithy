@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -56,10 +55,10 @@ final class ModelLoader {
      * @param contentSupplier The supplier that provides an InputStream. The
      *   supplied {@code InputStream} is automatically closed when the loader
      *   has finished reading from it.
-     * @return Returns a non-empty list of {@code ModelFile}s if model(s) could be loaded.
+     * @return Returns a {@code ModelFile} if the model could be loaded, or {@code null}.
      * @throws SourceException if there is an error reading from the contents.
      */
-    static List<ModelFile> load(
+    static ModelFile load(
             TraitFactory traitFactory,
             Map<String, Object> properties,
             String filename,
@@ -76,7 +75,7 @@ final class ModelLoader {
             // Assume it's JSON if there's a N/A filename.
             return loadParsedNode(traitFactory, Node.parse(contentSupplier.get(), filename));
         } else {
-            return Collections.emptyList();
+            return null;
         }
     }
 
@@ -86,12 +85,12 @@ final class ModelLoader {
     // Smithy JSON AST format.
     //
     // This loader supports version 1.0. Support for 0.5 and 0.4 was removed in 0.10.
-    static List<ModelFile> loadParsedNode(TraitFactory traitFactory, Node node) {
+    static ModelFile loadParsedNode(TraitFactory traitFactory, Node node) {
         ObjectNode model = node.expectObjectNode("Smithy documents must be an object. Found {type}.");
         StringNode version = model.expectStringMember(SMITHY);
 
         if (LoaderUtils.isVersionSupported(version.getValue())) {
-            return Collections.singletonList(AstModelLoader.INSTANCE.load(traitFactory, model));
+            return AstModelLoader.INSTANCE.load(traitFactory, model);
         } else {
             throw new ModelSyntaxException("Unsupported Smithy version number: " + version.getValue(), version);
         }
@@ -99,10 +98,10 @@ final class ModelLoader {
 
     // Allows importing JAR files by discovering models inside of a JAR file.
     // This is similar to model discovery, but done using an explicit import.
-    private static List<ModelFile> loadJar(TraitFactory traitFactory, Map<String, Object> properties, String filename) {
+    private static ModelFile loadJar(TraitFactory traitFactory, Map<String, Object> properties, String filename) {
+        List<ModelFile> modelFiles = new ArrayList<>();
         URL manifestUrl = ModelDiscovery.createSmithyJarManifestUrl(filename);
         LOGGER.fine(() -> "Loading Smithy model imports from JAR: " + manifestUrl);
-        List<ModelFile> result = new ArrayList<>();
 
         for (URL model : ModelDiscovery.findModels(manifestUrl)) {
             try {
@@ -112,21 +111,22 @@ final class ModelLoader {
                     connection.setUseCaches(false);
                 }
 
-                List<ModelFile> innerResult = load(traitFactory, properties, model.toExternalForm(), () -> {
+                ModelFile innerResult = load(traitFactory, properties, model.toExternalForm(), () -> {
                     try {
                         return connection.getInputStream();
                     } catch (IOException e) {
                         throw throwIoJarException(model, e);
                     }
                 });
-
-                result.addAll(innerResult);
+                if (innerResult != null) {
+                    modelFiles.add(innerResult);
+                }
             } catch (IOException e) {
                 throw throwIoJarException(model, e);
             }
         }
 
-        return result;
+        return new CompositeModelFile(traitFactory, modelFiles);
     }
 
     private static ModelImportException throwIoJarException(URL model, Throwable e) {
