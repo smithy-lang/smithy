@@ -17,12 +17,10 @@ package software.amazon.smithy.model.loader;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
@@ -81,26 +79,5 @@ final class LoaderUtils {
                 .shapeId(id)
                 .message(String.format("Conflicting shape definition for `%s` found at `%s` and `%s`", id, a, b))
                 .build();
-    }
-
-    /**
-     * Iterates over ModelFiles to find the {@link ShapeType} of a shape.
-     *
-     * <p>The first found shape in a ModelFile wins. This is OK, since any
-     * kind of conflict is detected when the ModelFiles are merged together.
-     *
-     * @param modelFiles ModelFile instances to iterate over, searching for shapes by ID.
-     * @return Returns the found {@link ShapeType} or {@code null} if the shape does not exist.
-     */
-    public static Function<ShapeId, ShapeType> aggregateTypeProvider(List<ModelFile> modelFiles) {
-        return id -> {
-            for (ModelFile modFile : modelFiles) {
-                ShapeType fileType = modFile.getShapeType(id);
-                if (fileType != null) {
-                    return fileType;
-                }
-            }
-            return null;
-        };
     }
 }

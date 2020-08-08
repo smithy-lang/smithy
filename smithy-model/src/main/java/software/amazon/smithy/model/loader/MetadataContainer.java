@@ -79,17 +79,6 @@ final class MetadataContainer {
     }
 
     /**
-     * Merges another metadata container into this container.
-     *
-     * @param other Metadata container to merge into this container.
-     */
-    void mergeWith(Map<String, Node> other) {
-        for (Map.Entry<String, Node> entry : other.entrySet()) {
-            putMetadata(entry.getKey(), entry.getValue());
-        }
-    }
-
-    /**
      * Gets all of the metadata in the container.
      *
      * @return Returns the metadata.

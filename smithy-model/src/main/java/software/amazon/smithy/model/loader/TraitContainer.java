@@ -191,20 +191,6 @@ public interface TraitContainer {
         }
 
         /**
-         * Merges the given {@code other} value into this value.
-         *
-         * @param other TraitValues to merge into this TraitValues.
-         */
-        void merge(TraitContainer other) {
-            for (Map.Entry<ShapeId, Map<ShapeId, Trait>> entry : other.traits().entrySet()) {
-                ShapeId target = entry.getKey();
-                for (Map.Entry<ShapeId, Trait> appliedEntry : entry.getValue().entrySet()) {
-                    onTrait(target, appliedEntry.getValue());
-                }
-            }
-        }
-
-        /**
          * Creates a trait and returns null if it can't be created.
          *
          * @param target Shape to apply the trait to.
