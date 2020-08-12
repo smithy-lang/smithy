@@ -33,6 +33,7 @@
                     "cacheNamespace": "cache namespace",
                     "cacheKeyParameters": [],
                     "passThroughBehavior": "never",
+                    "payloadFormatVersion": "1.0",
                     "responses": {
                         "2\\d{2}": {
                             "statusCode": "200",

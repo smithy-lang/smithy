@@ -68,6 +68,7 @@
           "httpMethod": "POST",
           "credentials": "arn:aws:iam::012345678901:role/apigateway-invoke-lambda-exec-role",
           "cacheNamespace": "cache namespace",
+          "payloadFormatVersion": "1.0",
           "requestParameters": {
             "integration.request.querystring.provider": "method.request.querystring.vendor",
             "integration.request.path.stage": "method.request.querystring.version"

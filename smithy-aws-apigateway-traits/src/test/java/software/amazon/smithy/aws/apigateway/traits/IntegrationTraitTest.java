@@ -34,6 +34,7 @@ public class IntegrationTraitTest {
                 .connectionType("xyz")
                 .contentHandling("CONVERT_TO_TEXT")
                 .credentials("abc")
+                .payloadFormatVersion("1.0")
                 .passThroughBehavior("when_no_templates")
                 .putRequestParameter("x", "y")
                 .build();
