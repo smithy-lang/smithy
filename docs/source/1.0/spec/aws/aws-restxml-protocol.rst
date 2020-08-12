@@ -349,7 +349,7 @@ serialized in the response.
             <Type>Sender</Type>
             <Code>InvalidGreeting</Code>
             <Message>Hi</Message>
-            <AnotherSetting>setting</Message>
+            <AnotherSetting>setting</AnotherSetting>
         </Error>
         <RequestId>foo-id</RequestId>
     </ErrorResponse>
@@ -363,7 +363,7 @@ using this additional nested XML element.
         <Type>Sender</Type>
         <Code>InvalidGreeting</Code>
         <Message>Hi</Message>
-        <AnotherSetting>setting</Message>
+        <AnotherSetting>setting</AnotherSetting>
         <RequestId>foo-id</RequestId>
     </Error>
 

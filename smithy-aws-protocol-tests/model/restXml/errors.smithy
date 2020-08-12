@@ -70,7 +70,7 @@ apply InvalidGreeting @httpResponseTests([
                     <Type>Sender</Type>
                     <Code>InvalidGreeting</Code>
                     <Message>Hi</Message>
-                    <AnotherSetting>setting</Message>
+                    <AnotherSetting>setting</AnotherSetting>
                  </Error>
                  <RequestId>foo-id</RequestId>
               </ErrorResponse>
