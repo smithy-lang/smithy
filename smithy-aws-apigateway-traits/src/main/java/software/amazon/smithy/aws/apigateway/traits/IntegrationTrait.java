@@ -56,6 +56,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
     private final String connectionId;
     private final String connectionType;
     private final String cacheNamespace;
+    private final String payloadFormatVersion;
     private final List<String> cacheKeyParameters;
     private final Map<String, String> requestParameters;
     private final Map<String, String> requestTemplates;
@@ -73,6 +74,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
         connectionId = builder.connectionId;
         connectionType = builder.connectionType;
         cacheNamespace = builder.cacheNamespace;
+        payloadFormatVersion = builder.payloadFormatVersion;
         cacheKeyParameters = ListUtils.copyOf(builder.cacheKeyParameters);
         requestParameters = MapUtils.copyOf(builder.requestParameters);
         requestTemplates = MapUtils.copyOf(builder.requestTemplates);
@@ -213,6 +215,15 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
     }
 
     /**
+     * Gets the payload format version. Only used in HTTP APIs.
+     *
+     * @return Returns the optionally present cache namespace.
+     */
+    public Optional<String> getPayloadFormatVersion() {
+        return Optional.ofNullable(payloadFormatVersion);
+    }
+
+    /**
      * A list of request parameters whose values are to be cached.
      *
      * @return Returns the cache key parameters.
@@ -341,6 +352,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
                 .connectionId(connectionId)
                 .connectionType(connectionType)
                 .cacheNamespace(cacheNamespace)
+                .payloadFormatVersion(payloadFormatVersion)
                 .requestParameters(requestParameters)
                 .requestTemplates(requestTemplates)
                 .responses(responses)
@@ -358,6 +370,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
         private String connectionId;
         private String connectionType;
         private String cacheNamespace;
+        private String payloadFormatVersion;
         private final List<String> cacheKeyParameters = new ArrayList<>();
         private final Map<String, String> requestParameters = new HashMap<>();
         private final Map<String, String> requestTemplates = new HashMap<>();
@@ -491,6 +504,17 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
          */
         public Builder cacheNamespace(String cacheNamespace) {
             this.cacheNamespace = cacheNamespace;
+            return this;
+        }
+
+        /**
+         * Sets the payload format version. Required for HTTP APIs.
+         *
+         * @param payloadFormatVersion Payload format version to set.
+         * @return Returns the builder.
+         */
+        public Builder payloadFormatVersion(String payloadFormatVersion) {
+            this.payloadFormatVersion = payloadFormatVersion;
             return this;
         }
 
