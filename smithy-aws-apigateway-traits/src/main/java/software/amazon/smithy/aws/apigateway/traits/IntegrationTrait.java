@@ -217,7 +217,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
     /**
      * Gets the payload format version. Only used in HTTP APIs.
      *
-     * @return Returns the optionally present cache namespace.
+     * @return Returns the optional payload format version.
      */
     public Optional<String> getPayloadFormatVersion() {
         return Optional.ofNullable(payloadFormatVersion);
