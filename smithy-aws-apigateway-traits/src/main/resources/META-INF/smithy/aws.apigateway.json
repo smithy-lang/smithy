@@ -163,6 +163,9 @@
                 "cacheNamespace": {
                     "target": "smithy.api#String"
                 },
+                "payloadFormatVersion": {
+                    "target": "smithy.api#String"
+                },
                 "cacheKeyParameters": {
                     "target": "aws.apigateway#StringList"
                 },

@@ -397,6 +397,11 @@ following members:
     * - cacheNamespace
       - ``string``
       - An API-specific tag group of related cached parameters.
+    * - payloadFormatVersion
+      - ``string``
+      - Specifies the format of the payload sent to an integration. Required for HTTP APIs. For HTTP APIs,
+        supported values for Lambda proxy integrations are 1.0 and 2.0. For all other integrations, 1.0 is the
+        only supported value.
     * - cacheKeyParameters
       - ``list<string>``
       - A list of request parameter names whose values are to be cached.
