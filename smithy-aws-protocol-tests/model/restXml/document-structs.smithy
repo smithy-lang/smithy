@@ -98,6 +98,49 @@ apply SimpleScalarProperties @httpResponseTests([
             floatValue: 5.5,
             doubleValue: 6.5,
         }
+    },
+    {
+        id: "SimpleScalarPropertiesWithEscapedCharacter",
+        documentation: "Serializes escaped string",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <SimpleScalarPropertiesInputOutput>
+                  <stringValue>&lt;string&gt;</stringValue>
+              </SimpleScalarPropertiesInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml",
+            "X-Foo": "Foo",
+        },
+        params: {
+            foo: "Foo",
+            stringValue: "<string>",
+        }
+    },
+    {
+        id: "SimpleScalarPropertiesWithXMLPreamble",
+        documentation: "Serializes simple scalar properties with xml preamble, comments and CDATA",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <?xml version = "1.0" encoding = "UTF-8"?>
+              <SimpleScalarPropertiesInputOutput>
+                  <![CDATA[characters representing CDATA]]>
+                  <stringValue>string</stringValue>
+                  <!--xml comment-->
+              </SimpleScalarPropertiesInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml",
+            "X-Foo": "Foo",
+        },
+        params: {
+            foo: "Foo",
+            stringValue: "string",
+        }
     }
 ])
 
