@@ -59,7 +59,49 @@ apply SimpleScalarProperties @httpRequestTests([
             floatValue: 5.5,
             doubleValue: 6.5,
         }
-    }
+    },
+    {
+        id: "SimpleScalarPropertiesWithEscapedCharacter",
+        documentation: "Serializes string with escaping",
+        protocol: restXml,
+        method: "PUT",
+        uri: "/SimpleScalarProperties",
+        body: """
+              <SimpleScalarPropertiesInputOutput>
+                  <stringValue>&lt;string&gt;</stringValue>
+              </SimpleScalarPropertiesInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml",
+            "X-Foo": "Foo",
+        },
+        params: {
+            foo: "Foo",
+            stringValue: "<string>",
+        }
+    },
+    {
+        id: "SimpleScalarPropertiesWithWhiteSpace",
+        documentation: "Serializes string containing white space",
+        protocol: restXml,
+        method: "PUT",
+        uri: "/SimpleScalarProperties",
+        body: """
+              <SimpleScalarPropertiesInputOutput>
+                  <stringValue>string with white    space</stringValue>
+              </SimpleScalarPropertiesInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml",
+            "X-Foo": "Foo",
+        },
+        params: {
+            foo: "Foo",
+            stringValue: "string with white    space",
+        }
+    },
 ])
 
 apply SimpleScalarProperties @httpResponseTests([
@@ -101,7 +143,7 @@ apply SimpleScalarProperties @httpResponseTests([
     },
     {
         id: "SimpleScalarPropertiesWithEscapedCharacter",
-        documentation: "Serializes escaped string",
+        documentation: "Serializes string with escaping",
         protocol: restXml,
         code: 200,
         body: """
@@ -140,6 +182,27 @@ apply SimpleScalarProperties @httpResponseTests([
         params: {
             foo: "Foo",
             stringValue: "string",
+        }
+    },
+    {
+        id: "SimpleScalarPropertiesWithWhiteSpace",
+        documentation: "Serializes string containing white space",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <?xml version = "1.0" encoding = "UTF-8"?>
+              <SimpleScalarPropertiesInputOutput>
+                  <stringValue>string with white    space</stringValue>
+              </SimpleScalarPropertiesInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml",
+            "X-Foo": "Foo",
+        },
+        params: {
+            foo: "Foo",
+            stringValue: "string with white    space",
         }
     }
 ])
