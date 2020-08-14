@@ -36,7 +36,27 @@ apply XmlAttributes @httpRequestTests([
             foo: "hi",
             attr: "test"
         }
-    }
+    },
+    {
+        id: "XmlAttributesWithEscaping",
+        documentation: "Serializes XML attributes with escaped characters on the synthesized document",
+        protocol: restXml,
+        method: "PUT",
+        uri: "/XmlAttributes",
+        body: """
+              <XmlAttributesInputOutput test="&lt;test&amp;mock&gt;">
+                  <foo>hi</foo>
+              </XmlAttributesInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            foo: "hi",
+            attr: "<test&mock>"
+        }
+    },
 ])
 
 apply XmlAttributes @httpResponseTests([
