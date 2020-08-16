@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
  * <p>The following example generates some Python code:
  *
  * <pre>{@code
- * CodeWriter writer = CodeWriter.createDefault();
+ * CodeWriter writer = new CodeWriter();
  * writer.write("def Foo(str):")
  *       .indent()
  *       .write("print str");
@@ -50,7 +50,7 @@ import java.util.regex.Pattern;
  * {@code write}:
  *
  * <pre>{@code
- * CodeWriter writer = CodeWriter.createDefault();
+ * CodeWriter writer = new CodeWriter();
  * writer.write("Hello, $L", "there!");
  * String code = writer.toString();
  * }</pre>
@@ -101,7 +101,7 @@ import java.util.regex.Pattern;
  * interpolates the first positional argument, the second the second, etc.
  *
  * <pre>{@code
- * CodeWriter writer = CodeWriter.createDefault();
+ * CodeWriter writer = new CodeWriter();
  * writer.write("$L $L $L", "a", "b", "c");
  * System.out.println(writer.toString());
  * // Outputs: "a b c"
@@ -117,7 +117,7 @@ import java.util.regex.Pattern;
  * number refers to the 1-based index of the argument to interpolate.
  *
  * <pre>{@code
- * CodeWriter writer = CodeWriter.createDefault();
+ * CodeWriter writer = new CodeWriter();
  * writer.write("$1L $2L $3L, $3L $2L $1L", "a", "b", "c");
  * System.out.println(writer.toString());
  * // Outputs: "a b c c b a"
@@ -135,7 +135,7 @@ import java.util.regex.Pattern;
  * {@code <formatter>} is the name of a formatter.
  *
  * <pre>{@code
- * CodeWriter writer = CodeWriter.createDefault();
+ * CodeWriter writer = new CodeWriter();
  * writer.putContext("foo", "a");
  * writer.putContext("baz.bar", "b");
  * writer.write("$foo:L $baz.bar:L");
@@ -163,7 +163,7 @@ import java.util.regex.Pattern;
  * then print a formatted statement.
  *
  * <pre>{@code
- * CodeWriter writer = CodeWriter.createDefault()
+ * CodeWriter writer = new CodeWriter()
  *       .openBlock("if ($L) {", someValue)
  *       .write("System.out.println($S);", "Hello!")
  *       .closeBlock("}");
@@ -180,19 +180,20 @@ import java.util.regex.Pattern;
  * <h2>Pushing and popping state</h2>
  *
  * <p>The CodeWriter can maintain a stack of transformation states, including
- * the text used to indent, a prefix to add before each line, the number of
- * times to indent, a map of context values, and whether or not whitespace is
- * trimmed from the end of newlines. State can be pushed onto the stack using
- * {@link #pushState} which copies the current state. Mutations can then be
- * made to the top-most state of the CodeWriter and do not affect previous
- * states. The previous transformation state of the CodeWriter can later be
- * restored using {@link #popState}.
+ * the text used to indent, a prefix to add before each line, newline character,
+ * the number of times to indent, a map of context values, whether or not
+ * whitespace is trimmed from the end of newlines, and whether or not the
+ * automatic insertion of newlines is disabled. State can be pushed onto the
+ * stack using {@link #pushState} which copies the current state. Mutations can
+ * then be made to the top-most state of the CodeWriter and do not affect
+ * previous states. The previous transformation state of the CodeWriter can
+ * later be restored using {@link #popState}.
  *
  * <p>The CodeWriter is stateful, and a prefix can be added before each line.
  * This is useful for doing things like create Javadoc strings:
  *
  * <pre>{@code
- * CodeWriter writer = CodeWriter.createDefault();
+ * CodeWriter writer = new CodeWriter();
  * writer
  *       .pushState()
  *       .write("/**")
@@ -223,7 +224,6 @@ import java.util.regex.Pattern;
  * <ul>
  *     <li>The number of successive blank lines to trim.</li>
  *     <li>Code formatters registered through {@link #putFormatter}</li>
- *     <li>The character used for newlines</li>
  *     <li>Whether or not a trailing newline is inserted or removed from
  *     the result of converting the {@code CodeWriter} to a string.</li>
  * </ul>
@@ -245,7 +245,7 @@ import java.util.regex.Pattern;
  * <p>In the the following example:
  *
  * <pre>{@code
- * CodeWriter writer = CodeWriter.createDefault();
+ * CodeWriter writer = new CodeWriter();
  * String result = writer.trimTrailingSpaces().write("hello  ").toString();
  * }</pre>
  *
@@ -301,7 +301,7 @@ import java.util.regex.Pattern;
  * {@code CodeBuilder}.
  *
  * <pre>{@code
- * CodeWriter writer = CodeWriter.createDefault();
+ * CodeWriter writer = new CodeWriter();
  * writer.onSection("example", text -> writer.write("Intercepted: " + text));
  * writer.pushState("example");
  * writer.write("Original contents");
@@ -325,7 +325,7 @@ import java.util.regex.Pattern;
  * make calls to the {@code CodeWriter} to modify the section.
  *
  * <pre>{@code
- * CodeWriter writer = CodeWriter.createDefault();
+ * CodeWriter writer = new CodeWriter();
  * writer.onSection("example", text -> writer.write("Intercepted: " + text));
  * writer.write("Leading text...${L@example}...Trailing text...", "foo");
  * System.out.println(writer.toString());
@@ -343,8 +343,15 @@ public class CodeWriter {
     private State currentState;
     private boolean trailingNewline = true;
     private int trimBlankLines = -1;
-    private String newline = "\n";
-    private String newlineRegexQuoted = Pattern.quote("\n");
+
+    /**
+     * Tracks when indentation is needed following a newline.
+     *
+     * <p>This is initially set to true to account for the case when a
+     * code writer is initialized with indentation but hasn't written
+     * anything yet.
+     */
+    private boolean needsIndentation = true;
 
     /**
      * Creates a new CodeWriter that uses "\n" for a newline, four spaces
@@ -441,25 +448,35 @@ public class CodeWriter {
 
             for (String line : lines) {
                 if (!StringUtils.isBlank(line)) {
-                    builder.append(line).append(newline);
+                    builder.append(line).append(currentState.newline);
                     blankCount = 0;
                 } else if (blankCount++ < trimBlankLines) {
-                    builder.append(line).append(newline);
+                    builder.append(line).append(currentState.newline);
                 }
             }
 
             result = builder.toString();
         }
 
-        // Trailing new lines are always present by default.
-        if (trailingNewline) {
-            return result;
+        if (result.isEmpty()) {
+            return trailingNewline ? String.valueOf(currentState.newline) : "";
         }
 
-        // Strip or add newlines if needed.
-        return result.endsWith(newline)
-               ? result.replaceAll(newlineRegexQuoted + "$", "")
-               : result;
+        // This accounts for cases where the only write on the CodeWriter was
+        // an inline write, but the write ended with spaces.
+        if (currentState.trimTrailingSpaces) {
+            result = StringUtils.stripEnd(result, " ");
+        }
+
+        if (trailingNewline) {
+            // Add a trailing newline if needed.
+            return result.charAt(result.length() - 1) != currentState.newline ? result + currentState.newline : result;
+        } else if (result.charAt(result.length() - 1) == currentState.newline) {
+            // Strip the trailing newline if present.
+            return result.substring(0, result.length() - 1);
+        } else {
+            return result;
+        }
     }
 
     /**
@@ -567,8 +584,8 @@ public class CodeWriter {
         // final call to writeOptional.
         if (builder != null
                 && builder.length() > 0
-                && builder.lastIndexOf(newline) == builder.length() - newline.length()) {
-            builder.delete(builder.length() - newline.length(), builder.length());
+                && builder.charAt(builder.length() - 1) == currentState.newline) {
+            builder.delete(builder.length() - 1, builder.length());
             result = builder.toString();
         }
 
@@ -609,14 +626,67 @@ public class CodeWriter {
     }
 
     /**
-     * Sets the character that represents newlines ("\n" is the default).
+     * Disables the automatic appending of newlines in the current state.
+     *
+     * <p>Methods like {@link #write}, {@link #openBlock}, and {@link #closeBlock}
+     * will not automatically append newlines when a state has this flag set.
+     *
+     * @return Returns the CodeWriter.
+     */
+    public CodeWriter disableNewlines() {
+        currentState.disableNewline = true;
+        return this;
+    }
+
+    /**
+     * Enables the automatic appending of newlines in the current state.
+     *
+     * @return Returns the CodeWriter.
+     */
+    public CodeWriter enableNewlines() {
+        currentState.disableNewline = false;
+        return this;
+    }
+
+    /**
+     * Sets the character used to represent newlines in the current state
+     * ("\n" is the default).
+     *
+     * <p>When the provided string is empty (""), then newlines are disabled
+     * in the current state. This is exactly equivalent to calling
+     * {@link #disableNewlines()}, and does not actually change the newline
+     * character of the current state.
+     *
+     * <p>When the provided string is not empty, then the string must contain
+     * exactly one character. Setting the newline character to a non-empty
+     * string also implicitly enables newlines in the current state.
      *
      * @param newline Newline character to use.
      * @return Returns the CodeWriter.
      */
     public final CodeWriter setNewline(String newline) {
-        this.newline = newline;
-        newlineRegexQuoted = Pattern.quote(newline);
+        if (newline.isEmpty()) {
+            return disableNewlines();
+        } else if (newline.length() > 1) {
+            throw new IllegalArgumentException("newline must be set to an empty string or a single character");
+        } else {
+            return setNewline(newline.charAt(0));
+        }
+    }
+
+    /**
+     * Sets the character used to represent newlines in the current state
+     * ("\n" is the default).
+     *
+     * <p>This call also enables newlines in the current state by calling
+     * {@link #enableNewlines()}.
+     *
+     * @param newline Newline character to use.
+     * @return Returns the CodeWriter.
+     */
+    public final CodeWriter setNewline(char newline) {
+        currentState.newline = newline;
+        enableNewlines();
         return this;
     }
 
@@ -763,7 +833,7 @@ public class CodeWriter {
      *
      * <pre>
      * {@code
-     * String result = CodeWriter.createDefault()
+     * String result = new CodeWriter()
      *         .openBlock("public final class $L {", "Foo")
      *             .openBlock("public void main(String[] args) {")
      *                 .write("System.out.println(args[0]);")
@@ -787,7 +857,7 @@ public class CodeWriter {
      * syntax by writing a newline, dedenting, then writing {@code textAfterNewline}.
      *
      * <pre>{@code
-     * CodeWriter writer = CodeWriter.createDefault();
+     * CodeWriter writer = new CodeWriter();
      * writer.openBlock("public final class $L {", "}", "Foo", () -> {
      *     writer.openBlock("public void main(String[] args) {", "}", () -> {
      *         writer.write("System.out.println(args[0]);");
@@ -925,8 +995,11 @@ public class CodeWriter {
     /**
      * Writes text to the CodeWriter and appends a newline.
      *
-     * <p>The provided text is automatically formatted using
-     * variadic arguments.
+     * <p>The provided text is automatically formatted using variadic
+     * arguments.
+     *
+     * <p>Indentation and the newline prefix is only prepended if the writer's
+     * cursor is at the beginning of a newline.
      *
      * @param content Content to write.
      * @param args String arguments to use for formatting.
@@ -934,18 +1007,18 @@ public class CodeWriter {
      */
     public final CodeWriter write(Object content, Object... args) {
         String value = formatter.format(content, currentState.indentText, this, args);
-        String[] lines = value.split(newlineRegexQuoted, -1);
-
-        // Indent lines and strip excessive newlines.
-        for (String line : lines) {
-            currentState.writeLine(line + newline);
-        }
-
+        currentState.writeLine(value);
         return this;
     }
 
     /**
-     * Writes text to the CodeWriter without appending a newline or prefixing indentation.
+     * Writes text to the CodeWriter without appending a newline.
+     *
+     * <p>The provided text is automatically formatted using variadic
+     * arguments.
+     *
+     * <p>Indentation and the newline prefix is only prepended if the writer's
+     * cursor is at the beginning of a newline.
      *
      * <p>If newlines are present in the given string, each of those lines will receive proper indentation.
      *
@@ -955,26 +1028,7 @@ public class CodeWriter {
      */
     public final CodeWriter writeInline(Object content, Object... args) {
         String value = formatter.format(content, currentState.indentText, this, args);
-        String[] lines = value.split(newlineRegexQuoted, -1);
-
-        // The first line is written directly, with no added indentation or newline
-        currentState.write(lines[0]);
-
-        // If there aren't any additional lines, return.
-        if (lines.length == 1) {
-            return this;
-        }
-
-        // If there are additional lines, they need to be handled properly. So insert a newline.
-        currentState.write(newline);
-
-        // Write all the intermediate lines as normal.
-        for (int i = 1; i <= lines.length - 2; i++) {
-            currentState.writeLine(lines[i] + newline);
-        }
-
-        // Write the final line with proper indentation, but without an appended newline.
-        currentState.writeLine(lines[lines.length - 1]);
+        currentState.write(value);
         return this;
     }
 
@@ -1078,34 +1132,38 @@ public class CodeWriter {
     }
 
     private final class State {
-        private String sectionName;
         private String indentText = "    ";
         private String leadingIndentString = "";
         private String newlinePrefix = "";
         private int indentation;
         private boolean trimTrailingSpaces;
+        private boolean disableNewline;
+        private char newline = '\n';
+
+        private transient String sectionName;
 
         /**
          * Inline states are created when formatting text. They aren't written
          * directly to the CodeWriter, but rather captured as part of the
          * process of expanding a template argument.
          */
-        private boolean isInline;
+        private transient boolean isInline;
 
         /** This StringBuilder, if null, will only be created lazily when needed. */
         private StringBuilder builder;
 
         /** The context map implements a simple copy on write pattern. */
         private Map<String, Object> context = MapUtils.of();
-        private boolean copiedContext = false;
+        private transient boolean copiedContext = false;
 
         /** The interceptors map implements a simple copy on write pattern. */
         private Map<String, List<Consumer<Object>>> interceptors = MapUtils.of();
-        private boolean copiedInterceptors = false;
+        private transient boolean copiedInterceptors = false;
 
         State() {}
 
-        State(State copy) {
+        private State(State copy) {
+            this.newline = copy.newline;
             this.builder = copy.builder;
             this.context = copy.context;
             this.indentText = copy.indentText;
@@ -1114,6 +1172,7 @@ public class CodeWriter {
             this.newlinePrefix = copy.newlinePrefix;
             this.trimTrailingSpaces = copy.trimTrailingSpaces;
             this.interceptors = copy.interceptors;
+            this.disableNewline = copy.disableNewline;
         }
 
         @Override
@@ -1153,44 +1212,56 @@ public class CodeWriter {
             if (builder == null) {
                 builder = new StringBuilder();
             }
-            builder.append(contents);
-            trimSpaces(false);
+
+            // Write each character, accounting for newlines along the way.
+            for (int i = 0; i < contents.length(); i++) {
+                append(contents.charAt(i));
+            }
+        }
+
+        void append(char c) {
+            if (needsIndentation) {
+                builder.append(leadingIndentString);
+                builder.append(newlinePrefix);
+                needsIndentation = false;
+            }
+
+            if (c == newline) {
+                // The next appended character will get indentation and a
+                // leading prefix string.
+                needsIndentation = true;
+                // Trim spaces before each newline. This only mutates the builder
+                // if space trimming is enabled.
+                trimSpaces();
+            }
+
+            builder.append(c);
         }
 
         void writeLine(String line) {
-            if (builder == null) {
-                builder = new StringBuilder();
+            write(line);
+
+            if (!disableNewline) {
+                append(newline);
             }
-
-            builder.append(leadingIndentString);
-            builder.append(newlinePrefix);
-            builder.append(line);
-
-            // Trim all trailing spaces before the trailing (customizable) newline.
-            trimSpaces(true);
         }
 
-        private void trimSpaces(boolean skipNewline) {
+        private void trimSpaces() {
             if (!trimTrailingSpaces) {
                 return;
             }
 
-            int skipLength = 0;
-            if (skipNewline) {
-                skipLength = newline.length();
-            }
-
             int toRemove = 0;
-            for (int i = builder.length() - 1 - skipLength; i > 0; i--) {
+            for (int i = builder.length() - 1; i > 0; i--) {
                 if (builder.charAt(i) == ' ') {
                     toRemove++;
                 } else {
                     break;
                 }
             }
-            // Remove the slice of the string that is made up of whitespace before the newline.
+
             if (toRemove > 0) {
-                builder.delete(builder.length() - skipLength - toRemove, builder.length() - skipLength);
+                builder.delete(builder.length() - toRemove, builder.length());
             }
         }
 

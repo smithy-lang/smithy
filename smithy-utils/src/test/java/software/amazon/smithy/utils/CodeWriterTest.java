@@ -64,6 +64,16 @@ public class CodeWriterTest {
     }
 
     @Test
+    public void toStringCanDisableTrimmingTrailingSpaces() {
+        CodeWriter writer = new CodeWriter()
+                .insertTrailingNewline(false)
+                .trimTrailingSpaces(false)
+                .writeInline("hi ");
+
+        assertThat(writer.toString(), equalTo("hi "));
+    }
+
+    @Test
     public void trimsSpacesAndBlankLines() {
         CodeWriter writer = new CodeWriter().trimTrailingSpaces().trimBlankLines();
         writer.write("hello\n\n\nthere, bud");
@@ -77,6 +87,13 @@ public class CodeWriterTest {
         writer.write("hello there, bud");
 
         assertThat(writer.toString(), equalTo("hello there, bud\n"));
+    }
+
+    @Test
+    public void trailingNewlineIsAddedToEmptyText() {
+        CodeWriter writer = new CodeWriter().insertTrailingNewline();
+
+        assertThat(writer.toString(), equalTo("\n"));
     }
 
     @Test
@@ -509,6 +526,7 @@ public class CodeWriterTest {
     @Test
     public void canWriteInline() {
         String result = CodeWriter.createDefault()
+                .insertTrailingNewline(false)
                 .writeInline("foo")
                 .writeInline(", bar")
                 .toString();
@@ -519,6 +537,7 @@ public class CodeWriterTest {
     @Test
     public void writeInlineHandlesSingleNewline() {
         String result = CodeWriter.createDefault()
+                .insertTrailingNewline(false)
                 .writeInline("foo").indent()
                 .writeInline(":\nbar")
                 .toString();
@@ -529,6 +548,7 @@ public class CodeWriterTest {
     @Test
     public void writeInlineHandlesMultipleNewlines() {
         String result = CodeWriter.createDefault()
+                .insertTrailingNewline(false)
                 .writeInline("foo:")
                 .writeInline(" [").indent()
                 .writeInline("\nbar,\nbaz,\nbam,")
@@ -541,10 +561,77 @@ public class CodeWriterTest {
     @Test
     public void writeInlineStripsSpaces() {
         String result = CodeWriter.createDefault()
+                .insertTrailingNewline(false)
                 .trimTrailingSpaces()
                 .writeInline("foo ")
                 .toString();
 
         assertThat(result, equalTo("foo"));
+    }
+
+    @Test
+    public void writeInlineDoesNotAllowIndentationToBeEscaped() {
+        String result = CodeWriter.createDefault()
+                .setIndentText("\t")
+                .insertTrailingNewline(false)
+                .indent()
+                .indent()
+                .writeInline("{foo:")
+                .writeInline(" [\n")
+                .indent()
+                .writeInline("hi,\nbye")
+                .dedent()
+                .writeInline("\n]\n")
+                .dedent()
+                .writeInline("}")
+                .toString();
+
+        assertThat(result, equalTo("\t\t{foo: [\n\t\t\thi,\n\t\t\tbye\n\t\t]\n\t}"));
+    }
+
+    @Test
+    public void newlineLengthMustBe1() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            CodeWriter.createDefault().setNewline("  ");
+        });
+    }
+
+    @Test
+    public void newlineCanBeDisabled() {
+        CodeWriter writer = CodeWriter
+                .createDefault()
+                .insertTrailingNewline();
+        String result = writer
+                .disableNewlines()
+                .openBlock("[", "]", () -> writer.write("hi"))
+                .toString();
+
+        assertThat(result, equalTo("[hi]\n"));
+    }
+
+    @Test
+    public void newlineCanBeDisabledWithEmptyString() {
+        CodeWriter writer = CodeWriter
+                .createDefault()
+                .insertTrailingNewline();
+        String result = writer
+                .setNewline("")
+                .openBlock("[", "]", () -> writer.write("hi"))
+                .enableNewlines()
+                .toString();
+
+        assertThat(result, equalTo("[hi]\n"));
+    }
+
+    @Test
+    public void settingNewlineEnablesNewlines() {
+        CodeWriter writer = CodeWriter.createDefault();
+        String result = writer
+                .disableNewlines()
+                .setNewline("\n")
+                .openBlock("[", "]", () -> writer.write("hi"))
+                .toString();
+
+        assertThat(result, equalTo("[\n    hi\n]\n"));
     }
 }
