@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -41,23 +41,23 @@ final class CodeFormatter {
         formatters.put(identifier, formatter);
     }
 
-    String format(Object content, String indent, CodeWriter writer, Object... args) {
+    String format(char expressionStart, Object content, String indent, CodeWriter writer, Object... args) {
         String expression = String.valueOf(content);
 
         // Simple case of no arguments and no expressions.
-        if (args.length == 0 && expression.indexOf('$') == -1) {
+        if (args.length == 0 && expression.indexOf(expressionStart) == -1) {
             return expression;
         }
 
-        return parse(new State(content, indent, writer, args));
+        return parse(expressionStart, new State(content, indent, writer, args));
     }
 
-    private String parse(State state) {
+    private String parse(char expressionStart, State state) {
         while (!state.eof()) {
             char c = state.c();
             state.next();
-            if (c == '$') {
-                parseArgumentWrapper(state);
+            if (c == expressionStart) {
+                parseArgumentWrapper(expressionStart, state);
             } else {
                 state.result.append(c);
             }
@@ -74,15 +74,15 @@ final class CodeFormatter {
         return state.result.toString();
     }
 
-    private void parseArgumentWrapper(State state) {
+    private void parseArgumentWrapper(char expressionStart, State state) {
         if (state.eof()) {
             throw new IllegalArgumentException("Invalid format string: " + state);
         }
 
         char c = state.c();
-        if (c == '$') {
+        if (c == expressionStart) {
             // $$ -> $
-            state.result.append('$');
+            state.result.append(expressionStart);
             state.next();
         } else if (c == '{') {
             parseBracedArgument(state);

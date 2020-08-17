@@ -34,7 +34,7 @@ public class CodeFormatterTest {
     @Test
     public void formatsDollarLiterals() {
         CodeFormatter formatter = new CodeFormatter();
-        String result = formatter.format("hello $$", "", createWriter());
+        String result = formatter.format('$', "hello $$", "", createWriter());
 
         assertThat(result, equalTo("hello $"));
     }
@@ -43,7 +43,7 @@ public class CodeFormatterTest {
     public void formatsRelativeLiterals() {
         CodeFormatter formatter = new CodeFormatter();
         formatter.putFormatter('L', CodeFormatterTest::valueOf);
-        String result = formatter.format("hello $L", "", createWriter(), "there");
+        String result = formatter.format('$', "hello $L", "", createWriter(), "there");
 
         assertThat(result, equalTo("hello there"));
     }
@@ -52,7 +52,7 @@ public class CodeFormatterTest {
     public void formatsRelativeLiteralsInBraces() {
         CodeFormatter formatter = new CodeFormatter();
         formatter.putFormatter('L', CodeFormatterTest::valueOf);
-        String result = formatter.format("hello ${L}", "", createWriter(), "there");
+        String result = formatter.format('$', "hello ${L}", "", createWriter(), "there");
 
         assertThat(result, equalTo("hello there"));
     }
@@ -61,7 +61,7 @@ public class CodeFormatterTest {
     public void requiresTextAfterOpeningBrace() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             CodeFormatter formatter = new CodeFormatter();
-            formatter.format("hello ${", "", createWriter(), "there");
+            formatter.format('$', "hello ${", "", createWriter(), "there");
         });
     }
 
@@ -70,7 +70,7 @@ public class CodeFormatterTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             CodeFormatter formatter = new CodeFormatter();
             formatter.putFormatter('L', CodeFormatterTest::valueOf);
-            formatter.format("hello ${L .", "", createWriter(), "there");
+            formatter.format('$', "hello ${L .", "", createWriter(), "there");
         });
     }
 
@@ -78,7 +78,7 @@ public class CodeFormatterTest {
     public void formatsMultipleRelativeLiterals() {
         CodeFormatter formatter = new CodeFormatter();
         formatter.putFormatter('L', CodeFormatterTest::valueOf);
-        String result = formatter.format("hello $L, $L", "", createWriter(), "there", "guy");
+        String result = formatter.format('$', "hello $L, $L", "", createWriter(), "there", "guy");
 
         assertThat(result, equalTo("hello there, guy"));
     }
@@ -87,7 +87,7 @@ public class CodeFormatterTest {
     public void formatsMultipleRelativeLiteralsInBraces() {
         CodeFormatter formatter = new CodeFormatter();
         formatter.putFormatter('L', CodeFormatterTest::valueOf);
-        String result = formatter.format("hello ${L}, ${L}", "", createWriter(), "there", "guy");
+        String result = formatter.format('$', "hello ${L}, ${L}", "", createWriter(), "there", "guy");
 
         assertThat(result, equalTo("hello there, guy"));
     }
@@ -97,7 +97,7 @@ public class CodeFormatterTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             CodeFormatter formatter = new CodeFormatter();
             formatter.putFormatter('L', CodeFormatterTest::valueOf);
-            formatter.format("hello $L", "", createWriter(), "a", "b", "c");
+            formatter.format('$', "hello $L", "", createWriter(), "a", "b", "c");
         });
     }
 
@@ -106,7 +106,7 @@ public class CodeFormatterTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             CodeFormatter formatter = new CodeFormatter();
             formatter.putFormatter('L', CodeFormatterTest::valueOf);
-            formatter.format("hello $L", "", createWriter());
+            formatter.format('$', "hello $L", "", createWriter());
         });
     }
 
@@ -115,7 +115,16 @@ public class CodeFormatterTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             CodeFormatter formatter = new CodeFormatter();
             formatter.putFormatter('L', CodeFormatterTest::valueOf);
-            formatter.format("hello $", "", createWriter());
+            formatter.format('$', "hello $", "", createWriter());
+        });
+    }
+
+    @Test
+    public void validatesThatCustomStartIsNotAtEof() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            CodeFormatter formatter = new CodeFormatter();
+            formatter.putFormatter('L', CodeFormatterTest::valueOf);
+            formatter.format('#', "hello #", "", createWriter());
         });
     }
 
@@ -123,7 +132,16 @@ public class CodeFormatterTest {
     public void formatsPositionalLiterals() {
         CodeFormatter formatter = new CodeFormatter();
         formatter.putFormatter('L', CodeFormatterTest::valueOf);
-        String result = formatter.format("hello $1L", "", createWriter(), "there");
+        String result = formatter.format('$', "hello $1L", "", createWriter(), "there");
+
+        assertThat(result, equalTo("hello there"));
+    }
+
+    @Test
+    public void formatsPositionalLiteralsWithCustomStart() {
+        CodeFormatter formatter = new CodeFormatter();
+        formatter.putFormatter('L', CodeFormatterTest::valueOf);
+        String result = formatter.format('#', "hello #1L", "", createWriter(), "there");
 
         assertThat(result, equalTo("hello there"));
     }
@@ -132,7 +150,7 @@ public class CodeFormatterTest {
     public void formatsMultiplePositionalLiterals() {
         CodeFormatter formatter = new CodeFormatter();
         formatter.putFormatter('L', CodeFormatterTest::valueOf);
-        String result = formatter.format("hello $1L, $2L. $2L? You $1L?", "", createWriter(), "there", "guy");
+        String result = formatter.format('$', "hello $1L, $2L. $2L? You $1L?", "", createWriter(), "there", "guy");
 
         assertThat(result, equalTo("hello there, guy. guy? You there?"));
     }
@@ -141,7 +159,7 @@ public class CodeFormatterTest {
     public void formatsMultiplePositionalLiteralsInBraces() {
         CodeFormatter formatter = new CodeFormatter();
         formatter.putFormatter('L', CodeFormatterTest::valueOf);
-        String result = formatter.format("hello ${1L}, ${2L}. ${2L}? You ${1L}?", "", createWriter(), "there", "guy");
+        String result = formatter.format('$', "hello ${1L}, ${2L}. ${2L}? You ${1L}?", "", createWriter(), "there", "guy");
 
         assertThat(result, equalTo("hello there, guy. guy? You there?"));
     }
@@ -150,7 +168,7 @@ public class CodeFormatterTest {
     public void formatsMultipleDigitPositionalLiterals() {
         CodeFormatter formatter = new CodeFormatter();
         formatter.putFormatter('L', CodeFormatterTest::valueOf);
-        String result = formatter.format("$1L $2L $3L $4L $5L $6L $7L $8L $9L $10L $11L", "", createWriter(),
+        String result = formatter.format('$', "$1L $2L $3L $4L $5L $6L $7L $8L $9L $10L $11L", "", createWriter(),
                                          "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11");
 
         assertThat(result, equalTo("1 2 3 4 5 6 7 8 9 10 11"));
@@ -161,7 +179,7 @@ public class CodeFormatterTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             CodeFormatter formatter = new CodeFormatter();
             formatter.putFormatter('L', CodeFormatterTest::valueOf);
-            formatter.format("hello $1L", "", createWriter());
+            formatter.format('$', "hello $1L", "", createWriter());
         });
     }
 
@@ -170,7 +188,7 @@ public class CodeFormatterTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             CodeFormatter formatter = new CodeFormatter();
             formatter.putFormatter('L', CodeFormatterTest::valueOf);
-            formatter.format("hello $0L", "", createWriter(), "a");
+            formatter.format('$', "hello $0L", "", createWriter(), "a");
         });
     }
 
@@ -179,7 +197,7 @@ public class CodeFormatterTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             CodeFormatter formatter = new CodeFormatter();
             formatter.putFormatter('L', CodeFormatterTest::valueOf);
-            formatter.format("hello $2", "", createWriter());
+            formatter.format('$', "hello $2", "", createWriter());
         });
     }
 
@@ -188,7 +206,7 @@ public class CodeFormatterTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             CodeFormatter formatter = new CodeFormatter();
             formatter.putFormatter('L', CodeFormatterTest::valueOf);
-            formatter.format("hello $2L $3L", "", createWriter(), "a", "b", "c", "d");
+            formatter.format('$', "hello $2L $3L", "", createWriter(), "a", "b", "c", "d");
         });
     }
 
@@ -197,7 +215,7 @@ public class CodeFormatterTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             CodeFormatter formatter = new CodeFormatter();
             formatter.putFormatter('L', CodeFormatterTest::valueOf);
-            formatter.format("hello $1L, $L", "", createWriter(), "there");
+            formatter.format('$', "hello $1L, $L", "", createWriter(), "there");
         });
     }
 
@@ -206,7 +224,7 @@ public class CodeFormatterTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             CodeFormatter formatter = new CodeFormatter();
             formatter.putFormatter('L', CodeFormatterTest::valueOf);
-            formatter.format("hello $L, $1L", "", createWriter(), "there");
+            formatter.format('$', "hello $L, $1L", "", createWriter(), "there");
         });
     }
 
@@ -217,7 +235,7 @@ public class CodeFormatterTest {
         CodeWriter writer = createWriter();
         writer.putContext("a", "a");
         writer.putContext("abc_def", "b");
-        String result = formatter.format("$a:L $abc_def:L", "", writer);
+        String result = formatter.format('$', "$a:L $abc_def:L", "", writer);
 
         assertThat(result, equalTo("a b"));
     }
@@ -229,7 +247,7 @@ public class CodeFormatterTest {
         CodeWriter writer = createWriter();
         writer.putContext("a", "a");
         writer.putContext("abc_def", "b");
-        String result = formatter.format("${a:L} ${abc_def:L}", "", writer);
+        String result = formatter.format('$', "${a:L} ${abc_def:L}", "", writer);
 
         assertThat(result, equalTo("a b"));
     }
@@ -239,7 +257,7 @@ public class CodeFormatterTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             CodeFormatter formatter = new CodeFormatter();
             formatter.putFormatter('L', CodeFormatterTest::valueOf);
-            formatter.format("hello $abc foo", "", createWriter());
+            formatter.format('$', "hello $abc foo", "", createWriter());
         });
     }
 
@@ -248,7 +266,7 @@ public class CodeFormatterTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             CodeFormatter formatter = new CodeFormatter();
             formatter.putFormatter('L', CodeFormatterTest::valueOf);
-            formatter.format("hello $abc:", "", createWriter());
+            formatter.format('$', "hello $abc:", "", createWriter());
         });
     }
 
@@ -260,8 +278,8 @@ public class CodeFormatterTest {
         CodeWriter writer = createWriter();
         writer.putContext("foo.baz#Bar$bam", "hello");
         writer.putContext("foo_baz", "hello");
-        assertThat(formatter.format("$foo.baz#Bar$bam:L", "", writer), equalTo("hello"));
-        assertThat(formatter.format("$foo_baz:L", "", writer), equalTo("hello"));
+        assertThat(formatter.format('$', "$foo.baz#Bar$bam:L", "", writer), equalTo("hello"));
+        assertThat(formatter.format('$', "$foo_baz:L", "", writer), equalTo("hello"));
     }
 
     @Test
@@ -269,7 +287,7 @@ public class CodeFormatterTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             CodeFormatter formatter = new CodeFormatter();
             formatter.putFormatter('L', CodeFormatterTest::valueOf);
-            formatter.format("$nope!:L", "", createWriter());
+            formatter.format('$', "$nope!:L", "", createWriter());
         });
     }
 
@@ -301,7 +319,7 @@ public class CodeFormatterTest {
     public void ensuresFormatterIsValid() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             CodeFormatter formatter = new CodeFormatter();
-            formatter.format("$L", "", createWriter(), "hi");
+            formatter.format('$', "$L", "", createWriter(), "hi");
         });
     }
 
@@ -311,7 +329,7 @@ public class CodeFormatterTest {
         formatter.putFormatter('L', CodeFormatterTest::valueOf);
         CodeWriter writer = createWriter();
 
-        assertThat(formatter.format("${L@hello}", "", writer, "default"), equalTo("default"));
+        assertThat(formatter.format('$', "${L@hello}", "", writer, "default"), equalTo("default"));
     }
 
     @Test
