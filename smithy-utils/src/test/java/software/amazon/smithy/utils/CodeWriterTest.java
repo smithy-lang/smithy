@@ -634,4 +634,40 @@ public class CodeWriterTest {
 
         assertThat(result, equalTo("[\n    hi\n]\n"));
     }
+
+    @Test
+    public void canSetCustomExpressionStartChar() {
+        CodeWriter writer = new CodeWriter();
+        writer.pushState();
+        writer.setExpressionStart('#');
+        writer.write("Hi, #L", "1");
+        writer.write("Hi, ##L");
+        writer.write("Hi, $L");
+        writer.write("Hi, $$L");
+        writer.popState();
+        writer.write("Hi, #L");
+        writer.write("Hi, ##L");
+        writer.write("Hi, $L", "2");
+        writer.write("Hi, $$L");
+        String result = writer.toString();
+
+        assertThat(result, equalTo("Hi, 1\n"
+                                   + "Hi, #L\n"
+                                   + "Hi, $L\n"
+                                   + "Hi, $$L\n"
+                                   + "Hi, #L\n"
+                                   + "Hi, ##L\n"
+                                   + "Hi, 2\n"
+                                   + "Hi, $L\n"));
+    }
+
+    @Test
+    public void expressionStartCannotBeSpace() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new CodeWriter().setExpressionStart(' '));
+    }
+
+    @Test
+    public void expressionStartCannotBeNewline() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new CodeWriter().setExpressionStart('\n'));
+    }
 }
