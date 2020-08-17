@@ -153,6 +153,26 @@ import java.util.regex.Pattern;
  * // Outputs: "$L"
  * }</pre>
  *
+ * <h3>Custom expression characters</h3>
+ *
+ * <p>The character used to start a code block expression can be customized
+ * to make it easier to write code that makes heavy use of {@code $}. The
+ * default character used to start an expression is, {@code $}, but this can
+ * be changed for the current state of the CodeWriter by calling
+ * {@link #setExpressionStart(char)}. A custom start character can be escaped
+ * using two start characters in a row. For example, given a custom start
+ * character of {@code #}, {@code #} can be escaped using {@code ##}.
+ *
+ * <pre>{@code
+ * CodeWriter writer = new CodeWriter();
+ * writer.setExpressionStart('#');
+ * writer.write("#L ##L $L", "hi");
+ * System.out.println(writer.toString());
+ * // Outputs: "hi #L $L"
+ * }</pre>
+ *
+ * <em>The start character cannot be set to ' ' or '\n'.</em>
+ *
  * <h2>Opening and closing blocks</h2>
  *
  * <p>{@code CodeWriter} provides a short cut for opening code blocks that that
@@ -182,12 +202,13 @@ import java.util.regex.Pattern;
  * <p>The CodeWriter can maintain a stack of transformation states, including
  * the text used to indent, a prefix to add before each line, newline character,
  * the number of times to indent, a map of context values, whether or not
- * whitespace is trimmed from the end of newlines, and whether or not the
- * automatic insertion of newlines is disabled. State can be pushed onto the
- * stack using {@link #pushState} which copies the current state. Mutations can
- * then be made to the top-most state of the CodeWriter and do not affect
- * previous states. The previous transformation state of the CodeWriter can
- * later be restored using {@link #popState}.
+ * whitespace is trimmed from the end of newlines, whether or not the automatic
+ * insertion of newlines is disabled, and the character used to start code
+ * expressions (defaults to {@code $}). State can be pushed onto the stack
+ * using {@link #pushState} which copies the current state. Mutations can then
+ * be made to the top-most state of the CodeWriter and do not affect previous
+ * states. The previous transformation state of the CodeWriter can later be
+ * restored using {@link #popState}.
  *
  * <p>The CodeWriter is stateful, and a prefix can be added before each line.
  * This is useful for doing things like create Javadoc strings:
@@ -424,6 +445,30 @@ public class CodeWriter {
      */
     public final CodeWriter putFormatter(char identifier, BiFunction<Object, String, String> formatter) {
         this.formatter.putFormatter(identifier, formatter);
+        return this;
+    }
+
+    /**
+     * Sets the character used to start expressions in the current state when calling
+     * {@link #write}, {@link #writeInline}, {@link #openBlock}, etc.
+     *
+     * <p>By default, {@code $} is used to start expressions (for example
+     * {@code $L}. However, some programming languages frequently give
+     * syntactic meaning to {@code $}, making this an inconvenient syntactic
+     * character for the CodeWriter. In these cases, the character used to
+     * start a CodeWriter expression can be changed. Just like {@code $}, the
+     * custom start character can be escaped using two subsequent start
+     * characters (e.g., {@code $$}).
+     *
+     * @param expressionStart Character to use to start expressions.
+     * @return Returns the CodeWriter.
+     */
+    public CodeWriter setExpressionStart(char expressionStart) {
+        if (expressionStart == ' ' || expressionStart == '\n') {
+            throw new IllegalArgumentException("expressionStart must not be set to " + expressionStart);
+        }
+
+        currentState.expressionStart = expressionStart;
         return this;
     }
 
@@ -1006,7 +1051,7 @@ public class CodeWriter {
      * @return Returns the CodeWriter.
      */
     public final CodeWriter write(Object content, Object... args) {
-        String value = formatter.format(content, currentState.indentText, this, args);
+        String value = formatter.format(currentState.expressionStart, content, currentState.indentText, this, args);
         currentState.writeLine(value);
         return this;
     }
@@ -1027,7 +1072,7 @@ public class CodeWriter {
      * @return Returns the CodeWriter.
      */
     public final CodeWriter writeInline(Object content, Object... args) {
-        String value = formatter.format(content, currentState.indentText, this, args);
+        String value = formatter.format(currentState.expressionStart, content, currentState.indentText, this, args);
         currentState.write(value);
         return this;
     }
@@ -1139,6 +1184,7 @@ public class CodeWriter {
         private boolean trimTrailingSpaces;
         private boolean disableNewline;
         private char newline = '\n';
+        private char expressionStart = '$';
 
         private transient String sectionName;
 
@@ -1164,6 +1210,7 @@ public class CodeWriter {
 
         private State(State copy) {
             this.newline = copy.newline;
+            this.expressionStart = copy.expressionStart;
             this.builder = copy.builder;
             this.context = copy.context;
             this.indentText = copy.indentText;
