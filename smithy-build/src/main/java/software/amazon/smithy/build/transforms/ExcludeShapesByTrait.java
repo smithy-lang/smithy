@@ -15,6 +15,9 @@
 
 package software.amazon.smithy.build.transforms;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.Prelude;
@@ -26,24 +29,26 @@ import software.amazon.smithy.model.shapes.ShapeId;
 public final class ExcludeShapesByTrait extends ConfigurableProjectionTransformer<ExcludeShapesByTrait.Config> {
 
     public static final class Config {
-        private String trait;
+        private Set<String> traits = Collections.emptySet();
 
         /**
-         * Gets the shape ID of the trait to filter shapes by.
+         * Gets the shape IDs of the traits to filter shapes by.
          *
-         * @return Returns the trait shape ID.
+         * <p>Relative shape IDs are assumed to be in the smithy.api namespace.
+         *
+         * @return Returns the trait shape IDs.
          */
-        public String getTrait() {
-            return trait;
+        public Set<String> getTraits() {
+            return traits;
         }
 
         /**
-         * Sets the shape ID of the trait to filter shapes by.
+         * Sets the shape IDs of the traits to filter shapes by.
          *
-         * @param trait The shape ID of the trait that if present causes a shape to be removed.
+         * @param traits The shape IDs of the traits that if present causes a shape to be removed.
          */
-        public void setTrait(String trait) {
-            this.trait = trait;
+        public void setTraits(Set<String> traits) {
+            this.traits = traits;
         }
     }
 
@@ -58,9 +63,14 @@ public final class ExcludeShapesByTrait extends ConfigurableProjectionTransforme
     }
 
     protected Model transformWithConfig(TransformContext context, Config config) {
-        // Default to smithy.api# if the given trait ID is relative.
-        ShapeId traitId = ShapeId.fromOptionalNamespace(Prelude.NAMESPACE, config.getTrait());
+        // Resolve relative IDs by defaulting to smithy.api# if the given trait ID is relative.
+        Set<ShapeId> ids = new HashSet<>(config.getTraits().size());
+        for (String id : config.getTraits()) {
+            ids.add(ShapeId.fromOptionalNamespace(Prelude.NAMESPACE, id));
+        }
 
-        return context.getTransformer().removeShapesIf(context.getModel(), shape -> shape.hasTrait(traitId));
+        return context.getTransformer().removeShapesIf(context.getModel(), shape -> {
+            return ids.stream().anyMatch(shape::hasTrait);
+        });
     }
 }

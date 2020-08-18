@@ -248,7 +248,7 @@ projection. For example:
                         {
                             "name": "excludeShapesByTrait",
                             "args": {
-                                "trait": "internal"
+                                "traits": ["internal"]
                             }
                         },
                         {
