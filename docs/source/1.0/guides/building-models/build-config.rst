@@ -76,7 +76,7 @@ The following is an example ``smithy-build.json`` configuration:
                         {
                             "name": "excludeShapesByTrait",
                             "args": {
-                                "trait": "internal"
+                                "traits": ["internal"]
                             }
                         }
                     ],
@@ -292,7 +292,7 @@ the :ref:`tags trait <tags-trait>`.
 excludeShapesByTrait
 --------------------
 
-Removes shapes if they are marked with a specific trait.
+Removes shapes if they are marked with one or more specific traits.
 
 .. list-table::
     :header-rows: 1
@@ -301,11 +301,12 @@ Removes shapes if they are marked with a specific trait.
     * - Property
       - Type
       - Description
-    * - trait
-      - ``string``
-      - The :ref:`shape ID <shape-id>` of a trait. If this trait is found on
-        a shape, the shape is removed from the model. Relative shape IDs are
-        assumed to be in the ``smithy.api`` prelude namespace.
+    * - traits
+      - ``[string]``
+      - A list of trait :ref:`shape IDs <shape-id>`. If any of these traits
+        are found on a shape, the shape is removed from the model. Relative
+        shape IDs are assumed to be in the ``smithy.api``
+        :ref:`prelude <prelude>` namespace.
 
 .. tabs::
 
@@ -319,7 +320,7 @@ Removes shapes if they are marked with a specific trait.
                         {
                             "name": "excludeShapesByTrait",
                             "args": {
-                                "trait": "internal"
+                                "traits": ["internal"]
                             }
                         }
                     ]

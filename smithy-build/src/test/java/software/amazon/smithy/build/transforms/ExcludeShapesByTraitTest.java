@@ -23,7 +23,7 @@ public class ExcludeShapesByTraitTest {
                 .unwrap();
         TransformContext context = TransformContext.builder()
                 .model(model)
-                .settings(Node.objectNode().withMember("trait", Node.from(trait)))
+                .settings(Node.objectNode().withMember("traits", Node.fromStrings(trait)))
                 .build();
         Model result = new ExcludeShapesByTrait().transform(context);
 
