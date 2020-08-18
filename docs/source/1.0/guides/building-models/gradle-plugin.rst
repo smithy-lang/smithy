@@ -246,9 +246,9 @@ projection. For example:
                             }
                         },
                         {
-                            "name": "excludeTraitsByTag",
+                            "name": "excludeShapesByTrait",
                             "args": {
-                                "tags": ["internal"]
+                                "trait": "internal"
                             }
                         },
                         {

@@ -22,6 +22,7 @@ software.amazon.smithy.model.traits.HttpTrait$Provider
 software.amazon.smithy.model.traits.IdempotencyTokenTrait$Provider
 software.amazon.smithy.model.traits.IdempotentTrait$Provider
 software.amazon.smithy.model.traits.IdRefTrait$Provider
+software.amazon.smithy.model.traits.InternalTrait$Provider
 software.amazon.smithy.model.traits.JsonNameTrait$Provider
 software.amazon.smithy.model.traits.LengthTrait$Provider
 software.amazon.smithy.model.traits.MediaTypeTrait$Provider

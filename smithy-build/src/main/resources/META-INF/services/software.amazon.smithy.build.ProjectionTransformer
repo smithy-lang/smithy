@@ -1,5 +1,6 @@
 software.amazon.smithy.build.transforms.ExcludeMetadata
 software.amazon.smithy.build.transforms.ExcludeShapesByTag
+software.amazon.smithy.build.transforms.ExcludeShapesByTrait
 software.amazon.smithy.build.transforms.ExcludeTags
 software.amazon.smithy.build.transforms.ExcludeTraits
 software.amazon.smithy.build.transforms.ExcludeTraitsByTag

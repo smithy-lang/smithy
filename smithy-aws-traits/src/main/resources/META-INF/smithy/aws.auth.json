@@ -56,9 +56,8 @@
                 },
                 "smithy.api#authDefinition": {},
                 "smithy.api#documentation": "Configures an Amazon Cognito User Pools auth scheme.",
-                "smithy.api#tags": [
-                    "internal"
-                ]
+                "smithy.api#internal": {},
+                "smithy.api#tags": ["internal"]
             }
         },
         "aws.auth#StringList": {
