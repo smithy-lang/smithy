@@ -264,6 +264,38 @@ Value type
         }
 
 
+.. _internal-trait:
+
+------------------
+``internal`` trait
+------------------
+
+Summary
+    Shapes marked with the internal trait are meant only for internal use.
+    Tooling can use the ``internal`` trait to filter out shapes from models
+    that are not intended for external customers.
+Trait selector
+    ``*``
+Value type
+    Annotation trait
+
+As an example, a service team may wish to use a version of a model that
+includes features that are only available to internal customers within the
+same company, whereas clients for external customers could be built from a
+filtered version of the model.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        structure MyStructure {
+            foo: String,
+
+            @internal
+            bar: String,
+        }
+
+
 .. _sensitive-trait:
 
 -------------------

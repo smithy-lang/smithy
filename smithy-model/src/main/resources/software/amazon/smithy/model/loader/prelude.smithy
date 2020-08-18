@@ -262,6 +262,11 @@ structure idempotent {}
        structurallyExclusive: "member")
 structure idempotencyToken {}
 
+/// Shapes marked with the internal trait are meant only for internal use and
+/// must not be exposed to customers.
+@trait
+structure internal {}
+
 /// The jsonName trait allows a serialized object property name to differ
 /// from a structure member name used in the model.
 @trait(selector: "structure > member")

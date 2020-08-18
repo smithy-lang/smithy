@@ -11,9 +11,8 @@
                 "smithy.api#externalDocumentation": {
                     "Developer Guide": "https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html"
                 },
-                "smithy.api#tags": [
-                    "internal"
-                ]
+                "smithy.api#internal": {},
+                "smithy.api#tags": ["internal"]
             }
         },
         "aws.apigateway#authorizers": {
@@ -29,9 +28,8 @@
                     "selector": "service"
                 },
                 "smithy.api#documentation": "A list of API Gateway authorizers to augment the service's declared authentication mechanisms.",
-                "smithy.api#tags": [
-                    "internal"
-                ]
+                "smithy.api#internal": {},
+                "smithy.api#tags": ["internal"]
             }
         },
         "aws.apigateway#AuthorizerDefinition": {
@@ -104,9 +102,8 @@
                     "selector": ":test(service, resource, operation)"
                 },
                 "smithy.api#documentation": "Attaches an authorizer to a service, resource, or operation.",
-                "smithy.api#tags": [
-                    "internal"
-                ]
+                "smithy.api#internal": {},
+                "smithy.api#tags": ["internal"]
             }
         },
         "aws.apigateway#requestValidator": {
@@ -116,9 +113,8 @@
                     "selector": ":test(service, operation)"
                 },
                 "smithy.api#documentation": "Selects which request validation strategy to use. One of: 'full', 'params-only', 'body-only'",
-                "smithy.api#tags": [
-                    "internal"
-                ]
+                "smithy.api#internal": {},
+                "smithy.api#tags": ["internal"]
             }
         },
         "aws.apigateway#integration": {
@@ -187,9 +183,8 @@
                     ]
                 },
                 "smithy.api#documentation": "Defines an API Gateway integration.",
-                "smithy.api#tags": [
-                    "internal"
-                ]
+                "smithy.api#internal": {},
+                "smithy.api#tags": ["internal"]
             }
         },
         "aws.apigateway#mockIntegration": {
@@ -216,9 +211,8 @@
                     ]
                 },
                 "smithy.api#documentation": "Defines an API Gateway mock integration.",
-                "smithy.api#tags": [
-                    "internal"
-                ]
+                "smithy.api#internal": {},
+                "smithy.api#tags": ["internal"]
             }
         },
         "aws.apigateway#IntegrationType": {

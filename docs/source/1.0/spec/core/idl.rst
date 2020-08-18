@@ -1336,7 +1336,7 @@ members.
         name: smithy.api#String,
 
         @length(min: 0)
-        @tags(["internal"])
+        @tags(["private-beta"])
         age: smithy.api#Integer,
     }
 
