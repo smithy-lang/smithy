@@ -17,6 +17,7 @@ package software.amazon.smithy.aws.traits;
 
 import java.util.Locale;
 import java.util.Optional;
+import java.util.logging.Logger;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -34,8 +35,8 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  */
 public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder<ServiceTrait> {
     public static final ShapeId ID = ShapeId.from("aws.api#service");
+    private static final Logger LOGGER = Logger.getLogger(ServiceTrait.class.getName());
 
-    private final String abbreviation;
     private final String cloudFormationName;
     private final String arnNamespace;
     private final String sdkId;
@@ -48,7 +49,6 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
         this.cloudFormationName = SmithyBuilder.requiredState("cloudFormationName", builder.cloudFormationName);
         this.cloudTrailEventSource = SmithyBuilder.requiredState(
                 "cloudTrailEventSource", builder.cloudTrailEventSource);
-        this.abbreviation = builder.abbreviation;
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -74,8 +74,6 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
                     .ifPresent(builder::cloudFormationName);
             objectNode.getStringMember("cloudTrailEventSource").map(StringNode::getValue)
                     .ifPresent(builder::cloudTrailEventSource);
-            objectNode.getStringMember("abbreviation").map(StringNode::getValue)
-                    .ifPresent(builder::abbreviation);
             return builder.build(target);
         }
     }
@@ -134,13 +132,9 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
         return cloudTrailEventSource;
     }
 
-    /**
-     * Gets the abbreviated name of the service (if available).
-     *
-     * @return Returns the service abbreviation.
-     */
+    @Deprecated
     public Optional<String> getAbbreviation() {
-        return Optional.ofNullable(abbreviation);
+        return Optional.empty();
     }
 
     @Override
@@ -150,8 +144,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
                 .sourceLocation(getSourceLocation())
                 .cloudFormationName(cloudFormationName)
                 .arnNamespace(arnNamespace)
-                .cloudTrailEventSource(cloudTrailEventSource)
-                .abbreviation(abbreviation);
+                .cloudTrailEventSource(cloudTrailEventSource);
     }
 
     @Override
@@ -160,13 +153,11 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
                 .withMember("sdkId", Node.from(sdkId))
                 .withMember("arnNamespace", Node.from(getArnNamespace()))
                 .withMember("cloudFormationName", Node.from(getCloudFormationName()))
-                .withMember("cloudTrailEventSource", Node.from(getCloudTrailEventSource()))
-                .withOptionalMember("abbreviation", getAbbreviation().map(Node::from));
+                .withMember("cloudTrailEventSource", Node.from(getCloudTrailEventSource()));
     }
 
     /** Builder for {@link ServiceTrait}. */
     public static final class Builder extends AbstractTraitBuilder<ServiceTrait, Builder> {
-        private String abbreviation;
         private String sdkId;
         private String cloudFormationName;
         private String arnNamespace;
@@ -246,14 +237,9 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
             return this;
         }
 
-        /**
-         * Sets the abbreviated name of the service.
-         *
-         * @param abbreviation Abbreviated service name.
-         * @return Returns the builder.
-         */
+        @Deprecated
         public Builder abbreviation(String abbreviation) {
-            this.abbreviation = abbreviation;
+            LOGGER.warning("The `abbreviation` property of aws.api#service is not supported");
             return this;
         }
     }
