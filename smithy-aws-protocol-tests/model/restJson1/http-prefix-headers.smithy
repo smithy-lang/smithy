@@ -83,10 +83,42 @@ structure HttpPrefixHeadersInputOutput {
     foo: String,
 
     @httpPrefixHeaders("X-Foo-")
-    fooMap: FooPrefixHeaders,
+    fooMap: StringMap,
 }
 
-map FooPrefixHeaders {
+map StringMap {
     key: String,
     value: String,
+}
+
+/// Clients that perform this test extract all headers from the response.
+@readonly
+@http(uri: "/HttpPrefixHeadersResponse", method: "GET")
+operation HttpPrefixHeadersResponse  {
+    output: HttpPrefixHeadersResponseOutput
+}
+
+apply HttpPrefixHeadersResponse @httpResponseTests([
+    {
+        id: "HttpPrefixHeadersResponse",
+        documentation: "(de)serializes all response headers",
+        protocol: restJson1,
+        code: 200,
+        body: "",
+        headers: {
+            "X-Foo": "Foo",
+            "Hello": "Hello"
+        },
+        params: {
+            prefixHeaders: {
+                "X-Foo": "Foo",
+                "Hello": "Hello"
+            }
+        }
+    },
+])
+
+structure HttpPrefixHeadersResponseOutput {
+    @httpPrefixHeaders("")
+    prefixHeaders: StringMap,
 }
