@@ -19,5 +19,6 @@ service JsonRpc10 {
 
         // Errors
         GreetingWithErrors,
+        JsonUnions,
     ]
 }

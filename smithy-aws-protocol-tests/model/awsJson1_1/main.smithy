@@ -27,6 +27,7 @@ service JsonProtocol {
         JsonEnums,
         NullOperation,
         GreetingWithErrors,
+        JsonUnions,
     ],
 }
 
