@@ -23,7 +23,6 @@ public class AwsRestJson1ProtocolTest {
             "adds-json-document-bodies.json",
             "adds-path-timestamp-format.json",
             "adds-query-timestamp-format.json",
-            "adds-query-blob-format.json",
             "adds-header-timestamp-format.json",
             "adds-header-mediatype-format.json",
             "supports-payloads.json",

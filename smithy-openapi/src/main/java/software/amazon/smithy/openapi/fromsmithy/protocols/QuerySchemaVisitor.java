@@ -16,7 +16,6 @@
 package software.amazon.smithy.openapi.fromsmithy.protocols;
 
 import software.amazon.smithy.jsonschema.Schema;
-import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -91,13 +90,5 @@ final class QuerySchemaVisitor<T extends Trait> extends ShapeVisitor.Default<Sch
         return ModelUtils.convertSchemaToStringBuilder(originalSchema)
                 .format("date-time")
                 .build();
-    }
-
-    // Query string blobs in Smithy must be base64 encoded, so this
-    // code grabs the referenced shape and creates an inline schema that
-    // explicitly defines the necessary styles.
-    @Override
-    public Schema blobShape(BlobShape shape) {
-        return schema.toBuilder().ref(null).type("string").format("byte").build();
     }
 }
