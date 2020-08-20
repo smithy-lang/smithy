@@ -53,6 +53,7 @@
     "/payload/{path}": {
       "put": {
         "operationId": "PutPayload",
+        "deprecated": true,
         "requestBody": {
           "content": {
             "application/octet-stream": {
