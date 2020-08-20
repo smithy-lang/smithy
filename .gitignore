@@ -30,3 +30,4 @@ build/
 !smithy-build/src/test/resources/software/amazon/smithy/build
 */out/
 */*/out/
+/wrapper

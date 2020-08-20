@@ -43,6 +43,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AuthTrait;
+import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.TitleTrait;
 import software.amazon.smithy.model.traits.Trait;
@@ -425,6 +426,10 @@ public final class OpenApiConverter {
                 String method = result.getMethod();
                 String path = result.getUri();
                 PathItem.Builder pathItem = paths.computeIfAbsent(result.getUri(), (uri) -> PathItem.builder());
+                // Mark the operation deprecated if the trait's present.
+                if (shape.hasTrait(DeprecatedTrait.class)) {
+                    result.getOperation().deprecated(true);
+                }
                 // Add security requirements to the operation.
                 addOperationSecurity(context, result.getOperation(), shape, plugin);
                 // Pass the operation through the plugin system and then build it.
