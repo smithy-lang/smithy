@@ -766,10 +766,10 @@ Trait selector
     .. code-block:: none
 
         structure > member
-        :test(> simpleType:not(document),
-              > collection > member > simpleType:not(document)))
+        :test(> :test(string, number, boolean, timestamp),
+              > collection > member > :test(string, number, boolean, timestamp))
 
-    *Structure members that target non-document simple types or collections of non-document simple types*
+    *Structure members that target string, number, boolean, or timestamp; or a list/set of said types*
 Value type
     ``string`` value defining the name of the query string parameter. The
     query string value MUST NOT be empty. This trait is ignored when
@@ -791,7 +791,6 @@ Serialization rules:
 * Multiple members of a structure MUST NOT case-sensitively target the same
   query string parameter.
 * boolean values are serialized as ``true`` or ``false``.
-* blob values are base64 encoded when serialized in the query string.
 * timestamp values are serialized as an :rfc:`3339`
   ``date-time`` string (e.g., ``1985-04-12T23:20:50.52Z``). The
   :ref:`timestampFormat-trait` MAY be used to use a custom serialization

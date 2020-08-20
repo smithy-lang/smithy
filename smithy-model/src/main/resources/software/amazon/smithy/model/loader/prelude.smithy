@@ -537,8 +537,8 @@ structure httpLabel {}
 /// Binds an operation input structure member to a query string parameter.
 @trait(selector: """
         structure > member
-        :test(> simpleType:not(document),
-              > collection > member > simpleType:not(document)))""",
+        :test(> :test(string, number, boolean, timestamp),
+              > collection > member > :test(string, number, boolean, timestamp))""",
         conflicts: [httpLabel, httpHeader, httpPrefixHeaders, httpPayload])
 @length(min: 1)
 @tags(["diff.error.const"])
