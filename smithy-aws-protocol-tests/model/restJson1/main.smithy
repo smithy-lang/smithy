@@ -67,5 +67,8 @@ service RestJson {
         // Documents
         InlineDocument,
         InlineDocumentAsPayload,
+
+        // Unions
+        JsonUnions,
     ]
 }
