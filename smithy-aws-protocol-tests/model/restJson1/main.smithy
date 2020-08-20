@@ -40,6 +40,7 @@ service RestJson {
 
         // @httpPrefixHeaders tests
         HttpPrefixHeaders,
+        HttpPrefixHeadersResponse,
 
         // @httpPayload tests
         HttpPayloadTraits,

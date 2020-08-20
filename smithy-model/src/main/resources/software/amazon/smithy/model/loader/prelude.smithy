@@ -556,9 +556,7 @@ string httpHeader
 /// Binds a map of key-value pairs to prefixed HTTP headers.
 @trait(selector: """
         structure > member
-        :test(> map > member[id|member=value] > :test(
-              boolean, number, string, timestamp,
-              collection > member > :test(boolean, number, string, timestamp)))""",
+        :test(> map > member[id|member=value] > :test(string, collection > member > string))""",
         structurallyExclusive: "member",
         conflicts: [httpLabel, httpQuery, httpHeader, httpPayload])
 @tags(["diff.error.const"])

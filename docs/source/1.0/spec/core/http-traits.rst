@@ -689,11 +689,9 @@ Trait selector
     .. code-block:: none
 
         structure > member
-        :test(> map > member[id|member=value] > :test(
-            boolean, number, string, timestamp,
-            collection > member > :test(boolean, number, string, timestamp)))
+        :test(> map > member[id|member=value] > :test(string, collection > member > string))
 
-    *Structure member that targets a map of specific simple types or a map of lists/sets of specific simple types*
+    *Structure member that targets a map of strings, or a map of list/set of strings*
 Value type
     ``string`` value that defines the prefix to prepend to each header field
     name stored in the targeted map member. For example, given a prefix value
