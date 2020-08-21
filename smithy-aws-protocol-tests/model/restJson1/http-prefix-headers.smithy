@@ -8,6 +8,7 @@ namespace aws.protocoltests.restjson
 use aws.protocols#restJson1
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
+use aws.protocoltests.shared#StringMap
 
 /// This examples adds headers to the input of a request and response by prefix.
 @readonly
@@ -84,11 +85,6 @@ structure HttpPrefixHeadersInputOutput {
 
     @httpPrefixHeaders("X-Foo-")
     fooMap: StringMap,
-}
-
-map StringMap {
-    key: String,
-    value: String,
 }
 
 /// Clients that perform this test extract all headers from the response.
