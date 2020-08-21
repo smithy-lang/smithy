@@ -1,5 +1,31 @@
 # Smithy Changelog
 
+## 1.0.9 (2020-08-21)
+
+### Features
+
+* Allow conflicting shape definitions if the fully built shapes are equivalent. ([#520](https://github.com/awslabs/smithy/pull/520))
+* Added the `@internal` trait to the prelude. ([#531](https://github.com/awslabs/smithy/pull/531))
+* Added the `excludeShapesByTrait` build transform that will remove any shapes marked with one or more of the
+  specified traits. ([#531](https://github.com/awslabs/smithy/pull/531))
+* Improved support for newlines and indentation in `CodeWriter`. ([#529](https://github.com/awslabs/smithy/pull/529))
+* Added support for configuring the expression starting character in `CodeWriter`. ([#529](https://github.com/awslabs/smithy/pull/529))
+* Added `payloadFormatVersion` property for API Gateway integrations. ([#527](https://github.com/awslabs/smithy/pull/527))
+* Add `deprecated` property to operations when converting to OpenAPI. ([#535](https://github.com/awslabs/smithy/pull/535))
+* Added several more protocol tests. ([#528](https://github.com/awslabs/smithy/pull/528), [#536](https://github.com/awslabs/smithy/pull/536)) 
+
+### Bug Fixes
+
+* Fixed the selector for the `@httpQuery` trait. ([#534](https://github.com/awslabs/smithy/pull/534))
+* Fixed the selector for the `@httpPrefixHeaders` trait. ([#533](https://github.com/awslabs/smithy/pull/533))
+* Fixed some issues in protocol tests. ([#526](https://github.com/awslabs/smithy/pull/526))
+
+### Cleanup
+
+* Removed the `abbreviation` property from the `@aws.api#service` trait. ([#532](https://github.com/awslabs/smithy/pull/532))
+* Simplified prelude model loading. ([#524](https://github.com/awslabs/smithy/pull/524))
+* Further simplified overall model loading. ([#525](https://github.com/awslabs/smithy/pull/525))
+
 ## 1.0.8 (2020-07-31)
 
 ### Features
