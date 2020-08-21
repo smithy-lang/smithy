@@ -55,8 +55,8 @@ apply JsonUnions @httpRequestTests([
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
-            "contents": {
-                "stringValue": "foo"
+            contents: {
+                stringValue: "foo"
             }
         }
     },
@@ -75,8 +75,8 @@ apply JsonUnions @httpRequestTests([
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
-            "contents": {
-                "booleanValue": true
+            contents: {
+                booleanValue: true
             }
         }
     },
@@ -95,8 +95,8 @@ apply JsonUnions @httpRequestTests([
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
-            "contents": {
-                "numberValue": 1
+            contents: {
+                numberValue: 1
             }
         }
     },
@@ -115,8 +115,8 @@ apply JsonUnions @httpRequestTests([
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
-            "contents": {
-                "blobValue": "foo"
+            contents: {
+                blobValue: "foo"
             }
         }
     },
@@ -135,8 +135,8 @@ apply JsonUnions @httpRequestTests([
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
-            "contents": {
-                "timestampValue": 1398796238
+            contents: {
+                timestampValue: 1398796238
             }
         }
     },
@@ -155,8 +155,8 @@ apply JsonUnions @httpRequestTests([
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
-            "contents": {
-                "enumValue": "Foo"
+            contents: {
+                enumValue: "Foo"
             }
         }
     },
@@ -175,8 +175,8 @@ apply JsonUnions @httpRequestTests([
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
-            "contents": {
-                "listValue": ["foo", "bar"]
+            contents: {
+                listValue: ["foo", "bar"]
             }
         }
     },
@@ -198,10 +198,10 @@ apply JsonUnions @httpRequestTests([
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
-            "contents": {
-                "mapValue": {
-                    "foo": "bar",
-                    "spam": "eggs",
+            contents: {
+                mapValue: {
+                    foo: "bar",
+                    spam: "eggs",
                 }
             }
         }
@@ -223,9 +223,9 @@ apply JsonUnions @httpRequestTests([
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
-            "contents": {
-                "structureValue": {
-                    "hi": "hello",
+            contents: {
+                structureValue: {
+                    hi: "hello",
                 }
             }
         }
@@ -247,8 +247,8 @@ apply JsonUnions @httpResponseTests([
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
-            "contents": {
-                "stringValue": "foo"
+            contents: {
+                stringValue: "foo"
             }
         }
     },
@@ -266,8 +266,8 @@ apply JsonUnions @httpResponseTests([
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
-            "contents": {
-                "booleanValue": true
+            contents: {
+                booleanValue: true
             }
         }
     },
@@ -285,8 +285,8 @@ apply JsonUnions @httpResponseTests([
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
-            "contents": {
-                "numberValue": 1
+            contents: {
+                numberValue: 1
             }
         }
     },
@@ -304,8 +304,8 @@ apply JsonUnions @httpResponseTests([
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
-            "contents": {
-                "blobValue": "foo"
+            contents: {
+                blobValue: "foo"
             }
         }
     },
@@ -323,8 +323,8 @@ apply JsonUnions @httpResponseTests([
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
-            "contents": {
-                "timestampValue": 1398796238
+            contents: {
+                timestampValue: 1398796238
             }
         }
     },
@@ -342,8 +342,8 @@ apply JsonUnions @httpResponseTests([
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
-            "contents": {
-                "enumValue": "Foo"
+            contents: {
+                enumValue: "Foo"
             }
         }
     },
@@ -361,8 +361,8 @@ apply JsonUnions @httpResponseTests([
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
-            "contents": {
-                "listValue": ["foo", "bar"]
+            contents: {
+                listValue: ["foo", "bar"]
             }
         }
     },
@@ -383,10 +383,10 @@ apply JsonUnions @httpResponseTests([
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
-            "contents": {
-                "mapValue": {
-                    "foo": "bar",
-                    "spam": "eggs",
+            contents: {
+                mapValue: {
+                    foo: "bar",
+                    spam: "eggs",
                 }
             }
         }
@@ -407,9 +407,9 @@ apply JsonUnions @httpResponseTests([
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
-            "contents": {
-                "structureValue": {
-                    "hi": "hello",
+            contents: {
+                structureValue: {
+                    hi: "hello",
                 }
             }
         }
