@@ -57,8 +57,8 @@ apply JsonUnions @httpRequestTests([
             "X-Amz-Target": "JsonRpc10.JsonUnions",
         },
         params: {
-            "contents": {
-                "stringValue": "foo"
+            contents: {
+                stringValue: "foo"
             }
         }
     },
@@ -80,8 +80,8 @@ apply JsonUnions @httpRequestTests([
             "X-Amz-Target": "JsonRpc10.JsonUnions",
         },
         params: {
-            "contents": {
-                "booleanValue": true
+            contents: {
+                booleanValue: true
             }
         }
     },
@@ -103,8 +103,8 @@ apply JsonUnions @httpRequestTests([
             "X-Amz-Target": "JsonRpc10.JsonUnions",
         },
         params: {
-            "contents": {
-                "numberValue": 1
+            contents: {
+                numberValue: 1
             }
         }
     },
@@ -126,8 +126,8 @@ apply JsonUnions @httpRequestTests([
             "X-Amz-Target": "JsonRpc10.JsonUnions",
         },
         params: {
-            "contents": {
-                "blobValue": "foo"
+            contents: {
+                blobValue: "foo"
             }
         }
     },
@@ -149,8 +149,8 @@ apply JsonUnions @httpRequestTests([
             "X-Amz-Target": "JsonRpc10.JsonUnions",
         },
         params: {
-            "contents": {
-                "timestampValue": 1398796238
+            contents: {
+                timestampValue: 1398796238
             }
         }
     },
@@ -172,8 +172,8 @@ apply JsonUnions @httpRequestTests([
             "X-Amz-Target": "JsonRpc10.JsonUnions",
         },
         params: {
-            "contents": {
-                "enumValue": "Foo"
+            contents: {
+                enumValue: "Foo"
             }
         }
     },
@@ -195,8 +195,8 @@ apply JsonUnions @httpRequestTests([
             "X-Amz-Target": "JsonRpc10.JsonUnions",
         },
         params: {
-            "contents": {
-                "listValue": ["foo", "bar"]
+            contents: {
+                listValue: ["foo", "bar"]
             }
         }
     },
@@ -221,10 +221,10 @@ apply JsonUnions @httpRequestTests([
             "X-Amz-Target": "JsonRpc10.JsonUnions",
         },
         params: {
-            "contents": {
-                "mapValue": {
-                    "foo": "bar",
-                    "spam": "eggs",
+            contents: {
+                mapValue: {
+                    foo: "bar",
+                    spam: "eggs",
                 }
             }
         }
@@ -249,9 +249,9 @@ apply JsonUnions @httpRequestTests([
             "X-Amz-Target": "JsonRpc10.JsonUnions",
         },
         params: {
-            "contents": {
-                "structureValue": {
-                    "hi": "hello",
+            contents: {
+                structureValue: {
+                    hi: "hello",
                 }
             }
         }
@@ -275,8 +275,8 @@ apply JsonUnions @httpResponseTests([
             "Content-Type": "application/x-amz-json-1.0",
         },
         params: {
-            "contents": {
-                "stringValue": "foo"
+            contents: {
+                stringValue: "foo"
             }
         }
     },
@@ -296,8 +296,8 @@ apply JsonUnions @httpResponseTests([
             "Content-Type": "application/x-amz-json-1.0",
         },
         params: {
-            "contents": {
-                "booleanValue": true
+            contents: {
+                booleanValue: true
             }
         }
     },
@@ -317,8 +317,8 @@ apply JsonUnions @httpResponseTests([
             "Content-Type": "application/x-amz-json-1.0",
         },
         params: {
-            "contents": {
-                "numberValue": 1
+            contents: {
+                numberValue: 1
             }
         }
     },
@@ -338,8 +338,8 @@ apply JsonUnions @httpResponseTests([
             "Content-Type": "application/x-amz-json-1.0",
         },
         params: {
-            "contents": {
-                "blobValue": "foo"
+            contents: {
+                blobValue: "foo"
             }
         }
     },
@@ -359,8 +359,8 @@ apply JsonUnions @httpResponseTests([
             "Content-Type": "application/x-amz-json-1.0",
         },
         params: {
-            "contents": {
-                "timestampValue": 1398796238
+            contents: {
+                timestampValue: 1398796238
             }
         }
     },
@@ -380,8 +380,8 @@ apply JsonUnions @httpResponseTests([
             "Content-Type": "application/x-amz-json-1.0",
         },
         params: {
-            "contents": {
-                "enumValue": "Foo"
+            contents: {
+                enumValue: "Foo"
             }
         }
     },
@@ -401,8 +401,8 @@ apply JsonUnions @httpResponseTests([
             "Content-Type": "application/x-amz-json-1.0",
         },
         params: {
-            "contents": {
-                "listValue": ["foo", "bar"]
+            contents: {
+                listValue: ["foo", "bar"]
             }
         }
     },
@@ -425,10 +425,10 @@ apply JsonUnions @httpResponseTests([
             "Content-Type": "application/x-amz-json-1.0",
         },
         params: {
-            "contents": {
-                "mapValue": {
-                    "foo": "bar",
-                    "spam": "eggs",
+            contents: {
+                mapValue: {
+                    foo: "bar",
+                    spam: "eggs",
                 }
             }
         }
@@ -451,9 +451,9 @@ apply JsonUnions @httpResponseTests([
             "Content-Type": "application/x-amz-json-1.0",
         },
         params: {
-            "contents": {
-                "structureValue": {
-                    "hi": "hello",
+            contents: {
+                structureValue: {
+                    hi: "hello",
                 }
             }
         }
