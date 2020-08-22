@@ -13,13 +13,14 @@
  * permissions and limitations under the License.
  */
 
-description = "This module contains support for converting a Smithy model to OpenAPI."
-extra["displayName"] = "Smithy :: OpenAPI Conversion"
-extra["moduleName"] = "software.amazon.smithy.openapi"
+description = "This module contains support for converting a Smithy model to JSON Schema."
+
+ext {
+    displayName = "Smithy :: JSON Schema Conversion"
+    moduleName = "software.amazon.smithy.jsonschema"
+}
 
 dependencies {
-    api(project(":smithy-model"))
-    api(project(":smithy-build"))
-    api(project(":smithy-jsonschema"))
-    api(project(":smithy-aws-traits"))
+    api project(":smithy-utils")
+    api project(":smithy-model")
 }

@@ -13,12 +13,21 @@
  * permissions and limitations under the License.
  */
 
-description = "This module detects differences between two Smithy models, identifying " +
-        "changes that are safe and changes that are backward incompatible."
-extra["displayName"] = "Smithy :: Diff"
-extra["moduleName"] = "software.amazon.smithy.diff"
+description = "This module provides the core implementation of loading, validating, " +
+        "traversing, mutating, and serializing a Smithy model."
+
+ext {
+    displayName = "Smithy :: Model"
+    moduleName = "software.amazon.smithy.model"
+}
+
+apply plugin: "me.champeau.gradle.jmh"
 
 dependencies {
-    api(project(":smithy-utils"))
-    api(project(":smithy-model"))
+    api project(":smithy-utils")
+    jmh project(":smithy-utils")
+}
+
+jmh {
+    timeUnit = "us"
 }
