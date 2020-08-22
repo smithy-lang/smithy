@@ -13,18 +13,13 @@
  * permissions and limitations under the License.
  */
 
-description = "This module provides the core implementation of loading, validating, " +
-        "traversing, mutating, and serializing a Smithy model."
-extra["displayName"] = "Smithy :: Model"
-extra["moduleName"] = "software.amazon.smithy.model"
+description = "Defines protocol test traits."
 
-apply(plugin = "me.champeau.gradle.jmh")
-
-dependencies {
-    api(project(":smithy-utils"))
-    "jmh"(project(":smithy-utils"))
+ext {
+    displayName = "Smithy :: Protocol Test Traits"
+    moduleName = "software.amazon.smithy.protocoltest.traits"
 }
 
-configure<me.champeau.gradle.JMHPluginExtension> {
-    timeUnit = "us"
+dependencies {
+    api project(":smithy-model")
 }

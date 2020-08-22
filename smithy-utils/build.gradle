@@ -13,16 +13,9 @@
  * permissions and limitations under the License.
  */
 
-description = "Defines protocol tests for AWS HTTP protocols."
-extra["displayName"] = "Smithy :: AWS :: Protocol Tests"
-extra["moduleName"] = "software.amazon.smithy.aws.protocoltests"
+description = "This module contains utility classes and interfaces for Smithy."
 
-plugins {
-    id("software.amazon.smithy").version("0.5.0")
-}
-
-dependencies {
-    compile(project(":smithy-cli"))
-    implementation(project(":smithy-protocol-test-traits"))
-    implementation(project(":smithy-aws-traits"))
+ext {
+    displayName = "Smithy :: Utilities"
+    moduleName = "software.amazon.smithy.utils"
 }

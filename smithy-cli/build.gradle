@@ -13,26 +13,29 @@
  * permissions and limitations under the License.
  */
 
-description = "This module implements the Smithy command line interface."
-extra["displayName"] = "Smithy :: CLI"
-extra["moduleName"] = "software.amazon.smithy.cli"
-
 plugins {
-    application
-    id("org.beryx.runtime") version "1.8.4"
+    id "application"
+    id "org.beryx.runtime" version "1.8.4"
+}
+
+description = "This module implements the Smithy command line interface."
+
+ext {
+    displayName = "Smithy :: CLI"
+    moduleName = "software.amazon.smithy.cli"
 }
 
 dependencies {
-    implementation(project(":smithy-model"))
-    implementation(project(":smithy-build"))
-    implementation(project(":smithy-linters"))
-    implementation(project(":smithy-diff"))
+    implementation project(":smithy-model")
+    implementation project(":smithy-build")
+    implementation project(":smithy-linters")
+    implementation project(":smithy-diff")
 }
 
 application {
     mainClassName = "software.amazon.smithy.cli.SmithyCli"
     applicationName = "smithy"
-    applicationDefaultJvmArgs = listOf("-XX:TieredStopAtLevel=2", "-Xshare:auto")
+    applicationDefaultJvmArgs = ["-XX:TieredStopAtLevel=2", "-Xshare:auto"]
 }
 
 runtime {
@@ -40,7 +43,7 @@ runtime {
     addModules("java.logging")
 }
 
-tasks.register<Exec>("optimizeCli") {
+tasks.register("optimizeCli", Exec) {
     commandLine("${project.buildDir}/image/bin/java", "-Xshare:dump")
 }
 

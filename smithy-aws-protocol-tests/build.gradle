@@ -13,11 +13,19 @@
  * permissions and limitations under the License.
  */
 
-description = "This module provides the implementation of MQTT binding traits for Smithy."
-extra["displayName"] = "Smithy :: MQTT Traits"
-extra["moduleName"] = "software.amazon.smithy.mqtt.traits"
+plugins {
+    id "software.amazon.smithy" version "0.5.0"
+}
+
+description = "Defines protocol tests for AWS HTTP protocols."
+
+ext {
+    displayName = "Smithy :: AWS :: Protocol Tests"
+    moduleName = "software.amazon.smithy.aws.protocoltests"
+}
 
 dependencies {
-    api(project(":smithy-utils"))
-    api(project(":smithy-model"))
+    compile project(":smithy-cli")
+    implementation project(":smithy-protocol-test-traits")
+    implementation project(":smithy-aws-traits")
 }

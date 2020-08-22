@@ -13,10 +13,16 @@
  * permissions and limitations under the License.
  */
 
-description = "Defines protocol test traits."
-extra["displayName"] = "Smithy :: Protocol Test Traits"
-extra["moduleName"] = "software.amazon.smithy.protocoltest.traits"
+description = "This module provides a code generation framework for generating clients, " +
+        "servers, documentation, and other artifacts for various languages from Smithy models."
+
+ext {
+    displayName = "Smithy :: Code Generation Framework"
+    moduleName = "software.amazon.smithy.codegen.core"
+}
 
 dependencies {
-    api(project(":smithy-model"))
+    api project(":smithy-utils")
+    api project(":smithy-model")
+    api project(":smithy-build")
 }

@@ -13,12 +13,16 @@
  * permissions and limitations under the License.
  */
 
-description = "This module is a library used to validate Smithy models, create filtered " +
-        "projections of a model, and generate build artifacts."
-extra["displayName"] = "Smithy :: Build"
-extra["moduleName"] = "software.amazon.smithy.build"
+description = "This module contains support for converting a Smithy model to OpenAPI."
+
+ext {
+    displayName = "Smithy :: OpenAPI Conversion"
+    moduleName = "software.amazon.smithy.openapi"
+}
 
 dependencies {
-    api(project(":smithy-utils"))
-    api(project(":smithy-model"))
+    api project(":smithy-model")
+    api project(":smithy-build")
+    api project(":smithy-jsonschema")
+    api project(":smithy-aws-traits")
 }

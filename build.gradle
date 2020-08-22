@@ -1,0 +1,248 @@
+/*
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+import java.util.stream.Collectors
+
+plugins {
+    id "java-library"
+    id "maven-publish"
+    id "signing"
+    id "checkstyle"
+    id "jacoco"
+    id "com.github.spotbugs" version "1.6.10"
+    id "io.codearte.nexus-staging" version "0.21.0"
+    id "me.champeau.gradle.jmh" version "0.4.6"
+}
+
+ext {
+    // Load the Smithy version from VERSION.
+    libraryVersion = project.file("VERSION").getText('UTF-8').replace("\n", "")
+}
+
+println "Smithy version: '${libraryVersion}'"
+
+allprojects {
+    group = "software.amazon.smithy"
+    version = libraryVersion
+}
+
+subprojects {
+    apply plugin: "java-library"
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    dependencies {
+        testCompile "org.junit.jupiter:junit-jupiter-api:5.4.0"
+        testRuntime "org.junit.jupiter:junit-jupiter-engine:5.4.0"
+        testCompile "org.junit.jupiter:junit-jupiter-params:5.4.0"
+        testCompile "org.hamcrest:hamcrest:2.1"
+    }
+
+    // Reusable license copySpec for building JARs
+    def licenseSpec = copySpec {
+        from "${project.rootDir}/LICENSE"
+        from "${project.rootDir}/NOTICE"
+    }
+
+    // Set up tasks that build source and javadoc jars.
+    task sourcesJar(type: Jar) {
+        metaInf.with(licenseSpec)
+        from {
+            sourceSets.main.get().allJava
+        }
+        archiveClassifier = "sources"
+    }
+
+    // Build a javadoc JAR too.
+    task javadocJar(type: Jar) {
+        metaInf.with(licenseSpec)
+        from {
+            tasks.javadoc
+        }
+        archiveClassifier = "javadoc"
+    }
+
+    // Include an Automatic-Module-Name in all JARs.
+    afterEvaluate { Project project ->
+        tasks.jar {
+            metaInf.with(licenseSpec)
+            inputs.property("moduleName", project.ext["moduleName"])
+            manifest {
+                attributes "Automatic-Module-Name": project.ext["moduleName"]
+            }
+        }
+    }
+
+    // Always run javadoc after build.
+    tasks["build"].dependsOn(tasks["javadoc"])
+
+    // ==== Tests ====
+    // https://docs.gradle.org/current/samples/sample_java_multi_project_with_junit5_tests.html
+    test {
+        useJUnitPlatform()
+    }
+    // Log on passed, skipped, and failed test events if the `-Plog-tests` property is set.
+    // https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/testing/logging/TestLoggingContainer.html
+    if (project.hasProperty("log-tests")) {
+        test {
+            testLogging {
+                events = ["passed", "skipped", "failed"]
+            }
+        }
+    }
+
+    // ==== Maven ====
+    apply plugin: "maven-publish"
+    apply plugin: "signing"
+
+    publishing {
+        repositories {
+            mavenCentral {
+                url = uri("https://aws.oss.sonatype.org/service/local/staging/deploy/maven2/")
+                if (project.hasProperty("sonatypeUser")) {
+                    credentials {
+                        username = project.property("sonatypeUser")
+                        password = project.property("sonatypePassword")
+                    }
+                }
+            }
+        }
+
+        publications {
+            mavenJava(MavenPublication) {
+                from(components["java"])
+
+                // Ship the source and javadoc jars.
+                artifact(tasks["sourcesJar"])
+                artifact(tasks["javadocJar"])
+
+                // Include extra information in the POMs.
+                project.afterEvaluate {
+                    pom {
+                        name.set(project.ext["displayName"].toString())
+                        description.set(project.description)
+                        url.set("https://github.com/awslabs/smithy")
+                        licenses {
+                            license {
+                                name.set("Apache License 2.0")
+                                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                                distribution.set("repo")
+                            }
+                        }
+                        developers {
+                            developer {
+                                id.set("smithy")
+                                name.set("Smithy")
+                                organization.set("Amazon Web Services")
+                                organizationUrl.set("https://aws.amazon.com")
+                                roles.add("developer")
+                            }
+                        }
+                        scm {
+                            url.set("https://github.com/awslabs/smithy.git")
+                        }
+                    }
+                }
+            }
+        }
+
+        // Don't sign the artifacts if we didn't get a key and password to use.
+        if (project.hasProperty("signingKey") && project.hasProperty("signingPassword")) {
+            signing {
+                useInMemoryPgpKeys(
+                        (String) project.property("signingKey"),
+                        (String) project.property("signingPassword"))
+                sign(publishing.publications["mavenJava"])
+            }
+        }
+    }
+
+    // ==== CheckStyle ====
+    // https://docs.gradle.org/current/userguide/checkstyle_plugin.html
+    apply plugin: "checkstyle"
+    tasks["checkstyleTest"].enabled = false
+
+    // ==== Code coverage ====
+    // https://docs.gradle.org/current/userguide/jacoco_plugin.html
+    apply plugin: "jacoco"
+    // report is always generated after tests run
+    test {
+        finalizedBy jacocoTestReport
+    }
+    // tests are required to run before generating the report
+    jacocoTestReport {
+        dependsOn test
+    }
+    jacocoTestReport {
+        reports {
+            xml.enabled false
+            csv.enabled false
+            html.destination file("$buildDir/reports/jacoco")
+        }
+    }
+
+    // ==== Spotbugs ====
+    // https://plugins.gradle.org/plugin/com.github.spotbugs
+    apply plugin: "com.github.spotbugs"
+    // We don't need to lint tests.
+    tasks["spotbugsTest"].enabled = false
+    // Configure the bug filter for spotbugs.
+    spotbugs {
+        effort = "max"
+        excludeFilterConfig = project.resources.text.fromFile("${project.rootDir}/config/spotbugs/filter.xml")
+    }
+}
+
+// The root project doesn't produce a JAR.
+tasks["jar"].enabled = false
+
+// ==== Javadoc ====
+project.afterEvaluate {
+    tasks.javadoc {
+        title = "Smithy API ${version}"
+        setDestinationDir(file("${project.buildDir}/docs/javadoc/latest"))
+        // Build a consolidated javadoc of all subprojects.
+        source(project.subprojects.stream().map({
+            project(it.path).sourceSets.main.allJava
+        }).collect(Collectors.toList()))
+    }
+}
+
+/*
+ * Sonatype Staging Finalization
+ * ====================================================
+ *
+ * When publishing to Maven Central, we need to close the staging
+ * repository and release the artifacts after they have been
+ * validated. This configuration is for the root project because
+ * it operates at the "group" level.
+ */
+if (project.hasProperty("sonatypeUser") && project.hasProperty("sonatypePassword")) {
+    apply plugin: "io.codearte.nexus-staging"
+    nexusStaging {
+        packageGroup = "software.amazon"
+        stagingProfileId = "e789115b6c941"
+        username = project.property("sonatypeUser")
+        password = project.property("sonatypePassword")
+    }
+}

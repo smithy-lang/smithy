@@ -13,10 +13,13 @@
  * permissions and limitations under the License.
  */
 
-description = "This module provides Smithy traits and validators for IAM."
-extra["displayName"] = "Smithy :: AWS :: IAM Traits"
-extra["moduleName"] = "software.amazon.smithy.aws.iam.traits"
+description = "This module provides Smithy traits and validators for API Gateway."
+
+ext {
+    displayName = "Smithy :: AWS :: API Gateway Traits"
+    moduleName = "software.amazon.smithy.aws.apigateway.traits"
+}
 
 dependencies {
-    api(project(":smithy-aws-traits"))
+    api project(":smithy-aws-traits")
 }

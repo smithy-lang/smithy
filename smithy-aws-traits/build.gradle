@@ -13,13 +13,13 @@
  * permissions and limitations under the License.
  */
 
-description = "This module provides a code generation framework for generating clients, " +
-        "servers, documentation, and other artifacts for various languages from Smithy models."
-extra["displayName"] = "Smithy :: Code Generation Framework"
-extra["moduleName"] = "software.amazon.smithy.codegen.core"
+description = "This module provides Smithy traits and validators that are used by most AWS services."
+
+ext {
+    displayName = "Smithy :: AWS Core Traits"
+    moduleName = "software.amazon.smithy.aws.traits"
+}
 
 dependencies {
-    api(project(":smithy-utils"))
-    api(project(":smithy-model"))
-    api(project(":smithy-build"))
+    api project(":smithy-model")
 }
