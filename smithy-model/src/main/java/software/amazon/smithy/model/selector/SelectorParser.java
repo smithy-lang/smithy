@@ -230,6 +230,13 @@ final class SelectorParser extends SimpleParser {
                 return new TestSelector(selectors);
             case "is":
                 return IsSelector.of(selectors);
+            case "topdown":
+                if (selectors.size() > 2) {
+                    throw new SelectorSyntaxException(
+                            "The :topdown function accepts 1 or 2 selectors, but found " + selectors.size(),
+                            expression(), functionPosition, line(), column());
+                }
+                return new TopDownSelector(selectors);
             case "each":
                 LOGGER.warning("The `:each` selector function has been renamed to `:is`: " + expression());
                 return IsSelector.of(selectors);
