@@ -543,21 +543,27 @@ value is <code class="docutils literal notranslate"><span class="pre">INTERNET</
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td>An API-specific tag group of related cached parameters.</td>
 </tr>
-<tr class="row-even"><td>cacheKeyParameters</td>
+<tr class="row-even"><td>payloadFormatVersion</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Specifies the format of the payload sent to an integration. Required for HTTP APIs. For HTTP APIs,
+supported values for Lambda proxy integrations are 1.0 and 2.0. For all other integrations, 1.0 is the
+only supported value.</td>
+</tr>
+<tr class="row-odd"><td>cacheKeyParameters</td>
 <td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></td>
 <td>A list of request parameter names whose values are to be cached.</td>
 </tr>
-<tr class="row-odd"><td>requestParameters</td>
+<tr class="row-even"><td>requestParameters</td>
 <td><code class="docutils literal notranslate"><span class="pre">map</span></code> of <a class="reference internal" href="#apigateway-requestparameters"><span class="std std-ref">requestParameters structure</span></a> to request parameters</td>
 <td>Specifies mappings from method request parameters to integration
 request parameters. Supported request parameters are querystring,
 path, header, and body.</td>
 </tr>
-<tr class="row-even"><td>requestTemplates</td>
+<tr class="row-odd"><td>requestTemplates</td>
 <td><code class="docutils literal notranslate"><span class="pre">map</span></code> of media types to <a class="reference internal" href="#apigateway-requesttemplates"><span class="std std-ref">requestTemplates structure</span></a></td>
 <td>Mapping templates for a request payload of specified media types.</td>
 </tr>
-<tr class="row-odd"><td>responses</td>
+<tr class="row-even"><td>responses</td>
 <td><code class="docutils literal notranslate"><span class="pre">map</span></code> of response codes to <a class="reference internal" href="#apigateway-responses"><span class="std std-ref">responses structure</span></a></td>
 <td>Defines the method's responses and specifies desired parameter
 mappings or payload mappings from integration responses to method

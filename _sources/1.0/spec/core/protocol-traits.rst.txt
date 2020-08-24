@@ -300,7 +300,8 @@ Smithy defines the following built-in timestamp formats:
     * - date-time
       - Date time as defined by the ``date-time`` production in
         `RFC3339 section 5.6 <https://xml2rfc.tools.ietf.org/public/rfc/html/rfc3339.html#anchor14>`_
-        with no UTC offset (for example, ``1985-04-12T23:20:50.52Z``).
+        with no UTC offset and optional fractional precision (for example,
+        ``1985-04-12T23:20:50.52Z``).
     * - http-date
       - An HTTP date as defined by the ``IMF-fixdate`` production in
         :rfc:`7231#section-7.1.1.1` (for example,
@@ -308,7 +309,7 @@ Smithy defines the following built-in timestamp formats:
     * - epoch-seconds
       - Also known as Unix time, the number of seconds that have elapsed since
         00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970,
-        with decimal precision (for example, ``1515531081.1234``).
+        with optional fractional precision (for example, ``1515531081.1234``).
 
 .. rubric:: Resolving timestamp formats
 

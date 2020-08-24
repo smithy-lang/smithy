@@ -74,9 +74,9 @@ The following is an example ``smithy-build.json`` configuration:
                             }
                         },
                         {
-                            "name": "excludeTraitsByTag",
+                            "name": "excludeShapesByTrait",
                             "args": {
-                                "tags": ["internal"]
+                                "traits": ["internal"]
                             }
                         }
                     ],
@@ -285,6 +285,48 @@ the :ref:`tags trait <tags-trait>`.
 .. note::
 
     This transformer does not remove shapes from the prelude.
+
+
+.. _excludeShapesByTrait-transform:
+
+excludeShapesByTrait
+--------------------
+
+Removes shapes if they are marked with one or more specific traits.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - traits
+      - ``[string]``
+      - A list of trait :ref:`shape IDs <shape-id>`. If any of these traits
+        are found on a shape, the shape is removed from the model. Relative
+        shape IDs are assumed to be in the ``smithy.api``
+        :ref:`prelude <prelude>` namespace.
+
+.. tabs::
+
+    .. code-tab:: json
+
+        {
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {
+                            "name": "excludeShapesByTrait",
+                            "args": {
+                                "traits": ["internal"]
+                            }
+                        }
+                    ]
+                }
+            }
+        }
 
 
 .. _includeShapesByTag-transform:

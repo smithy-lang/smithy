@@ -81,32 +81,31 @@ AWS products like AWS CloudFormation and tools like the AWS SDKs.</p>
 <li><a class="reference internal" href="#cloudformationname" id="id10"><code class="docutils literal notranslate"><span class="pre">cloudFormationName</span></code></a></li>
 <li><a class="reference internal" href="#arnnamespace" id="id11"><code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code></a></li>
 <li><a class="reference internal" href="#cloudtraileventsource" id="id12"><code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code></a></li>
-<li><a class="reference internal" href="#abbreviation" id="id13"><code class="docutils literal notranslate"><span class="pre">abbreviation</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#aws-api-arn-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait</a><ul>
-<li><a class="reference internal" href="#format-of-an-arn" id="id15">Format of an ARN</a></li>
-<li><a class="reference internal" href="#relative-arn-templates" id="id16">Relative ARN templates</a></li>
-<li><a class="reference internal" href="#using-an-arn-as-a-resource-identifier" id="id17">Using an ARN as a resource identifier</a></li>
+<li><a class="reference internal" href="#aws-api-arn-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait</a><ul>
+<li><a class="reference internal" href="#format-of-an-arn" id="id14">Format of an ARN</a></li>
+<li><a class="reference internal" href="#relative-arn-templates" id="id15">Relative ARN templates</a></li>
+<li><a class="reference internal" href="#using-an-arn-as-a-resource-identifier" id="id16">Using an ARN as a resource identifier</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#aws-api-arnreference-trait" id="id18"><code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-api-data-trait" id="id19"><code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait</a><ul>
-<li><a class="reference internal" href="#data-classifications" id="id20">Data Classifications</a></li>
+<li><a class="reference internal" href="#aws-api-arnreference-trait" id="id17"><code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-data-trait" id="id18"><code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait</a><ul>
+<li><a class="reference internal" href="#data-classifications" id="id19">Data Classifications</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#aws-api-controlplane-trait" id="id21"><code class="docutils literal notranslate"><span class="pre">aws.api#controlPlane</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-api-dataplane-trait" id="id22"><code class="docutils literal notranslate"><span class="pre">aws.api#dataPlane</span></code> trait</a></li>
-<li><a class="reference internal" href="#client-endpoint-discovery" id="id23">Client Endpoint Discovery</a><ul>
-<li><a class="reference internal" href="#aws-api-clientendpointdiscovery-trait" id="id24"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscovery</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-api-clientdiscoveredendpoint-trait" id="id25"><code class="docutils literal notranslate"><span class="pre">aws.api#clientDiscoveredEndpoint</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-api-clientendpointdiscoveryid-trait" id="id26"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscoveryId</span></code> trait</a></li>
-<li><a class="reference internal" href="#example-model" id="id27">Example Model</a></li>
-<li><a class="reference internal" href="#client-behavior" id="id28">Client Behavior</a></li>
+<li><a class="reference internal" href="#aws-api-controlplane-trait" id="id20"><code class="docutils literal notranslate"><span class="pre">aws.api#controlPlane</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-dataplane-trait" id="id21"><code class="docutils literal notranslate"><span class="pre">aws.api#dataPlane</span></code> trait</a></li>
+<li><a class="reference internal" href="#client-endpoint-discovery" id="id22">Client Endpoint Discovery</a><ul>
+<li><a class="reference internal" href="#aws-api-clientendpointdiscovery-trait" id="id23"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscovery</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-clientdiscoveredendpoint-trait" id="id24"><code class="docutils literal notranslate"><span class="pre">aws.api#clientDiscoveredEndpoint</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-clientendpointdiscoveryid-trait" id="id25"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscoveryId</span></code> trait</a></li>
+<li><a class="reference internal" href="#example-model" id="id26">Example Model</a></li>
+<li><a class="reference internal" href="#client-behavior" id="id27">Client Behavior</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#appendix" id="id29">Appendix</a><ul>
-<li><a class="reference internal" href="#appendix-a-example-sdk-service-ids" id="id30">Appendix A: Example SDK service IDs</a></li>
+<li><a class="reference internal" href="#appendix" id="id28">Appendix</a><ul>
+<li><a class="reference internal" href="#appendix-a-example-sdk-service-ids" id="id29">Appendix A: Example SDK service IDs</a></li>
 </ul>
 </li>
 </ul>
@@ -127,7 +126,6 @@ generate AWS SDK client classes and the namespace used in ARNs.</dd>
 <li><a class="reference internal" href="#service-cloudformation-name"><span class="std std-ref">cloudFormationName</span></a></li>
 <li><a class="reference internal" href="#service-arn-namespace"><span class="std std-ref">arnNamespace</span></a></li>
 <li><a class="reference internal" href="#service-cloudtrail-event-source"><span class="std std-ref">cloudTrailEventSource</span></a></li>
-<li><a class="reference internal" href="#service-abbreviation"><span class="std std-ref">abbreviation</span></a></li>
 </ul>
 </dd>
 </dl>
@@ -252,9 +250,9 @@ MUST NOT be an arbitrary value; for example for Amazon DynamoDB, an appropriate
 <p>The following steps can be taken to produce a <code class="docutils literal notranslate"><span class="pre">sdkId</span></code> that should generally work
 for most services:</p>
 <ol class="arabic simple">
-<li>Pick a base to derive the &quot;sdkId&quot;. If available, use the <code class="docutils literal notranslate"><span class="pre">abbreviation</span></code>
-property of the <code class="docutils literal notranslate"><span class="pre">aws.api#service</span></code> trait as the base. An example of an official
-service abbreviation is <code class="docutils literal notranslate"><span class="pre">Amazon</span> <span class="pre">S3</span></code> for <code class="docutils literal notranslate"><span class="pre">Amazon</span> <span class="pre">Simple</span> <span class="pre">Storage</span> <span class="pre">Service</span></code>.
+<li>Pick a base to derive the &quot;sdkId&quot;. If an official abbreviation for a service
+is available, then use that as the base. An example of an official service
+abbreviation is <code class="docutils literal notranslate"><span class="pre">Amazon</span> <span class="pre">S3</span></code> for <code class="docutils literal notranslate"><span class="pre">Amazon</span> <span class="pre">Simple</span> <span class="pre">Storage</span> <span class="pre">Service</span></code>.
 If the service has no official service abbreviation, then use the service's
 official name as specified by the <a class="reference internal" href="../core/documentation-traits.html#title-trait"><span class="std std-ref">title trait</span></a> (for example,
 <code class="docutils literal notranslate"><span class="pre">Amazon</span> <span class="pre">Simple</span> <span class="pre">Storage</span> <span class="pre">Service</span></code>).</li>
@@ -325,15 +323,6 @@ an event source of <code class="docutils literal notranslate"><span class="pre">
 <p>This convention has some exceptions. For example, the event source for
 Amazon CloudWatch is <code class="docutils literal notranslate"><span class="pre">monitoring.amazonaws.com</span></code>. Such services will
 need to explicitly configure the <code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code> setting.</p>
-</div>
-<div class="section" id="abbreviation">
-<span id="service-abbreviation"></span><h3><a href="#abbreviation"><code class="docutils literal notranslate"><span class="pre">abbreviation</span></code></a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">abbreviation</span></code> property is a <code class="docutils literal notranslate"><span class="pre">string</span></code> value that defines the official
-abbreviation of a service. For example, the official abbreviation of
-&quot;Amazon Simple Storage Service&quot; is &quot;Amazon S3&quot;, and the abbreviation of
-&quot;Amazon Kinesis Firehose&quot; is &quot;Firehose&quot;.</p>
-<p>See <a class="reference internal" href="#aws-service-appendix-a"><span class="std std-ref">Appendix A: Example SDK service IDs</span></a> for a table containing various AWS services
-and their abbreviations.</p>
 </div>
 </div>
 <div class="section" id="aws-api-arn-trait">
@@ -1388,438 +1377,331 @@ context.</p>
 <span id="aws-service-appendix-a"></span><h3><a href="#appendix-a-example-sdk-service-ids">Appendix A: Example SDK service IDs</a></h3>
 <p>The following, non-exhaustive, table defines the SDK service ID of many
 existing AWS services.</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="docutils">
 <colgroup>
-<col width="40%" />
-<col width="40%" />
-<col width="20%" />
+<col width="50%" />
+<col width="50%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">sdkId</th>
 <th class="head">title trait</th>
-<th class="head">abbreviation</th>
 </tr>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>ACM</td>
 <td>AWS Certificate Manager</td>
-<td>ACM</td>
 </tr>
 <tr class="row-odd"><td>API Gateway</td>
 <td>Amazon API Gateway</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>Application Auto Scaling</td>
 <td>Application Auto Scaling</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>AppStream</td>
 <td>Amazon AppStream</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>Athena</td>
 <td>Amazon Athena</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>Auto Scaling</td>
 <td>Auto Scaling</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>Batch</td>
-<td>AWS Batch</td>
 <td>AWS Batch</td>
 </tr>
 <tr class="row-odd"><td>Budgets</td>
 <td>AWS Budgets</td>
-<td>AWSBudgets</td>
 </tr>
 <tr class="row-even"><td>CloudDirectory</td>
 <td>Amazon CloudDirectory</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>CloudFormation</td>
 <td>AWS CloudFormation</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>CloudFront</td>
 <td>Amazon CloudFront</td>
-<td>CloudFront</td>
 </tr>
 <tr class="row-odd"><td>CloudHSM</td>
 <td>Amazon CloudHSM</td>
-<td>CloudHSM</td>
 </tr>
 <tr class="row-even"><td>CloudHSM V2</td>
 <td>AWS CloudHSM V2</td>
-<td>CloudHSM V2</td>
 </tr>
 <tr class="row-odd"><td>CloudSearch</td>
 <td>Amazon CloudSearch</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>CloudSearch Domain</td>
 <td>Amazon CloudSearch Domain</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>CloudTrail</td>
 <td>AWS CloudTrail</td>
-<td>CloudTrail</td>
 </tr>
 <tr class="row-even"><td>CloudWatch</td>
 <td>Amazon CloudWatch</td>
-<td>CloudWatch</td>
 </tr>
 <tr class="row-odd"><td>CodeBuild</td>
 <td>AWS CodeBuild</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>CodeCommit</td>
 <td>AWS CodeCommit</td>
-<td>CodeCommit</td>
 </tr>
 <tr class="row-odd"><td>CodeDeploy</td>
 <td>AWS CodeDeploy</td>
-<td>CodeDeploy</td>
 </tr>
 <tr class="row-even"><td>CodePipeline</td>
 <td>AWS CodePipeline</td>
-<td>CodePipeline</td>
 </tr>
 <tr class="row-odd"><td>CodeStar</td>
 <td>AWS CodeStar</td>
-<td>CodeStar</td>
 </tr>
 <tr class="row-even"><td>Cognito Identity</td>
 <td>Amazon Cognito Identity</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>Cognito Identity Provider</td>
 <td>Amazon Cognito Identity Provider</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>Cognito Sync</td>
 <td>Amazon Cognito Sync</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>Config Service</td>
 <td>AWS Config</td>
-<td>Config Service</td>
 </tr>
 <tr class="row-even"><td>Cost and Usage Report Service</td>
 <td>AWS Cost and Usage Report Service</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>Data Pipeline</td>
 <td>AWS Data Pipeline</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>DAX</td>
 <td>Amazon DynamoDB Accelerator (DAX)</td>
-<td>Amazon DAX</td>
 </tr>
 <tr class="row-odd"><td>Device Farm</td>
 <td>AWS Device Farm</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>Direct Connect</td>
 <td>AWS Direct Connect</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>Application Discovery Service</td>
 <td>AWS Application Discovery Service</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>Database Migration Service</td>
 <td>AWS Database Migration Service</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>Directory Service</td>
 <td>AWS Directory Service</td>
-<td>Directory Service</td>
 </tr>
 <tr class="row-even"><td>DynamoDB</td>
 <td>Amazon DynamoDB</td>
-<td>DynamoDB</td>
 </tr>
 <tr class="row-odd"><td>DynamoDB Streams</td>
 <td>Amazon DynamoDB Streams</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>EC2</td>
 <td>Amazon Elastic Compute Cloud</td>
-<td>Amazon EC2</td>
 </tr>
 <tr class="row-odd"><td>ECR</td>
 <td>Amazon EC2 Container Registry</td>
-<td>Amazon ECR</td>
 </tr>
 <tr class="row-even"><td>ECS</td>
 <td>Amazon EC2 Container Service</td>
-<td>Amazon ECS</td>
 </tr>
 <tr class="row-odd"><td>EFS</td>
 <td>Amazon Elastic File System</td>
-<td>EFS</td>
 </tr>
 <tr class="row-even"><td>ElastiCache</td>
 <td>Amazon ElastiCache</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>Elastic Beanstalk</td>
 <td>AWS Elastic Beanstalk</td>
-<td>Elastic Beanstalk</td>
 </tr>
 <tr class="row-even"><td>Elastic Transcoder</td>
 <td>Amazon Elastic Transcoder</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>Elastic Load Balancing</td>
 <td>Elastic Load Balancing</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>Elastic Load Balancing v2</td>
 <td>Elastic Load Balancing</td>
-<td>Elastic Load Balancing v2</td>
 </tr>
 <tr class="row-odd"><td>EMR</td>
 <td>Amazon Elastic MapReduce</td>
-<td>Amazon EMR</td>
 </tr>
 <tr class="row-even"><td>Elasticsearch Service</td>
 <td>Amazon Elasticsearch Service</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>CloudWatch Events</td>
 <td>Amazon CloudWatch Events</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>Firehose</td>
 <td>Amazon Kinesis Firehose</td>
-<td>Firehose</td>
 </tr>
 <tr class="row-odd"><td>GameLift</td>
 <td>Amazon GameLift</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>Glacier</td>
 <td>Amazon Glacier</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>Glue</td>
 <td>AWS Glue</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>Greengrass</td>
 <td>AWS Greengrass</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>Health</td>
 <td>AWS Health APIs and Notifications</td>
-<td>AWSHealth</td>
 </tr>
 <tr class="row-even"><td>IAM</td>
 <td>AWS Identity and Access Management</td>
-<td>IAM</td>
 </tr>
 <tr class="row-odd"><td>ImportExport</td>
 <td>AWS Import/Export</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>Inspector</td>
 <td>Amazon Inspector</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>IoT</td>
 <td>AWS IoT</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>IoT Data Plane</td>
 <td>AWS IoT Data Plane</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>Kinesis</td>
 <td>Amazon Kinesis</td>
-<td>Kinesis</td>
 </tr>
 <tr class="row-even"><td>Kinesis Analytics</td>
 <td>Amazon Kinesis Analytics</td>
-<td>Kinesis Analytics</td>
 </tr>
 <tr class="row-odd"><td>KMS</td>
 <td>AWS Key Management Service</td>
-<td>KMS</td>
 </tr>
 <tr class="row-even"><td>Lambda</td>
 <td>AWS Lambda</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>Lex Model Building Service</td>
 <td>Amazon Lex Model Building Service</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>Lex Runtime Service</td>
 <td>Amazon Lex Runtime Service</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>Lightsail</td>
 <td>Amazon Lightsail</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>CloudWatch Logs</td>
 <td>Amazon CloudWatch Logs</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>Machine Learning</td>
 <td>Amazon Machine Learning</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>Marketplace Entitlement Service</td>
 <td>AWS Marketplace Entitlement Service</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>Marketplace Commerce Analytics</td>
 <td>AWS Marketplace Commerce Analytics</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>Marketplace Metering</td>
 <td>AWS Marketplace Metering</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>Migration Hub</td>
 <td>AWS Migration Hub</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>Mobile</td>
 <td>AWS Mobile</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>MTurk</td>
 <td>Amazon Mechanical Turk</td>
-<td>Amazon MTurk</td>
 </tr>
 <tr class="row-even"><td>OpsWorks</td>
 <td>AWS OpsWorks</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>OpsWorksCM</td>
 <td>AWS OpsWorks for Chef Automate</td>
-<td>OpsWorksCM</td>
 </tr>
 <tr class="row-even"><td>Organizations</td>
 <td>AWS Organizations</td>
-<td>Organizations</td>
 </tr>
 <tr class="row-odd"><td>Pinpoint</td>
 <td>Amazon Pinpoint</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>Polly</td>
 <td>Amazon Polly</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>RDS</td>
 <td>Amazon Relational Database Service</td>
-<td>Amazon RDS</td>
 </tr>
 <tr class="row-even"><td>Redshift</td>
 <td>Amazon Redshift</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>Rekognition</td>
 <td>Amazon Rekognition</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>Resource Groups Tagging API</td>
 <td>AWS Resource Groups Tagging API</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>Route 53</td>
 <td>Amazon Route 53</td>
-<td>Route 53</td>
 </tr>
 <tr class="row-even"><td>Route 53 Domains</td>
 <td>Amazon Route 53 Domains</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>S3</td>
 <td>Amazon Simple Storage Service</td>
-<td>Amazon S3</td>
 </tr>
 <tr class="row-even"><td>SimpleDB</td>
 <td>Amazon SimpleDB</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>Service Catalog</td>
 <td>AWS Service Catalog</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>SES</td>
 <td>Amazon Simple Email Service</td>
-<td>Amazon SES</td>
 </tr>
 <tr class="row-odd"><td>Shield</td>
-<td>AWS Shield</td>
 <td>AWS Shield</td>
 </tr>
 <tr class="row-even"><td>SMS</td>
 <td>AWS Server Migration Service</td>
-<td>SMS</td>
 </tr>
 <tr class="row-odd"><td>Snowball</td>
 <td>Amazon Import/Export Snowball</td>
-<td>Amazon Snowball</td>
 </tr>
 <tr class="row-even"><td>SNS</td>
 <td>Amazon Simple Notification Service</td>
-<td>Amazon SNS</td>
 </tr>
 <tr class="row-odd"><td>SQS</td>
 <td>Amazon Simple Queue Service</td>
-<td>Amazon SQS</td>
 </tr>
 <tr class="row-even"><td>SSM</td>
 <td>Amazon Simple Systems Manager (SSM)</td>
-<td>Amazon SSM</td>
 </tr>
 <tr class="row-odd"><td>SFN</td>
 <td>AWS Step Functions</td>
-<td>AWS SFN</td>
 </tr>
 <tr class="row-even"><td>Storage Gateway</td>
 <td>AWS Storage Gateway</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>STS</td>
 <td>AWS Security Token Service</td>
-<td>AWS STS</td>
 </tr>
 <tr class="row-even"><td>Support</td>
 <td>AWS Support</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>SWF</td>
 <td>Amazon Simple Workflow Service</td>
-<td>Amazon SWF</td>
 </tr>
 <tr class="row-even"><td>WAF</td>
 <td>AWS WAF</td>
-<td>WAF</td>
 </tr>
 <tr class="row-odd"><td>WAF Regional</td>
 <td>AWS WAF Regional</td>
-<td>WAF Regional</td>
 </tr>
 <tr class="row-even"><td>WorkDocs</td>
 <td>Amazon WorkDocs</td>
-<td>None</td>
 </tr>
 <tr class="row-odd"><td>WorkSpaces</td>
 <td>Amazon WorkSpaces</td>
-<td>None</td>
 </tr>
 <tr class="row-even"><td>XRay</td>
 <td>AWS X-Ray</td>
-<td>None</td>
 </tr>
 </tbody>
 </table>
@@ -1858,7 +1740,6 @@ existing AWS services.</p>
 <li><a class="reference internal" href="#cloudformationname"><code class="docutils literal notranslate"><span class="pre">cloudFormationName</span></code></a></li>
 <li><a class="reference internal" href="#arnnamespace"><code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code></a></li>
 <li><a class="reference internal" href="#cloudtraileventsource"><code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code></a></li>
-<li><a class="reference internal" href="#abbreviation"><code class="docutils literal notranslate"><span class="pre">abbreviation</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#aws-api-arn-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait</a><ul>

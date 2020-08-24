@@ -209,16 +209,33 @@ is left to tooling to ensure that all necessary model files are merged
 together to form a valid semantic model.</p>
 <div class="section" id="merging-model-files">
 <span id="merging-models"></span><h3><a href="#merging-model-files">1.3.1. Merging model files</a></h3>
-<p>Implementations MUST take the following steps to merge models together to load
-the semantic model:</p>
+<p>Implementations MUST take the following steps when merging two or more
+model files to form a semantic model:</p>
 <ol class="arabic simple">
-<li>Duplicate shape IDs, if found, MUST cause the model merge to fail.
-See <a class="reference internal" href="#shape-id-conflicts"><span class="std std-ref">Shape ID conflicts</span></a> for more information.</li>
-<li>Merge any conflicting applied traits using
-<a class="reference internal" href="#trait-conflict-resolution"><span class="std std-ref">trait conflict resolution</span></a>.</li>
-<li>Merge the metadata objects of both models using the steps defined
-in <a class="reference internal" href="#merging-metadata"><span class="std std-ref">Merging metadata</span></a>.</li>
+<li>Merge the metadata objects of all model files using the steps defined in
+<a class="reference internal" href="#merging-metadata"><span class="std std-ref">Merging metadata</span></a>.</li>
+<li>Shapes defined in a single model file are added to the semantic model as-is.</li>
+<li>Shapes with the same shape ID defined in multiple model files are
+reconciled using the following rules:<ol class="arabic">
+<li>All conflicting shapes MUST have the same shape type.</li>
+<li>Conflicting <a class="reference internal" href="#aggregate-types"><span class="std std-ref">aggregate shapes</span></a> MUST contain the
+same members that target the same shapes.</li>
+<li>Conflicting <a class="reference internal" href="#service-types"><span class="std std-ref">service shapes</span></a> MUST contain the same
+properties and target the same shapes.</li>
 </ol>
+</li>
+<li>Conflicting traits defined in shape definitions or through
+<a class="reference internal" href="#apply-statements"><span class="std std-ref">apply statements</span></a> are reconciled using
+<a class="reference internal" href="#trait-conflict-resolution"><span class="std std-ref">trait conflict resolution</span></a>.</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><em>The following guidance is non-normative.</em> Because the Smithy IDL allows
+forward references to shapes that have not yet been defined or shapes
+that are defined in another model file, implementations likely need to
+defer <a class="reference internal" href="idl.html#relative-shape-id"><span class="std std-ref">resolving relative shape IDs</span></a> to
+absolute shape IDs until <em>all</em> model files are loaded.</p>
+</div>
 </div>
 </div>
 <div class="section" id="metadata">
@@ -577,6 +594,12 @@ a Python code generator might convert all member names to lower snake case).
 To illustrate, <code class="docutils literal notranslate"><span class="pre">com.Foo#baz</span></code> and <code class="docutils literal notranslate"><span class="pre">com.foo#BAZ</span></code> are not allowed in the
 same semantic model. This restriction also extends to member names:
 <code class="docutils literal notranslate"><span class="pre">com.foo#Baz$bar</span></code> and <code class="docutils literal notranslate"><span class="pre">com.foo#Baz$BAR</span></code> are in conflict.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#merging-models"><span class="std std-ref">Merging model files</span></a> for information on how conflicting shape
+definitions for the same shape ID are handled when assembling the
+semantic model from multiple model files.</p>
+</div>
 </div>
 </div>
 <div class="section" id="simple-shapes">
@@ -2356,7 +2379,13 @@ description of how traits are applied in the IDL.</li>
 <li>Refer to the <a class="reference internal" href="json-ast.html#json-ast"><span class="std std-ref">JSON AST specification</span></a> for a
 description of how traits are applied in the JSON AST.</li>
 </ul>
-<p class="rubric">Applying traits externally</p>
+<p class="rubric">Scope of member traits</p>
+<p>Traits that target <a class="reference internal" href="#member"><span class="std std-ref">members</span></a> apply only in the context of
+the member shape and do not affect the shape targeted by the member. Traits
+applied to a member supersede traits applied to the shape targeted by the
+member and do not inherently conflict.</p>
+<div class="section" id="applying-traits-externally">
+<span id="apply-statements"></span><h4><a href="#applying-traits-externally">1.10.1.1. Applying traits externally</a></h4>
 <p>Both the IDL and JSON AST model representations allow traits to be applied
 to shapes outside of a shape's definition. This is done using an
 <a class="reference internal" href="idl.html#grammar-token-apply_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">apply</span></code></a> statement in the IDL, or the
@@ -2412,11 +2441,7 @@ JSON</div>
 treated exactly the same as applying the trait inside of a shape
 definition.</p>
 </div>
-<p class="rubric">Scope of member traits</p>
-<p>Traits that target <a class="reference internal" href="#member"><span class="std std-ref">members</span></a> apply only in the context of
-the member shape and do not affect the shape targeted by the member. Traits
-applied to a member supersede traits applied to the shape targeted by the
-member and do not inherently conflict.</p>
+</div>
 </div>
 <div class="section" id="trait-conflict-resolution">
 <span id="id29"></span><h3><a href="#trait-conflict-resolution">1.10.2. Trait conflict resolution</a></h3>
@@ -2535,8 +2560,8 @@ string shape if present; however, this is not validated by Smithy.</td>
 <td>number | string</td>
 <td>If a number is provided, it represents Unix epoch seconds with optional
 millisecond precision. If a string is provided, it MUST be a valid
-<span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3339.html"><strong>RFC 3339</strong></a> string with optional millisecond precision and no
-UTC offset (for example, <code class="docutils literal notranslate"><span class="pre">1990-12-31T23:59:60Z</span></code>).</td>
+<span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3339.html"><strong>RFC 3339</strong></a> string with no UTC offset and optional fractional
+precision (for example, <code class="docutils literal notranslate"><span class="pre">1985-04-12T23:20:50.52Z</span></code>).</td>
 </tr>
 <tr class="row-even"><td>list and set</td>
 <td>array</td>
@@ -2965,7 +2990,10 @@ JSON</div>
 </ul>
 </li>
 <li><a class="reference internal" href="#traits">1.10. Traits</a><ul>
-<li><a class="reference internal" href="#applying-traits-to-shapes">1.10.1. Applying traits to shapes</a></li>
+<li><a class="reference internal" href="#applying-traits-to-shapes">1.10.1. Applying traits to shapes</a><ul>
+<li><a class="reference internal" href="#applying-traits-externally">1.10.1.1. Applying traits externally</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#trait-conflict-resolution">1.10.2. Trait conflict resolution</a></li>
 <li><a class="reference internal" href="#trait-node-values">1.10.3. Trait node values</a></li>
 <li><a class="reference internal" href="#defining-traits">1.10.4. Defining traits</a><ul>

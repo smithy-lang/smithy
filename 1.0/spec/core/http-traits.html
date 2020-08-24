@@ -642,7 +642,8 @@ single line or by serializing each header value on its own line.</li>
 <li>string values with a <a class="reference internal" href="protocol-traits.html#mediatype-trait"><span class="std std-ref">mediaType trait</span></a> are base64 encoded.</li>
 <li>timestamp values are serialized using the <code class="docutils literal notranslate"><span class="pre">http-date</span></code>
 format as defined in the <code class="docutils literal notranslate"><span class="pre">IMF-fixdate</span></code> production of
-<span class="target" id="index-3"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc7231.html#section-7.1.1.1"><strong>RFC 7231#section-7.1.1.1</strong></a>.</li>
+<span class="target" id="index-3"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc7231.html#section-7.1.1.1"><strong>RFC 7231#section-7.1.1.1</strong></a>. The <a class="reference internal" href="protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a> MAY be used
+to use a custom serialization format.</li>
 </ul>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -755,7 +756,8 @@ trait MUST target a string shape.</p>
 <ul class="simple">
 <li>boolean is serialized as <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>.</li>
 <li>timestamp values are serialized as an <span class="target" id="index-4"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3339.html"><strong>RFC 3339</strong></a> string
-(e.g., <code class="docutils literal notranslate"><span class="pre">1990-12-31T23:59:60Z</span></code>).</li>
+(e.g., <code class="docutils literal notranslate"><span class="pre">1985-04-12T23:20:50.52Z</span></code>). The <a class="reference internal" href="protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a> MAY
+be used to use a custom serialization format.</li>
 <li>Unless the label is greedy, &quot;/&quot; MUST be percent encoded.</li>
 </ul>
 <div class="sphinx-tabs docutils container">
@@ -833,12 +835,10 @@ sent as the body of the message.</li>
 <dd>Binds a map of key-value pairs to prefixed HTTP headers.</dd>
 <dt>Trait selector</dt>
 <dd><div class="first highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; member
-:test(&gt; map &gt; member[id|member=value] &gt; :test(
-    boolean, number, string, timestamp,
-    collection &gt; member &gt; :test(boolean, number, string, timestamp)))
+:test(&gt; map &gt; member[id|member=value] &gt; :test(string, collection &gt; member &gt; string))
 </pre></div>
 </div>
-<p class="last"><em>Structure member that targets a map of specific simple types or a map of lists/sets of specific simple types</em></p>
+<p class="last"><em>Structure member that targets a map of strings, or a map of list/set of strings</em></p>
 </dd>
 <dt>Value type</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">string</span></code> value that defines the prefix to prepend to each header field
@@ -907,11 +907,11 @@ Smithy</div>
 <dd>Binds an operation input structure member to a query string parameter.</dd>
 <dt>Trait selector</dt>
 <dd><div class="first highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; member
-:test(&gt; simpleType:not(document),
-      &gt; collection &gt; member &gt; simpleType:not(document)))
+:test(&gt; :test(string, number, boolean, timestamp),
+      &gt; collection &gt; member &gt; :test(string, number, boolean, timestamp))
 </pre></div>
 </div>
-<p class="last"><em>Structure members that target non-document simple types or collections of non-document simple types</em></p>
+<p class="last"><em>Structure members that target string, number, boolean, or timestamp; or a list/set of said types</em></p>
 </dd>
 <dt>Value type</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">string</span></code> value defining the name of the query string parameter. The
@@ -934,9 +934,10 @@ query string value.</li>
 <li>Multiple members of a structure MUST NOT case-sensitively target the same
 query string parameter.</li>
 <li>boolean values are serialized as <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>.</li>
-<li>blob values are base64 encoded when serialized in the query string.</li>
 <li>timestamp values are serialized as an <span class="target" id="index-6"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3339.html"><strong>RFC 3339</strong></a>
-<code class="docutils literal notranslate"><span class="pre">date-time</span></code> string (e.g., <code class="docutils literal notranslate"><span class="pre">1990-12-31T23:59:60Z</span></code>).</li>
+<code class="docutils literal notranslate"><span class="pre">date-time</span></code> string (e.g., <code class="docutils literal notranslate"><span class="pre">1985-04-12T23:20:50.52Z</span></code>). The
+<a class="reference internal" href="protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a> MAY be used to use a custom serialization
+format.</li>
 <li><a class="reference internal" href="model.html#list"><span class="std std-ref">List</span></a> members are serialized by adding multiple query string parameters
 to the query string using the same name. For example, given a member bound
 to <code class="docutils literal notranslate"><span class="pre">foo</span></code> that targets a list of strings with a value of <code class="docutils literal notranslate"><span class="pre">[&quot;a&quot;,</span> <span class="pre">&quot;b&quot;]</span></code>,

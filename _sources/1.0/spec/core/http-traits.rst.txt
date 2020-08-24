@@ -504,7 +504,8 @@ Serialization rules:
 * string values with a :ref:`mediaType-trait` are base64 encoded.
 * timestamp values are serialized using the ``http-date``
   format as defined in the ``IMF-fixdate`` production of
-  :rfc:`7231#section-7.1.1.1`.
+  :rfc:`7231#section-7.1.1.1`. The :ref:`timestampFormat-trait` MAY be used
+  to use a custom serialization format.
 
 .. note::
 
@@ -606,7 +607,8 @@ Serialization rules:
 
 - boolean is serialized as ``true`` or ``false``.
 - timestamp values are serialized as an :rfc:`3339` string
-  (e.g., ``1990-12-31T23:59:60Z``).
+  (e.g., ``1985-04-12T23:20:50.52Z``). The :ref:`timestampFormat-trait` MAY
+  be used to use a custom serialization format.
 - Unless the label is greedy, "/" MUST be percent encoded.
 
 
@@ -687,11 +689,9 @@ Trait selector
     .. code-block:: none
 
         structure > member
-        :test(> map > member[id|member=value] > :test(
-            boolean, number, string, timestamp,
-            collection > member > :test(boolean, number, string, timestamp)))
+        :test(> map > member[id|member=value] > :test(string, collection > member > string))
 
-    *Structure member that targets a map of specific simple types or a map of lists/sets of specific simple types*
+    *Structure member that targets a map of strings, or a map of list/set of strings*
 Value type
     ``string`` value that defines the prefix to prepend to each header field
     name stored in the targeted map member. For example, given a prefix value
@@ -764,10 +764,10 @@ Trait selector
     .. code-block:: none
 
         structure > member
-        :test(> simpleType:not(document),
-              > collection > member > simpleType:not(document)))
+        :test(> :test(string, number, boolean, timestamp),
+              > collection > member > :test(string, number, boolean, timestamp))
 
-    *Structure members that target non-document simple types or collections of non-document simple types*
+    *Structure members that target string, number, boolean, or timestamp; or a list/set of said types*
 Value type
     ``string`` value defining the name of the query string parameter. The
     query string value MUST NOT be empty. This trait is ignored when
@@ -789,9 +789,10 @@ Serialization rules:
 * Multiple members of a structure MUST NOT case-sensitively target the same
   query string parameter.
 * boolean values are serialized as ``true`` or ``false``.
-* blob values are base64 encoded when serialized in the query string.
 * timestamp values are serialized as an :rfc:`3339`
-  ``date-time`` string (e.g., ``1990-12-31T23:59:60Z``).
+  ``date-time`` string (e.g., ``1985-04-12T23:20:50.52Z``). The
+  :ref:`timestampFormat-trait` MAY be used to use a custom serialization
+  format.
 * :ref:`list` members are serialized by adding multiple query string parameters
   to the query string using the same name. For example, given a member bound
   to ``foo`` that targets a list of strings with a value of ``["a", "b"]``,

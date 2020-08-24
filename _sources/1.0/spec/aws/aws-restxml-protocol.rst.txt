@@ -48,8 +48,8 @@ members:
         also appear in ``http``.
     * - noErrorWrapping
       - ``boolean``
-      - Disables the serialization wrapping of error properties in an
-        'Error' XML element. See :ref:`operation error serialization <restXml-errors>`
+      - Disables the wrapping of error properties in an ``ErrorResponse``
+        XML element. See :ref:`operation error serialization <restXml-errors>`
         for more information.
 
 Each entry in ``http`` and ``eventStreamHttp`` SHOULD be a valid
@@ -332,10 +332,10 @@ as defined in the ``aws.protocols#restXml`` protocol.
 Operation error serialization
 -----------------------------
 
-Error responses in the ``restXml`` protocol are wrapped in one additional
-nested XML element with the name ``Error`` by default. All error structure
-members are serialized within this element, unless bound to another location
-with HTTP protocol bindings.
+Error responses in the ``restXml`` protocol are wrapped in an XML element
+named ``ErrorResponse`` by default. All error structure members are serialized
+within this element, unless bound to another location with HTTP protocol
+bindings.
 
 Serialized error shapes MUST also contain an additional child element ``Code``
 that contains only the :token:`shape name <identifier>` of the error's
@@ -349,23 +349,23 @@ serialized in the response.
             <Type>Sender</Type>
             <Code>InvalidGreeting</Code>
             <Message>Hi</Message>
-            <AnotherSetting>setting</Message>
+            <AnotherSetting>setting</AnotherSetting>
         </Error>
         <RequestId>foo-id</RequestId>
     </ErrorResponse>
 
-The ``noErrorWrapping`` setting on the ``restXml`` protocol trait disables
+The ``noErrorWrapping`` setting of the ``restXml`` protocol trait disables
 using this additional nested XML element.
 
 .. code-block:: xml
 
-    <ErrorResponse>
+    <Error>
         <Type>Sender</Type>
         <Code>InvalidGreeting</Code>
         <Message>Hi</Message>
-        <AnotherSetting>setting</Message>
+        <AnotherSetting>setting</AnotherSetting>
         <RequestId>foo-id</RequestId>
-    </ErrorResponse>
+    </Error>
 
 
 -------------------------

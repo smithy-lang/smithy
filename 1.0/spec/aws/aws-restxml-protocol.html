@@ -124,8 +124,8 @@ also appear in <code class="docutils literal notranslate"><span class="pre">http
 </tr>
 <tr class="row-even"><td>noErrorWrapping</td>
 <td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
-<td>Disables the serialization wrapping of error properties in an
-'Error' XML element. See <a class="reference internal" href="#restxml-errors"><span class="std std-ref">operation error serialization</span></a>
+<td>Disables the wrapping of error properties in an <code class="docutils literal notranslate"><span class="pre">ErrorResponse</span></code>
+XML element. See <a class="reference internal" href="#restxml-errors"><span class="std std-ref">operation error serialization</span></a>
 for more information.</td>
 </tr>
 </tbody>
@@ -454,10 +454,10 @@ as defined in the <code class="docutils literal notranslate"><span class="pre">a
 </div>
 <div class="section" id="operation-error-serialization">
 <span id="restxml-errors"></span><h2><a href="#operation-error-serialization">Operation error serialization</a></h2>
-<p>Error responses in the <code class="docutils literal notranslate"><span class="pre">restXml</span></code> protocol are wrapped in one additional
-nested XML element with the name <code class="docutils literal notranslate"><span class="pre">Error</span></code> by default. All error structure
-members are serialized within this element, unless bound to another location
-with HTTP protocol bindings.</p>
+<p>Error responses in the <code class="docutils literal notranslate"><span class="pre">restXml</span></code> protocol are wrapped in an XML element
+named <code class="docutils literal notranslate"><span class="pre">ErrorResponse</span></code> by default. All error structure members are serialized
+within this element, unless bound to another location with HTTP protocol
+bindings.</p>
 <p>Serialized error shapes MUST also contain an additional child element <code class="docutils literal notranslate"><span class="pre">Code</span></code>
 that contains only the <a class="reference internal" href="../core/model.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
 <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>. This can be used to distinguish which specific error has been
@@ -467,21 +467,21 @@ serialized in the response.</p>
         <span class="nt">&lt;Type&gt;</span>Sender<span class="nt">&lt;/Type&gt;</span>
         <span class="nt">&lt;Code&gt;</span>InvalidGreeting<span class="nt">&lt;/Code&gt;</span>
         <span class="nt">&lt;Message&gt;</span>Hi<span class="nt">&lt;/Message&gt;</span>
-        <span class="nt">&lt;AnotherSetting&gt;</span>setting<span class="nt">&lt;/Message&gt;</span>
+        <span class="nt">&lt;AnotherSetting&gt;</span>setting<span class="nt">&lt;/AnotherSetting&gt;</span>
     <span class="nt">&lt;/Error&gt;</span>
     <span class="nt">&lt;RequestId&gt;</span>foo-id<span class="nt">&lt;/RequestId&gt;</span>
 <span class="nt">&lt;/ErrorResponse&gt;</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">noErrorWrapping</span></code> setting on the <code class="docutils literal notranslate"><span class="pre">restXml</span></code> protocol trait disables
+<p>The <code class="docutils literal notranslate"><span class="pre">noErrorWrapping</span></code> setting of the <code class="docutils literal notranslate"><span class="pre">restXml</span></code> protocol trait disables
 using this additional nested XML element.</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;ErrorResponse&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;Error&gt;</span>
     <span class="nt">&lt;Type&gt;</span>Sender<span class="nt">&lt;/Type&gt;</span>
     <span class="nt">&lt;Code&gt;</span>InvalidGreeting<span class="nt">&lt;/Code&gt;</span>
     <span class="nt">&lt;Message&gt;</span>Hi<span class="nt">&lt;/Message&gt;</span>
-    <span class="nt">&lt;AnotherSetting&gt;</span>setting<span class="nt">&lt;/Message&gt;</span>
+    <span class="nt">&lt;AnotherSetting&gt;</span>setting<span class="nt">&lt;/AnotherSetting&gt;</span>
     <span class="nt">&lt;RequestId&gt;</span>foo-id<span class="nt">&lt;/RequestId&gt;</span>
-<span class="nt">&lt;/ErrorResponse&gt;</span>
+<span class="nt">&lt;/Error&gt;</span>
 </pre></div>
 </div>
 </div>

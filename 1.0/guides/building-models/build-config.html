@@ -151,9 +151,9 @@ JSON</div>
                     <span class="p">}</span>
                 <span class="p">},</span>
                 <span class="p">{</span>
-                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;excludeTraitsByTag&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;excludeShapesByTrait&quot;</span><span class="p">,</span>
                     <span class="nt">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;internal&quot;</span><span class="p">]</span>
+                        <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;internal&quot;</span><span class="p">]</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">],</span>
@@ -392,6 +392,59 @@ JSON</div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">This transformer does not remove shapes from the prelude.</p>
+</div>
+</div>
+<div class="section" id="excludeshapesbytrait">
+<span id="excludeshapesbytrait-transform"></span><h3><a href="#excludeshapesbytrait">excludeShapesByTrait</a></h3>
+<p>Removes shapes if they are marked with one or more specific traits.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>traits</td>
+<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
+<td>A list of trait <a class="reference internal" href="../../spec/core/model.html#shape-id"><span class="std std-ref">shape IDs</span></a>. If any of these traits
+are found on a shape, the shape is removed from the model. Relative
+shape IDs are assumed to be in the <code class="docutils literal notranslate"><span class="pre">smithy.api</span></code>
+<a class="reference internal" href="../../spec/core/prelude-model.html#prelude"><span class="std std-ref">prelude</span></a> namespace.</td>
+</tr>
+</tbody>
+</table>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;excludeShapesByTrait&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;internal&quot;</span><span class="p">]</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 <div class="section" id="includeshapesbytag">
@@ -1244,6 +1297,7 @@ All model names referenced by the manifest are relative to <code class="docutils
 <li><a class="reference internal" href="#transforms">Transforms</a><ul>
 <li><a class="reference internal" href="#apply">apply</a></li>
 <li><a class="reference internal" href="#excludeshapesbytag">excludeShapesByTag</a></li>
+<li><a class="reference internal" href="#excludeshapesbytrait">excludeShapesByTrait</a></li>
 <li><a class="reference internal" href="#includeshapesbytag">includeShapesByTag</a></li>
 <li><a class="reference internal" href="#includenamespaces">includeNamespaces</a></li>
 <li><a class="reference internal" href="#includeservices">includeServices</a></li>

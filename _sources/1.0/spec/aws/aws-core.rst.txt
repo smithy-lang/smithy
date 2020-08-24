@@ -30,7 +30,6 @@ Value type
     * :ref:`service-cloudformation-name`
     * :ref:`service-arn-namespace`
     * :ref:`service-cloudtrail-event-source`
-    * :ref:`service-abbreviation`
 
 The following example defines an AWS service that uses the default values of
 ``cloudFormationService``, ``arnNamespace``, and ``cloudTrailEventSource``:
@@ -137,9 +136,9 @@ MUST NOT be an arbitrary value; for example for Amazon DynamoDB, an appropriate
 The following steps can be taken to produce a ``sdkId`` that should generally work
 for most services:
 
-1. Pick a base to derive the "sdkId". If available, use the ``abbreviation``
-   property of the ``aws.api#service`` trait as the base. An example of an official
-   service abbreviation is ``Amazon S3`` for ``Amazon Simple Storage Service``.
+1. Pick a base to derive the "sdkId". If an official abbreviation for a service
+   is available, then use that as the base. An example of an official service
+   abbreviation is ``Amazon S3`` for ``Amazon Simple Storage Service``.
    If the service has no official service abbreviation, then use the service's
    official name as specified by the :ref:`title-trait` (for example,
    ``Amazon Simple Storage Service``).
@@ -228,20 +227,6 @@ emitted by the service. If not specified, this value defaults to the
 This convention has some exceptions. For example, the event source for
 Amazon CloudWatch is ``monitoring.amazonaws.com``. Such services will
 need to explicitly configure the ``cloudTrailEventSource`` setting.
-
-
-.. _service-abbreviation:
-
-``abbreviation``
-================
-
-The ``abbreviation`` property is a ``string`` value that defines the official
-abbreviation of a service. For example, the official abbreviation of
-"Amazon Simple Storage Service" is "Amazon S3", and the abbreviation of
-"Amazon Kinesis Firehose" is "Firehose".
-
-See :ref:`aws-service-appendix-a` for a table containing various AWS services
-and their abbreviations.
 
 
 .. _aws.api#arn-trait:
@@ -1209,114 +1194,113 @@ The following, non-exhaustive, table defines the SDK service ID of many
 existing AWS services.
 
 .. csv-table::
-    :header: "sdkId", "title trait", "abbreviation"
-    :widths: 20, 20, 10
+    :header: "sdkId", "title trait"
 
-    ACM, AWS Certificate Manager, ACM
-    API Gateway, Amazon API Gateway, None
-    Application Auto Scaling, Application Auto Scaling, None
-    AppStream, Amazon AppStream, None
-    Athena, Amazon Athena, None
-    Auto Scaling, Auto Scaling, None
-    Batch, AWS Batch, AWS Batch
-    Budgets, AWS Budgets, AWSBudgets
-    CloudDirectory, Amazon CloudDirectory, None
-    CloudFormation, AWS CloudFormation, None
-    CloudFront, Amazon CloudFront, CloudFront
-    CloudHSM, Amazon CloudHSM, CloudHSM
-    CloudHSM V2, AWS CloudHSM V2, CloudHSM V2
-    CloudSearch, Amazon CloudSearch, None
-    CloudSearch Domain, Amazon CloudSearch Domain, None
-    CloudTrail, AWS CloudTrail, CloudTrail
-    CloudWatch, Amazon CloudWatch, CloudWatch
-    CodeBuild, AWS CodeBuild, None
-    CodeCommit, AWS CodeCommit, CodeCommit
-    CodeDeploy, AWS CodeDeploy, CodeDeploy
-    CodePipeline, AWS CodePipeline, CodePipeline
-    CodeStar, AWS CodeStar, CodeStar
-    Cognito Identity, Amazon Cognito Identity, None
-    Cognito Identity Provider, Amazon Cognito Identity Provider, None
-    Cognito Sync, Amazon Cognito Sync, None
-    Config Service, AWS Config, Config Service
-    Cost and Usage Report Service, AWS Cost and Usage Report Service, None
-    Data Pipeline, AWS Data Pipeline, None
-    DAX, Amazon DynamoDB Accelerator (DAX), Amazon DAX
-    Device Farm, AWS Device Farm, None
-    Direct Connect, AWS Direct Connect, None
-    Application Discovery Service, AWS Application Discovery Service, None
-    Database Migration Service, AWS Database Migration Service, None
-    Directory Service, AWS Directory Service, Directory Service
-    DynamoDB, Amazon DynamoDB, DynamoDB
-    DynamoDB Streams, Amazon DynamoDB Streams, None
-    EC2, Amazon Elastic Compute Cloud, Amazon EC2
-    ECR, Amazon EC2 Container Registry, Amazon ECR
-    ECS, Amazon EC2 Container Service, Amazon ECS
-    EFS, Amazon Elastic File System, EFS
-    ElastiCache, Amazon ElastiCache, None
-    Elastic Beanstalk, AWS Elastic Beanstalk, Elastic Beanstalk
-    Elastic Transcoder, Amazon Elastic Transcoder, None
-    Elastic Load Balancing, Elastic Load Balancing, None
-    Elastic Load Balancing v2, Elastic Load Balancing, Elastic Load Balancing v2
-    EMR, Amazon Elastic MapReduce, Amazon EMR
-    Elasticsearch Service, Amazon Elasticsearch Service, None
-    CloudWatch Events, Amazon CloudWatch Events, None
-    Firehose, Amazon Kinesis Firehose, Firehose
-    GameLift, Amazon GameLift, None
-    Glacier, Amazon Glacier, None
-    Glue, AWS Glue, None
-    Greengrass, AWS Greengrass, None
-    Health, AWS Health APIs and Notifications, AWSHealth
-    IAM, AWS Identity and Access Management, IAM
-    ImportExport, AWS Import/Export, None
-    Inspector, Amazon Inspector, None
-    IoT, AWS IoT, None
-    IoT Data Plane, AWS IoT Data Plane, None
-    Kinesis, Amazon Kinesis, Kinesis
-    Kinesis Analytics, Amazon Kinesis Analytics, Kinesis Analytics
-    KMS, AWS Key Management Service, KMS
-    Lambda, AWS Lambda, None
-    Lex Model Building Service, Amazon Lex Model Building Service, None
-    Lex Runtime Service, Amazon Lex Runtime Service, None
-    Lightsail, Amazon Lightsail, None
-    CloudWatch Logs, Amazon CloudWatch Logs, None
-    Machine Learning, Amazon Machine Learning, None
-    Marketplace Entitlement Service, AWS Marketplace Entitlement Service, None
-    Marketplace Commerce Analytics, AWS Marketplace Commerce Analytics, None
-    Marketplace Metering, AWS Marketplace Metering, None
-    Migration Hub, AWS Migration Hub, None
-    Mobile, AWS Mobile, None
-    MTurk, Amazon Mechanical Turk, Amazon MTurk
-    OpsWorks, AWS OpsWorks, None
-    OpsWorksCM, AWS OpsWorks for Chef Automate, OpsWorksCM
-    Organizations, AWS Organizations, Organizations
-    Pinpoint, Amazon Pinpoint, None
-    Polly, Amazon Polly, None
-    RDS, Amazon Relational Database Service, Amazon RDS
-    Redshift, Amazon Redshift, None
-    Rekognition, Amazon Rekognition, None
-    Resource Groups Tagging API, AWS Resource Groups Tagging API, None
-    Route 53, Amazon Route 53, Route 53
-    Route 53 Domains, Amazon Route 53 Domains, None
-    S3, Amazon Simple Storage Service, Amazon S3
-    SimpleDB, Amazon SimpleDB, None
-    Service Catalog, AWS Service Catalog, None
-    SES, Amazon Simple Email Service, Amazon SES
-    Shield, AWS Shield, AWS Shield
-    SMS, AWS Server Migration Service, SMS
-    Snowball, Amazon Import/Export Snowball, Amazon Snowball
-    SNS, Amazon Simple Notification Service, Amazon SNS
-    SQS, Amazon Simple Queue Service, Amazon SQS
-    SSM, Amazon Simple Systems Manager (SSM), Amazon SSM
-    SFN, AWS Step Functions, AWS SFN
-    Storage Gateway, AWS Storage Gateway, None
-    STS, AWS Security Token Service, AWS STS
-    Support, AWS Support, None
-    SWF, Amazon Simple Workflow Service, Amazon SWF
-    WAF, AWS WAF, WAF
-    WAF Regional, AWS WAF Regional, WAF Regional
-    WorkDocs, Amazon WorkDocs, None
-    WorkSpaces, Amazon WorkSpaces, None
-    XRay, AWS X-Ray, None
+    ACM, AWS Certificate Manager
+    API Gateway, Amazon API Gateway
+    Application Auto Scaling, Application Auto Scaling
+    AppStream, Amazon AppStream
+    Athena, Amazon Athena
+    Auto Scaling, Auto Scaling
+    Batch, AWS Batch
+    Budgets, AWS Budgets
+    CloudDirectory, Amazon CloudDirectory
+    CloudFormation, AWS CloudFormation
+    CloudFront, Amazon CloudFront
+    CloudHSM, Amazon CloudHSM
+    CloudHSM V2, AWS CloudHSM V2
+    CloudSearch, Amazon CloudSearch
+    CloudSearch Domain, Amazon CloudSearch Domain
+    CloudTrail, AWS CloudTrail
+    CloudWatch, Amazon CloudWatch
+    CodeBuild, AWS CodeBuild
+    CodeCommit, AWS CodeCommit
+    CodeDeploy, AWS CodeDeploy
+    CodePipeline, AWS CodePipeline
+    CodeStar, AWS CodeStar
+    Cognito Identity, Amazon Cognito Identity
+    Cognito Identity Provider, Amazon Cognito Identity Provider
+    Cognito Sync, Amazon Cognito Sync
+    Config Service, AWS Config
+    Cost and Usage Report Service, AWS Cost and Usage Report Service
+    Data Pipeline, AWS Data Pipeline
+    DAX, Amazon DynamoDB Accelerator (DAX)
+    Device Farm, AWS Device Farm
+    Direct Connect, AWS Direct Connect
+    Application Discovery Service, AWS Application Discovery Service
+    Database Migration Service, AWS Database Migration Service
+    Directory Service, AWS Directory Service
+    DynamoDB, Amazon DynamoDB
+    DynamoDB Streams, Amazon DynamoDB Streams
+    EC2, Amazon Elastic Compute Cloud
+    ECR, Amazon EC2 Container Registry
+    ECS, Amazon EC2 Container Service
+    EFS, Amazon Elastic File System
+    ElastiCache, Amazon ElastiCache
+    Elastic Beanstalk, AWS Elastic Beanstalk
+    Elastic Transcoder, Amazon Elastic Transcoder
+    Elastic Load Balancing, Elastic Load Balancing
+    Elastic Load Balancing v2, Elastic Load Balancing
+    EMR, Amazon Elastic MapReduce
+    Elasticsearch Service, Amazon Elasticsearch Service
+    CloudWatch Events, Amazon CloudWatch Events
+    Firehose, Amazon Kinesis Firehose
+    GameLift, Amazon GameLift
+    Glacier, Amazon Glacier
+    Glue, AWS Glue
+    Greengrass, AWS Greengrass
+    Health, AWS Health APIs and Notifications
+    IAM, AWS Identity and Access Management
+    ImportExport, AWS Import/Export
+    Inspector, Amazon Inspector
+    IoT, AWS IoT
+    IoT Data Plane, AWS IoT Data Plane
+    Kinesis, Amazon Kinesis
+    Kinesis Analytics, Amazon Kinesis Analytics
+    KMS, AWS Key Management Service
+    Lambda, AWS Lambda
+    Lex Model Building Service, Amazon Lex Model Building Service
+    Lex Runtime Service, Amazon Lex Runtime Service
+    Lightsail, Amazon Lightsail
+    CloudWatch Logs, Amazon CloudWatch Logs
+    Machine Learning, Amazon Machine Learning
+    Marketplace Entitlement Service, AWS Marketplace Entitlement Service
+    Marketplace Commerce Analytics, AWS Marketplace Commerce Analytics
+    Marketplace Metering, AWS Marketplace Metering
+    Migration Hub, AWS Migration Hub
+    Mobile, AWS Mobile
+    MTurk, Amazon Mechanical Turk
+    OpsWorks, AWS OpsWorks
+    OpsWorksCM, AWS OpsWorks for Chef Automate
+    Organizations, AWS Organizations
+    Pinpoint, Amazon Pinpoint
+    Polly, Amazon Polly
+    RDS, Amazon Relational Database Service
+    Redshift, Amazon Redshift
+    Rekognition, Amazon Rekognition
+    Resource Groups Tagging API, AWS Resource Groups Tagging API
+    Route 53, Amazon Route 53
+    Route 53 Domains, Amazon Route 53 Domains
+    S3, Amazon Simple Storage Service
+    SimpleDB, Amazon SimpleDB
+    Service Catalog, AWS Service Catalog
+    SES, Amazon Simple Email Service
+    Shield, AWS Shield
+    SMS, AWS Server Migration Service
+    Snowball, Amazon Import/Export Snowball
+    SNS, Amazon Simple Notification Service
+    SQS, Amazon Simple Queue Service
+    SSM, Amazon Simple Systems Manager (SSM)
+    SFN, AWS Step Functions
+    Storage Gateway, AWS Storage Gateway
+    STS, AWS Security Token Service
+    Support, AWS Support
+    SWF, Amazon Simple Workflow Service
+    WAF, AWS WAF
+    WAF Regional, AWS WAF Regional
+    WorkDocs, Amazon WorkDocs
+    WorkSpaces, Amazon WorkSpaces
+    XRay, AWS X-Ray
 
 
 .. _event records: https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-record-contents.html
