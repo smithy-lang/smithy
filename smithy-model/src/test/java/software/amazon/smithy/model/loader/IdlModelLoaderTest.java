@@ -18,8 +18,10 @@ package software.amazon.smithy.model.loader;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -31,7 +33,10 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.StringTrait;
+import software.amazon.smithy.model.validation.Severity;
+import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidatedResultException;
+import software.amazon.smithy.model.validation.ValidationEvent;
 
 public class IdlModelLoaderTest {
     @Test
@@ -130,5 +135,23 @@ public class IdlModelLoaderTest {
         String docs = shape.getTrait(DocumentationTrait.class).map(StringTrait::getValue).orElse("");
 
         assertThat(docs, equalTo("This is the first line.\nThis is the second line."));
+    }
+
+    @Test
+    public void warnsWhenInvalidSyntacticShapeIdIsFound() {
+        ValidatedResult<Model> result = Model.assembler()
+                .addUnparsedModel("foo.smithy", "namespace smithy.example\n"
+                                                + "@tags([nonono])\n"
+                                                + "string Foo\n")
+                .assemble();
+
+        assertThat(result.isBroken(), is(true));
+        List<ValidationEvent> events = result.getValidationEvents(Severity.DANGER);
+        assertThat(events.stream().filter(e -> e.getId().equals("SyntacticShapeIdTarget")).count(), equalTo(1L));
+        assertThat(events.stream()
+                           .filter(e -> e.getId().equals("SyntacticShapeIdTarget"))
+                           .filter(e -> e.getMessage().contains("`nonono`"))
+                           .count(),
+                   equalTo(1L));
     }
 }

@@ -27,12 +27,16 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NullNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.validation.Severity;
+import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.Pair;
 
 /**
  * Parses IDL nodes.
  */
 final class IdlNodeParser {
+
+    private static final String SYNTACTIC_SHAPE_ID_TARGET = "SyntacticShapeIdTarget";
 
     private IdlNodeParser() {}
 
@@ -84,7 +88,19 @@ final class IdlNodeParser {
                 // not be able to be resolved until after the entire model is loaded.
                 Pair<StringNode, Consumer<String>> pair = StringNode.createLazyString(text, location);
                 Consumer<String> consumer = pair.right;
-                parser.modelFile.addForwardReference(text, id -> consumer.accept(id.toString()));
+                parser.modelFile.addForwardReference(text, (id, typeFunction) -> {
+                    if (typeFunction.apply(id) == null) {
+                        parser.modelFile.events().add(ValidationEvent.builder()
+                                .id(SYNTACTIC_SHAPE_ID_TARGET)
+                                .severity(Severity.DANGER)
+                                .message(String.format("Syntactic shape ID `%s` does not resolve to a valid shape ID: "
+                                                       + "`%s`. Did you mean to quote this string? Are you missing a "
+                                                       + "model file?", text, id))
+                                .sourceLocation(location)
+                                .build());
+                    }
+                    consumer.accept(id.toString());
+                });
                 return pair.left;
         }
     }
