@@ -41,7 +41,7 @@ import software.amazon.smithy.model.traits.Trait;
  *
  * <pre>
  * {@code
- * ResolvedTopicIndex resolvedIndex = model.getKnowledge(ResolvedTopicIndex.class);
+ * ResolvedTopicIndex resolvedIndex = ResolvedTopicIndex.of(model);
  * TopicBinding<PublishTrait> binding = resolvedIndex.getPublishBinding(myOperation).get();
  *
  * assert(binding.getTopic() instanceOf Topic);
@@ -59,8 +59,8 @@ public final class ResolvedTopicIndex implements KnowledgeIndex {
 
     public ResolvedTopicIndex(Model model) {
         // Find all the MQTT topic bindings in the model.
-        EventStreamIndex eventStreamIndex = model.getKnowledge(EventStreamIndex.class);
-        OperationIndex operationIndex = model.getKnowledge(OperationIndex.class);
+        EventStreamIndex eventStreamIndex = EventStreamIndex.of(model);
+        OperationIndex operationIndex = OperationIndex.of(model);
 
         model.shapes(OperationShape.class).forEach(operation -> {
             if (operation.hasTrait(PublishTrait.class)) {
@@ -72,6 +72,10 @@ public final class ResolvedTopicIndex implements KnowledgeIndex {
                 createSubscribeBinding(input, eventStreamIndex, operation, trait);
             }
         });
+    }
+
+    public static ResolvedTopicIndex of(Model model) {
+        return model.getKnowledge(ResolvedTopicIndex.class, ResolvedTopicIndex::new);
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -57,6 +57,10 @@ public final class BottomUpIndex implements KnowledgeIndex {
                 serviceBindings.put(path.getEndShape().getId(), shapes);
             }
         });
+    }
+
+    public static BottomUpIndex of(Model model) {
+        return model.getKnowledge(BottomUpIndex.class, BottomUpIndex::new);
     }
 
     /**

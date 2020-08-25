@@ -50,7 +50,7 @@ public final class Walker {
      * @param model Model to traverse.
      */
     public Walker(Model model) {
-        this(model.getKnowledge(NeighborProviderIndex.class).getProvider());
+        this(NeighborProviderIndex.of(model).getProvider());
     }
 
     /**

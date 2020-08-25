@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public final class TopDownIndex implements KnowledgeIndex {
     private final Map<ShapeId, Set<OperationShape>> operations = new HashMap<>();
 
     public TopDownIndex(Model model) {
-        NeighborProvider provider = model.getKnowledge(NeighborProviderIndex.class).getProvider();
+        NeighborProvider provider = NeighborProviderIndex.of(model).getProvider();
         Walker walker = new Walker(provider);
 
         // Only traverse resource and operation bindings.
@@ -66,6 +66,10 @@ public final class TopDownIndex implements KnowledgeIndex {
                 resource.getId(), walker.walkShapes(resource, filter)));
         model.shapes(ServiceShape.class).forEach(resource -> findContained(
                 resource.getId(), walker.walkShapes(resource, filter)));
+    }
+
+    public static TopDownIndex of(Model model) {
+        return model.getKnowledge(TopDownIndex.class, TopDownIndex::new);
     }
 
     private void findContained(ShapeId container, Collection<Shape> shapes) {

@@ -39,7 +39,7 @@ public final class HttpBindingsMissingValidator extends AbstractValidator {
             return Collections.emptyList();
         }
 
-        TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
         return model.shapes(ServiceShape.class)
                 .flatMap(shape -> validateService(topDownIndex, shape).stream())
                 .collect(Collectors.toList());

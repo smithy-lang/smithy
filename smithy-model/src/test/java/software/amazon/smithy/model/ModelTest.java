@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.IntegerShape;
@@ -230,5 +231,15 @@ public class ModelTest {
 
         assertThat(shapes, hasSize(1));
         assertThat(shapes, contains(string));
+    }
+
+    /**
+     * This test ensures that the old deprecated behavior of using reflection
+     * to create a KnowledgeIndex is maintained (for now at least).
+     */
+    @Test
+    public void canCreateKnowledgeIndexUsingReflection() {
+        Model model = Model.builder().build();
+        model.getKnowledge(TopDownIndex.class);
     }
 }

@@ -33,7 +33,7 @@ import software.amazon.smithy.utils.MapUtils;
  * resource, and service shape in a model.
  */
 public final class IntegrationTraitIndex implements KnowledgeIndex {
-    private Map<ShapeId, Map<ShapeId, Trait>> traits = new HashMap<>();
+    private final Map<ShapeId, Map<ShapeId, Trait>> traits = new HashMap<>();
 
     public IntegrationTraitIndex(Model model) {
         model.shapes(ServiceShape.class).forEach(service -> {
@@ -41,6 +41,10 @@ public final class IntegrationTraitIndex implements KnowledgeIndex {
             traits.put(service.getId(), serviceMap);
             walk(model, service.getId(), service, null);
         });
+    }
+
+    public static IntegrationTraitIndex of(Model model) {
+        return model.getKnowledge(IntegrationTraitIndex.class, IntegrationTraitIndex::new);
     }
 
     /**

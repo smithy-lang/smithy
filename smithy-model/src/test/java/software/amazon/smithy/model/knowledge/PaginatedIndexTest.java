@@ -32,7 +32,7 @@ public class PaginatedIndexTest {
                         "/software/amazon/smithy/model/errorfiles/validators/paginated-trait-test.json"))
                 .assemble();
         Model model = result.getResult().get();
-        PaginatedIndex index = model.getKnowledge(PaginatedIndex.class);
+        PaginatedIndex index = PaginatedIndex.of(model);
         ShapeId service = ShapeId.from("ns.foo#Service");
 
         assertThat(index.getPaginationInfo(service, ShapeId.from("ns.foo#Valid2")).isPresent(), is(true));

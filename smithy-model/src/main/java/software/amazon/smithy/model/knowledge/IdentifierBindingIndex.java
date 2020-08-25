@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -52,8 +52,12 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
     }
 
     public IdentifierBindingIndex(Model model) {
-        OperationIndex operationIndex = model.getKnowledge(OperationIndex.class);
+        OperationIndex operationIndex = OperationIndex.of(model);
         model.shapes(ResourceShape.class).forEach(resource -> processResource(resource, operationIndex, model));
+    }
+
+    public static IdentifierBindingIndex of(Model model) {
+        return model.getKnowledge(IdentifierBindingIndex.class, IdentifierBindingIndex::new);
     }
 
     /**

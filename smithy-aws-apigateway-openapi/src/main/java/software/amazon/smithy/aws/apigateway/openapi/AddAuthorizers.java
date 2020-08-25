@@ -82,7 +82,7 @@ final class AddAuthorizers implements ApiGatewayMapper {
         }
 
         ServiceShape service = context.getService();
-        AuthorizerIndex authorizerIndex = context.getModel().getKnowledge(AuthorizerIndex.class);
+        AuthorizerIndex authorizerIndex = AuthorizerIndex.of(context.getModel());
 
         return authorizerIndex.getAuthorizer(service, shape)
                 // Remove the original scheme authentication scheme from the operation if found.
@@ -100,7 +100,7 @@ final class AddAuthorizers implements ApiGatewayMapper {
             String path
     ) {
         ServiceShape service = context.getService();
-        AuthorizerIndex authorizerIndex = context.getModel().getKnowledge(AuthorizerIndex.class);
+        AuthorizerIndex authorizerIndex = AuthorizerIndex.of(context.getModel());
 
         // Get the resolved security schemes of the service and operation, and
         // only add security if it's different than the service.

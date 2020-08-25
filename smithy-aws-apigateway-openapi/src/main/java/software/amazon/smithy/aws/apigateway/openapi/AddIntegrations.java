@@ -71,7 +71,7 @@ final class AddIntegrations implements ApiGatewayMapper {
             String httpMethod,
             String path
     ) {
-        IntegrationTraitIndex index = context.getModel().getKnowledge(IntegrationTraitIndex.class);
+        IntegrationTraitIndex index = IntegrationTraitIndex.of(context.getModel());
         return index.getIntegrationTrait(context.getService(), shape)
                 .map(trait -> operation.toBuilder()
                         .putExtension(EXTENSION_NAME, createIntegration(context, shape, trait))

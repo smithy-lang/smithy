@@ -40,21 +40,21 @@ public class EventStreamIndexTest {
 
     @Test
     public void providesEmptyOptionalWhenNotShape() {
-        EventStreamIndex index = model.getKnowledge(EventStreamIndex.class);
+        EventStreamIndex index = EventStreamIndex.of(model);
 
         assertThat(index.getInputInfo(ShapeId.from("com.foo#Missing")), equalTo(Optional.empty()));
     }
 
     @Test
     public void providesEmptyOptionalWhenNotOperation() {
-        EventStreamIndex index = model.getKnowledge(EventStreamIndex.class);
+        EventStreamIndex index = EventStreamIndex.of(model);
 
         assertThat(index.getInputInfo(ShapeId.from("smithy.api#String")), equalTo(Optional.empty()));
     }
 
     @Test
     public void providesEmptyOptionalWhenNoInput() {
-        EventStreamIndex index = model.getKnowledge(EventStreamIndex.class);
+        EventStreamIndex index = EventStreamIndex.of(model);
 
         assertThat(index.getInputInfo(ShapeId.from("example.smithy#EmptyOperation")),
                    equalTo(Optional.empty()));
@@ -62,7 +62,7 @@ public class EventStreamIndexTest {
 
     @Test
     public void providesEmptyOptionalWhenNoOutput() {
-        EventStreamIndex index = model.getKnowledge(EventStreamIndex.class);
+        EventStreamIndex index = EventStreamIndex.of(model);
 
         assertThat(index.getOutputInfo(ShapeId.from("example.smithy#EmptyOperation")),
                    equalTo(Optional.empty()));
@@ -70,7 +70,7 @@ public class EventStreamIndexTest {
 
     @Test
     public void providesEmptyOptionalWhenNoEventStreamTarget() {
-        EventStreamIndex index = model.getKnowledge(EventStreamIndex.class);
+        EventStreamIndex index = EventStreamIndex.of(model);
 
         assertThat(index.getOutputInfo(ShapeId.from("example.smithy#NotEventStreamOperation")),
                    equalTo(Optional.empty()));
@@ -78,7 +78,7 @@ public class EventStreamIndexTest {
 
     @Test
     public void returnsEventStreamInputInformation() {
-        EventStreamIndex index = model.getKnowledge(EventStreamIndex.class);
+        EventStreamIndex index = EventStreamIndex.of(model);
 
         assertThat(index.getOutputInfo(ShapeId.from("example.smithy#NotEventStreamOperation")),
                    equalTo(Optional.empty()));
@@ -86,7 +86,7 @@ public class EventStreamIndexTest {
 
     @Test
     public void returnsEventStreamOutputInformation() {
-        EventStreamIndex index = model.getKnowledge(EventStreamIndex.class);
+        EventStreamIndex index = EventStreamIndex.of(model);
 
         assertTrue(index.getInputInfo(ShapeId.from("example.smithy#EventStreamOperation")).isPresent());
         assertTrue(index.getOutputInfo(ShapeId.from("example.smithy#EventStreamOperation")).isPresent());

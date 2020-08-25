@@ -55,7 +55,7 @@ public final class HttpUriConflictValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validateService(Model model, ServiceShape service) {
-        List<OperationShape> operations = model.getKnowledge(TopDownIndex.class).getContainedOperations(service)
+        List<OperationShape> operations = TopDownIndex.of(model).getContainedOperations(service)
                 .stream()
                 .filter(shape -> shape.getTrait(HttpTrait.class).isPresent())
                 .collect(Collectors.toList());
@@ -150,7 +150,7 @@ public final class HttpUriConflictValidator extends AbstractValidator {
     }
 
     private Map<String, Pattern> getLabelPatterns(Model model, OperationShape operation) {
-        return model.getKnowledge(HttpBindingIndex.class)
+        return HttpBindingIndex.of(model)
                 .getRequestBindings(operation).entrySet().stream()
                 .filter(entry -> entry.getValue().getLocation().equals(HttpBinding.Location.LABEL))
                 .flatMap(entry -> OptionalUtils.stream(entry.getValue()

@@ -37,7 +37,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 public final class MqttTopicConflictValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ResolvedTopicIndex bindingIndex = model.getKnowledge(ResolvedTopicIndex.class);
+        ResolvedTopicIndex bindingIndex = ResolvedTopicIndex.of(model);
 
         // Find conflicting topic bindings for each resolved topic.
         return bindingIndex.topicBindings()

@@ -57,7 +57,7 @@ public final class StreamingTraitValidator extends AbstractValidator {
 
     private List<ValidationEvent> validateStreamingTargets(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
-        NeighborProvider provider = model.getKnowledge(NeighborProviderIndex.class).getReverseProvider();
+        NeighborProvider provider = NeighborProviderIndex.of(model).getReverseProvider();
 
         // Find any containers that reference a streaming trait.
         Set<Shape> streamingStructures = model.shapes(MemberShape.class)

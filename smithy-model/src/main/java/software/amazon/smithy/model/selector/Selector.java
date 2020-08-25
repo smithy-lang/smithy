@@ -120,7 +120,7 @@ public interface Selector {
 
         private Context createContext() {
             SmithyBuilder.requiredState("model", model);
-            return new Context(model.getKnowledge(NeighborProviderIndex.class));
+            return new Context(NeighborProviderIndex.of(model));
         }
 
         /**

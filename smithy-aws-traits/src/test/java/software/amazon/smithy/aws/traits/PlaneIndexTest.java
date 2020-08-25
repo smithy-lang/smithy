@@ -32,7 +32,7 @@ public class PlaneIndexTest {
                 .unwrap();
 
         ShapeId service = ShapeId.from("smithy.example#Service");
-        PlaneIndex index = model.getKnowledge(PlaneIndex.class);
+        PlaneIndex index = PlaneIndex.of(model);
         assertTrue(index.isControlPlane(service));
         assertFalse(index.isDataPlane(service));
         assertTrue(index.isPlaneDefined(service));

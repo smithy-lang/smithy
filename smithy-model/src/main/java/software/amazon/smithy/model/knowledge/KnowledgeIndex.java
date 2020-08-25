@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,15 +15,17 @@
 
 package software.amazon.smithy.model.knowledge;
 
+import java.util.function.Function;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 
 /**
- * Contains an index of computed knowledge about a {@link Model}.
+ * A marker interface used to indicate that a class contains an index of
+ * computed knowledge about a {@link Model}.
  *
- * <p>A KnowledgeIndex is created to reduce code duplication and
+ * <p>The purpose of a KnowledgeIndex is to reduce code duplication and
  * complexity of extracting and computing information about a model.
  * A KnowledgeIndex is often a mapping of {@link ShapeId} to some kind of
  * interesting computed information. For example, in order to resolve the
@@ -31,39 +33,32 @@ import software.amazon.smithy.model.shapes.StructureShape;
  * you need a {@link Model}, to ensure that the reference from the
  * operation to the structure is resolvable in the model, that the
  * shape it references is a structure, and then to cast the shape to a
- * {@link StructureShape}. Because this process is error prone, verbose,
- * and is required by a large number of validators and tools, Smithy
- * provides a {@link OperationIndex} to compute it automatically.
+ * {@link StructureShape}. Because this process can be complex and is
+ * required by a large number of validators and tools, Smithy provides an
+ * {@link OperationIndex} to compute it automatically.
  *
- * <p>The {@link Model#getKnowledge} method should be used to create instances
- * of a KnowledgeIndex. Creating instances of a KnowledgeIndex using this
- * method reduces the number of times the results of a KnowledgeIndex needs
- * to be computed for a specific Model. In order to use this method,
- * implementations of a KnowledgeIndex must provide a public constructor
- * that accepts a {@link Model}.
+ * <p>By convention, each KnowledgeIndex should provide a public static method
+ * named {@code of} that accepts a {@link Model} and returns an instance of
+ * the KnowledgeIndex. The {@code of} method should invoke the
+ * {@link Model#getKnowledge(Class, Function)} method to ensure that the
+ * index is only computed once per model. Because they are cached and can be
+ * used across threads, a KnowledgeIndex must be thread safe.
+ *
+ * <p>The following example demonstrates a standard KnowledgeIndex
+ * implementation:
+ *
+ * <pre>{@code
+ * public final class MyIndex implements KnowledgeIndex {
+ *     public MyIndex(Model model) {
+ *         // implement the code used to create the index.
+ *     }
+ *
+ *     public static MyIndex of(Model model) {
+ *         return model.getKnowledge(MyIndex.class, MyIndex::new);
+ *     }
+ *
+ *     // Implement methods used to query the knowledge index.
+ * }
+ * }</pre>
  */
-public interface KnowledgeIndex {
-    /**
-     * Creates a KnowledgeIndex for a particular class.
-     *
-     * @param model Model to provide to the knowledge index constructor.
-     * @param type Class to create.
-     * @param <T> Type of knowledge index to create.
-     * @return Returns the created KnowledgeIndex.
-     * @throws RuntimeException if the index cannot be created.
-     */
-    @SuppressWarnings("unchecked")
-    static <T extends KnowledgeIndex> T create(Class<T> type, Model model) {
-        try {
-            return type.getConstructor(Model.class).newInstance(model);
-        } catch (NoSuchMethodException e) {
-            String message = String.format(
-                    "KnowledgeIndex for type `%s` does not expose a public constructor that accepts a Model", type);
-            throw new RuntimeException(message, e);
-        } catch (ReflectiveOperationException e) {
-            String message = String.format(
-                    "Unable to create a KnowledgeIndex for type `%s`: %s", type, e.getMessage());
-            throw new RuntimeException(message, e);
-        }
-    }
-}
+public interface KnowledgeIndex {}

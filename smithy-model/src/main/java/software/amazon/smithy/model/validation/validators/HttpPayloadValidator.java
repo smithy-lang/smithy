@@ -52,8 +52,8 @@ public final class HttpPayloadValidator extends AbstractValidator {
             return Collections.emptyList();
         }
 
-        OperationIndex opIndex = model.getKnowledge(OperationIndex.class);
-        HttpBindingIndex bindings = model.getKnowledge(HttpBindingIndex.class);
+        OperationIndex opIndex = OperationIndex.of(model);
+        HttpBindingIndex bindings = HttpBindingIndex.of(model);
         List<ValidationEvent> events = new ArrayList<>();
         events.addAll(model.shapes(OperationShape.class)
                 .filter(shape -> shape.getTrait(HttpTrait.class).isPresent())

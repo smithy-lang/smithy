@@ -31,7 +31,7 @@ public class IntegrationTraitIndexTest {
                 .assemble()
                 .unwrap();
 
-        IntegrationTraitIndex index = model.getKnowledge(IntegrationTraitIndex.class);
+        IntegrationTraitIndex index = IntegrationTraitIndex.of(model);
         ShapeId service = ShapeId.from("ns.foo#Service");
         ShapeId a = ShapeId.from("ns.foo#A");
         ShapeId b = ShapeId.from("ns.foo#B");

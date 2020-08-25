@@ -53,7 +53,7 @@ public final class TargetValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        NeighborProvider neighborProvider = model.getKnowledge(NeighborProviderIndex.class).getProvider();
+        NeighborProvider neighborProvider = NeighborProviderIndex.of(model).getProvider();
         return model.shapes()
                 .flatMap(shape -> validateShape(model, shape, neighborProvider.getNeighbors(shape)))
                 .collect(Collectors.toList());

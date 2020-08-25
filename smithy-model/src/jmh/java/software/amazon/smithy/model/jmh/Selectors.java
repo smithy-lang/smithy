@@ -128,7 +128,7 @@ public class Selectors {
     @Benchmark
     public Set<Shape> evaluateHttpBindingManually(SelectorState state) {
         Model model = state.model;
-        TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
         return model.shapes(ServiceShape.class).flatMap(service -> {
             Set<OperationShape> operations = topDownIndex.getContainedOperations(service);
             // Stop early if there are no bindings at all in the model for any operation.

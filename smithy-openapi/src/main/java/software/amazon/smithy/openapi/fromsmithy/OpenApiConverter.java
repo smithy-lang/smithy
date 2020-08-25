@@ -249,7 +249,7 @@ public final class OpenApiConverter {
     // If the derived protocol trait cannot be found on the service, an exception
     // is thrown.
     private Trait loadOrDeriveProtocolTrait(Model model, ServiceShape service) {
-        ServiceIndex serviceIndex = model.getKnowledge(ServiceIndex.class);
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
         Set<ShapeId> serviceProtocols = serviceIndex.getProtocols(service).keySet();
 
         if (config.getProtocol() != null) {
@@ -363,7 +363,7 @@ public final class OpenApiConverter {
             List<Smithy2OpenApiExtension> extensions
     ) {
         // Note: Using a LinkedHashSet here in case order is ever important.
-        ServiceIndex serviceIndex = model.getKnowledge(ServiceIndex.class);
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
         Set<Class<? extends Trait>> schemes = getTraitMapTypes(serviceIndex.getAuthSchemes(service));
 
         List<SecuritySchemeConverter<? extends Trait>> converters = extensions.stream()
@@ -417,7 +417,7 @@ public final class OpenApiConverter {
             OpenApiProtocol<T> protocolService,
             OpenApiMapper plugin
     ) {
-        TopDownIndex topDownIndex = context.getModel().getKnowledge(TopDownIndex.class);
+        TopDownIndex topDownIndex = TopDownIndex.of(context.getModel());
         Map<String, PathItem.Builder> paths = new HashMap<>();
 
         // Add each operation connected to the service shape to the OpenAPI model.
@@ -498,7 +498,7 @@ public final class OpenApiConverter {
             OpenApiMapper plugin
     ) {
         ServiceShape service = context.getService();
-        ServiceIndex serviceIndex = context.getModel().getKnowledge(ServiceIndex.class);
+        ServiceIndex serviceIndex = ServiceIndex.of(context.getModel());
         Map<ShapeId, Trait> serviceSchemes = serviceIndex.getEffectiveAuthSchemes(service);
         Map<ShapeId, Trait> operationSchemes = serviceIndex.getEffectiveAuthSchemes(service, shape);
 
@@ -633,7 +633,7 @@ public final class OpenApiConverter {
             OpenApiMapper plugin
     ) {
         ServiceShape service = context.getService();
-        ServiceIndex serviceIndex = context.getModel().getKnowledge(ServiceIndex.class);
+        ServiceIndex serviceIndex = ServiceIndex.of(context.getModel());
 
         // Create security components for each referenced security scheme.
         for (SecuritySchemeConverter<? extends Trait> converter : context.getSecuritySchemeConverters()) {

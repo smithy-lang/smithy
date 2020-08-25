@@ -34,7 +34,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 public final class ProtocolHttpValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ServiceIndex serviceIndex = model.getKnowledge(ServiceIndex.class);
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
         return model.shapes(ServiceShape.class)
                 .flatMap(service -> validateService(service, serviceIndex).stream())
                 .collect(Collectors.toList());

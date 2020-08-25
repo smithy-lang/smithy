@@ -78,7 +78,7 @@ public final class CleanClientDiscoveryTraitTransformer implements ModelTransfor
             Model model,
             Set<ShapeId> updatedServices
     ) {
-        ClientEndpointDiscoveryIndex discoveryIndex = model.getKnowledge(ClientEndpointDiscoveryIndex.class);
+        ClientEndpointDiscoveryIndex discoveryIndex = ClientEndpointDiscoveryIndex.of(model);
         Set<ShapeId> stillBoundOperations = model.shapes(ServiceShape.class)
                 // Get all endpoint discovery services
                 .filter(service -> service.hasTrait(ClientEndpointDiscoveryTrait.class))

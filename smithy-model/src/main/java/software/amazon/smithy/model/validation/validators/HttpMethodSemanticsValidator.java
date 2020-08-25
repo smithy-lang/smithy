@@ -67,7 +67,7 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
             return Collections.emptyList();
         }
 
-        HttpBindingIndex bindingIndex = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex bindingIndex = HttpBindingIndex.of(model);
         List<ValidationEvent> events = new ArrayList<>();
         for (Shape shape : model.getShapesWithTrait(HttpTrait.class)) {
             shape.asOperationShape().ifPresent(operation -> {

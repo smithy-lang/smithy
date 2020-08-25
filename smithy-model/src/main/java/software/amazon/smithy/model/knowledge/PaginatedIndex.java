@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -48,8 +48,8 @@ public final class PaginatedIndex implements KnowledgeIndex {
     private final Map<ShapeId, Map<ShapeId, PaginationInfo>> paginationInfo = new HashMap<>();
 
     public PaginatedIndex(Model model) {
-        TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
-        OperationIndex opIndex = model.getKnowledge(OperationIndex.class);
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
+        OperationIndex opIndex = OperationIndex.of(model);
 
         model.shapes(ServiceShape.class).forEach(service -> {
             PaginatedTrait serviceTrait = service.getTrait(PaginatedTrait.class).orElse(null);
@@ -59,6 +59,10 @@ public final class PaginatedIndex implements KnowledgeIndex {
                     .collect(Collectors.toMap(i -> i.getOperation().getId(), Function.identity()));
             paginationInfo.put(service.getId(), Collections.unmodifiableMap(mappings));
         });
+    }
+
+    public static PaginatedIndex of(Model model) {
+        return model.getKnowledge(PaginatedIndex.class, PaginatedIndex::new);
     }
 
     private Optional<PaginationInfo> create(

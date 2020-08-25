@@ -65,7 +65,7 @@ public final class ServiceValidator extends AbstractValidator {
 
     private List<ValidationEvent> validateService(Model model, ServiceShape service) {
         // Ensure that shapes bound to the service have unique shape names.
-        Walker walker = new Walker(model.getKnowledge(NeighborProviderIndex.class).getProvider());
+        Walker walker = new Walker(NeighborProviderIndex.of(model).getProvider());
         Set<Shape> serviceClosure = walker.walkShapes(service);
         Map<String, List<ShapeId>> conflicts = ValidationUtils.findDuplicateShapeNames(serviceClosure);
 

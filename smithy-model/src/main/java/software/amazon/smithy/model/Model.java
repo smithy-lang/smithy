@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
 import software.amazon.smithy.model.loader.ModelAssembler;
@@ -348,24 +349,51 @@ public final class Model implements ToSmithyBuilder<Model> {
     }
 
     /**
-     * Gets a computed knowledge index of a specific type for the model.
-     *
-     * <p>If a {@link KnowledgeIndex} of the given type has not yet been
-     * computed, one will be created using a constructor of the given type
-     * that accepts a {@link Model}. Computed knowledge indexes are cached
-     * and returned on subsequent retrievals.
-     *
-     * <p>Using this method is preferred over directly instantiating instances
-     * of a KnowledgeIndex if the KnowledgeIndex required in various unrelated
-     * code paths where passing around an instance of a KnowledgeIndex is not
-     * practical or impossible.
+     * This method is deprecated. Use the {@code of} method of the
+     * {@link KnowledgeIndex} you wish to create instead.
      *
      * @param type Type of knowledge index to retrieve.
      * @param <T> The type of knowledge index to retrieve.
      * @return Returns the computed knowledge index.
      */
-    @SuppressWarnings("unchecked")
+    @Deprecated
     public <T extends KnowledgeIndex> T getKnowledge(Class<T> type) {
+        return getKnowledge(type, m -> {
+            try {
+                return type.getConstructor(Model.class).newInstance(this);
+            } catch (NoSuchMethodException e) {
+                String message = String.format(
+                        "KnowledgeIndex for type `%s` does not expose a public constructor that accepts a Model", type);
+                throw new RuntimeException(message, e);
+            } catch (ReflectiveOperationException e) {
+                String message = String.format(
+                        "Unable to create a KnowledgeIndex for type `%s`: %s", type, e.getMessage());
+                throw new RuntimeException(message, e);
+            }
+        });
+    }
+
+    /**
+     * Gets a computed "knowledge index" of a specific type for the model
+     * and caches it for subsequent retrieval.
+     *
+     * <p>This method should not typically be called directly because
+     * KnowledgeIndex classes should all provide a public static {@code of}
+     * method that accepts a {@code Model} and returns an instance of the
+     * index by invoking {@code getKnowledge}.
+     *
+     * <p>If a {@link KnowledgeIndex} of the given type has not yet been
+     * computed, one will be created using the provided {@code constructor}
+     * function that accepts a {@link Model}. Computed knowledge indexes are
+     * cached and returned on subsequent retrievals.
+     *
+     * @param type Type of knowledge index to retrieve.
+     * @param constructor The method used to create {@code type}.
+     * @param <T> The type of knowledge index to retrieve.
+     * @return Returns the computed knowledge index.
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends KnowledgeIndex> T getKnowledge(Class<T> type, Function<Model, T> constructor) {
         // This method intentionally does not use putIfAbsent to avoid
         // deadlocks in the case where a knowledge index needs to access
         // other knowledge indexes from a Model. While this *can* cause
@@ -377,7 +405,7 @@ public final class Model implements ToSmithyBuilder<Model> {
         T value = (T) blackboard.get(type);
 
         if (value == null) {
-            value = KnowledgeIndex.create(type, this);
+            value = constructor.apply(this);
             blackboard.put(type, value);
         }
 
@@ -388,7 +416,7 @@ public final class Model implements ToSmithyBuilder<Model> {
      * Builder used to create a Model.
      */
     public static final class Builder implements SmithyBuilder<Model> {
-        private Map<String, Node> metadata = new HashMap<>();
+        private final Map<String, Node> metadata = new HashMap<>();
         private final Map<ShapeId, Shape> shapeMap = new HashMap<>();
 
         private Builder() {}
@@ -502,8 +530,8 @@ public final class Model implements ToSmithyBuilder<Model> {
     }
 
     private static final class TraitCache {
-        private Map<ShapeId, Set<Shape>> traitIdsToShapes = new HashMap<>();
-        private Map<Class<? extends Trait>, Set<Shape>> traitsToShapes = new HashMap<>();
+        private final Map<ShapeId, Set<Shape>> traitIdsToShapes = new HashMap<>();
+        private final Map<Class<? extends Trait>, Set<Shape>> traitsToShapes = new HashMap<>();
 
         TraitCache(Collection<Shape> shapes) {
             for (Shape shape : shapes) {

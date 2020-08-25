@@ -49,7 +49,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 public final class MqttSubscribeOutputValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        EventStreamIndex eventStreamIndex = model.getKnowledge(EventStreamIndex.class);
+        EventStreamIndex eventStreamIndex = EventStreamIndex.of(model);
         return model.shapes(OperationShape.class)
                 .flatMap(shape -> Trait.flatMapStream(shape, SubscribeTrait.class))
                 .flatMap(pair -> validateOperation(model, pair.getLeft(), eventStreamIndex).stream())

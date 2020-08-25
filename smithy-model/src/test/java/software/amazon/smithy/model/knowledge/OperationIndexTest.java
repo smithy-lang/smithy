@@ -47,7 +47,7 @@ public class OperationIndexTest {
 
     @Test
     public void indexesEmptyOperations() {
-        OperationIndex opIndex = model.getKnowledge(OperationIndex.class);
+        OperationIndex opIndex = OperationIndex.of(model);
 
         assertThat(opIndex.getInput(ShapeId.from("ns.foo#A")), is(Optional.empty()));
         assertThat(opIndex.getOutput(ShapeId.from("ns.foo#A")), is(Optional.empty()));
@@ -56,7 +56,7 @@ public class OperationIndexTest {
 
     @Test
     public void indexesOperations() {
-        OperationIndex opIndex = model.getKnowledge(OperationIndex.class);
+        OperationIndex opIndex = OperationIndex.of(model);
         Shape input = model.getShape(ShapeId.from("ns.foo#Input")).get();
         Shape output = model.getShape(ShapeId.from("ns.foo#Output")).get();
         Shape error1 = model.getShape(ShapeId.from("ns.foo#Error1")).get();

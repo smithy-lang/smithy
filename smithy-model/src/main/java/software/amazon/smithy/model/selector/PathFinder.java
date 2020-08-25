@@ -67,7 +67,7 @@ public final class PathFinder {
 
     private PathFinder(Model model) {
         this.model = model;
-        this.reverseProvider = model.getKnowledge(NeighborProviderIndex.class).getReverseProvider();
+        this.reverseProvider = NeighborProviderIndex.of(model).getReverseProvider();
     }
 
     /**

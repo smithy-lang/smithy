@@ -123,9 +123,7 @@ public interface OpenApiProtocol<T extends Trait> {
      * @return Returns the status code as a string.
      */
     default String getOperationResponseStatusCode(Context<T> context, ToShapeId operationOrError) {
-        return String.valueOf(context.getModel()
-                .getKnowledge(HttpBindingIndex.class)
-                .getResponseCode(operationOrError));
+        return String.valueOf(HttpBindingIndex.of(context.getModel()).getResponseCode(operationOrError));
     }
 
     /**
