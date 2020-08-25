@@ -612,6 +612,17 @@ shape IDs inside of strings, and this difference is inconsequential in the
 resolved to a string that contains a fully-qualified shape ID when parsing
 the model.
 
+.. rubric:: Validation
+
+When a syntactic shape ID is found that does not target an actual shape in
+the fully loaded semantic model, an implementation SHOULD emit a DANGER
+:ref:`validation event <validation>` with an ID of `SyntacticShapeIdTarget`.
+This validation brings attention to the broken reference and helps to ensure
+that modelers do not unintentionally use a syntactic shape ID when they should
+have used a string. A DANGER severity is used so that the validation can be
+:ref:`suppressed <suppression-definition>` in the rare cases that the broken
+reference can be ignored.
+
 
 Defining shapes
 ===============
