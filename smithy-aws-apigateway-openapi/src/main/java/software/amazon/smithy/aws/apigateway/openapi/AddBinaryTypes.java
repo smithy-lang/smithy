@@ -71,8 +71,8 @@ final class AddBinaryTypes implements ApiGatewayMapper {
 
     private Stream<String> supportedMediaTypes(Context<? extends Trait> context) {
         Model model = context.getModel();
-        HttpBindingIndex httpBindingIndex = context.getModel().getKnowledge(HttpBindingIndex.class);
-        TopDownIndex topDownIndex = context.getModel().getKnowledge(TopDownIndex.class);
+        HttpBindingIndex httpBindingIndex = HttpBindingIndex.of(context.getModel());
+        TopDownIndex topDownIndex = TopDownIndex.of(context.getModel());
 
         // Find the media types defined on all request and response bindings.
         return topDownIndex.getContainedOperations(context.getService()).stream()

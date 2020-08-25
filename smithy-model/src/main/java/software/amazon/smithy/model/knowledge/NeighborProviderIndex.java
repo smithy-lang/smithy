@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -43,6 +43,10 @@ public final class NeighborProviderIndex implements KnowledgeIndex {
         // Store a WeakReference to the model since the reversed provider that includes
         // traits is lazily computed.
         this.model = new WeakReference<>(model);
+    }
+
+    public static NeighborProviderIndex of(Model model) {
+        return model.getKnowledge(NeighborProviderIndex.class, NeighborProviderIndex::new);
     }
 
     /**

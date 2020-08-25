@@ -71,6 +71,10 @@ public final class AuthorizerIndex implements KnowledgeIndex {
         });
     }
 
+    public static AuthorizerIndex of(Model model) {
+        return model.getKnowledge(AuthorizerIndex.class, AuthorizerIndex::new);
+    }
+
     private static String getNullableAuthorizerValue(Shape shape, String previous) {
         return shape.getTrait(AuthorizerTrait.class).map(AuthorizerTrait::getValue).orElse(previous);
     }

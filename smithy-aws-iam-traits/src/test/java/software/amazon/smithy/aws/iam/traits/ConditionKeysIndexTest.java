@@ -43,7 +43,7 @@ public class ConditionKeysIndexTest {
                 .unwrap();
         ShapeId service = ShapeId.from("smithy.example#MyService");
 
-        ConditionKeysIndex index = model.getKnowledge(ConditionKeysIndex.class);
+        ConditionKeysIndex index = ConditionKeysIndex.of(model);
         assertThat(index.getConditionKeyNames(service), containsInAnyOrder(
                 "aws:accountId", "foo:baz", "myservice:Resource1Id1", "myservice:Resource2Id2"));
         assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#Operation1")),

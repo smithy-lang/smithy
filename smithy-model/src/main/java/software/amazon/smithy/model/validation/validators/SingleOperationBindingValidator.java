@@ -38,7 +38,7 @@ public final class SingleOperationBindingValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
         return model.shapes(ServiceShape.class)
                 .flatMap(shape -> validateService(topDownIndex, shape).stream())
                 .collect(Collectors.toList());

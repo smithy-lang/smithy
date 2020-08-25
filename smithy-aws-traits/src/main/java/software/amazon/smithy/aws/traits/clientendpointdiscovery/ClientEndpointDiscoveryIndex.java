@@ -41,8 +41,8 @@ public final class ClientEndpointDiscoveryIndex implements KnowledgeIndex {
     private final Map<ShapeId, Map<ShapeId, ClientEndpointDiscoveryInfo>> endpointDiscoveryInfo = new HashMap<>();
 
     public ClientEndpointDiscoveryIndex(Model model) {
-        TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
-        OperationIndex opIndex = model.getKnowledge(OperationIndex.class);
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
+        OperationIndex opIndex = OperationIndex.of(model);
 
         model.shapes(ServiceShape.class)
                 .flatMap(service -> Trait.flatMapStream(service, ClientEndpointDiscoveryTrait.class))
@@ -64,6 +64,10 @@ public final class ClientEndpointDiscoveryIndex implements KnowledgeIndex {
                         }
                     }
                 });
+    }
+
+    public static ClientEndpointDiscoveryIndex of(Model model) {
+        return model.getKnowledge(ClientEndpointDiscoveryIndex.class, ClientEndpointDiscoveryIndex::new);
     }
 
     private Map<ShapeId, ClientEndpointDiscoveryInfo> getOperations(

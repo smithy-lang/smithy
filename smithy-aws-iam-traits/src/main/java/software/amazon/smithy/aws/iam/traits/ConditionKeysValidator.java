@@ -42,8 +42,8 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 public final class ConditionKeysValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ConditionKeysIndex conditionIndex = model.getKnowledge(ConditionKeysIndex.class);
-        TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
+        ConditionKeysIndex conditionIndex = ConditionKeysIndex.of(model);
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
 
         return model.shapes(ServiceShape.class)
                 .filter(service -> service.hasTrait(ServiceTrait.class))

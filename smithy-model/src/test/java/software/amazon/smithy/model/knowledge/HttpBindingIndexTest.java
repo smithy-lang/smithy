@@ -56,13 +56,13 @@ public class HttpBindingIndexTest {
     @Test
     public void throwsWhenShapeIsInvalid() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            model.getKnowledge(HttpBindingIndex.class).getRequestBindings(ShapeId.from("ns.foo#Missing"));
+            HttpBindingIndex.of(model).getRequestBindings(ShapeId.from("ns.foo#Missing"));
         });
     }
 
     @Test
     public void providesResponseCode() {
-        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex index = HttpBindingIndex.of(model);
 
         assertThat(index.getResponseCode(ShapeId.from("ns.foo#ServiceOperationNoInputOutput")), is(200));
     }
@@ -75,7 +75,7 @@ public class HttpBindingIndexTest {
                 .addTrait(new HttpErrorTrait(400, SourceLocation.NONE))
                 .build();
         Model model = Model.assembler().addShape(structure).assemble().unwrap();
-        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex index = HttpBindingIndex.of(model);
 
         assertThat(index.getResponseCode(ShapeId.from("ns.foo#Error")), is(400));
     }
@@ -87,14 +87,14 @@ public class HttpBindingIndexTest {
                 .addTrait(new ErrorTrait("client", SourceLocation.NONE))
                 .build();
         Model model = Model.assembler().addShape(structure).assemble().unwrap();
-        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex index = HttpBindingIndex.of(model);
 
         assertThat(index.getResponseCode(ShapeId.from("ns.foo#Error")), is(400));
     }
 
     @Test
     public void returnsEmptyBindingsWhenNoInputOrOutput() {
-        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex index = HttpBindingIndex.of(model);
 
         assertThat(index.getRequestBindings(ShapeId.from("ns.foo#ServiceOperationNoInputOutput")).entrySet(), empty());
         assertThat(index.getResponseBindings(ShapeId.from("ns.foo#ServiceOperationNoInputOutput")).entrySet(), empty());
@@ -102,7 +102,7 @@ public class HttpBindingIndexTest {
 
     @Test
     public void returnsResponseMemberBindingsWithDefaults() {
-        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex index = HttpBindingIndex.of(model);
         ShapeId id = ShapeId.from("ns.foo#ServiceOperationExplicitMembers");
         Map<String, HttpBinding> responseBindings = index.getResponseBindings(id);
 
@@ -130,7 +130,7 @@ public class HttpBindingIndexTest {
 
     @Test
     public void returnsResponseMemberBindingsWithExplicitBody() {
-        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex index = HttpBindingIndex.of(model);
         ShapeId id = ShapeId.from("ns.foo#ServiceOperationExplicitBody");
         Map<String, HttpBinding> responseBindings = index.getResponseBindings(id);
 
@@ -154,7 +154,7 @@ public class HttpBindingIndexTest {
 
     @Test
     public void returnsErrorResponseCode() {
-        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex index = HttpBindingIndex.of(model);
         ShapeId id = ShapeId.from("ns.foo#ErrorExplicitStatus");
 
         assertThat(index.getResponseCode(id), is(403));
@@ -162,7 +162,7 @@ public class HttpBindingIndexTest {
 
     @Test
     public void findsLabelBindings() {
-        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex index = HttpBindingIndex.of(model);
         ShapeId id = ShapeId.from("ns.foo#WithLabels");
         Map<String, HttpBinding> bindings = index.getRequestBindings(id);
 
@@ -202,7 +202,7 @@ public class HttpBindingIndexTest {
                 .assemble()
                 .getResult()
                 .get();
-        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex index = HttpBindingIndex.of(model);
         Map<String, HttpBinding> requestBindings = index.getRequestBindings(operation.getId());
 
         assertThat(requestBindings.get("bar").getLocation(), is(HttpBinding.Location.PAYLOAD));
@@ -235,7 +235,7 @@ public class HttpBindingIndexTest {
 
     @Test
     public void resolvesStructureBodyContentType() {
-        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex index = HttpBindingIndex.of(model);
         ShapeId operation = ShapeId.from("ns.foo#ServiceOperationWithStructurePayload");
         Optional<String> contentType = index.determineResponseContentType(operation, "application/json");
 
@@ -244,7 +244,7 @@ public class HttpBindingIndexTest {
 
     @Test
     public void resolvesStringBodyContentType() {
-        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex index = HttpBindingIndex.of(model);
         ShapeId operation = ShapeId.from("ns.foo#ServiceOperationExplicitMembers");
         Optional<String> contentType = index.determineRequestContentType(operation, "application/json");
 
@@ -253,7 +253,7 @@ public class HttpBindingIndexTest {
 
     @Test
     public void resolvesBlobBodyContentType() {
-        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex index = HttpBindingIndex.of(model);
         ShapeId operation = ShapeId.from("ns.foo#ServiceOperationWithBlobPayload");
         Optional<String> contentType = index.determineResponseContentType(operation, "application/json");
 
@@ -262,7 +262,7 @@ public class HttpBindingIndexTest {
 
     @Test
     public void resolvesMediaType() {
-        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex index = HttpBindingIndex.of(model);
         ShapeId operation = ShapeId.from("ns.foo#ServiceOperationWithMediaType");
         Optional<String> contentType = index.determineResponseContentType(operation, "application/json");
 
@@ -271,7 +271,7 @@ public class HttpBindingIndexTest {
 
     @Test
     public void resolvesResponseEventStreamMediaType() {
-        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex index = HttpBindingIndex.of(model);
         ShapeId operation = ShapeId.from("ns.foo#ServiceOperationWithEventStream");
         String expected = "application/vnd.amazon.eventstream";
         Optional<String> contentType = index.determineResponseContentType(operation, "ignore/me", expected);
@@ -281,7 +281,7 @@ public class HttpBindingIndexTest {
 
     @Test
     public void resolvesDocumentMediaType() {
-        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex index = HttpBindingIndex.of(model);
         ShapeId operation = ShapeId.from("ns.foo#ServiceOperationExplicitMembers");
         Optional<String> contentType = index.determineResponseContentType(operation, "application/json");
 
@@ -305,7 +305,7 @@ public class HttpBindingIndexTest {
                 .addShape(ListShape.builder().member(member).id("foo.bar#Baz").build())
                 .assemble()
                 .unwrap();
-        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex index = HttpBindingIndex.of(model);
         TimestampFormatTrait.Format format = index.determineTimestampFormat(
                 member, HttpBinding.Location.HEADER, TimestampFormatTrait.Format.DATE_TIME);
 
@@ -323,7 +323,7 @@ public class HttpBindingIndexTest {
                 .addShape(ListShape.builder().member(member).id("foo.bar#Baz").build())
                 .assemble()
                 .unwrap();
-        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex index = HttpBindingIndex.of(model);
 
         assertThat(index.determineTimestampFormat(
                 member, HttpBinding.Location.HEADER, TimestampFormatTrait.Format.EPOCH_SECONDS),
@@ -345,7 +345,7 @@ public class HttpBindingIndexTest {
                 .addShape(MapShape.builder().addMember(key).addMember(value).id("foo.bar#Baz").build())
                 .assemble()
                 .unwrap();
-        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex index = HttpBindingIndex.of(model);
 
         assertThat(index.determineTimestampFormat(
                 value, HttpBinding.Location.PREFIX_HEADERS, TimestampFormatTrait.Format.EPOCH_SECONDS),
@@ -363,7 +363,7 @@ public class HttpBindingIndexTest {
                 .addShape(ListShape.builder().member(member).id("foo.bar#Baz").build())
                 .assemble()
                 .unwrap();
-        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex index = HttpBindingIndex.of(model);
 
         assertThat(index.determineTimestampFormat(
                 member, HttpBinding.Location.QUERY, TimestampFormatTrait.Format.EPOCH_SECONDS),
@@ -384,7 +384,7 @@ public class HttpBindingIndexTest {
                 .addShape(ListShape.builder().member(member).id("foo.bar#Baz").build())
                 .assemble()
                 .unwrap();
-        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex index = HttpBindingIndex.of(model);
 
         assertThat(index.determineTimestampFormat(
                 member, HttpBinding.Location.DOCUMENT, TimestampFormatTrait.Format.EPOCH_SECONDS),

@@ -47,7 +47,7 @@ abstract class ProtocolTestCaseValidator<T extends Trait> extends AbstractValida
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        OperationIndex operationIndex = model.getKnowledge(OperationIndex.class);
+        OperationIndex operationIndex = OperationIndex.of(model);
 
         return Stream.concat(model.shapes(OperationShape.class), model.shapes(StructureShape.class))
                 .flatMap(operation -> Trait.flatMapStream(operation, traitClass))

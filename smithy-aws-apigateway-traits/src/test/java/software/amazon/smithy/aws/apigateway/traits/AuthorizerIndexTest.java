@@ -18,7 +18,7 @@ public class AuthorizerIndexTest {
                 .assemble()
                 .unwrap();
 
-        AuthorizerIndex index = model.getKnowledge(AuthorizerIndex.class);
+        AuthorizerIndex index = AuthorizerIndex.of(model);
         ShapeId serviceA = ShapeId.from("smithy.example#ServiceA");
         ShapeId serviceB = ShapeId.from("smithy.example#ServiceB");
         ShapeId resourceA = ShapeId.from("smithy.example#ResourceA");

@@ -47,7 +47,7 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        IdentifierBindingIndex bindingIndex = model.getKnowledge(IdentifierBindingIndex.class);
+        IdentifierBindingIndex bindingIndex = IdentifierBindingIndex.of(model);
 
         return Stream.of(
                 model.shapes(ResourceShape.class)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
 
     public HttpBindingIndex(Model model) {
         this.model = model;
-        OperationIndex opIndex = model.getKnowledge(OperationIndex.class);
+        OperationIndex opIndex = OperationIndex.of(model);
         model.shapes(OperationShape.class).forEach(shape -> {
             if (shape.getTrait(HttpTrait.class).isPresent()) {
                 requestBindings.put(shape.getId(), computeRequestBindings(opIndex, shape));
@@ -80,6 +80,10 @@ public final class HttpBindingIndex implements KnowledgeIndex {
                 .forEach(pair -> responseBindings.put(
                         pair.getLeft().getId(),
                         createStructureBindings(pair.getLeft(), false)));
+    }
+
+    public static HttpBindingIndex of(Model model) {
+        return model.getKnowledge(HttpBindingIndex.class, HttpBindingIndex::new);
     }
 
     /**

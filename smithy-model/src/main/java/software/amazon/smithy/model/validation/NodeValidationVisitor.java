@@ -276,7 +276,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     }
 
     private boolean isMemberPrimitive(MemberShape member) {
-        return !model.getKnowledge(BoxIndex.class).isBoxed(member);
+        return !BoxIndex.of(model).isBoxed(member);
     }
 
     @Override
@@ -329,7 +329,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     private List<ValidationEvent> invalidShape(Shape shape, NodeType expectedType) {
         // Boxed shapes allow null values.
-        if (allowBoxedNull && value.isNullNode() && model.getKnowledge(BoxIndex.class).isBoxed(shape)) {
+        if (allowBoxedNull && value.isNullNode() && BoxIndex.of(model).isBoxed(shape)) {
             return Collections.emptyList();
         }
 

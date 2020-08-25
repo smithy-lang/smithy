@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -60,6 +60,10 @@ public final class ServiceIndex implements KnowledgeIndex {
                 .filter(shape -> shape.hasTrait(AuthDefinitionTrait.class))
                 .map(Shape::getId)
                 .collect(Collectors.toSet());
+    }
+
+    public static ServiceIndex of(Model model) {
+        return model.getKnowledge(ServiceIndex.class, ServiceIndex::new);
     }
 
     /**

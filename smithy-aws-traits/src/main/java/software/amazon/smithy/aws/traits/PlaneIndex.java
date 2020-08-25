@@ -58,6 +58,10 @@ public final class PlaneIndex implements KnowledgeIndex {
         });
     }
 
+    public static PlaneIndex of(Model model) {
+        return model.getKnowledge(PlaneIndex.class, PlaneIndex::new);
+    }
+
     /**
      * Checks if the given service shape is part of the control plane.
      *

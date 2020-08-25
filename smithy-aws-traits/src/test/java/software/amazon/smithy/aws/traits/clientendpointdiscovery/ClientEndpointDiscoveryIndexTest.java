@@ -35,7 +35,7 @@ public class ClientEndpointDiscoveryIndexTest {
                 .addImport(getClass().getResource("test-model.json"))
                 .assemble()
                 .unwrap();
-        ClientEndpointDiscoveryIndex discoveryIndex = result.getKnowledge(ClientEndpointDiscoveryIndex.class);
+        ClientEndpointDiscoveryIndex discoveryIndex = ClientEndpointDiscoveryIndex.of(result);
 
         ShapeId service = ShapeId.from("ns.foo#FooService");
         ShapeId operation = ShapeId.from("ns.foo#GetObject");
@@ -57,7 +57,7 @@ public class ClientEndpointDiscoveryIndexTest {
                 .addImport(getClass().getResource("test-model.json"))
                 .assemble()
                 .unwrap();
-        ClientEndpointDiscoveryIndex discoveryIndex = result.getKnowledge(ClientEndpointDiscoveryIndex.class);
+        ClientEndpointDiscoveryIndex discoveryIndex = ClientEndpointDiscoveryIndex.of(result);
 
         ShapeId service = ShapeId.from("ns.foo#FooService");
         ShapeId operation = ShapeId.from("ns.foo#DescribeEndpoints");
@@ -73,7 +73,7 @@ public class ClientEndpointDiscoveryIndexTest {
                 .addImport(getClass().getResource("test-model.json"))
                 .assemble()
                 .unwrap();
-        ClientEndpointDiscoveryIndex discoveryIndex = result.getKnowledge(ClientEndpointDiscoveryIndex.class);
+        ClientEndpointDiscoveryIndex discoveryIndex = ClientEndpointDiscoveryIndex.of(result);
 
         ShapeId service = ShapeId.from("ns.foo#BarService");
         ShapeId operation = ShapeId.from("ns.foo#GetObject");
@@ -89,7 +89,7 @@ public class ClientEndpointDiscoveryIndexTest {
                 .addImport(getClass().getResource("test-model.json"))
                 .assemble()
                 .unwrap();
-        ClientEndpointDiscoveryIndex discoveryIndex = result.getKnowledge(ClientEndpointDiscoveryIndex.class);
+        ClientEndpointDiscoveryIndex discoveryIndex = ClientEndpointDiscoveryIndex.of(result);
         ShapeId service = ShapeId.from("ns.foo#FooService");
         Set<ShapeId> discoveryOperations = discoveryIndex.getEndpointDiscoveryOperations(service);
 

@@ -44,8 +44,8 @@ public final class ClientEndpointDiscoveryValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ClientEndpointDiscoveryIndex discoveryIndex = model.getKnowledge(ClientEndpointDiscoveryIndex.class);
-        OperationIndex opIndex = model.getKnowledge(OperationIndex.class);
+        ClientEndpointDiscoveryIndex discoveryIndex = ClientEndpointDiscoveryIndex.of(model);
+        OperationIndex opIndex = OperationIndex.of(model);
 
         Map<ServiceShape, ClientEndpointDiscoveryTrait> endpointDiscoveryServices = model
                 .shapes(ServiceShape.class)

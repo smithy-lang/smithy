@@ -44,7 +44,7 @@ public final class AuthorizersTraitValidator extends AbstractValidator {
     }
 
     private Optional<ValidationEvent> validateService(Model model, ServiceShape service) {
-        Set<ShapeId> authSchemes = model.getKnowledge(ServiceIndex.class).getAuthSchemes(service).keySet();
+        Set<ShapeId> authSchemes = ServiceIndex.of(model).getAuthSchemes(service).keySet();
 
         // Create a comma separated string of authorizer names to schemes.
         String invalidMappings = service.getTrait(AuthorizersTrait.class)

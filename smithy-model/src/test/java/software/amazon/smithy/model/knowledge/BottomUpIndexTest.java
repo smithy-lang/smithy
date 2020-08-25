@@ -48,7 +48,7 @@ public class BottomUpIndexTest {
 
     @Test
     public void findsEntityBinding() {
-        BottomUpIndex index = model.getKnowledge(BottomUpIndex.class);
+        BottomUpIndex index = BottomUpIndex.of(model);
 
         assertThat(index.getEntityBinding(serviceId, serviceId), equalTo(Optional.empty()));
         assertThat(index.getEntityBinding(serviceId, ShapeId.from("smithy.example#ServiceOperation")).map(EntityShape::getId),
@@ -77,7 +77,7 @@ public class BottomUpIndexTest {
 
     @Test
     public void findsResourceBinding() {
-        BottomUpIndex index = model.getKnowledge(BottomUpIndex.class);
+        BottomUpIndex index = BottomUpIndex.of(model);
 
         assertThat(index.getResourceBinding(serviceId, serviceId), equalTo(Optional.empty()));
         assertThat(index.getResourceBinding(serviceId, ShapeId.from("smithy.example#ServiceOperation")).map(EntityShape::getId),
@@ -106,7 +106,7 @@ public class BottomUpIndexTest {
 
     @Test
     public void findsPathToLeafOperation() {
-        BottomUpIndex index = model.getKnowledge(BottomUpIndex.class);
+        BottomUpIndex index = BottomUpIndex.of(model);
         List<EntityShape> entities = index.getAllParents(
                 serviceId, ShapeId.from("smithy.example#Resource1_1_2_Operation"));
         List<String> ids = entities.stream()
@@ -119,7 +119,7 @@ public class BottomUpIndexTest {
 
     @Test
     public void findsPathToLeafResource() {
-        BottomUpIndex index = model.getKnowledge(BottomUpIndex.class);
+        BottomUpIndex index = BottomUpIndex.of(model);
         List<EntityShape> entities = index.getAllParents(
                 serviceId, ShapeId.from("smithy.example#Resource1_1_2"));
         List<String> ids = entities.stream()

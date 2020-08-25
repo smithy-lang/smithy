@@ -16,7 +16,7 @@ public class BoxIndexTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checksIfBoxed(Model model, String shapeId, boolean isBoxed) {
-        BoxIndex index = model.getKnowledge(BoxIndex.class);
+        BoxIndex index = BoxIndex.of(model);
         ShapeId targetId = ShapeId.from(shapeId);
 
         if (isBoxed && !index.isBoxed(targetId)) {

@@ -77,6 +77,10 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
         });
     }
 
+    public static ConditionKeysIndex of(Model model) {
+        return model.getKnowledge(ConditionKeysIndex.class, ConditionKeysIndex::new);
+    }
+
     /**
      * Get all of the explicit and inferred condition keys used in the entire service.
      *

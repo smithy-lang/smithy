@@ -44,9 +44,9 @@ public final class AuthTraitValidator extends AbstractValidator {
     }
 
     private void validateService(Model model, ServiceShape service, List<ValidationEvent> events) {
-        ServiceIndex serviceIndex = model.getKnowledge(ServiceIndex.class);
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
         Set<ShapeId> serviceAuth = serviceIndex.getAuthSchemes(service).keySet();
-        TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
 
         // Validate the service's @auth trait.
         validateShape(serviceAuth, service, service, events);

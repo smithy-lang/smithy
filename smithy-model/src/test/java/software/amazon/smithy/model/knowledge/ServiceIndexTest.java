@@ -54,7 +54,7 @@ public class ServiceIndexTest {
                 .addImport(getClass().getResource("service-index-loads-protocols.smithy"))
                 .assemble()
                 .unwrap();
-        ServiceIndex serviceIndex = model.getKnowledge(ServiceIndex.class);
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
         Map<ShapeId, Trait> protocols = serviceIndex.getProtocols(ShapeId.from("smithy.example#TestService"));
 
         assertThat(protocols, hasKey(ShapeId.from("smithy.example#fooJson")));
@@ -64,7 +64,7 @@ public class ServiceIndexTest {
 
     @Test
     public void returnsAuthSchemesOfService() {
-        ServiceIndex serviceIndex = model.getKnowledge(ServiceIndex.class);
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
         Map<ShapeId, Trait> auth = serviceIndex.getAuthSchemes(
                 ShapeId.from("smithy.example#ServiceWithNoAuthTrait"));
 
@@ -76,7 +76,7 @@ public class ServiceIndexTest {
 
     @Test
     public void getsAuthSchemesOfServiceWithNoAuthTrait() {
-        ServiceIndex serviceIndex = model.getKnowledge(ServiceIndex.class);
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
         Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(
                 ShapeId.from("smithy.example#ServiceWithNoAuthTrait"));
 
@@ -88,7 +88,7 @@ public class ServiceIndexTest {
 
     @Test
     public void getsAuthSchemesOfServiceWithAuthTrait() {
-        ServiceIndex serviceIndex = model.getKnowledge(ServiceIndex.class);
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
         Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(
                 ShapeId.from("smithy.example#ServiceWithAuthTrait"));
 
@@ -99,7 +99,7 @@ public class ServiceIndexTest {
 
     @Test
     public void getsAuthSchemesOfOperationWithNoAuthTraitAndServiceWithNoAuthTrait() {
-        ServiceIndex serviceIndex = model.getKnowledge(ServiceIndex.class);
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
         Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(
                 ShapeId.from("smithy.example#ServiceWithNoAuthTrait"),
                 ShapeId.from("smithy.example#OperationWithNoAuthTrait"));
@@ -112,7 +112,7 @@ public class ServiceIndexTest {
 
     @Test
     public void getsAuthSchemesOfOperationWithNoAuthTraitAndServiceWithAuthTrait() {
-        ServiceIndex serviceIndex = model.getKnowledge(ServiceIndex.class);
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
         Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(
                 ShapeId.from("smithy.example#ServiceWithAuthTrait"),
                 ShapeId.from("smithy.example#OperationWithNoAuthTrait"));
@@ -124,7 +124,7 @@ public class ServiceIndexTest {
 
     @Test
     public void getsAuthSchemesOfOperationWithAuthTrait() {
-        ServiceIndex serviceIndex = model.getKnowledge(ServiceIndex.class);
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
         Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(
                 ShapeId.from("smithy.example#ServiceWithAuthTrait"),
                 ShapeId.from("smithy.example#OperationWithAuthTrait"));
@@ -135,7 +135,7 @@ public class ServiceIndexTest {
 
     @Test
     public void returnsAnEmptyCollectionWhenTheServiceDoesNotExist() {
-        ServiceIndex serviceIndex = model.getKnowledge(ServiceIndex.class);
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
         Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(
                 ShapeId.from("smithy.example#Invalid"),
                 ShapeId.from("smithy.example#OperationWithAuthTrait"));

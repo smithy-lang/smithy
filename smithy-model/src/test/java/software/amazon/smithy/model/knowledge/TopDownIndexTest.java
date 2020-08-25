@@ -37,7 +37,7 @@ public class TopDownIndexTest {
                 .build();
         ResourceShape resource = ResourceShape.builder().id("ns.foo#Resource").build();
         Model model = Model.builder().addShapes(service, resource).build();
-        TopDownIndex childIndex = model.getKnowledge(TopDownIndex.class);
+        TopDownIndex childIndex = TopDownIndex.of(model);
 
         assertThat(childIndex.getContainedOperations(service), empty());
         assertThat(childIndex.getContainedResources(service), contains(resource));
@@ -62,7 +62,7 @@ public class TopDownIndexTest {
         OperationShape operation = OperationShape.builder().id("ns.foo#Operation").build();
         OperationShape list = OperationShape.builder().id("ns.foo#List").build();
         Model model = Model.builder().addShapes(service, resourceA, resourceB, operation, list).build();
-        TopDownIndex childIndex = model.getKnowledge(TopDownIndex.class);
+        TopDownIndex childIndex = TopDownIndex.of(model);
 
         assertThat(childIndex.getContainedResources(service.getId()), containsInAnyOrder(resourceA, resourceB));
         assertThat(childIndex.getContainedOperations(service.getId()), containsInAnyOrder(operation, list));

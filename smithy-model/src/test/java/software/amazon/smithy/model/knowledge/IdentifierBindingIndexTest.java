@@ -39,7 +39,7 @@ public class IdentifierBindingIndexTest {
     @Test
     public void returnsEmptyMapForUnknownBindings() {
         Model model = Model.builder().build();
-        IdentifierBindingIndex index = model.getKnowledge(IdentifierBindingIndex.class);
+        IdentifierBindingIndex index = IdentifierBindingIndex.of(model);
 
         assertThat(index.getOperationBindingType(ShapeId.from("ns.foo#A"), ShapeId.from("ns.foo#B")),
                    equalTo(IdentifierBindingIndex.BindingType.NONE));
@@ -64,7 +64,7 @@ public class IdentifierBindingIndexTest {
                 .addOperation(operation.getId())
                 .build();
         Model model = Model.assembler().addShapes(id, resource, operation, input).assemble().unwrap();
-        IdentifierBindingIndex index = model.getKnowledge(IdentifierBindingIndex.class);
+        IdentifierBindingIndex index = IdentifierBindingIndex.of(model);
 
         assertThat(index.getOperationBindingType(resource.getId(), operation.getId()),
                    equalTo(IdentifierBindingIndex.BindingType.INSTANCE));
@@ -102,7 +102,7 @@ public class IdentifierBindingIndexTest {
                 .addShapes(id, resource, operation, input, listOperation, createOperation)
                 .assemble()
                 .unwrap();
-        IdentifierBindingIndex index = model.getKnowledge(IdentifierBindingIndex.class);
+        IdentifierBindingIndex index = IdentifierBindingIndex.of(model);
 
         assertThat(index.getOperationBindingType(resource.getId(), operation.getId()),
                    equalTo(IdentifierBindingIndex.BindingType.COLLECTION));
@@ -136,7 +136,7 @@ public class IdentifierBindingIndexTest {
                 .addOperation(operation.getId())
                 .build();
         Model model = Model.assembler().addShapes(resource, operation, input).assemble().unwrap();
-        IdentifierBindingIndex index = model.getKnowledge(IdentifierBindingIndex.class);
+        IdentifierBindingIndex index = IdentifierBindingIndex.of(model);
 
         assertThat(index.getOperationBindingType(resource.getId(), operation.getId()),
                    equalTo(IdentifierBindingIndex.BindingType.INSTANCE));

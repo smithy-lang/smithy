@@ -48,7 +48,7 @@ public final class UnreferencedTraitDefinitions {
     }
 
     public Set<Shape> compute(Model model) {
-        Walker walker = new Walker(model.getKnowledge(NeighborProviderIndex.class).getProvider());
+        Walker walker = new Walker(NeighborProviderIndex.of(model).getProvider());
 
         // Begin with a mutable set of all trait definitions contained in the model
         Set<Shape> unused = model.getShapesWithTrait(TraitDefinition.class).stream()

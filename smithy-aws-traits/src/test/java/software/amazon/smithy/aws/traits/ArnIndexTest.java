@@ -107,7 +107,7 @@ public class ArnIndexTest {
                 .addImport(ArnIndexTest.class.getResource("effective-arns.json"))
                 .assemble()
                 .unwrap();
-        ArnIndex index = m.getKnowledge(ArnIndex.class);
+        ArnIndex index = ArnIndex.of(m);
         ShapeId service = ShapeId.from("ns.foo#SomeService");
 
         assertThat(index.getEffectiveOperationArn(service, ShapeId.from("ns.foo#InstanceOperation")).map(ArnTrait::getTemplate),

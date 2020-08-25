@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public final class EventStreamIndex implements KnowledgeIndex {
     private final Map<ShapeId, EventStreamInfo> outputInfo = new HashMap<>();
 
     public EventStreamIndex(Model model) {
-        OperationIndex operationIndex = model.getKnowledge(OperationIndex.class);
+        OperationIndex operationIndex = OperationIndex.of(model);
 
         model.shapes(OperationShape.class).forEach(operation -> {
             operationIndex.getInput(operation).ifPresent(input -> {
@@ -53,6 +53,10 @@ public final class EventStreamIndex implements KnowledgeIndex {
                 computeEvents(model, operation, output, outputInfo);
             });
         });
+    }
+
+    public static EventStreamIndex of(Model model) {
+        return model.getKnowledge(EventStreamIndex.class, EventStreamIndex::new);
     }
 
     private void computeEvents(

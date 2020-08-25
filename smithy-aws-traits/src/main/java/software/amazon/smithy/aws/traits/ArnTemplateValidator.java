@@ -46,7 +46,7 @@ public final class ArnTemplateValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ArnIndex arnIndex = model.getKnowledge(ArnIndex.class);
+        ArnIndex arnIndex = ArnIndex.of(model);
         return model.shapes(ServiceShape.class)
                 .flatMap(service -> Trait.flatMapStream(service, ServiceTrait.class))
                 .flatMap(pair -> validateService(model, arnIndex, pair.getLeft()))

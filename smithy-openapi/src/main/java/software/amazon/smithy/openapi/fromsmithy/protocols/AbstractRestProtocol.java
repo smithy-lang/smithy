@@ -106,8 +106,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             String method = context.getOpenApiProtocol().getOperationMethod(context, operation);
             String uri = context.getOpenApiProtocol().getOperationUri(context, operation);
             OperationObject.Builder builder = OperationObject.builder().operationId(operation.getId().getName());
-            HttpBindingIndex bindingIndex = context.getModel().getKnowledge(HttpBindingIndex.class);
-            EventStreamIndex eventStreamIndex = context.getModel().getKnowledge(EventStreamIndex.class);
+            HttpBindingIndex bindingIndex = HttpBindingIndex.of(context.getModel());
+            EventStreamIndex eventStreamIndex = EventStreamIndex.of(context.getModel());
             createPathParameters(context, operation).forEach(builder::addParameter);
             createQueryParameters(context, operation).forEach(builder::addParameter);
             createRequestHeaderParameters(context, operation).forEach(builder::addParameter);
@@ -119,7 +119,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
 
     private List<ParameterObject> createPathParameters(Context<T> context, OperationShape operation) {
         List<ParameterObject> result = new ArrayList<>();
-        HttpBindingIndex bindingIndex = context.getModel().getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex bindingIndex = HttpBindingIndex.of(context.getModel());
 
         for (HttpBinding binding : bindingIndex.getRequestBindings(operation, HttpBinding.Location.LABEL)) {
             Schema schema = createPathParameterSchema(context, binding);
@@ -163,7 +163,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     // bound to the QUERY location will generate a new ParameterObject that
     // has a location of "query".
     private List<ParameterObject> createQueryParameters(Context<T> context, OperationShape operation) {
-        HttpBindingIndex httpBindingIndex = context.getModel().getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex httpBindingIndex = HttpBindingIndex.of(context.getModel());
         List<ParameterObject> result = new ArrayList<>();
 
         for (HttpBinding binding : httpBindingIndex.getRequestBindings(operation, HttpBinding.Location.QUERY)) {
@@ -191,7 +191,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     }
 
     private Collection<ParameterObject> createRequestHeaderParameters(Context<T> context, OperationShape operation) {
-        List<HttpBinding> bindings = context.getModel().getKnowledge(HttpBindingIndex.class)
+        List<HttpBinding> bindings = HttpBindingIndex.of(context.getModel())
                 .getRequestBindings(operation, HttpBinding.Location.HEADER);
         return createHeaderParameters(context, bindings, MessageType.REQUEST).values();
     }
@@ -319,7 +319,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             OperationShape operation
     ) {
         Map<String, ResponseObject> result = new TreeMap<>();
-        OperationIndex operationIndex = context.getModel().getKnowledge(OperationIndex.class);
+        OperationIndex operationIndex = OperationIndex.of(context.getModel());
 
         operationIndex.getOutput(operation).ifPresent(output -> {
             updateResponsesMapWithResponseStatusAndObject(
@@ -367,7 +367,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             Context<T> context,
             Shape operationOrError
     ) {
-        List<HttpBinding> bindings = context.getModel().getKnowledge(HttpBindingIndex.class)
+        List<HttpBinding> bindings = HttpBindingIndex.of(context.getModel())
                 .getResponseBindings(operationOrError, HttpBinding.Location.HEADER);
         return createHeaderParameters(context, bindings, MessageType.RESPONSE);
     }

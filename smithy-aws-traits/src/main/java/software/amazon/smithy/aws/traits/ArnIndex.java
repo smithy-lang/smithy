@@ -53,7 +53,7 @@ public final class ArnIndex implements KnowledgeIndex {
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight)));
 
         // Pre-compute all of the ArnTemplates in a service shape.
-        TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
         List<ServiceShape> services = model.shapes(ServiceShape.class)
                 .filter(shape -> shape.hasTrait(ServiceTrait.class))
                 .collect(Collectors.toList());
@@ -63,10 +63,14 @@ public final class ArnIndex implements KnowledgeIndex {
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight)));
 
         // Pre-compute all effective ARNs in each service.
-        IdentifierBindingIndex bindingIndex = model.getKnowledge(IdentifierBindingIndex.class);
+        IdentifierBindingIndex bindingIndex = IdentifierBindingIndex.of(model);
         for (ServiceShape service : services) {
             compileEffectiveArns(topDownIndex, bindingIndex, service);
         }
+    }
+
+    public static ArnIndex of(Model model) {
+        return model.getKnowledge(ArnIndex.class, ArnIndex::new);
     }
 
     private static String resolveServiceArn(Pair<ServiceShape, ServiceTrait> pair) {

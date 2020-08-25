@@ -54,7 +54,7 @@ public final class UnreferencedShapes {
      * @return Returns the unreferenced shapes.
      */
     public Set<Shape> compute(Model model) {
-        Walker shapeWalker = new Walker(model.getKnowledge(NeighborProviderIndex.class).getProvider());
+        Walker shapeWalker = new Walker(NeighborProviderIndex.of(model).getProvider());
 
         // Find all shapes connected to any service shape.
         Set<Shape> connected = model.shapes(ServiceShape.class)
