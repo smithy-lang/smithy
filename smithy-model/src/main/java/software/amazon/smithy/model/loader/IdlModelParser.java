@@ -22,11 +22,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
@@ -546,17 +545,9 @@ final class IdlModelParser extends SimpleParser {
         ObjectNode node = IdlNodeParser.parseObjectNode(this);
         LoaderUtils.checkForAdditionalProperties(node, id, OPERATION_PROPERTY_NAMES, modelFile.events());
         modelFile.onShape(builder);
-        node.getStringMember("input").ifPresent(input -> {
-            modelFile.addForwardReference(input.getValue(), builder::input);
-        });
-        node.getStringMember("output").ifPresent(output -> {
-            modelFile.addForwardReference(output.getValue(), builder::output);
-        });
-        node.getArrayMember("errors").ifPresent(errors -> {
-            for (StringNode value : errors.getElementsAs(StringNode.class)) {
-                modelFile.addForwardReference(value.getValue(), builder::addError);
-            }
-        });
+        optionalId(node, "input", builder::input);
+        optionalId(node, "output", builder::output);
+        optionalIdList(node, "errors", builder::addError);
     }
 
     private void parseServiceStatement(ShapeId id, SourceLocation location) {
@@ -566,21 +557,23 @@ final class IdlModelParser extends SimpleParser {
         LoaderUtils.checkForAdditionalProperties(shapeNode, id, SERVICE_PROPERTY_NAMES, modelFile.events());
         builder.version(shapeNode.expectStringMember(VERSION_KEY).getValue());
         modelFile.onShape(builder);
-        optionalIdList(shapeNode, id.getNamespace(), OPERATIONS_KEY).forEach(builder::addOperation);
-        optionalIdList(shapeNode, id.getNamespace(), RESOURCES_KEY).forEach(builder::addResource);
+        optionalIdList(shapeNode, OPERATIONS_KEY, builder::addOperation);
+        optionalIdList(shapeNode, RESOURCES_KEY, builder::addResource);
     }
 
-    private static Optional<ShapeId> optionalId(ObjectNode node, String namespace, String name) {
-        return node.getStringMember(name).map(stringNode -> stringNode.expectShapeId(namespace));
+    private void optionalId(ObjectNode node, String name, Consumer<ShapeId> consumer) {
+        if (node.getMember(name).isPresent()) {
+            modelFile.addForwardReference(node.expectStringMember(name).getValue(), consumer);
+        }
     }
 
-    private static List<ShapeId> optionalIdList(ObjectNode node, String namespace, String name) {
-        return node.getArrayMember(name)
-                .map(array -> array.getElements().stream()
-                        .map(Node::expectStringNode)
-                        .map(s -> s.expectShapeId(namespace))
-                        .collect(Collectors.toList()))
-                .orElseGet(Collections::emptyList);
+    private void optionalIdList(ObjectNode node, String name, Consumer<ShapeId> consumer) {
+        if (node.getMember(name).isPresent()) {
+            ArrayNode value = node.expectArrayMember(name);
+            for (StringNode element : value.getElementsAs(StringNode.class)) {
+                modelFile.addForwardReference(element.getValue(), consumer);
+            }
+        }
     }
 
     private void parseResourceStatement(ShapeId id, SourceLocation location) {
@@ -590,16 +583,15 @@ final class IdlModelParser extends SimpleParser {
         ObjectNode shapeNode = IdlNodeParser.parseObjectNode(this);
 
         LoaderUtils.checkForAdditionalProperties(shapeNode, id, RESOURCE_PROPERTY_NAMES, modelFile.events());
-        optionalId(shapeNode, id.getNamespace(), PUT_KEY).ifPresent(builder::put);
-        optionalId(shapeNode, id.getNamespace(), CREATE_KEY).ifPresent(builder::create);
-        optionalId(shapeNode, id.getNamespace(), READ_KEY).ifPresent(builder::read);
-        optionalId(shapeNode, id.getNamespace(), UPDATE_KEY).ifPresent(builder::update);
-        optionalId(shapeNode, id.getNamespace(), DELETE_KEY).ifPresent(builder::delete);
-        optionalId(shapeNode, id.getNamespace(), LIST_KEY).ifPresent(builder::list);
-        optionalIdList(shapeNode, id.getNamespace(), OPERATIONS_KEY).forEach(builder::addOperation);
-        optionalIdList(shapeNode, id.getNamespace(), RESOURCES_KEY).forEach(builder::addResource);
-        optionalIdList(shapeNode, id.getNamespace(), COLLECTION_OPERATIONS_KEY)
-                .forEach(builder::addCollectionOperation);
+        optionalId(shapeNode, PUT_KEY, builder::put);
+        optionalId(shapeNode, CREATE_KEY, builder::create);
+        optionalId(shapeNode, READ_KEY, builder::read);
+        optionalId(shapeNode, UPDATE_KEY, builder::update);
+        optionalId(shapeNode, DELETE_KEY, builder::delete);
+        optionalId(shapeNode, LIST_KEY, builder::list);
+        optionalIdList(shapeNode, OPERATIONS_KEY, builder::addOperation);
+        optionalIdList(shapeNode, RESOURCES_KEY, builder::addResource);
+        optionalIdList(shapeNode, COLLECTION_OPERATIONS_KEY, builder::addCollectionOperation);
 
         // Load identifiers and resolve forward references.
         shapeNode.getObjectMember(IDENTIFIERS_KEY).ifPresent(ids -> {

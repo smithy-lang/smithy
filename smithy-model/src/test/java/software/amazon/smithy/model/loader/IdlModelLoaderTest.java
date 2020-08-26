@@ -22,12 +22,14 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -37,6 +39,7 @@ import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidatedResultException;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.ListUtils;
 
 public class IdlModelLoaderTest {
     @Test
@@ -153,5 +156,30 @@ public class IdlModelLoaderTest {
                            .filter(e -> e.getMessage().contains("`nonono`"))
                            .count(),
                    equalTo(1L));
+    }
+
+    @Test
+    public void properlyLoadsOperationsWithUseStatements() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("use-operations/service.smithy"))
+                .addImport(getClass().getResource("use-operations/nested.smithy"))
+                .addImport(getClass().getResource("use-operations/other.smithy"))
+                .assemble()
+                .unwrap();
+
+        // Spot check for a specific "use" shape.
+        assertThat(model.expectShape(ShapeId.from("smithy.example#Local"), OperationShape.class).getInput(),
+                   equalTo(Optional.of(ShapeId.from("smithy.example.nested#A"))));
+
+        assertThat(model.expectShape(ShapeId.from("smithy.example#Local"), OperationShape.class).getErrors(),
+                   equalTo(ListUtils.of(ShapeId.from("smithy.example.nested#C"))));
+
+        Map<String, ShapeId> identifiers = model.expectShape(
+                ShapeId.from("smithy.example.nested#Resource"),
+                ResourceShape.class
+        ).getIdentifiers();
+
+        assertThat(identifiers.get("s"), equalTo(ShapeId.from("smithy.api#String")));
+        assertThat(identifiers.get("x"), equalTo(ShapeId.from("smithy.example.other#X")));
     }
 }
