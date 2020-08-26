@@ -1,5 +1,21 @@
 # Smithy Changelog
 
+## 1.0.10 (2020-08-26)
+
+### Features
+
+* Added a validation event when a syntactic shape ID is found that does not target an actual shape in the model.
+  ([#542](https://github.com/awslabs/smithy/pull/542))
+
+### Bug Fixes
+
+* Fixed a bug where forward reference resolution would use the incorrect namespace when resolving operation and
+  resource bindings. ([#543](https://github.com/awslabs/smithy/pull/543))
+
+### Cleanup
+
+* Deprecated the reflection-based creation pattern for `KnowledgeIndex` implementations. ([#541](https://github.com/awslabs/smithy/pull/541))
+
 ## 1.0.9 (2020-08-21)
 
 ### Features
