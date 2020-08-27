@@ -795,6 +795,15 @@ shape IDs inside of strings, and this difference is inconsequential in the
 <a class="reference internal" href="model.html#semantic-model"><span class="std std-ref">semantic model</span></a>. A syntactic shape ID SHOULD be
 resolved to a string that contains a fully-qualified shape ID when parsing
 the model.</p>
+<p class="rubric">Validation</p>
+<p>When a syntactic shape ID is found that does not target an actual shape in
+the fully loaded semantic model, an implementation SHOULD emit a DANGER
+<a class="reference internal" href="model-validation.html#validation"><span class="std std-ref">validation event</span></a> with an ID of <cite>SyntacticShapeIdTarget</cite>.
+This validation brings attention to the broken reference and helps to ensure
+that modelers do not unintentionally use a syntactic shape ID when they should
+have used a string. A DANGER severity is used so that the validation can be
+<a class="reference internal" href="model-validation.html#suppression-definition"><span class="std std-ref">suppressed</span></a> in the rare cases that the broken
+reference can be ignored.</p>
 </div>
 </div>
 <div class="section" id="defining-shapes">
