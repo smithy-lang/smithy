@@ -151,4 +151,22 @@ public class PathFinderTest {
         assertThat(output.get().toString(),
                    equalTo("[id|smithy.example#Operation] -[output]-> [id|smithy.example#Output] -[member]-> [id|smithy.example#Output$foo] > [id|smithy.api#String]"));
     }
+
+    @Test
+    public void createsPathToOtherShape() {
+        MemberShape recursiveMember = MemberShape.builder().id("a.b#Struct$a").target("a.b#Struct").build();
+        StructureShape struct = StructureShape.builder()
+                .id("a.b#Struct")
+                .addMember(recursiveMember)
+                .build();
+        Model model = Model.builder().addShapes(struct).build();
+        PathFinder finder = PathFinder.create(model);
+        List<PathFinder.Path> paths = finder.search(struct.getId(), struct.getId());
+
+        assertThat(paths, hasSize(1));
+        assertThat(paths.get(0), hasSize(2));
+        assertThat(paths.get(0).getShapes(), hasSize(3));
+        assertThat(paths.get(0).getStartShape(), equalTo(struct));
+        assertThat(paths.get(0).getEndShape(), equalTo(struct));
+    }
 }

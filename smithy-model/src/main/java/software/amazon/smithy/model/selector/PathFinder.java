@@ -18,6 +18,7 @@ package software.amazon.smithy.model.selector;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -101,12 +102,6 @@ public final class PathFinder {
      * @return Returns the list of matching paths.
      */
     public List<Path> search(ToShapeId startingShape, Selector targetSelector) {
-        Shape shape = model.getShape(startingShape.toShapeId()).orElse(null);
-
-        if (shape == null) {
-            return ListUtils.of();
-        }
-
         // Find all shapes that match the selector then work backwards from there.
         Set<Shape> candidates = targetSelector.select(model);
 
@@ -116,7 +111,30 @@ public final class PathFinder {
         }
 
         LOGGER.finest(() -> candidates.size() + " shapes matched the PathFinder selector of " + targetSelector);
-        return new Search(reverseProvider, shape, candidates).execute();
+        return searchFromShapeToSet(startingShape, candidates);
+    }
+
+    private List<Path> searchFromShapeToSet(ToShapeId startingShape, Set<Shape> candidates) {
+        Shape shape = model.getShape(startingShape.toShapeId()).orElse(null);
+        if (shape == null || candidates.isEmpty()) {
+            return ListUtils.of();
+        } else {
+            return new Search(reverseProvider, shape, candidates).execute();
+        }
+    }
+
+    /**
+     * Finds all of the possible paths from the {@code startingShape} to the
+     * the {@code targetShape}.
+     *
+     * @param startingShape Starting shape to find the paths from.
+     * @param targetShape The shape to try to find a path to.
+     * @return Returns the list of matching paths.
+     */
+    public List<Path> search(ToShapeId startingShape, ToShapeId targetShape) {
+        return searchFromShapeToSet(
+                startingShape,
+                model.getShape(targetShape.toShapeId()).map(Collections::singleton).orElse(Collections.emptySet()));
     }
 
     /**
@@ -183,7 +201,7 @@ public final class PathFinder {
      * An immutable {@code Relationship} path from a starting shape to an end shape.
      */
     public static final class Path extends AbstractList<Relationship> {
-        private List<Relationship> relationships;
+        private final List<Relationship> relationships;
 
         public Path(List<Relationship> relationships) {
             if (relationships.isEmpty()) {
@@ -239,7 +257,7 @@ public final class PathFinder {
          * starting shape.
          *
          * @return Returns the ending shape of the Path.
-         * @throws SourceException if the relationship is invalid.
+         * @throws SourceException if the last relationship is invalid.
          */
         public Shape getEndShape() {
             Relationship last = relationships.get(relationships.size() - 1);
