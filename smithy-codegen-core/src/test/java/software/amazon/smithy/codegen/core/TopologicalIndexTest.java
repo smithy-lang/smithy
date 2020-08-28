@@ -50,12 +50,12 @@ public class TopologicalIndexTest {
                 "smithy.example#MyString",
                 "smithy.example#BamList$member",
                 "smithy.example#BamList",
+                "smithy.example#Bar$bam",
                 "smithy.api#Integer",
                 "smithy.example#Bar$baz",
-                "smithy.example#Bar$bam",
                 "smithy.example#Bar",
-                "smithy.example#Foo$foo",
                 "smithy.example#Foo$bar",
+                "smithy.example#Foo$foo",
                 "smithy.example#Foo"));
 
         assertThat(recursive, contains(

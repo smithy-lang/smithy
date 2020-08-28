@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
@@ -108,12 +109,18 @@ public final class TopologicalIndex implements KnowledgeIndex {
     private void visitShape(NeighborProvider provider, Shape shape) {
         // Visit members before visiting containers. Note that no 'visited'
         // set is needed since only non-recursive shapes are traversed.
+        // We sort the neighbors to better order the result.
+        Set<Shape> neighbors = new TreeSet<>();
         for (Relationship rel : provider.getNeighbors(shape)) {
             if (rel.getRelationshipType().getDirection() == RelationshipDirection.DIRECTED) {
                 if (!rel.getNeighborShapeId().equals(shape.getId()) && rel.getNeighborShape().isPresent()) {
-                    visitShape(provider, rel.getNeighborShape().get());
+                    neighbors.add(rel.getNeighborShape().get());
                 }
             }
+        }
+
+        for (Shape neighbor : neighbors) {
+            visitShape(provider, neighbor);
         }
 
         shapes.add(shape);
