@@ -18,6 +18,7 @@ software.amazon.smithy.model.traits.HttpLabelTrait$Provider
 software.amazon.smithy.model.traits.HttpPayloadTrait$Provider
 software.amazon.smithy.model.traits.HttpPrefixHeadersTrait$Provider
 software.amazon.smithy.model.traits.HttpQueryTrait$Provider
+software.amazon.smithy.model.traits.HttpResponseCodeTrait$Provider
 software.amazon.smithy.model.traits.HttpTrait$Provider
 software.amazon.smithy.model.traits.IdempotencyTokenTrait$Provider
 software.amazon.smithy.model.traits.IdempotentTrait$Provider
