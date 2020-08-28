@@ -574,6 +574,14 @@ structure httpPayload {}
 @tags(["diff.error.const"])
 integer httpError
 
+/// Indicates that the structure member represents the HTTP response
+/// status code. The value MAY differ from the HTTP status code provided
+/// on the response.
+@trait(selector: "structure > member :test(> integer)",
+        structurallyExclusive: "member")
+@tags(["diff.error.const"])
+structure httpResponseCode {}
+
 /// Defines how a service supports cross-origin resource sharing.
 @trait(selector: "service")
 @tags(["diff.error.remove"])

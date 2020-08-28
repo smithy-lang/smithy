@@ -805,6 +805,23 @@ Serialization rules:
     Smithy models SHOULD carefully consider the maximum allowed length of each
     member that is bound to an HTTP query string or path.
 
+.. _httpResponseCode-trait:
+
+``httpResponseCode`` trait
+==========================
+
+Summary
+    Indicates that the structure member represents an HTTP response
+    status code.
+Trait selector
+    ``structure > member :test(> integer)``
+Value type
+    Annotation trait.
+
+The value MAY differ from the HTTP status code provided on the response.
+Explicitly modeling this as a field can be helpful for services that wish to
+provide different response codes for an operation, like 200 or 201 for a PUT
+operation.
 
 .. _cors-trait:
 
