@@ -98,6 +98,46 @@ apply XmlBlobs @httpResponseTests([
         params: {
             data: "value"
         }
+    },
+    {
+        id: "QueryXmlEmptyBlobs",
+        documentation: "Empty blobs are deserialized as empty string",
+        protocol: awsQuery,
+        code: 200,
+        body: """
+              <XmlBlobsResponse xmlns="https://example.com/">
+                  <XmlBlobsResult>
+                      <data></data>
+                  </XmlBlobsResult>
+              </XmlBlobsResponse>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "text/xml"
+        },
+        params: {
+            data: ""
+        }
+    },
+    {
+        id: "QueryXmlEmptySelfClosedBlobs",
+        documentation: "Empty self closed blobs are deserialized as empty string",
+        protocol: awsQuery,
+        code: 200,
+        body: """
+              <XmlBlobsResponse xmlns="https://example.com/">
+                  <XmlBlobsResult>
+                      <data/>
+                  </XmlBlobsResult>
+              </XmlBlobsResponse>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "text/xml"
+        },
+        params: {
+            data: ""
+        }
     }
 ])
 

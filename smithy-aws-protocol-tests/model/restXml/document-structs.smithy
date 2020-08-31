@@ -276,6 +276,42 @@ apply XmlBlobs @httpResponseTests([
         params: {
             data: "value"
         }
+    },
+    {
+        id: "XmlEmptyBlobs",
+        documentation: "Empty blobs are deserialized as empty string",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <XmlBlobsInputOutput>
+                  <data></data>
+              </XmlBlobsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            data: ""
+        }
+    },
+    {
+        id: "XmlEmptySelfClosedBlobs",
+        documentation: "Empty self closed blobs are deserialized as empty string",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <XmlBlobsInputOutput>
+                  <data/>
+              </XmlBlobsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            data: ""
+        }
     }
 ])
 
