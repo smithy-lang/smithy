@@ -56,13 +56,32 @@ apply XmlMaps @httpRequestTests([
                 }
             }
         }
-    }
+    },
+    {
+        id: "XmlEmptyMaps",
+        documentation: "Serializes Empty XML maps",
+        protocol: restXml,
+        method: "POST",
+        uri: "/XmlMaps",
+        body: """
+              <XmlMapsInputOutput>
+                  <myMap></myMap>
+              </XmlMapsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            myMap: {}
+        }
+    },
 ])
 
 apply XmlMaps @httpResponseTests([
     {
         id: "XmlMaps",
-        documentation: "Serializes XML maps",
+        documentation: "Deserializes XML maps",
         protocol: restXml,
         code: 200,
         body: """
@@ -97,7 +116,43 @@ apply XmlMaps @httpResponseTests([
                 }
             }
         }
-    }
+    },
+    {
+        id: "XmlEmptyMaps",
+        documentation: "Deserializes Empty XML maps",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <XmlMapsInputOutput>
+                  <myMap></myMap>
+              </XmlMapsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            myMap: {}
+        }
+    },
+    {
+        id: "XmlEmptySelfClosedMaps",
+        documentation: "Deserializes Empty Self-closed XML maps",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <XmlMapsInputOutput>
+                  <myMap/>
+              </XmlMapsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            myMap: {}
+        }
+    },
 ])
 
 structure XmlMapsInputOutput {

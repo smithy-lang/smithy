@@ -123,13 +123,34 @@ apply XmlLists @httpRequestTests([
                 }
             ]
         }
-    }
+    },
+    {
+        id: "XmlEmptyLists",
+        documentation: "Serializes Empty XML lists",
+        protocol: restXml,
+        method: "PUT",
+        uri: "/XmlLists",
+        body: """
+              <XmlListsInputOutput>
+                      <stringList></stringList>
+                      <stringSet></stringSet>
+              </XmlListsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            stringList: [],
+            stringSet: [],
+        }
+    },
 ])
 
 apply XmlLists @httpResponseTests([
     {
         id: "XmlLists",
-        documentation: "Serializes XML lists",
+        documentation: "Deserializes XML lists",
         protocol: restXml,
         code: 200,
         body: """
@@ -214,7 +235,27 @@ apply XmlLists @httpResponseTests([
                 }
             ]
         }
-    }
+    },
+    {
+        id: "XmlEmptyLists",
+        documentation: "Deserializes Empty XML lists",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <XmlListsInputOutput>
+                      <stringList/>
+                      <stringSet></stringSet>
+              </XmlListsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            stringList: [],
+            stringSet: [],
+        }
+    },
 ])
 
 structure XmlListsInputOutput {
