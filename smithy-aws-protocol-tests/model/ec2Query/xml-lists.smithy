@@ -31,7 +31,7 @@ operation XmlLists {
 apply XmlLists @httpResponseTests([
     {
         id: "Ec2XmlLists",
-        documentation: "Serializes XML lists",
+        documentation: "Deserializes XML lists",
         protocol: ec2Query,
         code: 200,
         body: """
@@ -117,7 +117,29 @@ apply XmlLists @httpResponseTests([
                 }
             ]
         }
-    }
+    },
+    {
+        id: "Ec2XmlEmptyLists",
+        documentation: "Deserializes Empty XML lists",
+        protocol: ec2Query,
+        code: 200,
+        body: """
+              <XmlListsResponse xmlns="https://example.com/">
+                  <XmlListsResult>
+                      <stringList/>
+                      <stringSet></stringSet>
+                  </XmlListsResult>
+              </XmlListsResponse>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "text/xml"
+        },
+        params: {
+            stringList: [],
+            stringSet: [],
+        }
+    },
 ])
 
 structure XmlListsOutput {

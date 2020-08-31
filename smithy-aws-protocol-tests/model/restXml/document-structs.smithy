@@ -32,6 +32,7 @@ apply SimpleScalarProperties @httpRequestTests([
         body: """
               <SimpleScalarPropertiesInputOutput>
                   <stringValue>string</stringValue>
+                  <emptyStringValue></emptyStringValue>
                   <trueBooleanValue>true</trueBooleanValue>
                   <falseBooleanValue>false</falseBooleanValue>
                   <byteValue>1</byteValue>
@@ -50,6 +51,7 @@ apply SimpleScalarProperties @httpRequestTests([
         params: {
             foo: "Foo",
             stringValue: "string",
+            emptyStringValue: "",
             trueBooleanValue: true,
             falseBooleanValue: false,
             byteValue: 1,
@@ -113,6 +115,7 @@ apply SimpleScalarProperties @httpResponseTests([
         body: """
               <SimpleScalarPropertiesInputOutput>
                   <stringValue>string</stringValue>
+                  <emptyStringValue/>
                   <trueBooleanValue>true</trueBooleanValue>
                   <falseBooleanValue>false</falseBooleanValue>
                   <byteValue>1</byteValue>
@@ -131,6 +134,7 @@ apply SimpleScalarProperties @httpResponseTests([
         params: {
             foo: "Foo",
             stringValue: "string",
+            emptyStringValue: "",
             trueBooleanValue: true,
             falseBooleanValue: false,
             byteValue: 1,
@@ -212,6 +216,7 @@ structure SimpleScalarPropertiesInputOutput {
     foo: String,
 
     stringValue: String,
+    emptyStringValue: String,
     trueBooleanValue: Boolean,
     falseBooleanValue: Boolean,
     byteValue: Byte,

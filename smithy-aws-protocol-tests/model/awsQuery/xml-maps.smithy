@@ -17,7 +17,7 @@ operation XmlMaps {
 apply XmlMaps @httpResponseTests([
     {
         id: "QueryXmlMaps",
-        documentation: "Serializes XML maps",
+        documentation: "Deserializes XML maps",
         protocol: awsQuery,
         code: 200,
         body: """
@@ -54,7 +54,48 @@ apply XmlMaps @httpResponseTests([
                 }
             }
         }
-    }
+    },
+    {
+        id: "QueryXmlEmptyMaps",
+        documentation: "Deserializes Empty XML maps",
+        protocol: awsQuery,
+        code: 200,
+        body: """
+              <XmlMapsResponse xmlns="https://example.com/">
+                  <XmlMapsResult>
+                      <myMap>
+                      </myMap>
+                  </XmlMapsResult>
+              </XmlMapsResponse>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "text/xml"
+        },
+        params: {
+            myMap: {}
+        }
+    },
+    {
+        id: "QueryXmlEmptySelfClosedMaps",
+        documentation: "Deserializes Self-Closed XML maps",
+        protocol: awsQuery,
+        code: 200,
+        body: """
+              <XmlMapsResponse xmlns="https://example.com/">
+                  <XmlMapsResult>
+                      <myMap/>
+                  </XmlMapsResult>
+              </XmlMapsResponse>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "text/xml"
+        },
+        params: {
+            myMap: {}
+        }
+    },
 ])
 
 structure XmlMapsOutput {
