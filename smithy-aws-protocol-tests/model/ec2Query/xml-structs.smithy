@@ -100,6 +100,44 @@ apply XmlBlobs @httpResponseTests([
         params: {
             data: "value"
         }
+    },
+    {
+        id: "Ec2XmlEmptyBlobs",
+        documentation: "Empty blobs are deserialized as empty string",
+        protocol: ec2Query,
+        code: 200,
+        body: """
+              <XmlBlobsResponse xmlns="https://example.com/">
+                  <data></data>
+                  <RequestId>requestid</RequestId>
+              </XmlBlobsResponse>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "text/xml;charset=UTF-8"
+        },
+        params: {
+            data: ""
+        }
+    },
+    {
+        id: "Ec2XmlEmptySelfClosedBlobs",
+        documentation: "Empty self closed blobs are deserialized as empty string",
+        protocol: ec2Query,
+        code: 200,
+        body: """
+              <XmlBlobsResponse xmlns="https://example.com/">
+                  <data/>
+                  <RequestId>requestid</RequestId>
+              </XmlBlobsResponse>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "text/xml;charset=UTF-8"
+        },
+        params: {
+            data: ""
+        }
     }
 ])
 
