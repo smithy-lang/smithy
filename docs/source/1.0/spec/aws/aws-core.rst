@@ -213,9 +213,9 @@ are combined with the service's arnNamespace to form an ARN.
 =========================
 
 The ``cloudTrailEventSource`` property is a ``string`` value that defines the
-*eventSource* property contained in CloudTrail `event records`_
-emitted by the service. If not specified, this value defaults to the
-``arnNamespace`` plus .amazonaws.com. For example:
+AWS customer-facing *eventSource* property contained in CloudTrail
+`event records`_ emitted by the service. If not specified, this value defaults
+to the ``arnNamespace`` plus .amazonaws.com. For example:
 
 * AWS CloudFormation has an ``arnNamespace`` of ``cloudformation`` and an
   event source of ``cloudformation.amazonaws.com``.
@@ -224,7 +224,8 @@ emitted by the service. If not specified, this value defaults to the
 * Amazon Simple Workflow Service has an ``arnNamespace`` of ``swf`` and
   an event source of ``swf.amazonaws.com``.
 
-This convention has some exceptions. For example, the event source for
+This value SHOULD follow the convention of ``{arnNamespace}.amazonaws.com``,
+but there are some exceptions. For example, the event source for
 Amazon CloudWatch is ``monitoring.amazonaws.com``. Such services will
 need to explicitly configure the ``cloudTrailEventSource`` setting.
 
