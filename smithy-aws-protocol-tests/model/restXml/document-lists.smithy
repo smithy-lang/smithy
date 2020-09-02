@@ -249,7 +249,7 @@ apply XmlEmptyLists @httpRequestTests([
     }
 ])
 
-apply XmlLists @httpResponseTests([
+apply XmlEmptyLists @httpResponseTests([
     {
         id: "XmlEmptyLists",
         documentation: "Deserializes Empty XML lists",
