@@ -37,7 +37,7 @@ operation XmlLists {
 apply XmlLists @httpRequestTests([
     {
         id: "XmlLists",
-        documentation: "Serializes XML lists",
+        documentation: "Tests for XML list serialization",
         protocol: restXml,
         method: "PUT",
         uri: "/XmlLists",
@@ -123,7 +123,109 @@ apply XmlLists @httpRequestTests([
                 }
             ]
         }
-    },
+    }
+])
+
+apply XmlLists @httpResponseTests([
+    {
+        id: "XmlLists",
+        documentation: "Tests for XML list serialization",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <XmlListsInputOutput>
+                  <stringList>
+                      <member>foo</member>
+                      <member>bar</member>
+                  </stringList>
+                  <stringSet>
+                      <member>foo</member>
+                      <member>bar</member>
+                  </stringSet>
+                  <integerList>
+                      <member>1</member>
+                      <member>2</member>
+                  </integerList>
+                  <booleanList>
+                      <member>true</member>
+                      <member>false</member>
+                  </booleanList>
+                  <timestampList>
+                      <member>2014-04-29T18:30:38Z</member>
+                      <member>2014-04-29T18:30:38Z</member>
+                  </timestampList>
+                  <enumList>
+                      <member>Foo</member>
+                      <member>0</member>
+                  </enumList>
+                  <nestedStringList>
+                      <member>
+                          <member>foo</member>
+                          <member>bar</member>
+                      </member>
+                      <member>
+                          <member>baz</member>
+                          <member>qux</member>
+                      </member>
+                  </nestedStringList>
+                  <renamed>
+                      <item>foo</item>
+                      <item>bar</item>
+                  </renamed>
+                  <flattenedList>hi</flattenedList>
+                  <flattenedList>bye</flattenedList>
+                  <customName>yep</customName>
+                  <customName>nope</customName>
+                  <myStructureList>
+                      <item>
+                          <value>1</value>
+                          <other>2</other>
+                      </item>
+                      <item>
+                          <value>3</value>
+                          <other>4</other>
+                      </item>
+                  </myStructureList>
+              </XmlListsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            stringList: ["foo", "bar"],
+            stringSet: ["foo", "bar"],
+            integerList: [1, 2],
+            booleanList: [true, false],
+            timestampList: [1398796238, 1398796238],
+            enumList: ["Foo", "0"],
+            nestedStringList: [["foo", "bar"], ["baz", "qux"]],
+            renamedListMembers: ["foo", "bar"],
+            flattenedList: ["hi", "bye"],
+            flattenedList2: ["yep", "nope"],
+            structureList: [
+                {
+                    a: "1",
+                    b: "2",
+                },
+                {
+                    a: "3",
+                    b: "4",
+                }
+            ]
+        }
+    }
+])
+
+@idempotent
+@http(uri: "/XmlLists", method: "PUT")
+@tags(["client-only"])
+operation XmlEmptyLists {
+    input: XmlListsInputOutput,
+    output: XmlListsInputOutput,
+}
+
+apply XmlEmptyLists @httpRequestTests([
     {
         id: "XmlEmptyLists",
         documentation: "Serializes Empty XML lists",
@@ -144,98 +246,10 @@ apply XmlLists @httpRequestTests([
             stringList: [],
             stringSet: [],
         }
-    },
+    }
 ])
 
 apply XmlLists @httpResponseTests([
-    {
-        id: "XmlLists",
-        documentation: "Deserializes XML lists",
-        protocol: restXml,
-        code: 200,
-        body: """
-              <XmlListsInputOutput>
-                  <stringList>
-                      <member>foo</member>
-                      <member>bar</member>
-                  </stringList>
-                  <stringSet>
-                      <member>foo</member>
-                      <member>bar</member>
-                  </stringSet>
-                  <integerList>
-                      <member>1</member>
-                      <member>2</member>
-                  </integerList>
-                  <booleanList>
-                      <member>true</member>
-                      <member>false</member>
-                  </booleanList>
-                  <timestampList>
-                      <member>2014-04-29T18:30:38Z</member>
-                      <member>2014-04-29T18:30:38Z</member>
-                  </timestampList>
-                  <enumList>
-                      <member>Foo</member>
-                      <member>0</member>
-                  </enumList>
-                  <nestedStringList>
-                      <member>
-                          <member>foo</member>
-                          <member>bar</member>
-                      </member>
-                      <member>
-                          <member>baz</member>
-                          <member>qux</member>
-                      </member>
-                  </nestedStringList>
-                  <renamed>
-                      <item>foo</item>
-                      <item>bar</item>
-                  </renamed>
-                  <flattenedList>hi</flattenedList>
-                  <flattenedList>bye</flattenedList>
-                  <customName>yep</customName>
-                  <customName>nope</customName>
-                  <myStructureList>
-                      <item>
-                          <value>1</value>
-                          <other>2</other>
-                      </item>
-                      <item>
-                          <value>3</value>
-                          <other>4</other>
-                      </item>
-                  </myStructureList>
-              </XmlListsInputOutput>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
-        params: {
-            stringList: ["foo", "bar"],
-            stringSet: ["foo", "bar"],
-            integerList: [1, 2],
-            booleanList: [true, false],
-            timestampList: [1398796238, 1398796238],
-            enumList: ["Foo", "0"],
-            nestedStringList: [["foo", "bar"], ["baz", "qux"]],
-            renamedListMembers: ["foo", "bar"],
-            flattenedList: ["hi", "bye"],
-            flattenedList2: ["yep", "nope"],
-            structureList: [
-                {
-                    a: "1",
-                    b: "2",
-                },
-                {
-                    a: "3",
-                    b: "4",
-                }
-            ]
-        }
-    },
     {
         id: "XmlEmptyLists",
         documentation: "Deserializes Empty XML lists",
@@ -255,7 +269,7 @@ apply XmlLists @httpResponseTests([
             stringList: [],
             stringSet: [],
         }
-    },
+    }
 ])
 
 structure XmlListsInputOutput {

@@ -17,7 +17,7 @@ operation XmlMaps {
 apply XmlMaps @httpResponseTests([
     {
         id: "QueryXmlMaps",
-        documentation: "Deserializes XML maps",
+        documentation: "Tests for XML map serialization",
         protocol: awsQuery,
         code: 200,
         body: """
@@ -54,7 +54,16 @@ apply XmlMaps @httpResponseTests([
                 }
             }
         }
-    },
+    }
+])
+
+// Operation for client only
+@tags(["client-only"])
+operation XmlEmptyMaps {
+    output: XmlMapsOutput
+}
+
+apply XmlEmptyMaps @httpResponseTests([
     {
         id: "QueryXmlEmptyMaps",
         documentation: "Deserializes Empty XML maps",
@@ -95,8 +104,9 @@ apply XmlMaps @httpResponseTests([
         params: {
             myMap: {}
         }
-    },
+    }
 ])
+
 
 structure XmlMapsOutput {
     myMap: XmlMapsOutputMap,

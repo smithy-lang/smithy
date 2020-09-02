@@ -276,7 +276,18 @@ apply XmlBlobs @httpResponseTests([
         params: {
             data: "value"
         }
-    },
+    }
+])
+
+/// Blobs are base64 encoded
+@http(uri: "/XmlBlobs", method: "POST")
+@tags(["client-only"])
+operation XmlEmptyBlobs {
+    input: XmlBlobsInputOutput,
+    output: XmlBlobsInputOutput
+}
+
+apply XmlEmptyBlobs @httpResponseTests([
     {
         id: "XmlEmptyBlobs",
         documentation: "Empty blobs are deserialized as empty string",
