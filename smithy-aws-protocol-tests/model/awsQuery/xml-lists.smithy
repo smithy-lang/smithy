@@ -31,7 +31,7 @@ operation XmlLists {
 apply XmlLists @httpResponseTests([
     {
         id: "QueryXmlLists",
-        documentation: "Deserializes XML lists",
+        documentation: "Tests for XML list serialization",
         protocol: awsQuery,
         code: 200,
         body: """
@@ -118,10 +118,19 @@ apply XmlLists @httpResponseTests([
                 }
             ]
         }
-    },
+    }
+])
+
+// Operation for client only
+@tags(["client-only"])
+operation XmlEmptyLists {
+    output: XmlListsOutput
+}
+
+apply XmlEmptyLists @httpResponseTests([
     {
         id: "QueryXmlEmptyLists",
-        documentation: "Deserializes Empty XML lists",
+        documentation: "Deserializes empty XML lists",
         protocol: awsQuery,
         code: 200,
         body: """
@@ -140,7 +149,7 @@ apply XmlLists @httpResponseTests([
             stringList: [],
             stringSet: [],
         }
-    },
+    }
 ])
 
 structure XmlListsOutput {

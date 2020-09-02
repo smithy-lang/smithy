@@ -20,7 +20,7 @@ operation XmlMaps {
 apply XmlMaps @httpRequestTests([
     {
         id: "XmlMaps",
-        documentation: "Serializes XML maps",
+        documentation: "Tests for XML map serialization",
         protocol: restXml,
         method: "POST",
         uri: "/XmlMaps",
@@ -56,32 +56,13 @@ apply XmlMaps @httpRequestTests([
                 }
             }
         }
-    },
-    {
-        id: "XmlEmptyMaps",
-        documentation: "Serializes Empty XML maps",
-        protocol: restXml,
-        method: "POST",
-        uri: "/XmlMaps",
-        body: """
-              <XmlMapsInputOutput>
-                  <myMap></myMap>
-              </XmlMapsInputOutput>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
-        params: {
-            myMap: {}
-        }
-    },
+    }
 ])
 
 apply XmlMaps @httpResponseTests([
     {
         id: "XmlMaps",
-        documentation: "Deserializes XML maps",
+        documentation: "Tests for XML map serialization",
         protocol: restXml,
         code: 200,
         body: """
@@ -116,7 +97,39 @@ apply XmlMaps @httpResponseTests([
                 }
             }
         }
-    },
+    }
+])
+
+@http(uri: "/XmlMaps", method: "POST")
+@tags(["client-only"])
+operation XmlEmptyMaps {
+    input: XmlMapsInputOutput,
+    output: XmlMapsInputOutput
+}
+
+apply XmlEmptyMaps @httpRequestTests([
+    {
+        id: "XmlEmptyMaps",
+        documentation: "Serializes Empty XML maps",
+        protocol: restXml,
+        method: "POST",
+        uri: "/XmlMaps",
+        body: """
+              <XmlMapsInputOutput>
+                  <myMap></myMap>
+              </XmlMapsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            myMap: {}
+        }
+    }
+])
+
+apply XmlEmptyMaps @httpResponseTests([
     {
         id: "XmlEmptyMaps",
         documentation: "Deserializes Empty XML maps",
@@ -152,7 +165,7 @@ apply XmlMaps @httpResponseTests([
         params: {
             myMap: {}
         }
-    },
+    }
 ])
 
 structure XmlMapsInputOutput {

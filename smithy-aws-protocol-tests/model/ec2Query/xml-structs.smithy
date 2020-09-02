@@ -100,7 +100,16 @@ apply XmlBlobs @httpResponseTests([
         params: {
             data: "value"
         }
-    },
+    }
+])
+
+// Operation for client only
+@tags(["client-only"])
+operation XmlEmptyBlobs {
+    output: XmlBlobsOutput
+}
+
+apply XmlEmptyBlobs @httpResponseTests([
     {
         id: "Ec2XmlEmptyBlobs",
         documentation: "Empty blobs are deserialized as empty string",
