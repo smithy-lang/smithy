@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -161,7 +162,7 @@ public class PathFinderTest {
                 .build();
         Model model = Model.builder().addShapes(struct).build();
         PathFinder finder = PathFinder.create(model);
-        List<PathFinder.Path> paths = finder.search(struct.getId(), struct.getId());
+        List<PathFinder.Path> paths = finder.search(struct.getId(), Collections.singleton(struct));
 
         assertThat(paths, hasSize(1));
         assertThat(paths.get(0), hasSize(2));

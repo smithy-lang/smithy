@@ -18,7 +18,6 @@ package software.amazon.smithy.model.selector;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -114,7 +113,7 @@ public final class PathFinder {
         return searchFromShapeToSet(startingShape, candidates);
     }
 
-    private List<Path> searchFromShapeToSet(ToShapeId startingShape, Set<Shape> candidates) {
+    private List<Path> searchFromShapeToSet(ToShapeId startingShape, Collection<Shape> candidates) {
         Shape shape = model.getShape(startingShape.toShapeId()).orElse(null);
         if (shape == null || candidates.isEmpty()) {
             return ListUtils.of();
@@ -124,17 +123,15 @@ public final class PathFinder {
     }
 
     /**
-     * Finds all of the possible paths from the {@code startingShape} to the
-     * the {@code targetShape}.
+     * Finds all of the possible paths from the {@code startingShape} to
+     * any of the provided shapes in {@code targetShapes}.
      *
      * @param startingShape Starting shape to find the paths from.
-     * @param targetShape The shape to try to find a path to.
+     * @param targetShapes The shapes to try to find a path to.
      * @return Returns the list of matching paths.
      */
-    public List<Path> search(ToShapeId startingShape, ToShapeId targetShape) {
-        return searchFromShapeToSet(
-                startingShape,
-                model.getShape(targetShape.toShapeId()).map(Collections::singleton).orElse(Collections.emptySet()));
+    public List<Path> search(ToShapeId startingShape, Collection<Shape> targetShapes) {
+        return searchFromShapeToSet(startingShape, targetShapes);
     }
 
     /**

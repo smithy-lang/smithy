@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.codegen.core;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -33,9 +34,7 @@ import software.amazon.smithy.model.neighbor.RelationshipDirection;
 import software.amazon.smithy.model.selector.PathFinder;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.SimpleShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
-import software.amazon.smithy.utils.FunctionalUtils;
 
 /**
  * Creates a reverse-topological ordering of shapes.
@@ -58,72 +57,79 @@ import software.amazon.smithy.utils.FunctionalUtils;
 public final class TopologicalIndex implements KnowledgeIndex {
 
     private final Set<Shape> shapes = new LinkedHashSet<>();
-    private final Map<Shape, List<PathFinder.Path>> recursiveShapes = new LinkedHashMap<>();
+    private final Map<Shape, Set<PathFinder.Path>> recursiveShapes = new LinkedHashMap<>();
 
     public TopologicalIndex(Model model) {
-        // A reverse-topological sort can't be performed on recursive shapes,
-        // so instead, recursive shapes are explored first and removed from
-        // the topological sort.
-        computeRecursiveShapes(model);
-
-        // Next, the model is explored using a DFS so that targets of shapes
-        // are ordered before the shape itself.
-        NeighborProvider provider = NeighborProviderIndex.of(model).getProvider();
-        model.shapes()
-                // Note that while we do not scan the prelude here, shapes from
-                // the prelude are pull into the ordered result if referenced.
-                .filter(FunctionalUtils.not(Prelude::isPreludeShape))
-                .filter(shape -> !recursiveShapes.containsKey(shape))
-                // Sort here to provide a deterministic result.
-                .sorted()
-                .forEach(shape -> visitShape(provider, shape));
-    }
-
-    private void computeRecursiveShapes(Model model) {
-        // PathFinder is used to find all paths from U -> U.
-        PathFinder finder = PathFinder.create(model);
-
-        // The order of recursive shapes is first by the number of edges
-        // (the degree of recursion), and then alphabetically by shape ID.
-        Map<Integer, Map<Shape, List<PathFinder.Path>>> edgesToShapePaths = new TreeMap<>();
+        // Explore sorted shapes not in the prelude for a stable result order.
+        Set<Shape> shapes = new TreeSet<>();
         for (Shape shape : model.toSet()) {
-            if (!Prelude.isPreludeShape(shape) && !(shape instanceof SimpleShape)) {
-                // Find all paths from the shape back to itself.
-                List<PathFinder.Path> paths = finder.search(shape, shape);
-                if (!paths.isEmpty()) {
-                    int edgeCount = 0;
-                    for (PathFinder.Path path : paths) {
-                        edgeCount += path.size();
-                    }
-                    edgesToShapePaths.computeIfAbsent(edgeCount, s -> new TreeMap<>())
-                            .put(shape, Collections.unmodifiableList(paths));
-                }
+            if (!Prelude.isPreludeShape(shape)) {
+                shapes.add(shape);
             }
         }
 
-        for (Map.Entry<Integer, Map<Shape, List<PathFinder.Path>>> entry : edgesToShapePaths.entrySet()) {
+        // This map ensures that more recursive shapes come after less recursive shapes.
+        Map<Integer, Map<Shape, Set<PathFinder.Path>>> frequencyMap = new TreeMap<>();
+        NeighborProvider provider = NeighborProviderIndex.of(model).getProvider();
+
+        for (Shape shape : shapes) {
+            Set<PathFinder.Path> paths = explore(shape, Collections.emptyList(), Collections.emptySet(), provider);
+            if (!paths.isEmpty()) {
+                int edges = 0;
+                for (PathFinder.Path path : paths) {
+                    edges += path.size();
+                }
+                frequencyMap.computeIfAbsent(edges, e -> new LinkedHashMap<>()).put(shape, paths);
+            }
+        }
+
+        // Flatten the ordered frequency map into the collection of all recursive values.
+        for (Map.Entry<Integer, Map<Shape, Set<PathFinder.Path>>> entry : frequencyMap.entrySet()) {
             recursiveShapes.putAll(entry.getValue());
         }
     }
 
-    private void visitShape(NeighborProvider provider, Shape shape) {
-        // Visit members before visiting containers. Note that no 'visited'
-        // set is needed since only non-recursive shapes are traversed.
-        // We sort the neighbors to better order the result.
-        Set<Shape> neighbors = new TreeSet<>();
+    private Set<PathFinder.Path> explore(
+            Shape shape,
+            List<Relationship> path,
+            Set<Shape> visited,
+            NeighborProvider provider
+    ) {
+        if (visited.contains(shape)) {
+            return Collections.singleton(new PathFinder.Path(path));
+        }
+
+        Set<Shape> newVisited = new LinkedHashSet<>(visited);
+        newVisited.add(shape);
+
+        // Sort edges alphabetically by shape to make the order predictable.
+        Map<Shape, Relationship> shapeRelationshipMap = new TreeMap<>();
         for (Relationship rel : provider.getNeighbors(shape)) {
             if (rel.getRelationshipType().getDirection() == RelationshipDirection.DIRECTED) {
                 if (!rel.getNeighborShapeId().equals(shape.getId()) && rel.getNeighborShape().isPresent()) {
-                    neighbors.add(rel.getNeighborShape().get());
+                    shapeRelationshipMap.put(rel.getNeighborShape().get(), rel);
                 }
             }
         }
 
-        for (Shape neighbor : neighbors) {
-            visitShape(provider, neighbor);
+        if (shapeRelationshipMap.isEmpty()) {
+            shapes.add(shape);
+            return Collections.emptySet();
         }
 
-        shapes.add(shape);
+        Set<PathFinder.Path> recursivePaths = new LinkedHashSet<>();
+        for (Map.Entry<Shape, Relationship> entry : shapeRelationshipMap.entrySet()) {
+            List<Relationship> newPath = new ArrayList<>(path.size() + 1);
+            newPath.addAll(path);
+            newPath.add(entry.getValue());
+            recursivePaths.addAll(explore(entry.getKey(), newPath, newVisited, provider));
+        }
+
+        if (recursivePaths.isEmpty()) {
+            shapes.add(shape);
+        }
+
+        return recursivePaths;
     }
 
     /**
@@ -178,22 +184,27 @@ public final class TopologicalIndex implements KnowledgeIndex {
      * Gets the recursive closure of a given shape represented as
      * {@link PathFinder.Path} objects.
      *
+     * <p>The first element of each path is the given {@code shape},
+     * and the last element of each path is the first shape that is
+     * encountered a second time in the path (i.e., the point of
+     * recursion).
+     *
      * @param shape Shape to get the recursive closures of.
-     * @return The closures of the shape, or an empty {@code List} if the shape is not recursive.
+     * @return The closures of the shape, or an empty {@code Set} if the shape is not recursive.
      */
-    public List<PathFinder.Path> getRecursiveClosure(ToShapeId shape) {
+    public Set<PathFinder.Path> getRecursiveClosure(ToShapeId shape) {
         if (shape instanceof Shape) {
-            return recursiveShapes.getOrDefault(shape, Collections.emptyList());
+            return Collections.unmodifiableSet(recursiveShapes.getOrDefault(shape, Collections.emptySet()));
         }
 
         // If given an ID, we need to scan the recursive shapes to look for a matching ID.
         ShapeId id = shape.toShapeId();
-        for (Map.Entry<Shape, List<PathFinder.Path>> entry : recursiveShapes.entrySet()) {
+        for (Map.Entry<Shape, Set<PathFinder.Path>> entry : recursiveShapes.entrySet()) {
             if (entry.getKey().getId().equals(id)) {
-                return entry.getValue();
+                return Collections.unmodifiableSet(entry.getValue());
             }
         }
 
-        return Collections.emptyList();
+        return Collections.emptySet();
     }
 }
