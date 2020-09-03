@@ -16,7 +16,6 @@
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -210,33 +209,10 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         Optional<MemberShape> getMember(
                 Model model, OperationIndex opIndex, OperationShape operation, PaginatedTrait trait
         ) {
-            // Split up the path expression into a list of member names
-            List<String> memberNames = getMemberPath(opIndex, operation, trait)
-                    .map(value -> Arrays.asList(PATH_PATTERN.split(value)))
-                    .orElse(Collections.emptyList());
-            if (memberNames.isEmpty()) {
-                return Optional.empty();
-            }
             Optional<StructureShape> outputShape = opIndex.getOutput(operation);
-            if (!outputShape.isPresent()) {
-                return Optional.empty();
-            }
-
-            // Grab the first member from the output shape.
-            Optional<MemberShape> memberShape = outputShape.get().getMember(memberNames.get(0));
-
-            // For each member name in the path except the first, try to find that member in the previous structure
-            for (String memberName: memberNames.subList(1, memberNames.size())) {
-                if (!memberShape.isPresent()) {
-                    return Optional.empty();
-                }
-                memberShape = model.getShape(memberShape.get().getTarget())
-                        .flatMap(Shape::asStructureShape)
-                        .flatMap(target -> target.getMember(memberName));
-            }
-            return memberShape;
+            return outputShape.flatMap(structureShape -> getMemberPath(opIndex, operation, trait)
+                    .flatMap(path -> PaginatedTrait.resolvePath(path, model, structureShape)));
         }
-
     }
 
     private static final class InputTokenValidator extends PropertyValidator {

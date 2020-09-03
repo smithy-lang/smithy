@@ -55,7 +55,8 @@ public final class PaginatedIndex implements KnowledgeIndex {
             PaginatedTrait serviceTrait = service.getTrait(PaginatedTrait.class).orElse(null);
             Map<ShapeId, PaginationInfo> mappings = topDownIndex.getContainedOperations(service).stream()
                     .flatMap(operation -> Trait.flatMapStream(operation, PaginatedTrait.class))
-                    .flatMap(p -> OptionalUtils.stream(create(service, opIndex, p.left, p.right.merge(serviceTrait))))
+                    .flatMap(p -> OptionalUtils.stream(create(
+                            model, service, opIndex, p.left, p.right.merge(serviceTrait))))
                     .collect(Collectors.toMap(i -> i.getOperation().getId(), Function.identity()));
             paginationInfo.put(service.getId(), Collections.unmodifiableMap(mappings));
         });
@@ -66,6 +67,7 @@ public final class PaginatedIndex implements KnowledgeIndex {
     }
 
     private Optional<PaginationInfo> create(
+            Model model,
             ServiceShape service,
             OperationIndex opIndex,
             OperationShape operation,
@@ -79,14 +81,18 @@ public final class PaginatedIndex implements KnowledgeIndex {
         }
 
         MemberShape inputToken = trait.getInputToken().flatMap(input::getMember).orElse(null);
-        MemberShape outputToken = trait.getOutputToken().flatMap(output::getMember).orElse(null);
+        MemberShape outputToken = trait.getOutputToken()
+                .flatMap(path -> PaginatedTrait.resolvePath(path, model, output))
+                .orElse(null);
 
         if (inputToken == null || outputToken == null) {
             return Optional.empty();
         }
 
         MemberShape pageSizeMember = trait.getPageSize().flatMap(input::getMember).orElse(null);
-        MemberShape itemsMember = trait.getItems().flatMap(output::getMember).orElse(null);
+        MemberShape itemsMember = trait.getItems()
+                .flatMap(path -> PaginatedTrait.resolvePath(path, model, output))
+                .orElse(null);
 
         return Optional.of(new PaginationInfo(
                 service, operation, input, output, trait,

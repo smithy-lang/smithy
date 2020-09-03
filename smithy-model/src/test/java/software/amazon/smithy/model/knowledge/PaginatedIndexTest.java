@@ -19,6 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -45,5 +46,22 @@ public class PaginatedIndexTest {
         assertThat(info.getPageSizeMember().isPresent(), is(true));
         assertThat(info.getPageSizeMember().get().getMemberName(), equalTo("pageSize"));
         assertThat(info.getItemsMember().get().getMemberName(), equalTo("items"));
+    }
+
+    @Test
+    public void findIndirectChildren() {
+        ValidatedResult<Model> result = Model.assembler()
+                .addImport(getClass().getResource(
+                        "/software/amazon/smithy/model/errorfiles/validators/paginated-trait-test.json"))
+                .assemble();
+        Model model = result.getResult().get();
+        PaginatedIndex index = PaginatedIndex.of(model);
+
+        ShapeId service = ShapeId.from("ns.foo#Service");
+        ShapeId operation = ShapeId.from("ns.foo#ValidNestedOutputOperation");
+        Optional<PaginationInfo> info = index.getPaginationInfo(service, operation);
+
+        assertThat(info.isPresent(), is(true));
+        assertThat(info.get().getItemsMember().isPresent(), is(true));
     }
 }
