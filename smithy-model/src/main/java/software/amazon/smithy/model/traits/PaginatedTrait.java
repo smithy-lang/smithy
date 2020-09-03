@@ -16,9 +16,14 @@
 package software.amazon.smithy.model.traits;
 
 import java.util.Optional;
+import java.util.regex.Pattern;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.validation.validators.PaginatedTraitValidator;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -30,6 +35,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  */
 public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuilder<PaginatedTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.api#paginated");
+    private static final Pattern PATH_PATTERN = Pattern.compile("\\.");
 
     private final String items;
     private final String inputToken;
@@ -70,6 +76,37 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
      */
     public Optional<String> getPageSize() {
         return Optional.ofNullable(pageSize);
+    }
+
+    /**
+     * Resolves an output path.
+     *
+     * <p>A path is a series of identifiers separated by dots (`.`) where each identifier
+     * represents a member name in a structure.
+     *
+     * @param path The path to resolve.
+     * @param model The model to be searched when resolving the path.
+     * @param shape The shape where path resolution should start, e.g. the output shape
+     *              of an operation.
+     * @return The optional member shape that the path resolves to.
+     */
+    public static Optional<MemberShape> resolvePath(
+            String path,
+            Model model,
+            StructureShape shape
+    ) {
+        // For each member name in the path, try to find that member in the previous structure
+        Optional<MemberShape> memberShape = Optional.empty();
+        Optional<StructureShape> container = Optional.of(shape);
+        for (String memberName: PATH_PATTERN.split(path)) {
+            memberShape = container.flatMap(structure -> structure.getMember(memberName));
+            if (!memberShape.isPresent()) {
+                return Optional.empty();
+            }
+            container = model.getShape(memberShape.get().getTarget())
+                    .flatMap(Shape::asStructureShape);
+        }
+        return memberShape;
     }
 
     /**
