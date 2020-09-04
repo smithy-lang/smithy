@@ -1,0 +1,2 @@
+software.amazon.smithy.aws.cloudformation.traits.CfnMutabilityTraitValidator
+software.amazon.smithy.aws.cloudformation.traits.CfnResourcePropertyValidator
