@@ -24,3 +24,4 @@ include ":smithy-utils"
 include ":smithy-protocol-test-traits"
 include ':smithy-jmespath'
 include ":smithy-waiters"
+include ":smithy-aws-cloudformation-traits"
