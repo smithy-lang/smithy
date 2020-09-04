@@ -75,6 +75,10 @@ in a Smithy model are not currently supported in the OpenAPI conversion.
   not supported with OpenAPI (for example, an MQTT-based protocol modeled
   with Smithy would need to also support an HTTP-based protocol to be
   converted to OpenAPI).
+* :ref:`aws.api#arn-trait`: This trait does not influence resources defined
+  in the OpenAPI model natively, nor via any of the `Amazon API Gateway extensions`_.
+
+  .. seealso:: :ref:`other-traits`
 
 **Compatibility notes**
 
@@ -1040,6 +1044,7 @@ entry:
 In the entry, ``providerARNs`` will be populated from the ``providerArns`` list
 from the trait.
 
+.. _other-traits:
 
 Other traits that influence API Gateway
 =======================================
