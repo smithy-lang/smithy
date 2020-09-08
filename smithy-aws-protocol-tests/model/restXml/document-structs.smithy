@@ -32,7 +32,6 @@ apply SimpleScalarProperties @httpRequestTests([
         body: """
               <SimpleScalarPropertiesInputOutput>
                   <stringValue>string</stringValue>
-                  <emptyStringValue></emptyStringValue>
                   <trueBooleanValue>true</trueBooleanValue>
                   <falseBooleanValue>false</falseBooleanValue>
                   <byteValue>1</byteValue>
@@ -51,7 +50,6 @@ apply SimpleScalarProperties @httpRequestTests([
         params: {
             foo: "Foo",
             stringValue: "string",
-            emptyStringValue: "",
             trueBooleanValue: true,
             falseBooleanValue: false,
             byteValue: 1,
@@ -115,7 +113,6 @@ apply SimpleScalarProperties @httpResponseTests([
         body: """
               <SimpleScalarPropertiesInputOutput>
                   <stringValue>string</stringValue>
-                  <emptyStringValue/>
                   <trueBooleanValue>true</trueBooleanValue>
                   <falseBooleanValue>false</falseBooleanValue>
                   <byteValue>1</byteValue>
@@ -134,7 +131,6 @@ apply SimpleScalarProperties @httpResponseTests([
         params: {
             foo: "Foo",
             stringValue: "string",
-            emptyStringValue: "",
             trueBooleanValue: true,
             falseBooleanValue: false,
             byteValue: 1,
@@ -216,7 +212,6 @@ structure SimpleScalarPropertiesInputOutput {
     foo: String,
 
     stringValue: String,
-    emptyStringValue: String,
     trueBooleanValue: Boolean,
     falseBooleanValue: Boolean,
     byteValue: Byte,
@@ -227,6 +222,81 @@ structure SimpleScalarPropertiesInputOutput {
 
     @xmlName("DoubleDribble")
     doubleValue: Double,
+}
+
+// This example serializes empty string in the top level XML document.
+@idempotent
+@http(uri: "/XmlEmptyStrings", method: "PUT")
+@tags(["client-only"])
+operation XmlEmptyStrings {
+    input: xmlEmptyStringInputOutput,
+    output: xmlEmptyStringInputOutput
+}
+
+apply XmlEmptyStrings @httpRequestTests([
+       {
+           id: "XmlEmptyStrings",
+           documentation: "Serializes xml empty strings",
+           protocol: restXml,
+           method: "PUT",
+           uri: "/XmlEmptyStrings",
+           body: """
+                 <XmlEmptyStringsInputOutput>
+                     <emptyString></emptyString>
+                 </XmlEmptyStringsInputOutput>
+                 """,
+           bodyMediaType: "application/xml",
+           headers: {
+               "Content-Type": "application/xml",
+               "X-Foo": "Foo",
+           },
+           params: {
+               emptyString: "",
+           }
+       }
+])
+
+apply XmlEmptyStrings @httpResponseTests([
+    {
+        id: "XmlEmptyStrings",
+        documentation: "Deserializes xml empty strings",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <XmlEmptyStringsInputOutput>
+                  <emptyString></emptyString>
+              </XmlEmptyStringsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            emptyString: ""
+        }
+    },
+    {
+        id: "XmlEmptySelfClosedStrings",
+        documentation: "Empty self closed string are deserialized as empty string",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <XmlEmptyStringsInputOutput>
+                  <emptyString/>
+              </XmlEmptyStringsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            emptyString: ""
+        }
+    }
+])
+
+structure xmlEmptyStringInputOutput {
+    emptyString: String
 }
 
 /// Blobs are base64 encoded
