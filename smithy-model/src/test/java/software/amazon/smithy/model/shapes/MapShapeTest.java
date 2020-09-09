@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.shapes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -92,5 +93,20 @@ public class MapShapeTest {
                 .build();
 
         assertThat(shape.members(), hasSize(2));
+    }
+
+    @Test
+    public void builderUpdatesMembers() {
+        MapShape shape = MapShape.builder()
+                .id("ns.foo#bar")
+                .key(ShapeId.from("ns.foo#bam"))
+                .value(ShapeId.from("ns.foo#bam"))
+                .id("ns.bar#bar")
+                .build();
+
+        assertThat(shape.getKey().getId(), equalTo(ShapeId.from("ns.bar#bar$key")));
+        assertThat(shape.getKey().getTarget(), equalTo(ShapeId.from("ns.foo#bam")));
+        assertThat(shape.getValue().getId(), equalTo(ShapeId.from("ns.bar#bar$value")));
+        assertThat(shape.getValue().getTarget(), equalTo(ShapeId.from("ns.foo#bam")));
     }
 }

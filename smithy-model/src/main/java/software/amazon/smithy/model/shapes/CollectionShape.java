@@ -68,6 +68,15 @@ public abstract class CollectionShape extends Shape {
 
         private MemberShape member;
 
+        @Override
+        public final B id(ShapeId shapeId) {
+            if (member != null) {
+                // Update the member name so it isn't pointing to the old shape id.
+                member(member.toBuilder().id(shapeId.withMember(member.getMemberName())).build());
+            }
+            return super.id(shapeId);
+        }
+
         /**
          * Sets the member of the collection.
          * @param member Member of the collection to set.

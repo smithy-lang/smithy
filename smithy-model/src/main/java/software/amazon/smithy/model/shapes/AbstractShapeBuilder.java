@@ -68,7 +68,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
      * @return Returns the builder.
      */
     @SuppressWarnings("unchecked")
-    public final B id(ShapeId shapeId) {
+    public B id(ShapeId shapeId) {
         id = shapeId;
         return (B) this;
     }

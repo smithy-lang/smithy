@@ -98,4 +98,23 @@ public class StructureShapeTest {
 
         assertThat(a, not(equalTo(b)));
     }
+
+    @Test
+    public void builderUpdatesMemberIds() {
+        StructureShape original = StructureShape.builder()
+                .id("ns.foo#bar")
+                .addMember("foo", ShapeId.from("ns.foo#bam"))
+                .addMember("baz", ShapeId.from("ns.foo#bam"))
+                .build();
+
+        StructureShape actual = original.toBuilder().id(ShapeId.from("ns.bar#bar")).build();
+
+        StructureShape expected = StructureShape.builder()
+                .id("ns.bar#bar")
+                .addMember("foo", ShapeId.from("ns.foo#bam"))
+                .addMember("baz", ShapeId.from("ns.foo#bam"))
+                .build();
+
+        assertThat(actual, equalTo(expected));
+    }
 }
