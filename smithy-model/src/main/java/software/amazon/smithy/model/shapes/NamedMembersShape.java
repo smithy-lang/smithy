@@ -113,6 +113,15 @@ abstract class NamedMembersShape extends Shape {
 
         Map<String, MemberShape> members = new LinkedHashMap<>();
 
+        @Override
+        public final B id(ShapeId shapeId) {
+            // If there are already any members set, update their ids to point to the new parent id.
+            for (MemberShape member : members.values()) {
+                addMember(member.toBuilder().id(shapeId.withMember(member.getMemberName())).build());
+            }
+            return super.id(shapeId);
+        }
+
         /**
          * Replaces the members of the builder.
          *

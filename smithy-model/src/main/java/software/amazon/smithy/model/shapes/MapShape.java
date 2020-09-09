@@ -123,6 +123,18 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
             return ShapeType.MAP;
         }
 
+        @Override
+        public Builder id(ShapeId shapeId) {
+            // If the shape id has changed then the key and value member ids also need to be updated.
+            if (key != null) {
+                key(key.toBuilder().id(shapeId.withMember(key.getMemberName())).build());
+            }
+            if (value != null) {
+                value(value.toBuilder().id(shapeId.withMember(value.getMemberName())).build());
+            }
+            return super.id(shapeId);
+        }
+
         public Builder key(MemberShape member) {
             this.key = Objects.requireNonNull(member);
             return this;
