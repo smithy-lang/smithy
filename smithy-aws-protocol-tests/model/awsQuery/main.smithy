@@ -27,14 +27,19 @@ service AwsQuery {
         QueryMaps,
         QueryIdempotencyTokenAutoFill,
 
+        // Output tests
+        XmlEmptyBlobs,
+
         // Output XML map tests
         XmlMaps,
         XmlMapsXmlName,
         FlattenedXmlMap,
         FlattenedXmlMapWithXmlName,
+        XmlEmptyMaps,
 
         // Output XML list tests
         XmlLists,
+        XmlEmptyLists,
 
         // Output XML structure tests
         SimpleScalarXmlProperties,

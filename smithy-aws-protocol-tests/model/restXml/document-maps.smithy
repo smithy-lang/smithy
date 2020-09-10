@@ -100,7 +100,7 @@ apply XmlMaps @httpResponseTests([
     }
 ])
 
-@http(uri: "/XmlMaps", method: "POST")
+@http(uri: "/XmlEmptyMaps", method: "POST")
 @tags(["client-only"])
 operation XmlEmptyMaps {
     input: XmlMapsInputOutput,
@@ -113,7 +113,7 @@ apply XmlEmptyMaps @httpRequestTests([
         documentation: "Serializes Empty XML maps",
         protocol: restXml,
         method: "POST",
-        uri: "/XmlMaps",
+        uri: "/XmlEmptyMaps",
         body: """
               <XmlMapsInputOutput>
                   <myMap></myMap>

@@ -17,6 +17,9 @@ service RestXml {
         NoInputAndNoOutput,
         NoInputAndOutput,
         EmptyInputAndEmptyOutput,
+        XmlEmptyLists,
+        XmlEmptyMaps,
+        XmlEmptyStrings,
 
         // @httpHeader tests
         InputAndOutputWithHeaders,
@@ -47,6 +50,9 @@ service RestXml {
         HttpPayloadWithXmlName,
         HttpPayloadWithXmlNamespace,
         HttpPayloadWithXmlNamespaceAndPrefix,
+
+        // Output tests
+        XmlEmptyBlobs,
 
         // Errors
         GreetingWithErrors,

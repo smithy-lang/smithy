@@ -51,8 +51,12 @@ service AwsEc2 {
         QueryLists,
         QueryIdempotencyTokenAutoFill,
 
+        // Output tests
+        XmlEmptyBlobs,
+
         // Output XML list tests
         XmlLists,
+        XmlEmptyLists,
 
         // Output XML structure tests
         SimpleScalarXmlProperties,
