@@ -74,6 +74,7 @@ public final class TraceFile implements ToNode, ToSmithyBuilder<TraceFile> {
      * Converts ObjectNode into TraceFile.
      *
      * @param value an ObjectNode that represents the entire trace file.
+     * @return TraceFile produced from an ObjectNode.
      */
     public static TraceFile fromNode(Node value) {
         ObjectNode node = value.expectObjectNode();
