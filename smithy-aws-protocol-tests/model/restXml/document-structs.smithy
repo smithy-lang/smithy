@@ -350,7 +350,7 @@ apply XmlBlobs @httpResponseTests([
 ])
 
 /// Blobs are base64 encoded
-@http(uri: "/XmlBlobs", method: "POST")
+@http(uri: "/XmlEmptyBlobs", method: "POST")
 @tags(["client-only"])
 operation XmlEmptyBlobs {
     input: XmlBlobsInputOutput,

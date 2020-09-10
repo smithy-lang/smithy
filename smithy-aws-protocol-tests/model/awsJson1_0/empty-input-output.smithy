@@ -123,4 +123,3 @@ apply EmptyInputAndEmptyOutput @httpResponseTests([
 ])
 
 structure EmptyInputAndEmptyOutputInput {}
-structure EmptyInputAndEmptyOutputOutput {}

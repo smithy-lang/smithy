@@ -218,7 +218,7 @@ apply XmlLists @httpResponseTests([
 ])
 
 @idempotent
-@http(uri: "/XmlLists", method: "PUT")
+@http(uri: "/XmlEmptyLists", method: "PUT")
 @tags(["client-only"])
 operation XmlEmptyLists {
     input: XmlListsInputOutput,
@@ -231,7 +231,7 @@ apply XmlEmptyLists @httpRequestTests([
         documentation: "Serializes Empty XML lists",
         protocol: restXml,
         method: "PUT",
-        uri: "/XmlLists",
+        uri: "/XmlEmptyLists",
         body: """
               <XmlListsInputOutput>
                       <stringList></stringList>
