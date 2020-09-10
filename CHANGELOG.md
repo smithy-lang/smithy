@@ -1,5 +1,28 @@
 # Smithy Changelog
 
+## 1.0.11 (2020-09-10)
+
+### Features
+
+* Added a reverse-topological knowledge index to aid in code generation for languages that require types to be
+  defined before they are referenced. ([#545](https://github.com/awslabs/smithy/pull/545), [#53](https://github.com/awslabs/smithy/pull/553))
+* Added the `@httpResponseCode` trait to indicate that a structure member represents an HTTP response status code. ([#546](https://github.com/awslabs/smithy/pull/546))
+* Added (unstable) support for generating a "Trace File" to link code generated artifacts back to their modeled source.
+  ([#552](https://github.com/awslabs/smithy/pull/552))
+* Added the `:topdown` selector that matches shapes hierarchically. ([#539](https://github.com/awslabs/smithy/pull/539))
+* Added validation for the `cloudTrailEventSource` property of the `@aws.api#service` trait. ([#550](https://github.com/awslabs/smithy/pull/550))
+* Updated shape builders to properly update their member ShapeIds if the ShapeId of the builder changes. ([#556](https://github.com/awslabs/smithy/pull/556))
+* Added several more XML related protocol tests. ([#547](https://github.com/awslabs/smithy/pull/547))
+
+### Bug Fixes
+
+* Fixed a bug where the `PaginatedIndex` did not properly support resolving paths. ([#554](https://github.com/awslabs/smithy/pull/554))
+
+### Documentation
+
+* Clarified the documentation for the `cloudTrailEventSource` property of the `@aws.api#service` trait. ([#550](https://github.com/awslabs/smithy/pull/550))
+* Clarified that the `@aws.api#arn` trait has no impact on OpenAPI conversions. ([#555](https://github.com/awslabs/smithy/pull/555))
+
 ## 1.0.10 (2020-08-26)
 
 ### Features
