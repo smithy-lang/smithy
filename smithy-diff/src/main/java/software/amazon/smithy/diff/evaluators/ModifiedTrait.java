@@ -103,7 +103,7 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                             Node.prettyPrintJson(newTrait.toNode()))));
                 } else if (oldTrait == null) {
                     events.add(note(changedShape.getNewShape(), newTrait, String.format(
-                            "The `%s` trait was added to the `%s` %s shape: %s",
+                            "The `%s` trait was added to the `%s` %s shape with the value: %s",
                             traitName,
                             changedShape.getNewShape().getId(),
                             changedShape.getNewShape().getType(),
