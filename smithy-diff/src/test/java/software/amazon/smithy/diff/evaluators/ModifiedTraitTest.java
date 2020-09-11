@@ -18,10 +18,14 @@ package software.amazon.smithy.diff.evaluators;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.diff.ModelDiff;
@@ -33,6 +37,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 public class ModifiedTraitTest {
@@ -97,5 +102,29 @@ public class ModifiedTraitTest {
                 .addTrait(TagsTrait.builder().addValue(tag).build())
                 .addTrait(TraitDefinition.builder().build())
                 .build();
+    }
+
+    @Test
+    public void modifiedShapeNoTag() {
+        Model modelA = Model.assembler()
+                .addImport(getClass().getResource("trait-test-a.smithy"))
+                .assemble()
+                .unwrap();
+        Model modelB = Model.assembler()
+                .addImport(getClass().getResource("trait-test-b.smithy"))
+                .assemble()
+                .unwrap();
+        List<ValidationEvent> events = TestHelper.findEvents(ModelDiff.compare(modelA, modelB), "ModifiedTrait");
+        List<String> messages = events.stream()
+                .map(ValidationEvent::getMessage)
+                .collect(Collectors.toList());
+
+        assertThat(events, hasSize(3));
+        assertThat(events.stream().filter(e -> e.getSeverity() == Severity.WARNING).count(), equalTo(1L));
+        assertThat(events.stream().filter(e -> e.getSeverity() == Severity.NOTE).count(), equalTo(2L));
+
+        assertThat(messages, hasItem("The `smithy.example#c` trait was added to the `smithy.example#Foo` string shape: \"foo\""));
+        assertThat(messages, hasItem("The `smithy.example#a` trait was removed from the `smithy.example#Foo` string shape. The removed trait value was: {}"));
+        assertThat(messages, hasItem("The `smithy.example#b` trait was changed on the `smithy.example#Foo` string shape. The old trait value was: \"hello\". The new trait value is: \"hello!\""));
     }
 }

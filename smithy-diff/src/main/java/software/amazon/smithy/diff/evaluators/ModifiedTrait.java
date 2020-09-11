@@ -101,6 +101,29 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                             changedShape.getNewShape().getType(),
                             Node.prettyPrintJson(oldTrait.toNode()),
                             Node.prettyPrintJson(newTrait.toNode()))));
+                } else if (oldTrait == null) {
+                    events.add(note(changedShape.getNewShape(), newTrait, String.format(
+                            "The `%s` trait was added to the `%s` %s shape: %s",
+                            traitName,
+                            changedShape.getNewShape().getId(),
+                            changedShape.getNewShape().getType(),
+                            Node.prettyPrintJson(newTrait.toNode()))));
+                } else if (newTrait == null) {
+                    events.add(warning(changedShape.getNewShape(), String.format(
+                            "The `%s` trait was removed from the `%s` %s shape. The removed trait value was: %s",
+                            traitName,
+                            changedShape.getNewShape().getId(),
+                            changedShape.getNewShape().getType(),
+                            Node.prettyPrintJson(oldTrait.toNode()))));
+                } else {
+                    events.add(note(changedShape.getNewShape(), newTrait, String.format(
+                            "The `%s` trait was changed on the `%s` %s shape. The old trait value was: %s. "
+                            + "The new trait value is: %s",
+                            traitName,
+                            changedShape.getNewShape().getId(),
+                            changedShape.getNewShape().getType(),
+                            Node.prettyPrintJson(oldTrait.toNode()),
+                            Node.prettyPrintJson(newTrait.toNode()))));
                 }
             });
         });
