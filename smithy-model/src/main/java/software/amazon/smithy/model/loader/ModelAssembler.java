@@ -298,7 +298,17 @@ public final class ModelAssembler {
      */
     public ModelAssembler addImport(URL url) {
         Objects.requireNonNull(url, "The provided url to ModelAssembler#addImport was null");
-        inputStreamModels.put(url.toExternalForm(), () -> {
+
+        // Format the key used to de-dupe files.
+        String key = url.toExternalForm();
+        if (key.startsWith("jar:")) {
+            key = key.substring(4);
+        }
+        if (key.startsWith("file:")) {
+            key = key.substring(5);
+        }
+
+        inputStreamModels.put(key, () -> {
             try {
                 URLConnection connection = url.openConnection();
                 if (properties.containsKey(ModelAssembler.DISABLE_JAR_CACHE)) {
