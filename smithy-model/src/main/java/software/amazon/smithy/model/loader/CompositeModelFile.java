@@ -106,7 +106,7 @@ final class CompositeModelFile implements ModelFile {
                 } else if (!previous.equals(shape)) {
                     mergeEvents.add(LoaderUtils.onShapeConflict(shape.getId(), shape.getSourceLocation(),
                                                                 previous.getSourceLocation()));
-                } else {
+                } else if (!LoaderUtils.isSameLocation(shape, previous)) {
                     LOGGER.warning(() -> "Ignoring duplicate but equivalent shape definition: " + previous.getId()
                                          + " defined at " + shape.getSourceLocation() + " and "
                                          + previous.getSourceLocation());

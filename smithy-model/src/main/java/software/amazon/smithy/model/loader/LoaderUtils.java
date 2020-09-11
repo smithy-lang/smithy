@@ -17,6 +17,7 @@ package software.amazon.smithy.model.loader;
 
 import java.util.Collection;
 import java.util.List;
+import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -79,5 +80,19 @@ final class LoaderUtils {
                 .shapeId(id)
                 .message(String.format("Conflicting shape definition for `%s` found at `%s` and `%s`", id, a, b))
                 .build();
+    }
+
+    /**
+     * Checks if the given values are defined at the same source location,
+     * and the source location is not {@link SourceLocation#NONE}.
+     *
+     * @param a First value to check.
+     * @param b Second value to check.
+     * @return Returns true if they are the same.
+     */
+    static boolean isSameLocation(FromSourceLocation a, FromSourceLocation b) {
+        SourceLocation sa = a.getSourceLocation();
+        SourceLocation sb = b.getSourceLocation();
+        return sa != SourceLocation.NONE && sa.equals(sb);
     }
 }
