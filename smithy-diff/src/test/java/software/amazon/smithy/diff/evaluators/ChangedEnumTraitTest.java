@@ -49,7 +49,7 @@ public class ChangedEnumTraitTest {
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, Severity.NOTE).size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").get(0).getSeverity(), equalTo(Severity.NOTE));
     }
 
     @Test
