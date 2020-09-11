@@ -123,7 +123,7 @@ public class ModifiedTraitTest {
         assertThat(events.stream().filter(e -> e.getSeverity() == Severity.WARNING).count(), equalTo(1L));
         assertThat(events.stream().filter(e -> e.getSeverity() == Severity.NOTE).count(), equalTo(2L));
 
-        assertThat(messages, hasItem("The `smithy.example#c` trait was added to the `smithy.example#Foo` string shape: \"foo\""));
+        assertThat(messages, hasItem("The `smithy.example#c` trait was added to the `smithy.example#Foo` string shape with the value: \"foo\""));
         assertThat(messages, hasItem("The `smithy.example#a` trait was removed from the `smithy.example#Foo` string shape. The removed trait value was: {}"));
         assertThat(messages, hasItem("The `smithy.example#b` trait was changed on the `smithy.example#Foo` string shape. The old trait value was: \"hello\". The new trait value is: \"hello!\""));
     }
