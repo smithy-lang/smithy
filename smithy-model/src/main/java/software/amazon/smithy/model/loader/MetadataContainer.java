@@ -56,22 +56,34 @@ final class MetadataContainer {
      * @param value Value to set.
      */
     void putMetadata(String key, Node value) {
-        if (!data.containsKey(key)) {
-            data.put(key, value);
-        } else if (data.get(key).isArrayNode() && value.isArrayNode()) {
-            ArrayNode previous = data.get(key).expectArrayNode();
-            List<Node> merged = new ArrayList<>(previous.getElements());
+        Node previous = data.putIfAbsent(key, value);
+
+        if (previous == null) {
+            return;
+        }
+
+        if (LoaderUtils.isSameLocation(value, previous) && value.equals(previous)) {
+            // The assumption here is that if the metadata value is exactly the
+            // same and from the same location, then the same model file was
+            // included more than once in a way that side-steps file and URL
+            // de-duplication. For example, this can occur when a Model is assembled
+            // through a ModelAssembler using model discovery, then the Model is
+            // added to a subsequent ModelAssembler, and then model discovery is
+            // performed again using the same classpath.
+            LOGGER.finer(() -> "Ignoring duplicate metadata key from same exact location: " + key);
+        } else if (previous.isArrayNode() && value.isArrayNode()) {
+            ArrayNode previousArray = previous.expectArrayNode();
+            List<Node> merged = new ArrayList<>(previousArray.getElements());
             merged.addAll(value.expectArrayNode().getElements());
-            ArrayNode mergedArray = new ArrayNode(merged, value.getSourceLocation());
-            data.put(key, mergedArray);
-        } else if (!data.get(key).equals(value)) {
+            data.put(key, new ArrayNode(merged, value.getSourceLocation()));
+        } else if (!previous.equals(value)) {
             events.add(ValidationEvent.builder()
                     .id(Validator.MODEL_ERROR)
                     .severity(Severity.ERROR)
                     .sourceLocation(value)
                     .message(format(
                             "Metadata conflict for key `%s`. Defined in both `%s` and `%s`",
-                            key, value.getSourceLocation(), data.get(key).getSourceLocation()))
+                            key, value.getSourceLocation(), previous.getSourceLocation()))
                     .build());
         } else {
             LOGGER.fine(() -> "Ignoring duplicate metadata definition of " + key);

@@ -146,6 +146,20 @@ public interface TraitContainer {
 
             if (traits.containsKey(traitId)) {
                 Trait previousTrait = traits.get(traitId);
+
+                if (LoaderUtils.isSameLocation(previousTrait, value) && previousTrait.equals(value)) {
+                    // The assumption here is that if the trait value is exactly the
+                    // same and from the same location, then the same model file was
+                    // included more than once in a way that side-steps file and URL
+                    // de-duplication. For example, this can occur when a Model is assembled
+                    // through a ModelAssembler using model discovery, then the Model is
+                    // added to a subsequent ModelAssembler, and then model discovery is
+                    // performed again using the same classpath.
+                    LOGGER.finest(() -> String.format("Ignoring duplicate %s trait value on %s at same exact location",
+                                                      traitId, target));
+                    return;
+                }
+
                 Node previous = previousTrait.toNode();
                 Node updated = value.toNode();
 
@@ -157,8 +171,7 @@ public interface TraitContainer {
                         return;
                     }
                 } else if (previous.equals(updated)) {
-                    LOGGER.fine(() -> String.format(
-                            "Ignoring duplicate %s trait value on %s", traitId, target));
+                    LOGGER.fine(() -> String.format("Ignoring duplicate %s trait value on %s", traitId, target));
                     return;
                 } else {
                     events.add(ValidationEvent.builder()
