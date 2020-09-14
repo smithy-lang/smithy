@@ -229,8 +229,8 @@ structure SimpleScalarPropertiesInputOutput {
 @http(uri: "/XmlEmptyStrings", method: "PUT")
 @tags(["client-only"])
 operation XmlEmptyStrings {
-    input: xmlEmptyStringInputOutput,
-    output: xmlEmptyStringInputOutput
+    input: XmlEmptyStringsInputOutput,
+    output: XmlEmptyStringsInputOutput
 }
 
 apply XmlEmptyStrings @httpRequestTests([
@@ -248,7 +248,6 @@ apply XmlEmptyStrings @httpRequestTests([
            bodyMediaType: "application/xml",
            headers: {
                "Content-Type": "application/xml",
-               "X-Foo": "Foo",
            },
            params: {
                emptyString: "",
@@ -295,7 +294,7 @@ apply XmlEmptyStrings @httpResponseTests([
     }
 ])
 
-structure xmlEmptyStringInputOutput {
+structure XmlEmptyStringsInputOutput {
     emptyString: String
 }
 
