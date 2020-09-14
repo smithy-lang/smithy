@@ -48,9 +48,7 @@ public final class ConditionKeysTrait extends StringListTrait implements ToSmith
 
     @Override
     public Builder toBuilder() {
-        ConditionKeysTrait.Builder builder = builder().sourceLocation(getSourceLocation());
-        getValues().forEach(builder::addValue);
-        return builder;
+        return builder().sourceLocation(getSourceLocation()).values(getValues());
     }
 
     public static final class Builder extends StringListTrait.Builder<ConditionKeysTrait, Builder> {

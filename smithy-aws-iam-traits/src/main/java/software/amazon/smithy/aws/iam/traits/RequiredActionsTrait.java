@@ -45,9 +45,7 @@ public final class RequiredActionsTrait extends StringListTrait implements ToSmi
 
     @Override
     public Builder toBuilder() {
-        Builder builder = builder().sourceLocation(getSourceLocation());
-        getValues().forEach(builder::addValue);
-        return builder;
+        return builder().sourceLocation(getSourceLocation()).values(getValues());
     }
 
     public static final class Builder extends StringListTrait.Builder<RequiredActionsTrait, Builder> {
