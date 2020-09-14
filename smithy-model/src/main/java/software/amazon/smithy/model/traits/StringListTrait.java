@@ -46,7 +46,11 @@ public abstract class StringListTrait extends AbstractTrait {
 
     @Override
     protected final Node createNode() {
-        return ArrayNode.fromStrings(values);
+        List<Node> nodes = new ArrayList<>(values.size());
+        for (String value : values) {
+            nodes.add(Node.from(value));
+        }
+        return new ArrayNode(nodes, getSourceLocation());
     }
 
     /**
