@@ -51,6 +51,7 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.shapes.ModelSerializer;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
@@ -615,5 +616,20 @@ public class ModelAssemblerTest {
 
         assertTrue(model.expectShape(id).findTrait(traitId).isPresent());
         assertThat(model.expectShape(id).findTrait(traitId).get(), instanceOf(DynamicTrait.class));
+    }
+
+    @Test
+    public void dedupesExactSameTraitsAndMetadataFromSameLocation() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("dedupe-models.smithy"))
+                .assemble()
+                .unwrap();
+        Model model2 = Model.assembler()
+                .addModel(model)
+                .addImport(getClass().getResource("dedupe-models.smithy"))
+                .assemble()
+                .unwrap();
+
+        assertThat(model, equalTo(model2));
     }
 }
