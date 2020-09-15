@@ -1,0 +1,27 @@
+{
+  "smithy": "1.0",
+  "shapes": {
+    "ns.foo#bar": {
+      "type": "structure",
+      "members": {
+        "member": {
+          "target": "ns.foo#BarTraitShapeMember"
+        }
+      },
+      "traits": {
+        "smithy.api#trait": {}
+      }
+    },
+    "ns.foo#baz": {
+      "type": "string",
+      "traits": {
+        "ns.foo#bar": {
+          "member": "baz"
+        }
+      }
+    },
+    "ns.foo#BarTraitShapeMember": {
+      "type": "string"
+    }
+  }
+}

@@ -862,6 +862,54 @@ key is not in the provided ``keys`` list.
             }
         }
 
+.. _removeTraitDefinitions-transform:
+
+removeTraitDefinitions
+----------------------
+
+Removes trait definitions from the model, but leaves the instances of traits
+intact on any shapes.
+
+You can *export* trait definitions by applying specific tags to the trait
+definition and adding the list of export tags in the ``exportTagged`` argument.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - exportTagged
+      - ``[string]``
+      - The set of tags that, if found on a trait definition, forces the trait
+        to be retained in the transformed model.
+
+The following example removes trait definitions but keeps the instances of the
+trait intact on shapes in the model:
+
+.. tabs::
+
+    .. code-tab:: json
+
+        {
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {
+                            "name": "removeTraitDefinitions",
+                            "args": {
+                                "exportTagged": [
+                                    "export-tag1",
+                                    "another-export-tag"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        }
 
 .. _removeUnusedShapes-transform:
 
