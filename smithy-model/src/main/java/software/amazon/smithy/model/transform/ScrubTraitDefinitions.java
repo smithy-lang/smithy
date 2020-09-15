@@ -37,7 +37,7 @@ import software.amazon.smithy.utils.FunctionalUtils;
  *
  * <p>This can be useful when serializing a Smithy model to a format that
  * does not include trait definitions and the shapes used by trait definitions
- * would have no meaning (e.g., Swagger).
+ * would have no meaning (e.g., OpenAPI).
  *
  * <p>TODO: Should there be an option to only remove private traits?
  *
