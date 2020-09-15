@@ -24,7 +24,9 @@
                 }
             ],
             "traits": {
-                "smithy.api#readonly": {}
+                "smithy.api#readonly": {},
+                "ns.foo#MyTrait": {},
+                "ns.foo#MyOtherTrait": {}
             }
         },
         "ns.foo#MyOperationInput": {
@@ -37,6 +39,18 @@
             "type": "structure",
             "traits": {
                 "smithy.api#error": "client"
+            }
+        },
+        "ns.foo#MyTrait": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {}
+            }
+        },
+        "ns.foo#MyOtherTrait": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {}
             }
         }
     }
