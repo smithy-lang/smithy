@@ -18,11 +18,9 @@ package software.amazon.smithy.build.transforms;
 import java.util.Collections;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.logging.Logger;
 import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.transform.ModelTransformer;
 
 /**
@@ -32,9 +30,7 @@ import software.amazon.smithy.model.transform.ModelTransformer;
  *
  * <p>This transformer will not remove prelude trait definitions.
  */
-public final class RemoveTraitDefinitions extends BackwardCompatHelper<RemoveTraitDefinitions.Config> {
-
-    private static final Logger LOGGER = Logger.getLogger(RemoveTraitDefinitions.class.getName());
+public final class RemoveTraitDefinitions extends ConfigurableProjectionTransformer<RemoveTraitDefinitions.Config> {
 
     /**
      * {@code removeTraitShapes} configuration settings.
@@ -66,11 +62,6 @@ public final class RemoveTraitDefinitions extends BackwardCompatHelper<RemoveTra
     }
 
     @Override
-    String getBackwardCompatibleNameMapping() {
-        return "removeTraitDefinitions";
-    }
-
-    @Override
     public Class<Config> getConfigType() {
         return Config.class;
     }
@@ -79,24 +70,9 @@ public final class RemoveTraitDefinitions extends BackwardCompatHelper<RemoveTra
     protected Model transformWithConfig(TransformContext context, Config config) {
         Model model = context.getModel();
         ModelTransformer transformer = context.getTransformer();
+        Predicate<Shape> keepTraitDefsByTag = trait -> config.getExportTagged().stream().noneMatch(trait::hasTag);
 
-        Model modelWithoutTraitDefinitions = transformer.getModelWithoutTraitShapes(model);
-
-        // If no export tags have been configured, we can return the scrubbed model directly.
-        if (config.getExportTagged().isEmpty()) {
-            return modelWithoutTraitDefinitions;
-        }
-
-        Predicate<Shape> keepTraitDefsByTag = trait -> config.getExportTagged().stream().anyMatch(trait::hasTag);
-        Model.Builder builder = modelWithoutTraitDefinitions.toBuilder();
-
-        // Add trait definitions back to scrubbed model.
-        model.shapes()
-                .filter(shape -> shape.getTrait(TraitDefinition.class).isPresent())
-                .filter(keepTraitDefsByTag)
-                .forEach(builder::addShape);
-
-        return builder.build();
+        return transformer.getModelWithoutTraitShapes(model, keepTraitDefsByTag);
     }
 
     @Override
