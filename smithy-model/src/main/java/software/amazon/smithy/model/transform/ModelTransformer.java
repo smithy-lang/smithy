@@ -370,7 +370,7 @@ public final class ModelTransformer {
      *
      * <p>This can be useful when serializing a Smithy model to a format that
      * does not include trait definitions and the shapes used by trait definitions
-     * would have no meaning (e.g., Swagger).
+     * would have no meaning (e.g., OpenAPI).
      *
      * @param model Model to transform.
      * @return Returns the transformed model.base.
@@ -386,13 +386,13 @@ public final class ModelTransformer {
      *
      * <p>This can be useful when serializing a Smithy model to a format that
      * does not include trait definitions and the shapes used by trait definitions
-     * would have no meaning (e.g., Swagger).
+     * would have no meaning (e.g., OpenAPI).
      *
      * @param model Model to transform.
      * @param keepFilter Predicate function that accepts an trait shape (that
      *  has the {@link TraitDefinition} trait) and returns true to remove the
-     *  definition or false to keep the definition in the model.base.
-     * @return Returns the transformed model.base.
+     *  definition or false to keep the definition in the model.
+     * @return Returns the transformed model.
      */
     public Model scrubTraitDefinitions(Model model, Predicate<Shape> keepFilter) {
         return new ScrubTraitDefinitions().transform(this, model, keepFilter);
@@ -416,7 +416,7 @@ public final class ModelTransformer {
      * @param model Model that contains shapes.
      * @param keepFilter Predicate function that accepts a trait shape (that
      *  has the {@link TraitDefinition} trait) and returns true to remove the
-     *  definition or false to keep the definition in the model.base.
+     *  definition or false to keep the definition in the model.
      * @return Returns a model that contains matching shapes.
      */
     public Model getModelWithoutTraitShapes(Model model, Predicate<Shape> keepFilter) {

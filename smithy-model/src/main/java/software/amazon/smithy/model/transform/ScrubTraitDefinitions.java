@@ -49,14 +49,11 @@ final class ScrubTraitDefinitions {
     }
 
     Model transform(ModelTransformer transformer, Model model, Predicate<Shape> keepFilter) {
-        // Find all trait definition shapes and private shapes in the prelude.
-        Set<Shape> traitDefinitions = Stream.concat(
-                model.shapes().filter(shape -> shape.hasTrait(TraitDefinition.class)),
+        // Find all trait definition shapes, excluding those to be kept, and private shapes in the prelude.
+        Set<Shape> toMark = Stream.concat(
+                model.shapes().filter(shape -> isTraitDefinitionToRemove(shape, keepFilter)),
                 model.shapes().filter(shape -> Prelude.isPreludeShape(shape) && shape.hasTrait(PrivateTrait.class))
         ).collect(Collectors.toSet());
-
-        // Filter any trait definitions from being marked for removal that we want to retain.
-        Set<Shape> toMark = traitDefinitions.stream().filter(keepFilter).collect(Collectors.toSet());
 
         MarkAndSweep markAndSweep = new MarkAndSweep(
                 // Mark shapes for removal that are private or remaining trait definitions.
@@ -73,5 +70,9 @@ final class ScrubTraitDefinitions {
 
     private static boolean notPublicPreludeShape(Shape shape) {
         return !(Prelude.isPublicPreludeShape(shape.getId()) && !shape.hasTrait(TraitDefinition.class));
+    }
+
+    private static boolean isTraitDefinitionToRemove(Shape shape, Predicate<Shape> keepFilter) {
+        return shape.hasTrait(TraitDefinition.class) && keepFilter.test(shape);
     }
 }
