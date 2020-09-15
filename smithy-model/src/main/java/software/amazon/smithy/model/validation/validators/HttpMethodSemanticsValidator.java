@@ -57,7 +57,7 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
             "OPTIONS", new HttpMethodSemantics(true, false, false),
             "TRACE", new HttpMethodSemantics(true, false, false),
             "POST", new HttpMethodSemantics(false, null, true),
-            "DELETE", new HttpMethodSemantics(false, true, true),
+            "DELETE", new HttpMethodSemantics(false, true, false),
             "PUT", new HttpMethodSemantics(false, true, true),
             "PATCH", new HttpMethodSemantics(false, false, true));
 

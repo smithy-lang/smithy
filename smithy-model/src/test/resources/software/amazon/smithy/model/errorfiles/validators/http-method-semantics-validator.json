@@ -151,6 +151,27 @@
                     }
                 }
             }
+        },
+        "ns.foo#M": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#MInput"
+            },
+            "traits": {
+                "smithy.api#http": {
+                    "method": "DELETE",
+                    "uri": "/M"
+                },
+                "smithy.api#idempotent": {}
+            }
+        },
+        "ns.foo#MInput": {
+            "type": "structure",
+            "members": {
+                "payload": {
+                    "target": "smithy.api#String"
+                }
+            }
         }
     }
 }
