@@ -42,7 +42,7 @@ public final class RemoveUnusedShapes extends BackwardCompatHelper<RemoveUnusedS
         /**
          * You can <em>export</em> shapes that are not connected to any service
          * shape by applying specific tags to the shape and adding the list of
-         * export tags an argument to the transformer.
+         * export tags as an argument to the transformer.
          *
          * @param exportByTags Tags that cause shapes to be exported.
          */
