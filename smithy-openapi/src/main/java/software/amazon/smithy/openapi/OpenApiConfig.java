@@ -74,7 +74,7 @@ public class OpenApiConfig extends JsonSchemaConfig {
     private ShapeId service;
     private ShapeId protocol;
     private boolean tags;
-    private List<String> supportedTags = Collections.emptyList();
+    private List<String> supportedTags;
     private String defaultBlobFormat = "byte";
     private boolean keepUnusedComponents;
     private String jsonContentType = "application/json";

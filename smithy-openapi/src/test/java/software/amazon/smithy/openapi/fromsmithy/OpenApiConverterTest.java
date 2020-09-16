@@ -70,7 +70,26 @@ public class OpenApiConverterTest {
     }
 
     @Test
-    public void passesThroughTags() {
+    public void passesThroughAllTags() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("tagged-service.json"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
+        config.setTags(true);
+        OpenApi result = OpenApiConverter.create()
+                .config(config)
+                .convert(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("tagged-service-all-tags.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
+    public void passesThroughSupportedTags() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("tagged-service.json"))
                 .discoverModels()
@@ -84,7 +103,27 @@ public class OpenApiConverterTest {
                 .config(config)
                 .convert(model);
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
-                getClass().getResourceAsStream("tagged-service.openapi.json")));
+                getClass().getResourceAsStream("tagged-service-supported-tags.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
+    public void doesNotPassThroughTagsWithEmptySupportedTagList() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("tagged-service.json"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
+        config.setTags(true);
+        config.setSupportedTags(ListUtils.of());
+        OpenApi result = OpenApiConverter.create()
+                .config(config)
+                .convert(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("tagged-service-empty-supported-tags.openapi.json")));
 
         Node.assertEquals(result, expectedNode);
     }
