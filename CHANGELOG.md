@@ -1,5 +1,24 @@
 # Smithy Changelog
 
+## 1.1.0 (2020-09-16)
+
+### Features
+
+* Added the `removeTraitDefinitions` build transform to remove trait definitions from models but leave instances intact.
+  ([#558](https://github.com/awslabs/smithy/pull/558))
+* Added payload binding validation to HTTP `DELETE` operations. ([#566](https://github.com/awslabs/smithy/pull/566))
+* Updated `SmithyDiff` to emit events when traits are changed. ([#561](https://github.com/awslabs/smithy/pull/561))
+
+### Bug Fixes
+
+* Fixed an issue where some `StringListTrait` instances could lose `SourceLocation` information. ([#564](https://github.com/awslabs/smithy/pull/564))
+* Fixed some issues in protocol tests. ([#560](https://github.com/awslabs/smithy/pull/560), [#563](https://github.com/awslabs/smithy/pull/563))
+
+### Cleanup
+
+* Model components are now deduplicated based on location and value. ([#565](https://github.com/awslabs/smithy/pull/565))
+* Normalize URL import filenames for better deduplication and reporting. ([#562](https://github.com/awslabs/smithy/pull/562))
+
 ## 1.0.11 (2020-09-10)
 
 ### Features
