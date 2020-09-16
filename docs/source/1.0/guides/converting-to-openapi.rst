@@ -206,8 +206,8 @@ protocol (string)
 
 tags (boolean)
     Whether or not to include Smithy :ref:`tags <tags-trait>` in the result
-    as `OpenAPI tags`_. The following example adds all tags in the Smithy
-    model to the OpenAPI model.
+    as `OpenAPI tags`_. This property requires that ``supportedTags`` is set
+    with the list of tags to be included.
 
     .. code-block:: json
 
@@ -216,15 +216,16 @@ tags (boolean)
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
-                    "tags": true
+                    "tags": true,
+                    "supportedTags": ["foo", "baz", "bar"]
                 }
             }
         }
 
 supportedTags ([string])
-    Limits the exported ``tags`` to a specific set of tags. The value
-    must be a list of strings. This property requires that ``tags`` is set to
-    ``true`` in order to have an effect.
+    Sets list of specific ``tags`` that will be exported. The value must be a
+    list of strings. This property requires that ``tags`` is set to ``true`` in
+    order to have an effect.
 
     .. code-block:: json
 
