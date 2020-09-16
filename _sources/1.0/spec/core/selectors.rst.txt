@@ -1359,6 +1359,93 @@ trait applied to it:
     service :not(-[trait]-> [trait|protocolDefinition])
 
 
+``:topdown``
+------------
+
+The ``:topdown`` function matches service, resource, and operation shapes
+and resource and operation shapes within their containment hierarchy. The
+``:topdown`` function starts at each given shape and forward-traverses
+the containment hierarchy of the shape by following ``operation`` and
+``resource`` :ref:`relationships <selector-relationships>` from the shape
+to its neighbors; this function *does not* traverse *up* the containment
+hierarchy of a given shape to check if the shape is within the containment
+hierarchy of a qualified service or resource shape. This function essentially
+allows shapes to be matched by inheriting from the resource or service they
+are bound to.
+
+.. rubric:: Selector arguments
+
+Exactly one or two selectors MUST be provided to the ``:topdown`` selector:
+
+1. The first selector is the "qualifier". It is used to mark a shape as a
+   match. If the selector yields any results, then it is considered a match.
+2. If provided, the second selector is called the "disqualifier". It is used
+   to remove the match flag for the current shape before traversing any
+   resource and operation bindings of the current shape. If this selector
+   yields any results, then the shape is not considered a match, and bound
+   resources and operations are not considered a match until the qualifier
+   selector matches again. Resource and operation binding traversal continues
+   regardless of if the second selector removes the match flag for the current
+   shape because resource and operation shapes bound to the current shape
+   could yield matching results.
+
+.. rubric:: Examples
+
+The following selector finds all service, resource, and operation shapes that
+are marked with the ``aws.api#dataPlane`` trait or that are bound within the
+containment hierarchy of resource and service shapes that are marked as such:
+
+.. code-block:: none
+
+    :topdown([trait|aws.api#dataPlane])
+
+The following selector finds all service, resource, and operation shapes that
+are marked with the ``aws.api#dataPlane`` trait, but does not match shapes
+where the ``aws.api#controlPlane`` trait is used to override the
+``aws.api#dataPlane`` trait. For example, if a service is marked with the
+``aws.api#dataPlane`` trait to provide a default setting for all resources and
+operations within the service, the ``aws.api#controlPlane`` trait can be used
+to override the default.
+
+.. code-block:: none
+
+    :topdown([trait|aws.api#dataPlane], [trait|aws.api#controlPlane])
+
+The above selector applied to the following model matches ``Example``,
+``OperationA``, and ``OperationB``. It does not match ``Foo`` because ``Foo``
+matches the disqualifier selector.
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    @aws.api#dataPlane
+    service Example {
+        version: "2020-09-08",
+        resources: [Foo],
+        operations: [OperationA],
+    }
+
+    operation OperationA {}
+
+    @aws.api#controlPlane
+    resource Foo {
+        operations: [OperationB]
+    }
+
+    @aws.api#dataPlane
+    operation OperationB {}
+
+In the following example, the ``:topdown`` function does not inherit any
+matches from service shapes because the selector only sends resource shapes
+to the function. When applied to the previous example model, the following
+selector matches only ``OperationB``.
+
+.. code-block:: none
+
+    resource :topdown([trait|aws.api#dataPlane], [trait|aws.api#controlPlane])
+
+
 .. _selector-variables:
 
 Variables

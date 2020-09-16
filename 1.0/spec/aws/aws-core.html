@@ -309,9 +309,9 @@ are combined with the service's arnNamespace to form an ARN.</p>
 <div class="section" id="cloudtraileventsource">
 <span id="service-cloudtrail-event-source"></span><h3><a href="#cloudtraileventsource"><code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code> property is a <code class="docutils literal notranslate"><span class="pre">string</span></code> value that defines the
-<em>eventSource</em> property contained in CloudTrail <a class="reference external" href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-record-contents.html">event records</a>
-emitted by the service. If not specified, this value defaults to the
-<code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code> plus .amazonaws.com. For example:</p>
+AWS customer-facing <em>eventSource</em> property contained in CloudTrail
+<a class="reference external" href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-record-contents.html">event records</a> emitted by the service. If not specified, this value defaults
+to the <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code> plus .amazonaws.com. For example:</p>
 <ul class="simple">
 <li>AWS CloudFormation has an <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code> of <code class="docutils literal notranslate"><span class="pre">cloudformation</span></code> and an
 event source of <code class="docutils literal notranslate"><span class="pre">cloudformation.amazonaws.com</span></code>.</li>
@@ -320,7 +320,8 @@ event source of <code class="docutils literal notranslate"><span class="pre">clo
 <li>Amazon Simple Workflow Service has an <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code> of <code class="docutils literal notranslate"><span class="pre">swf</span></code> and
 an event source of <code class="docutils literal notranslate"><span class="pre">swf.amazonaws.com</span></code>.</li>
 </ul>
-<p>This convention has some exceptions. For example, the event source for
+<p>This value SHOULD follow the convention of <code class="docutils literal notranslate"><span class="pre">{arnNamespace}.amazonaws.com</span></code>,
+but there are some exceptions. For example, the event source for
 Amazon CloudWatch is <code class="docutils literal notranslate"><span class="pre">monitoring.amazonaws.com</span></code>. Such services will
 need to explicitly configure the <code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code> setting.</p>
 </div>

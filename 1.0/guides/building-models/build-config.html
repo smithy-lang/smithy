@@ -1108,6 +1108,65 @@ JSON</div>
 </div>
 </div>
 </div>
+<div class="section" id="removetraitdefinitions">
+<span id="removetraitdefinitions-transform"></span><h3><a href="#removetraitdefinitions">removeTraitDefinitions</a></h3>
+<p>Removes trait definitions from the model, but leaves the instances of traits
+intact on any shapes.</p>
+<p>You can <em>export</em> trait definitions by applying specific tags to the trait
+definition and adding the list of export tags in the <code class="docutils literal notranslate"><span class="pre">exportTagged</span></code> argument.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>exportTagged</td>
+<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
+<td>The set of tags that, if found on a trait definition, forces the trait
+to be retained in the transformed model.</td>
+</tr>
+</tbody>
+</table>
+<p>The following example removes trait definitions but keeps the instances of the
+trait intact on shapes in the model:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;removeTraitDefinitions&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;exportTagged&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="s2">&quot;export-tag1&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;another-export-tag&quot;</span>
+                        <span class="p">]</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
 <div class="section" id="removeunusedshapes">
 <span id="removeunusedshapes-transform"></span><h3><a href="#removeunusedshapes">removeUnusedShapes</a></h3>
 <p>Removes shapes from the model that are not connected to any service shape
@@ -1309,6 +1368,7 @@ All model names referenced by the manifest are relative to <code class="docutils
 <li><a class="reference internal" href="#includetraitsbytag">includeTraitsByTag</a></li>
 <li><a class="reference internal" href="#excludemetadata">excludeMetadata</a></li>
 <li><a class="reference internal" href="#includemetadata">includeMetadata</a></li>
+<li><a class="reference internal" href="#removetraitdefinitions">removeTraitDefinitions</a></li>
 <li><a class="reference internal" href="#removeunusedshapes">removeUnusedShapes</a></li>
 </ul>
 </li>

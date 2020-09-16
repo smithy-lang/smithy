@@ -1287,6 +1287,81 @@ trait applied to it:</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="topdown">
+<h3><a href="#topdown">14.8.4. <code class="docutils literal notranslate"><span class="pre">:topdown</span></code></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">:topdown</span></code> function matches service, resource, and operation shapes
+and resource and operation shapes within their containment hierarchy. The
+<code class="docutils literal notranslate"><span class="pre">:topdown</span></code> function starts at each given shape and forward-traverses
+the containment hierarchy of the shape by following <code class="docutils literal notranslate"><span class="pre">operation</span></code> and
+<code class="docutils literal notranslate"><span class="pre">resource</span></code> <a class="reference internal" href="#selector-relationships"><span class="std std-ref">relationships</span></a> from the shape
+to its neighbors; this function <em>does not</em> traverse <em>up</em> the containment
+hierarchy of a given shape to check if the shape is within the containment
+hierarchy of a qualified service or resource shape. This function essentially
+allows shapes to be matched by inheriting from the resource or service they
+are bound to.</p>
+<p class="rubric">Selector arguments</p>
+<p>Exactly one or two selectors MUST be provided to the <code class="docutils literal notranslate"><span class="pre">:topdown</span></code> selector:</p>
+<ol class="arabic simple">
+<li>The first selector is the &quot;qualifier&quot;. It is used to mark a shape as a
+match. If the selector yields any results, then it is considered a match.</li>
+<li>If provided, the second selector is called the &quot;disqualifier&quot;. It is used
+to remove the match flag for the current shape before traversing any
+resource and operation bindings of the current shape. If this selector
+yields any results, then the shape is not considered a match, and bound
+resources and operations are not considered a match until the qualifier
+selector matches again. Resource and operation binding traversal continues
+regardless of if the second selector removes the match flag for the current
+shape because resource and operation shapes bound to the current shape
+could yield matching results.</li>
+</ol>
+<p class="rubric">Examples</p>
+<p>The following selector finds all service, resource, and operation shapes that
+are marked with the <code class="docutils literal notranslate"><span class="pre">aws.api#dataPlane</span></code> trait or that are bound within the
+containment hierarchy of resource and service shapes that are marked as such:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>:topdown([trait|aws.api#dataPlane])
+</pre></div>
+</div>
+<p>The following selector finds all service, resource, and operation shapes that
+are marked with the <code class="docutils literal notranslate"><span class="pre">aws.api#dataPlane</span></code> trait, but does not match shapes
+where the <code class="docutils literal notranslate"><span class="pre">aws.api#controlPlane</span></code> trait is used to override the
+<code class="docutils literal notranslate"><span class="pre">aws.api#dataPlane</span></code> trait. For example, if a service is marked with the
+<code class="docutils literal notranslate"><span class="pre">aws.api#dataPlane</span></code> trait to provide a default setting for all resources and
+operations within the service, the <code class="docutils literal notranslate"><span class="pre">aws.api#controlPlane</span></code> trait can be used
+to override the default.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>:topdown([trait|aws.api#dataPlane], [trait|aws.api#controlPlane])
+</pre></div>
+</div>
+<p>The above selector applied to the following model matches <code class="docutils literal notranslate"><span class="pre">Example</span></code>,
+<code class="docutils literal notranslate"><span class="pre">OperationA</span></code>, and <code class="docutils literal notranslate"><span class="pre">OperationB</span></code>. It does not match <code class="docutils literal notranslate"><span class="pre">Foo</span></code> because <code class="docutils literal notranslate"><span class="pre">Foo</span></code>
+matches the disqualifier selector.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="nd">@aws.api#dataPlane</span>
+<span class="kd">service</span><span class="nc"> Example</span> {
+    <span class="nl">version:</span> <span class="s2">&quot;2020-09-08&quot;</span>,
+    <span class="nl">resources:</span> [<span class="vc">Foo</span>],
+    <span class="nl">operations:</span> [<span class="vc">OperationA</span>],
+}
+
+<span class="kd">operation</span><span class="nc"> OperationA</span> {}
+
+<span class="nd">@aws.api#controlPlane</span>
+<span class="kd">resource</span><span class="nc"> Foo</span> {
+    <span class="nl">operations:</span> [<span class="vc">OperationB</span>]
+}
+
+<span class="nd">@aws.api#dataPlane</span>
+<span class="kd">operation</span><span class="nc"> OperationB</span> {}
+</pre></div>
+</div>
+<p>In the following example, the <code class="docutils literal notranslate"><span class="pre">:topdown</span></code> function does not inherit any
+matches from service shapes because the selector only sends resource shapes
+to the function. When applied to the previous example model, the following
+selector matches only <code class="docutils literal notranslate"><span class="pre">OperationB</span></code>.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>resource :topdown([trait|aws.api#dataPlane], [trait|aws.api#controlPlane])
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="variables">
 <span id="selector-variables"></span><h2><a href="#variables">14.9. Variables</a></h2>
@@ -1580,6 +1655,7 @@ changing the semantics of a selector.</p>
 <li><a class="reference internal" href="#test">14.8.1. <code class="docutils literal notranslate"><span class="pre">:test</span></code></a></li>
 <li><a class="reference internal" href="#is">14.8.2. <code class="docutils literal notranslate"><span class="pre">:is</span></code></a></li>
 <li><a class="reference internal" href="#not">14.8.3. <code class="docutils literal notranslate"><span class="pre">:not</span></code></a></li>
+<li><a class="reference internal" href="#topdown">14.8.4. <code class="docutils literal notranslate"><span class="pre">:topdown</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#variables">14.9. Variables</a><ul>

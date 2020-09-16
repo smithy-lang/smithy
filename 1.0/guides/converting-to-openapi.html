@@ -123,29 +123,41 @@ a poor customer experience when using clients in strongly-typed languages.</p>
 <p>Converting a Smithy model to OpenAPI is a lossy conversion. Various features
 in a Smithy model are not currently supported in the OpenAPI conversion.</p>
 <p><strong>Unsupported features</strong></p>
-<ul class="simple">
-<li><a class="reference internal" href="../spec/core/endpoint-traits.html#endpoint-trait"><span class="std std-ref">endpoint trait</span></a> and <a class="reference internal" href="../spec/core/endpoint-traits.html#hostlabel-trait"><span class="std std-ref">hostLabel trait</span></a>: These traits are used
+<ul>
+<li><p class="first"><a class="reference internal" href="../spec/core/endpoint-traits.html#endpoint-trait"><span class="std std-ref">endpoint trait</span></a> and <a class="reference internal" href="../spec/core/endpoint-traits.html#hostlabel-trait"><span class="std std-ref">hostLabel trait</span></a>: These traits are used
 to dynamically alter the endpoint of an operation based on input. They
-are not supported in OpenAPI.</li>
-<li><a class="reference internal" href="../spec/core/http-traits.html#httpprefixheaders-trait"><span class="std std-ref">HTTP prefix headers</span></a>: &quot;Prefix headers&quot;
+are not supported in OpenAPI.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="../spec/core/http-traits.html#httpprefixheaders-trait"><span class="std std-ref">HTTP prefix headers</span></a>: &quot;Prefix headers&quot;
 are used in Smithy to bind all headers under a common prefix into a
 single property of the input or output of an API operation. This can
 be used for things like Amazon S3's <a class="reference external" href="https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html">x-amz-meta-* headers</a>. OpenAPI
-does not currently support this kind of header.</li>
-<li><a class="reference internal" href="../spec/core/http-traits.html#greedy-labels"><span class="std std-ref">Greedy labels</span></a>: Greedy labels are used in HTTP URIs to act as a
+does not currently support this kind of header.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="../spec/core/http-traits.html#greedy-labels"><span class="std std-ref">Greedy labels</span></a>: Greedy labels are used in HTTP URIs to act as a
 placeholder for multiple segments of a URI (for example,
 <code class="docutils literal notranslate"><span class="pre">/foo/{baz+}/bar</span></code>). Some OpenAPI vendors/tooling support greedy labels
 (for example, Amazon API Gateway) while other do not. The converter will
 pass greedy labels through into the OpenAPI document by default, but they
-can be forbidden through the <code class="docutils literal notranslate"><span class="pre">forbidGreedyLabels</span></code> flag.</li>
-<li>Non-RESTful routing: HTTP routing schemes that aren't based on
+can be forbidden through the <code class="docutils literal notranslate"><span class="pre">forbidGreedyLabels</span></code> flag.</p>
+</li>
+<li><p class="first">Non-RESTful routing: HTTP routing schemes that aren't based on
 methods and unique URIs are not supported in OpenAPI (for example,
 routing to operations based on a specific header or query string
-parameter).</li>
-<li>Non-HTTP protocols: Protocols that do not send requests over HTTP are
+parameter).</p>
+</li>
+<li><p class="first">Non-HTTP protocols: Protocols that do not send requests over HTTP are
 not supported with OpenAPI (for example, an MQTT-based protocol modeled
 with Smithy would need to also support an HTTP-based protocol to be
-converted to OpenAPI).</li>
+converted to OpenAPI).</p>
+</li>
+<li><p class="first"><a class="reference internal" href="../spec/aws/aws-core.html#aws-api-arn-trait"><span class="std std-ref">aws.api#arn trait</span></a>: This trait does not influence resources defined
+in the OpenAPI model natively, nor via any of the <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions.html">Amazon API Gateway extensions</a>.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#other-traits"><span class="std std-ref">Other traits that influence API Gateway</span></a></p>
+</div>
+</li>
 </ul>
 <p><strong>Compatibility notes</strong></p>
 <ul class="simple">
@@ -182,7 +194,7 @@ specification from a Smithy model using a buildscript dependency:</p>
 
 <span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.0.10&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.1.0&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -209,7 +221,7 @@ that builds an OpenAPI specification from a service for the
 </div>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-openapi:1.0.10&quot; is
+<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-openapi:1.1.0&quot; is
 required in order for smithy-build to map the &quot;openapi&quot; plugin name to the
 correct Java library implementation.</p>
 </div>
@@ -667,7 +679,7 @@ dependency on <code class="docutils literal notranslate"><span class="pre">softw
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#apigateway-build-gradle" title="Permalink to this code">¶</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-apigateway-openapi:1.0.10&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-apigateway-openapi:1.1.0&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -1044,7 +1056,7 @@ entry:</p>
 from the trait.</p>
 </div>
 <div class="section" id="other-traits-that-influence-api-gateway">
-<h3><a href="#other-traits-that-influence-api-gateway">Other traits that influence API Gateway</a></h3>
+<span id="other-traits"></span><h3><a href="#other-traits-that-influence-api-gateway">Other traits that influence API Gateway</a></h3>
 <dl class="docutils">
 <dt><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeySource</span></code></dt>
 <dd>Specifies the source of the caller identifier that will be used to
@@ -1072,7 +1084,7 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#code-build-gradle" title="Permalink to this code">¶</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.0.10&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.1.0&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>

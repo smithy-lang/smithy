@@ -80,16 +80,17 @@ and error structures are considered when serializing HTTP messages.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#http-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">http</span></code> trait</a></li>
-<li><a class="reference internal" href="#httperror-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait</a></li>
-<li><a class="reference internal" href="#httpheader-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait</a></li>
-<li><a class="reference internal" href="#httplabel-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait</a></li>
-<li><a class="reference internal" href="#httppayload-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait</a></li>
-<li><a class="reference internal" href="#httpprefixheaders-trait" id="id15"><code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait</a></li>
-<li><a class="reference internal" href="#httpquery-trait" id="id16"><code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait</a></li>
-<li><a class="reference internal" href="#cors-trait" id="id17"><code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></li>
-<li><a class="reference internal" href="#serializing-http-messages" id="id18">Serializing HTTP messages</a></li>
-<li><a class="reference internal" href="#event-streams" id="id19">Event streams</a></li>
+<li><a class="reference internal" href="#http-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">http</span></code> trait</a></li>
+<li><a class="reference internal" href="#httperror-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpheader-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait</a></li>
+<li><a class="reference internal" href="#httplabel-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait</a></li>
+<li><a class="reference internal" href="#httppayload-trait" id="id15"><code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpprefixheaders-trait" id="id16"><code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpquery-trait" id="id17"><code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpresponsecode-trait" id="id18"><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait</a></li>
+<li><a class="reference internal" href="#cors-trait" id="id19"><code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></li>
+<li><a class="reference internal" href="#serializing-http-messages" id="id20">Serializing HTTP messages</a></li>
+<li><a class="reference internal" href="#event-streams" id="id21">Event streams</a></li>
 </ul>
 </div>
 <div class="section" id="http-trait">
@@ -951,8 +952,24 @@ Smithy models SHOULD carefully consider the maximum allowed length of each
 member that is bound to an HTTP query string or path.</p>
 </div>
 </div>
+<div class="section" id="httpresponsecode-trait">
+<span id="id9"></span><h2><a href="#httpresponsecode-trait">11.8. <code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Indicates that the structure member represents an HTTP response
+status code.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span> <span class="pre">:test(&gt;</span> <span class="pre">integer)</span></code></dd>
+<dt>Value type</dt>
+<dd>Annotation trait.</dd>
+</dl>
+<p>The value MAY differ from the HTTP status code provided on the response.
+Explicitly modeling this as a field can be helpful for services that wish to
+provide different response codes for an operation, like 200 or 201 for a PUT
+operation.</p>
+</div>
 <div class="section" id="cors-trait">
-<span id="id9"></span><h2><a href="#cors-trait">11.8. <code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></h2>
+<span id="id10"></span><h2><a href="#cors-trait">11.9. <code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Defines how a service supports cross-origin resource sharing</dd>
@@ -1017,7 +1034,7 @@ such authentication schemes MUST designate a single origin from which
 cross-origin, credentialed requests will be accepted.</p>
 </div>
 <div class="section" id="serializing-http-messages">
-<h2><a href="#serializing-http-messages">11.9. Serializing HTTP messages</a></h2>
+<h2><a href="#serializing-http-messages">11.10. Serializing HTTP messages</a></h2>
 <p>The following steps are taken to serialize an HTTP request given a map of
 parameters:</p>
 <ol class="arabic simple">
@@ -1065,7 +1082,7 @@ protocol-specific document sent in the body of the response.</li>
 </ol>
 </div>
 <div class="section" id="event-streams">
-<h2><a href="#event-streams">11.10. Event streams</a></h2>
+<h2><a href="#event-streams">11.11. Event streams</a></h2>
 <p>When using <a class="reference internal" href="stream-traits.html#event-streams"><span class="std std-ref">event streams</span></a> and HTTP bindings, the
 <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload</span></a> trait MUST be applied to any input or
 output member that targets a shape marked with the <a class="reference internal" href="stream-traits.html#streaming-trait"><span class="std std-ref">streaming trait</span></a>.</p>
@@ -1225,9 +1242,10 @@ marked with the <code class="docutils literal notranslate"><span class="pre">htt
 <li><a class="reference internal" href="#httppayload-trait">11.5. <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait</a></li>
 <li><a class="reference internal" href="#httpprefixheaders-trait">11.6. <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait</a></li>
 <li><a class="reference internal" href="#httpquery-trait">11.7. <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait</a></li>
-<li><a class="reference internal" href="#cors-trait">11.8. <code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></li>
-<li><a class="reference internal" href="#serializing-http-messages">11.9. Serializing HTTP messages</a></li>
-<li><a class="reference internal" href="#event-streams">11.10. Event streams</a></li>
+<li><a class="reference internal" href="#httpresponsecode-trait">11.8. <code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait</a></li>
+<li><a class="reference internal" href="#cors-trait">11.9. <code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></li>
+<li><a class="reference internal" href="#serializing-http-messages">11.10. Serializing HTTP messages</a></li>
+<li><a class="reference internal" href="#event-streams">11.11. Event streams</a></li>
 </ul>
 </li>
 </ul>
