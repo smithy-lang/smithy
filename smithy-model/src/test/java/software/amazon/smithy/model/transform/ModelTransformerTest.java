@@ -16,9 +16,12 @@
 package software.amazon.smithy.model.transform;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.function.Predicate;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -55,6 +58,23 @@ public class ModelTransformerTest {
 
         assertThat(nonTraitShapes.getShape(operation), Matchers.not(Optional.empty()));
         assertThat(nonTraitShapes.getShape(operation).get().getTrait(ReadonlyTrait.class), Matchers.not(Optional.empty()));
+        assertThat(nonTraitShapes.getShape(EnumTrait.ID), Matchers.equalTo(Optional.empty()));
+    }
+
+    @Test
+    public void removesTraitShapesExcludingFilteredButNotTraitUsage() {
+        ModelTransformer transformer = ModelTransformer.create();
+        Model model = createTestModel();
+        Predicate<Shape> keepFilter = trait -> !trait.getId().equals(ShapeId.from("ns.foo#MyTrait"));
+        Model nonTraitShapes = transformer.getModelWithoutTraitShapes(model, keepFilter);
+        ShapeId operation = ShapeId.from("ns.foo#MyOperation");
+
+        assertThat(nonTraitShapes.getShape(operation), Matchers.not(Optional.empty()));
+        assertThat(nonTraitShapes.getShape(operation).get().getTrait(ReadonlyTrait.class), Matchers.not(Optional.empty()));
+        assertTrue(nonTraitShapes.getShape(operation).get().hasTrait("ns.foo#MyTrait"));
+        assertTrue(nonTraitShapes.getShape(operation).get().hasTrait("ns.foo#MyOtherTrait"));
+        assertTrue(nonTraitShapes.getShape(ShapeId.from("ns.foo#MyTrait")).isPresent());
+        assertFalse(nonTraitShapes.getShape(ShapeId.from("ns.foo#MyOtherTrait")).isPresent());
         assertThat(nonTraitShapes.getShape(EnumTrait.ID), Matchers.equalTo(Optional.empty()));
     }
 

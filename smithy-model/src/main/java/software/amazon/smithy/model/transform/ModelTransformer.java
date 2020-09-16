@@ -370,13 +370,32 @@ public final class ModelTransformer {
      *
      * <p>This can be useful when serializing a Smithy model to a format that
      * does not include trait definitions and the shapes used by trait definitions
-     * would have no meaning (e.g., Swagger).
+     * would have no meaning (e.g., OpenAPI).
      *
      * @param model Model to transform.
      * @return Returns the transformed model.base.
      */
     public Model scrubTraitDefinitions(Model model) {
-        return new ScrubTraitDefinitions().transform(this, model);
+        return scrubTraitDefinitions(model, FunctionalUtils.alwaysTrue());
+    }
+
+    /**
+     * Removes trait definitions from a model and all shapes that are
+     * only connected to the graph either directly or transitively by a
+     * trait definition shape.
+     *
+     * <p>This can be useful when serializing a Smithy model to a format that
+     * does not include trait definitions and the shapes used by trait definitions
+     * would have no meaning (e.g., OpenAPI).
+     *
+     * @param model Model to transform.
+     * @param keepFilter Predicate function that accepts an trait shape (that
+     *  has the {@link TraitDefinition} trait) and returns true to remove the
+     *  definition or false to keep the definition in the model.
+     * @return Returns the transformed model.
+     */
+    public Model scrubTraitDefinitions(Model model, Predicate<Shape> keepFilter) {
+        return new ScrubTraitDefinitions().transform(this, model, keepFilter);
     }
 
     /**
@@ -387,6 +406,20 @@ public final class ModelTransformer {
      * @return Returns a model that contains matching shapes.
      */
     public Model getModelWithoutTraitShapes(Model model) {
+        return getModelWithoutTraitShapes(model, FunctionalUtils.alwaysTrue());
+    }
+
+    /**
+     * Gets all shapes from a model where shapes that define traits or shapes
+     * that are only used as part of a trait definition have been removed.
+     *
+     * @param model Model that contains shapes.
+     * @param keepFilter Predicate function that accepts a trait shape (that
+     *  has the {@link TraitDefinition} trait) and returns true to remove the
+     *  definition or false to keep the definition in the model.
+     * @return Returns a model that contains matching shapes.
+     */
+    public Model getModelWithoutTraitShapes(Model model, Predicate<Shape> keepFilter) {
         Model.Builder builder = Model.builder();
 
         // ScrubTraitDefinitions is used to removed traits and trait shapes.
@@ -395,7 +428,7 @@ public final class ModelTransformer {
         // a model is created by getting all shape IDs from the modified
         // model, grabbing shapes from the original model, and building a new
         // Model.
-        scrubTraitDefinitions(model).shapes()
+        scrubTraitDefinitions(model, keepFilter).shapes()
                 .map(Shape::getId)
                 .map(model::getShape)
                 .map(Optional::get)
