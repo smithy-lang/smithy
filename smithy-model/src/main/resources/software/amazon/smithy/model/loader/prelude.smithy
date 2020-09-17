@@ -530,7 +530,7 @@ structure http {
 
 /// Binds an operation input structure member to an HTTP label.
 @trait(selector: "structure > member[trait|required] :test(> :test(string, number, boolean, timestamp))",
-        conflicts: [httpHeader, httpQuery, httpPrefixHeaders, httpPayload])
+        conflicts: [httpHeader, httpQuery, httpPrefixHeaders, httpPayload, httpResponseCode])
 @tags(["diff.error.const"])
 structure httpLabel {}
 
@@ -539,7 +539,7 @@ structure httpLabel {}
         structure > member
         :test(> :test(string, number, boolean, timestamp),
               > collection > member > :test(string, number, boolean, timestamp))""",
-        conflicts: [httpLabel, httpHeader, httpPrefixHeaders, httpPayload])
+        conflicts: [httpLabel, httpHeader, httpPrefixHeaders, httpPayload, httpResponseCode])
 @length(min: 1)
 @tags(["diff.error.const"])
 string httpQuery
@@ -548,7 +548,7 @@ string httpQuery
 @trait(selector: """
         structure > :test(member > :test(boolean, number, string, timestamp,
                 collection > member > :test(boolean, number, string, timestamp)))""",
-        conflicts: [httpLabel, httpQuery, httpPrefixHeaders, httpPayload])
+        conflicts: [httpLabel, httpQuery, httpPrefixHeaders, httpPayload, httpResponseCode])
 @length(min: 1)
 @tags(["diff.error.const"])
 string httpHeader
@@ -558,13 +558,13 @@ string httpHeader
         structure > member
         :test(> map > member[id|member=value] > :test(string, collection > member > string))""",
         structurallyExclusive: "member",
-        conflicts: [httpLabel, httpQuery, httpHeader, httpPayload])
+        conflicts: [httpLabel, httpQuery, httpHeader, httpPayload, httpResponseCode])
 @tags(["diff.error.const"])
 string httpPrefixHeaders
 
 /// Binds a single structure member to the body of an HTTP request.
 @trait(selector: "structure > :test(member > :test(string, blob, structure, union, document))",
-        conflicts: [httpLabel, httpQuery, httpHeader, httpPrefixHeaders],
+        conflicts: [httpLabel, httpQuery, httpHeader, httpPrefixHeaders, httpResponseCode],
         structurallyExclusive: "member")
 @tags(["diff.error.const"])
 structure httpPayload {}
@@ -578,7 +578,8 @@ integer httpError
 /// status code. The value MAY differ from the HTTP status code provided
 /// on the response.
 @trait(selector: "structure > member :test(> integer)",
-        structurallyExclusive: "member")
+        structurallyExclusive: "member",
+        conflicts: [httpLabel, httpQuery, httpHeader, httpPrefixHeaders, httpPayload])
 @tags(["diff.error.const"])
 structure httpResponseCode {}
 
