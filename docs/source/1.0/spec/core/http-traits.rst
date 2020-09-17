@@ -492,7 +492,8 @@ Conflicts with
    :ref:`httpLabel-trait`,
    :ref:`httpQuery-trait`,
    :ref:`httpPrefixHeaders-trait`,
-   :ref:`httpPayload-trait`
+   :ref:`httpPayload-trait`,
+   :ref:`httpResponseCode-trait`
 
 Serialization rules:
 
@@ -585,7 +586,8 @@ Conflicts with
     :ref:`httpHeader-trait`,
     :ref:`httpQuery-trait`,
     :ref:`httpPrefixHeaders-trait`,
-    :ref:`httpPayload-trait`
+    :ref:`httpPayload-trait`,
+    :ref:`httpResponseCode-trait`
 
 ``httpLabel`` members MUST be marked as :ref:`required-trait`.
 
@@ -649,7 +651,8 @@ Value type
     Annotation trait.
 Conflicts with
     :ref:`httpLabel-trait`, :ref:`httpQuery-trait`,
-    :ref:`httpHeader-trait`, :ref:`httpPrefixHeaders-trait`
+    :ref:`httpHeader-trait`, :ref:`httpPrefixHeaders-trait`,
+    :ref:`httpResponseCode-trait`
 
 By default, all structure members that are not bound as part of the HTTP
 message are serialized in a protocol-specific document sent in the body of
@@ -699,7 +702,8 @@ Value type
     field name serialized in the message is "X-Amz-Meta-Baz".
 Conflicts with
    :ref:`httpLabel-trait`, :ref:`httpQuery-trait`,
-   :ref:`httpHeader-trait`, :ref:`httpPayload-trait`
+   :ref:`httpHeader-trait`, :ref:`httpPayload-trait`,
+   :ref:`httpResponseCode-trait`
 
 In order to differentiate ``httpPrefixHeaders`` from other headers, when
 ``httpPrefixHeaders`` are used, no other :ref:`httpHeader-trait` bindings can
@@ -774,7 +778,8 @@ Value type
     resolving the HTTP bindings of an operation's output or an error.
 Conflicts with
    :ref:`httpLabel-trait`, :ref:`httpHeader-trait`,
-   :ref:`httpPrefixHeaders-trait`, :ref:`httpPayload-trait`
+   :ref:`httpPrefixHeaders-trait`, :ref:`httpPayload-trait`,
+   :ref:`httpResponseCode-trait`
 
 Serialization rules:
 
@@ -817,6 +822,10 @@ Trait selector
     ``structure > member :test(> integer)``
 Value type
     Annotation trait.
+Conflicts with
+   :ref:`httpLabel-trait`, :ref:`httpHeader-trait`,
+   :ref:`httpPrefixHeaders-trait`, :ref:`httpPayload-trait`,
+   :ref:`httpQuery-trait`
 
 The value MAY differ from the HTTP status code provided on the response.
 Explicitly modeling this as a field can be helpful for services that wish to
