@@ -862,6 +862,62 @@ key is not in the provided ``keys`` list.
             }
         }
 
+.. _flattenNamespaces:
+
+flattenNamespaces
+-----------------
+
+Flattens namespaces of any shapes connected to a service into a target
+namespace. Shapes not connected to a service will not be flattened.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - namespace
+      - ``string``
+      - The target namespace.
+    * - service
+      - ``string``
+      - The service to be flattened.
+    * - includeTagged
+      - ``[string]``
+      - The set of tags that, if found on a shape not connected to the service,
+        forces the shape to have its namespace flattened into the target
+        namespace.
+
+
+The following example will flatten the namespaces of the shapes connected to
+the ``ns.bar#MyService`` service into the target namespace, ``ns.foo``. Shapes
+tagged with ``baz`` or ``qux`` will also be flattened into the ``ns.foo``
+namespace, so long as they don't conflict with a shape within the service closure.
+
+.. tabs::
+
+    .. code-tab:: json
+
+        {
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {
+                            "name": "flattenNamespaces",
+                            "args": {
+                                "namespace": "ns.foo",
+                                "service": "ns.bar#MyService",
+                                "includeTagged": ["baz", "qux"]
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+
+
 .. _removeTraitDefinitions-transform:
 
 removeTraitDefinitions

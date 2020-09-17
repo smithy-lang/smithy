@@ -1,0 +1,8 @@
+{
+  "smithy": "1.0",
+  "shapes": {
+    "ns.foo#MyString": {
+      "type": "string"
+    }
+  }
+}
