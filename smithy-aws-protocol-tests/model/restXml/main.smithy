@@ -51,6 +51,9 @@ service RestXml {
         HttpPayloadWithXmlNamespace,
         HttpPayloadWithXmlNamespaceAndPrefix,
 
+        // @httpResponseCode tests
+        HttpResponseCode,
+
         // Output tests
         XmlEmptyBlobs,
 
