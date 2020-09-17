@@ -22,8 +22,34 @@
                 },
                 {
                     "target": "ns.foo#ServiceOperationWithEventStream"
+                },
+                {
+                    "target": "ns.foo#OperationWithBoundResponseCode"
                 }
             ]
+        },
+        "ns.foo#OperationWithBoundResponseCode": {
+            "type": "operation",
+            "output": {
+                "target": "ns.foo#StructureWithBoundResponseCode"
+            },
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/OperationWithBoundResponseCode",
+                    "method": "PUT"
+                }
+            }
+        },
+        "ns.foo#StructureWithBoundResponseCode": {
+            "type": "structure",
+            "members": {
+                "Status": {
+                    "target": "smithy.api#Integer",
+                    "traits": {
+                        "smithy.api#httpResponseCode": {}
+                    }
+                }
+            }
         },
         "ns.foo#ServiceOperationNoInputOutput": {
             "type": "operation",

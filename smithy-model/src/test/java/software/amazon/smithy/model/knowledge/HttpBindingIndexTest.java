@@ -43,6 +43,7 @@ import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
+import software.amazon.smithy.model.traits.HttpResponseCodeTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 
@@ -153,6 +154,20 @@ public class HttpBindingIndexTest {
     }
 
     @Test
+    public void returnsResponseCodeBinding() {
+        HttpBindingIndex index = HttpBindingIndex.of(model);
+        ShapeId id = ShapeId.from("ns.foo#OperationWithBoundResponseCode");
+        Map<String, HttpBinding> responseBindings = index.getResponseBindings(id);
+
+        assertThat(responseBindings.size(), is(1));
+        assertThat(responseBindings.get("Status"), equalTo(new HttpBinding(
+                expectMember(model, "ns.foo#StructureWithBoundResponseCode$Status"),
+                HttpBinding.Location.RESPONSE_CODE,
+                "Status",
+                new HttpResponseCodeTrait())));
+    }
+
+    @Test
     public void returnsErrorResponseCode() {
         HttpBindingIndex index = HttpBindingIndex.of(model);
         ShapeId id = ShapeId.from("ns.foo#ErrorExplicitStatus");
@@ -230,6 +245,18 @@ public class HttpBindingIndexTest {
                 .build();
 
         assertThat(HttpBindingIndex.hasHttpRequestBindings(shape), is(true));
+        assertThat(HttpBindingIndex.hasHttpResponseBindings(shape), is(true));
+    }
+
+    @Test
+    public void checksForHttpResponseCodeBindings() {
+        Shape shape = MemberShape.builder()
+                .target("smithy.api#Integer")
+                .id("smithy.example#Baz$bar")
+                .addTrait(new HttpResponseCodeTrait())
+                .build();
+
+        assertThat(HttpBindingIndex.hasHttpRequestBindings(shape), is(false));
         assertThat(HttpBindingIndex.hasHttpResponseBindings(shape), is(true));
     }
 
