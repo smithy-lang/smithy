@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.diff;
 
+import java.util.Objects;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
@@ -63,5 +64,24 @@ public final class ChangedMetadata implements FromSourceLocation {
     @Override
     public SourceLocation getSourceLocation() {
         return getNewValue().getSourceLocation();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof ChangedMetadata)) {
+            return false;
+        } else {
+            ChangedMetadata that = (ChangedMetadata) o;
+            return getKey().equals(that.getKey())
+                   && Objects.equals(getOldValue(), that.getOldValue())
+                   && Objects.equals(getNewValue(), that.getNewValue());
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getKey(), getOldValue(), getNewValue());
     }
 }

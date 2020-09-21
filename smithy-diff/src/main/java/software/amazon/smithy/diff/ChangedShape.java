@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package software.amazon.smithy.diff;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.FromSourceLocation;
@@ -136,6 +137,26 @@ public final class ChangedShape<S extends Shape> implements FromSourceLocation {
      */
     public Map<ShapeId, Pair<Trait, Trait>> getTraitDifferences() {
         return traitDiff;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof ChangedShape)) {
+            return false;
+        } else {
+            // If the shapes are equal, then the changed traits are equal, so
+            // there's no need to compare the traitDiff property.
+            ChangedShape<?> that = (ChangedShape<?>) o;
+            return Objects.equals(getOldShape(), that.getOldShape())
+                   && Objects.equals(getNewShape(), that.getNewShape());
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getOldShape(), getNewShape());
     }
 
     /**

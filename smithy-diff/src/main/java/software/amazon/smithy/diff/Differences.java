@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package software.amazon.smithy.diff;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
@@ -159,6 +160,25 @@ public final class Differences {
      */
     public Stream<ChangedMetadata> changedMetadata() {
         return changedMetadata.stream();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof Differences)) {
+            return false;
+        } else {
+            // The differences between the models are always equivalent if the
+            // models are equivalent, so no need to compare them.
+            Differences that = (Differences) o;
+            return getOldModel().equals(that.getOldModel()) && getNewModel().equals(that.getNewModel());
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getOldModel(), getNewModel());
     }
 
     private static void detectShapeChanges(Model oldModel, Model newModel, Differences differences) {
