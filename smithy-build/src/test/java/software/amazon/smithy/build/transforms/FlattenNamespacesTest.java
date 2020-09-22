@@ -24,8 +24,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.build.SmithyBuildException;
+import software.amazon.smithy.build.SourcesConflictException;
 import software.amazon.smithy.build.TransformContext;
+import software.amazon.smithy.build.plugins.SourcesPlugin;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.Node;
@@ -117,18 +121,44 @@ public class FlattenNamespacesTest {
     }
 
     @Test
-    public void doesNotModifyModelsWithoutServices() throws Exception {
+    public void throwsWhenServiceIsNotConfigured() {
         Model model = Model.assembler()
-                .addImport(Paths.get(getClass().getResource("no-service.json").toURI()))
+                .addUnparsedModel("N/A", "{ \"smithy\": \"1.0\" }")
                 .assemble()
                 .unwrap();
         TransformContext context = TransformContext.builder()
                 .model(model)
                 .settings(Node.objectNode().withMember("namespace", Node.from("ns.bar")))
                 .build();
-        Model result = new FlattenNamespaces().transform(context);
+        Assertions.assertThrows(SmithyBuildException.class, () -> new FlattenNamespaces().transform(context));
+    }
 
-        assertTrue(result.getShape(ShapeId.from("ns.foo#MyString")).isPresent());
-        assertFalse(result.getShape(ShapeId.from("ns.bar#MyString")).isPresent());
+    @Test
+    public void throwsWhenNamespaceIsNotConfigured() {
+        Model model = Model.assembler()
+                .addUnparsedModel("N/A", "{ \"smithy\": \"1.0\" }")
+                .assemble()
+                .unwrap();
+        TransformContext context = TransformContext.builder()
+                .model(model)
+                .settings(Node.objectNode().withMember("service", Node.from("ns.foo#MyService")))
+                .build();
+        Assertions.assertThrows(SmithyBuildException.class, () -> new FlattenNamespaces().transform(context));
+    }
+
+    @Test
+    public void throwsWhenServiceCannotBeFoundInModel() {
+        Model model = Model.assembler()
+                .addUnparsedModel("N/A", "{ \"smithy\": \"1.0\" }")
+                .assemble()
+                .unwrap();
+        ObjectNode config = Node.objectNode()
+                .withMember("namespace", Node.from("ns.qux"))
+                .withMember("service", Node.from("ns.foo#MyService"));
+        TransformContext context = TransformContext.builder()
+                .model(model)
+                .settings(config)
+                .build();
+        Assertions.assertThrows(SmithyBuildException.class, () -> new FlattenNamespaces().transform(context));
     }
 }

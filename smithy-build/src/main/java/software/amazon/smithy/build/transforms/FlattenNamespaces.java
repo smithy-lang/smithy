@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
@@ -115,6 +116,10 @@ public final class FlattenNamespaces extends ConfigurableProjectionTransformer<F
 
     @Override
     protected Model transformWithConfig(TransformContext context, Config config) {
+        if (config.getService() == null || config.getNamespace() == null) {
+            throw new SmithyBuildException(
+                    "'namespace' and 'service'properties must be set on flattenNamespace transformer.");
+        }
         Model model = context.getModel();
         Map<ShapeId, ShapeId> shapesToRename = getRenamedShapes(config, model);
         return ModelTransformer.create().renameShapes(model, shapesToRename);
@@ -126,10 +131,8 @@ public final class FlattenNamespaces extends ConfigurableProjectionTransformer<F
     }
 
     private Map<ShapeId, ShapeId> getRenamedShapes(Config config, Model model) {
-        // If no service has been specified, or the service is not present in
-        // the model, return an empty map.
-        if (config.service == null || !model.getShape(config.getService()).isPresent()) {
-            return Collections.emptyMap();
+        if (!model.getShape(config.getService()).isPresent()) {
+            throw new SmithyBuildException("Service not found in model when performing flattenNamespaces transform.");
         }
 
         Map<ShapeId, ShapeId> shapesToRename = getRenamedShapesConnectedToService(config, model);
