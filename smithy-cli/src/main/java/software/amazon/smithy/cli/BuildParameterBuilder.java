@@ -65,6 +65,7 @@ public final class BuildParameterBuilder {
     private static final Logger LOGGER = Logger.getLogger(BuildParameterBuilder.class.getName());
     private static final String SMITHY_TAG_PROPERTY = "Smithy-Tags";
     private static final String SOURCE = "source";
+    private static final String PATH_SEPARATOR = "path.separator";
 
     private String projectionSource = SOURCE;
     private Set<String> projectionSourceTags = new LinkedHashSet<>();
@@ -135,7 +136,7 @@ public final class BuildParameterBuilder {
      * @return Returns the builder.
      */
     public BuildParameterBuilder buildClasspath(String buildClasspath) {
-        this.buildClasspath.addAll(splitAndFilterString(":", buildClasspath));
+        this.buildClasspath.addAll(splitAndFilterString(System.getProperty(PATH_SEPARATOR), buildClasspath));
         return this;
     }
 
@@ -157,7 +158,7 @@ public final class BuildParameterBuilder {
      * @return Returns the builder.
      */
     public BuildParameterBuilder libClasspath(String libClasspath) {
-        this.libClasspath.addAll(splitAndFilterString(":", libClasspath));
+        this.libClasspath.addAll(splitAndFilterString(System.getProperty(PATH_SEPARATOR), libClasspath));
         return this;
     }
 
@@ -357,7 +358,9 @@ public final class BuildParameterBuilder {
         Set<String> combined = new LinkedHashSet<>(libClasspath);
         combined.addAll(buildClasspath);
 
-        return new Result(this, String.join(":", computedDiscovery), String.join(":", combined), sources);
+        String discoveryClasspath = String.join(System.getProperty(PATH_SEPARATOR), computedDiscovery);
+        String classpath = String.join(System.getProperty(PATH_SEPARATOR), combined);
+        return new Result(this, discoveryClasspath, classpath, sources);
     }
 
     /**
@@ -373,7 +376,7 @@ public final class BuildParameterBuilder {
             LOGGER.warning("No projection source tags were set for the projection `" + projection + "`, so the "
                            + "projection will not have any sources in it other than files found in the sources of "
                            + "the package being built.");
-            String buildCp = String.join(":", buildClasspath);
+            String buildCp = String.join(System.getProperty(PATH_SEPARATOR), buildClasspath);
             return new Result(this, buildCp, buildCp, sources);
         }
 
@@ -390,8 +393,9 @@ public final class BuildParameterBuilder {
         Set<String> computedDiscovery = new LinkedHashSet<>(buildClasspath);
         computedDiscovery.removeAll(computedSources);
 
-        return new Result(this, String.join(":", computedDiscovery),
-                String.join(":", buildClasspath), computedSources);
+        String discoveryClasspath = String.join(System.getProperty(PATH_SEPARATOR), computedDiscovery);
+        String classpath = String.join(System.getProperty(PATH_SEPARATOR), buildClasspath);
+        return new Result(this, discoveryClasspath, classpath, computedSources);
     }
 
     /**
