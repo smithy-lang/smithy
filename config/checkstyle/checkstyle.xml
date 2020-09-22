@@ -36,7 +36,9 @@
         <property name="fileExtensions" value="java"/>
     </module>
 
-    <module name="NewlineAtEndOfFile"/>
+    <module name="NewlineAtEndOfFile">
+        <property name="lineSeparator" value="lf_cr_crlf"/>
+    </module>
 
     <!-- Checks for whitespace                               -->
     <!-- See http://checkstyle.sf.net/config_whitespace.html -->
