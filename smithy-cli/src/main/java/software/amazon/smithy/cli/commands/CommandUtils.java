@@ -70,7 +70,9 @@ final class CommandUtils {
     private static void discoverModelsWithClasspath(Arguments arguments, ModelAssembler assembler) {
         String rawClasspath = arguments.parameter(SmithyCli.DISCOVER_CLASSPATH);
         LOGGER.finer("Discovering models with classpath: " + rawClasspath);
-        String[] classpath = rawClasspath.split(":");
+
+        // Use System.getProperty here each time since it allows the value to be changed.
+        String[] classpath = rawClasspath.split(System.getProperty("path.separator"));
         URL[] urls = new URL[classpath.length];
 
         for (int i = 0; i < classpath.length; i++) {

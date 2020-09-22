@@ -217,7 +217,8 @@ public class BuildParameterBuilderTest {
         String a = getClass().getResource("jars/a/a.jar").getPath();
         String b = getClass().getResource("jars/b/b.jar").getPath();
         String c = getClass().getResource("jars/c/c.jar").getPath();
-        String buildCp = a + ":" + b + ":" + c;
+        String separator = System.getProperty("path.separator");
+        String buildCp = a + separator + b + separator + c;
 
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
                 .projectionSource("foo")
@@ -230,8 +231,35 @@ public class BuildParameterBuilderTest {
         // The classpath keeps all of the JARs.
         assertThat(result.classpath, equalTo(buildCp));
         // The discovery classpath removes a because it's JAR matched the source tag.
-        assertThat(result.discoveryClasspath, equalTo(b + ":" + c));
+        assertThat(result.discoveryClasspath, equalTo(b + separator + c));
         // The sources now contains a because it matched a source tag.
         assertThat(result.sources, contains(a));
+    }
+
+    @Test
+    public void usesCustomSeparator() {
+        String currentSeparator = System.getProperty("path.separator");
+
+        try {
+            System.setProperty("path.separator", "|");
+            String a = getClass().getResource("jars/a/a.jar").getPath();
+            String b = getClass().getResource("jars/b/b.jar").getPath();
+            String c = getClass().getResource("jars/c/c.jar").getPath();
+            String buildCp = a + "|" + b + "|" + c;
+
+            BuildParameterBuilder.Result result = new BuildParameterBuilder()
+                    .projectionSource("foo")
+                    .projectionSourceTags("X, Blah")
+                    .libClasspath("abc.jar")
+                    .buildClasspath(buildCp)
+                    .discover(true)
+                    .build();
+
+            assertThat(result.classpath, equalTo(buildCp));
+            assertThat(result.discoveryClasspath, equalTo(b + "|" + c));
+            assertThat(result.sources, contains(a));
+        } finally {
+            System.setProperty("path.separator", currentSeparator);
+        }
     }
 }
