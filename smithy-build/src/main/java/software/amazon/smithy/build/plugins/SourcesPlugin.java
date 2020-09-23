@@ -25,6 +25,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
@@ -91,7 +92,9 @@ public final class SourcesPlugin implements SmithyBuildPlugin {
             LOGGER.info(String.format("Skipping `%s` manifest because no Smithy sources found", projectionName));
         } else {
             LOGGER.fine(() -> String.format("Writing `%s` manifest", projectionName));
-            context.getFileManifest().writeFile("manifest", String.join("\n", names) + "\n");
+            // Normalize filenames to Unix style.
+            String manifest = names.stream().map(name -> name.replace("\\", "/")).collect(Collectors.joining("\n"));
+            context.getFileManifest().writeFile("manifest", manifest + "\n");
         }
     }
 
