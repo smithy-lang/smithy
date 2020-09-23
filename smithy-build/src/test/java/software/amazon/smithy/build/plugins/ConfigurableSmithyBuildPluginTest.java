@@ -14,7 +14,7 @@ public class ConfigurableSmithyBuildPluginTest {
     @Test
     public void loadsConfigurationClass() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("sources/a.smithy").getPath())
+                .addImport(getClass().getResource("sources/a.smithy"))
                 .assemble()
                 .unwrap();
         MockManifest manifest = new MockManifest();

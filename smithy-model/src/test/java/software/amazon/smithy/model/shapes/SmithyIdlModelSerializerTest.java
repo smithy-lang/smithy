@@ -1,14 +1,15 @@
 package software.amazon.smithy.model.shapes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.not;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,9 +27,9 @@ import software.amazon.smithy.utils.IoUtils;
 
 public class SmithyIdlModelSerializerTest {
     @TestFactory
-    public Stream<DynamicTest> generateTests() throws IOException {
+    public Stream<DynamicTest> generateTests() throws IOException, URISyntaxException {
         return Files.list(Paths.get(
-                SmithyIdlModelSerializer.class.getResource("idl-serialization/cases").getPath()))
+                SmithyIdlModelSerializer.class.getResource("idl-serialization/cases").toURI()))
                 .map(path -> DynamicTest.dynamicTest(path.getFileName().toString(), () -> testConversion(path)));
     }
 
@@ -46,12 +47,12 @@ public class SmithyIdlModelSerializerTest {
     }
 
     @Test
-    public void multipleNamespacesGenerateMultipleFiles() {
+    public void multipleNamespacesGenerateMultipleFiles() throws Exception {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("idl-serialization/multiple-namespaces/input.json"))
                 .assemble()
                 .unwrap();
-        Path outputDir = Paths.get(getClass().getResource("idl-serialization/multiple-namespaces/output").getFile());
+        Path outputDir = Paths.get(getClass().getResource("idl-serialization/multiple-namespaces/output").toURI());
         SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder()
                 .basePath(outputDir)
                 .build();

@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.containsString;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.cli.CliError;
@@ -31,7 +33,7 @@ public class AstCommandTest {
         PrintStream printStream = new PrintStream(outputStream);
         System.setOut(printStream);
 
-        String dir = getClass().getResource("valid.jar").getPath();
+        String dir = Paths.get(getClass().getResource("valid.jar").toURI()).toString();
         SmithyCli.create().run("ast", "--debug", "--discover-classpath", dir);
         System.setOut(out);
 
@@ -42,7 +44,7 @@ public class AstCommandTest {
     @Test
     public void usesModelDiscoveryWithCustomInvalidClasspath() {
         CliError e = Assertions.assertThrows(CliError.class, () -> {
-            String dir = getClass().getResource("invalid.jar").getPath();
+            String dir = Paths.get(getClass().getResource("invalid.jar").toURI()).toString();
             SmithyCli.create().run("ast", "--debug", "--discover-classpath", dir);
         });
 
@@ -60,8 +62,8 @@ public class AstCommandTest {
     }
 
     @Test
-    public void allowsUnknownTrait() {
-        String model = getClass().getResource("unknown-trait.smithy").getPath();
+    public void allowsUnknownTrait() throws URISyntaxException {
+        String model = Paths.get(getClass().getResource("unknown-trait.smithy").toURI()).toString();
         SmithyCli.create().run("ast", "--allow-unknown-traits", model);
     }
 }

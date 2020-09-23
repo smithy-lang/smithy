@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 public class NodeDiffTest {
     @Test
     public void detectsNodeTypeDifference() {
-        assertThat(NodeDiff.diff(Node.nullNode(), Node.from(true)), contains(
-                "[]: Expected node of type `boolean` but found node of type `null`.\n\nExpected: true\n\n Found: null"));
+        assertThat(NodeDiff.diff(Node.nullNode(), Node.from(true)), contains(String.format(
+                "[]: Expected node of type `boolean` but found node of type `null`.%n%nExpected: true%n%n Found: null")));
     }
 
     @Test

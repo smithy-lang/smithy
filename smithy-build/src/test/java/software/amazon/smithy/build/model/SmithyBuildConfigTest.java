@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -149,6 +150,10 @@ public class SmithyBuildConfigTest {
     }
 
     private String getResourcePath(String name) {
-        return SmithyBuildTest.class.getResource(name).getPath();
+        try {
+            return Paths.get(SmithyBuildTest.class.getResource(name).toURI()).toString();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

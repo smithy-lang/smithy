@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,10 +19,10 @@ import software.amazon.smithy.utils.ListUtils;
 
 public class SourcesPluginTest {
     @Test
-    public void copiesFilesForSourceProjection() {
+    public void copiesFilesForSourceProjection() throws URISyntaxException {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("sources/a.smithy").getPath())
-                .addImport(getClass().getResource("sources/b.smithy").getPath())
+                .addImport(getClass().getResource("sources/a.smithy"))
+                .addImport(getClass().getResource("sources/b.smithy"))
                 .addImport(getClass().getResource("sources/c/c.json"))
                 .addImport(getClass().getResource("notsources/d.smithy"))
                 .assemble()
@@ -31,10 +32,12 @@ public class SourcesPluginTest {
                 .fileManifest(manifest)
                 .model(model)
                 .originalModel(model)
-                .sources(ListUtils.of(Paths.get(getClass().getResource("sources/a.smithy").getPath()).getParent()))
+                .sources(ListUtils.of(Paths.get(getClass().getResource("sources/a.smithy").toURI()).getParent()))
                 .build();
         new SourcesPlugin().execute(context);
         String manifestString = manifest.getFileString("manifest").get();
+        // Normalize for Windows.
+        manifestString = manifestString.replace("\\", "/");
 
         assertThat(manifestString, containsString("a.smithy\n"));
         assertThat(manifestString, containsString("b.smithy\n"));
@@ -46,9 +49,9 @@ public class SourcesPluginTest {
     }
 
     @Test
-    public void copiesModelFromJarWithSourceProjection() {
+    public void copiesModelFromJarWithSourceProjection() throws URISyntaxException {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("sources/jar-import.jar").getPath())
+                .addImport(getClass().getResource("sources/jar-import.jar"))
                 .addImport(getClass().getResource("notsources/d.smithy"))
                 .assemble()
                 .unwrap();
@@ -57,10 +60,12 @@ public class SourcesPluginTest {
                 .fileManifest(manifest)
                 .model(model)
                 .originalModel(model)
-                .sources(ListUtils.of(Paths.get(getClass().getResource("sources/jar-import.jar").getPath())))
+                .sources(ListUtils.of(Paths.get(getClass().getResource("sources/jar-import.jar").toURI())))
                 .build();
         new SourcesPlugin().execute(context);
         String manifestString = manifest.getFileString("manifest").get();
+        // Normalize for Windows.
+        manifestString = manifestString.replace("\\", "/");
 
         assertThat(manifestString, containsString("jar-import/a.smithy\n"));
         assertThat(manifestString, containsString("jar-import/b/b.smithy\n"));
@@ -72,9 +77,9 @@ public class SourcesPluginTest {
     }
 
     @Test
-    public void copiesModelFromJarWithNonSourceProjection() {
+    public void copiesModelFromJarWithNonSourceProjection() throws URISyntaxException {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("sources/jar-import.jar").getPath())
+                .addImport(getClass().getResource("sources/jar-import.jar"))
                 .addImport(getClass().getResource("notsources/d.smithy"))
                 .assemble()
                 .unwrap();
@@ -85,10 +90,12 @@ public class SourcesPluginTest {
                 .projection("foo", projection)
                 .model(model)
                 .originalModel(model)
-                .sources(ListUtils.of(Paths.get(getClass().getResource("sources/jar-import.jar").getPath())))
+                .sources(ListUtils.of(Paths.get(getClass().getResource("sources/jar-import.jar").toURI())))
                 .build();
         new SourcesPlugin().execute(context);
         String manifestString = manifest.getFileString("manifest").get();
+        // Normalize for Windows.
+        manifestString = manifestString.replace("\\", "/");
 
         assertThat(manifestString, containsString("model.json"));
         assertThat(manifestString, not(containsString("jar-import")));
@@ -98,11 +105,11 @@ public class SourcesPluginTest {
     }
 
     @Test
-    public void copiesOnlyFilesFromSourcesForProjection() {
+    public void copiesOnlyFilesFromSourcesForProjection() throws URISyntaxException {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("sources/a.smithy").getPath())
-                .addImport(getClass().getResource("sources/b.smithy").getPath())
-                .addImport(getClass().getResource("sources/c/c.json").getPath())
+                .addImport(getClass().getResource("sources/a.smithy"))
+                .addImport(getClass().getResource("sources/b.smithy"))
+                .addImport(getClass().getResource("sources/c/c.json"))
                 .addImport(getClass().getResource("notsources/d.smithy"))
                 .assemble()
                 .unwrap();
@@ -113,7 +120,7 @@ public class SourcesPluginTest {
                 .fileManifest(manifest)
                 .model(model)
                 .originalModel(model)
-                .sources(ListUtils.of(Paths.get(getClass().getResource("sources/a.smithy").getPath()).getParent()))
+                .sources(ListUtils.of(Paths.get(getClass().getResource("sources/a.smithy").toURI()).getParent()))
                 .build();
         new SourcesPlugin().execute(context);
         String manifestString = manifest.getFileString("manifest").get();
@@ -135,7 +142,7 @@ public class SourcesPluginTest {
     }
 
     @Test
-    public void treatsNewlyAddedShapesAsNewSources() {
+    public void treatsNewlyAddedShapesAsNewSources() throws URISyntaxException {
         Model originalModel = Model.assembler().assemble().unwrap();
         Model newModel = Model.assembler()
                 .addShape(StringShape.builder().id("a.b#MyString").build())
@@ -148,7 +155,7 @@ public class SourcesPluginTest {
                 .fileManifest(manifest)
                 .originalModel(originalModel)
                 .model(newModel)
-                .sources(ListUtils.of(Paths.get(getClass().getResource("sources/a.smithy").getPath()).getParent()))
+                .sources(ListUtils.of(Paths.get(getClass().getResource("sources/a.smithy").toURI()).getParent()))
                 .build();
         new SourcesPlugin().execute(context);
         String modelString = manifest.getFileString("model.json").get();
@@ -157,10 +164,10 @@ public class SourcesPluginTest {
     }
 
     @Test
-    public void doesNotAllowConflicts() {
+    public void doesNotAllowConflicts() throws URISyntaxException {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("sources/a.smithy").getPath())
-                .addImport(getClass().getResource("conflicting/a.smithy").getPath())
+                .addImport(getClass().getResource("sources/a.smithy"))
+                .addImport(getClass().getResource("conflicting/a.smithy"))
                 .assemble()
                 .unwrap();
         MockManifest manifest = new MockManifest();
@@ -169,8 +176,8 @@ public class SourcesPluginTest {
                 .model(model)
                 .originalModel(model)
                 .sources(ListUtils.of(
-                        Paths.get(getClass().getResource("sources/a.smithy").getPath()),
-                        Paths.get(getClass().getResource("conflicting/a.smithy").getPath())))
+                        Paths.get(getClass().getResource("sources/a.smithy").toURI()),
+                        Paths.get(getClass().getResource("conflicting/a.smithy").toURI())))
                 .build();
 
         Assertions.assertThrows(SourcesConflictException.class, () -> new SourcesPlugin().execute(context));

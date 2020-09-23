@@ -14,6 +14,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1293,9 +1294,10 @@ public class NodeMapperTest {
     public void pathSerde() {
         NodeMapper mapper = new NodeMapper();
         Path path = mapper.deserialize(Node.from("/foo/baz"), Path.class);
+        String expected = path.toUri().toString(); // e.g., file:///foo/baz
 
-        assertThat(path.toAbsolutePath().toUri().toString(), equalTo("file:///foo/baz"));
-        assertThat(mapper.serialize(path), equalTo(Node.from("file:///foo/baz")));
+        assertThat(path.toAbsolutePath().toUri().toString(), equalTo(expected));
+        assertThat(mapper.serialize(path), equalTo(Node.from(expected)));
     }
 
     @Test
@@ -1318,11 +1320,13 @@ public class NodeMapperTest {
 
     @Test
     public void fileSerde() {
+        // Wonky because of Windows.
+        String bogusPath = new File("/does/not/exist/blah/blah").getAbsolutePath().toString();
         NodeMapper mapper = new NodeMapper();
-        File file = mapper.deserialize(Node.from("/does/not/exist/blah/blah"), File.class);
+        File file = mapper.deserialize(Node.from(bogusPath), File.class);
 
-        assertThat(file.toString(), equalTo("/does/not/exist/blah/blah"));
-        assertThat(mapper.serialize(file), equalTo(Node.from("/does/not/exist/blah/blah")));
+        assertThat(file.toString(), equalTo(bogusPath));
+        assertThat(mapper.serialize(file), equalTo(Node.from(bogusPath)));
     }
 
     @Test
