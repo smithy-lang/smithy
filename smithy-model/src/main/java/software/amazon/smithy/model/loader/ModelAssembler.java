@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -299,13 +300,18 @@ public final class ModelAssembler {
     public ModelAssembler addImport(URL url) {
         Objects.requireNonNull(url, "The provided url to ModelAssembler#addImport was null");
 
-        // Format the key used to de-dupe files.
+        // Format the key used to de-dupe files. Note that a "jar:" prefix
+        // can't be removed since it's needed in order to load files from JARs
+        // and differentiate between top-level JARs and contents of JARs.
         String key = url.toExternalForm();
-        if (key.startsWith("jar:")) {
-            key = key.substring(4);
-        }
+
         if (key.startsWith("file:")) {
-            key = key.substring(5);
+            try {
+                // Paths.get ensures paths are normalized for Windows too.
+                key = Paths.get(url.toURI()).toString();
+            } catch (URISyntaxException e) {
+                key = key.substring(5);
+            }
         }
 
         inputStreamModels.put(key, () -> {
