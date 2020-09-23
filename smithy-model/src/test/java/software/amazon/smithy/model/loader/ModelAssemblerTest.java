@@ -349,10 +349,11 @@ public class ModelAssemblerTest {
                 .assemble()
                 .unwrap();
 
+        String expectedPath = Paths.get(getClass().getResource("main.json").toURI()).toString();
         assertThat(model.getShape(ShapeId.from("example.namespace#String")).get().getSourceLocation(),
-                is(new SourceLocation(getClass().getResource("main.json").toString().replace("file:", ""), 4, 37)));
+                is(new SourceLocation(expectedPath, 4, 37)));
         assertThat(model.getShape(ShapeId.from("example.namespace#TaggedUnion$foo")).get().getSourceLocation(),
-                is(new SourceLocation(getClass().getResource("main.json").toString().replace("file:", ""), 69, 24)));
+                is(new SourceLocation(expectedPath, 69, 24)));
     }
 
     @Test
