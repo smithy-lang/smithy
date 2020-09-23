@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.containsString;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.nio.file.Paths;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.cli.CliError;
@@ -47,7 +48,7 @@ public class BuildCommandTest {
         System.setOut(printStream);
 
         CliError e = Assertions.assertThrows(CliError.class, () -> {
-            String model = getClass().getResource("unknown-trait.smithy").getPath();
+            String model = Paths.get(getClass().getResource("unknown-trait.smithy").toURI()).toString();
             SmithyCli.create().run("build", model);
         });
 
@@ -61,7 +62,7 @@ public class BuildCommandTest {
 
     @Test
     public void printsSuccessfulProjections() throws Exception {
-        String model = getClass().getResource("valid-model.smithy").getPath();
+        String model = Paths.get(getClass().getResource("valid-model.smithy").toURI()).toString();
 
         PrintStream out = System.out;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -83,8 +84,8 @@ public class BuildCommandTest {
         System.setOut(printStream);
 
         CliError e = Assertions.assertThrows(CliError.class, () -> {
-            String model = getClass().getResource("valid-model.smithy").getPath();
-            String config = getClass().getResource("projection-build-failure.json").getPath();
+            String model = Paths.get(getClass().getResource("valid-model.smithy").toURI()).toString();
+            String config = Paths.get(getClass().getResource("projection-build-failure.json").toURI()).toString();
             SmithyCli.create().run("build", "--debug", "--config", config, model);
         });
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -101,11 +102,7 @@ public final class IoUtils {
      * @throws UncheckedIOException if the resource cannot be loaded.
      */
     public static String readUtf8Resource(ClassLoader classLoader, String resourcePath) {
-        try (InputStream is = classLoader.getResourceAsStream(resourcePath)) {
-            return toUtf8String(is);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        return readUtf8Url(classLoader.getResource(resourcePath));
     }
 
     /**
@@ -119,8 +116,19 @@ public final class IoUtils {
      * @return Returns the loaded resource.
      * @throws UncheckedIOException if the resource cannot be loaded.
      */
-    public static String readUtf8Resource(Class clazz, String resourcePath) {
-        try (InputStream is = clazz.getResourceAsStream(resourcePath)) {
+    public static String readUtf8Resource(Class<?> clazz, String resourcePath) {
+        return readUtf8Url(clazz.getResource(resourcePath));
+    }
+
+    /**
+     * Reads a URL resource into a UTF-8 string.
+     *
+     * @param url URL to load from.
+     * @return Returns the loaded resource.
+     * @throws UncheckedIOException if the resource cannot be loaded.
+     */
+    public static String readUtf8Url(URL url) {
+        try (InputStream is = url.openStream()) {
             return toUtf8String(is);
         } catch (IOException e) {
             throw new UncheckedIOException(e);

@@ -34,7 +34,7 @@ public class CloudFormationSubstitutionTest {
                 .unwrap();
 
         ObjectNode expected = Node.parse(
-                IoUtils.readUtf8File(getClass().getResource("substitution-performed.json").getPath()))
+                IoUtils.readUtf8Resource(getClass(), "substitution-performed.json"))
                 .expectObjectNode();
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("example.smithy#MyService"));
@@ -55,7 +55,7 @@ public class CloudFormationSubstitutionTest {
                 .unwrap();
 
         ObjectNode expected = Node.parse(
-                IoUtils.readUtf8File(getClass().getResource("substitution-not-performed.json").getPath()))
+                IoUtils.readUtf8Resource(getClass(), "substitution-not-performed.json"))
                 .expectObjectNode();
 
         OpenApiConfig config = new OpenApiConfig();

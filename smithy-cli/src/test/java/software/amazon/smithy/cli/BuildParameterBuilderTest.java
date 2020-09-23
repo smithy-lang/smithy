@@ -9,6 +9,8 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,8 +40,8 @@ public class BuildParameterBuilderTest {
     }
 
     @Test
-    public void addsConfigFilesWhenFound() {
-        String configFile = getClass().getResource("smithy-build-a.json").getPath();
+    public void addsConfigFilesWhenFound() throws URISyntaxException {
+        String configFile = Paths.get(getClass().getResource("smithy-build-a.json").toURI()).toString();
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
                 .addConfigIfExists(configFile)
                 .build();
@@ -213,10 +215,10 @@ public class BuildParameterBuilderTest {
     }
 
     @Test
-    public void findsProjectionJarsWithSourceTags() {
-        String a = getClass().getResource("jars/a/a.jar").getPath();
-        String b = getClass().getResource("jars/b/b.jar").getPath();
-        String c = getClass().getResource("jars/c/c.jar").getPath();
+    public void findsProjectionJarsWithSourceTags() throws URISyntaxException {
+        String a = Paths.get(getClass().getResource("jars/a/a.jar").toURI()).toString();
+        String b = Paths.get(getClass().getResource("jars/b/b.jar").toURI()).toString();
+        String c = Paths.get(getClass().getResource("jars/c/c.jar").toURI()).toString();
         String separator = System.getProperty("path.separator");
         String buildCp = a + separator + b + separator + c;
 
@@ -237,14 +239,14 @@ public class BuildParameterBuilderTest {
     }
 
     @Test
-    public void usesCustomSeparator() {
+    public void usesCustomSeparator() throws URISyntaxException {
         String currentSeparator = System.getProperty("path.separator");
 
         try {
             System.setProperty("path.separator", "|");
-            String a = getClass().getResource("jars/a/a.jar").getPath();
-            String b = getClass().getResource("jars/b/b.jar").getPath();
-            String c = getClass().getResource("jars/c/c.jar").getPath();
+            String a = Paths.get(getClass().getResource("jars/a/a.jar").toURI()).toString();
+            String b = Paths.get(getClass().getResource("jars/b/b.jar").toURI()).toString();
+            String c = Paths.get(getClass().getResource("jars/c/c.jar").toURI()).toString();
             String buildCp = a + "|" + b + "|" + c;
 
             BuildParameterBuilder.Result result = new BuildParameterBuilder()

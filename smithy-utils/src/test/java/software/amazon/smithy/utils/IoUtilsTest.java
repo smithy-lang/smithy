@@ -60,8 +60,12 @@ public class IoUtilsTest {
     }
 
     @Test
-    public void readsFromStringPath() {
-        assertEquals("This is a test.\n", IoUtils.readUtf8File(getClass().getResource("test.txt").getPath()));
+    public void readsFromStringPath() throws Exception {
+        // Windows doesn't like the result of URL#getPath, so to test this
+        // we create a Path from the URI, convert that to a string, then pass
+        // it to the helper method which uses Paths.get again.
+        assertEquals("This is a test.\n",
+                     IoUtils.readUtf8File(Paths.get(getClass().getResource("test.txt").toURI()).toString()));
     }
 
     @Test

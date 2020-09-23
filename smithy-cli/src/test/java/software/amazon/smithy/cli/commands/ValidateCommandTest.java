@@ -20,6 +20,8 @@ import static org.hamcrest.Matchers.containsString;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.cli.CliError;
@@ -40,15 +42,15 @@ public class ValidateCommandTest {
     }
 
     @Test
-    public void usesModelDiscoveryWithCustomValidClasspath() {
-        String dir = getClass().getResource("valid.jar").getPath();
+    public void usesModelDiscoveryWithCustomValidClasspath() throws URISyntaxException {
+        String dir = Paths.get(getClass().getResource("valid.jar").toURI()).toString();
         SmithyCli.create().run("validate", "--debug", "--discover-classpath", dir);
     }
 
     @Test
     public void usesModelDiscoveryWithCustomInvalidClasspath() {
         CliError e = Assertions.assertThrows(CliError.class, () -> {
-            String dir = getClass().getResource("invalid.jar").getPath();
+            String dir = Paths.get(getClass().getResource("invalid.jar").toURI()).toString();
             SmithyCli.create().run("validate", "--debug", "--discover-classpath", dir);
         });
 
@@ -58,7 +60,7 @@ public class ValidateCommandTest {
     @Test
     public void failsOnUnknownTrait() {
         CliError e = Assertions.assertThrows(CliError.class, () -> {
-            String model = getClass().getResource("unknown-trait.smithy").getPath();
+            String model = Paths.get(getClass().getResource("unknown-trait.smithy").toURI()).toString();
             SmithyCli.create().run("validate", model);
         });
 
@@ -66,8 +68,8 @@ public class ValidateCommandTest {
     }
 
     @Test
-    public void allowsUnknownTrait() {
-        String model = getClass().getResource("unknown-trait.smithy").getPath();
+    public void allowsUnknownTrait() throws URISyntaxException {
+        String model = Paths.get(getClass().getResource("unknown-trait.smithy").toURI()).toString();
         SmithyCli.create().run("validate", "--allow-unknown-traits", model);
     }
 }

@@ -8,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.nio.file.Paths;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.cli.CliError;
@@ -44,7 +45,7 @@ public class SelectCommandTest {
         System.setOut(outPrintStream);
 
         CliError e = Assertions.assertThrows(CliError.class, () -> {
-            String model = getClass().getResource("unknown-trait.smithy").getPath();
+            String model = Paths.get(getClass().getResource("unknown-trait.smithy").toURI()).toString();
             SmithyCli.create().run("select", "--selector", "string", model);
         });
 
@@ -64,7 +65,7 @@ public class SelectCommandTest {
 
     @Test
     public void printsSuccessfulMatchesToStdout() throws Exception {
-        String model = getClass().getResource("valid-model.smithy").getPath();
+        String model = Paths.get(getClass().getResource("valid-model.smithy").toURI()).toString();
 
         PrintStream out = System.out;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -82,7 +83,7 @@ public class SelectCommandTest {
 
     @Test
     public void printsJsonVarsToStdout() throws Exception {
-        String model = getClass().getResource("valid-model.smithy").getPath();
+        String model = Paths.get(getClass().getResource("valid-model.smithy").toURI()).toString();
 
         // Take over stdout.
         PrintStream out = System.out;
@@ -101,7 +102,7 @@ public class SelectCommandTest {
 
     @Test
     public void readsSelectorFromStdinToo() throws Exception {
-        String model = getClass().getResource("valid-model.smithy").getPath();
+        String model = Paths.get(getClass().getResource("valid-model.smithy").toURI()).toString();
 
         // Send the selector through input stream.
         InputStream in = System.in;
