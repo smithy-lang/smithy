@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.StringJoiner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.SmithyBuildException;
@@ -134,20 +135,32 @@ public class BuildParameterBuilderTest {
         assertThat(result.sources, empty());
     }
 
+    private static String cp(String... paths) {
+        StringJoiner joiner = new StringJoiner(System.getProperty("path.separator"));
+        for (String path : paths) {
+            joiner.add(path);
+        }
+        return joiner.toString();
+    }
+
     @Test
     public void sourceBuildUsesCorrectClasspaths() {
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
                 .sources(ListUtils.of("foo.smithy", "bar.smithy"))
                 // Note that duplicates are removed when necessary.
-                .libClasspath("foo.jar:baz.jar:bar.jar")
-                .buildClasspath("foo.jar:/abc/123.jar")
+                .libClasspath(cp("foo.jar", "baz.jar", "bar.jar"))
+                .buildClasspath(cp("foo.jar", "/abc/123.jar"))
                 .discover(true)
                 .build();
 
         assertThat(result.args, contains(
-                "build", "--discover-classpath", "foo.jar:baz.jar:bar.jar", "foo.smithy", "bar.smithy"));
-        assertThat(result.classpath, equalTo("foo.jar:baz.jar:bar.jar:/abc/123.jar"));
-        assertThat(result.discoveryClasspath, equalTo("foo.jar:baz.jar:bar.jar"));
+                "build",
+                "--discover-classpath",
+                cp("foo.jar", "baz.jar", "bar.jar"),
+                "foo.smithy",
+                "bar.smithy"));
+        assertThat(result.classpath, equalTo(cp("foo.jar", "baz.jar", "bar.jar", "/abc/123.jar")));
+        assertThat(result.discoveryClasspath, equalTo(cp("foo.jar", "baz.jar", "bar.jar")));
         assertThat(result.sources, contains("foo.smithy", "bar.smithy"));
     }
 
@@ -165,15 +178,19 @@ public class BuildParameterBuilderTest {
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
                 .projectionSource("foo")
                 .sources(ListUtils.of("foo.smithy", "bar.smithy"))
-                .libClasspath("foo.jar:baz.jar:bar.jar")
-                .buildClasspath("foo.jar:/abc/123.jar")
+                .libClasspath(cp("foo.jar", "baz.jar", "bar.jar"))
+                .buildClasspath(cp("foo.jar", "/abc/123.jar"))
                 .discover(true)
                 .build();
 
         assertThat(result.args, contains(
-                "build", "--discover-classpath", "foo.jar:/abc/123.jar", "foo.smithy", "bar.smithy"));
-        assertThat(result.classpath, equalTo("foo.jar:/abc/123.jar"));
-        assertThat(result.discoveryClasspath, equalTo("foo.jar:/abc/123.jar"));
+                "build",
+                "--discover-classpath",
+                cp("foo.jar", "/abc/123.jar"),
+                "foo.smithy",
+                "bar.smithy"));
+        assertThat(result.classpath, equalTo(cp("foo.jar", "/abc/123.jar")));
+        assertThat(result.discoveryClasspath, equalTo(cp("foo.jar", "/abc/123.jar")));
         assertThat(result.sources, contains("foo.smithy", "bar.smithy"));
     }
 
@@ -182,13 +199,13 @@ public class BuildParameterBuilderTest {
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
                 .projectionSource("foo")
                 .projectionSourceTags("abc, def")
-                .libClasspath("foo.jar:baz.jar:bar.jar")
-                .buildClasspath("foo.jar:/abc/123.jar")
+                .libClasspath(cp("foo.jar", "baz.jar", "bar.jar"))
+                .buildClasspath(cp("foo.jar", "/abc/123.jar"))
                 .discover(true)
                 .build();
 
-        assertThat(result.classpath, equalTo("foo.jar:/abc/123.jar"));
-        assertThat(result.discoveryClasspath, equalTo("foo.jar:/abc/123.jar"));
+        assertThat(result.classpath, equalTo(cp("foo.jar", "/abc/123.jar")));
+        assertThat(result.discoveryClasspath, equalTo(cp("foo.jar", "/abc/123.jar")));
         assertThat(result.sources, empty());
     }
 
@@ -199,8 +216,8 @@ public class BuildParameterBuilderTest {
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
                 .projectionSource("foo")
                 .projectionSourceTags("abc, def")
-                .libClasspath("abc.jar")
-                .buildClasspath("foo.jar:baz.jar:bar.jar")
+                .libClasspath(cp("abc.jar"))
+                .buildClasspath(cp("foo.jar", "baz.jar", "bar.jar"))
                 .discover(true)
                 .tagMatcher((cp, tags) -> {
                     parsedTags.addAll(tags);
@@ -209,8 +226,8 @@ public class BuildParameterBuilderTest {
                 .build();
 
         assertThat(parsedTags, containsInAnyOrder("abc", "def"));
-        assertThat(result.classpath, equalTo("foo.jar:baz.jar:bar.jar"));
-        assertThat(result.discoveryClasspath, equalTo("foo.jar:bar.jar"));
+        assertThat(result.classpath, equalTo(cp("foo.jar", "baz.jar", "bar.jar")));
+        assertThat(result.discoveryClasspath, equalTo(cp("foo.jar", "bar.jar")));
         assertThat(result.sources, contains("baz.jar"));
     }
 
