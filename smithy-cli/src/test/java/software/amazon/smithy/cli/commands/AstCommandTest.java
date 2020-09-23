@@ -54,7 +54,7 @@ public class AstCommandTest {
     @Test
     public void failsOnUnknownTrait() {
         CliError e = Assertions.assertThrows(CliError.class, () -> {
-            String model = getClass().getResource("unknown-trait.smithy").getPath();
+            String model = Paths.get(getClass().getResource("unknown-trait.smithy").toURI()).toString();
             SmithyCli.create().run("ast", model);
         });
 
