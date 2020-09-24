@@ -118,7 +118,7 @@ public final class FlattenNamespaces extends ConfigurableProjectionTransformer<F
     protected Model transformWithConfig(TransformContext context, Config config) {
         if (config.getService() == null || config.getNamespace() == null) {
             throw new SmithyBuildException(
-                    "'namespace' and 'service'properties must be set on flattenNamespace transformer.");
+                    "'namespace' and 'service' properties must be set on flattenNamespace transformer.");
         }
         Model model = context.getModel();
         Map<ShapeId, ShapeId> shapesToRename = getRenamedShapes(config, model);
@@ -132,7 +132,8 @@ public final class FlattenNamespaces extends ConfigurableProjectionTransformer<F
 
     private Map<ShapeId, ShapeId> getRenamedShapes(Config config, Model model) {
         if (!model.getShape(config.getService()).isPresent()) {
-            throw new SmithyBuildException("Service not found in model when performing flattenNamespaces transform.");
+            throw new SmithyBuildException("Configured service, " + config.getService()
+                    + ", not found in model when performing flattenNamespaces transform.");
         }
 
         Map<ShapeId, ShapeId> shapesToRename = getRenamedShapesConnectedToService(config, model);
@@ -158,8 +159,7 @@ public final class FlattenNamespaces extends ConfigurableProjectionTransformer<F
     }
 
     private Map<ShapeId, ShapeId> getRenamedShapesConnectedToService(Config config, Model model) {
-        Walker shapeWalker = new Walker(model.getKnowledge(NeighborProviderIndex.class, NeighborProviderIndex::new)
-                .getProvider());
+        Walker shapeWalker = new Walker(NeighborProviderIndex.of(model).getProvider());
         ServiceShape service = model.expectShape(config.getService(), ServiceShape.class);
         return shapeWalker.walkShapes(service).stream()
                 .filter(FunctionalUtils.not(Prelude::isPreludeShape))
