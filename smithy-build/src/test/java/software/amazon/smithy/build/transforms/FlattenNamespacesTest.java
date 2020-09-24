@@ -32,6 +32,7 @@ import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.build.plugins.SourcesPlugin;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.Prelude;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.Shape;
@@ -160,5 +161,21 @@ public class FlattenNamespacesTest {
                 .settings(config)
                 .build();
         Assertions.assertThrows(SmithyBuildException.class, () -> new FlattenNamespaces().transform(context));
+    }
+
+    @Test
+    public void throwsWhenServiceIsInvalidInModel() {
+        Model model = Model.assembler()
+                .addUnparsedModel("N/A", "{ \"smithy\": \"1.0\", \"shapes\": { \"ns.foo#InvalidService\": { \"type\": \"string\" } } }")
+                .assemble()
+                .unwrap();
+        ObjectNode config = Node.objectNode()
+                .withMember("namespace", Node.from("ns.qux"))
+                .withMember("service", Node.from("ns.foo#InvalidService"));
+        TransformContext context = TransformContext.builder()
+                .model(model)
+                .settings(config)
+                .build();
+        Assertions.assertThrows(ExpectationNotMetException.class, () -> new FlattenNamespaces().transform(context));
     }
 }

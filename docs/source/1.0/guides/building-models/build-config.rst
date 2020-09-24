@@ -882,15 +882,16 @@ namespace. Shapes not connected to a service will not be flattened.
       - **REQUIRED** The target namespace.
     * - service
       - ``shapeId``
-      - **REQUIRED** The service to be flattened.
+      - **REQUIRED** The service to be flattened. All shapes within this
+        :ref:`service closure <service-closure>` will be replaced with equivalent
+        shapes in the target namespace.
     * - includeTagged
       - ``[string]``
       - The set of tags that, if found on a shape not connected to the service,
         forces the shape to have its namespace flattened into the target
         namespace. When additional shapes are included, the shapes are replaced
         entirely, along with any references to the shapes which may exist within
-        separate :ref:`service closure <service-closure>`.
-
+        separate :ref:`service closures <service-closure>`.
 
 The following example will flatten the namespaces of the shapes connected to
 the ``ns.bar#MyService`` service into the target namespace, ``ns.foo``. Shapes
