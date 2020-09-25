@@ -114,7 +114,7 @@ An *authorizer* definition is a structure that supports the following members:
     * - type
       - ``string``
       - The type of the authorizer. If specifying information beyond the
-        scheme, this value is required. The he value must be "token", for an
+        scheme, this value is required. The value must be "token", for an
         authorizer with the caller identity embedded in an authorization token,
         or "request", for an authorizer with the caller identity contained in
         request parameters.
