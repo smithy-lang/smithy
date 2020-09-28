@@ -1,0 +1,100 @@
+{
+  "typeName": "Smithy::TestService::Foo",
+  "description": "Definition of Example::TestService::Foo Resource Type",
+  "definitions": {
+    "ArbitraryMap": {
+      "type": "object",
+      "patternProperties": {
+        ".+": {
+          "type": "string"
+        }
+      }
+    },
+    "ComplexProperty": {
+      "type": "object",
+      "properties": {
+        "AnotherProperty": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "properties": {
+    "AddedProperty": {
+      "type": "string"
+    },
+    "BarProperty": {
+      "type": "string"
+    },
+    "CreateProperty": {
+      "$ref": "#/definitions/ComplexProperty"
+    },
+    "CreateWriteProperty": {
+      "$ref": "#/definitions/ArbitraryMap"
+    },
+    "CreatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "FooAlias": {
+      "type": "string"
+    },
+    "FooId": {
+      "type": "string"
+    },
+    "ImmutableSetting": {
+      "type": "boolean"
+    },
+    "MutableProperty": {
+      "$ref": "#/definitions/ComplexProperty"
+    },
+    "Password": {
+      "type": "string"
+    },
+    "ReadProperty": {
+      "$ref": "#/definitions/ComplexProperty"
+    },
+    "Secret": {
+      "type": "string"
+    },
+    "Tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "UpdatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "WriteProperty": {
+      "$ref": "#/definitions/ComplexProperty"
+    }
+  },
+  "readOnlyProperties": [
+    "/properties/CreatedAt",
+    "/properties/FooId",
+    "/properties/ReadProperty",
+    "/properties/UpdatedAt"
+  ],
+  "writeOnlyProperties": [
+    "/properties/CreateWriteProperty",
+    "/properties/Password",
+    "/properties/Secret",
+    "/properties/WriteProperty"
+  ],
+  "createOnlyProperties": [
+    "/properties/CreateProperty",
+    "/properties/CreateWriteProperty",
+    "/properties/ImmutableSetting"
+  ],
+  "primaryIdentifier": [
+    "/properties/FooId"
+  ],
+  "additionalIdentifiers": [
+    [
+      "/properties/FooAlias"
+    ]
+  ],
+  "additionalProperties": false
+}

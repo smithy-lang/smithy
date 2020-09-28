@@ -1,0 +1,25 @@
+{
+  "typeName": "Smithy::TestService::PutResource",
+  "description": "Definition of Smithy::TestService::PutResource Resource Type",
+  "properties": {
+    "BarProperty": {
+      "type": "string"
+    },
+    "FooId": {
+      "type": "string"
+    },
+    "Tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "createOnlyProperties": [
+    "/properties/FooId"
+  ],
+  "primaryIdentifier": [
+    "/properties/FooId"
+  ],
+  "additionalProperties": false
+}

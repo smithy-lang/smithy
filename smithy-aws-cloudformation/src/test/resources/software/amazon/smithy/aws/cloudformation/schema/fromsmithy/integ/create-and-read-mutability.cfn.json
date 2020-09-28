@@ -1,0 +1,22 @@
+{
+  "typeName": "Smithy::TestService::CreateAndRead",
+  "description": "Definition of Smithy::TestService::CreateAndRead Resource Type",
+  "properties": {
+    "FooId": {
+      "type": "string"
+    },
+    "ImmutableSetting": {
+      "type": "boolean"
+    }
+  },
+  "readOnlyProperties": [
+    "/properties/FooId"
+  ],
+  "createOnlyProperties": [
+    "/properties/ImmutableSetting"
+  ],
+  "primaryIdentifier": [
+    "/properties/FooId"
+  ],
+  "additionalProperties": false
+}
