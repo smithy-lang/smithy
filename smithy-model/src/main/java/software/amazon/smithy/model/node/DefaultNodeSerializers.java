@@ -26,8 +26,8 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -188,7 +188,7 @@ final class DefaultNodeSerializers {
         @Override
         @SuppressWarnings("unchecked")
         public Node serialize(Map value, Set<Object> serializedObjects, NodeMapper mapper) {
-            Map<StringNode, Node> mappings = new HashMap<>();
+            Map<StringNode, Node> mappings = new LinkedHashMap<>();
             Set<Map.Entry<Object, Object>> entries = (Set<Map.Entry<Object, Object>>) value.entrySet();
 
             // Iterate over the map entries and populate map entries for an ObjectNode.
@@ -254,7 +254,7 @@ final class DefaultNodeSerializers {
         private static final ConcurrentMap<Class, ClassInfo> CACHE = new ConcurrentHashMap<>();
 
         // Methods aren't returned normally in any particular order, so give them an order.
-        final Map<String, Method> getters = new HashMap<>();
+        final Map<String, Method> getters = new TreeMap<>();
 
         static ClassInfo fromClass(Class<?> type) {
             return CACHE.computeIfAbsent(type, klass -> {

@@ -1,0 +1,57 @@
+{
+  "typeName": "AWS::SomeThing::FooResource",
+  "description": "The Foo resource is cool.",
+  "sourceUrl": "https://source.example.com",
+  "documentationUrl": "https://docs.example.com",
+  "definitions": {
+    "ComplexProperty": {
+      "type": "object",
+      "properties": {
+        "Property": {
+          "type": "string"
+        },
+        "Another": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "properties": {
+    "FooDeprecatedMutableProperty": {
+      "type": "string"
+    },
+    "FooId": {
+      "type": "string"
+    },
+    "FooValidCreateProperty": {
+      "type": "string"
+    },
+    "FooValidFullyMutableProperty": {
+      "$ref": "#/definitions/ComplexProperty"
+    },
+    "FooValidReadProperty": {
+      "type": "string"
+    },
+    "FooValidWriteProperty": {
+      "type": "string"
+    }
+  },
+  "readOnlyProperties": [
+    "/properties/FooId",
+    "/properties/FooValidReadProperty"
+  ],
+  "writeOnlyProperties": [
+    "/properties/FooValidCreateProperty",
+    "/properties/FooValidWriteProperty"
+  ],
+  "createOnlyProperties": [
+    "/properties/FooValidCreateProperty"
+  ],
+  "deprecatedProperties": [
+    "/properties/FooDeprecatedMutableProperty"
+  ],
+  "primaryIdentifier": [
+    "/properties/FooId"
+  ],
+  "additionalProperties": false
+}

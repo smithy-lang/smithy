@@ -1,0 +1,101 @@
+{
+  "typeName": "Smithy::TestService::Queue",
+  "description": "Definition of Smithy::TestService::Queue Resource Type",
+  "definitions": {
+    "RedrivePolicy": {
+      "type": "object",
+      "properties": {
+        "MaxReceiveCount": {
+          "type": "number"
+        },
+        "DeadLetterTargetArn": {
+          "type": "string"
+        }
+      }
+    },
+    "TagMap": {
+      "type": "object",
+      "patternProperties": {
+        ".+": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "properties": {
+    "Arn": {
+      "type": "string"
+    },
+    "ContentBasedDeduplication": {
+      "type": "boolean"
+    },
+    "DelaySeconds": {
+      "type": "number",
+      "maximum": 900,
+      "minimum": 0
+    },
+    "FifoQueue": {
+      "type": "boolean"
+    },
+    "KmsDataKeyReusePeriodSeconds": {
+      "type": "number",
+      "maximum": 86400,
+      "minimum": 60
+    },
+    "KmsMasterKeyId": {
+      "type": "string"
+    },
+    "MaximumMessageSize": {
+      "type": "number",
+      "maximum": 262144,
+      "minimum": 1024
+    },
+    "MessageRetentionPeriod": {
+      "type": "number",
+      "maximum": 1209600,
+      "minimum": 60
+    },
+    "QueueName": {
+      "type": "string"
+    },
+    "ReceiveMessageWaitTimeSeconds": {
+      "type": "number",
+      "maximum": 20,
+      "minimum": 0
+    },
+    "RedrivePolicy": {
+      "$ref": "#/definitions/RedrivePolicy"
+    },
+    "Tags": {
+      "$ref": "#/definitions/TagMap"
+    },
+    "URL": {
+      "type": "string"
+    },
+    "VisibilityTimeout": {
+      "type": "number",
+      "maximum": 43200,
+      "minimum": 0
+    }
+  },
+  "readOnlyProperties": [
+    "/properties/Arn",
+    "/properties/URL"
+  ],
+  "createOnlyProperties": [
+    "/properties/FifoQueue",
+    "/properties/QueueName"
+  ],
+  "primaryIdentifier": [
+    "/properties/QueueName"
+  ],
+  "additionalIdentifiers": [
+    [
+      "/properties/URL"
+    ],
+    [
+      "/properties/Arn"
+    ]
+  ],
+  "additionalProperties": false
+}

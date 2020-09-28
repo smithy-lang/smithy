@@ -1,0 +1,25 @@
+{
+  "typeName": "Smithy::TestService::CreateWrite",
+  "description": "Definition of Smithy::TestService::CreateWrite Resource Type",
+  "properties": {
+    "CreateWriteProperty": {
+      "type": "string"
+    },
+    "FooId": {
+      "type": "string"
+    }
+  },
+  "readOnlyProperties": [
+    "/properties/FooId"
+  ],
+  "writeOnlyProperties": [
+    "/properties/CreateWriteProperty"
+  ],
+  "createOnlyProperties": [
+    "/properties/CreateWriteProperty"
+  ],
+  "primaryIdentifier": [
+    "/properties/FooId"
+  ],
+  "additionalProperties": false
+}

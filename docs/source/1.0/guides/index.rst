@@ -12,3 +12,4 @@ Smithy Guides
     evolving-models
     style-guide
     converting-to-openapi
+    generating-cloudformation-resources
