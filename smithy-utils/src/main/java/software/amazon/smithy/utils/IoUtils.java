@@ -15,15 +15,19 @@
 
 package software.amazon.smithy.utils;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 
 /**
  * Utilities for IO operations.
@@ -132,6 +136,86 @@ public final class IoUtils {
             return toUtf8String(is);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
+     * Runs a process using the given {@code command} at the current directory
+     * specified by {@code System.getProperty("user.dir")}.
+     *
+     * <p>stderr is redirected to stdout in the return value of this method.
+     *
+     * @param command Process command to execute.
+     * @return Returns the combined stdout and stderr of the process.
+     * @throws RuntimeException if the process returns a non-zero exit code or fails.
+     */
+    public static String runCommand(String command) {
+        return runCommand(command, Paths.get(System.getProperty("user.dir")));
+    }
+
+    /**
+     * Runs a process using the given {@code command} relative to the given
+     * {@code directory}.
+     *
+     * <p>stderr is redirected to stdout in the return value of this method.
+     *
+     * @param command Process command to execute.
+     * @param directory Directory to use as the working directory.
+     * @return Returns the combined stdout and stderr of the process.
+     * @throws RuntimeException if the process returns a non-zero exit code or fails.
+     */
+    public static String runCommand(String command, Path directory) {
+        StringBuilder sb = new StringBuilder();
+        int exitValue = runCommand(command, directory, sb);
+
+        if (exitValue != 0) {
+            throw new RuntimeException(String.format(
+                    "Command `%s` failed with exit code %d and output:%n%n%s", command, exitValue, sb.toString()));
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Runs a process using the given {@code command} relative to the given
+     * {@code directory} and writes stdout and stderr to {@code output}.
+     *
+     * <p>stderr is redirected to stdout when writing to {@code output}.
+     * This method <em>does not</em> throw when a non-zero exit code is
+     * encountered. For any more complex use cases, use {@link ProcessBuilder}
+     * directly.
+     *
+     * @param command Process command to execute.
+     * @param directory Directory to use as the working directory.
+     * @param output Where stdout and stderr is written.
+     * @return Returns the exit code of the process.
+     */
+    public static int runCommand(String command, Path directory, Appendable output) {
+        String[] finalizedCommand;
+        if (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).startsWith("windows")) {
+            finalizedCommand = new String[]{"cmd.exe", "/c", command};
+        } else {
+            finalizedCommand = new String[]{"sh", "-c", command};
+        }
+
+        ProcessBuilder processBuilder = new ProcessBuilder(finalizedCommand)
+                .directory(directory.toFile())
+                .redirectErrorStream(true);
+
+        try {
+            Process process = processBuilder.start();
+            try (BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream(), Charset.defaultCharset()))) {
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    output.append(line).append(System.lineSeparator());
+                }
+            }
+            process.waitFor();
+            process.destroy();
+            return process.exitValue();
+        } catch (InterruptedException | IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
