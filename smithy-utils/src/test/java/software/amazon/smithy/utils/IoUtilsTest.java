@@ -15,6 +15,10 @@
 
 package software.amazon.smithy.utils;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
@@ -22,6 +26,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.util.Random;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class IoUtilsTest {
@@ -82,5 +88,24 @@ public class IoUtilsTest {
     public void readsFromClassLoader() {
         assertEquals("This is a test.\n", IoUtils.readUtf8Resource(
                 getClass().getClassLoader(), "software/amazon/smithy/utils/test.txt"));
+    }
+
+    @Test
+    public void throwsWhenProcessFails() {
+        RuntimeException e = Assertions.assertThrows(RuntimeException.class, () -> {
+            IoUtils.runCommand("thisCommandDoesNotExist" + new Random().nextInt(1000));
+        });
+
+        assertThat(e.getMessage(), containsString("failed with exit code"));
+    }
+
+    @Test
+    public void doesNotThrowWhenGivenOutput() {
+        StringBuilder sb = new StringBuilder();
+        String name = "thisCommandDoesNotExist" + new Random().nextInt(1000);
+        int code = IoUtils.runCommand(name, Paths.get(System.getProperty("user.dir")), sb);
+
+        assertThat(code, not(0));
+        assertThat(sb.toString(), not(emptyString()));
     }
 }
