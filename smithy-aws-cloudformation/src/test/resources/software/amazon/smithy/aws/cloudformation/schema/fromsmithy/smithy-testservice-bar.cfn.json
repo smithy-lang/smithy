@@ -1,0 +1,40 @@
+{
+  "typeName": "Smithy::TestService::Bar",
+  "description": "A Bar resource, not that kind of bar though.",
+  "properties": {
+    "Arn": {
+      "type": "string"
+    },
+    "BarExplicitMutableProperty": {
+      "type": "string"
+    },
+    "BarId": {
+      "type": "string"
+    },
+    "BarImplicitFullProperty": {
+      "type": "string"
+    },
+    "BarImplicitReadProperty": {
+      "type": "string"
+    },
+    "BarValidAdditionalProperty": {
+      "type": "string"
+    }
+  },
+  "readOnlyProperties": [
+    "/properties/Arn",
+    "/properties/BarImplicitReadProperty"
+  ],
+  "createOnlyProperties": [
+    "/properties/BarId"
+  ],
+  "primaryIdentifier": [
+    "/properties/BarId"
+  ],
+  "additionalIdentifiers": [
+    [
+      "/properties/Arn"
+    ]
+  ],
+  "additionalProperties": false
+}

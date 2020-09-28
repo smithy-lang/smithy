@@ -1,0 +1,61 @@
+{
+  "typeName": "Smithy::TestService::FooResource",
+  "description": "The Foo resource is cool.",
+  "definitions": {
+    "ComplexProperty": {
+      "type": "object",
+      "properties": {
+        "Property": {
+          "type": "string"
+        },
+        "Another": {
+          "type": "string"
+        }
+      }
+    },
+    "FooMap": {
+      "type": "object",
+      "patternProperties": {
+        ".+": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "properties": {
+    "FooId": {
+      "type": "string"
+    },
+    "FooValidCreateProperty": {
+      "$ref": "#/definitions/FooMap"
+    },
+    "FooValidCreateReadProperty": {
+      "type": "string"
+    },
+    "FooValidFullyMutableProperty": {
+      "$ref": "#/definitions/ComplexProperty"
+    },
+    "FooValidReadProperty": {
+      "type": "string"
+    },
+    "FooValidWriteProperty": {
+      "type": "string"
+    }
+  },
+  "readOnlyProperties": [
+    "/properties/FooId",
+    "/properties/FooValidReadProperty"
+  ],
+  "writeOnlyProperties": [
+    "/properties/FooValidCreateProperty",
+    "/properties/FooValidWriteProperty"
+  ],
+  "createOnlyProperties": [
+    "/properties/FooValidCreateProperty",
+    "/properties/FooValidCreateReadProperty"
+  ],
+  "primaryIdentifier": [
+    "/properties/FooId"
+  ],
+  "additionalProperties": false
+}

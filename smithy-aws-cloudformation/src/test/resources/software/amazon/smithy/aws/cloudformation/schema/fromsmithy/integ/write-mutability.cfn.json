@@ -1,0 +1,26 @@
+{
+  "typeName": "Smithy::TestService::Write",
+  "description": "Definition of Smithy::TestService::Write Resource Type",
+  "properties": {
+    "FooId": {
+      "type": "string"
+    },
+    "Password": {
+      "type": "string"
+    },
+    "Secret": {
+      "type": "string"
+    }
+  },
+  "readOnlyProperties": [
+    "/properties/FooId"
+  ],
+  "writeOnlyProperties": [
+    "/properties/Password",
+    "/properties/Secret"
+  ],
+  "primaryIdentifier": [
+    "/properties/FooId"
+  ],
+  "additionalProperties": false
+}

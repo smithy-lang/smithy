@@ -1,0 +1,26 @@
+{
+  "typeName": "Smithy::TestService::Read",
+  "description": "Definition of Smithy::TestService::Read Resource Type",
+  "properties": {
+    "CreatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "FooId": {
+      "type": "string"
+    },
+    "UpdatedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "readOnlyProperties": [
+    "/properties/CreatedAt",
+    "/properties/FooId",
+    "/properties/UpdatedAt"
+  ],
+  "primaryIdentifier": [
+    "/properties/FooId"
+  ],
+  "additionalProperties": false
+}

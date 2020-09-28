@@ -1,3 +1,5 @@
+.. _aws-cloudformation-traits:
+
 =========================
 AWS CloudFormation traits
 =========================

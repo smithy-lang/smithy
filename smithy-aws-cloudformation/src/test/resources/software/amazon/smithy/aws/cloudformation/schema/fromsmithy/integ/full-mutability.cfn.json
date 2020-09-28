@@ -1,0 +1,25 @@
+{
+  "typeName": "Smithy::TestService::Full",
+  "description": "Definition of Smithy::TestService::Full Resource Type",
+  "properties": {
+    "BarProperty": {
+      "type": "string"
+    },
+    "FooId": {
+      "type": "string"
+    },
+    "Tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "readOnlyProperties": [
+    "/properties/FooId"
+  ],
+  "primaryIdentifier": [
+    "/properties/FooId"
+  ],
+  "additionalProperties": false
+}
