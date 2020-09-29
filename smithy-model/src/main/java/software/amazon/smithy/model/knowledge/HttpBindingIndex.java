@@ -382,7 +382,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
                     break;
                 } else if (StreamingTrait.isEventStream(target)) {
                     return eventStreamContentType;
-                } else if (target.isDocumentShape() || target.isStructureShape()) {
+                } else if (target.isDocumentShape() || target.isStructureShape() || target.isUnionShape()) {
                     // Document type and structure targets are always the document content-type.
                     return documentContentType;
                 } else if (target.getTrait(MediaTypeTrait.class).isPresent()) {

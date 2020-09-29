@@ -1,0 +1,63 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "Example",
+        "version": "2020-09-11"
+    },
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "GetItem",
+                "responses": {
+                    "200": {
+                        "description": "GetItem 200 response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ItemResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Foo": {
+                "type": "object"
+            },
+            "ItemResponse": {
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "title": "Foo",
+                        "properties": {
+                            "Foo": {
+                                "$ref": "#/components/schemas/Foo"
+                            }
+                        },
+                        "required": [
+                            "Foo"
+                        ]
+                    }
+                ]
+            }
+        },
+        "securitySchemes": {
+            "aws.auth.sigv4": {
+                "type": "apiKey",
+                "description": "AWS Signature Version 4 authentication",
+                "name": "Authorization",
+                "in": "header",
+                "x-amazon-apigateway-authtype": "awsSigv4"
+            }
+        }
+    },
+    "security": [
+        {
+            "aws.auth.sigv4": []
+        }
+    ]
+}
