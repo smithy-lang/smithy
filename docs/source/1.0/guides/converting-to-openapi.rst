@@ -165,7 +165,7 @@ tools and vendors.
 
 The following key-value pairs are supported:
 
-service (string)
+service (``string``)
     **Required**. The Smithy service :ref:`shape ID <shape-id>` to convert.
     For example, ``smithy.example#Weather``.
 
@@ -180,7 +180,7 @@ service (string)
             }
         }
 
-protocol (string)
+protocol (``string``)
     The protocol shape ID to use when converting Smithy to OpenAPI.
     For example, ``aws.protocols#restJson1``.
 
@@ -204,7 +204,7 @@ protocol (string)
             }
         }
 
-tags (boolean)
+tags (``boolean``)
     Whether or not to include Smithy :ref:`tags <tags-trait>` in the result
     as `OpenAPI tags`_. The following example adds all tags in the Smithy
     model to the OpenAPI model.
@@ -221,7 +221,7 @@ tags (boolean)
             }
         }
 
-supportedTags ([string])
+supportedTags (``[string]``)
     Limits the exported ``tags`` to a specific set of tags. The value
     must be a list of strings. This property requires that ``tags`` is set to
     ``true`` in order to have an effect.
@@ -239,7 +239,7 @@ supportedTags ([string])
             }
         }
 
-defaultBlobFormat (string)
+defaultBlobFormat (``string``)
     Sets the default format property used when converting blob shapes in
     Smithy to strings in OpenAPI. Defaults to "byte", meaning Base64 encoded.
     See `OpenAPI Data types`_ for more information.
@@ -256,7 +256,7 @@ defaultBlobFormat (string)
             }
         }
 
-externalDocs ([string])
+externalDocs (``[string]``)
     Limits the source of converted "externalDocs" fields to the specified
     priority ordered list of names in an :ref:`externaldocumentation-trait`.
     This list is case insensitive. By default, this is a list of the following
@@ -278,7 +278,7 @@ externalDocs ([string])
             }
         }
 
-keepUnusedComponents (boolean)
+keepUnusedComponents (``boolean``)
     Set to ``true`` to prevent unused OpenAPI ``components`` from being
     removed from the created specification.
 
@@ -294,7 +294,7 @@ keepUnusedComponents (boolean)
             }
         }
 
-jsonContentType (string)
+jsonContentType (``string``)
     Sets a custom media-type to associate with the JSON payload of
     JSON-based protocols.
 
@@ -310,7 +310,7 @@ jsonContentType (string)
             }
         }
 
-forbidGreedyLabels (boolean)
+forbidGreedyLabels (``boolean``)
     Set to true to forbid greedy URI labels. By default, greedy labels will
     appear as-is in the path generated for an operation. For example,
     "/{foo+}".
@@ -327,7 +327,7 @@ forbidGreedyLabels (boolean)
             }
         }
 
-onHttpPrefixHeaders (string)
+onHttpPrefixHeaders (``string``)
     Specifies what to do when the :ref:`httpPrefixHeaders-trait` is found in
     a model. OpenAPI does not support ``httpPrefixHeaders``. By default, the
     conversion will fail when this trait is encountered, but this behavior
@@ -349,7 +349,7 @@ onHttpPrefixHeaders (string)
             }
         }
 
-ignoreUnsupportedTraits (boolean)
+ignoreUnsupportedTraits (``boolean``)
     Emits warnings rather than failing when unsupported traits like
     ``endpoint`` and ``hostLabel`` are encountered.
 
@@ -435,7 +435,7 @@ jsonAdd (``Map<String, Node>``)
 JSON schema configuration settings
 ----------------------------------
 
-alphanumericOnlyRefs (boolean)
+alphanumericOnlyRefs (``boolean``)
     Creates JSON schema names that strip out non-alphanumeric characters.
 
     This is necessary for compatibility with some vendors like
@@ -447,7 +447,7 @@ alphanumericOnlyRefs (boolean)
         ``software.amazon.smithy:smithy-aws-apigateway-openapi`` is on the classpath
         and ``apiGatewayType`` is not set to ``DISABLED``.
 
-useJsonName (boolean)
+useJsonName (``boolean``)
     Uses the value of the :ref:`jsonName-trait` when creating JSON schema
     properties for structure and union shapes. This property MAY be
     automatically set to ``true`` depending on the protocol being converted.
@@ -464,7 +464,7 @@ useJsonName (boolean)
             }
         }
 
-defaultTimestampFormat (string)
+defaultTimestampFormat (``string``)
     Sets the assumed :ref:`timestampFormat-trait` value for timestamps with
     no explicit timestampFormat trait. The provided value is expected to be
     a string. Defaults to "date-time" if not set. Can be set to "date-time",
@@ -482,7 +482,7 @@ defaultTimestampFormat (string)
             }
         }
 
-unionStrategy (string)
+unionStrategy (``string``)
     Configures how Smithy union shapes are converted to JSON Schema.
 
     This property must be a string set to one of the following values:
