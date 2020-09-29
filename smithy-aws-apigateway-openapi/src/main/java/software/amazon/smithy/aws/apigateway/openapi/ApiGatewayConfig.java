@@ -15,7 +15,9 @@
 
 package software.amazon.smithy.aws.apigateway.openapi;
 
+import java.util.List;
 import java.util.Objects;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * API Gateway OpenAPI configuration.
@@ -53,6 +55,7 @@ public final class ApiGatewayConfig {
 
     private ApiType apiGatewayType = ApiType.REST;
     private boolean disableCloudFormationSubstitution;
+    private List<String> additionalAllowedCorsHeaders = ListUtils.of("amz-sdk-invocation-id", "amz-sdk-request");
 
     /**
      * @return Returns true if CloudFormation substitutions are disabled.
@@ -88,5 +91,24 @@ public final class ApiGatewayConfig {
      */
     public void setApiGatewayType(ApiType apiGatewayType) {
         this.apiGatewayType = Objects.requireNonNull(apiGatewayType);
+    }
+
+    /**
+     * @return the list of additional allowed CORS headers.
+     */
+    public List<String> getAdditionalAllowedCorsHeaders() {
+        return additionalAllowedCorsHeaders;
+    }
+
+    /**
+     * Sets the list of additional allowed CORS headers.
+     *
+     * <p>If not set, this value defaults to setting "amz-sdk-invocation-id" and
+     * "amz-sdk-request" as the additional allowed CORS headers.</p>
+     *
+     * @param additionalAllowedCorsHeaders additional cors headers to be allowed.
+     */
+    public void setAdditionalAllowedCorsHeaders(List<String> additionalAllowedCorsHeaders) {
+        this.additionalAllowedCorsHeaders = Objects.requireNonNull(additionalAllowedCorsHeaders);
     }
 }
