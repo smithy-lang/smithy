@@ -93,7 +93,7 @@
               "statusCode": "200",
               "responseParameters": {
                 "method.response.header.Access-Control-Max-Age": "'86400'",
-                "method.response.header.Access-Control-Allow-Headers": "'Authorization,Date,X-Amz-Date,X-Amz-Security-Token,X-Amz-Target,X-Service-Input-Metadata,amz-sdk-invocation-id,amz-sdk-request'",
+                "method.response.header.Access-Control-Allow-Headers": "'Authorization,Date,X-Amz-Date,X-Amz-Security-Token,X-Amz-Target,X-Service-Input-Metadata,bar,foo'",
                 "method.response.header.Access-Control-Allow-Origin": "'https://www.example.com'",
                 "method.response.header.Access-Control-Allow-Methods": "'GET'"
               }
@@ -262,7 +262,7 @@
               "statusCode": "200",
               "responseParameters": {
                 "method.response.header.Access-Control-Max-Age": "'86400'",
-                "method.response.header.Access-Control-Allow-Headers": "'Authorization,Date,X-Amz-Date,X-Amz-Security-Token,X-Amz-Target,X-EnumString,X-Foo-Header,X-Service-Input-Metadata,amz-sdk-invocation-id,amz-sdk-request'",
+                "method.response.header.Access-Control-Allow-Headers": "'Authorization,Date,X-Amz-Date,X-Amz-Security-Token,X-Amz-Target,X-EnumString,X-Foo-Header,X-Service-Input-Metadata,bar,foo'",
                 "method.response.header.Access-Control-Allow-Origin": "'https://www.example.com'",
                 "method.response.header.Access-Control-Allow-Methods": "'DELETE,GET,PUT'"
               }

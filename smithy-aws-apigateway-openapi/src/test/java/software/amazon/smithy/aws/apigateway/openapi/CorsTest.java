@@ -11,6 +11,7 @@ import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.utils.IoUtils;
+import software.amazon.smithy.utils.ListUtils;
 
 public class CorsTest {
     @Test
@@ -41,6 +42,25 @@ public class CorsTest {
         ObjectNode result = OpenApiConverter.create().config(config).convertToNode(model);
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("cors-explicit-options.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
+    public void setsConfiguredAdditionalAllowedHeaders() {
+        Model model = Model.assembler(getClass().getClassLoader())
+                .discoverModels(getClass().getClassLoader())
+                .addImport(getClass().getResource("cors-model.json"))
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example.smithy#MyService"));
+        ApiGatewayConfig apiGatewayConfig = new ApiGatewayConfig();
+        apiGatewayConfig.setAdditionalAllowedCorsHeaders(ListUtils.of("foo","bar"));
+        config.putExtensions(apiGatewayConfig);
+        ObjectNode result = OpenApiConverter.create().config(config).convertToNode(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("cors-with-additional-headers.openapi.json")));
 
         Node.assertEquals(result, expectedNode);
     }
