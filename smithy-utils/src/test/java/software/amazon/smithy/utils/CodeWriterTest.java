@@ -18,6 +18,7 @@ package software.amazon.smithy.utils;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+import java.util.Locale;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -669,5 +670,16 @@ public class CodeWriterTest {
     @Test
     public void expressionStartCannotBeNewline() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> new CodeWriter().setExpressionStart('\n'));
+    }
+
+    @Test
+    public void canFilterSections() {
+        CodeWriter writer = new CodeWriter();
+        writer.pushFilteredState(s -> s.toUpperCase(Locale.ENGLISH));
+        writer.write("Hello!");
+        writer.write("Goodbye!");
+        writer.popState();
+
+        assertThat(writer.toString(), equalTo("HELLO!\nGOODBYE!\n"));
     }
 }

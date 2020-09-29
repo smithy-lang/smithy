@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
@@ -473,6 +474,19 @@ public class CodeWriter {
     }
 
     /**
+     * Get the expression start character of the <em>current</em> state.
+     *
+     * <p>This value should not be cached and reused across pushed and popped
+     * states. This value is "$" by default, but it can be changed using
+     * {@link #setExpressionStart(char)}.
+     *
+     * @return Returns the expression start char of the current state.
+     */
+    public char getExpressionStart() {
+        return currentState.expressionStart;
+    }
+
+    /**
      * Gets the contents of the generated code.
      *
      * <p>The result will have an appended newline if the CodeWriter is
@@ -572,6 +586,20 @@ public class CodeWriter {
             dedent(-1);
         }
 
+        return this;
+    }
+
+    /**
+     * Pushes an anonymous named state that is always passed through the given
+     * filter function before being written to the writer.
+     *
+     * @param filter Function that maps over the entire section when popped.
+     * @return Returns the code writer.
+     */
+    public CodeWriter pushFilteredState(Function<String, String> filter) {
+        String sectionName = "__filtered_state_" + states.size() + 1;
+        pushState(sectionName);
+        onSection(sectionName, content -> writeWithNoFormatting(filter.apply(content.toString())));
         return this;
     }
 
@@ -1035,6 +1063,22 @@ public class CodeWriter {
      */
     public final CodeWriter closeBlock(String textAfterNewline, Object... args) {
         return dedent().write(textAfterNewline, args);
+    }
+
+    /**
+     * Writes text to the CodeWriter and appends a newline.
+     *
+     * <p>The provided text does not use any kind of expression formatting.
+     *
+     * <p>Indentation and the newline prefix is only prepended if the writer's
+     * cursor is at the beginning of a newline.
+     *
+     * @param content Content to write.
+     * @return Returns the CodeWriter.
+     */
+    public final CodeWriter writeWithNoFormatting(Object content) {
+        currentState.writeLine(content.toString());
+        return this;
     }
 
     /**
