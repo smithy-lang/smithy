@@ -407,4 +407,20 @@ public class OpenApiConverterTest {
 
         Node.assertEquals(result, expectedNode);
     }
+
+    @Test
+    public void convertsUnions() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("union-test.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Example"));
+        Node result = OpenApiConverter.create().config(config).convertToNode(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("union-test.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
 }
