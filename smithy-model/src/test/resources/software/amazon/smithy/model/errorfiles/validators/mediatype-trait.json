@@ -1,0 +1,71 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "smithy.example#Valid1": {
+            "type": "string",
+            "traits": {
+                "smithy.api#mediaType": "application/json"
+            }
+        },
+        "smithy.example#Valid2": {
+            "type": "string",
+            "traits": {
+                "smithy.api#mediaType": "application/foo+json"
+            }
+        },
+        "smithy.example#Valid3": {
+            "type": "string",
+            "traits": {
+                "smithy.api#mediaType": "application/foo+json; bar=baz"
+            }
+        },
+        "smithy.example#Valid4": {
+            "type": "string",
+            "traits": {
+                "smithy.api#mediaType": "application/foo+json; bar=baz; bam=boozled; foo=\"hi\""
+            }
+        },
+        "smithy.example#Invalid1": {
+            "type": "string",
+            "traits": {
+                "smithy.api#mediaType": "application"
+            }
+        },
+        "smithy.example#Invalid2": {
+            "type": "string",
+            "traits": {
+                "smithy.api#mediaType": "application/"
+            }
+        },
+        "smithy.example#Invalid3": {
+            "type": "string",
+            "traits": {
+                "smithy.api#mediaType": "application/json;"
+            }
+        },
+        "smithy.example#Invalid4": {
+            "type": "string",
+            "traits": {
+                "smithy.api#mediaType": "application/json; bar"
+            }
+        },
+        "smithy.example#Invalid5": {
+            "type": "string",
+            "traits": {
+                "smithy.api#mediaType": "application/json; bar="
+            }
+        },
+        "smithy.example#Invalid6": {
+            "type": "string",
+            "traits": {
+                "smithy.api#mediaType": "application/json; bar=,"
+            }
+        },
+        "smithy.example#Invalid7": {
+            "type": "string",
+            "traits": {
+                "smithy.api#mediaType": "application/json; bar=bam;"
+            }
+        }
+    }
+}
