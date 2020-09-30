@@ -1,5 +1,28 @@
 # Smithy Changelog
 
+## 1.2.0 (2020-09-30)
+
+### Features
+
+* Added information to the `ModelDiff.Result` indicating how events have changed between the diff'd models. ([#574](https://github.com/awslabs/smithy/pull/574))
+* Added a media type parser and validation for the `@mediaType` trait. ([#582](https://github.com/awslabs/smithy/pull/582))
+* Added additional default CORS headers and configuration for OpenAPI conversions. ([#583](https://github.com/awslabs/smithy/pull/583))
+* Added the `flattenNamespaces` build transform to flatten the namespaces of shapes connected to a specified service
+  in a model in to a target namespace. ([#572](https://github.com/awslabs/smithy/pull/572))
+* Added `runCommand` functionality to `smithy-utils`. ([#580](https://github.com/awslabs/smithy/pull/580))
+* Added a `TriConsumer` to `smithy-utils`. ([#581](https://github.com/awslabs/smithy/pull/581))
+* Added support for the `@httpResponseCode` trait in the `HttpBindingIndex`. ([#571](https://github.com/awslabs/smithy/pull/571))
+* Added protocol tests for the `@httpResponseCode` trait. ([#573](https://github.com/awslabs/smithy/pull/573))
+
+### Bug Fixes
+
+* Fixed several issues that would cause Smithy to fail when running on Windows. ([#575](https://github.com/awslabs/smithy/pull/575),
+  [#576](https://github.com/awslabs/smithy/pull/576), [#577](https://github.com/awslabs/smithy/pull/577))
+* Fixed a bug where a `union` shape marked as an `@httpPayload` would throw an exception when trying to resolve
+  its content-type. ([#584](https://github.com/awslabs/smithy/pull/584))
+* Fixed a bug in OpenAPI conversions where tags were not passed through unless set in the `supportedTags` list, even
+  when the `tags` setting was enabled. ([#570](https://github.com/awslabs/smithy/pull/570))
+
 ## 1.1.0 (2020-09-16)
 
 ### Features
