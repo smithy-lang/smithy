@@ -17,6 +17,7 @@ package software.amazon.smithy.model.transform;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.neighbor.UnreferencedShapes;
 import software.amazon.smithy.model.neighbor.UnreferencedTraitDefinitions;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
@@ -435,5 +437,22 @@ public final class ModelTransformer {
                 .forEach(builder::addShape);
 
         return builder.build();
+    }
+
+    /**
+     * Reorders the members of structure and union shapes using the given
+     * {@link Comparator}.
+     *
+     * <p>Note that by default, Smithy models retain the order in which
+     * members are defined in the model. However, in programming languages
+     * where this isn't important, it may be desirable to order members
+     * alphabetically or using some other kind of order.
+     *
+     * @param model Model that contains shapes.
+     * @param comparator Comparator used to order members of unions and structures.
+     * @return Returns a model that contains matching shapes.
+     */
+    public Model sortMembers(Model model, Comparator<MemberShape> comparator) {
+        return new SortMembers(comparator).transform(this, model);
     }
 }
