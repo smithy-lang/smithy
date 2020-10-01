@@ -1108,6 +1108,77 @@ JSON</div>
 </div>
 </div>
 </div>
+<div class="section" id="flattennamespaces">
+<span id="id4"></span><h3><a href="#flattennamespaces">flattenNamespaces</a></h3>
+<p>Flattens namespaces of any shapes connected to a service into a target
+namespace. Shapes not connected to a service will not be flattened.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>namespace</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>REQUIRED</strong> The target namespace.</td>
+</tr>
+<tr class="row-odd"><td>service</td>
+<td><code class="docutils literal notranslate"><span class="pre">shapeId</span></code></td>
+<td><strong>REQUIRED</strong> The service to be flattened. All shapes within this
+<a class="reference internal" href="../../spec/core/model.html#service-closure"><span class="std std-ref">service closure</span></a> will be replaced with equivalent
+shapes in the target namespace.</td>
+</tr>
+<tr class="row-even"><td>includeTagged</td>
+<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
+<td>The set of tags that, if found on a shape not connected to the service,
+forces the shape to have its namespace flattened into the target
+namespace. When additional shapes are included, the shapes are replaced
+entirely, along with any references to the shapes which may exist within
+separate <a class="reference internal" href="../../spec/core/model.html#service-closure"><span class="std std-ref">service closures</span></a>.</td>
+</tr>
+</tbody>
+</table>
+<p>The following example will flatten the namespaces of the shapes connected to
+the <code class="docutils literal notranslate"><span class="pre">ns.bar#MyService</span></code> service into the target namespace, <code class="docutils literal notranslate"><span class="pre">ns.foo</span></code>. Shapes
+tagged with <code class="docutils literal notranslate"><span class="pre">baz</span></code> or <code class="docutils literal notranslate"><span class="pre">qux</span></code> will also be flattened into the <code class="docutils literal notranslate"><span class="pre">ns.foo</span></code>
+namespace, so long as they don't conflict with a shape within the <a class="reference internal" href="../../spec/core/model.html#service-closure"><span class="std std-ref">service closure</span></a>.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;flattenNamespaces&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;namespace&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.bar#MyService&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;includeTagged&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;baz&quot;</span><span class="p">,</span> <span class="s2">&quot;qux&quot;</span><span class="p">]</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
 <div class="section" id="removetraitdefinitions">
 <span id="removetraitdefinitions-transform"></span><h3><a href="#removetraitdefinitions">removeTraitDefinitions</a></h3>
 <p>Removes trait definitions from the model, but leaves the instances of traits
@@ -1279,7 +1350,7 @@ environment variable set to &quot;hi&quot;, this file is equivalent to:</p>
 </div>
 </div>
 <div class="section" id="plugins">
-<span id="id4"></span><h2><a href="#plugins">Plugins</a></h2>
+<span id="id5"></span><h2><a href="#plugins">Plugins</a></h2>
 <p>Plugins are defined in either the top-level &quot;plugins&quot; key-value pair of the
 configuration file, or in the &quot;plugins&quot; key-value pair of a projection.
 Plugins defined at the top-level of the configuration file are applied to
@@ -1297,18 +1368,18 @@ them to be discovered.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">model</span></code>, <code class="docutils literal notranslate"><span class="pre">build-info</span></code>, and <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugins are plugins that are
 always run in every non-abstract projection.</p>
 <div class="section" id="model-plugin">
-<span id="id5"></span><h3><a href="#model-plugin">model plugin</a></h3>
+<span id="id6"></span><h3><a href="#model-plugin">model plugin</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">model</span></code> plugin serializes a self-contained and filtered version of the
 model as a single file. All of the dependencies of the model are included
 in the file.</p>
 </div>
 <div class="section" id="build-info-plugin">
-<span id="id6"></span><h3><a href="#build-info-plugin">build-info plugin</a></h3>
+<span id="id7"></span><h3><a href="#build-info-plugin">build-info plugin</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">build-info</span></code> plugin produces a JSON document that contains information
 about the projection and model.</p>
 </div>
 <div class="section" id="sources-plugin">
-<span id="id7"></span><h3><a href="#sources-plugin">sources plugin</a></h3>
+<span id="id8"></span><h3><a href="#sources-plugin">sources plugin</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugin copies the source models and creates a manifest.
 When building the <code class="docutils literal notranslate"><span class="pre">source</span></code> projection, the models that were used to build the
 model are copied over literally. When a JAR is used as a source model, the
@@ -1368,6 +1439,7 @@ All model names referenced by the manifest are relative to <code class="docutils
 <li><a class="reference internal" href="#includetraitsbytag">includeTraitsByTag</a></li>
 <li><a class="reference internal" href="#excludemetadata">excludeMetadata</a></li>
 <li><a class="reference internal" href="#includemetadata">includeMetadata</a></li>
+<li><a class="reference internal" href="#flattennamespaces">flattenNamespaces</a></li>
 <li><a class="reference internal" href="#removetraitdefinitions">removeTraitDefinitions</a></li>
 <li><a class="reference internal" href="#removeunusedshapes">removeUnusedShapes</a></li>
 </ul>

@@ -631,7 +631,8 @@ members of the structure.</dd>
 <dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>,
 <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>,
 <a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>,
-<a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a></dd>
+<a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
+<a class="reference internal" href="#httpresponsecode-trait"><span class="std std-ref">httpResponseCode trait</span></a></dd>
 </dl>
 <p>Serialization rules:</p>
 <ul class="simple">
@@ -739,7 +740,8 @@ need to be modeled.</td>
 <dd><a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>,
 <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>,
 <a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>,
-<a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a></dd>
+<a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
+<a class="reference internal" href="#httpresponsecode-trait"><span class="std std-ref">httpResponseCode trait</span></a></dd>
 </dl>
 <p><code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> members MUST be marked as <a class="reference internal" href="constraint-traits.html#required-trait"><span class="std std-ref">required trait</span></a>.</p>
 <p>When a structure is associated with an operation, any member of the structure
@@ -803,7 +805,8 @@ Smithy</div>
 <dd>Annotation trait.</dd>
 <dt>Conflicts with</dt>
 <dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>,
-<a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>, <a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a></dd>
+<a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>, <a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>,
+<a class="reference internal" href="#httpresponsecode-trait"><span class="std std-ref">httpResponseCode trait</span></a></dd>
 </dl>
 <p>By default, all structure members that are not bound as part of the HTTP
 message are serialized in a protocol-specific document sent in the body of
@@ -848,7 +851,8 @@ of of &quot;X-Amz-Meta-&quot; and a map key entry of &quot;Baz&quot;, the result
 field name serialized in the message is &quot;X-Amz-Meta-Baz&quot;.</dd>
 <dt>Conflicts with</dt>
 <dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>,
-<a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>, <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a></dd>
+<a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>, <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
+<a class="reference internal" href="#httpresponsecode-trait"><span class="std std-ref">httpResponseCode trait</span></a></dd>
 </dl>
 <p>In order to differentiate <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> from other headers, when
 <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> are used, no other <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a> bindings can
@@ -920,7 +924,8 @@ query string value MUST NOT be empty. This trait is ignored when
 resolving the HTTP bindings of an operation's output or an error.</dd>
 <dt>Conflicts with</dt>
 <dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>,
-<a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>, <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a></dd>
+<a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>, <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
+<a class="reference internal" href="#httpresponsecode-trait"><span class="std std-ref">httpResponseCode trait</span></a></dd>
 </dl>
 <p>Serialization rules:</p>
 <ul class="simple">
@@ -962,6 +967,10 @@ status code.</dd>
 <dd><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span> <span class="pre">:test(&gt;</span> <span class="pre">integer)</span></code></dd>
 <dt>Value type</dt>
 <dd>Annotation trait.</dd>
+<dt>Conflicts with</dt>
+<dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>,
+<a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>, <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
+<a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a></dd>
 </dl>
 <p>The value MAY differ from the HTTP status code provided on the response.
 Explicitly modeling this as a field can be helpful for services that wish to

@@ -691,6 +691,24 @@ disableCloudFormationSubstitution (``boolean``)
     .. seealso:: :ref:`openapi-cfn-substitutions`
 
 
+additionalAllowedCorsHeaders (``[string]``)
+    Sets additional allowed CORS headers on the preflight requests. If this
+    option is not set, the default ``amz-sdk-invocation-id`` and ``amz-sdk-request``
+    headers will be added. By setting this option to an empty array, those default
+    headers will be omitted.
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "additionalAllowedCorsHeaders": ["foo-header", "bar-header"]
+                }
+            }
+        }
+
 Binary types
 ============
 
