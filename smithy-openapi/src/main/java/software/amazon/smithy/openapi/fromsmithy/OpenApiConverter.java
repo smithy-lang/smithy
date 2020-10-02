@@ -432,6 +432,12 @@ public final class OpenApiConverter {
                 }
                 // Add security requirements to the operation.
                 addOperationSecurity(context, result.getOperation(), shape, plugin);
+
+                // Add the documentation trait to the operation if present.
+                shape.getTrait(DocumentationTrait.class)
+                        .map(DocumentationTrait::getValue)
+                        .ifPresent(description -> result.getOperation().description(description));
+
                 // Pass the operation through the plugin system and then build it.
                 OperationObject builtOperation = plugin.updateOperation(
                         context, shape, result.getOperation().build(), method, path);
