@@ -16,11 +16,13 @@
 package software.amazon.smithy.model.neighbor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -122,13 +124,24 @@ public interface NeighborProvider {
      * @return Returns the reverse neighbor provider.
      */
     static NeighborProvider reverse(Model model, NeighborProvider forwardProvider) {
-        Map<ShapeId, List<Relationship>> targetedFrom = model.shapes()
-                .map(forwardProvider::getNeighbors)
-                .flatMap(List::stream)
-                .distinct()
-                .collect(Collectors.groupingBy(Relationship::getNeighborShapeId, ListUtils.toUnmodifiableList()));
+        // Note: this method previously needed lots of intermediate representations
+        // stored in memory to create a Map<ShapeId, List<RelationShip>> that contains
+        // only unique relationships. It was done using Stream, distinct, and groupingBy.
+        // however, when trying to load ridiculously large models, that approach consume
+        // tons of heap. This approach allocates as little as possible (I think), but
+        // does require creating an ArrayList copy of a Set each time neighbors are returned.
+        Map<ShapeId, Set<Relationship>> targetedFrom = new HashMap<>();
 
-        return shape -> targetedFrom.getOrDefault(shape.getId(), ListUtils.of());
+        for (Shape shape : model.toSet()) {
+            for (Relationship rel : forwardProvider.getNeighbors(shape)) {
+                targetedFrom.computeIfAbsent(rel.getNeighborShapeId(), id -> new HashSet<>()).add(rel);
+            }
+        }
+
+        return shape -> {
+            Set<Relationship> shapes = targetedFrom.get(shape.getId());
+            return shapes == null ? Collections.emptyList() : ListUtils.copyOf(shapes);
+        };
     }
 
     /**
