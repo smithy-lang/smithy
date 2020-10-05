@@ -127,7 +127,7 @@ public interface NeighborProvider {
         // Note: this method previously needed lots of intermediate representations
         // stored in memory to create a Map<ShapeId, List<RelationShip>> that contains
         // only unique relationships. It was done using Stream, distinct, and groupingBy.
-        // however, when trying to load ridiculously large models, that approach consume
+        // However, when trying to load ridiculously large models, that approach consumes
         // tons of heap. This approach allocates as little as possible (I think), but
         // does require creating an ArrayList copy of a Set each time neighbors are returned.
         Map<ShapeId, Set<Relationship>> targetedFrom = new HashMap<>();
