@@ -121,7 +121,16 @@ specification from a Smithy model using a buildscript dependency:
     buildscript {
         dependencies {
             classpath("software.amazon.smithy:smithy-openapi:__smithy_version__")
+            // The openapi plugin configured in the smithy-build.json example below
+            // uses the restJson1 protocol defined in the aws-traits package. This
+            // additional dependency must added to use that protocol.
+            classpath("software.amazon.smithy:smithy-aws-traits:__smithy_version__")
         }
+    }
+
+    dependencies {
+        // The dependency for restJson1 is required here too.
+        implementation("software.amazon.smithy:smithy-aws-traits:__smithy_version__")
     }
 
 The Smithy Gradle plugin relies on a ``smithy-build.json`` file found at the
