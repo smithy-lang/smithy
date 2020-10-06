@@ -95,14 +95,17 @@ final class ModelValidator {
         List<ValidatorDefinition> assembledValidatorDefinitions = assembleValidatorDefinitions();
         assembleValidators(assembledValidatorDefinitions);
 
-        events.addAll(validators
+        List<ValidationEvent> result = validators
                 .parallelStream()
                 .flatMap(validator -> validator.validate(model).stream())
                 .map(this::suppressEvent)
                 .filter(ModelValidator::filterPrelude)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
 
-        return events;
+        // Add in events encountered while building up validators and suppressions.
+        result.addAll(events);
+
+        return result;
     }
 
     private static boolean filterPrelude(ValidationEvent event) {
