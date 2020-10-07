@@ -512,7 +512,7 @@ of the targeted numeric shape to which it is applied.
 
 Summary
     Marks a structure member as required, meaning a value for the member MUST
-    be present.
+    be present and not set to ``null``.
 Trait selector
     ``structure > member``
 
