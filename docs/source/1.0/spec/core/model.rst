@@ -762,6 +762,13 @@ The following example defines a set of strings:
             }
         }
 
+.. rubric:: Providing values for a set
+
+The values provided for a set are not permitted to be ``null``. ``null`` set
+values do not provide much, if any, utility, and set implementations across
+programming languages often do not support ``null`` values. If a ``null``
+value is encountered for a set, it MUST be discarded.
+
 .. rubric:: Set member shape ID
 
 The shape ID of the member of a set is the set shape ID followed by
@@ -815,6 +822,12 @@ The following example defines a map of strings to integers:
                 }
             }
         }
+
+.. rubric:: Providing keys for a map
+
+Map keys are not permitted to be ``null``. Not all protocol serialization
+formats have a way to define ``null`` map keys, and map implementations
+across programming languages often do not allow ``null`` keys in maps.
 
 .. rubric:: Map member shape IDs
 
@@ -945,6 +958,13 @@ The following example defines a union shape with several members:
                 }
             }
         }
+
+.. rubric:: Providing a value to a union
+
+Exactly one member of a union MUST be set to a non-null value. In protocol
+serialization formats that support ``null`` values (for example, JSON), if a
+``null`` value is provided for a union member, it is discarded as if it was
+not provided.
 
 .. rubric:: Adding new members
 
