@@ -466,6 +466,11 @@ string pattern
 @tags(["diff.error.add"])
 structure required {}
 
+/// Marks a list or map as sparse.
+@trait(selector: ":is(list, map)")
+@tags(["diff.error.const"])
+structure sparse {}
+
 /// Indicates that the items in a list MUST be unique.
 @trait(selector: "list")
 structure uniqueItems {}

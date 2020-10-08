@@ -15,87 +15,27 @@
 
 package software.amazon.smithy.model.knowledge;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.shapes.CollectionShape;
-import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ToShapeId;
-import software.amazon.smithy.model.traits.BoxTrait;
 
 /**
- * An index that checks if a shape is boxed or not.
+ * An index that checks if a shape can be set to null.
  *
- * <p>A service, resource, and operation are never considered boxed. A member
- * is considered boxed if the member is targeted by the {@code box} trait or
- * if the shape the member targets is considered boxed. A shape is considered
- * boxed if it is targeted by the {@code box} trait or if the shape is a
- * string, blob, timestamp, bigInteger, bigDecimal, list, set, map, structure,
- * or union.
+ * <p>This index is deprecated in favor of {@link NullableIndex}.
  */
-public final class BoxIndex implements KnowledgeIndex {
-
-    private final Map<ShapeId, Boolean> boxMap;
+@Deprecated
+public final class BoxIndex extends NullableIndex {
 
     public BoxIndex(Model model) {
-        // Create a HashMap with the same initial capacity as the number of shapes in the model.
-        boxMap = model.shapes().collect(Collectors.toMap(
-                Shape::getId,
-                s -> isBoxed(model, s),
-                (a, b) -> b,
-                () -> new HashMap<>(model.toSet().size())));
+        super(model);
     }
 
     public static BoxIndex of(Model model) {
         return model.getKnowledge(BoxIndex.class, BoxIndex::new);
     }
 
-    private static boolean isBoxed(Model model, Shape shape) {
-        if (shape.hasTrait(BoxTrait.class)) {
-            return true;
-        }
-
-        if (shape.isStringShape()
-                || shape.isBlobShape()
-                || shape.isTimestampShape()
-                || shape.isBigDecimalShape()
-                || shape.isBigIntegerShape()
-                || shape instanceof CollectionShape
-                || shape.isMapShape()
-                || shape.isStructureShape()
-                || shape.isUnionShape()) {
-            return true;
-        }
-
-        // Check if the member targets a boxed shape.
-        if (shape.isMemberShape()) {
-            return shape.asMemberShape()
-                    .map(MemberShape::getTarget)
-                    .flatMap(model::getShape)
-                    .filter(target -> isBoxed(model, target))
-                    .isPresent();
-        }
-
-        return false;
-    }
-
-    /**
-     * Checks if the given shape should be considered boxed, meaning it
-     * accepts a null value.
-     *
-     * <p>Note that "accepts a null value" means that the type that
-     * represents the shape, <em>in code</em>, accepts a null value or can
-     * be optionally set, but does not necessarily mean that sending a null
-     * value over the wire in a given protocol has any special meaning
-     * that's materially different than if a value is completely omitted.
-     *
-     * @param shape Shape to check.
-     * @return Returns true if the shape is effectively boxed.
-     */
+    @Deprecated
     public boolean isBoxed(ToShapeId shape) {
-        return boxMap.get(shape.toShapeId());
+        return isNullable(shape);
     }
 }

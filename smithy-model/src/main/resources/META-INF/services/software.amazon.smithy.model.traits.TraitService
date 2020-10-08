@@ -40,6 +40,7 @@ software.amazon.smithy.model.traits.ResourceIdentifierTrait$Provider
 software.amazon.smithy.model.traits.RetryableTrait$Provider
 software.amazon.smithy.model.traits.SensitiveTrait$Provider
 software.amazon.smithy.model.traits.SinceTrait$Provider
+software.amazon.smithy.model.traits.SparseTrait$Provider
 software.amazon.smithy.model.traits.StreamingTrait$Provider
 software.amazon.smithy.model.traits.SuppressTrait$Provider
 software.amazon.smithy.model.traits.TagsTrait$Provider

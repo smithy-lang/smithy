@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.knowledge.BoxIndex;
+import software.amazon.smithy.model.knowledge.NullableIndex;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeType;
 import software.amazon.smithy.model.node.StringNode;
@@ -276,7 +276,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     }
 
     private boolean isMemberPrimitive(MemberShape member) {
-        return !BoxIndex.of(model).isBoxed(member);
+        return !NullableIndex.of(model).isNullable(member);
     }
 
     @Override
@@ -329,7 +329,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     private List<ValidationEvent> invalidShape(Shape shape, NodeType expectedType) {
         // Boxed shapes allow null values.
-        if (allowBoxedNull && value.isNullNode() && BoxIndex.of(model).isBoxed(shape)) {
+        if (allowBoxedNull && value.isNullNode() && NullableIndex.of(model).isNullable(shape)) {
             return Collections.emptyList();
         }
 
