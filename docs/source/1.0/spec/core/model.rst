@@ -692,7 +692,6 @@ List
 The :dfn:`list` type represents an ordered homogeneous collection of values.
 A list shape requires a single member named ``member``. Lists are defined
 in the IDL using a :ref:`list_statement <idl-list>`.
-
 The following example defines a list with a string member from the
 :ref:`prelude <prelude>`:
 
@@ -720,6 +719,45 @@ The following example defines a list with a string member from the
             }
         }
 
+.. rubric:: List member nullability
+
+Lists are considered *dense* by default, meaning they MAY NOT contain ``null``
+values. A list MAY be made *sparse* by applying the :ref:`sparse-trait`.
+The :ref:`box-trait` is not used to determine if a list is dense or sparse;
+a list with no ``@sparse`` trait is always considered dense. The following
+example defines a sparse list:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @sparse
+        list SparseList {
+            member: String
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#SparseList": {
+                    "type": "list",
+                    "member": {
+                        "target": "smithy.api#String"
+                    },
+                    "traits": {
+                        "smithy.api#sparse": {}
+                    }
+                }
+            }
+        }
+
+If a client encounters a ``null`` value when deserializing a dense list
+returned from a service, the client MUST discard the ``null`` value. If a
+service receives a ``null`` value for a dense list from a client, it SHOULD
+reject the request.
+
 .. rubric:: List member shape ID
 
 The shape ID of the member of a list is the list shape ID followed by
@@ -735,7 +773,6 @@ Set
 The :dfn:`set` type represents an unordered collection of unique homogeneous
 values. A set shape requires a single member named ``member``.
 Sets are defined in the IDL using a :ref:`set_statement <idl-set>`.
-
 The following example defines a set of strings:
 
 .. tabs::
@@ -762,12 +799,16 @@ The following example defines a set of strings:
             }
         }
 
-.. rubric:: Providing values for a set
+.. rubric:: Sets MUST NOT contain ``null`` values
 
-The values provided for a set are not permitted to be ``null``. ``null`` set
+The values contained in a set are not permitted to be ``null``. ``null`` set
 values do not provide much, if any, utility, and set implementations across
-programming languages often do not support ``null`` values. If a ``null``
-value is encountered for a set, it MUST be discarded.
+programming languages often do not support ``null`` values.
+
+If a client encounters a ``null`` value when deserializing a set returned
+from a service, the client MUST discard the ``null`` value. If a service
+receives a ``null`` value for a set from a client, it SHOULD reject the
+request.
 
 .. rubric:: Set member shape ID
 
@@ -792,7 +833,6 @@ The :dfn:`map` type represents a map data structure that maps ``string``
 keys to homogeneous values. A map requires a member named ``key``
 that MUST target a ``string`` shape and a member named ``value``.
 Maps are defined in the IDL using a :ref:`map_statement <idl-map>`.
-
 The following example defines a map of strings to integers:
 
 .. tabs::
@@ -823,11 +863,54 @@ The following example defines a map of strings to integers:
             }
         }
 
-.. rubric:: Providing keys for a map
+.. rubric:: Map keys MUST NOT be ``null``
 
 Map keys are not permitted to be ``null``. Not all protocol serialization
 formats have a way to define ``null`` map keys, and map implementations
 across programming languages often do not allow ``null`` keys in maps.
+
+.. rubric:: Map value member nullability
+
+Maps values are considered *dense* by default, meaning they MAY NOT contain
+``null`` values. A map MAY be made *sparse* by applying the
+:ref:`sparse-trait`. The :ref:`box-trait` is not used to determine if a map
+is dense or sparse; a map with no ``@sparse`` trait is always considered
+dense. The following example defines a sparse map:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @sparse
+        map SparseMap {
+            key: String,
+            value: String
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#SparseMap": {
+                    "type": "map",
+                    "key": {
+                        "target": "smithy.api#String"
+                    },
+                    "value": {
+                        "target": "smithy.api#String"
+                    },
+                    "traits": {
+                        "smithy.api#sparse": {}
+                    }
+                }
+            }
+        }
+
+If a client encounters a ``null`` map value when deserializing a dense map
+returned from a service, the client MUST discard the ``null`` entry. If a
+service receives a ``null`` map value for a dense map from a client, it
+SHOULD reject the request.
 
 .. rubric:: Map member shape IDs
 
@@ -905,6 +988,24 @@ by "#", followed by the member name, For example, the shape ID of the "foo"
 member in the above example is ``smithy.example#MyStructure$foo``.
 
 
+.. _default-values:
+
+Default structure member values
+-------------------------------
+
+The values provided for structure members are either always present and set to
+a default value when necessary or *boxed*, meaning a value is optionally present
+with no default value. Members are considered boxed if the member is marked with
+the :ref:`box-trait` or the shape targeted by the member is marked with the box
+trait. Members that target strings, timestamps, and aggregate shapes are always
+considered boxed and have no default values.
+
+- The default value of a ``byte``, ``short``, ``integer``, ``long``,
+  ``float``, and ``double`` shape that is not boxed is zero.
+- The default value of a ``boolean`` shape that is not boxed is ``false``.
+- All other shapes are always considered boxed and have no default value.
+
+
 .. _union:
 
 Union
@@ -958,7 +1059,7 @@ The following example defines a union shape with several members:
             }
         }
 
-.. rubric:: Providing a value to a union
+.. rubric:: Union member nullability
 
 Exactly one member of a union MUST be set to a non-null value. In protocol
 serialization formats that support ``null`` values (for example, JSON), if a
@@ -977,24 +1078,6 @@ able to maintain backward compatibility.
 The shape ID of a member of a union is the union shape ID, followed
 by "#", followed by the member name. For example, the shape ID of the "i32"
 member in the above example is ``smithy.example#MyUnion$i32``.
-
-
-.. _default-values:
-
-Default values
-==============
-
-The values provided for :ref:`members <member>` are either always present
-and set to a default value when necessary or *boxed*, meaning a value is
-optionally present with no default value. Members are considered boxed if
-the member is marked with the :ref:`box-trait` or the shape targeted by the
-member is marked with the box trait. Members that target strings, timestamps,
-and aggregate shapes are always considered boxed and have no default values.
-
-- The default value of a ``byte``, ``short``, ``integer``, ``long``,
-  ``float``, and ``double`` shape that is not boxed is zero.
-- The default value of a ``boolean`` shape that is not boxed is ``false``.
-- All other shapes are always considered boxed and have no default value.
 
 
 Recursive shape definitions
