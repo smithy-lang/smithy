@@ -167,7 +167,15 @@ final class AddAuthorizers implements ApiGatewayMapper {
         T authTrait = context.getService().expectTrait(converter.getAuthSchemeType());
         SecurityScheme createdScheme = converter.createSecurityScheme(context, authTrait);
         SecurityScheme.Builder schemeBuilder = createdScheme.toBuilder();
-        schemeBuilder.putExtension(CLIENT_EXTENSION_NAME, authorizer.getCustomAuthType().orElse(DEFAULT_AUTH_TYPE));
+
+        // Allow the setting of an empty customAuthType to indicate that
+        // the extension should not be set to "custom". This is done to
+        // handle the current defaulting behavior instead of adding a flag.
+        // This is necessary to enable API Gateway's built-in API key validation.
+        String authType = authorizer.getCustomAuthType().orElse(DEFAULT_AUTH_TYPE);
+        if (!authType.isEmpty()) {
+            schemeBuilder.putExtension(CLIENT_EXTENSION_NAME, authType);
+        }
 
         ObjectNode authorizerNode = Node.objectNodeBuilder()
                 .withOptionalMember("type", authorizer.getType().map(Node::from))

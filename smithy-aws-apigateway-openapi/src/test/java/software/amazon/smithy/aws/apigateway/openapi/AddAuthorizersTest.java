@@ -113,6 +113,28 @@ public class AddAuthorizersTest {
     }
 
     @Test
+    public void emptyCustomAuthTypeNotSet() {
+        Model model = Model.assembler()
+                .discoverModels(getClass().getClassLoader())
+                .addImport(getClass().getResource("empty-custom-auth-type-authorizer.json"))
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("ns.foo#SomeService"));
+        OpenApi result = OpenApiConverter.create()
+                .config(config)
+                .classLoader(getClass().getClassLoader())
+                .convert(model);
+        SecurityScheme apiKey = result.getComponents().getSecuritySchemes().get("api_key");
+
+        assertThat(apiKey.getType(), equalTo("apiKey"));
+        assertThat(apiKey.getName().get(), equalTo("x-api-key"));
+        assertThat(apiKey.getIn().get(), equalTo("header"));
+        assertFalse(apiKey.getExtension("x-amazon-apigateway-authtype").isPresent());
+        assertFalse(apiKey.getExtension("x-amazon-apigateway-authorizer").isPresent());
+    }
+
+    @Test
     public void resolvesEffectiveAuthorizersForEachOperation() {
         Model model = Model.assembler()
                 .discoverModels(getClass().getClassLoader())
