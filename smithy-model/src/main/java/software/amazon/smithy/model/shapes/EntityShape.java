@@ -16,7 +16,7 @@
 package software.amazon.smithy.model.shapes;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import software.amazon.smithy.utils.SetUtils;
 
@@ -28,11 +28,10 @@ public abstract class EntityShape extends Shape {
     private final Set<ShapeId> resources;
     private final Set<ShapeId> operations;
 
-    @SuppressWarnings("unchecked")
-    EntityShape(Builder builder) {
+    EntityShape(Builder<?, ?> builder) {
         super(builder, false);
-        resources = SetUtils.copyOf(builder.resources);
-        operations = SetUtils.copyOf(builder.operations);
+        resources = SetUtils.orderedCopyOf(builder.resources);
+        operations = SetUtils.orderedCopyOf(builder.operations);
     }
 
     /**
@@ -79,11 +78,12 @@ public abstract class EntityShape extends Shape {
      * @param <B> Concrete builder type.
      * @param <S> Shape type being created.
      */
+    @SuppressWarnings("rawtypes")
     public abstract static class Builder<B extends Builder, S extends EntityShape>
             extends AbstractShapeBuilder<B, S> {
 
-        private final Set<ShapeId> resources = new HashSet<>();
-        private final Set<ShapeId> operations = new HashSet<>();
+        private final Set<ShapeId> resources = new LinkedHashSet<>();
+        private final Set<ShapeId> operations = new LinkedHashSet<>();
 
         @SuppressWarnings("unchecked")
         public B operations(Collection<ShapeId> ids) {
@@ -98,7 +98,6 @@ public abstract class EntityShape extends Shape {
             return (B) this;
         }
 
-        @SuppressWarnings("unchecked")
         public B addOperation(String id) {
             return addOperation(ShapeId.from(id));
         }
@@ -128,7 +127,6 @@ public abstract class EntityShape extends Shape {
             return (B) this;
         }
 
-        @SuppressWarnings("unchecked")
         public B addResource(String id) {
             return addResource(ShapeId.from(id));
         }

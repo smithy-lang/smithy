@@ -18,10 +18,12 @@ package software.amazon.smithy.utils;
 import static java.util.function.Function.identity;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anEmptyMap;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
@@ -35,6 +37,21 @@ public class MapUtilsTest {
     @Test
     public void copyOfIsSame() {
         assertThat(MapUtils.copyOf(Collections.singletonMap("1", "A")), hasEntry("1", "A"));
+    }
+
+    @Test
+    public void orderedCopyOfEmptyIsEmpty() {
+        assertThat(MapUtils.orderedCopyOf(Collections.emptyMap()), anEmptyMap());
+    }
+
+    @Test
+    public void orderedCopyOfIsSame() {
+        Map<String, String> input = new LinkedHashMap<>();
+        input.put("a", "aa");
+        input.put("b", "bb");
+        Map<String, String> copy = MapUtils.copyOf(input);
+
+        assertThat(ListUtils.copyOf(input.entrySet()), equalTo(ListUtils.copyOf(copy.entrySet())));
     }
 
     @Test

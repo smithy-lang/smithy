@@ -15,14 +15,14 @@
 
 package software.amazon.smithy.model.shapes;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Abstract classes shared by structure and union shapes.
@@ -41,7 +41,7 @@ abstract class NamedMembersShape extends Shape {
 
         // Copy the members to make them immutable and ensure that each
         // member has a valid ID that is prefixed with the shape ID.
-        members = Collections.unmodifiableMap(new LinkedHashMap<>(builder.members));
+        members = MapUtils.orderedCopyOf(builder.members);
 
         members.forEach((key, value) -> {
             ShapeId expected = getId().withMember(key);
@@ -71,7 +71,7 @@ abstract class NamedMembersShape extends Shape {
     public List<String> getMemberNames() {
         List<String> names = memberNames;
         if (names == null) {
-            names = Collections.unmodifiableList(new ArrayList<>(members.keySet()));
+            names = ListUtils.copyOf(members.keySet());
             memberNames = names;
         }
 
