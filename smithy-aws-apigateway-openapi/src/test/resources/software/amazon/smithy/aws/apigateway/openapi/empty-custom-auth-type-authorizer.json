@@ -1,0 +1,23 @@
+{
+  "smithy": "1.0",
+  "shapes": {
+    "ns.foo#SomeService": {
+      "type": "service",
+      "version": "2018-03-17",
+      "traits": {
+        "aws.protocols#restJson1": {},
+        "smithy.api#httpApiKeyAuth": {
+          "name": "x-api-key",
+          "in": "header"
+        },
+        "aws.apigateway#authorizer": "api_key",
+        "aws.apigateway#authorizers": {
+          "api_key": {
+            "scheme": "smithy.api#httpApiKeyAuth",
+            "customAuthType": ""
+          }
+        }
+      }
+    }
+  }
+}
