@@ -18,6 +18,7 @@ package software.amazon.smithy.utils;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -37,6 +38,17 @@ public final class SetUtils {
      */
     public static <T> Set<T> copyOf(Collection<? extends T> values) {
         return values.isEmpty() ? Collections.emptySet() : Collections.unmodifiableSet(new HashSet<>(values));
+    }
+
+    /**
+     * Creates an ordered immutable copy of the given set.
+     *
+     * @param values The collection to make an immutable set of.
+     * @param <T> the Set's value type.
+     * @return An ordered immutable Set copy that maintains the order of the original.
+     */
+    public static <T> Set<T> orderedCopyOf(Collection<? extends T> values) {
+        return values.isEmpty() ? Collections.emptySet() : Collections.unmodifiableSet(new LinkedHashSet<>(values));
     }
 
     /**

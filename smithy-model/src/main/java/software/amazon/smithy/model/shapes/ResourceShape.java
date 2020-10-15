@@ -19,10 +19,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -42,14 +44,14 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
 
     private ResourceShape(Builder builder) {
         super(builder);
-        identifiers = Collections.unmodifiableMap(new LinkedHashMap<>(builder.identifiers));
+        identifiers = MapUtils.orderedCopyOf(builder.identifiers);
         put = builder.put;
         create = builder.create;
         read = builder.read;
         update = builder.update;
         delete = builder.delete;
         list = builder.list;
-        collectionOperations = SetUtils.copyOf(builder.collectionOperations);
+        collectionOperations = SetUtils.orderedCopyOf(builder.collectionOperations);
 
         // Compute all operations bound to the resource.
         allOperations.addAll(getOperations());
@@ -201,13 +203,13 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
      */
     public static final class Builder extends EntityShape.Builder<Builder, ResourceShape> {
         private final Map<String, ShapeId> identifiers = new LinkedHashMap<>();
+        private final Set<ShapeId> collectionOperations = new LinkedHashSet<>();
         private ShapeId put;
         private ShapeId create;
         private ShapeId read;
         private ShapeId update;
         private ShapeId delete;
         private ShapeId list;
-        private final Set<ShapeId> collectionOperations = new HashSet<>();
 
         @Override
         public ResourceShape build() {

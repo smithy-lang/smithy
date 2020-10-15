@@ -17,6 +17,7 @@ package software.amazon.smithy.utils;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -39,6 +40,18 @@ public final class MapUtils {
      */
     public static <K, V> Map<K, V>  copyOf(Map<? extends K, ? extends V> map) {
         return map.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(new HashMap<>(map));
+    }
+
+    /**
+     * Creates an ordered immutable copy of the given map.
+     *
+     * @param map The map to make an immutable copy of
+     * @param <K> the Map's key type
+     * @param <V> the Map's value type
+     * @return An ordered immutable Map copy that maintains the order of the original.
+     */
+    public static <K, V> Map<K, V>  orderedCopyOf(Map<? extends K, ? extends V> map) {
+        return map.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(new LinkedHashMap<>(map));
     }
 
     /**
