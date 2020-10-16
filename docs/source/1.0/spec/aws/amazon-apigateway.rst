@@ -122,9 +122,8 @@ An *authorizer* definition is a structure that supports the following members:
       - ``string``
       - The ``authType`` of the authorizer. This value is used in APIGateway
         exports as ``x-amazon-apigateway-authtype``. This value is set to
-        ``custom`` by default, or ``awsSigv4`` if your scheme is
-        :ref:`aws.auth#sigv4 <aws.auth#sigv4-trait>`. Set the value to an empty
-        string to disable defaulting to ``custom``.
+        ``custom`` by default if ``type`` is set, or ``awsSigv4`` if your
+        scheme is :ref:`aws.auth#sigv4 <aws.auth#sigv4-trait>`.
     * - uri
       - ``string``
       - Specifies the authorizer's Uniform Resource Identifier

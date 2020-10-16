@@ -1,9 +1,14 @@
 {
   "smithy": "1.0",
   "shapes": {
-    "ns.foo#SomeService": {
+    "smithy.example#Service": {
       "type": "service",
-      "version": "2018-03-17",
+      "version": "2006-03-01",
+      "operations": [
+        {
+          "target": "smithy.example#Operation1"
+        }
+      ],
       "traits": {
         "aws.protocols#restJson1": {},
         "smithy.api#httpApiKeyAuth": {
@@ -15,6 +20,15 @@
           "api_key": {
             "scheme": "smithy.api#httpApiKeyAuth"
           }
+        }
+      }
+    },
+    "smithy.example#Operation1": {
+      "type": "operation",
+      "traits": {
+        "smithy.api#http": {
+          "uri": "/",
+          "method": "GET"
         }
       }
     }
