@@ -1071,6 +1071,36 @@ entry:
 In the entry, ``providerARNs`` will be populated from the ``providerArns`` list
 from the trait.
 
+Amazon API Gateway API key usage plans
+======================================
+
+Smithy enables `API Gateway's API key usage plans`_ when a scheme based on the
+:ref:`httpApiKeyAuth-trait` is set and configured as :ref:`an authorizer
+<aws.apigateway#authorizers-trait>` with no ``type`` property set.
+
+The following Smithy model enables API Gateway's API key usage plans on the
+``OperationA`` operation:
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    use aws.apigateway#authorizer
+    use aws.apigateway#authorizers
+    use aws.protocols#restJson1
+
+    @restJson1
+    @httpApiKeyAuth(name: "x-api-key", in: "header")
+    @authorizer("api_key")
+    @authorizers(api_key: {scheme: "smithy.api#httpApiKeyAuth"})
+    service Example {
+      version: "2019-06-17",
+      operations: [OperationA],
+    }
+
+    operation OperationA {}
+
+
 .. _other-traits:
 
 Other traits that influence API Gateway
@@ -1152,3 +1182,4 @@ The conversion process is highly extensible through
 .. _OpenAPI security schemes: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#securitySchemeObject
 .. _x-amazon-apigateway-authorizer: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html
 .. _Lambda authorizers: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html
+.. _API Gateway's API key usage plans: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-usage-plans.html

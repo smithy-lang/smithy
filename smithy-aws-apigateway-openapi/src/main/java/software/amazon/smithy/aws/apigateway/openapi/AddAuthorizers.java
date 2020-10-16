@@ -18,6 +18,7 @@ package software.amazon.smithy.aws.apigateway.openapi;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Logger;
 import software.amazon.smithy.aws.apigateway.traits.AuthorizerDefinition;
 import software.amazon.smithy.aws.apigateway.traits.AuthorizerIndex;
@@ -29,6 +30,7 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.HttpApiKeyAuthTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
@@ -103,17 +105,42 @@ final class AddAuthorizers implements ApiGatewayMapper {
         AuthorizerIndex authorizerIndex = AuthorizerIndex.of(context.getModel());
 
         // Get the resolved security schemes of the service and operation, and
-        // only add security if it's different than the service.
+        // only add security if it's different than the service or...
         String serviceAuth = authorizerIndex.getAuthorizer(service).orElse(null);
         String operationAuth = authorizerIndex.getAuthorizer(service, shape).orElse(null);
 
-        if (operationAuth == null || Objects.equals(operationAuth, serviceAuth)) {
+        // Short circuit if we have no authorizer for the operation.
+        if (operationAuth == null) {
+            return operation;
+        }
+
+        // ...API Gateway's built-in API keys are being used. It requires the
+        // security to be specified on every operation.
+        // See https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-setup-api-key-with-console.html#api-gateway-usage-plan-configure-apikey-on-method
+        if (Objects.equals(operationAuth, serviceAuth) && !usesApiGatewayApiKeys(service, operationAuth)) {
             return operation;
         }
 
         return operation.toBuilder()
                 .addSecurity(MapUtils.of(operationAuth, ListUtils.of()))
                 .build();
+    }
+
+    private boolean usesApiGatewayApiKeys(ServiceShape service, String operationAuth) {
+        // Get the authorizer for this operation if it has no "type" set,
+        // as is required for API Gateway's API keys.
+        Optional<AuthorizerDefinition> definitionOptional = service.getTrait(AuthorizersTrait.class)
+                .flatMap(authorizers -> authorizers.getAuthorizer(operationAuth)
+                        .filter(authorizer -> !authorizer.getType().isPresent()));
+
+        if (!definitionOptional.isPresent()) {
+            return false;
+        }
+        AuthorizerDefinition definition = definitionOptional.get();
+
+        // We then need to validate that the @httpApiKeyAuth trait has been set
+        // to authenticate the operation, declaring it's a built-in scheme.
+        return definition.getScheme().equals(HttpApiKeyAuthTrait.ID);
     }
 
     @Override
@@ -168,12 +195,12 @@ final class AddAuthorizers implements ApiGatewayMapper {
         SecurityScheme createdScheme = converter.createSecurityScheme(context, authTrait);
         SecurityScheme.Builder schemeBuilder = createdScheme.toBuilder();
 
-        // Allow the setting of an empty customAuthType to indicate that
-        // the extension should not be set to "custom". This is done to
-        // handle the current defaulting behavior instead of adding a flag.
+        // Do not set the client extension if there is no "type" property
+        // set on the authorizer definition. This is consistent with the
+        // "type" property support in the documentation.
         // This is necessary to enable API Gateway's built-in API key validation.
         String authType = authorizer.getCustomAuthType().orElse(DEFAULT_AUTH_TYPE);
-        if (!authType.isEmpty()) {
+        if (authorizer.getType().isPresent()) {
             schemeBuilder.putExtension(CLIENT_EXTENSION_NAME, authType);
         }
 
