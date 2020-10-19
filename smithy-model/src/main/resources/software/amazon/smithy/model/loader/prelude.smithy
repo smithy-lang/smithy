@@ -201,8 +201,15 @@ structure httpApiKeyAuth {
 
 @private
 @enum([
-    {value: "header"},
-    {value: "query"}])
+    {
+        name: "HEADER",
+        value: "header",
+    },
+    {
+        name: "QUERY",
+        value: "query",
+    },
+])
 string HttpApiKeyLocations
 
 /// Indicates that an operation can be called without authentication.
