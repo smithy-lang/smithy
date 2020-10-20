@@ -1134,7 +1134,8 @@ The ``sources`` plugin copies the source models and creates a manifest.
 When building the ``source`` projection, the models that were used to build the
 model are copied over literally. When a JAR is used as a source model, the
 Smithy models contained within the JAR are copied as a source model while the
-JAR itself is not copied.
+JAR itself is not copied. If there are no source models, an empty manifest is
+created.
 
 When applying a projection, a new model file is created that contains only
 the shapes, trait definitions, and metadata that were defined in a source
