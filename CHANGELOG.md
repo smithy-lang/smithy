@@ -1,5 +1,41 @@
 # Smithy Changelog
 
+## 1.3.0 (2020-10-20)
+
+### Features
+
+* Added several `CodegenWriter` and related abstractions to simplify creating code generators. ([#587](https://github.com/awslabs/smithy/pull/587))
+* Added the `@sparse` trait to the Prelude. ([#599](https://github.com/awslabs/smithy/pull/599))
+* Added the `NullableIndex` to help check if a shape can be set to null. ([#599](https://github.com/awslabs/smithy/pull/599))
+* Added support for API Gateway API key usage plans. ([#603](https://github.com/awslabs/smithy/pull/603), [#605](https://github.com/awslabs/smithy/pull/605))
+* Added the `sortMembers` model transform to reorder the members of structures and unions. ([#588](https://github.com/awslabs/smithy/pull/588))
+* Add `description` property to operations when converting to OpenAPI. ([#589](https://github.com/awslabs/smithy/pull/589))
+
+### Bug Fixes
+
+* Fixed an issue where the `flattenNamespaces` build transform was not registered with the SPI. ([#593](https://github.com/awslabs/smithy/pull/593))
+
+### Optimizations
+
+* Optimized the reverse `NeighborProvider` for memory usage. ([#590](https://github.com/awslabs/smithy/pull/590))
+* Optimized model validation event aggregation for memory usage. ([#595](https://github.com/awslabs/smithy/pull/595))
+
+### Documentation
+
+* Clarified that `map` keys, `set` values, and `union` members cannot be null. ([#596](https://github.com/awslabs/smithy/pull/596/))
+* Clarified `enum` names and their usage. ([#601](https://github.com/awslabs/smithy/pull/601))
+* Added an example dependency to OpenAPI conversion. ([#594](https://github.com/awslabs/smithy/pull/594))
+* Improve and clean up formatting. ([#585](https://github.com/awslabs/smithy/pull/585), [#597](https://github.com/awslabs/smithy/pull/597),
+  [#598](https://github.com/awslabs/smithy/pull/598))
+
+### Cleanup
+
+* Updated `service`, `resource`, and `operation` shapes to maintain the order of bound `resource` and `operation`
+  shapes. ([#602](https://github.com/awslabs/smithy/pull/602))
+* Updated the `sources` build plugin to create an empty manifest if there are no source models. ([#607](https://github.com/awslabs/smithy/pull/607))
+* Deprecated the `BoxIndex`. ([#599](https://github.com/awslabs/smithy/pull/599))
+* Added `enum` names for `httpApiKeyLocation` in the Prelude. ([#606](https://github.com/awslabs/smithy/pull/606))
+
 ## 1.2.0 (2020-09-30)
 
 ### Features
