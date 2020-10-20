@@ -19,6 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -131,6 +132,26 @@ public class SmithyBuildTest {
         assertThat(Files.isDirectory(outputDirectory.resolve("b")), is(true));
         assertThat(Files.isRegularFile(outputDirectory.resolve("b/build-info/smithy-build-info.json")), is(true));
         assertThat(Files.isRegularFile(outputDirectory.resolve("b/model/model.json")), is(true));
+    }
+
+    @Test
+    public void createsEmptyManifest() throws Exception {
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource("empty-config.json").toURI()))
+                .outputDirectory(outputDirectory.toString())
+                .build();
+        Model model = Model.assembler()
+                .assemble()
+                .unwrap();
+        SmithyBuild builder = new SmithyBuild().config(config).model(model);
+        SmithyBuildResult results = builder.build();
+        List<Path> files = results.allArtifacts().collect(Collectors.toList());
+
+        assertThat(files, hasItem(outputDirectory.resolve("source/sources/manifest")));
+        assertThat("\n", equalTo(IoUtils.readUtf8File(results.allArtifacts()
+                .filter(path -> path.toString().endsWith("/manifest"))
+                .findFirst()
+                .get())));
     }
 
     @Test
@@ -377,6 +398,7 @@ public class SmithyBuildTest {
         List<Path> files = results.allArtifacts().collect(Collectors.toList());
 
         assertThat(files, containsInAnyOrder(
+                outputDirectory.resolve("source/sources/manifest"),
                 outputDirectory.resolve("source/model/model.json"),
                 outputDirectory.resolve("source/build-info/smithy-build-info.json"),
                 outputDirectory.resolve("a/sources/manifest"),
