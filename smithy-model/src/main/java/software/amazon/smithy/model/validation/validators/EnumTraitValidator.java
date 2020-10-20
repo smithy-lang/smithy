@@ -53,7 +53,7 @@ public final class EnumTraitValidator extends AbstractValidator {
         Set<String> names = new HashSet<>();
         Set<String> values = new HashSet<>();
 
-        // Ensure that names are unique.
+        // Ensure that values are unique.
         for (EnumDefinition definition : trait.getValues()) {
             if (!values.add(definition.getValue())) {
                 events.add(error(shape, trait, String.format(
@@ -79,8 +79,8 @@ public final class EnumTraitValidator extends AbstractValidator {
             }
         }
 
-        // If one enum definition has a name, then they all must have names.
         if (!names.isEmpty()) {
+            // If one enum definition has a name, then they all must have names.
             for (EnumDefinition definition : trait.getValues()) {
                 if (!definition.getName().isPresent()) {
                     events.add(error(shape, trait, String.format(
@@ -89,6 +89,12 @@ public final class EnumTraitValidator extends AbstractValidator {
                             definition.getValue())));
                 }
             }
+        } else {
+            // Enums SHOULD have names, so warn if there are none.
+            ValidationEvent event = warning(shape, trait, "Enums should define the `name` property to allow rich "
+                    + "types to be generated in code generators.");
+            // Change the id of the event so that it can be suppressed separately.
+            events.add(event.toBuilder().id("EnumNamesPresent").build());
         }
 
         return events;

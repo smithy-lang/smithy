@@ -1,16 +1,20 @@
 {
     "smithy": "1.0",
     "shapes": {
-        "ns.foo#Valid1": {
+        "ns.foo#ValidNoName": {
             "type": "string",
             "traits": {
                 "smithy.api#enum": [
-                    {"value": "foo"},
-                    {"value": "bar"}
+                    {
+                        "value": "foo"
+                    },
+                    {
+                        "value": "bar"
+                    }
                 ]
             }
         },
-        "ns.foo#Valid2": {
+        "ns.foo#ValidFullDefinition": {
             "type": "string",
             "traits": {
                 "smithy.api#enum": [
@@ -91,8 +95,14 @@
             "type": "string",
             "traits": {
                 "smithy.api#enum": [
-                    {"value": "a"},
-                    {"value": "a"}
+                    {
+                        "name": "A",
+                        "value": "a"
+                    },
+                    {
+                        "name": "B",
+                        "value": "a"
+                    }
                 ]
             }
         }
