@@ -287,8 +287,14 @@
             "traits": {
                 "smithy.api#private": {},
                 "smithy.api#enum": [
-                    {"value": "INTERNET"},
-                    {"value": "VPC_LINK"}
+                    {
+                        "name": "INTERNET",
+                        "value": "INTERNET"
+                    },
+                    {
+                        "name": "VPC_LINK",
+                        "value": "VPC_LINK"
+                    }
                 ]
             }
         },

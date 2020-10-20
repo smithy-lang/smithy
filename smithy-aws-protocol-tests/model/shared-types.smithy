@@ -58,11 +58,26 @@ list TimestampList {
 }
 
 @enum([
-    {value: "Foo"},
-    {value: "Baz"},
-    {value: "Bar"},
-    {value: "1"},
-    {value: "0"},
+    {
+        name: "FOO",
+        value: "Foo",
+    },
+    {
+        name: "BAZ",
+        value: "Baz",
+    },
+    {
+        name: "BAR",
+        value: "Bar",
+    },
+    {
+        name: "ONE",
+        value: "1",
+    },
+    {
+        name: "ZERO",
+        value: "0",
+    },
 ])
 string FooEnum
 

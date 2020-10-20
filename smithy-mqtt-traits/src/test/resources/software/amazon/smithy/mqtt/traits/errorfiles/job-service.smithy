@@ -50,15 +50,42 @@ structure RejectedError {
 }
 
 @enum([
-  {value: "InvalidTopic"},
-  {value: "InvalidJson"},
-  {value: "InvalidRequest"},
-  {value: "InvalidStateTransition"},
-  {value: "ResourceNotFound"},
-  {value: "VersionMismatch"},
-  {value: "InternalError"},
-  {value: "RequestThrottled"},
-  {value: "TerminalStateReached"},
+  {
+    name: "INVALID_TOPIC",
+    value: "InvalidTopic",
+  },
+  {
+    name: "INVALID_JSON",
+    value: "InvalidJson",
+  },
+  {
+    name: "INVALID_REQUEST",
+    value: "InvalidRequest",
+  },
+  {
+    name: "INVALID_STATE_TRANSITION",
+    value: "InvalidStateTransition",
+  },
+  {
+    name: "RESOURCE_NOT_FOUND",
+    value: "ResourceNotFound",
+  },
+  {
+    name: "VERSION_MISMATCH",
+    value: "VersionMismatch",
+  },
+  {
+    name: "INTERNAL_ERROR",
+    value: "InternalError",
+  },
+  {
+    name: "REQUEST_THROTTLED",
+    value: "RequestThrottled",
+  },
+  {
+    name: "TERMINAL_STATE_REACHED",
+    value: "TerminalStateReached",
+  },
 ])
 string RejectedErrorCode
 
@@ -203,14 +230,38 @@ structure JobExecutionData {
 }
 
 @enum([
-  {value: "QUEUED"},
-  {value: "IN_PROGRESS"},
-  {value: "TIMED_OUT"},
-  {value: "FAILED"},
-  {value: "SUCCEEDED"},
-  {value: "CANCELED"},
-  {value: "REJECTED"},
-  {value: "REMOVED"},
+  {
+    name: "QUEUED",
+    value: "QUEUED",
+  },
+  {
+    name: "IN_PROGRESS",
+    value: "IN_PROGRESS",
+  },
+  {
+    name: "TIMED_OUT",
+    value: "TIMED_OUT",
+  },
+  {
+    name: "FAILED",
+    value: "FAILED",
+  },
+  {
+    name: "SUCCEEDED",
+    value: "SUCCEEDED",
+  },
+  {
+    name: "CANCELED",
+    value: "CANCELED",
+  },
+  {
+    name: "REJECTED",
+    value: "REJECTED",
+  },
+  {
+    name: "REMOVED",
+    value: "REMOVED",
+  },
 ])
 string JobStatus
 
