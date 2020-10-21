@@ -109,9 +109,23 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
 
     @Override
     public Schema mapShape(MapShape shape) {
-        return buildSchema(shape, createBuilder(shape, "object")
-                .propertyNames(createRef(shape.getKey()))
-                .additionalProperties(createRef(shape.getValue())));
+        JsonSchemaConfig.MapStrategy mapStrategy = converter.getConfig().getMapStrategy();
+
+        switch (mapStrategy) {
+            case PROPERTY_NAMES:
+                return buildSchema(shape, createBuilder(shape, "object")
+                        .propertyNames(createRef(shape.getKey()))
+                        .additionalProperties(createRef(shape.getValue())));
+            case PATTERN_PROPERTIES:
+                String keyPattern = shape.getKey().getMemberTrait(model, PatternTrait.class)
+                        .map(PatternTrait::getPattern)
+                        .map(Pattern::pattern)
+                        .orElse(".+");
+                return buildSchema(shape, createBuilder(shape, "object")
+                        .putPatternProperty(keyPattern, createRef(shape.getValue())));
+            default:
+                throw new SmithyJsonSchemaException(String.format("Unsupported map strategy: %s", mapStrategy));
+        }
     }
 
     @Override

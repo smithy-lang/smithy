@@ -62,10 +62,42 @@ public class JsonSchemaConfig {
         }
     }
 
+    /**
+     * Configures how Smithy map shapes are converted to JSON Schema.
+     */
+    public enum MapStrategy {
+        /**
+         * Converts to a schema that uses a combination of "propertyNames"
+         * and "additionalProperties".
+         *
+         * <p>This is the default setting used if not configured.
+         */
+        PROPERTY_NAMES("propertyNames"),
+
+        /**
+         * Converts to a schema that uses "patternProperties". If a map's key
+         * member or its target does not have a {@code pattern} trait, a default
+         * indicating one or more of any character (".+") is applied.
+         */
+        PATTERN_PROPERTIES("patternProperties");
+
+        private String stringValue;
+
+        MapStrategy(String stringValue) {
+            this.stringValue = stringValue;
+        }
+
+        @Override
+        public String toString() {
+            return stringValue;
+        }
+    }
+
     private boolean alphanumericOnlyRefs;
     private boolean useJsonName;
     private TimestampFormatTrait.Format defaultTimestampFormat = TimestampFormatTrait.Format.DATE_TIME;
     private UnionStrategy unionStrategy = UnionStrategy.ONE_OF;
+    private MapStrategy mapStrategy = MapStrategy.PROPERTY_NAMES;
     private String definitionPointer = "#/definitions";
     private ObjectNode schemaDocumentExtensions = Node.objectNode();
     private ObjectNode extensions = Node.objectNode();
@@ -138,6 +170,19 @@ public class JsonSchemaConfig {
      */
     public void setUnionStrategy(UnionStrategy unionStrategy) {
         this.unionStrategy = unionStrategy;
+    }
+
+    public MapStrategy getMapStrategy() {
+        return mapStrategy;
+    }
+
+    /**
+     * Configures how Smithy map shapes are converted to JSON Schema.
+     *
+     * @param mapStrategy The map strategy to use.
+     */
+    public void setMapStrategy(MapStrategy mapStrategy) {
+        this.mapStrategy = mapStrategy;
     }
 
     public String getDefinitionPointer() {
