@@ -41,7 +41,6 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * version of JSON Schema. The following properties are not supported:
  *
  * <ul>
- *     <li>patternProperties</li>
  *     <li>dependencies</li>
  *     <li>if</li>
  *     <li>then</li>
@@ -88,6 +87,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
     private final Map<String, Schema> properties;
     private final Schema additionalProperties;
     private final Schema propertyNames;
+    private final Map<String, Schema> patternProperties;
 
     private final List<Schema> allOf;
     private final List<Schema> anyOf;
@@ -137,6 +137,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         maxProperties = builder.maxProperties;
         minProperties = builder.minProperties;
         propertyNames = builder.propertyNames;
+        patternProperties = builder.patternProperties;
 
         allOf = ListUtils.copyOf(builder.allOf);
         oneOf = ListUtils.copyOf(builder.oneOf);
@@ -257,6 +258,10 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         return Optional.ofNullable(propertyNames);
     }
 
+    public Map<String, Schema> getPatternProperties() {
+        return patternProperties;
+    }
+
     public List<Schema> getAllOf() {
         return allOf;
     }
@@ -362,6 +367,11 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
 
         if (!properties.isEmpty()) {
             result.withMember("properties", properties.entrySet().stream()
+                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, e -> e.getValue().toNode())));
+        }
+
+        if (!patternProperties.isEmpty()) {
+            result.withMember("patternProperties", patternProperties.entrySet().stream()
                     .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, e -> e.getValue().toNode())));
         }
 
@@ -516,6 +526,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
                 .contentEncoding(contentEncoding)
                 .contentMediaType(contentMediaType);
         properties.forEach(builder::putProperty);
+        patternProperties.forEach(builder::putPatternProperty);
         extensions.forEach(builder::putExtension);
         return builder;
     }
@@ -567,6 +578,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         private Map<String, Schema> properties = new HashMap<>();
         private Schema additionalProperties;
         private Schema propertyNames;
+        private Map<String, Schema> patternProperties = new HashMap<>();
 
         private List<Schema> allOf = ListUtils.of();
         private List<Schema> anyOf = ListUtils.of();
@@ -725,6 +737,26 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
 
         public Builder propertyNames(Schema propertyNames) {
             this.propertyNames = propertyNames;
+            return this;
+        }
+
+        public Builder patternProperties(Map<String, Schema> patternProperties) {
+            this.patternProperties.clear();
+
+            if (patternProperties != null) {
+                patternProperties.forEach(this::putPatternProperty);
+            }
+
+            return this;
+        }
+
+        public Builder putPatternProperty(String key, Schema value) {
+            this.patternProperties.put(key, value);
+            return this;
+        }
+
+        public Builder removePatternProperty(String key) {
+            patternProperties.remove(key);
             return this;
         }
 

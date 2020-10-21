@@ -514,6 +514,31 @@ unionStrategy (``string``)
             }
         }
 
+mapStrategy (``string``)
+    Configures how Smithy map shapes are converted to JSON Schema.
+
+    This property must be a string set to one of the following values:
+
+    * ``propertyNames``:  Converts to a schema that uses a combination of
+      "propertyNames" and "additionalProperties". This is the default setting
+      used if not configured.
+    * ``patternProperties``: Converts to a schema that uses
+      "patternProperties". If a map's key member or its target does not have a
+      "pattern" trait, a default indicating one or more of any character (".+")
+      is applied.
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "mapStrategy": "propertyNames"
+                }
+            }
+        }
+
 schemaDocumentExtensions (``Map<String, any>``)
     Adds custom top-level key-value pairs to the created OpenAPI specification.
     Any existing value is overwritten.

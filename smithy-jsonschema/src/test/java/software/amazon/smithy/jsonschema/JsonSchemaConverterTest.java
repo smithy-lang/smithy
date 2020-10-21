@@ -459,6 +459,64 @@ public class JsonSchemaConverterTest {
     }
 
     @Test
+    public void supportsMapPropertyNames() {
+        ShapeId shapeId = ShapeId.from("smithy.api#String");
+        StringShape string = StringShape.builder().id(shapeId).build();
+        MapShape map = MapShape.builder().id("a.b#Map").key(shapeId).value(shapeId).build();
+        Model model = Model.builder().addShapes(map, string).build();
+        SchemaDocument document = JsonSchemaConverter.builder().model(model).build().convertShape(map);
+        Schema schema = document.getRootSchema();
+
+        assertTrue(schema.getPropertyNames().isPresent());
+        assertThat(schema.getPropertyNames().get().getType().get(), equalTo("string"));
+        assertTrue(schema.getAdditionalProperties().isPresent());
+        assertThat(schema.getAdditionalProperties().get().getType().get(), equalTo("string"));
+    }
+
+    @Test
+    public void supportsMapPatternProperties() {
+        ShapeId shapeId = ShapeId.from("smithy.api#String");
+        StringShape string = StringShape.builder().id(shapeId).build();
+        String pattern = "[a-z]{1,16}";
+        StringShape key = StringShape.builder().id("a.b#Key")
+                .addTrait(new PatternTrait(pattern)).build();
+        MapShape map = MapShape.builder().id("a.b#Map").key(key.getId()).value(shapeId).build();
+        Model model = Model.builder().addShapes(map, key, string).build();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setMapStrategy(JsonSchemaConfig.MapStrategy.PATTERN_PROPERTIES);
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .config(config)
+                .model(model)
+                .build()
+                .convertShape(map);
+        Schema schema = document.getRootSchema();
+
+        assertThat(schema.getPatternProperties().size(), equalTo(1));
+        assertTrue(schema.getPatternProperties().containsKey(pattern));
+        assertThat(schema.getPatternProperties().get(pattern).getType().get(), equalTo("string"));
+    }
+
+    @Test
+    public void supportsMapPatternPropertiesWithDefaultPattern() {
+        ShapeId shapeId = ShapeId.from("smithy.api#String");
+        StringShape string = StringShape.builder().id(shapeId).build();
+        MapShape map = MapShape.builder().id("a.b#Map").key(shapeId).value(shapeId).build();
+        Model model = Model.builder().addShapes(map, string).build();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setMapStrategy(JsonSchemaConfig.MapStrategy.PATTERN_PROPERTIES);
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .config(config)
+                .model(model)
+                .build()
+                .convertShape(map);
+        Schema schema = document.getRootSchema();
+
+        assertThat(schema.getPatternProperties().size(), equalTo(1));
+        assertTrue(schema.getPatternProperties().containsKey(".+"));
+        assertThat(schema.getPatternProperties().get(".+").getType().get(), equalTo("string"));
+    }
+
+    @Test
     public void convertingToBuilderGivesSameResult() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("test-service.json"))
