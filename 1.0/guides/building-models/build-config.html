@@ -61,7 +61,7 @@
         
         <section id="page-container">
             <div class="width-wrapper flex">
-                <article id="document-body">
+                <article class="document-body">
                     
                     <ul class="rel-parents">
                     <li><a href="../index.html" >Smithy Guides</a></li>
@@ -1384,7 +1384,8 @@ about the projection and model.</p>
 When building the <code class="docutils literal notranslate"><span class="pre">source</span></code> projection, the models that were used to build the
 model are copied over literally. When a JAR is used as a source model, the
 Smithy models contained within the JAR are copied as a source model while the
-JAR itself is not copied.</p>
+JAR itself is not copied. If there are no source models, an empty manifest is
+created.</p>
 <p>When applying a projection, a new model file is created that contains only
 the shapes, trait definitions, and metadata that were defined in a source
 model <em>and</em> all of the newly added shapes, traits, and metadata.</p>

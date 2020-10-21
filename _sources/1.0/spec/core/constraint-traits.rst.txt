@@ -22,12 +22,12 @@ Summary
 Trait selector
     ``string``
 Value type
-    ``list`` of enum definition structures.
+    ``list`` of *enum definition* structures.
 
 Smithy models SHOULD apply the enum trait when string shapes have a fixed
 set of allowable values.
 
-An enum definition is a structure that supports the following members:
+An *enum definition* is a structure that supports the following members:
 
 .. list-table::
     :header-rows: 1
@@ -42,22 +42,28 @@ An enum definition is a structure that supports the following members:
         Values MUST be unique across all enum definitions in an ``enum`` trait.
     * - name
       - string
-      - Defines a constant name to use when referencing an enum value.
+      - Defines a constant name that can be used in programming languages to
+        reference an enum ``value``. A ``name`` is not required, though
+        their use is strongly encouraged to help tools like code generators
+        safely and reliably create symbols that represent specific values.
 
-        Enum constant names MUST start with an upper or lower case ASCII Latin
-        letter (``A-Z`` or ``a-z``), or the ASCII underscore (``_``) and be
-        followed by zero or more upper or lower case ASCII Latin letters
-        (``A-Z`` or ``a-z``), ASCII underscores (``_``), or ASCII digits
-        (``0-9``). That is, enum constant names MUST match the following
-        regular expression: ``^[a-zA-Z_]+[a-zA-Z_0-9]*$``.
+        Validation constraints:
 
-        The following stricter rules are recommended for consistency: Enum
-        constant names SHOULD NOT contain any lowercase ASCII Latin letters
-        (``a-z``) and SHOULD NOT start with an ASCII underscore (``_``). That
-        is, enum names SHOULD match the following regular expression:
-        ``^[A-Z]+[A-Z_0-9]*$``.
-
-        Names MUST be unique across all enum definitions in an ``enum`` trait.
+        * Names MUST start with an upper or lower case ASCII Latin letter
+          (``A-Z`` or ``a-z``), or the ASCII underscore (``_``) and be
+          followed by zero or more upper or lower case ASCII Latin letters
+          (``A-Z`` or ``a-z``), ASCII underscores (``_``), or ASCII digits
+          (``0-9``). That is, names MUST match the following regular
+          expression: ``^[a-zA-Z_]+[a-zA-Z_0-9]*$``.
+        * The following stricter rules are recommended for consistency: Enum
+          constant names SHOULD NOT contain any lowercase ASCII Latin letters
+          (``a-z``) and SHOULD NOT start with an ASCII underscore (``_``).
+          That is, enum names SHOULD match the following regular expression:
+          ``^[A-Z]+[A-Z_0-9]*$``.
+        * Names MUST be unique across all enum definitions of an ``enum``
+          trait.
+        * If any enum definition has a ``name``, then all entries in the
+          ``enum`` trait MUST have a ``name``.
     * - documentation
       - string
       - Defines documentation about the enum value in the CommonMark_ format.
@@ -72,11 +78,11 @@ An enum definition is a structure that supports the following members:
 
 .. note::
 
-      Consumers of a Smithy model MAY choose to represent enum values as
-      constants. Those that do SHOULD use the enum definition's ``name``
-      property, if specified. Consumers that choose to represent enums as
-      constants SHOULD ensure that unknown enum names returned from a service
-      do not cause runtime failures.
+    Code generators MAY choose to represent enums as programming language
+    constants. Those that do SHOULD use the enum definition's ``name`` property,
+    if specified. Consumers that choose to represent enums as constants SHOULD
+    ensure that unknown enum names returned from a service do not cause runtime
+    failures.
 
 The following example defines an enum of valid string values for ``MyString``.
 
@@ -512,7 +518,7 @@ of the targeted numeric shape to which it is applied.
 
 Summary
     Marks a structure member as required, meaning a value for the member MUST
-    be present.
+    be present and not set to ``null``.
 Trait selector
     ``structure > member``
 

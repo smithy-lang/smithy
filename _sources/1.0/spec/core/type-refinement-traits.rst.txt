@@ -18,10 +18,10 @@ the type of a shape.
 -------------
 
 Summary
-    Indicates that a shape is boxed. When a :ref:`member <member>` is marked
-    with this trait or the shape targeted by a member is marked with this
-    trait, the member may or may not contain a value, and the member has no
-    :ref:`default value <default-values>`.
+    Indicates that a shape is boxed. When a structure :ref:`member <member>` is
+    marked with this trait or the shape targeted by a structure member is marked
+    with the ``box`` trait, the member may or may not contain a value, and the
+    member has no :ref:`default value <default-values>`.
 
     Boolean, byte, short, integer, long, float, and double shapes are only
     considered boxed if they are marked with the ``box`` trait. All other
@@ -133,6 +133,83 @@ in Java).
         structure ThrottlingError {
             @required
             message: String,
+        }
+
+
+.. _sparse-trait:
+
+----------------
+``sparse`` trait
+----------------
+
+Summary
+    Indicates that lists and maps MAY contain ``null`` values. The ``sparse``
+    trait has no effect on map keys; map keys are never allowed to be ``null``.
+Trait selector
+    ``:is(list, map)``
+Value type
+    Annotation trait.
+
+The following example defines a :ref:`list <list>` shape that MAY contain
+``null`` values:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @sparse
+        list SparseList {
+            member: String
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#SparseList": {
+                    "type": "list",
+                    "member": {
+                        "target": "smithy.api#String",
+                    },
+                    "traits": {
+                        "smithy.api#sparse": {}
+                    }
+                }
+            }
+        }
+
+The following example defines a :ref:`map <map>` shape that MAY contain
+``null`` values:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @sparse
+        map SparseMap {
+            key: String,
+            value: String
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#SparseMap": {
+                    "type": "map",
+                    "key": {
+                        "target": "smithy.api#String"
+                    },
+                    "value": {
+                        "target": "smithy.api#String"
+                    },
+                    "traits": {
+                        "smithy.api#sparse": {}
+                    }
+                }
+            }
         }
 
 .. _Option type: https://doc.rust-lang.org/std/option/enum.Option.html

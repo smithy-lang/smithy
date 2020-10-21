@@ -61,7 +61,7 @@
         
         <section id="page-container">
             <div class="width-wrapper flex">
-                <article id="document-body">
+                <article class="document-body">
                     
                     <ul class="rel-parents">
                     <li><a href="../index.html" >Specifications</a></li>
@@ -76,16 +76,16 @@ create it. Smithy models are used to describe services and data structures.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#smithy-framework" id="id34">Smithy framework</a></li>
-<li><a class="reference internal" href="#the-semantic-model" id="id35">The semantic model</a></li>
-<li><a class="reference internal" href="#model-files" id="id36">Model files</a></li>
-<li><a class="reference internal" href="#metadata" id="id37">Metadata</a></li>
-<li><a class="reference internal" href="#node-values" id="id38">Node values</a></li>
-<li><a class="reference internal" href="#shapes" id="id39">Shapes</a></li>
-<li><a class="reference internal" href="#simple-shapes" id="id40">Simple shapes</a></li>
-<li><a class="reference internal" href="#aggregate-shapes" id="id41">Aggregate shapes</a></li>
-<li><a class="reference internal" href="#service-shapes" id="id42">Service shapes</a></li>
-<li><a class="reference internal" href="#traits" id="id43">Traits</a></li>
+<li><a class="reference internal" href="#smithy-framework" id="id33">Smithy framework</a></li>
+<li><a class="reference internal" href="#the-semantic-model" id="id34">The semantic model</a></li>
+<li><a class="reference internal" href="#model-files" id="id35">Model files</a></li>
+<li><a class="reference internal" href="#metadata" id="id36">Metadata</a></li>
+<li><a class="reference internal" href="#node-values" id="id37">Node values</a></li>
+<li><a class="reference internal" href="#shapes" id="id38">Shapes</a></li>
+<li><a class="reference internal" href="#simple-shapes" id="id39">Simple shapes</a></li>
+<li><a class="reference internal" href="#aggregate-shapes" id="id40">Aggregate shapes</a></li>
+<li><a class="reference internal" href="#service-shapes" id="id41">Service shapes</a></li>
+<li><a class="reference internal" href="#traits" id="id42">Traits</a></li>
 </ul>
 </div>
 <div class="section" id="smithy-framework">
@@ -262,16 +262,16 @@ arrays, and the values are not equal, then the key is invalid and there
 is a metadata conflict error.</li>
 </ol>
 <p>Given the following two Smithy models:</p>
-<div class="literal-block-wrapper docutils container" id="id32">
-<div class="code-block-caption"><span class="caption-text">model-a.smithy</span><a class="headerlink" href="#id32" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id31">
+<div class="code-block-caption"><span class="caption-text">model-a.smithy</span><a class="headerlink" href="#id31" title="Permalink to this code">¶</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> &quot;foo&quot; </span><span class="nd">=</span> [<span class="s2">&quot;baz&quot;</span>, <span class="s2">&quot;bar&quot;</span>]
 <span class="kd">metadata</span><span class="nc"> &quot;qux&quot; </span><span class="nd">=</span> <span class="s2">&quot;test&quot;</span>
 <span class="kd">metadata</span><span class="nc"> &quot;validConflict&quot; </span><span class="nd">=</span> <span class="s2">&quot;hi!&quot;</span>
 </pre></div>
 </div>
 </div>
-<div class="literal-block-wrapper docutils container" id="id33">
-<div class="code-block-caption"><span class="caption-text">model-b.smithy</span><a class="headerlink" href="#id33" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id32">
+<div class="code-block-caption"><span class="caption-text">model-b.smithy</span><a class="headerlink" href="#id32" title="Permalink to this code">¶</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> &quot;foo&quot; </span><span class="nd">=</span> [<span class="s2">&quot;lorem&quot;</span>, <span class="s2">&quot;ipsum&quot;</span>]
 <span class="kd">metadata</span><span class="nc"> &quot;lorem&quot; </span><span class="nd">=</span> <span class="s2">&quot;ipsum&quot;</span>
 <span class="kd">metadata</span><span class="nc"> &quot;validConflict&quot; </span><span class="nd">=</span> <span class="s2">&quot;hi!&quot;</span>
@@ -807,8 +807,8 @@ a <a class="reference internal" href="#shape-id"><span class="std std-ref">shape
 <span id="id8"></span><h3><a href="#list">1.8.2. List</a></h3>
 <p>The <em class="dfn">list</em> type represents an ordered homogeneous collection of values.
 A list shape requires a single member named <code class="docutils literal notranslate"><span class="pre">member</span></code>. Lists are defined
-in the IDL using a <a class="reference internal" href="idl.html#idl-list"><span class="std std-ref">list_statement</span></a>.</p>
-<p>The following example defines a list with a string member from the
+in the IDL using a <a class="reference internal" href="idl.html#idl-list"><span class="std std-ref">list_statement</span></a>.
+The following example defines a list with a string member from the
 <a class="reference internal" href="prelude-model.html#prelude"><span class="std std-ref">prelude</span></a>:</p>
 <div class="sphinx-tabs docutils container">
 <div class="ui top attached tabular menu sphinx-menu docutils container">
@@ -846,6 +846,54 @@ JSON</div>
 </div>
 </div>
 </div>
+<p class="rubric">List member nullability</p>
+<p>Lists are considered <em>dense</em> by default, meaning they MAY NOT contain <code class="docutils literal notranslate"><span class="pre">null</span></code>
+values. A list MAY be made <em>sparse</em> by applying the <a class="reference internal" href="type-refinement-traits.html#sparse-trait"><span class="std std-ref">sparse trait</span></a>.
+The <a class="reference internal" href="type-refinement-traits.html#box-trait"><span class="std std-ref">box trait</span></a> is not used to determine if a list is dense or sparse;
+a list with no <code class="docutils literal notranslate"><span class="pre">&#64;sparse</span></code> trait is always considered dense. The following
+example defines a sparse list:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@sparse</span>
+<span class="kd">list</span><span class="nc"> SparseList</span> {
+    <span class="nl">member:</span> <span class="vc">String</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#SparseList&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;member&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#sparse&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>If a client encounters a <code class="docutils literal notranslate"><span class="pre">null</span></code> value when deserializing a dense list
+returned from a service, the client MUST discard the <code class="docutils literal notranslate"><span class="pre">null</span></code> value. If a
+service receives a <code class="docutils literal notranslate"><span class="pre">null</span></code> value for a dense list from a client, it SHOULD
+reject the request.</p>
 <p class="rubric">List member shape ID</p>
 <p>The shape ID of the member of a list is the list shape ID followed by
 <code class="docutils literal notranslate"><span class="pre">$member</span></code>. For example, the shape ID of the list member in the above
@@ -855,8 +903,8 @@ example is <code class="docutils literal notranslate"><span class="pre">smithy.e
 <span id="id9"></span><h3><a href="#set">1.8.3. Set</a></h3>
 <p>The <em class="dfn">set</em> type represents an unordered collection of unique homogeneous
 values. A set shape requires a single member named <code class="docutils literal notranslate"><span class="pre">member</span></code>.
-Sets are defined in the IDL using a <a class="reference internal" href="idl.html#idl-set"><span class="std std-ref">set_statement</span></a>.</p>
-<p>The following example defines a set of strings:</p>
+Sets are defined in the IDL using a <a class="reference internal" href="idl.html#idl-set"><span class="std std-ref">set_statement</span></a>.
+The following example defines a set of strings:</p>
 <div class="sphinx-tabs docutils container">
 <div class="ui top attached tabular menu sphinx-menu docutils container">
 <div class="active item sphinx-data-tab-U21pdGh5 docutils container">
@@ -893,6 +941,14 @@ JSON</div>
 </div>
 </div>
 </div>
+<p class="rubric">Sets MUST NOT contain <code class="docutils literal notranslate"><span class="pre">null</span></code> values</p>
+<p>The values contained in a set are not permitted to be <code class="docutils literal notranslate"><span class="pre">null</span></code>. <code class="docutils literal notranslate"><span class="pre">null</span></code> set
+values do not provide much, if any, utility, and set implementations across
+programming languages often do not support <code class="docutils literal notranslate"><span class="pre">null</span></code> values.</p>
+<p>If a client encounters a <code class="docutils literal notranslate"><span class="pre">null</span></code> value when deserializing a set returned
+from a service, the client MUST discard the <code class="docutils literal notranslate"><span class="pre">null</span></code> value. If a service
+receives a <code class="docutils literal notranslate"><span class="pre">null</span></code> value for a set from a client, it SHOULD reject the
+request.</p>
 <p class="rubric">Set member shape ID</p>
 <p>The shape ID of the member of a set is the set shape ID followed by
 <code class="docutils literal notranslate"><span class="pre">$member</span></code>. For example, the shape ID of the set member in the above
@@ -908,8 +964,8 @@ structure in a list and rely on validation to ensure uniqueness.</p>
 <p>The <em class="dfn">map</em> type represents a map data structure that maps <code class="docutils literal notranslate"><span class="pre">string</span></code>
 keys to homogeneous values. A map requires a member named <code class="docutils literal notranslate"><span class="pre">key</span></code>
 that MUST target a <code class="docutils literal notranslate"><span class="pre">string</span></code> shape and a member named <code class="docutils literal notranslate"><span class="pre">value</span></code>.
-Maps are defined in the IDL using a <a class="reference internal" href="idl.html#idl-map"><span class="std std-ref">map_statement</span></a>.</p>
-<p>The following example defines a map of strings to integers:</p>
+Maps are defined in the IDL using a <a class="reference internal" href="idl.html#idl-map"><span class="std std-ref">map_statement</span></a>.
+The following example defines a map of strings to integers:</p>
 <div class="sphinx-tabs docutils container">
 <div class="ui top attached tabular menu sphinx-menu docutils container">
 <div class="active item sphinx-data-tab-U21pdGh5 docutils container">
@@ -950,6 +1006,62 @@ JSON</div>
 </div>
 </div>
 </div>
+<p class="rubric">Map keys MUST NOT be <code class="docutils literal notranslate"><span class="pre">null</span></code></p>
+<p>Map keys are not permitted to be <code class="docutils literal notranslate"><span class="pre">null</span></code>. Not all protocol serialization
+formats have a way to define <code class="docutils literal notranslate"><span class="pre">null</span></code> map keys, and map implementations
+across programming languages often do not allow <code class="docutils literal notranslate"><span class="pre">null</span></code> keys in maps.</p>
+<p class="rubric">Map value member nullability</p>
+<p>Maps values are considered <em>dense</em> by default, meaning they MAY NOT contain
+<code class="docutils literal notranslate"><span class="pre">null</span></code> values. A map MAY be made <em>sparse</em> by applying the
+<a class="reference internal" href="type-refinement-traits.html#sparse-trait"><span class="std std-ref">sparse trait</span></a>. The <a class="reference internal" href="type-refinement-traits.html#box-trait"><span class="std std-ref">box trait</span></a> is not used to determine if a map
+is dense or sparse; a map with no <code class="docutils literal notranslate"><span class="pre">&#64;sparse</span></code> trait is always considered
+dense. The following example defines a sparse map:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@sparse</span>
+<span class="kd">map</span><span class="nc"> SparseMap</span> {
+    <span class="nl">key:</span> <span class="vc">String</span>,
+    <span class="nl">value:</span> <span class="vc">String</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#SparseMap&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;map&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;key&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#sparse&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>If a client encounters a <code class="docutils literal notranslate"><span class="pre">null</span></code> map value when deserializing a dense map
+returned from a service, the client MUST discard the <code class="docutils literal notranslate"><span class="pre">null</span></code> entry. If a
+service receives a <code class="docutils literal notranslate"><span class="pre">null</span></code> map value for a dense map from a client, it
+SHOULD reject the request.</p>
 <p class="rubric">Map member shape IDs</p>
 <p>The shape ID of the <code class="docutils literal notranslate"><span class="pre">key</span></code> member of a map is the map shape ID followed by
 <code class="docutils literal notranslate"><span class="pre">$key</span></code>, and the shape ID of the <code class="docutils literal notranslate"><span class="pre">value</span></code> member is the map shape ID
@@ -1015,8 +1127,7 @@ JSON</div>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last">Refer to <a class="reference internal" href="idl.html#idl-applying-traits"><span class="std std-ref">Applying traits</span></a> for a description of how traits
-are applied to shapes.</p>
+<p class="last"><a class="reference internal" href="idl.html#idl-applying-traits"><span class="std std-ref">Applying traits</span></a> for a description of how to apply traits.</p>
 </div>
 <p class="rubric">Adding new members</p>
 <p>New members added to existing structures SHOULD be added to the end of the
@@ -1027,6 +1138,21 @@ able to maintain backward compatibility.</p>
 <p>The shape ID of a member of a structure is the structure shape ID, followed
 by &quot;#&quot;, followed by the member name, For example, the shape ID of the &quot;foo&quot;
 member in the above example is <code class="docutils literal notranslate"><span class="pre">smithy.example#MyStructure$foo</span></code>.</p>
+<div class="section" id="default-structure-member-values">
+<span id="default-values"></span><h4><a href="#default-structure-member-values">1.8.5.1. Default structure member values</a></h4>
+<p>The values provided for structure members are either always present and set to
+a default value when necessary or <em>boxed</em>, meaning a value is optionally present
+with no default value. Members are considered boxed if the member is marked with
+the <a class="reference internal" href="type-refinement-traits.html#box-trait"><span class="std std-ref">box trait</span></a> or the shape targeted by the member is marked with the box
+trait. Members that target strings, timestamps, and aggregate shapes are always
+considered boxed and have no default values.</p>
+<ul class="simple">
+<li>The default value of a <code class="docutils literal notranslate"><span class="pre">byte</span></code>, <code class="docutils literal notranslate"><span class="pre">short</span></code>, <code class="docutils literal notranslate"><span class="pre">integer</span></code>, <code class="docutils literal notranslate"><span class="pre">long</span></code>,
+<code class="docutils literal notranslate"><span class="pre">float</span></code>, and <code class="docutils literal notranslate"><span class="pre">double</span></code> shape that is not boxed is zero.</li>
+<li>The default value of a <code class="docutils literal notranslate"><span class="pre">boolean</span></code> shape that is not boxed is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</li>
+<li>All other shapes are always considered boxed and have no default value.</li>
+</ul>
+</div>
 </div>
 <div class="section" id="union">
 <span id="id12"></span><h3><a href="#union">1.8.6. Union</a></h3>
@@ -1088,6 +1214,11 @@ JSON</div>
 </div>
 </div>
 </div>
+<p class="rubric">Union member nullability</p>
+<p>Exactly one member of a union MUST be set to a non-null value. In protocol
+serialization formats that support <code class="docutils literal notranslate"><span class="pre">null</span></code> values (for example, JSON), if a
+<code class="docutils literal notranslate"><span class="pre">null</span></code> value is provided for a union member, it is discarded as if it was
+not provided.</p>
 <p class="rubric">Adding new members</p>
 <p>New members added to existing unions SHOULD be added to the end of the
 union. This ensures that programming languages that require a specific
@@ -1098,23 +1229,8 @@ able to maintain backward compatibility.</p>
 by &quot;#&quot;, followed by the member name. For example, the shape ID of the &quot;i32&quot;
 member in the above example is <code class="docutils literal notranslate"><span class="pre">smithy.example#MyUnion$i32</span></code>.</p>
 </div>
-<div class="section" id="default-values">
-<span id="id13"></span><h3><a href="#default-values">1.8.7. Default values</a></h3>
-<p>The values provided for <a class="reference internal" href="#member"><span class="std std-ref">members</span></a> are either always present
-and set to a default value when necessary or <em>boxed</em>, meaning a value is
-optionally present with no default value. Members are considered boxed if
-the member is marked with the <a class="reference internal" href="type-refinement-traits.html#box-trait"><span class="std std-ref">box trait</span></a> or the shape targeted by the
-member is marked with the box trait. Members that target strings, timestamps,
-and aggregate shapes are always considered boxed and have no default values.</p>
-<ul class="simple">
-<li>The default value of a <code class="docutils literal notranslate"><span class="pre">byte</span></code>, <code class="docutils literal notranslate"><span class="pre">short</span></code>, <code class="docutils literal notranslate"><span class="pre">integer</span></code>, <code class="docutils literal notranslate"><span class="pre">long</span></code>,
-<code class="docutils literal notranslate"><span class="pre">float</span></code>, and <code class="docutils literal notranslate"><span class="pre">double</span></code> shape that is not boxed is zero.</li>
-<li>The default value of a <code class="docutils literal notranslate"><span class="pre">boolean</span></code> shape that is not boxed is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</li>
-<li>All other shapes are always considered boxed and have no default value.</li>
-</ul>
-</div>
 <div class="section" id="recursive-shape-definitions">
-<h3><a href="#recursive-shape-definitions">1.8.8. Recursive shape definitions</a></h3>
+<h3><a href="#recursive-shape-definitions">1.8.7. Recursive shape definitions</a></h3>
 <p>Smithy allows for recursive shape definitions with the following constraint:
 the member of a list, set, or map cannot directly or transitively target its
 containing shape unless one or more members in the path from the container
@@ -1237,7 +1353,7 @@ and operations.</p>
 </tbody>
 </table>
 <div class="section" id="service">
-<span id="id14"></span><h3><a href="#service">1.9.1. Service</a></h3>
+<span id="id13"></span><h3><a href="#service">1.9.1. Service</a></h3>
 <p>A <em class="dfn">service</em> is the entry point of an API that aggregates resources and
 operations together. The <a class="reference internal" href="#resource"><span class="std std-ref">resources</span></a> and
 <a class="reference internal" href="#operation"><span class="std std-ref">operations</span></a> of an API are bound within the closure of a
@@ -1312,7 +1428,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="service-operations">
-<span id="id15"></span><h4><a href="#service-operations">1.9.1.1. Service operations</a></h4>
+<span id="id14"></span><h4><a href="#service-operations">1.9.1.1. Service operations</a></h4>
 <p><a class="reference internal" href="#operation"><span class="std std-ref">Operation</span></a> shapes can be bound to a service by adding the
 shape ID of an operation to the <code class="docutils literal notranslate"><span class="pre">operations</span></code> property of a service.
 Operations bound directly to a service are typically RPC-style operations
@@ -1370,7 +1486,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="service-resources">
-<span id="id16"></span><h4><a href="#service-resources">1.9.1.2. Service resources</a></h4>
+<span id="id15"></span><h4><a href="#service-resources">1.9.1.2. Service resources</a></h4>
 <p><a class="reference internal" href="#resource"><span class="std std-ref">Resource</span></a> shapes can be bound to a service by adding the
 shape ID of a resource to the <code class="docutils literal notranslate"><span class="pre">resources</span></code> property of a service.</p>
 <div class="sphinx-tabs docutils container">
@@ -1420,7 +1536,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="service-closure">
-<span id="id17"></span><h4><a href="#service-closure">1.9.1.3. Service closure</a></h4>
+<span id="id16"></span><h4><a href="#service-closure">1.9.1.3. Service closure</a></h4>
 <p>The <em>closure</em> of a service is the set of shapes connected to a service
 through resources, operations, and members.</p>
 <div class="admonition important">
@@ -1451,7 +1567,7 @@ fully-qualified path from the service to the shape.</p>
 </div>
 </div>
 <div class="section" id="operation">
-<span id="id18"></span><h3><a href="#operation">1.9.2. Operation</a></h3>
+<span id="id17"></span><h3><a href="#operation">1.9.2. Operation</a></h3>
 <p>The <em class="dfn">operation</em> type represents the input, output, and possible errors of
 an API operation. Operation shapes are bound to <a class="reference internal" href="#resource"><span class="std std-ref">resource</span></a>
 shapes and <a class="reference internal" href="#service"><span class="std std-ref">service</span></a> shapes. An operation is defined in the IDL
@@ -1547,7 +1663,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="resource">
-<span id="id19"></span><h3><a href="#resource">1.9.3. Resource</a></h3>
+<span id="id18"></span><h3><a href="#resource">1.9.3. Resource</a></h3>
 <p>Smithy defines a <em class="dfn">resource</em> as an entity with an identity that has a
 set of operations. A resource shape is defined in the IDL using a
 <a class="reference internal" href="idl.html#idl-resource"><span class="std std-ref">resource_statement</span></a>.</p>
@@ -1631,7 +1747,7 @@ resource or service.</td>
 </table>
 </div>
 <div class="section" id="resource-identifiers">
-<span id="id20"></span><h3><a href="#resource-identifiers">1.9.4. Resource Identifiers</a></h3>
+<span id="id19"></span><h3><a href="#resource-identifiers">1.9.4. Resource Identifiers</a></h3>
 <p><em class="dfn">Identifiers</em> are used to refer to a specific resource within a service.
 The identifiers property of a resource is a map of identifier names to
 <a class="reference internal" href="#shape-id"><span class="std std-ref">shape IDs</span></a> that MUST target string shapes.</p>
@@ -1900,7 +2016,7 @@ of the resource it is bound to, but MUST bind all identifiers of any parent
 resource.</p>
 </div>
 <div class="section" id="implicit-identifier-bindings">
-<span id="id21"></span><h4><a href="#implicit-identifier-bindings">1.9.4.2. Implicit identifier bindings</a></h4>
+<span id="id20"></span><h4><a href="#implicit-identifier-bindings">1.9.4.2. Implicit identifier bindings</a></h4>
 <p><em>Implicit identifier bindings</em> are formed when the input of an operation
 contains member names that target the same shapes that are defined in the
 &quot;identifiers&quot; property of the resource to which an operation is bound.</p>
@@ -2154,7 +2270,7 @@ lifecycle.</p>
 </pre></div>
 </div>
 <div class="section" id="put-lifecycle">
-<span id="id22"></span><h4><a href="#put-lifecycle">1.9.5.1. Put lifecycle</a></h4>
+<span id="id21"></span><h4><a href="#put-lifecycle">1.9.5.1. Put lifecycle</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">put</span></code> lifecycle operation is used to create a resource using identifiers
 provided by the client.</p>
 <ul class="simple">
@@ -2189,7 +2305,7 @@ created or replaced ...</div></blockquote>
 replaced using the <code class="docutils literal notranslate"><span class="pre">put</span></code> operation.</p>
 </div>
 <div class="section" id="create-lifecycle">
-<span id="id23"></span><h4><a href="#create-lifecycle">1.9.5.2. Create lifecycle</a></h4>
+<span id="id22"></span><h4><a href="#create-lifecycle">1.9.5.2. Create lifecycle</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">create</span></code> operation is used to create a resource using one or more
 identifiers created by the service.</p>
 <ul class="simple">
@@ -2217,7 +2333,7 @@ identifiers created by the service.</p>
 </div>
 </div>
 <div class="section" id="read-lifecycle">
-<span id="id24"></span><h4><a href="#read-lifecycle">1.9.5.3. Read lifecycle</a></h4>
+<span id="id23"></span><h4><a href="#read-lifecycle">1.9.5.3. Read lifecycle</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">read</span></code> operation is the canonical operation used to retrieve the current
 representation of a resource.</p>
 <ul class="simple">
@@ -2240,7 +2356,7 @@ representation of a resource.</p>
 </div>
 </div>
 <div class="section" id="update-lifecycle">
-<span id="id25"></span><h4><a href="#update-lifecycle">1.9.5.4. Update lifecycle</a></h4>
+<span id="id24"></span><h4><a href="#update-lifecycle">1.9.5.4. Update lifecycle</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">update</span></code> operation is the canonical operation used to update a
 resource.</p>
 <ul class="simple">
@@ -2264,7 +2380,7 @@ resource.</p>
 </div>
 </div>
 <div class="section" id="delete-lifecycle">
-<span id="id26"></span><h4><a href="#delete-lifecycle">1.9.5.5. Delete lifecycle</a></h4>
+<span id="id25"></span><h4><a href="#delete-lifecycle">1.9.5.5. Delete lifecycle</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">delete</span></code> operation is canonical operation used to delete a resource.</p>
 <ul class="simple">
 <li>Delete operations MUST be valid <a class="reference internal" href="#instance-operations"><span class="std std-ref">instance operations</span></a>.</li>
@@ -2287,7 +2403,7 @@ resource.</p>
 </div>
 </div>
 <div class="section" id="list-lifecycle">
-<span id="id27"></span><h4><a href="#list-lifecycle">1.9.5.6. List lifecycle</a></h4>
+<span id="id26"></span><h4><a href="#list-lifecycle">1.9.5.6. List lifecycle</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">list</span></code> operation is the canonical operation used to list a
 collection of resources.</p>
 <ul class="simple">
@@ -2324,7 +2440,7 @@ being listed.</li>
 </div>
 </div>
 <div class="section" id="traits">
-<span id="id28"></span><h2><a href="#traits">1.10. Traits</a></h2>
+<span id="id27"></span><h2><a href="#traits">1.10. Traits</a></h2>
 <p><em>Traits</em> are model components that can be attached to <a class="reference internal" href="#shapes"><span class="std std-ref">shapes</span></a>
 to describe additional information about the shape; shapes provide the
 structure and layout of an API, while traits provide refinement and style.</p>
@@ -2444,7 +2560,7 @@ definition.</p>
 </div>
 </div>
 <div class="section" id="trait-conflict-resolution">
-<span id="id29"></span><h3><a href="#trait-conflict-resolution">1.10.2. Trait conflict resolution</a></h3>
+<span id="id28"></span><h3><a href="#trait-conflict-resolution">1.10.2. Trait conflict resolution</a></h3>
 <p>Trait conflict resolution is used when the same trait is applied multiple
 times to a shape. Duplicate traits applied to shapes are allowed in the
 following cases:</p>
@@ -2491,7 +2607,7 @@ duplicated on the <code class="docutils literal notranslate"><span class="pre">M
 </div>
 </div>
 <div class="section" id="trait-node-values">
-<span id="id30"></span><h3><a href="#trait-node-values">1.10.3. Trait node values</a></h3>
+<span id="id29"></span><h3><a href="#trait-node-values">1.10.3. Trait node values</a></h3>
 <p>The value provided for a trait MUST be compatible with the <code class="docutils literal notranslate"><span class="pre">shape</span></code> of the
 trait. The following table defines each shape type that is available to
 target from traits and how their values are defined in
@@ -2592,7 +2708,7 @@ compatible with the corresponding shape.</td>
 shape being validated.</p>
 </div>
 <div class="section" id="defining-traits">
-<span id="trait-shapes"></span><span id="id31"></span><h3><a href="#defining-traits">1.10.4. Defining traits</a></h3>
+<span id="trait-shapes"></span><span id="id30"></span><h3><a href="#defining-traits">1.10.4. Defining traits</a></h3>
 <p>Traits are defined inside of a namespace by applying <code class="docutils literal notranslate"><span class="pre">smithy.api#trait</span></code> to
 a shape. This trait can only be applied to simple types, <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">map</span></code>,
 <code class="docutils literal notranslate"><span class="pre">set</span></code>, <code class="docutils literal notranslate"><span class="pre">structure</span></code>, and <code class="docutils literal notranslate"><span class="pre">union</span></code> shapes.</p>
@@ -2957,10 +3073,12 @@ JSON</div>
 <li><a class="reference internal" href="#list">1.8.2. List</a></li>
 <li><a class="reference internal" href="#set">1.8.3. Set</a></li>
 <li><a class="reference internal" href="#map">1.8.4. Map</a></li>
-<li><a class="reference internal" href="#structure">1.8.5. Structure</a></li>
+<li><a class="reference internal" href="#structure">1.8.5. Structure</a><ul>
+<li><a class="reference internal" href="#default-structure-member-values">1.8.5.1. Default structure member values</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#union">1.8.6. Union</a></li>
-<li><a class="reference internal" href="#default-values">1.8.7. Default values</a></li>
-<li><a class="reference internal" href="#recursive-shape-definitions">1.8.8. Recursive shape definitions</a></li>
+<li><a class="reference internal" href="#recursive-shape-definitions">1.8.7. Recursive shape definitions</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#service-shapes">1.9. Service shapes</a><ul>

@@ -61,7 +61,7 @@
         
         <section id="page-container">
             <div class="width-wrapper flex">
-                <article id="document-body">
+                <article class="document-body">
                     
                     <ul class="rel-parents">
                     <li><a href="../index.html" >Specifications</a></li>
@@ -94,11 +94,11 @@ for a shape.</p>
 <dt>Trait selector</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
 <dt>Value type</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">list</span></code> of enum definition structures.</dd>
+<dd><code class="docutils literal notranslate"><span class="pre">list</span></code> of <em>enum definition</em> structures.</dd>
 </dl>
 <p>Smithy models SHOULD apply the enum trait when string shapes have a fixed
 set of allowable values.</p>
-<p>An enum definition is a structure that supports the following members:</p>
+<p>An <em>enum definition</em> is a structure that supports the following members:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="10%" />
@@ -119,19 +119,28 @@ Values MUST be unique across all enum definitions in an <code class="docutils li
 </tr>
 <tr class="row-odd"><td>name</td>
 <td>string</td>
-<td><p class="first">Defines a constant name to use when referencing an enum value.</p>
-<p>Enum constant names MUST start with an upper or lower case ASCII Latin
-letter (<code class="docutils literal notranslate"><span class="pre">A-Z</span></code> or <code class="docutils literal notranslate"><span class="pre">a-z</span></code>), or the ASCII underscore (<code class="docutils literal notranslate"><span class="pre">_</span></code>) and be
+<td><p class="first">Defines a constant name that can be used in programming languages to
+reference an enum <code class="docutils literal notranslate"><span class="pre">value</span></code>. A <code class="docutils literal notranslate"><span class="pre">name</span></code> is not required, though
+their use is strongly encouraged to help tools like code generators
+safely and reliably create symbols that represent specific values.</p>
+<p>Validation constraints:</p>
+<ul class="last simple">
+<li>Names MUST start with an upper or lower case ASCII Latin letter
+(<code class="docutils literal notranslate"><span class="pre">A-Z</span></code> or <code class="docutils literal notranslate"><span class="pre">a-z</span></code>), or the ASCII underscore (<code class="docutils literal notranslate"><span class="pre">_</span></code>) and be
 followed by zero or more upper or lower case ASCII Latin letters
 (<code class="docutils literal notranslate"><span class="pre">A-Z</span></code> or <code class="docutils literal notranslate"><span class="pre">a-z</span></code>), ASCII underscores (<code class="docutils literal notranslate"><span class="pre">_</span></code>), or ASCII digits
-(<code class="docutils literal notranslate"><span class="pre">0-9</span></code>). That is, enum constant names MUST match the following
-regular expression: <code class="docutils literal notranslate"><span class="pre">^[a-zA-Z_]+[a-zA-Z_0-9]*$</span></code>.</p>
-<p>The following stricter rules are recommended for consistency: Enum
+(<code class="docutils literal notranslate"><span class="pre">0-9</span></code>). That is, names MUST match the following regular
+expression: <code class="docutils literal notranslate"><span class="pre">^[a-zA-Z_]+[a-zA-Z_0-9]*$</span></code>.</li>
+<li>The following stricter rules are recommended for consistency: Enum
 constant names SHOULD NOT contain any lowercase ASCII Latin letters
-(<code class="docutils literal notranslate"><span class="pre">a-z</span></code>) and SHOULD NOT start with an ASCII underscore (<code class="docutils literal notranslate"><span class="pre">_</span></code>). That
-is, enum names SHOULD match the following regular expression:
-<code class="docutils literal notranslate"><span class="pre">^[A-Z]+[A-Z_0-9]*$</span></code>.</p>
-<p class="last">Names MUST be unique across all enum definitions in an <code class="docutils literal notranslate"><span class="pre">enum</span></code> trait.</p>
+(<code class="docutils literal notranslate"><span class="pre">a-z</span></code>) and SHOULD NOT start with an ASCII underscore (<code class="docutils literal notranslate"><span class="pre">_</span></code>).
+That is, enum names SHOULD match the following regular expression:
+<code class="docutils literal notranslate"><span class="pre">^[A-Z]+[A-Z_0-9]*$</span></code>.</li>
+<li>Names MUST be unique across all enum definitions of an <code class="docutils literal notranslate"><span class="pre">enum</span></code>
+trait.</li>
+<li>If any enum definition has a <code class="docutils literal notranslate"><span class="pre">name</span></code>, then all entries in the
+<code class="docutils literal notranslate"><span class="pre">enum</span></code> trait MUST have a <code class="docutils literal notranslate"><span class="pre">name</span></code>.</li>
+</ul>
 </td>
 </tr>
 <tr class="row-even"><td>documentation</td>
@@ -152,11 +161,11 @@ the Smithy model.</td>
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Consumers of a Smithy model MAY choose to represent enum values as
-constants. Those that do SHOULD use the enum definition's <code class="docutils literal notranslate"><span class="pre">name</span></code>
-property, if specified. Consumers that choose to represent enums as
-constants SHOULD ensure that unknown enum names returned from a service
-do not cause runtime failures.</p>
+<p class="last">Code generators MAY choose to represent enums as programming language
+constants. Those that do SHOULD use the enum definition's <code class="docutils literal notranslate"><span class="pre">name</span></code> property,
+if specified. Consumers that choose to represent enums as constants SHOULD
+ensure that unknown enum names returned from a service do not cause runtime
+failures.</p>
 </div>
 <p>The following example defines an enum of valid string values for <code class="docutils literal notranslate"><span class="pre">MyString</span></code>.</p>
 <div class="sphinx-tabs docutils container">
@@ -681,7 +690,7 @@ JSON</div>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Marks a structure member as required, meaning a value for the member MUST
-be present.</dd>
+be present and not set to <code class="docutils literal notranslate"><span class="pre">null</span></code>.</dd>
 <dt>Trait selector</dt>
 <dd><p class="first"><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></p>
 <p class="last"><em>Member of a structure</em></p>
