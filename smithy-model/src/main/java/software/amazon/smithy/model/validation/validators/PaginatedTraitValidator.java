@@ -93,7 +93,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
             events.addAll(validateMember(opIndex, model, null, operation, trait, pageSizeValidator));
             pageSizeValidator.getMember(model, opIndex, operation, trait)
                     .filter(MemberShape::isRequired)
-                    .ifPresent(member -> events.add(danger(operation, trait, String.format(
+                    .ifPresent(member -> events.add(warning(operation, trait, String.format(
                             "paginated trait `%s` member `%s` should not be required",
                             pageSizeValidator.propertyName(), member.getMemberName()))));
         }
