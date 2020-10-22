@@ -13,7 +13,6 @@
                 "aws.apigateway#authorizers": {
                     "sigv4": {
                         "scheme": "aws.auth#sigv4",
-                        "type": "request",
                         "customAuthType": "myCustomType"
                     }
                 }

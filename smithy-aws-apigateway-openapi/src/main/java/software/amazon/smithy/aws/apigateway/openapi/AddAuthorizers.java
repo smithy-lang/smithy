@@ -127,11 +127,12 @@ final class AddAuthorizers implements ApiGatewayMapper {
     }
 
     private boolean usesApiGatewayApiKeys(ServiceShape service, String operationAuth) {
-        // Get the authorizer for this operation if it has no "type" set,
-        // as is required for API Gateway's API keys.
+        // Get the authorizer for this operation if it has no "type" or
+        // "customAuthType" set, as is required for API Gateway's API keys.
         Optional<AuthorizerDefinition> definitionOptional = service.getTrait(AuthorizersTrait.class)
                 .flatMap(authorizers -> authorizers.getAuthorizer(operationAuth)
-                        .filter(authorizer -> !authorizer.getType().isPresent()));
+                        .filter(authorizer -> !authorizer.getType().isPresent()
+                                && !authorizer.getCustomAuthType().isPresent()));
 
         if (!definitionOptional.isPresent()) {
             return false;
@@ -195,12 +196,15 @@ final class AddAuthorizers implements ApiGatewayMapper {
         SecurityScheme createdScheme = converter.createSecurityScheme(context, authTrait);
         SecurityScheme.Builder schemeBuilder = createdScheme.toBuilder();
 
-        // Do not set the client extension if there is no "type" property
-        // set on the authorizer definition. This is consistent with the
-        // "type" property support in the documentation.
-        // This is necessary to enable API Gateway's built-in API key validation.
-        String authType = authorizer.getCustomAuthType().orElse(DEFAULT_AUTH_TYPE);
-        if (authorizer.getType().isPresent()) {
+        // Do not default the client extension if there is no "type" property
+        // set on the authorizer definition. This allows setting the
+        // "customAuthType" property without setting the "type".
+        //
+        // This is necessary to enable various API Gateway authentication
+        // schemes and usage plans.
+        Optional<String> authTypeOptional = authorizer.getCustomAuthType();
+        if (authorizer.getType().isPresent() || authTypeOptional.isPresent()) {
+            String authType = authTypeOptional.orElse(DEFAULT_AUTH_TYPE);
             schemeBuilder.putExtension(CLIENT_EXTENSION_NAME, authType);
         }
 

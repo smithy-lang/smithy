@@ -114,10 +114,10 @@ An *authorizer* definition is a structure that supports the following members:
     * - type
       - ``string``
       - The type of the authorizer. If specifying information beyond the
-        scheme, this value is required. The value must be "token", for an
-        authorizer with the caller identity embedded in an authorization token,
-        or "request", for an authorizer with the caller identity contained in
-        request parameters.
+        scheme or customAuthType, this value is required. The value must be
+        "token", for an authorizer with the caller identity embedded in an
+        authorization token, or "request", for an authorizer with the caller
+        identity contained in request parameters.
     * - customAuthType
       - ``string``
       - The ``authType`` of the authorizer. This value is used in APIGateway
