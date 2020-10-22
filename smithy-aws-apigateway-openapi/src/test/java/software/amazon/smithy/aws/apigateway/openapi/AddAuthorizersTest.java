@@ -111,7 +111,7 @@ public class AddAuthorizersTest {
         assertThat(sigV4.getName().get(), equalTo("Authorization"));
         assertThat(sigV4.getIn().get(), equalTo("header"));
         assertThat(sigV4.getExtension("x-amazon-apigateway-authtype").get(), equalTo(Node.from("myCustomType")));
-        assertTrue(sigV4.getExtension("x-amazon-apigateway-authorizer").isPresent());
+        assertFalse(sigV4.getExtension("x-amazon-apigateway-authorizer").isPresent());
     }
 
     @Test
