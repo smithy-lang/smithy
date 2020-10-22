@@ -220,9 +220,8 @@ request parameters.</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td>The <code class="docutils literal notranslate"><span class="pre">authType</span></code> of the authorizer. This value is used in APIGateway
 exports as <code class="docutils literal notranslate"><span class="pre">x-amazon-apigateway-authtype</span></code>. This value is set to
-<code class="docutils literal notranslate"><span class="pre">custom</span></code> by default, or <code class="docutils literal notranslate"><span class="pre">awsSigv4</span></code> if your scheme is
-<a class="reference internal" href="aws-auth.html#aws-auth-sigv4-trait"><span class="std std-ref">aws.auth#sigv4</span></a>. Set the value to an empty
-string to disable defaulting to <code class="docutils literal notranslate"><span class="pre">custom</span></code>.</td>
+<code class="docutils literal notranslate"><span class="pre">custom</span></code> by default if <code class="docutils literal notranslate"><span class="pre">type</span></code> is set, or <code class="docutils literal notranslate"><span class="pre">awsSigv4</span></code> if your
+scheme is <a class="reference internal" href="aws-auth.html#aws-auth-sigv4-trait"><span class="std std-ref">aws.auth#sigv4</span></a>.</td>
 </tr>
 <tr class="row-odd"><td>uri</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>

@@ -86,10 +86,11 @@ specifications.</p>
 <li><a class="reference internal" href="#authorizers" id="id16">Authorizers</a></li>
 <li><a class="reference internal" href="#aws-cloudformation-substitutions" id="id17">AWS CloudFormation substitutions</a></li>
 <li><a class="reference internal" href="#amazon-cognito-user-pools" id="id18">Amazon Cognito User Pools</a></li>
-<li><a class="reference internal" href="#other-traits-that-influence-api-gateway" id="id19">Other traits that influence API Gateway</a></li>
+<li><a class="reference internal" href="#amazon-api-gateway-api-key-usage-plans" id="id19">Amazon API Gateway API key usage plans</a></li>
+<li><a class="reference internal" href="#other-traits-that-influence-api-gateway" id="id20">Other traits that influence API Gateway</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#converting-to-openapi-with-code" id="id20">Converting to OpenAPI with code</a></li>
+<li><a class="reference internal" href="#converting-to-openapi-with-code" id="id21">Converting to OpenAPI with code</a></li>
 </ul>
 </div>
 <div class="section" id="introduction">
@@ -1081,6 +1082,31 @@ entry:</p>
 <p>In the entry, <code class="docutils literal notranslate"><span class="pre">providerARNs</span></code> will be populated from the <code class="docutils literal notranslate"><span class="pre">providerArns</span></code> list
 from the trait.</p>
 </div>
+<div class="section" id="amazon-api-gateway-api-key-usage-plans">
+<h3><a href="#amazon-api-gateway-api-key-usage-plans">Amazon API Gateway API key usage plans</a></h3>
+<p>Smithy enables <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-usage-plans.html">API Gateway's API key usage plans</a> when a scheme based on the
+<a class="reference internal" href="../spec/core/auth-traits.html#httpapikeyauth-trait"><span class="std std-ref">httpApiKeyAuth trait</span></a> is set and configured as <a class="reference internal" href="../spec/aws/amazon-apigateway.html#aws-apigateway-authorizers-trait"><span class="std std-ref">an authorizer</span></a> with no <code class="docutils literal notranslate"><span class="pre">type</span></code> property set.</p>
+<p>The following Smithy model enables API Gateway's API key usage plans on the
+<code class="docutils literal notranslate"><span class="pre">OperationA</span></code> operation:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">use</span><span class="nc"> aws.apigateway#authorizer</span>
+<span class="kd">use</span><span class="nc"> aws.apigateway#authorizers</span>
+<span class="kd">use</span><span class="nc"> aws.protocols#restJson1</span>
+
+<span class="nd">@restJson1</span>
+<span class="nd">@httpApiKeyAuth</span>(<span class="nl">name:</span> <span class="s2">&quot;x-api-key&quot;</span>, <span class="nl">in:</span> <span class="s2">&quot;header&quot;</span>)
+<span class="nd">@authorizer</span>(<span class="s2">&quot;api_key&quot;</span>)
+<span class="nd">@authorizers</span>(<span class="nl">api_key:</span> {<span class="nl">scheme:</span> <span class="s2">&quot;smithy.api#httpApiKeyAuth&quot;</span>})
+<span class="kd">service</span><span class="nc"> Example</span> {
+  <span class="nl">version:</span> <span class="s2">&quot;2019-06-17&quot;</span>,
+  <span class="nl">operations:</span> [<span class="vc">OperationA</span>],
+}
+
+<span class="kd">operation</span><span class="nc"> OperationA</span> {}
+</pre></div>
+</div>
+</div>
 <div class="section" id="other-traits-that-influence-api-gateway">
 <span id="other-traits"></span><h3><a href="#other-traits-that-influence-api-gateway">Other traits that influence API Gateway</a></h3>
 <dl class="docutils">
@@ -1177,6 +1203,7 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
 <li><a class="reference internal" href="#authorizers">Authorizers</a></li>
 <li><a class="reference internal" href="#aws-cloudformation-substitutions">AWS CloudFormation substitutions</a></li>
 <li><a class="reference internal" href="#amazon-cognito-user-pools">Amazon Cognito User Pools</a></li>
+<li><a class="reference internal" href="#amazon-api-gateway-api-key-usage-plans">Amazon API Gateway API key usage plans</a></li>
 <li><a class="reference internal" href="#other-traits-that-influence-api-gateway">Other traits that influence API Gateway</a></li>
 </ul>
 </li>
