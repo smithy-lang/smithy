@@ -26,7 +26,7 @@ Trait selector
 Value type
     Annotation trait.
 See
-    `Protocol tests <https://github.com/awslabs/smithy/tree/1.3.0/smithy-aws-protocol-tests/model/awsJson1_1>`_
+    `Protocol tests <https://github.com/awslabs/smithy/tree/__smithy_version__/smithy-aws-protocol-tests/model/awsJson1_1>`_
 
 .. tabs::
 
