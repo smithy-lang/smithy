@@ -1,0 +1,1 @@
+[ERROR] smithy.example#A: `smithy.waiters#waitable` trait waiter named `Bad` has a `minDelay` value of 10 that is greater than its `maxDelay` value of 5 | WaitableTrait

@@ -1,0 +1,1 @@
+[ERROR] smithy.example#A: No success state matcher found for `smithy.waiters#waitable` trait waiter named `MissingSuccessState` | WaitableTrait

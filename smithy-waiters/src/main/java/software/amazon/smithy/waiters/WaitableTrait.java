@@ -1,0 +1,118 @@
+/*
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+package software.amazon.smithy.waiters;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.AbstractTrait;
+import software.amazon.smithy.model.traits.AbstractTraitBuilder;
+import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.traits.TraitService;
+import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
+
+/**
+ * Indicates that an operation has various named "waiters" that can be used
+ * to poll a resource until it enters a desired state.
+ */
+public final class WaitableTrait extends AbstractTrait implements ToSmithyBuilder<WaitableTrait> {
+
+    public static final ShapeId ID = ShapeId.from("smithy.waiters#waitable");
+
+    private final Map<String, Waiter> waiters;
+
+    private WaitableTrait(Builder builder) {
+        super(ID, builder.getSourceLocation());
+        this.waiters = MapUtils.orderedCopyOf(builder.waiters);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    @Override
+    public SmithyBuilder<WaitableTrait> toBuilder() {
+        return new Builder().sourceLocation(getSourceLocation()).replace(waiters);
+    }
+
+    /**
+     * Gets the waiters defined on the trait.
+     *
+     * @return Returns the defined waiters.
+     */
+    public Map<String, Waiter> getWaiters() {
+        return waiters;
+    }
+
+    @Override
+    protected Node createNode() {
+        ObjectNode.Builder builder = ObjectNode.objectNodeBuilder();
+        builder.sourceLocation(getSourceLocation());
+        for (Map.Entry<String, Waiter> entry : waiters.entrySet()) {
+            builder.withMember(entry.getKey(), entry.getValue().toNode());
+        }
+        return builder.build();
+    }
+
+    public static final class Builder extends AbstractTraitBuilder<WaitableTrait, Builder> {
+
+        private final Map<String, Waiter> waiters = new LinkedHashMap<>();
+
+        private Builder() {}
+
+        @Override
+        public WaitableTrait build() {
+            return new WaitableTrait(this);
+        }
+
+        public Builder put(String name, Waiter value) {
+            waiters.put(name, value);
+            return this;
+        }
+
+        public Builder clear() {
+            this.waiters.clear();
+            return this;
+        }
+
+        public Builder replace(Map<String, Waiter> waiters) {
+            clear();
+            this.waiters.putAll(waiters);
+            return this;
+        }
+    }
+
+    public static final class Provider implements TraitService {
+        @Override
+        public ShapeId getShapeId() {
+            return ID;
+        }
+
+        @Override
+        public Trait createTrait(ShapeId target, Node value) {
+            ObjectNode node = value.expectObjectNode();
+            Builder builder = builder().sourceLocation(value);
+            for (Map.Entry<String, Node> entry : node.getStringMap().entrySet()) {
+                builder.put(entry.getKey(), Waiter.fromNode(entry.getValue()));
+            }
+            return builder.build();
+        }
+    }
+}
