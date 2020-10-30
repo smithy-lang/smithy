@@ -22,3 +22,4 @@ include ":smithy-jsonschema"
 include ":smithy-openapi"
 include ":smithy-utils"
 include ":smithy-protocol-test-traits"
+include ':smithy-jmespath'
