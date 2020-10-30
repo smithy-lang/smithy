@@ -358,9 +358,9 @@ import java.util.regex.Pattern;
  *
  * <pre>{@code
  * CodeWriter writer = new CodeWriter();
- * writer.onSection("example", text -> writer2.write(text + "1, "));
- * writer.onSection("example", text -> writer2.write(text + "2, "));
- * writer.onSection("example", text -> writer2.write(text + "3"));
+ * writer.onSection("example", text -> writer.write(text + "1, "));
+ * writer.onSection("example", text -> writer.write(text + "2, "));
+ * writer.onSection("example", text -> writer.write(text + "3"));
  * writer.write("[${L@example}]", "");
  * System.out.println(writer.toString());
  * // Outputs: "[1, 2, 3]\n"
