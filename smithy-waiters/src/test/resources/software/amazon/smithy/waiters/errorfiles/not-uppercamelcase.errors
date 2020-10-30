@@ -1,0 +1,1 @@
+[ERROR] smithy.example#A: Error validating trait `smithy.waiters#waitable`.thingNotExists (map-key): String value provided for `smithy.waiters#WaiterName` must match regular expression: ^[A-Z]+[A-Za-z0-9]*$ | TraitValue
