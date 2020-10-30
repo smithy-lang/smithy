@@ -353,6 +353,18 @@ import java.util.regex.Pattern;
  * System.out.println(writer.toString());
  * // Outputs: "Leading text...Intercepted: foo...Trailing text...\n"
  * }</pre>
+ *
+ * Inline sections are useful for composing sets or lists from any code with access to {@code CodeWriter}:
+ *
+ * <pre>{@code
+ * CodeWriter writer = new CodeWriter();
+ * writer.onSection("example", text -> writer2.write(text + "1, "));
+ * writer.onSection("example", text -> writer2.write(text + "2, "));
+ * writer.onSection("example", text -> writer2.write(text + "3"));
+ * writer.write("[${L@example}]", "");
+ * System.out.println(writer.toString());
+ * // Outputs: "[1, 2, 3]\n"
+ * }</pre>
  */
 public class CodeWriter {
     private static final Pattern LINES = Pattern.compile("\\r?\\n");
