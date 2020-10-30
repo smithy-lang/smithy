@@ -133,6 +133,7 @@ structure JsonMapsInputOutput {
     myMap: JsonMapsInputOutputMap,
 }
 
+@sparse
 map JsonMapsInputOutputMap {
     key: String,
     value: GreetingStruct
