@@ -1,0 +1,213 @@
+/*
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+package software.amazon.smithy.waiters;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import software.amazon.smithy.jmespath.ExpressionProblem;
+import software.amazon.smithy.jmespath.JmespathException;
+import software.amazon.smithy.jmespath.JmespathExpression;
+import software.amazon.smithy.jmespath.LinterResult;
+import software.amazon.smithy.jmespath.RuntimeType;
+import software.amazon.smithy.jmespath.ast.LiteralExpression;
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.OperationIndex;
+import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.validation.Severity;
+import software.amazon.smithy.model.validation.ValidationEvent;
+
+final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEvent>> {
+
+    private static final String NON_SUPPRESSABLE_ERROR = "WaitableTrait";
+    private static final String JMESPATH_PROBLEM = NON_SUPPRESSABLE_ERROR + "JmespathProblem";
+    private static final String INVALID_ERROR_TYPE = NON_SUPPRESSABLE_ERROR + "InvalidErrorType";
+
+    private final Model model;
+    private final OperationShape operation;
+    private final String waiterName;
+    private final WaitableTrait waitable;
+    private final List<ValidationEvent> events = new ArrayList<>();
+    private final int acceptorIndex;
+
+    WaiterMatcherValidator(Model model, OperationShape operation, String waiterName, int acceptorIndex) {
+        this.model = Objects.requireNonNull(model);
+        this.operation = Objects.requireNonNull(operation);
+        this.waitable = operation.expectTrait(WaitableTrait.class);
+        this.waiterName = Objects.requireNonNull(waiterName);
+        this.acceptorIndex = acceptorIndex;
+    }
+
+    @Override
+    public List<ValidationEvent> visitOutput(Matcher.OutputMember outputPath) {
+        StructureShape struct = OperationIndex.of(model).getOutput(operation).orElse(null);
+        if (struct == null) {
+            addEvent(Severity.ERROR, NON_SUPPRESSABLE_ERROR, "output path used on operation with no output");
+        } else {
+            validatePathMatcher(struct, outputPath.getValue());
+        }
+        return events;
+    }
+
+    @Override
+    public List<ValidationEvent> visitInput(Matcher.InputMember inputPath) {
+        StructureShape struct = OperationIndex.of(model).getInput(operation).orElse(null);
+        if (struct == null) {
+            addEvent(Severity.ERROR, NON_SUPPRESSABLE_ERROR, "input path used on operation with no input");
+        } else {
+            validatePathMatcher(struct, inputPath.getValue());
+        }
+        return events;
+    }
+
+    @Override
+    public List<ValidationEvent> visitSuccess(Matcher.SuccessMember success) {
+        return events;
+    }
+
+    @Override
+    public List<ValidationEvent> visitErrorType(Matcher.ErrorTypeMember errorType) {
+        // Ensure that the errorType is defined on the operation. There may be cases
+        // where the errorType is framework based or lower level, so it might not be
+        // defined in the actual model.
+        String error = errorType.getValue();
+
+        for (ShapeId errorId : operation.getErrors()) {
+            if (error.equals(errorId.toString()) || error.equals(errorId.getName())) {
+                return events;
+            }
+        }
+
+        addEvent(Severity.WARNING, INVALID_ERROR_TYPE, String.format(
+                "errorType '%s' not found on operation. This operation defines the following errors: %s",
+                error, operation.getErrors()));
+
+        return events;
+    }
+
+    @Override
+    public List<ValidationEvent> visitAnd(Matcher.AndMember and) {
+        for (Matcher<?> matcher : and.getValue()) {
+            matcher.accept(this);
+        }
+        return events;
+    }
+
+    @Override
+    public List<ValidationEvent> visitOr(Matcher.OrMember or) {
+        for (Matcher<?> matcher : or.getValue()) {
+            matcher.accept(this);
+        }
+        return events;
+    }
+
+    @Override
+    public List<ValidationEvent> visitNot(Matcher.NotMember not) {
+        not.getValue().accept(this);
+        return events;
+    }
+
+    @Override
+    public List<ValidationEvent> visitUnknown(Matcher.UnknownMember unknown) {
+        // This is validated by model validation. No need to do more here.
+        return events;
+    }
+
+    private void validatePathMatcher(StructureShape struct, PathMatcher pathMatcher) {
+        RuntimeType returnType = validatePath(struct, pathMatcher.getPath());
+
+        switch (pathMatcher.getComparator()) {
+            case BOOLEAN_EQUALS:
+                // A booleanEquals comparator requires an `expected` value of "true" or "false".
+                if (!pathMatcher.getExpected().equals("true") && !pathMatcher.getExpected().equals("false")) {
+                    addEvent(Severity.ERROR, NON_SUPPRESSABLE_ERROR, String.format(
+                            "Waiter acceptors with a %s comparator must set their `expected` value to 'true' or "
+                            + "'false', but found '%s'.",
+                            PathComparator.BOOLEAN_EQUALS, pathMatcher.getExpected()));
+                }
+                validateReturnType(pathMatcher.getComparator(), RuntimeType.BOOLEAN, returnType);
+                break;
+            case STRING_EQUALS:
+                validateReturnType(pathMatcher.getComparator(), RuntimeType.STRING, returnType);
+                break;
+            default: // array operations
+                validateReturnType(pathMatcher.getComparator(), RuntimeType.ARRAY, returnType);
+        }
+    }
+
+    private void validateReturnType(PathComparator comparator, RuntimeType expected, RuntimeType actual) {
+        if (actual != RuntimeType.ANY && actual != expected) {
+            addEvent(Severity.DANGER, JMESPATH_PROBLEM, String.format(
+                    "Waiter acceptors with a %s comparator must return a `%s` type, but this acceptor was "
+                    + "statically determined to return a `%s` type.",
+                    comparator, expected, actual));
+        }
+    }
+
+    private RuntimeType validatePath(StructureShape struct, String path) {
+        try {
+            JmespathExpression expression = JmespathExpression.parse(path);
+            LinterResult result = expression.lint(createCurrentNodeFromShape(struct));
+            for (ExpressionProblem problem : result.getProblems()) {
+                addJmespathEvent(path, problem);
+            }
+            return result.getReturnType();
+        } catch (JmespathException e) {
+            addEvent(Severity.ERROR, NON_SUPPRESSABLE_ERROR, String.format(
+                    "Invalid JMESPath expression (%s): %s", path, e.getMessage()));
+            return RuntimeType.ANY;
+        }
+    }
+
+    // Lint using an ANY type or using the modeled shape as the starting data.
+    private LiteralExpression createCurrentNodeFromShape(Shape shape) {
+        return shape == null
+               ? LiteralExpression.ANY
+               : new LiteralExpression(shape.accept(new ModelRuntimeTypeGenerator(model)));
+    }
+
+    private void addJmespathEvent(String path, ExpressionProblem problem) {
+        Severity severity;
+        switch (problem.severity) {
+            case ERROR:
+                severity = Severity.ERROR;
+                break;
+            case DANGER:
+                severity = Severity.DANGER;
+                break;
+            default:
+                severity = Severity.WARNING;
+                break;
+        }
+
+        String problemMessage = problem.message + " (" + problem.line + ":" + problem.column + ")";
+        addEvent(severity, severity == Severity.ERROR ? NON_SUPPRESSABLE_ERROR : JMESPATH_PROBLEM, String.format(
+                "Problem found in JMESPath expression (%s): %s", path, problemMessage));
+    }
+
+    private void addEvent(Severity severity, String id, String message) {
+        events.add(ValidationEvent.builder()
+                .id(id)
+                .shape(operation)
+                .sourceLocation(waitable)
+                .severity(severity)
+                .message(String.format("Waiter `%s`, acceptor %d: %s", waiterName, acceptorIndex, message))
+                .build());
+    }
+}
