@@ -667,10 +667,10 @@ public class CodeWriter {
 
         // Remove the trailing newline, if present, since it gets added in the
         // final call to writeOptional.
-        if (builder != null
-                && builder.length() > 0
-                && builder.charAt(builder.length() - 1) == currentState.newline) {
-            builder.delete(builder.length() - 1, builder.length());
+        if (builder != null && builder.length() > 0) {
+            if (builder.charAt(builder.length() - 1) == currentState.newline) {
+                builder.delete(builder.length() - 1, builder.length());
+            }
             result = builder.toString();
         }
 
