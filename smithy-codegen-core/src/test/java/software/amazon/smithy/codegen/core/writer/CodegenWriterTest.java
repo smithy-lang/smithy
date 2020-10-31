@@ -113,18 +113,4 @@ public class CodegenWriterTest {
         assertThat(writer.getImportContainer().imports, hasKey("MyString"));
         assertThat(writer.getImportContainer().imports.get("MyString"), equalTo("java.lang.String"));
     }
-
-    @Test
-    public void canComposeSetWithSection() {
-        String testSection = "testSection";
-        MyWriter writer = new MyWriter("foo");
-
-        writer.onSection(testSection, text -> writer.write(text + "1, "));
-        writer.onSection(testSection, text -> writer.write(text + "2, "));
-        writer.onSection(testSection, text -> writer.write(text + "3"));
-
-        writer.write("[${L@testSection}]", "");
-
-        assertThat(writer.toString(), equalTo("[1, 2, 3]"));
-    }
 }

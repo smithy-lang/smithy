@@ -682,4 +682,18 @@ public class CodeWriterTest {
 
         assertThat(writer.toString(), equalTo("HELLO!\nGOODBYE!\n"));
     }
+
+    @Test
+    public void canComposeSetWithSection() {
+        String testSection = "testSection";
+        CodeWriter writer = new CodeWriter();
+
+        writer.onSection(testSection, text -> writer.write(text + "1, "));
+        writer.onSection(testSection, text -> writer.write(text + "2, "));
+        writer.onSection(testSection, text -> writer.write(text + "3"));
+
+        writer.write("[${L@testSection}]", "");
+
+        assertThat(writer.toString(), equalTo("[1, 2, 3]\n"));
+    }
 }
