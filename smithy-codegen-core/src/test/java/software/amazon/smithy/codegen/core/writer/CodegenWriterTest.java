@@ -113,34 +113,4 @@ public class CodegenWriterTest {
         assertThat(writer.getImportContainer().imports, hasKey("MyString"));
         assertThat(writer.getImportContainer().imports.get("MyString"), equalTo("java.lang.String"));
     }
-
-    @Test
-    public void sectionWithWrite() {
-        String testSection = "TEST_SECTION";
-        MyWriter writer = new MyWriter("foo");
-
-        writer.onSection(testSection, text -> {
-            writer.write(text + "addition");
-        });
-
-        writer.pushState(testSection);
-        writer.popState();
-
-        assertThat(writer.toString(), equalTo("addition\n"));
-    }
-
-    @Test
-    public void sectionWithWriteInline() {
-        String testSection = "TEST_SECTION";
-        MyWriter writer = new MyWriter("foo");
-
-        writer.onSection(testSection, text -> {
-            writer.writeInline(text + "inline addition");
-        });
-
-        writer.pushState(testSection);
-        writer.popState();
-
-        assertThat(writer.toString(), equalTo("inline addition\n"));
-    }
 }

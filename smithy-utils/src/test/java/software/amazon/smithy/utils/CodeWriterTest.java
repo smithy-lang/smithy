@@ -696,4 +696,33 @@ public class CodeWriterTest {
 
         assertThat(writer.toString(), equalTo("[1, 2, 3]\n"));
     }
+
+    public void sectionWithWrite() {
+        String testSection = "TEST_SECTION";
+        CodeWriter writer = new CodeWriter();
+
+        writer.onSection(testSection, text -> {
+            writer.write(text + "addition");
+        });
+
+        writer.pushState(testSection);
+        writer.popState();
+
+        assertThat(writer.toString(), equalTo("addition\n"));
+    }
+
+    @Test
+    public void sectionWithWriteInline() {
+        String testSection = "TEST_SECTION";
+        CodeWriter writer = new CodeWriter();
+
+        writer.onSection(testSection, text -> {
+            writer.writeInline(text + "inline addition");
+        });
+
+        writer.pushState(testSection);
+        writer.popState();
+
+        assertThat(writer.toString(), equalTo("inline addition\n"));
+    }
 }
