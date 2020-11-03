@@ -18,20 +18,33 @@ package software.amazon.smithy.jmespath;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * Contains the result of {@link JmespathExpression#lint}.
+ */
 public final class LinterResult {
 
-    public final RuntimeType returnType;
-    public final Set<ExpressionProblem> problems;
+    private final RuntimeType returnType;
+    private final Set<ExpressionProblem> problems;
 
     public LinterResult(RuntimeType returnType, Set<ExpressionProblem> problems) {
         this.returnType = returnType;
         this.problems = problems;
     }
 
+    /**
+     * Gets the statically known return type of the expression.
+     *
+     * @return Returns the return type of the expression.
+     */
     public RuntimeType getReturnType() {
         return returnType;
     }
 
+    /**
+     * Gets the set of problems in the expression.
+     *
+     * @return Returns the detected problems.
+     */
     public Set<ExpressionProblem> getProblems() {
         return problems;
     }

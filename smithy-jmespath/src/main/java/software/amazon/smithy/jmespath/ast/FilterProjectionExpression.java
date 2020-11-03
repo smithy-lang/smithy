@@ -19,6 +19,16 @@ import java.util.Objects;
 import software.amazon.smithy.jmespath.ExpressionVisitor;
 import software.amazon.smithy.jmespath.JmespathExpression;
 
+/**
+ * A projection that filters values using a comparison.
+ *
+ * <p>A filter projection executes the left AST expression, expects it to
+ * return an array of values, passes each result of the left expression to
+ * a {@link ComparatorExpression}, and yields any value from the comparison
+ * expression that returns {@code true} to the right AST expression.
+ *
+ * @see <a href="https://jmespath.org/specification.html#filter-expressions">Filter Expressions</a>
+ */
 public final class FilterProjectionExpression extends JmespathExpression {
 
     private final JmespathExpression comparison;

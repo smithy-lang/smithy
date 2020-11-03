@@ -20,10 +20,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import software.amazon.smithy.jmespath.ast.AndExpression;
+import software.amazon.smithy.jmespath.ast.ComparatorExpression;
 import software.amazon.smithy.jmespath.ast.ComparatorType;
-import software.amazon.smithy.jmespath.ast.ComparisonExpression;
 import software.amazon.smithy.jmespath.ast.CurrentExpression;
-import software.amazon.smithy.jmespath.ast.ExpressionReferenceExpression;
+import software.amazon.smithy.jmespath.ast.ExpressionTypeExpression;
 import software.amazon.smithy.jmespath.ast.FieldExpression;
 import software.amazon.smithy.jmespath.ast.FilterProjectionExpression;
 import software.amazon.smithy.jmespath.ast.FlattenExpression;
@@ -69,7 +69,6 @@ final class Parser {
             TokenType.OR,
             TokenType.AND,
             TokenType.PIPE,
-            TokenType.LPAREN,
             TokenType.FLATTEN,
             TokenType.FILTER,
             TokenType.EQUAL,
@@ -77,7 +76,10 @@ final class Parser {
             TokenType.GREATER_THAN,
             TokenType.GREATER_THAN_EQUAL,
             TokenType.LESS_THAN,
-            TokenType.LESS_THAN_EQUAL
+            TokenType.LESS_THAN_EQUAL,
+            // While not found in the led() method, a led LPAREN is handled
+            // when parsing a nud identifier because it creates a function.
+            TokenType.LPAREN
     };
 
     private final String expression;
@@ -113,9 +115,9 @@ final class Parser {
                 if (iterator.peek().type == TokenType.LPAREN) {
                     iterator.expect(TokenType.LPAREN);
                     List<JmespathExpression> arguments = parseList(TokenType.RPAREN);
-                    return new FunctionExpression(token.value.asStringValue(), arguments, token.line, token.column);
+                    return new FunctionExpression(token.value.expectStringValue(), arguments, token.line, token.column);
                 } else {
-                    return new FieldExpression(token.value.asStringValue(), token.line, token.column);
+                    return new FieldExpression(token.value.expectStringValue(), token.line, token.column);
                 }
             case STAR: // Example: *
                 return parseWildcardObject(new CurrentExpression(token.line, token.column));
@@ -129,7 +131,7 @@ final class Parser {
                 return parseFlatten(new CurrentExpression(token.line, token.column));
             case EXPREF:  // Example: sort_by(@, &foo)
                 JmespathExpression expressionRef = expression(token.type.lbp);
-                return new ExpressionReferenceExpression(expressionRef, token.line, token.column);
+                return new ExpressionTypeExpression(expressionRef, token.line, token.column);
             case NOT: // Example: !foo
                 JmespathExpression notNode = expression(token.type.lbp);
                 return new NotExpression(notNode, token.line, token.column);
@@ -227,7 +229,7 @@ final class Parser {
             switch (next.type) {
                 case NUMBER:
                     iterator.expect(TokenType.NUMBER);
-                    parts[pos] = next.value.asNumberValue().intValue();
+                    parts[pos] = next.value.expectNumberValue().intValue();
                     iterator.expectPeek(TokenType.COLON, TokenType.RBRACKET);
                     break;
                 case RBRACKET:
@@ -301,7 +303,7 @@ final class Parser {
             Token key = iterator.expect(TokenType.IDENTIFIER);
             iterator.expect(TokenType.COLON);
             JmespathExpression value = expression(0);
-            entries.put(key.value.asStringValue(), value);
+            entries.put(key.value.expectStringValue(), value);
 
             if (iterator.expectPeek(TokenType.RBRACE, TokenType.COMMA).type == TokenType.COMMA) {
                 iterator.expect(TokenType.COMMA);
@@ -363,7 +365,7 @@ final class Parser {
         int line = iterator.line();
         int column = iterator.column();
         JmespathExpression rhs = expression(TokenType.EQUAL.lbp);
-        return new ComparisonExpression(comparatorType, lhs, rhs, line, column);
+        return new ComparatorExpression(comparatorType, lhs, rhs, line, column);
     }
 
     // Parses the right hand side of a ".".

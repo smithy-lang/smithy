@@ -537,7 +537,7 @@ final class Lexer {
                 // Backtrack for positioning.
                 position--;
                 column--;
-                return parseString().value.asStringValue();
+                return parseString().value.expectStringValue();
             case '{':
                 return parseJsonObject();
             case '[':
@@ -546,7 +546,7 @@ final class Lexer {
                 // Backtrack.
                 position--;
                 column--;
-                return parseNumber().value.asNumberValue();
+                return parseNumber().value.expectNumberValue();
         }
     }
 
@@ -587,7 +587,7 @@ final class Lexer {
         }
 
         while (!eof() && peek() != '`') {
-            String key = parseString().value.asStringValue();
+            String key = parseString().value.expectStringValue();
             ws();
             expect(':');
             ws();

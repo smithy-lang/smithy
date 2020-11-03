@@ -20,6 +20,8 @@ import software.amazon.smithy.jmespath.JmespathExpression;
 
 /**
  * Gets the current node.
+ *
+ * <a href="https://jmespath.org/specification.html#current-node">current-node</a>
  */
 public final class CurrentExpression extends JmespathExpression {
 

@@ -22,6 +22,8 @@ import software.amazon.smithy.jmespath.JmespathExpression;
 
 /**
  * Selects one or more values into a created array.
+ *
+ * @see <a href="https://jmespath.org/specification.html#multiselect-list">MultiSelect List</a>
  */
 public final class MultiSelectListExpression extends JmespathExpression {
 

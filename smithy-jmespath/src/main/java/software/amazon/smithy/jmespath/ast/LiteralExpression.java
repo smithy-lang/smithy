@@ -140,7 +140,7 @@ public final class LiteralExpression extends JmespathExpression {
         } else if (isNullValue()) {
             return RuntimeType.NULL;
         } else if (this == EXPREF) {
-            return RuntimeType.EXPRESSION_REFERENCE;
+            return RuntimeType.EXPRESSION;
         } else {
             return RuntimeType.ANY;
         }
@@ -155,7 +155,7 @@ public final class LiteralExpression extends JmespathExpression {
      * @return Returns the object field value.
      */
     public LiteralExpression getObjectField(String name) {
-        Map<String, Object> values = asObjectValue();
+        Map<String, Object> values = expectObjectValue();
         return values.containsKey(name)
                ? new LiteralExpression(values.get(name))
                : new LiteralExpression(null);
@@ -169,7 +169,7 @@ public final class LiteralExpression extends JmespathExpression {
      * @return Returns true if the object contains the given key.
      */
     public boolean hasObjectField(String name) {
-        return asObjectValue().containsKey(name);
+        return expectObjectValue().containsKey(name);
     }
 
     /**
@@ -182,7 +182,7 @@ public final class LiteralExpression extends JmespathExpression {
      * @return Returns the array value.
      */
     public LiteralExpression getArrayIndex(int index) {
-        List<Object> values = asArrayValue();
+        List<Object> values = expectArrayValue();
 
         if (index < 0) {
             index = values.size() + index;
@@ -253,7 +253,7 @@ public final class LiteralExpression extends JmespathExpression {
      * @return Returns the string value.
      * @throws JmespathException if the value is not a string.
      */
-    public String asStringValue() {
+    public String expectStringValue() {
         if (value instanceof String) {
             return (String) value;
         }
@@ -267,7 +267,7 @@ public final class LiteralExpression extends JmespathExpression {
      * @return Returns the number value.
      * @throws JmespathException if the value is not a number.
      */
-    public Number asNumberValue() {
+    public Number expectNumberValue() {
         if (value instanceof Number) {
             return (Number) value;
         }
@@ -281,7 +281,7 @@ public final class LiteralExpression extends JmespathExpression {
      * @return Returns the boolean value.
      * @throws JmespathException if the value is not a boolean.
      */
-    public boolean asBooleanValue() {
+    public boolean expectBooleanValue() {
         if (value instanceof Boolean) {
             return (Boolean) value;
         }
@@ -296,7 +296,7 @@ public final class LiteralExpression extends JmespathExpression {
      * @throws JmespathException if the value is not an array.
      */
     @SuppressWarnings("unchecked")
-    public List<Object> asArrayValue() {
+    public List<Object> expectArrayValue() {
         try {
             return (List<Object>) value;
         } catch (ClassCastException e) {
@@ -311,7 +311,7 @@ public final class LiteralExpression extends JmespathExpression {
      * @throws JmespathException if the value is not an object.
      */
     @SuppressWarnings("unchecked")
-    public Map<String, Object> asObjectValue() {
+    public Map<String, Object> expectObjectValue() {
         try {
             return (Map<String, Object>) value;
         } catch (ClassCastException e) {
@@ -328,16 +328,16 @@ public final class LiteralExpression extends JmespathExpression {
         switch (getType()) {
             case ANY:    // just assume it's true.
             case NUMBER: // number is always true
-            case EXPRESSION_REFERENCE: // references are always true
+            case EXPRESSION: // references are always true
                 return true;
             case STRING:
-                return !asStringValue().isEmpty();
+                return !expectStringValue().isEmpty();
             case ARRAY:
-                return !asArrayValue().isEmpty();
+                return !expectArrayValue().isEmpty();
             case OBJECT:
-                return !asObjectValue().isEmpty();
+                return !expectObjectValue().isEmpty();
             case BOOLEAN:
-                return asBooleanValue();
+                return expectBooleanValue();
             default:
                 return false;
         }

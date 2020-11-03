@@ -19,6 +19,10 @@ import java.util.Arrays;
 import java.util.List;
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
 
+/**
+ * Defines the positional arguments, variadic arguments, and return value
+ * of JMESPath functions.
+ */
 final class FunctionDefinition {
 
     @FunctionalInterface
@@ -57,7 +61,7 @@ final class FunctionDefinition {
             if (type == RuntimeType.ANY || arg.getType() == RuntimeType.ANY) {
                 return null;
             } else if (arg.getType() == RuntimeType.ARRAY) {
-                List<Object> values = arg.asArrayValue();
+                List<Object> values = arg.expectArrayValue();
                 for (int i = 0; i < values.size(); i++) {
                     LiteralExpression element = LiteralExpression.from(values.get(i));
                     if (element.getType() != type) {

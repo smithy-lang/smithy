@@ -20,6 +20,8 @@ import software.amazon.smithy.jmespath.JmespathExpression;
 
 /**
  * Or expression that returns the expression that returns a truthy value.
+ *
+ * @see <a href="https://jmespath.org/specification.html#or-expressions">Or Expressions</a>
  */
 public final class OrExpression extends BinaryExpression {
 
