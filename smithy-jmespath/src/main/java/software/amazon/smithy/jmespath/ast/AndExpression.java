@@ -21,6 +21,8 @@ import software.amazon.smithy.jmespath.JmespathExpression;
 /**
  * And expression where both sides must return truthy values. The second
  * truthy value becomes the result of the expression.
+ *
+ * @see <a href="https://jmespath.org/specification.html#and-expressions">And Expressions</a>
  */
 public final class AndExpression extends BinaryExpression {
 

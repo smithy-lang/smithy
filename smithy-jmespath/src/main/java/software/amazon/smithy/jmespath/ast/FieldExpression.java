@@ -21,6 +21,11 @@ import software.amazon.smithy.jmespath.JmespathExpression;
 
 /**
  * Gets a field by name from an object.
+ *
+ * <p>This AST node is created for identifiers. For example,
+ * {@code foo} creates a {@code FieldExpression}.
+ *
+ * @see <a href="https://jmespath.org/specification.html#identifiers">Identifiers</a>
  */
 public final class FieldExpression extends JmespathExpression {
 

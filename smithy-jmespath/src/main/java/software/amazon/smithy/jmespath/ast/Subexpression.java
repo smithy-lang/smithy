@@ -20,6 +20,12 @@ import software.amazon.smithy.jmespath.JmespathExpression;
 
 /**
  * Visits the left expression and passes its result to the right expression.
+ *
+ * <p>This AST node is used for both sub-expressions and pipe-expressions in
+ * the JMESPath specification.
+ *
+ * @see <a href="https://jmespath.org/specification.html#subexpressions">SubExpressions</a>
+ * @see <a href="https://jmespath.org/specification.html#pipe-expressions">Pipe expressions</a>
  */
 public final class Subexpression extends BinaryExpression {
 

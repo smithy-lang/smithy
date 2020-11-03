@@ -16,9 +16,9 @@
 package software.amazon.smithy.jmespath;
 
 import software.amazon.smithy.jmespath.ast.AndExpression;
-import software.amazon.smithy.jmespath.ast.ComparisonExpression;
+import software.amazon.smithy.jmespath.ast.ComparatorExpression;
 import software.amazon.smithy.jmespath.ast.CurrentExpression;
-import software.amazon.smithy.jmespath.ast.ExpressionReferenceExpression;
+import software.amazon.smithy.jmespath.ast.ExpressionTypeExpression;
 import software.amazon.smithy.jmespath.ast.FieldExpression;
 import software.amazon.smithy.jmespath.ast.FilterProjectionExpression;
 import software.amazon.smithy.jmespath.ast.FlattenExpression;
@@ -41,11 +41,11 @@ import software.amazon.smithy.jmespath.ast.Subexpression;
  */
 public interface ExpressionVisitor<T> {
 
-    T visitComparison(ComparisonExpression expression);
+    T visitComparator(ComparatorExpression expression);
 
     T visitCurrentNode(CurrentExpression expression);
 
-    T visitExpressionReference(ExpressionReferenceExpression expression);
+    T visitExpressionType(ExpressionTypeExpression expression);
 
     T visitFlatten(FlattenExpression expression);
 

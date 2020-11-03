@@ -27,9 +27,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.jmespath.ast.AndExpression;
 import software.amazon.smithy.jmespath.ast.ComparatorType;
-import software.amazon.smithy.jmespath.ast.ComparisonExpression;
+import software.amazon.smithy.jmespath.ast.ComparatorExpression;
 import software.amazon.smithy.jmespath.ast.CurrentExpression;
-import software.amazon.smithy.jmespath.ast.ExpressionReferenceExpression;
+import software.amazon.smithy.jmespath.ast.ExpressionTypeExpression;
 import software.amazon.smithy.jmespath.ast.FieldExpression;
 import software.amazon.smithy.jmespath.ast.FilterProjectionExpression;
 import software.amazon.smithy.jmespath.ast.FlattenExpression;
@@ -149,7 +149,7 @@ public class ParserTest {
     @Test
     public void parsesNudAmpersand() {
         assertThat(JmespathExpression.parse("&foo[1]"), equalTo(
-                new ExpressionReferenceExpression(
+                new ExpressionTypeExpression(
                         new Subexpression(
                                 new FieldExpression("foo"),
                                 new IndexExpression(1)))));
@@ -169,7 +169,7 @@ public class ParserTest {
         assertThat(JmespathExpression.parse("[?foo == `true`]"), equalTo(
                 new FilterProjectionExpression(
                         new CurrentExpression(),
-                        new ComparisonExpression(
+                        new ComparatorExpression(
                                 ComparatorType.EQUAL,
                                 new FieldExpression("foo"),
                                 new LiteralExpression(true)),
@@ -182,7 +182,7 @@ public class ParserTest {
             assertThat(JmespathExpression.parse("[?foo " + type + " `true`]"), equalTo(
                     new FilterProjectionExpression(
                             new CurrentExpression(),
-                            new ComparisonExpression(
+                            new ComparatorExpression(
                                     type,
                                     new FieldExpression("foo"),
                                     new LiteralExpression(true)),
@@ -295,7 +295,7 @@ public class ParserTest {
         assertThat(JmespathExpression.parse("a[?b > c].d"), equalTo(
                 new FilterProjectionExpression(
                         new FieldExpression("a"),
-                        new ComparisonExpression(
+                        new ComparatorExpression(
                                 ComparatorType.GREATER_THAN,
                                 new FieldExpression("b"),
                                 new FieldExpression("c")),
@@ -319,7 +319,7 @@ public class ParserTest {
                         new FieldExpression("a"),
                         new FilterProjectionExpression(
                                 new CurrentExpression(),
-                                new ComparisonExpression(
+                                new ComparatorExpression(
                                         ComparatorType.EQUAL,
                                         new FieldExpression("foo"),
                                         new FieldExpression("bar")),

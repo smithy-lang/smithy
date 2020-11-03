@@ -22,13 +22,15 @@ import software.amazon.smithy.jmespath.JmespathExpression;
 
 /**
  * Creates an object using key-value pairs.
+ *
+ * @see <a href="https://jmespath.org/specification.html#multiselect-hash">MultiSelect Hash</a>
  */
 public final class MultiSelectHashExpression extends JmespathExpression {
 
     private final Map<String, JmespathExpression> expressions;
 
-    public MultiSelectHashExpression(Map<String, JmespathExpression> entries) {
-        this(entries, 1, 1);
+    public MultiSelectHashExpression(Map<String, JmespathExpression> expressions) {
+        this(expressions, 1, 1);
     }
 
     public MultiSelectHashExpression(Map<String, JmespathExpression> expressions, int line, int column) {

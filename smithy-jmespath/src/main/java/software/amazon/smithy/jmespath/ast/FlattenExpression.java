@@ -21,6 +21,8 @@ import software.amazon.smithy.jmespath.JmespathExpression;
 
 /**
  * Flattens the wrapped expression into an array.
+ *
+ * @see <a href="https://jmespath.org/specification.html#flatten-operator">Flatten Operator</a>
  */
 public final class FlattenExpression extends JmespathExpression {
 

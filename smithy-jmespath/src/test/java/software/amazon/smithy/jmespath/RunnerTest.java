@@ -22,8 +22,6 @@ public class RunnerTest {
                 for (ExpressionProblem problem : expression.lint().getProblems()) {
                     if (problem.severity == ExpressionProblem.Severity.ERROR) {
                         Assertions.fail("Did not expect an ERROR for line: " + line + "\n" + problem);
-                    } else {
-                        System.out.println(problem);
                     }
                 }
             } catch (JmespathException e) {
@@ -54,7 +52,7 @@ public class RunnerTest {
                         return line;
                     }
                 })
-                .map(line -> Lexer.tokenize(line).next().value.asStringValue())
+                .map(line -> Lexer.tokenize(line).next().value.expectStringValue())
                 .collect(Collectors.toList());
     }
 }

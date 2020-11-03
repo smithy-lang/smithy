@@ -20,8 +20,13 @@ import software.amazon.smithy.jmespath.ExpressionVisitor;
 import software.amazon.smithy.jmespath.JmespathExpression;
 
 /**
- * Gets a specific element by zero-based index. Use -1 to get the
- * last element in an array.
+ * Gets a specific element by zero-based index.
+ *
+ * <p>Use a negative index to get an element from the end of the array
+ * (e.g., -1 is used to get the last element of the array). If an
+ * array element does not exist, a {@code null} value is returned.
+ *
+ * @see <a href="https://jmespath.org/specification.html#index-expressions">Index Expressions</a>
  */
 public final class IndexExpression extends JmespathExpression {
 

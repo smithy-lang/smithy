@@ -22,16 +22,18 @@ import software.amazon.smithy.jmespath.JmespathExpression;
 /**
  * Compares the left and right expression using a comparator,
  * resulting in a boolean value.
+ *
+ * @see <a href="https://jmespath.org/specification.html#filter-expressions">Comparator expression as defined in Filter Expressions</a>
  */
-public final class ComparisonExpression extends BinaryExpression {
+public final class ComparatorExpression extends BinaryExpression {
 
     private final ComparatorType comparator;
 
-    public ComparisonExpression(ComparatorType comparator, JmespathExpression left, JmespathExpression right) {
+    public ComparatorExpression(ComparatorType comparator, JmespathExpression left, JmespathExpression right) {
         this(comparator, left, right, 1, 1);
     }
 
-    public ComparisonExpression(
+    public ComparatorExpression(
             ComparatorType comparator,
             JmespathExpression left,
             JmespathExpression right,
@@ -44,7 +46,7 @@ public final class ComparisonExpression extends BinaryExpression {
 
     @Override
     public <T> T accept(ExpressionVisitor<T> visitor) {
-        return visitor.visitComparison(this);
+        return visitor.visitComparator(this);
     }
 
     /**
@@ -60,10 +62,10 @@ public final class ComparisonExpression extends BinaryExpression {
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        } else if (!(o instanceof ComparisonExpression)) {
+        } else if (!(o instanceof ComparatorExpression)) {
             return false;
         }
-        ComparisonExpression that = (ComparisonExpression) o;
+        ComparatorExpression that = (ComparatorExpression) o;
         return getLeft().equals(that.getLeft())
                && getRight().equals(that.getRight())
                && getComparator().equals(that.getComparator());

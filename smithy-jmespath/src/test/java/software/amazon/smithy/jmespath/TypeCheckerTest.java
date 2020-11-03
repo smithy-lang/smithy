@@ -328,7 +328,7 @@ public class TypeCheckerTest {
 
     @Test
     public void cannotCompareExpref() {
-        assertThat(check("(&foo) == (&foo)"), contains("[WARNING] Invalid comparator '==' for expression_reference (1:11)"));
+        assertThat(check("(&foo) == (&foo)"), contains("[WARNING] Invalid comparator '==' for expression (1:11)"));
     }
 
     @Test

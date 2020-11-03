@@ -22,23 +22,25 @@ import software.amazon.smithy.jmespath.JmespathExpression;
 /**
  * Contains a reference to an expression that can be run zero or more
  * times by a function.
+ *
+ * @see <a href="https://jmespath.org/specification.html#data-types">Data types</a>
  */
-public final class ExpressionReferenceExpression extends JmespathExpression {
+public final class ExpressionTypeExpression extends JmespathExpression {
 
     private final JmespathExpression expression;
 
-    public ExpressionReferenceExpression(JmespathExpression expression) {
+    public ExpressionTypeExpression(JmespathExpression expression) {
         this(expression, 1, 1);
     }
 
-    public ExpressionReferenceExpression(JmespathExpression expression, int line, int column) {
+    public ExpressionTypeExpression(JmespathExpression expression, int line, int column) {
         super(line, column);
         this.expression = expression;
     }
 
     @Override
     public <T> T accept(ExpressionVisitor<T> visitor) {
-        return visitor.visitExpressionReference(this);
+        return visitor.visitExpressionType(this);
     }
 
     /**
@@ -54,10 +56,10 @@ public final class ExpressionReferenceExpression extends JmespathExpression {
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        } else if (!(o instanceof ExpressionReferenceExpression)) {
+        } else if (!(o instanceof ExpressionTypeExpression)) {
             return false;
         }
-        ExpressionReferenceExpression that = (ExpressionReferenceExpression) o;
+        ExpressionTypeExpression that = (ExpressionTypeExpression) o;
         return expression.equals(that.expression);
     }
 
