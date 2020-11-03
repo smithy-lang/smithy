@@ -22,6 +22,8 @@ import software.amazon.smithy.jmespath.JmespathExpression;
 
 /**
  * Executes a function by name using a list of argument expressions.
+ *
+ * @see <a href="https://jmespath.org/specification.html#functions-expressions">Function Expressions</a>
  */
 public final class FunctionExpression extends JmespathExpression {
 

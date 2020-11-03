@@ -48,7 +48,7 @@ public class LexerTest {
 
         Token token = tokens.next();
         assertThat(token.type, equalTo(TokenType.IDENTIFIER));
-        assertThat(token.value.asStringValue(), equalTo("foo_123_FOO"));
+        assertThat(token.value.expectStringValue(), equalTo("foo_123_FOO"));
         assertThat(token.line, equalTo(1));
         assertThat(token.column, equalTo(1));
 
@@ -66,7 +66,7 @@ public class LexerTest {
 
         assertThat(tokens, hasSize(4));
         assertThat(tokens.get(0).type, equalTo(TokenType.IDENTIFIER));
-        assertThat(tokens.get(0).value.asStringValue(), equalTo("foo"));
+        assertThat(tokens.get(0).value.expectStringValue(), equalTo("foo"));
         assertThat(tokens.get(0).line, equalTo(1));
         assertThat(tokens.get(0).column, equalTo(1));
 
@@ -75,7 +75,7 @@ public class LexerTest {
         assertThat(tokens.get(1).column, equalTo(4));
 
         assertThat(tokens.get(2).type, equalTo(TokenType.IDENTIFIER));
-        assertThat(tokens.get(2).value.asStringValue(), equalTo("bar"));
+        assertThat(tokens.get(2).value.expectStringValue(), equalTo("bar"));
         assertThat(tokens.get(2).line, equalTo(1));
         assertThat(tokens.get(2).column, equalTo(5));
 
@@ -90,7 +90,7 @@ public class LexerTest {
 
         assertThat(tokens, hasSize(2));
         assertThat(tokens.get(0).type, equalTo(TokenType.LITERAL));
-        assertThat(tokens.get(0).value.asArrayValue(), equalTo(Arrays.asList(1.0, true, false, null, -2.0, "hi")));
+        assertThat(tokens.get(0).value.expectArrayValue(), equalTo(Arrays.asList(1.0, true, false, null, -2.0, "hi")));
         assertThat(tokens.get(0).line, equalTo(1));
         assertThat(tokens.get(0).column, equalTo(1));
 
@@ -110,7 +110,7 @@ public class LexerTest {
 
         assertThat(tokens, hasSize(2));
         assertThat(tokens.get(0).type, equalTo(TokenType.LITERAL));
-        assertThat(tokens.get(0).value.asArrayValue(), empty());
+        assertThat(tokens.get(0).value.expectArrayValue(), empty());
         assertThat(tokens.get(0).line, equalTo(1));
         assertThat(tokens.get(0).column, equalTo(1));
 
@@ -149,7 +149,7 @@ public class LexerTest {
 
         assertThat(tokens, hasSize(2));
         assertThat(tokens.get(0).type, equalTo(TokenType.LITERAL));
-        Map<String, Object> obj = tokens.get(0).value.asObjectValue();
+        Map<String, Object> obj = tokens.get(0).value.expectObjectValue();
         assertThat(obj.entrySet(), hasSize(2));
         assertThat(obj.keySet(), contains("foo", "bar"));
         assertThat(obj.get("foo"), equalTo(true));
@@ -168,7 +168,7 @@ public class LexerTest {
 
         assertThat(tokens, hasSize(2));
         assertThat(tokens.get(0).type, equalTo(TokenType.LITERAL));
-        assertThat(tokens.get(0).value.asObjectValue().entrySet(), empty());
+        assertThat(tokens.get(0).value.expectObjectValue().entrySet(), empty());
         assertThat(tokens.get(0).line, equalTo(1));
         assertThat(tokens.get(0).column, equalTo(1));
 
@@ -227,7 +227,7 @@ public class LexerTest {
 
         assertThat(tokens, hasSize(2));
         assertThat(tokens.get(0).type, equalTo(TokenType.LITERAL));
-        assertThat(tokens.get(0).value.asStringValue(), equalTo("`"));
+        assertThat(tokens.get(0).value.expectStringValue(), equalTo("`"));
         assertThat(tokens.get(0).line, equalTo(1));
         assertThat(tokens.get(0).column, equalTo(1));
 
@@ -249,12 +249,12 @@ public class LexerTest {
 
         assertThat(tokens, hasSize(3));
         assertThat(tokens.get(0).type, equalTo(TokenType.IDENTIFIER));
-        assertThat(tokens.get(0).value.asStringValue(), equalTo("foo"));
+        assertThat(tokens.get(0).value.expectStringValue(), equalTo("foo"));
         assertThat(tokens.get(0).line, equalTo(1));
         assertThat(tokens.get(0).column, equalTo(1));
 
         assertThat(tokens.get(1).type, equalTo(TokenType.IDENTIFIER));
-        assertThat(tokens.get(1).value.asStringValue(), equalTo(""));
+        assertThat(tokens.get(1).value.expectStringValue(), equalTo(""));
         assertThat(tokens.get(1).line, equalTo(1));
         assertThat(tokens.get(1).column, equalTo(7));
 
@@ -274,7 +274,7 @@ public class LexerTest {
 
         assertThat(tokens, hasSize(2));
         assertThat(tokens.get(0).type, equalTo(TokenType.IDENTIFIER));
-        assertThat(tokens.get(0).value.asStringValue(), equalTo("\" \n \t \r \f \b / \\ "));
+        assertThat(tokens.get(0).value.expectStringValue(), equalTo("\" \n \t \r \f \b / \\ "));
         assertThat(tokens.get(0).line, equalTo(1));
         assertThat(tokens.get(0).column, equalTo(1));
 
@@ -289,7 +289,7 @@ public class LexerTest {
 
         assertThat(tokens, hasSize(2));
         assertThat(tokens.get(0).type, equalTo(TokenType.IDENTIFIER));
-        assertThat(tokens.get(0).value.asStringValue(), equalTo("\n\n"));
+        assertThat(tokens.get(0).value.expectStringValue(), equalTo("\n\n"));
         assertThat(tokens.get(0).line, equalTo(1));
         assertThat(tokens.get(0).column, equalTo(1));
 
@@ -479,17 +479,17 @@ public class LexerTest {
 
         assertThat(tokens, hasSize(4));
         assertThat(tokens.get(0).type, equalTo(TokenType.NUMBER));
-        assertThat(tokens.get(0).value.asNumberValue().doubleValue(), equalTo(123.0));
+        assertThat(tokens.get(0).value.expectNumberValue().doubleValue(), equalTo(123.0));
         assertThat(tokens.get(0).line, equalTo(1));
         assertThat(tokens.get(0).column, equalTo(1));
 
         assertThat(tokens.get(1).type, equalTo(TokenType.NUMBER));
-        assertThat(tokens.get(1).value.asNumberValue().doubleValue(), equalTo(-1.0));
+        assertThat(tokens.get(1).value.expectNumberValue().doubleValue(), equalTo(-1.0));
         assertThat(tokens.get(1).line, equalTo(1));
         assertThat(tokens.get(1).column, equalTo(5));
 
         assertThat(tokens.get(2).type, equalTo(TokenType.NUMBER));
-        assertThat(tokens.get(2).value.asNumberValue().doubleValue(), equalTo(0.0));
+        assertThat(tokens.get(2).value.expectNumberValue().doubleValue(), equalTo(0.0));
         assertThat(tokens.get(2).line, equalTo(1));
         assertThat(tokens.get(2).column, equalTo(8));
 
@@ -519,12 +519,12 @@ public class LexerTest {
 
         assertThat(tokens, hasSize(3));
         assertThat(tokens.get(0).type, equalTo(TokenType.NUMBER));
-        assertThat(tokens.get(0).value.asNumberValue().doubleValue(), equalTo(0.0));
+        assertThat(tokens.get(0).value.expectNumberValue().doubleValue(), equalTo(0.0));
         assertThat(tokens.get(0).line, equalTo(1));
         assertThat(tokens.get(0).column, equalTo(1));
 
         assertThat(tokens.get(1).type, equalTo(TokenType.IDENTIFIER));
-        assertThat(tokens.get(1).value.asStringValue(), equalTo("a"));
+        assertThat(tokens.get(1).value.expectStringValue(), equalTo("a"));
         assertThat(tokens.get(1).line, equalTo(1));
         assertThat(tokens.get(1).column, equalTo(4));
 
@@ -539,12 +539,12 @@ public class LexerTest {
 
         assertThat(tokens, hasSize(3));
         assertThat(tokens.get(0).type, equalTo(TokenType.NUMBER));
-        assertThat(tokens.get(0).value.asNumberValue().doubleValue(), equalTo(123.009e12));
+        assertThat(tokens.get(0).value.expectNumberValue().doubleValue(), equalTo(123.009e12));
         assertThat(tokens.get(0).line, equalTo(1));
         assertThat(tokens.get(0).column, equalTo(1));
 
         assertThat(tokens.get(1).type, equalTo(TokenType.NUMBER));
-        assertThat(tokens.get(1).value.asNumberValue().doubleValue(), equalTo(-001.109e-12));
+        assertThat(tokens.get(1).value.expectNumberValue().doubleValue(), equalTo(-001.109e-12));
         assertThat(tokens.get(1).line, equalTo(1));
         assertThat(tokens.get(1).column, equalTo(13));
 
@@ -564,17 +564,17 @@ public class LexerTest {
 
         assertThat(tokens, hasSize(4));
         assertThat(tokens.get(0).type, equalTo(TokenType.LITERAL));
-        assertThat(tokens.get(0).value.asStringValue(), equalTo("foo"));
+        assertThat(tokens.get(0).value.expectStringValue(), equalTo("foo"));
         assertThat(tokens.get(0).line, equalTo(1));
         assertThat(tokens.get(0).column, equalTo(1));
 
         assertThat(tokens.get(1).type, equalTo(TokenType.LITERAL));
-        assertThat(tokens.get(1).value.asStringValue(), equalTo("foo's"));
+        assertThat(tokens.get(1).value.expectStringValue(), equalTo("foo's"));
         assertThat(tokens.get(1).line, equalTo(1));
         assertThat(tokens.get(1).column, equalTo(7));
 
         assertThat(tokens.get(2).type, equalTo(TokenType.LITERAL));
-        assertThat(tokens.get(2).value.asStringValue(), equalTo("foo\\a"));
+        assertThat(tokens.get(2).value.expectStringValue(), equalTo("foo\\a"));
         assertThat(tokens.get(2).line, equalTo(1));
         assertThat(tokens.get(2).column, equalTo(16));
 
@@ -589,7 +589,7 @@ public class LexerTest {
 
         assertThat(tokens, hasSize(2));
         assertThat(tokens.get(0).type, equalTo(TokenType.LITERAL));
-        assertThat(tokens.get(0).value.asStringValue(), equalTo(""));
+        assertThat(tokens.get(0).value.expectStringValue(), equalTo(""));
         assertThat(tokens.get(0).line, equalTo(1));
         assertThat(tokens.get(0).column, equalTo(1));
 

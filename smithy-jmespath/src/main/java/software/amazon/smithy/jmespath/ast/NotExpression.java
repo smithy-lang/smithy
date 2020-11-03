@@ -26,8 +26,8 @@ public final class NotExpression extends JmespathExpression {
 
     private final JmespathExpression expression;
 
-    public NotExpression(JmespathExpression wrapped) {
-        this(wrapped, 1, 1);
+    public NotExpression(JmespathExpression expression) {
+        this(expression, 1, 1);
     }
 
     public NotExpression(JmespathExpression expression, int line, int column) {

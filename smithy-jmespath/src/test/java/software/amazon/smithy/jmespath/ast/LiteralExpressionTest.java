@@ -39,14 +39,14 @@ public class LiteralExpressionTest {
     public void throwsWhenNotString() {
         LiteralExpression node = new LiteralExpression(10);
 
-        Assertions.assertThrows(JmespathException.class, node::asStringValue);
+        Assertions.assertThrows(JmespathException.class, node::expectStringValue);
     }
 
     @Test
     public void getsAsString() {
         LiteralExpression node = new LiteralExpression("foo");
 
-        node.asStringValue();
+        node.expectStringValue();
         assertThat(node.isStringValue(), is(true));
         assertThat(node.isNullValue(), is(false)); // not null
         assertThat(node.getType(), equalTo(RuntimeType.STRING));
@@ -56,14 +56,14 @@ public class LiteralExpressionTest {
     public void throwsWhenNotArray() {
         LiteralExpression node = new LiteralExpression("hi");
 
-        Assertions.assertThrows(JmespathException.class, node::asArrayValue);
+        Assertions.assertThrows(JmespathException.class, node::expectArrayValue);
     }
 
     @Test
     public void getsAsArray() {
         LiteralExpression node = new LiteralExpression(Collections.emptyList());
 
-        node.asArrayValue();
+        node.expectArrayValue();
         assertThat(node.isArrayValue(), is(true));
         assertThat(node.getType(), equalTo(RuntimeType.ARRAY));
     }
@@ -82,14 +82,14 @@ public class LiteralExpressionTest {
     public void throwsWhenNotNumber() {
         LiteralExpression node = new LiteralExpression("hi");
 
-        Assertions.assertThrows(JmespathException.class, node::asNumberValue);
+        Assertions.assertThrows(JmespathException.class, node::expectNumberValue);
     }
 
     @Test
     public void getsAsNumber() {
         LiteralExpression node = new LiteralExpression(10);
 
-        node.asNumberValue();
+        node.expectNumberValue();
         assertThat(node.isNumberValue(), is(true));
         assertThat(node.getType(), equalTo(RuntimeType.NUMBER));
     }
@@ -98,14 +98,14 @@ public class LiteralExpressionTest {
     public void throwsWhenNotBoolean() {
         LiteralExpression node = new LiteralExpression("hi");
 
-        Assertions.assertThrows(JmespathException.class, node::asBooleanValue);
+        Assertions.assertThrows(JmespathException.class, node::expectBooleanValue);
     }
 
     @Test
     public void getsAsBoolean() {
         LiteralExpression node = new LiteralExpression(true);
 
-        node.asBooleanValue();
+        node.expectBooleanValue();
         assertThat(node.isBooleanValue(), is(true));
         assertThat(node.getType(), equalTo(RuntimeType.BOOLEAN));
     }
@@ -114,7 +114,7 @@ public class LiteralExpressionTest {
     public void getsAsBoxedBoolean() {
         LiteralExpression node = new LiteralExpression(new Boolean(true));
 
-        node.asBooleanValue();
+        node.expectBooleanValue();
         assertThat(node.isBooleanValue(), is(true));
     }
 
@@ -122,21 +122,21 @@ public class LiteralExpressionTest {
     public void throwsWhenNotMap() {
         LiteralExpression node = new LiteralExpression("hi");
 
-        Assertions.assertThrows(JmespathException.class, node::asObjectValue);
+        Assertions.assertThrows(JmespathException.class, node::expectObjectValue);
     }
 
     @Test
     public void getsAsMap() {
         LiteralExpression node = new LiteralExpression(Collections.emptyMap());
 
-        node.asObjectValue();
+        node.expectObjectValue();
         assertThat(node.isObjectValue(), is(true));
         assertThat(node.getType(), equalTo(RuntimeType.OBJECT));
     }
 
     @Test
     public void expressionReferenceTypeIsExpref() {
-        assertThat(LiteralExpression.EXPREF.getType(), equalTo(RuntimeType.EXPRESSION_REFERENCE));
+        assertThat(LiteralExpression.EXPREF.getType(), equalTo(RuntimeType.EXPRESSION));
     }
 
     @Test

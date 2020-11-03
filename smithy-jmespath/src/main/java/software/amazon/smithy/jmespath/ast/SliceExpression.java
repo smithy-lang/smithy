@@ -23,6 +23,8 @@ import software.amazon.smithy.jmespath.JmespathExpression;
 /**
  * Represents a slice expression, containing an optional zero-based
  * start offset, zero-based stop offset, and step.
+ *
+ * @see <a href="https://jmespath.org/specification.html#slices">Slices</a>
  */
 public final class SliceExpression extends JmespathExpression {
 

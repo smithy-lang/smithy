@@ -21,6 +21,11 @@ import software.amazon.smithy.jmespath.JmespathExpression;
 /**
  * Iterates over each element in the array returned from the left expression,
  * passes it to the right expression, and returns the aggregated results.
+ *
+ * <p>This AST node is created when parsing expressions like {@code [*]},
+ * {@code []}, and {@code [1:1]}.
+ *
+ * @see <a href="https://jmespath.org/specification.html#wildcard-expressions">Wildcard Expressions</a>
  */
 public class ProjectionExpression extends BinaryExpression {
 

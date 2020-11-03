@@ -18,7 +18,7 @@ package software.amazon.smithy.jmespath.ast;
 /**
  * A comparator in a comparison expression.
  */
-public enum  ComparatorType {
+public enum ComparatorType {
 
     EQUAL("=="),
     NOT_EQUAL("!="),

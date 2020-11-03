@@ -35,10 +35,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import software.amazon.smithy.jmespath.ast.AndExpression;
+import software.amazon.smithy.jmespath.ast.ComparatorExpression;
 import software.amazon.smithy.jmespath.ast.ComparatorType;
-import software.amazon.smithy.jmespath.ast.ComparisonExpression;
 import software.amazon.smithy.jmespath.ast.CurrentExpression;
-import software.amazon.smithy.jmespath.ast.ExpressionReferenceExpression;
+import software.amazon.smithy.jmespath.ast.ExpressionTypeExpression;
 import software.amazon.smithy.jmespath.ast.FieldExpression;
 import software.amazon.smithy.jmespath.ast.FilterProjectionExpression;
 import software.amazon.smithy.jmespath.ast.FlattenExpression;
@@ -76,17 +76,17 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
         FUNCTIONS.put("length", new FunctionDefinition(
                 NUMBER, oneOf(RuntimeType.STRING, RuntimeType.ARRAY, RuntimeType.OBJECT)));
         // TODO: Support expression reference return type validation?
-        FUNCTIONS.put("map", new FunctionDefinition(ARRAY, isType(RuntimeType.EXPRESSION_REFERENCE), isArray));
+        FUNCTIONS.put("map", new FunctionDefinition(ARRAY, isType(RuntimeType.EXPRESSION), isArray));
         // TODO: support array<X|Y>
         FUNCTIONS.put("max", new FunctionDefinition(NUMBER, isArray));
-        FUNCTIONS.put("max_by", new FunctionDefinition(NUMBER, isArray, isType(RuntimeType.EXPRESSION_REFERENCE)));
+        FUNCTIONS.put("max_by", new FunctionDefinition(NUMBER, isArray, isType(RuntimeType.EXPRESSION)));
         FUNCTIONS.put("merge", new FunctionDefinition(OBJECT, Collections.emptyList(), isType(RuntimeType.OBJECT)));
         FUNCTIONS.put("min", new FunctionDefinition(NUMBER, isArray));
-        FUNCTIONS.put("min_by", new FunctionDefinition(NUMBER, isArray, isType(RuntimeType.EXPRESSION_REFERENCE)));
+        FUNCTIONS.put("min_by", new FunctionDefinition(NUMBER, isArray, isType(RuntimeType.EXPRESSION)));
         FUNCTIONS.put("not_null", new FunctionDefinition(ANY, Collections.singletonList(isAny), isAny));
         FUNCTIONS.put("reverse", new FunctionDefinition(ARRAY, oneOf(RuntimeType.ARRAY, RuntimeType.STRING)));
         FUNCTIONS.put("sort", new FunctionDefinition(ARRAY, isArray));
-        FUNCTIONS.put("sort_by", new FunctionDefinition(ARRAY, isArray, isType(RuntimeType.EXPRESSION_REFERENCE)));
+        FUNCTIONS.put("sort_by", new FunctionDefinition(ARRAY, isArray, isType(RuntimeType.EXPRESSION)));
         FUNCTIONS.put("starts_with", new FunctionDefinition(BOOLEAN, isString, isString));
         FUNCTIONS.put("sum", new FunctionDefinition(NUMBER, listOfType(RuntimeType.NUMBER)));
         FUNCTIONS.put("to_array", new FunctionDefinition(ARRAY, isAny));
@@ -106,92 +106,16 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
     }
 
     @Override
-    public LiteralExpression visitComparison(ComparisonExpression expression) {
+    public LiteralExpression visitComparator(ComparatorExpression expression) {
         LiteralExpression left = expression.getLeft().accept(this);
         LiteralExpression right = expression.getRight().accept(this);
+        LiteralExpression result = left.getType().compare(left, right, expression.getComparator());
 
-        // Different types always cause a comparison to not match.
-        if (left.getType() != right.getType()) {
-            return BOOLEAN;
+        if (result.getType() == RuntimeType.NULL) {
+            badComparator(expression, left.getType(), expression.getComparator());
         }
 
-        // I'm so sorry for the following code.
-        switch (left.getType()) {
-            case STRING:
-                switch (expression.getComparator()) {
-                    case EQUAL:
-                        return new LiteralExpression(left.asStringValue().equals(right.asStringValue()));
-                    case NOT_EQUAL:
-                        return new LiteralExpression(!left.asStringValue().equals(right.asStringValue()));
-                    default:
-                        badComparator(expression, left.getType(), expression.getComparator());
-                        return NULL;
-                }
-            case NUMBER:
-                double comparison = left.asNumberValue().doubleValue() - right.asNumberValue().doubleValue();
-                switch (expression.getComparator()) {
-                    case EQUAL:
-                        return new LiteralExpression(comparison == 0);
-                    case NOT_EQUAL:
-                        return new LiteralExpression(comparison != 0);
-                    case GREATER_THAN:
-                        return new LiteralExpression(comparison > 0);
-                    case GREATER_THAN_EQUAL:
-                        return new LiteralExpression(comparison >= 0);
-                    case LESS_THAN:
-                        return new LiteralExpression(comparison < 0);
-                    case LESS_THAN_EQUAL:
-                        return new LiteralExpression(comparison <= 0);
-                    default:
-                        throw new IllegalArgumentException("Unreachable comparator " + expression.getComparator());
-                }
-            case BOOLEAN:
-                switch (expression.getComparator()) {
-                    case EQUAL:
-                        return new LiteralExpression(left.asBooleanValue() == right.asBooleanValue());
-                    case NOT_EQUAL:
-                        return new LiteralExpression(left.asBooleanValue() != right.asBooleanValue());
-                    default:
-                        badComparator(expression, left.getType(), expression.getComparator());
-                        return NULL;
-                }
-            case NULL:
-                switch (expression.getComparator()) {
-                    case EQUAL:
-                        return new LiteralExpression(true);
-                    case NOT_EQUAL:
-                        return new LiteralExpression(false);
-                    default:
-                        badComparator(expression, left.getType(), expression.getComparator());
-                        return NULL;
-                }
-            case ARRAY:
-                switch (expression.getComparator()) {
-                    case EQUAL:
-                        return new LiteralExpression(left.asArrayValue().equals(right.asArrayValue()));
-                    case NOT_EQUAL:
-                        return new LiteralExpression(!left.asArrayValue().equals(right.asArrayValue()));
-                    default:
-                        badComparator(expression, left.getType(), expression.getComparator());
-                        return NULL;
-                }
-            case EXPRESSION_REFERENCE:
-                badComparator(expression, left.getType(), expression.getComparator());
-                return NULL;
-            case OBJECT:
-                switch (expression.getComparator()) {
-                    case EQUAL:
-                        return new LiteralExpression(left.asObjectValue().equals(right.asObjectValue()));
-                    case NOT_EQUAL:
-                        return new LiteralExpression(!left.asObjectValue().equals(right.asObjectValue()));
-                    default:
-                        badComparator(expression, left.getType(), expression.getComparator());
-                        return NULL;
-                }
-            default: // ANY
-                // Just assume any kind of ANY comparison is satisfied.
-                return new LiteralExpression(true);
-        }
+        return result;
     }
 
     @Override
@@ -200,7 +124,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
     }
 
     @Override
-    public LiteralExpression visitExpressionReference(ExpressionReferenceExpression expression) {
+    public LiteralExpression visitExpressionType(ExpressionTypeExpression expression) {
         // Expression references are late bound, so the type is only known
         // when the reference is used in a function.
         expression.getExpression().accept(new TypeChecker(knownFunctionType, problems));
@@ -220,10 +144,10 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
 
         // Perform the actual flattening.
         List<Object> flattened = new ArrayList<>();
-        for (Object value : result.asArrayValue()) {
+        for (Object value : result.expectArrayValue()) {
             LiteralExpression element = LiteralExpression.from(value);
             if (element.isArrayValue()) {
-                flattened.addAll(element.asArrayValue());
+                flattened.addAll(element.expectArrayValue());
             } else if (!element.isNullValue()) {
                 flattened.add(element);
             }
@@ -240,7 +164,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
             } else {
                 danger(expression, String.format(
                         "Object field '%s' does not exist in object with properties %s",
-                        expression.getName(), current.asObjectValue().keySet()));
+                        expression.getName(), current.expectObjectValue().keySet()));
                 return NULL;
             }
         }
@@ -325,7 +249,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
         LiteralExpression leftResult = expression.getLeft().accept(this);
 
         // If LHS is not an array, then just do basic checks on RHS using ANY + ARRAY.
-        if (!leftResult.isArrayValue() || leftResult.asArrayValue().isEmpty()) {
+        if (!leftResult.isArrayValue() || leftResult.expectArrayValue().isEmpty()) {
             if (leftResult.getType() != RuntimeType.ANY && !leftResult.isArrayValue()) {
                 danger(expression, "Array projection performed on " + leftResult.getType());
             }
@@ -335,7 +259,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
         } else {
             // LHS is an array, so do the projection.
             List<Object> result = new ArrayList<>();
-            for (Object value : leftResult.asArrayValue()) {
+            for (Object value : leftResult.expectArrayValue()) {
                 TypeChecker checker = new TypeChecker(LiteralExpression.from(value), problems);
                 result.add(expression.getRight().accept(checker).getValue());
             }
@@ -359,7 +283,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
 
         // LHS is an object, so do the projection.
         List<Object> result = new ArrayList<>();
-        for (Object value : leftResult.asObjectValue().values()) {
+        for (Object value : leftResult.expectObjectValue().values()) {
             TypeChecker checker = new TypeChecker(LiteralExpression.from(value), problems);
             result.add(expression.getRight().accept(checker).getValue());
         }
@@ -372,7 +296,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
         LiteralExpression leftResult = expression.getLeft().accept(this);
 
         // If LHS is not an array or is empty, then just do basic checks on RHS using ANY + ARRAY.
-        if (!leftResult.isArrayValue() || leftResult.asArrayValue().isEmpty()) {
+        if (!leftResult.isArrayValue() || leftResult.expectArrayValue().isEmpty()) {
             if (!leftResult.isArrayValue() && leftResult.getType() != RuntimeType.ANY) {
                 danger(expression, "Filter projection performed on " + leftResult.getType());
             }
@@ -385,7 +309,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
 
         // It's a non-empty array, perform the actual filter.
         List<Object> result = new ArrayList<>();
-        for (Object value : leftResult.asArrayValue()) {
+        for (Object value : leftResult.expectArrayValue()) {
             LiteralExpression literalValue = LiteralExpression.from(value);
             TypeChecker rightVisitor = new TypeChecker(literalValue, problems);
             LiteralExpression comparisonValue = expression.getComparison().accept(rightVisitor);
