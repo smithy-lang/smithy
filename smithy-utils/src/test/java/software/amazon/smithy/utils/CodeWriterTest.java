@@ -352,6 +352,20 @@ public class CodeWriterTest {
     }
 
     @Test
+    public void canPrependAndAppendToSection() {
+        CodeWriter w = CodeWriter.createDefault().putContext("testing", "123");
+        w.onSectionPrepend("foo", () -> w.write("A"));
+        w.onSection("foo", text -> {
+            w.write(text);
+            w.write("C");
+        });
+        w.onSectionAppend("foo", () -> w.write("D"));
+        w.pushState("foo").write("B").popState();
+
+        assertThat(w.toString(), equalTo("A\nB\nC\nD\n"));
+    }
+
+    @Test
     public void allowsForCustomFormatters() {
         // Setup the code writer and section interceptors.
         CodeWriter w = CodeWriter.createDefault();
