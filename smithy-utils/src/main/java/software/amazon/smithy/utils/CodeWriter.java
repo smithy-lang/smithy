@@ -701,6 +701,30 @@ public class CodeWriter {
      * a non-null, non-empty string, allowing for empty placeholders to be
      * added that don't affect the resulting layout of the code.
      *
+     * <pre>{@code
+     * CodeWriter writer = new CodeWriter();
+     *
+     * // Prepend text to a section named "foo".
+     * writer.onSectionPrepend("foo", () -> writer.write("A"));
+     *
+     * // Write text to a section, and ensure that the original
+     * // text is written too.
+     * writer.onSection("foo", text -> {
+     *     // Write the original text of the section.
+     *     writer.write(text);
+     *     // Write more text to the section.
+     *     writer.write("C");
+     * });
+     *
+     * // Append text to a section.
+     * writer.onSectionAppend("foo", () -> writer.write("D"));
+     *
+     * // Create the section, write to it, then close the section.
+     * writer.pushState("foo").write("B").popState();
+     *
+     * assert(writer.toString().equals("A\nB\nC\nD\n"));
+     * }</pre>
+     *
      * @param sectionName The name of the section to intercept.
      * @param interceptor The function to intercept with.
      * @return Returns the CodeWriter.
@@ -708,6 +732,48 @@ public class CodeWriter {
     public CodeWriter onSection(String sectionName, Consumer<Object> interceptor) {
         currentState.putInterceptor(sectionName, interceptor);
         return this;
+    }
+
+    /**
+     * Prepends to the contents of a named section.
+     *
+     * <pre>{@code
+     * writer.onSectionPrepend("foo", () -> {
+     *     writer.write("This text is added before the rest of the section.");
+     * });
+     * }</pre>
+     *
+     * @param sectionName The name of the section to intercept.
+     * @param writeBefore A runnable that prepends to a section by mutating the writer.
+     * @return Returns the CodeWriter.
+     * @see #onSection
+     */
+    public final CodeWriter onSectionPrepend(String sectionName, Runnable writeBefore) {
+        return onSection(sectionName, contents -> {
+            writeBefore.run();
+            write(contents);
+        });
+    }
+
+    /**
+     * Appends to the contents of a named section.
+     *
+     * <pre>{@code
+     * writer.onSectionAppend("foo", () -> {
+     *     writer.write("This text is added after the rest of the section.");
+     * });
+     * }</pre>
+     *
+     * @param sectionName The name of the section to intercept.
+     * @param writeAfter A runnable that appends to a section by mutating the writer.
+     * @return Returns the CodeWriter.
+     * @see #onSection
+     */
+    public final CodeWriter onSectionAppend(String sectionName, Runnable writeAfter) {
+        return onSection(sectionName, contents -> {
+            write(contents);
+            writeAfter.run();
+        });
     }
 
     /**
@@ -1094,6 +1160,36 @@ public class CodeWriter {
     }
 
     /**
+     * Creates a formatted string using formatter expressions and variadic
+     * arguments.
+     *
+     * <p>Important: if the formatters that are executed while formatting the
+     * given {@code content} string mutate the CodeWriter, it could leave the
+     * CodeWriter in an inconsistent state. For example, some CodeWriter
+     * implementations manage imports and dependencies automatically based on
+     * code that is referenced by formatters. If such an expression is used
+     * with this format method but the returned String is never written to the
+     * CodeWriter, then the CodeWriter might be mutated to track dependencies
+     * that aren't actually necessary.
+     *
+     * <pre>{@code
+     * CodeWriter writer = new CodeWriter();
+     * String name = "Person";
+     * String formatted = writer.format("Hello, $L", name);
+     * assert(formatted.equals("Hello, Person"));
+     * }</pre>
+     *
+     * @param content Content to format.
+     * @param args String arguments to use for formatting.
+     * @return Returns the formatted string.
+     * @see #write
+     * @see #putFormatter
+     */
+    public final String format(Object content, Object... args) {
+        return formatter.format(currentState.expressionStart, content, currentState.indentText, this, args);
+    }
+
+    /**
      * Writes text to the CodeWriter and appends a newline.
      *
      * <p>The provided text is automatically formatted using variadic
@@ -1107,7 +1203,7 @@ public class CodeWriter {
      * @return Returns the CodeWriter.
      */
     public final CodeWriter write(Object content, Object... args) {
-        String value = formatter.format(currentState.expressionStart, content, currentState.indentText, this, args);
+        String value = format(content, args);
         currentState.writeLine(value);
         return this;
     }
@@ -1128,7 +1224,7 @@ public class CodeWriter {
      * @return Returns the CodeWriter.
      */
     public final CodeWriter writeInline(Object content, Object... args) {
-        String value = formatter.format(currentState.expressionStart, content, currentState.indentText, this, args);
+        String value = format(content, args);
         currentState.write(value);
         return this;
     }
