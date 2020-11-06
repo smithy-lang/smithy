@@ -324,17 +324,19 @@ members MUST be set:
     * - Property
       - Type
       - Description
-    * - input
-      - :ref:`PathMatcher structure <waiter-PathMatcher>`
-      - Matches on the input of an operation using a JMESPath_ expression.
-        The ``input`` matcher MUST NOT be used on operations with no input.
-        This matcher is checked regardless of if an operation succeeds or
-        fails with an error.
     * - output
       - :ref:`PathMatcher structure <waiter-PathMatcher>`
       - Matches on the successful output of an operation using a
-        JMESPath_ expression. The ``output`` matcher MUST NOT be used on
-        operations with no output. This matcher is checked only if an
+        JMESPath_ expression. This matcher MUST NOT be used on operations
+        with no output. This matcher is checked only if an operation
+        completes successfully.
+    * - inputOutput
+      - :ref:`PathMatcher structure <waiter-PathMatcher>`
+      - Matches on both the input and output of an operation using a JMESPath_
+        expression. Input parameters are available through the top-level
+        ``input`` field, and output data is available through the top-level
+        ``output`` field. This matcher can only be used on operations that
+        define both input and output. This matcher is checked only if an
         operation completes successfully.
     * - success
       - ``boolean``
@@ -354,17 +356,6 @@ members MUST be set:
         with an operation through its ``errors`` property, though some
         operations might need to refer to framework errors or lower-level
         errors that are not defined in the model.
-    * - and
-      - ``[`` :ref:`Matcher <waiter-matcher>` ``]``
-      - Matches if all matchers in the list match. The list MUST contain at
-        least one matcher.
-    * - or
-      - ``[`` :ref:`Matcher <waiter-matcher>` ``]``
-      - Matches if any matchers in the list match. The list MUST contain at
-        least one matcher.
-    * - not
-      - :ref:`Matcher <waiter-matcher>`
-      - Matches if the given matcher is not a match.
 
 
 .. _waiter-PathMatcher:
@@ -372,7 +363,7 @@ members MUST be set:
 PathMatcher structure
 =====================
 
-The ``input`` and ``output`` matchers test the result of a JMESPath_
+The ``output`` and ``inputOutput`` matchers test the result of a JMESPath_
 expression against an expected value. These matchers are structures that
 support the following members:
 
@@ -509,10 +500,6 @@ comparator can be set to any of the following values:
       - Matches if the return value of a JMESPath expression is an array and
         any value in the array is a string that equals an expected string.
       - ``array`` of ``string``
-    * - arrayEmpty
-      - Matches if the return value of a JMESPath expression is an empty
-        ``array``.
-      - ``array``
 
 
 Waiter examples
@@ -577,9 +564,9 @@ triggered if the ``status`` property equals ``failed``.
         status: String
     }
 
-The ``and`` and ``not`` matchers can be composed together. The following
-example waiter transitions into a failure state if the waiter encounters
-any error other than ``NotFoundError``:
+Both input and output data can be queried using the ``inputOutput`` matcher.
+The following example waiter completes successfully when the number of
+provided groups on input matches the number of provided groups on output:
 
 .. code-block:: smithy
 
@@ -588,34 +575,21 @@ any error other than ``NotFoundError``:
     use smithy.waiters#waitable
 
     @waitable(
-        FooExists: {
+        GroupExists: {
             acceptors: [
                 {
-                    state: "failure",
-                    matcher: {
-                        and: [
-                            {
-                                success: false
-                            },
-                            {
-                                not: {
-                                    errorType: "NotFoundError"
-                                }
-                            }
-                        ]
-                    }
-                },
-                {
-                    "state": "success",
-                    matcher: {
-                        success: true
+                    inputOutput: {
+                        path: "length(input.groups) == length(output.groups)",
+                        expected: "true",
+                        comparator: "booleanEquals"
                     }
                 }
             ]
         }
     )
-    operation GetFoo {
-        errors: [NotFoundError]
+    operation ListGroups {
+        input: ListGroupsInput,
+        output: ListGroupsOutput,
     }
 
 
