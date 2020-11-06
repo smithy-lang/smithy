@@ -21,7 +21,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import software.amazon.smithy.utils.Pair;
 
 /**
  * Represents a URI pattern.
@@ -154,43 +153,6 @@ public final class UriPattern extends SmithyPattern {
         // At this point, the path portions are equivalent. If the query
         // string literals are the same, then the patterns conflict.
         return queryLiterals.equals(otherPattern.queryLiterals);
-    }
-
-    /**
-     * Gets a list of explicitly conflicting uri label segments between this
-     * pattern and another.
-     *
-     * @param otherPattern SmithyPattern to check against.
-     * @return A list of Segment Pairs where each pair represents a conflict
-     *     and where the left side of the Pair is a segment from this pattern.
-     */
-    public List<Pair<Segment, Segment>> getConflictingLabelSegments(UriPattern otherPattern) {
-        List<Pair<Segment, Segment>> conflictingSegments = new ArrayList<>();
-
-        List<Segment> segments = getSegments();
-        List<Segment> otherSegments = otherPattern.getSegments();
-        int minSize = Math.min(segments.size(), otherSegments.size());
-        for (int i = 0; i < minSize; i++) {
-            Segment thisSegment = segments.get(i);
-            Segment otherSegment = otherSegments.get(i);
-            if (thisSegment.isLabel() != otherSegment.isLabel()) {
-                // The segments conflict if one is a literal and the other
-                // is a label.
-                conflictingSegments.add(Pair.of(thisSegment, otherSegment));
-            } else if  (thisSegment.isGreedyLabel() != otherSegment.isGreedyLabel()) {
-                // The segments conflict if a greedy label is introduced at
-                // or before segments in the other pattern.
-                conflictingSegments.add(Pair.of(thisSegment, otherSegment));
-            } else if (!thisSegment.isLabel()) {
-                // Both are literals. They can only conflict if they are the
-                // same exact string.
-                if (!thisSegment.getContent().equals(otherSegment.getContent())) {
-                    return conflictingSegments;
-                }
-            }
-        }
-
-        return conflictingSegments;
     }
 
     @Override
