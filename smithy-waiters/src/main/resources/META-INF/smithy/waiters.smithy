@@ -29,9 +29,8 @@ structure Waiter {
     minDelay: WaiterDelay,
 
     /// The maximum amount of time in seconds to delay between each retry.
-    /// This value defaults to 256 if not specified (or, 4 minutes and 16
-    /// seconds). If specified, this value MUST be greater than or equal
-    /// to 1.
+    /// This value defaults to 120 if not specified (or, 2 minutes). If
+    /// specified, this value MUST be greater than or equal to 1.
     maxDelay: WaiterDelay,
 }
 
@@ -126,7 +125,7 @@ structure PathMatcher {
     comparator: PathComparator,
 }
 
-/// Defines a comparison to perform in a ListPathMatcher.
+/// Defines a comparison to perform in a PathMatcher.
 @enum([
     {
         "name": "STRING_EQUALS",

@@ -152,11 +152,10 @@ final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
         });
     }
 
-    // Visits members and mutates a copy of the current set of
-    // visited shapes rather than a shared set. This a shape to
-    // be used multiple times in the closure of a single shape
-    // without causing the reuse of the shape to always be
-    // assume to be a recursive type.
+    // Visits members and mutates a copy of the current set of visited
+    // shapes rather than a shared set. This allows a shape to be used
+    // multiple times in the closure of a single shape without causing the
+    // reuse of the shape to always be assumed to be a recursive type.
     private Object withCopiedVisitors(Supplier<Object> supplier) {
         // Account for recursive shapes at the current
         Set<MemberShape> visitedCopy = new HashSet<>(visited);
@@ -253,7 +252,7 @@ final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
     }
 
     private double computeRange(Shape shape) {
-        // Create a random string that does not exceed or go under the length trait.
+        // Create a random string that does not exceed or go under the range trait.
         double i = 8;
 
         if (shape.hasTrait(RangeTrait.class)) {

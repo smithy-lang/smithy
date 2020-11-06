@@ -20,7 +20,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ToNode;
 
 /**
- * Defines a comparison to perform in a ListPathMatcher.
+ * Defines a comparison to perform in a PathMatcher.
  */
 public enum PathComparator implements ToNode {
 
@@ -43,9 +43,9 @@ public enum PathComparator implements ToNode {
     }
 
     /**
-     * Creates a {@code ListPathComparator} from a {@link Node}.
-     * @param node Node to create the {@code ListPathComparator} from.
-     * @return Returns the created {@code ListPathComparator}.
+     * Creates a {@code PathComparator} from a {@link Node}.
+     * @param node Node to create the {@code PathComparator} from.
+     * @return Returns the created {@code PathComparator}.
      * @throws ExpectationNotMetException if the given {@code node} is invalid.
      */
     public static PathComparator fromNode(Node node) {

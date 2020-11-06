@@ -32,7 +32,7 @@ public enum AcceptorState implements ToNode {
     /** Transition to a final failure state. */
     FAILURE,
 
-    /** Transition to a final retry state. */
+    /** Transition to an intermediate retry state. */
     RETRY;
 
     @Override
