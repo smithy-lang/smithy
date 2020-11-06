@@ -9,24 +9,25 @@ use smithy.waiters#waitable
             {
                 "state": "success",
                 "matcher": {
-                    "input": {
-                        "path": "missingA == 'hi'",
-                        "comparator": "booleanEquals",
-                        "expected": "true"
+                    "inputOutput": {
+                        "path": "input.foop == output.bazz",
+                        "expected": "true",
+                        "comparator": "booleanEquals"
                     }
                 }
             }
         ]
     },
     B: {
+        "documentation": "A",
         "acceptors": [
             {
                 "state": "success",
                 "matcher": {
-                    "output": {
-                        "path": "missingB == 'hey'",
-                        "comparator": "booleanEquals",
-                        "expected": "true"
+                    "inputOutput": {
+                        "path": "foo == baz", // needs top-level input or output
+                        "expected": "true",
+                        "comparator": "booleanEquals"
                     }
                 }
             }

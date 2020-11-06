@@ -30,9 +30,6 @@ public enum PathComparator implements ToNode {
     /** Matches if any value in the list matches the expected string. */
     ANY_STRING_EQUALS("anyStringEquals"),
 
-    /** Matches if the list is null or empty. */
-    ARRAY_EMPTY("arrayEmpty"),
-
     /** Matches if the return value is a string that is equal to the expected string. */
     STRING_EQUALS("stringEquals"),
 

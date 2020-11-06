@@ -4,21 +4,6 @@ use smithy.waiters#waitable
 
 @waitable(
     A: {
-        "documentation": "A",
-        "acceptors": [
-            {
-                "state": "success",
-                "matcher": {
-                    "input": {
-                        "path": "foo == 'hi'",
-                        "comparator": "booleanEquals",
-                        "expected": "true"
-                    }
-                }
-            }
-        ]
-    },
-    B: {
         "acceptors": [
             {
                 "state": "success",

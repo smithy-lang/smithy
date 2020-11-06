@@ -86,12 +86,17 @@ string AcceptorState
 
 @private
 union Matcher {
-    /// Matches on the input of an operation using a JMESPath expression.
-    input: PathMatcher,
-
     /// Matches on the successful output of an operation using a
     /// JMESPath expression.
     output: PathMatcher,
+
+    /// Matches on both the input and output of an operation using a JMESPath
+    /// expression. Input parameters are available through the top-level
+    /// `input` field, and output data is available through the top-level
+    /// `output` field. This matcher can only be used on operations that
+    /// define both input and output. This matcher is checked only if an
+    /// operation completes successfully.
+    inputOutput: PathMatcher,
 
     /// Matches if an operation returns an error and the error matches
     /// the expected error type. If an absolute shape ID is provided, the
@@ -103,15 +108,6 @@ union Matcher {
     /// response. When set to `false`, matches when an operation fails with
     /// any error.
     success: Boolean,
-
-    /// Matches if all matchers in the list match.
-    and: MatcherList,
-
-    /// Matches if any matchers in the list match.
-    or: MatcherList,
-
-    /// Matches if the given matcher is not a match.
-    not: Matcher,
 }
 
 @private
@@ -151,18 +147,7 @@ structure PathMatcher {
         "name": "ANY_STRING_EQUALS",
         "value": "anyStringEquals",
         "documentation": "Matches if any value in the list matches the expected string."
-    },
-    {
-        "name": "ARRAY_EMPTY",
-        "value": "arrayEmpty",
-        "documentation": "Matches if the return value is an array that is null or empty."
-    },
+    }
 ])
 @private
 string PathComparator
-
-@private
-@length(min: 1)
-list MatcherList {
-    member: Matcher,
-}
