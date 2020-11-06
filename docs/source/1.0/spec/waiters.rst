@@ -31,17 +31,14 @@ following client pseudocode:
 ``smithy.waiters#waitable`` trait
 =================================
 
-Waiters are defined on :ref:`operations <operation>` using the
-``smithy.waiters#waitable`` trait.
-
-Trait summary
+Summary
     Indicates that an operation has various named "waiters" that can be used
     to poll a resource until it enters a desired state.
 Trait selector
     ``operation :not(-[input, output]-> structure > member > union[trait|streaming])``
 
     (Operations that do not use :ref:`event streams <event-streams>` in their input or output)
-Trait value
+Value type
     A ``map`` of :ref:`waiter names <waiter-names>` to
     :ref:`Waiter structures <waiter-structure>`.
 
@@ -52,6 +49,8 @@ exists:
     :emphasize-lines: 3
 
     namespace com.amazonaws.s3
+
+    use smithy.waiters#waitable
 
     @waitable(
         BucketExists: {
@@ -139,7 +138,7 @@ waiter implementations perform the following steps:
    3. Stop waiting if the acceptor transitions the waiter to the ``success``
       or ``failure`` state.
 
-4. If none of the acceptors are matched and an error was encountered while
+4. If none of the acceptors are matched *and* an error was encountered while
    calling the operation, then transition to the ``failure`` state and stop
    waiting.
 5. Transition the waiter to the ``retry`` state, follow the process
@@ -155,7 +154,7 @@ Waiter implementations MUST delay for a period of time before attempting a
 retry. The amount of time a waiter delays between retries is computed using
 `exponential backoff`_ through the following algorithm:
 
-* Let ``attempt`` be the number retry attempts.
+* Let ``attempt`` be the number of retry attempts.
 * Let ``minDelay`` be the minimum amount of time to delay between retries in
   seconds, specified by the ``minDelay`` property of a
   :ref:`waiter <waiter-structure>` with a default of 2.
@@ -182,8 +181,8 @@ or equal to ``minDelay``, then set ``delay`` to ``remainingTime`` minus
 needlessly only to exceed ``maxWaitTime`` before issuing a final request.
 
 Using the default ``minDelay`` of 2, ``maxDelay`` of 120, a ``maxWaitTime``
-of 300 (or 5 minutes), and assuming that requests complete in 0 seconds
-(for example purposes only), delays are computed as followed:
+of 300 (5 minutes), and assuming that requests complete in 0 seconds
+(for example purposes only), delays are computed as follows:
 
 .. list-table::
     :header-rows: 1
@@ -335,8 +334,8 @@ members MUST be set:
       - Matches on both the input and output of an operation using a JMESPath_
         expression. Input parameters are available through the top-level
         ``input`` field, and output data is available through the top-level
-        ``output`` field. This matcher can only be used on operations that
-        define both input and output. This matcher is checked only if an
+        ``output`` field. This matcher MUST NOT be used on operations that
+        do not define input or output. This matcher is checked only if an
         operation completes successfully.
     * - success
       - ``boolean``
@@ -488,9 +487,10 @@ comparator can be set to any of the following values:
         that is equal to an expected string.
       - ``string``
     * - booleanEquals
-      - Matches if the return value of a JMESPath expression is a boolean.
-        The ``expected`` value of a ``PathMatcher`` MUST be set to "true"
-        or "false" to match the corresponding boolean value.
+      - Matches if the return value of a JMESPath expression is a boolean
+        that is equal to an expected boolean. The ``expected`` value of a
+        ``PathMatcher`` MUST be set to "true" or "false" to match the
+        corresponding boolean value.
       - ``boolean``
     * - allStringEquals
       - Matches if the return value of a JMESPath expression is an array and
@@ -650,7 +650,7 @@ Implicit acceptors are unnecessary and can quickly become incomplete as new
 resource states and errors are added. Waiters have 2 implicit
 :ref:`acceptors <waiter-acceptor>`:
 
-* (Step 4) - If none of the acceptors are matched and an error was
+* (Step 4) - If none of the acceptors are matched *and* an error was
   encountered while calling the operation, then transition to the
   ``failure`` state and stop waiting.
 * (Step 5) - Transition the waiter to the ``retry`` state, follow the

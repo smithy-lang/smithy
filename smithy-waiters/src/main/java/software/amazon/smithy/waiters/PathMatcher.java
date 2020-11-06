@@ -80,8 +80,8 @@ public final class PathMatcher implements ToNode {
     /**
      * Creates a new instance from a {@link Node}.
      *
-     * @param node Node tom create the ListPathMatcher from.
-     * @return Returns the created ListPathMatcher.
+     * @param node Node tom create the PathMatcher from.
+     * @return Returns the created PathMatcher.
      * @throws ExpectationNotMetException if the given Node is invalid.
      */
     public static PathMatcher fromNode(Node node) {
