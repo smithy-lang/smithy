@@ -1,0 +1,4 @@
+[DANGER] smithy.example#A: Waiter `A`, acceptor 0: Problem found in JMESPath expression (input.foop == output.bazz): Object field 'bazz' does not exist in object with properties [baz] (1:22) | WaitableTraitJmespathProblem
+[DANGER] smithy.example#A: Waiter `A`, acceptor 0: Problem found in JMESPath expression (input.foop == output.bazz): Object field 'foop' does not exist in object with properties [foo] (1:7) | WaitableTraitJmespathProblem
+[DANGER] smithy.example#A: Waiter `B`, acceptor 0: Problem found in JMESPath expression (foo == baz): Object field 'baz' does not exist in object with properties [input, output] (1:8) | WaitableTraitJmespathProblem
+[DANGER] smithy.example#A: Waiter `B`, acceptor 0: Problem found in JMESPath expression (foo == baz): Object field 'foo' does not exist in object with properties [input, output] (1:1) | WaitableTraitJmespathProblem

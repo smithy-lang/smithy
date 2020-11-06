@@ -3,16 +3,16 @@ namespace smithy.example
 use smithy.waiters#waitable
 
 @waitable(
-    thingNotExists: {
-        "documentation": "Something",
+    A: {
+        "documentation": "A",
         "acceptors": [
             {
                 "state": "success",
                 "matcher": {
-                    "output": {
-                        "path": "baz == 'hi'",
-                        "comparator": "booleanEquals",
-                        "expected": "true"
+                    "inputOutput": {
+                        "path": "output.foo == 'hi'",
+                        "expected": "true",
+                        "comparator": "booleanEquals"
                     }
                 }
             }
@@ -20,9 +20,9 @@ use smithy.waiters#waitable
     }
 )
 operation A {
-    output: AOutput,
+    output: AOutput
 }
 
 structure AOutput {
-    baz: String,
+    foo: String,
 }

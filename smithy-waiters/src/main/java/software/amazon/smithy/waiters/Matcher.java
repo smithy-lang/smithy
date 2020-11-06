@@ -15,12 +15,8 @@
 
 package software.amazon.smithy.waiters;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
-import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -43,17 +39,11 @@ public abstract class Matcher<T> implements ToNode {
     public interface Visitor<T> {
         T visitOutput(OutputMember outputPath);
 
-        T visitInput(InputMember inputPath);
+        T visitInputOutput(InputOutputMember inputOutputPath);
 
         T visitSuccess(SuccessMember success);
 
         T visitErrorType(ErrorTypeMember errorType);
-
-        T visitAnd(AndMember and);
-
-        T visitOr(OrMember or);
-
-        T visitNot(NotMember not);
 
         T visitUnknown(UnknownMember unknown);
     }
@@ -116,20 +106,14 @@ public abstract class Matcher<T> implements ToNode {
         Node entryValue = entry.getValue();
 
         switch (entryKey) {
-            case "input":
-                return new InputMember(PathMatcher.fromNode(entryValue));
             case "output":
                 return new OutputMember(PathMatcher.fromNode(entryValue));
+            case "inputOutput":
+                return new InputOutputMember(PathMatcher.fromNode(entryValue));
             case "success":
                 return new SuccessMember(entryValue.expectBooleanNode().getValue());
             case "errorType":
                 return new ErrorTypeMember(entryValue.expectStringNode().getValue());
-            case "and":
-                return MatcherList.fromNode(entryValue, AndMember::new);
-            case "or":
-                return MatcherList.fromNode(entryValue, OrMember::new);
-            case "not":
-                return new NotMember(fromNode(entryValue));
             default:
                 return new UnknownMember(entryKey, entryValue);
         }
@@ -171,14 +155,14 @@ public abstract class Matcher<T> implements ToNode {
         }
     }
 
-    public static final class InputMember extends PathMatcherMember {
-        public InputMember(PathMatcher value) {
-            super("input", value);
+    public static final class InputOutputMember extends PathMatcherMember {
+        public InputOutputMember(PathMatcher value) {
+            super("inputOutput", value);
         }
 
         @Override
         public <U> U accept(Visitor<U> visitor) {
-            return visitor.visitInput(this);
+            return visitor.visitInputOutput(this);
         }
     }
 
@@ -276,99 +260,6 @@ public abstract class Matcher<T> implements ToNode {
         @Override
         public <U> U accept(Visitor<U> visitor) {
             return visitor.visitUnknown(this);
-        }
-    }
-
-    private abstract static class MatcherList extends Matcher<List<Matcher<?>>> {
-        private final List<Matcher<?>> values;
-        private final String memberName;
-
-        private MatcherList(String memberName, List<Matcher<?>> values) {
-            this.memberName = memberName;
-            this.values = values;
-        }
-
-        private static <T> T fromNode(Node node, Function<List<Matcher<?>>, T> constructor) {
-            ArrayNode values = node.expectArrayNode();
-            List<Matcher<?>> result = new ArrayList<>();
-            for (ObjectNode element : values.getElementsAs(ObjectNode.class)) {
-                result.add(Matcher.fromNode(element));
-            }
-            return constructor.apply(result);
-        }
-
-        @Override
-        public String getMemberName() {
-            return memberName;
-        }
-
-        public List<Matcher<?>> getValue() {
-            return values;
-        }
-
-        @Override
-        public final Node toNode() {
-            return Node.objectNode()
-                    .withMember(getMemberName(), values.stream().map(Matcher::toNode).collect(ArrayNode.collect()));
-        }
-    }
-
-    /**
-     * Matches if all matchers in the list are matches.
-     */
-    public static final class AndMember extends MatcherList {
-        public AndMember(List<Matcher<?>> matchers) {
-            super("and", matchers);
-        }
-
-        @Override
-        public <U> U accept(Visitor<U> visitor) {
-            return visitor.visitAnd(this);
-        }
-    }
-
-    /**
-     * Matches if any matchers in the list are matches.
-     */
-    public static final class OrMember extends MatcherList {
-        public OrMember(List<Matcher<?>> matchers) {
-            super("or", matchers);
-        }
-
-        @Override
-        public <U> U accept(Visitor<U> visitor) {
-            return visitor.visitOr(this);
-        }
-    }
-
-    /**
-     * Matches if the given matcher is not a match.
-     */
-    public static final class NotMember extends Matcher<Matcher<?>> {
-        private final Matcher<?> value;
-
-        public NotMember(Matcher<?> value) {
-            this.value = value;
-        }
-
-        @Override
-        public String getMemberName() {
-            return "not";
-        }
-
-        @Override
-        public Matcher<?> getValue() {
-            return value;
-        }
-
-        @Override
-        public Node toNode() {
-            return Node.objectNode().withMember(getMemberName(), getValue());
-        }
-
-        @Override
-        public <U> U accept(Visitor<U> visitor) {
-            return visitor.visitNot(this);
         }
     }
 }

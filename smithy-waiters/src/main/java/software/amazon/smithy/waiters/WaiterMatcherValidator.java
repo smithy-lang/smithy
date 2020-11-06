@@ -16,7 +16,9 @@
 package software.amazon.smithy.waiters;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import software.amazon.smithy.jmespath.ExpressionProblem;
 import software.amazon.smithy.jmespath.JmespathException;
@@ -60,19 +62,33 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
         if (struct == null) {
             addEvent(Severity.ERROR, NON_SUPPRESSABLE_ERROR, "output path used on operation with no output");
         } else {
-            validatePathMatcher(struct, outputPath.getValue());
+            validatePathMatcher(createCurrentNodeFromShape(struct), outputPath.getValue());
         }
         return events;
     }
 
     @Override
-    public List<ValidationEvent> visitInput(Matcher.InputMember inputPath) {
-        StructureShape struct = OperationIndex.of(model).getInput(operation).orElse(null);
-        if (struct == null) {
-            addEvent(Severity.ERROR, NON_SUPPRESSABLE_ERROR, "input path used on operation with no input");
-        } else {
-            validatePathMatcher(struct, inputPath.getValue());
+    public List<ValidationEvent> visitInputOutput(Matcher.InputOutputMember inputOutputMember) {
+        OperationIndex index = OperationIndex.of(model);
+
+        StructureShape input = index.getInput(operation).orElse(null);
+        if (input == null) {
+            addEvent(Severity.ERROR, NON_SUPPRESSABLE_ERROR, "inputOutput path used on operation with no input");
         }
+
+        StructureShape output = index.getOutput(operation).orElse(null);
+        if (output == null) {
+            addEvent(Severity.ERROR, NON_SUPPRESSABLE_ERROR, "inputOutput path used on operation with no output");
+        }
+
+        if (input != null && output != null) {
+            Map<String, Object> composedMap = new LinkedHashMap<>();
+            composedMap.put("input", createCurrentNodeFromShape(input).expectObjectValue());
+            composedMap.put("output", createCurrentNodeFromShape(output).expectObjectValue());
+            LiteralExpression composedData = new LiteralExpression(composedMap);
+            validatePathMatcher(composedData, inputOutputMember.getValue());
+        }
+
         return events;
     }
 
@@ -102,35 +118,13 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
     }
 
     @Override
-    public List<ValidationEvent> visitAnd(Matcher.AndMember and) {
-        for (Matcher<?> matcher : and.getValue()) {
-            matcher.accept(this);
-        }
-        return events;
-    }
-
-    @Override
-    public List<ValidationEvent> visitOr(Matcher.OrMember or) {
-        for (Matcher<?> matcher : or.getValue()) {
-            matcher.accept(this);
-        }
-        return events;
-    }
-
-    @Override
-    public List<ValidationEvent> visitNot(Matcher.NotMember not) {
-        not.getValue().accept(this);
-        return events;
-    }
-
-    @Override
     public List<ValidationEvent> visitUnknown(Matcher.UnknownMember unknown) {
         // This is validated by model validation. No need to do more here.
         return events;
     }
 
-    private void validatePathMatcher(StructureShape struct, PathMatcher pathMatcher) {
-        RuntimeType returnType = validatePath(struct, pathMatcher.getPath());
+    private void validatePathMatcher(LiteralExpression input, PathMatcher pathMatcher) {
+        RuntimeType returnType = validatePath(input, pathMatcher.getPath());
 
         switch (pathMatcher.getComparator()) {
             case BOOLEAN_EQUALS:
@@ -151,19 +145,10 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
         }
     }
 
-    private void validateReturnType(PathComparator comparator, RuntimeType expected, RuntimeType actual) {
-        if (actual != RuntimeType.ANY && actual != expected) {
-            addEvent(Severity.DANGER, JMESPATH_PROBLEM, String.format(
-                    "Waiter acceptors with a %s comparator must return a `%s` type, but this acceptor was "
-                    + "statically determined to return a `%s` type.",
-                    comparator, expected, actual));
-        }
-    }
-
-    private RuntimeType validatePath(StructureShape struct, String path) {
+    private RuntimeType validatePath(LiteralExpression input, String path) {
         try {
             JmespathExpression expression = JmespathExpression.parse(path);
-            LinterResult result = expression.lint(createCurrentNodeFromShape(struct));
+            LinterResult result = expression.lint(input);
             for (ExpressionProblem problem : result.getProblems()) {
                 addJmespathEvent(path, problem);
             }
@@ -172,6 +157,15 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
             addEvent(Severity.ERROR, NON_SUPPRESSABLE_ERROR, String.format(
                     "Invalid JMESPath expression (%s): %s", path, e.getMessage()));
             return RuntimeType.ANY;
+        }
+    }
+
+    private void validateReturnType(PathComparator comparator, RuntimeType expected, RuntimeType actual) {
+        if (actual != RuntimeType.ANY && actual != expected) {
+            addEvent(Severity.DANGER, JMESPATH_PROBLEM, String.format(
+                    "Waiter acceptors with a %s comparator must return a `%s` type, but this acceptor was "
+                    + "statically determined to return a `%s` type.",
+                    comparator, expected, actual));
         }
     }
 
