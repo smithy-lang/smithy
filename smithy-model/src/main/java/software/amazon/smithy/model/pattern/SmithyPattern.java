@@ -17,6 +17,7 @@ package software.amazon.smithy.model.pattern;
 
 import static java.lang.String.format;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Represents a contained pattern.
@@ -109,6 +111,43 @@ public class SmithyPattern {
     @Override
     public boolean equals(Object other) {
         return other instanceof SmithyPattern && pattern.equals(((SmithyPattern) other).pattern);
+    }
+
+    /**
+     * Gets a list of explicitly conflicting label segments between this
+     * pattern and another.
+     *
+     * @param otherPattern SmithyPattern to check against.
+     * @return A list of Segment Pairs where each pair represents a conflict
+     *     and where the left side of the Pair is a segment from this pattern.
+     */
+    public List<Pair<Segment, Segment>> getConflictingLabelSegments(SmithyPattern otherPattern) {
+        List<Pair<Segment, Segment>> conflictingSegments = new ArrayList<>();
+
+        List<Segment> segments = getSegments();
+        List<Segment> otherSegments = otherPattern.getSegments();
+        int minSize = Math.min(segments.size(), otherSegments.size());
+        for (int i = 0; i < minSize; i++) {
+            Segment thisSegment = segments.get(i);
+            Segment otherSegment = otherSegments.get(i);
+            if (thisSegment.isLabel() != otherSegment.isLabel()) {
+                // The segments conflict if one is a literal and the other
+                // is a label.
+                conflictingSegments.add(Pair.of(thisSegment, otherSegment));
+            } else if  (thisSegment.isGreedyLabel() != otherSegment.isGreedyLabel()) {
+                // The segments conflict if a greedy label is introduced at
+                // or before segments in the other pattern.
+                conflictingSegments.add(Pair.of(thisSegment, otherSegment));
+            } else if (!thisSegment.isLabel()) {
+                // Both are literals. They can only conflict if they are the
+                // same exact string.
+                if (!thisSegment.getContent().equals(otherSegment.getContent())) {
+                    return conflictingSegments;
+                }
+            }
+        }
+
+        return conflictingSegments;
     }
 
     @Override

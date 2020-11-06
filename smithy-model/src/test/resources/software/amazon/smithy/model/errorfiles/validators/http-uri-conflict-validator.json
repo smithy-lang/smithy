@@ -55,6 +55,24 @@
                 },
                 {
                     "target": "ns.foo#ConflictsWithoutPattern2"
+                },
+                {
+                    "target": "ns.foo#EndpointPrefixDeconflicts1"
+                },
+                {
+                    "target": "ns.foo#EndpointPrefixDeconflicts2"
+                },
+                {
+                    "target": "ns.foo#PatternDeconflicts1"
+                },
+                {
+                    "target": "ns.foo#PatternDeconflicts2"
+                },
+                {
+                    "target": "ns.foo#LackOfPatternEnablesConflict1"
+                },
+                {
+                    "target": "ns.foo#LackOfPatternEnablesConflict2"
                 }
             ]
         },
@@ -311,6 +329,120 @@
                     "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
+                    }
+                }
+            }
+        },
+        "ns.foo#EndpointPrefixDeconflicts1": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/endpoint-prefix",
+                    "method": "PUT"
+                },
+                "smithy.api#endpoint": {
+                    "hostPrefix": "prefix."
+                },
+                "smithy.api#idempotent": {}
+            }
+        },
+        "ns.foo#EndpointPrefixDeconflicts2": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/endpoint-prefix",
+                    "method": "PUT"
+                },
+                "smithy.api#idempotent": {}
+            }
+        },
+        "ns.foo#PatternDeconflicts1": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/endpoint-prefix-pattern-deconflicts",
+                    "method": "PUT"
+                },
+                "smithy.api#endpoint": {
+                    "hostPrefix": "label."
+                },
+                "smithy.api#idempotent": {}
+            }
+        },
+        "ns.foo#PatternDeconflicts2": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/endpoint-prefix-pattern-deconflicts",
+                    "method": "PUT"
+                },
+                "smithy.api#endpoint": {
+                    "hostPrefix": "{HostLabel}."
+                },
+                "smithy.api#idempotent": {}
+            },
+            "input": {
+                "target": "ns.foo#HostLabelInputWithPattern"
+            }
+        },
+        "ns.foo#HostLabelInputWithPattern": {
+            "type": "structure",
+            "members": {
+                "HostLabel": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#hostLabel": {},
+                        "smithy.api#pattern": "foo",
+                        "smithy.api#required": {}
+                    }
+                }
+            }
+        },
+
+
+
+
+
+
+
+
+        "ns.foo#LackOfPatternEnablesConflict1": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/double-endpoint-prefix-conflicts",
+                    "method": "PUT"
+                },
+                "smithy.api#endpoint": {
+                    "hostPrefix": "label."
+                },
+                "smithy.api#idempotent": {}
+            }
+        },
+        "ns.foo#LackOfPatternEnablesConflict2": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/double-endpoint-prefix-conflicts",
+                    "method": "PUT"
+                },
+                "smithy.api#endpoint": {
+                    "hostPrefix": "{HostLabel}."
+                },
+                "smithy.api#idempotent": {}
+            },
+            "input": {
+                "target": "ns.foo#HostLabelInputWithoutPattern"
+            }
+        },
+        "ns.foo#HostLabelInputWithoutPattern": {
+            "type": "structure",
+            "members": {
+                "HostLabel": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#hostLabel": {},
                         "smithy.api#required": {}
                     }
                 }
