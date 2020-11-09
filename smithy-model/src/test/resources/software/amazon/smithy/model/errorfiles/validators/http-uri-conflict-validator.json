@@ -399,14 +399,6 @@
                 }
             }
         },
-
-
-
-
-
-
-
-
         "ns.foo#LackOfPatternEnablesConflict1": {
             "type": "operation",
             "traits": {
