@@ -17,6 +17,7 @@ package software.amazon.smithy.model.knowledge;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -81,22 +82,22 @@ public final class PaginatedIndex implements KnowledgeIndex {
         }
 
         MemberShape inputToken = trait.getInputToken().flatMap(input::getMember).orElse(null);
-        MemberShape outputToken = trait.getOutputToken()
+        List<MemberShape> outputTokenPath = trait.getOutputToken()
                 .flatMap(path -> PaginatedTrait.resolvePath(path, model, output))
                 .orElse(null);
 
-        if (inputToken == null || outputToken == null) {
+        if (inputToken == null || outputTokenPath == null) {
             return Optional.empty();
         }
 
         MemberShape pageSizeMember = trait.getPageSize().flatMap(input::getMember).orElse(null);
-        MemberShape itemsMember = trait.getItems()
+        List<MemberShape> itemsMemberPath = trait.getItems()
                 .flatMap(path -> PaginatedTrait.resolvePath(path, model, output))
                 .orElse(null);
 
         return Optional.of(new PaginationInfo(
                 service, operation, input, output, trait,
-                inputToken, outputToken, pageSizeMember, itemsMember));
+                inputToken, outputTokenPath, pageSizeMember, itemsMemberPath));
     }
 
     public Optional<PaginationInfo> getPaginationInfo(ToShapeId service, ToShapeId operation) {

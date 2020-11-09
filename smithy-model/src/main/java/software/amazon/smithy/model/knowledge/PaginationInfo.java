@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.knowledge;
 
+import java.util.List;
 import java.util.Optional;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -33,9 +34,9 @@ public final class PaginationInfo {
     private final StructureShape output;
     private final PaginatedTrait paginatedTrait;
     private final MemberShape inputToken;
-    private final MemberShape outputToken;
+    private final List<MemberShape> outputToken;
     private final MemberShape pageSize;
-    private final MemberShape items;
+    private final List<MemberShape> items;
 
     PaginationInfo(
             ServiceShape service,
@@ -44,9 +45,9 @@ public final class PaginationInfo {
             StructureShape output,
             PaginatedTrait paginatedTrait,
             MemberShape inputToken,
-            MemberShape outputToken,
+            List<MemberShape> outputToken,
             MemberShape pageSize,
-            MemberShape items
+            List<MemberShape> items
     ) {
         this.service = service;
         this.operation = operation;
@@ -88,11 +89,35 @@ public final class PaginationInfo {
         return inputToken;
     }
 
+    /**
+     * @return the last {@link MemberShape} of the output path.
+     * @deprecated See getOutputTokenPath.
+     */
     public MemberShape getOutputTokenMember() {
+        int size = outputToken.size();
+        if (size == 0) {
+            return null;
+        }
+        return outputToken.get(size - 1);
+    }
+
+    public List<MemberShape> getOutputTokenPath() {
         return outputToken;
     }
 
+    /**
+     * @return the last {@link MemberShape} of the items path.
+     * @deprecated See getItemsMemberPath
+     */
     public Optional<MemberShape> getItemsMember() {
+        int size = items.size();
+        if (size == 0) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(items.get(size - 1));
+    }
+
+    public Optional<List<MemberShape>> getItemsMemberPath() {
         return Optional.ofNullable(items);
     }
 

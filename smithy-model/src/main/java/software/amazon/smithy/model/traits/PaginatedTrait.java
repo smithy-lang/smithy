@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.model.traits;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.Model;
@@ -90,23 +92,26 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
      *              of an operation.
      * @return The optional member shape that the path resolves to.
      */
-    public static Optional<MemberShape> resolvePath(
+    public static Optional<List<MemberShape>> resolvePath(
             String path,
             Model model,
             StructureShape shape
     ) {
+        List<MemberShape> memberShapes = new ArrayList<>();
+
         // For each member name in the path, try to find that member in the previous structure
-        Optional<MemberShape> memberShape = Optional.empty();
+        Optional<MemberShape> memberShape;
         Optional<StructureShape> container = Optional.of(shape);
         for (String memberName: PATH_PATTERN.split(path)) {
             memberShape = container.flatMap(structure -> structure.getMember(memberName));
             if (!memberShape.isPresent()) {
                 return Optional.empty();
             }
+            memberShapes.add(memberShape.get());
             container = model.getShape(memberShape.get().getTarget())
                     .flatMap(Shape::asStructureShape);
         }
-        return memberShape;
+        return Optional.of(memberShapes);
     }
 
     /**
