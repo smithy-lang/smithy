@@ -151,7 +151,7 @@ public final class HttpUriConflictValidator extends AbstractValidator {
             BiFunction<Model, OperationShape, Map<String, Pattern>> getLabelPatterns
     ) {
 
-        List<Pair<Segment, Segment>> conflictingLabelSegments = pattern.getConflictingLabelSegments(otherPattern);
+        Map<Segment, Segment> conflictingLabelSegments = pattern.getConflictingLabelSegments(otherPattern);
 
         // If there aren't any conflicting label segments that means the uris are identical, which is not allowable.
         if (conflictingLabelSegments.isEmpty()) {
@@ -161,20 +161,20 @@ public final class HttpUriConflictValidator extends AbstractValidator {
         Map<String, Pattern> labelPatterns = getLabelPatterns.apply(model, operation);
         Map<String, Pattern> otherLabelPatterns = getLabelPatterns.apply(model, otherOperation);
 
-        return conflictingLabelSegments.stream()
+        return conflictingLabelSegments.entrySet().stream()
                 // Only allow conflicts in cases where one of the segments is static and the other is a label.
-                .filter(conflict -> conflict.getLeft().isLabel() != conflict.getRight().isLabel())
+                .filter(conflict -> conflict.getKey().isLabel() != conflict.getValue().isLabel())
                 // Only allow the uris to conflict if every conflicting segment is allowable.
                 .allMatch(conflict -> {
                     Pattern p;
                     String staticSegment;
 
-                    if (conflict.getLeft().isLabel()) {
-                        p = labelPatterns.get(conflict.getLeft().getContent());
-                        staticSegment = conflict.getRight().getContent();
+                    if (conflict.getKey().isLabel()) {
+                        p = labelPatterns.get(conflict.getKey().getContent());
+                        staticSegment = conflict.getValue().getContent();
                     } else {
-                        p = otherLabelPatterns.get(conflict.getRight().getContent());
-                        staticSegment = conflict.getLeft().getContent();
+                        p = otherLabelPatterns.get(conflict.getValue().getContent());
+                        staticSegment = conflict.getKey().getContent();
                     }
 
                     if (p == null) {
