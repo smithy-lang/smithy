@@ -21,6 +21,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Represents a URI pattern.
@@ -115,6 +117,14 @@ public final class UriPattern extends SmithyPattern {
      */
     public Optional<String> getQueryLiteralValue(String parameter) {
         return Optional.ofNullable(queryLiterals.get(parameter));
+    }
+
+    @Deprecated
+    public List<Pair<Segment, Segment>> getConflictingLabelSegments(UriPattern otherPattern) {
+        Map<Segment, Segment> conflictingSegments = getConflictingLabelSegments((SmithyPattern) otherPattern);
+        return conflictingSegments.entrySet().stream()
+                .map(entry -> Pair.of(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 
     /**

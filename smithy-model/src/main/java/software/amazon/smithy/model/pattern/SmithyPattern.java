@@ -17,17 +17,17 @@ package software.amazon.smithy.model.pattern;
 
 import static java.lang.String.format;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.Pair;
 
 /**
  * Represents a contained pattern.
@@ -118,11 +118,13 @@ public class SmithyPattern {
      * pattern and another.
      *
      * @param otherPattern SmithyPattern to check against.
-     * @return A list of Segment Pairs where each pair represents a conflict
-     *     and where the left side of the Pair is a segment from this pattern.
+     * @return A map of Segments where each pair represents a conflict
+     *     and where the key is a segment from this pattern. This map is
+     *     ordered so segments that appear first in this pattern appear
+     *     first when iterating the map.
      */
-    public List<Pair<Segment, Segment>> getConflictingLabelSegments(SmithyPattern otherPattern) {
-        List<Pair<Segment, Segment>> conflictingSegments = new ArrayList<>();
+    public Map<Segment, Segment> getConflictingLabelSegments(SmithyPattern otherPattern) {
+        Map<Segment, Segment> conflictingSegments = new LinkedHashMap<>();
 
         List<Segment> segments = getSegments();
         List<Segment> otherSegments = otherPattern.getSegments();
@@ -133,11 +135,11 @@ public class SmithyPattern {
             if (thisSegment.isLabel() != otherSegment.isLabel()) {
                 // The segments conflict if one is a literal and the other
                 // is a label.
-                conflictingSegments.add(Pair.of(thisSegment, otherSegment));
+                conflictingSegments.put(thisSegment, otherSegment);
             } else if  (thisSegment.isGreedyLabel() != otherSegment.isGreedyLabel()) {
                 // The segments conflict if a greedy label is introduced at
                 // or before segments in the other pattern.
-                conflictingSegments.add(Pair.of(thisSegment, otherSegment));
+                conflictingSegments.put(thisSegment, otherSegment);
             } else if (!thisSegment.isLabel()) {
                 // Both are literals. They can only conflict if they are the
                 // same exact string.
