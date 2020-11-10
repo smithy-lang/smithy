@@ -1,9 +1,9 @@
 [ERROR] ns.foo#Invalid1: paginated operations require an input | PaginatedTrait
 [ERROR] ns.foo#Invalid2: paginated trait `inputToken` targets a member `nextToken` that does not exist | PaginatedTrait
 [ERROR] ns.foo#Invalid2: paginated trait `outputToken` targets a member `nextToken` that does not exist | PaginatedTrait
-[ERROR] ns.foo#Invalid3: paginated trait `inputToken` member `InputNotString` targets a integer shape, but must target one of the following: [`string`] | PaginatedTrait
+[ERROR] ns.foo#Invalid3: paginated trait `inputToken` member `InputNotString` targets a integer shape, but must target one of the following: [`map`, `string`] | PaginatedTrait
 [ERROR] ns.foo#Invalid3: paginated trait `items` targets a member `items` that does not exist | PaginatedTrait
-[ERROR] ns.foo#Invalid3: paginated trait `outputToken` member `OutputNotString` targets a integer shape, but must target one of the following: [`string`] | PaginatedTrait
+[ERROR] ns.foo#Invalid3: paginated trait `outputToken` member `OutputNotString` targets a integer shape, but must target one of the following: [`map`, `string`] | PaginatedTrait
 [ERROR] ns.foo#Invalid4: paginated trait `inputToken` member `nextToken` must not be required | PaginatedTrait
 [ERROR] ns.foo#Invalid4: paginated trait `outputToken` member `nextToken` must not be required | PaginatedTrait
 [WARNING] ns.foo#Invalid4: paginated trait `pageSize` member `pageSize` should not be required | PaginatedTrait
@@ -22,3 +22,5 @@
 [WARNING] ns.foo#DeeplyNestedOutputOperation: paginated trait `outputToken` contains a path with more than two parts, which can make your API cumbersome to use | PaginatedTrait
 [ERROR] ns.foo#InvalidNestedInput: paginated trait `inputToken` does not allow path values | PaginatedTrait
 [ERROR] ns.foo#InvalidNestedInput: paginated trait `pageSize` does not allow path values | PaginatedTrait
+[DANGER] ns.foo#MapTokens: paginated trait `inputToken` member `MapTokenInputOutput` targets a map shape, but this is not recommended. One of [`string`] SHOULD be targeted. | PaginatedTrait
+[DANGER] ns.foo#MapTokens: paginated trait `outputToken` member `MapTokenInputOutput` targets a map shape, but this is not recommended. One of [`string`] SHOULD be targeted. | PaginatedTrait
