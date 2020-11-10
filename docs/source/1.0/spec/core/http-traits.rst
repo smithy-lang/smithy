@@ -418,14 +418,14 @@ following rules are in place:
    - ``/{foo}/{bar+}`` is legal
    - ``/{foo+}/{bar}`` is illegal
 
-#. Patterns MUST NOT be equivalent.
+#. Patterns MUST NOT be equivalent if they share a host.
 
    - Pattern ``/foo/bar`` and ``/foo/bar`` conflict.
    - Pattern ``/foo/{bar}`` and ``/foo/{baz}`` conflict regardless of any
      constraint traits on the label members.
 
 #. A label and a literal SHOULD NOT both occupy the same segment in patterns
-   which are equivalent to that point.
+   which are equivalent to that point if they share a host.
 
    - ``/foo/bar/{baz}`` and ``/foo/baz/bam`` can coexist.
    - ``/foo/bar`` and ``/foo/{baz}/bam`` cannot coexist unless pattern
@@ -435,6 +435,15 @@ following rules are in place:
 #. A query string literal with no value and a query string literal with an
    empty value are considered equivalent. For example, ``/foo?baz`` and
    ``/foo?baz=`` are considered the same route.
+
+#. Patterns MAY conflict if the operations use different hosts. Different hosts
+   can be configured using the :ref:`endpoint-trait`'s ``hostPrefix`` property.
+
+   - ``/foo/bar`` and ``/foo/{baz}/bam`` can coexist if one operation has no
+     endpoint trait and the other specifies ``foo.`` as the ``hostPrefix``.
+   - ``/foo/bar`` and ``/foo/{baz}/bam`` can coexist if one operation specifies
+     ``foo.`` as the ``hostPrefix`` and the other specifies ``bar.`` as the
+     ``hostPrefix``.
 
 
 .. _httpError-trait:
