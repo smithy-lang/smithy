@@ -39,7 +39,7 @@ public final class ChangedShape<S extends Shape> implements FromSourceLocation {
     private final S newShape;
     private final Map<ShapeId, Pair<Trait, Trait>> traitDiff;
 
-    ChangedShape(S oldShape, S newShape) {
+    public ChangedShape(S oldShape, S newShape) {
         this.oldShape = oldShape;
         this.newShape = newShape;
         traitDiff = Collections.unmodifiableMap(findTraitDifferences(oldShape, newShape));
