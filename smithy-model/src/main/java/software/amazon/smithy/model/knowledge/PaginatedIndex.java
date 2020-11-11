@@ -32,6 +32,7 @@ import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.PaginatedTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.validators.PaginatedTraitValidator;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.OptionalUtils;
 
 /**
@@ -83,17 +84,17 @@ public final class PaginatedIndex implements KnowledgeIndex {
 
         MemberShape inputToken = trait.getInputToken().flatMap(input::getMember).orElse(null);
         List<MemberShape> outputTokenPath = trait.getOutputToken()
-                .flatMap(path -> PaginatedTrait.resolvePath(path, model, output))
-                .orElse(null);
+                .map(path -> PaginatedTrait.resolvePathToMember(path, model, output))
+                .orElse(ListUtils.of());
 
-        if (inputToken == null || outputTokenPath == null) {
+        if (inputToken == null || outputTokenPath.size() == 0) {
             return Optional.empty();
         }
 
         MemberShape pageSizeMember = trait.getPageSize().flatMap(input::getMember).orElse(null);
         List<MemberShape> itemsMemberPath = trait.getItems()
-                .flatMap(path -> PaginatedTrait.resolvePath(path, model, output))
-                .orElse(null);
+                .map(path -> PaginatedTrait.resolvePathToMember(path, model, output))
+                .orElse(ListUtils.of());
 
         return Optional.of(new PaginationInfo(
                 service, operation, input, output, trait,

@@ -27,6 +27,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.validation.validators.PaginatedTraitValidator;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -86,13 +87,40 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
      * <p>A path is a series of identifiers separated by dots (`.`) where each identifier
      * represents a member name in a structure.
      *
-     * @param path The path to resolve.
+     * @param path  The path to resolve.
      * @param model The model to be searched when resolving the path.
      * @param shape The shape where path resolution should start, e.g. the output shape
      *              of an operation.
      * @return The optional member shape that the path resolves to.
+     * @deprecated This method only returns the last {@link MemberShape} of an output path. To resolve each path
+     * identifier to it's respective {@link MemberShape} see {@link PaginatedTrait#resolvePathToMember}
      */
-    public static Optional<List<MemberShape>> resolvePath(
+    public static Optional<MemberShape> resolvePath(
+            String path,
+            Model model,
+            StructureShape shape
+    ) {
+        List<MemberShape> memberShapes = resolvePathToMember(path, model, shape);
+        if (memberShapes.size() == 0) {
+            return Optional.empty();
+        }
+        return Optional.of(memberShapes.get(memberShapes.size() - 1));
+    }
+
+    /**
+     * Resolves an output path to a list of {@link MemberShape}.
+     *
+     * <p>A path is a series of identifiers separated by dots (`.`) where each identifier
+     * represents a member name in a structure.
+     *
+     * @param path  The path to resolve.
+     * @param model The model to be searched when resolving the path.
+     * @param shape The shape where path resolution should start, e.g. the output shape
+     *              of an operation.
+     * @return The list of member shapes corresponding to each path identifier. An unresolvable path will be returned
+     * as an empty list.
+     */
+    public static List<MemberShape> resolvePathToMember(
             String path,
             Model model,
             StructureShape shape
@@ -102,16 +130,16 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
         // For each member name in the path, try to find that member in the previous structure
         Optional<MemberShape> memberShape;
         Optional<StructureShape> container = Optional.of(shape);
-        for (String memberName: PATH_PATTERN.split(path)) {
+        for (String memberName : PATH_PATTERN.split(path)) {
             memberShape = container.flatMap(structure -> structure.getMember(memberName));
             if (!memberShape.isPresent()) {
-                return Optional.empty();
+                return ListUtils.of();
             }
             memberShapes.add(memberShape.get());
             container = model.getShape(memberShape.get().getTarget())
                     .flatMap(Shape::asStructureShape);
         }
-        return Optional.of(memberShapes);
+        return memberShapes;
     }
 
     /**

@@ -228,8 +228,13 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         ) {
             Optional<StructureShape> outputShape = opIndex.getOutput(operation);
             return outputShape.flatMap(structureShape -> getMemberPath(opIndex, operation, trait)
-                    .flatMap(path -> PaginatedTrait.resolvePath(path, model, structureShape)))
-                    .map(memberShapes -> memberShapes.get(memberShapes.size() - 1));
+                    .map(path -> PaginatedTrait.resolvePathToMember(path, model, structureShape)))
+                    .flatMap(memberShapes -> {
+                        if (memberShapes.size() == 0) {
+                            return Optional.empty();
+                        }
+                        return Optional.of(memberShapes.get(memberShapes.size() - 1));
+                    });
         }
     }
 

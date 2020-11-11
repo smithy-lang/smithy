@@ -91,14 +91,11 @@ public final class PaginationInfo {
 
     /**
      * @return the last {@link MemberShape} of the output path.
-     * @deprecated See getOutputTokenPath.
+     *
+     * @deprecated See {@link PaginationInfo#getOutputTokenPath} to retrieve the full path.
      */
     public MemberShape getOutputTokenMember() {
-        int size = outputToken.size();
-        if (size == 0) {
-            return null;
-        }
-        return outputToken.get(size - 1);
+        return outputToken.get(outputToken.size() - 1);
     }
 
     public List<MemberShape> getOutputTokenPath() {
@@ -107,7 +104,8 @@ public final class PaginationInfo {
 
     /**
      * @return the last {@link MemberShape} of the items path.
-     * @deprecated See getItemsMemberPath
+     *
+     * @deprecated See {@link PaginationInfo#getItemsMemberPath} to retrieve the full path.
      */
     public Optional<MemberShape> getItemsMember() {
         int size = items.size();
@@ -117,8 +115,8 @@ public final class PaginationInfo {
         return Optional.ofNullable(items.get(size - 1));
     }
 
-    public Optional<List<MemberShape>> getItemsMemberPath() {
-        return Optional.ofNullable(items);
+    public List<MemberShape> getItemsMemberPath() {
+        return items;
     }
 
     public Optional<MemberShape> getPageSizeMember() {
