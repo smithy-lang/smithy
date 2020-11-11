@@ -7,6 +7,7 @@ namespace aws.protocoltests.restjson
 use aws.protocols#restJson1
 use aws.protocoltests.shared#FooEnumMap
 use aws.protocoltests.shared#GreetingStruct
+use aws.protocoltests.shared#SparseStringMap
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -26,7 +27,15 @@ apply JsonMaps @httpRequestTests([
         uri: "/JsonMaps",
         body: """
               {
-                  "myMap": {
+                  "denseStructMap": {
+                      "foo": {
+                          "hi": "there"
+                      },
+                      "baz": {
+                          "hi": "bye"
+                      }
+                  },
+                  "sparseStructMap": {
                       "foo": {
                           "hi": "there"
                       },
@@ -40,7 +49,15 @@ apply JsonMaps @httpRequestTests([
             "Content-Type": "application/json"
         },
         params: {
-            "myMap": {
+            "denseStructMap": {
+                "foo": {
+                    "hi": "there"
+                },
+                "baz": {
+                    "hi": "bye"
+                }
+            },
+            "sparseStructMap": {
                 "foo": {
                     "hi": "there"
                 },
@@ -52,14 +69,23 @@ apply JsonMaps @httpRequestTests([
     },
     {
         id: "RestJsonSerializesNullMapValues",
-        documentation: "Serializes null JSON map values",
+        documentation: "Serializes JSON map values in sparse maps",
         protocol: restJson1,
         method: "POST",
         uri: "/JsonMaps",
         body: """
             {
-                "myMap": {
-                    "foo": null
+                "sparseBooleanMap": {
+                    "x": null
+                },
+                "sparseNumberMap": {
+                    "x": null
+                },
+                "sparseStringMap": {
+                    "x": null
+                },
+                "sparseStructMap": {
+                    "x": null
                 }
             }""",
         bodyMediaType: "application/json",
@@ -67,11 +93,60 @@ apply JsonMaps @httpRequestTests([
             "Content-Type": "application/json"
         },
         params: {
-            myMap: {
-                "foo": null
+            "sparseBooleanMap": {
+                "x": null
+            },
+            "sparseNumberMap": {
+                "x": null
+            },
+            "sparseStringMap": {
+                "x": null
+            },
+            "sparseStructMap": {
+                "x": null
             }
         }
     },
+    {
+        id: "RestJsonSerializesZeroValuesInMaps",
+        documentation: "Ensure that 0 and false are sent over the wire in all maps and lists",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/JsonMaps",
+        body: """
+            {
+                "denseNumberMap": {
+                    "x": 0
+                },
+                "sparseNumberMap": {
+                    "x": 0
+                },
+                "denseBooleanMap": {
+                    "x": false
+                },
+                "sparseBooleanMap": {
+                    "x": false
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            "denseNumberMap": {
+                "x": 0
+            },
+            "sparseNumberMap": {
+                "x": 0
+            },
+            "denseBooleanMap": {
+                "x": false
+            },
+            "sparseBooleanMap": {
+                "x": false
+            }
+        }
+    }
 ])
 
 apply JsonMaps @httpResponseTests([
@@ -82,26 +157,42 @@ apply JsonMaps @httpResponseTests([
         code: 200,
         body: """
               {
-                  "myMap": {
+                  "denseStructMap": {
                       "foo": {
                           "hi": "there"
                       },
                       "baz": {
                           "hi": "bye"
                       }
-                  }
+                  },
+                  "sparseStructMap": {
+                      "foo": {
+                          "hi": "there"
+                      },
+                      "baz": {
+                          "hi": "bye"
+                      }
+                 }
               }""",
         bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/json"
         },
         params: {
-            myMap: {
-                foo: {
-                    hi: "there"
+            "denseStructMap": {
+                "foo": {
+                    "hi": "there"
                 },
-                baz: {
-                    hi: "bye"
+                "baz": {
+                    "hi": "bye"
+                }
+            },
+            "sparseStructMap": {
+                "foo": {
+                    "hi": "there"
+                },
+                "baz": {
+                    "hi": "bye"
                 }
             }
         }
@@ -113,8 +204,17 @@ apply JsonMaps @httpResponseTests([
         code: 200,
         body: """
             {
-                "myMap": {
-                    "foo": null
+                "sparseBooleanMap": {
+                    "x": null
+                },
+                "sparseNumberMap": {
+                    "x": null
+                },
+                "sparseStringMap": {
+                    "x": null
+                },
+                "sparseStructMap": {
+                    "x": null
                 }
             }""",
         bodyMediaType: "application/json",
@@ -122,19 +222,106 @@ apply JsonMaps @httpResponseTests([
             "Content-Type": "application/json"
         },
         params: {
-            myMap: {
-                "foo": null
+            "sparseBooleanMap": {
+                "x": null
+            },
+            "sparseNumberMap": {
+                "x": null
+            },
+            "sparseStringMap": {
+                "x": null
+            },
+            "sparseStructMap": {
+                "x": null
             }
         }
     },
+    {
+        id: "RestJsonDeserializesZeroValuesInMaps",
+        documentation: "Ensure that 0 and false are sent over the wire in all maps and lists",
+        protocol: restJson1,
+        code: 200,
+        body: """
+            {
+                "denseNumberMap": {
+                    "x": 0
+                },
+                "sparseNumberMap": {
+                    "x": 0
+                },
+                "denseBooleanMap": {
+                    "x": false
+                },
+                "sparseBooleanMap": {
+                    "x": false
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            "denseNumberMap": {
+                "x": 0
+            },
+            "sparseNumberMap": {
+                "x": 0
+            },
+            "denseBooleanMap": {
+                "x": false
+            },
+            "sparseBooleanMap": {
+                "x": false
+            }
+        }
+    }
 ])
 
 structure JsonMapsInputOutput {
-    myMap: JsonMapsInputOutputMap,
+    denseStructMap: DenseStructMap,
+    sparseStructMap: SparseStructMap,
+    denseNumberMap: DenseNumberMap,
+    denseBooleanMap: DenseBooleanMap,
+    denseStringMap: DenseStringMap,
+    sparseNumberMap: SparseNumberMap,
+    sparseBooleanMap: SparseBooleanMap,
+    sparseStringMap: SparseStringMap,
+}
+
+map DenseStructMap {
+    key: String,
+    value: GreetingStruct
 }
 
 @sparse
-map JsonMapsInputOutputMap {
+map SparseStructMap {
     key: String,
     value: GreetingStruct
+}
+
+map DenseBooleanMap {
+    key: String,
+    value: Boolean
+}
+
+map DenseNumberMap {
+    key: String,
+    value: Integer
+}
+
+map DenseStringMap {
+    key: String,
+    value: String
+}
+
+@sparse
+map SparseBooleanMap {
+    key: String,
+    value: Boolean
+}
+
+@sparse
+map SparseNumberMap {
+    key: String,
+    value: Integer
 }
