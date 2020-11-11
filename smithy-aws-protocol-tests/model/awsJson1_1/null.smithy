@@ -3,7 +3,8 @@ $version: "1.0"
 namespace aws.protocoltests.json
 
 use aws.protocols#awsJson1_1
-use aws.protocoltests.shared#StringList
+use aws.protocoltests.shared#SparseStringList
+use aws.protocoltests.shared#SparseStringMap
 use aws.protocoltests.shared#StringMap
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
@@ -28,16 +29,16 @@ use smithy.test#httpResponseTests
         protocol: awsJson1_1,
         body: """
             {
-                "stringMap": {
+                "sparseStringMap": {
                     "foo": null
                 }
             }""",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
-          stringMap: {
-              "foo": null
-          }
+            "sparseStringMap": {
+                "foo": null
+            }
         },
         method: "POST",
         uri: "/",
@@ -48,14 +49,16 @@ use smithy.test#httpResponseTests
         protocol: awsJson1_1,
         body: """
             {
-                "stringList": [
+                "sparseStringList": [
                     null
                 ]
             }""",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
-          stringList: [null]
+            "sparseStringList": [
+                null
+            ]
         },
         method: "POST",
         uri: "/",
@@ -82,16 +85,16 @@ use smithy.test#httpResponseTests
         code: 200,
         body: """
             {
-                "stringMap": {
+                "sparseStringMap": {
                     "foo": null
                 }
             }""",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
-          stringMap: {
-              "foo": null
-          }
+            "sparseStringMap": {
+                "foo": null
+            }
         },
     },
     {
@@ -101,14 +104,16 @@ use smithy.test#httpResponseTests
         code: 200,
         body: """
             {
-                "stringList": [
+                "sparseStringList": [
                     null
                 ]
             }""",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
-          stringList: [null]
+            "sparseStringList": [
+                null
+            ]
         },
     }
 ])
@@ -119,6 +124,6 @@ operation NullOperation {
 
 structure NullOperationInputOutput {
     string: String,
-    stringList: StringList,
-    stringMap: StringMap,
+    sparseStringList: SparseStringList,
+    sparseStringMap: SparseStringMap,
 }

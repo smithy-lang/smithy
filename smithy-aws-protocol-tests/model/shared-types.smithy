@@ -23,11 +23,22 @@ list StringList {
     member: String,
 }
 
+@sparse
+list SparseStringList {
+    member: String
+}
+
 set StringSet {
     member: String,
 }
 
 map StringMap {
+    key: String,
+    value: String,
+}
+
+@sparse
+map SparseStringMap {
     key: String,
     value: String,
 }

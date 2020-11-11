@@ -12,6 +12,7 @@ use aws.protocoltests.shared#GreetingList
 use aws.protocoltests.shared#IntegerList
 use aws.protocoltests.shared#NestedStringList
 use aws.protocoltests.shared#StringList
+use aws.protocoltests.shared#SparseStringList
 use aws.protocoltests.shared#StringSet
 use aws.protocoltests.shared#TimestampList
 use smithy.test#httpRequestTests
@@ -158,14 +159,15 @@ apply JsonLists @httpRequestTests([
           uri: "/JsonLists",
           body: """
                 {
-                    "stringList": [
-                        null
+                    "sparseStringList": [
+                        null,
+                        "hi"
                     ]
                 }""",
           bodyMediaType: "application/json",
           headers: {"Content-Type": "application/json"},
           params: {
-              stringList: [null]
+              sparseStringList: [null, "hi"]
           }
     }
 ])
@@ -289,25 +291,28 @@ apply JsonLists @httpResponseTests([
     },
     {
           id: "RestJsonListsSerializeNull",
-          documentation: "Serializes null values in lists",
+          documentation: "Serializes null values in sparse lists",
           protocol: restJson1,
           code: 200,
           body: """
                 {
-                    "stringList": [
-                        null
+                    "sparseStringList": [
+                        null,
+                        "hi"
                     ]
                 }""",
           bodyMediaType: "application/json",
           headers: {"Content-Type": "application/json"},
           params: {
-              stringList: [null]
+              sparseStringList: [null, "hi"]
           }
     }
 ])
 
 structure JsonListsInputOutput {
     stringList: StringList,
+
+    sparseStringList: SparseStringList,
 
     stringSet: StringSet,
 
