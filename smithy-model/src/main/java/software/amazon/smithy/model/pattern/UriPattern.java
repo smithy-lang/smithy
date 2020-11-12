@@ -119,14 +119,6 @@ public final class UriPattern extends SmithyPattern {
         return Optional.ofNullable(queryLiterals.get(parameter));
     }
 
-    @Deprecated
-    public List<Pair<Segment, Segment>> getConflictingLabelSegments(UriPattern otherPattern) {
-        Map<Segment, Segment> conflictingSegments = getConflictingLabelSegments((SmithyPattern) otherPattern);
-        return conflictingSegments.entrySet().stream()
-                .map(entry -> Pair.of(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
-    }
-
     /**
      * Determines if the pattern conflicts with another pattern.
      *
@@ -134,7 +126,7 @@ public final class UriPattern extends SmithyPattern {
      * @return Returns true if there is a conflict.
      */
     public boolean conflictsWith(UriPattern otherPattern) {
-        if (!getConflictingLabelSegments(otherPattern).isEmpty()) {
+        if (!getConflictingLabelSegmentsMap(otherPattern).isEmpty()) {
             return true;
         }
 
@@ -163,6 +155,14 @@ public final class UriPattern extends SmithyPattern {
         // At this point, the path portions are equivalent. If the query
         // string literals are the same, then the patterns conflict.
         return queryLiterals.equals(otherPattern.queryLiterals);
+    }
+
+    @Deprecated
+    public List<Pair<Segment, Segment>> getConflictingLabelSegments(UriPattern otherPattern) {
+        Map<Segment, Segment> conflictingSegments = getConflictingLabelSegmentsMap(otherPattern);
+        return conflictingSegments.entrySet().stream()
+                .map(entry -> Pair.of(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 
     @Override

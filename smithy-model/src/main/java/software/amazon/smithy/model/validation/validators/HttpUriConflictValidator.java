@@ -153,7 +153,7 @@ public final class HttpUriConflictValidator extends AbstractValidator {
             BiFunction<Model, OperationShape, Map<String, Pattern>> getLabelPatterns
     ) {
 
-        Map<Segment, Segment> conflictingLabelSegments = pattern.getConflictingLabelSegments(otherPattern);
+        Map<Segment, Segment> conflictingLabelSegments = pattern.getConflictingLabelSegmentsMap(otherPattern);
 
         // If there aren't any conflicting label segments that means the uris are identical, which is not allowable.
         if (conflictingLabelSegments.isEmpty()) {
