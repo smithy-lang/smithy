@@ -114,7 +114,7 @@ public class SmithyPattern {
     }
 
     /**
-     * Gets a list of explicitly conflicting label segments between this
+     * Gets a map of explicitly conflicting label segments between this
      * pattern and another.
      *
      * @param otherPattern SmithyPattern to check against.
@@ -123,7 +123,7 @@ public class SmithyPattern {
      *     ordered so segments that appear first in this pattern appear
      *     first when iterating the map.
      */
-    public Map<Segment, Segment> getConflictingLabelSegments(SmithyPattern otherPattern) {
+    public Map<Segment, Segment> getConflictingLabelSegmentsMap(SmithyPattern otherPattern) {
         Map<Segment, Segment> conflictingSegments = new LinkedHashMap<>();
 
         List<Segment> segments = getSegments();
