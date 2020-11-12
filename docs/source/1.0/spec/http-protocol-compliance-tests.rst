@@ -173,17 +173,25 @@ that support the following members:
     * - body
       - ``string``
       - The expected HTTP message body. If no request body is defined,
-        then no assertions are made about the body of the message.
+        then no assertions are made about the body of the message. Because
+        the ``body`` parameter is a string, binary data MUST be represented
+        in ``body`` by base64 encoding the data (for example, use "Zm9vCg=="
+        and not "foo").
     * - bodyMediaType
       - ``string``
       - The media type of the ``body``. This is used to help test runners
         to parse and validate the expected data against generated data.
-        Binary media type formats require that the contents of ``body`` are
-        base64 encoded.
     * - params
       - ``document``
       - Defines the input parameters used to generate the HTTP request. These
         parameters MUST be compatible with the input of the operation.
+
+        Parameter values that contain binary data MUST be defined using
+        values that can be represented in plain text (for example, use "foo"
+        and not "Zm9vCg=="). While this limits the kinds of binary values
+        that can be tested in protocol tests, it allows protocol tests to
+        demonstrate the requirement of many protocols that binary data is
+        automatically base64 encoded and decoded.
     * - vendorParams
       - ``document``
       - Defines vendor-specific parameters that are used to influence the
@@ -385,6 +393,13 @@ structures that support the following members:
       - Defines the output or error parameters used to generate the HTTP
         response. These parameters MUST be compatible with the targeted
         operation's output or the targeted error structure.
+
+        Parameter values that contain binary data MUST be defined using
+        values that can be represented in plain text (for example, use "foo"
+        and not "Zm9vCg=="). While this limits the kinds of binary values
+        that can be tested in protocol tests, it allows protocol tests to
+        demonstrate the requirement of many protocols that binary data is
+        automatically base64 encoded and decoded.
     * - vendorParams
       - ``document``
       - Defines vendor-specific parameters that are used to influence the
