@@ -36,9 +36,9 @@ Trait value
         * - name
           - ``string``
           - **Required**. The signature version 4 service signing name to use
-            in the `credential scope`_ when signing requests. This value
-            SHOULD match the ``arnNamespace`` property of the
-            :ref:`aws.api#service-trait`.
+            in the `credential scope`_ when signing requests. This value MUST
+            NOT be empty. This value SHOULD match the ``arnNamespace`` property
+            of the :ref:`aws.api#service-trait`.
 
 .. tabs::
 
