@@ -1,0 +1,1 @@
+[ERROR] smithy.example#InvalidService: Error validating trait `aws.auth#sigv4`.name: String value provided for `aws.auth#sigv4$name` must be >= 1 characters, but the provided value is only 0 characters. | TraitValue
