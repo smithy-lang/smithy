@@ -129,6 +129,20 @@ public class OpenApiConverterTest {
     }
 
     @Test
+    public void usesOpenApiIntegers() {
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example.rest#RestService"));
+        config.setUseIntegerType(true);
+        ObjectNode result = OpenApiConverter.create()
+                .config(config)
+                .convertToNode(testService);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("test-service-integer.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
     public void requiresProtocolsTrait() {
         Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
             Model model = Model.assembler()

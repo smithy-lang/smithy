@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.jsonschema.JsonSchemaConverter;
 import software.amazon.smithy.jsonschema.Schema;
@@ -28,13 +29,16 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.BlobShape;
+import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
@@ -232,6 +236,74 @@ public class OpenApiJsonSchemaMapperTest {
                 .convertShape(shape);
 
         assertThat(document.getRootSchema().getFormat().get(), equalTo("binary"));
+    }
+
+    @Test
+    public void integerTypesDefaultsToNumber() {
+        ByteShape byteShape = ByteShape.builder().id("a.b#Byte").build();
+        ShortShape shortShape = ShortShape.builder().id("a.b#Short").build();
+        IntegerShape integerShape = IntegerShape.builder().id("a.b#Integer").build();
+        LongShape longShape = LongShape.builder().id("a.b#Long").build();
+        StructureShape structureShape = StructureShape.builder()
+                .id("a.b#Structure")
+                .addMember("byte", byteShape.getId())
+                .addMember("short", shortShape.getId())
+                .addMember("int", integerShape.getId())
+                .addMember("long", longShape.getId())
+                .build();
+
+        Model model = Model.builder()
+                .addShapes(byteShape, shortShape, integerShape, longShape, structureShape)
+                .build();
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .config(new OpenApiConfig())
+                .addMapper(new OpenApiJsonSchemaMapper())
+                .model(model)
+                .build()
+                .convertShape(structureShape);
+
+        assertThat(document.getRootSchema().getType().get(), equalTo("object"));
+        assertThat(document.getRootSchema().getProperties().size(), equalTo(4));
+
+        Map<String, Schema> properties = document.getRootSchema().getProperties();
+        for (Map.Entry<String, Schema> property : properties.entrySet()) {
+            assertThat(property.getValue().getType().get(), equalTo("number"));
+        }
+    }
+
+    @Test
+    public void integerTypesOverriddenToInteger() {
+        ByteShape byteShape = ByteShape.builder().id("a.b#Byte").build();
+        ShortShape shortShape = ShortShape.builder().id("a.b#Short").build();
+        IntegerShape integerShape = IntegerShape.builder().id("a.b#Integer").build();
+        LongShape longShape = LongShape.builder().id("a.b#Long").build();
+        StructureShape structureShape = StructureShape.builder()
+                .id("a.b#Structure")
+                .addMember("byte", byteShape.getId())
+                .addMember("short", shortShape.getId())
+                .addMember("int", integerShape.getId())
+                .addMember("long", longShape.getId())
+                .build();
+
+        Model model = Model.builder()
+                .addShapes(byteShape, shortShape, integerShape, longShape, structureShape)
+                .build();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setUseIntegerType(true);
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .config(config)
+                .addMapper(new OpenApiJsonSchemaMapper())
+                .model(model)
+                .build()
+                .convertShape(structureShape);
+
+        assertThat(document.getRootSchema().getType().get(), equalTo("object"));
+        assertThat(document.getRootSchema().getProperties().size(), equalTo(4));
+
+        Map<String, Schema> properties = document.getRootSchema().getProperties();
+        for (Map.Entry<String, Schema> property : properties.entrySet()) {
+            assertThat(property.getValue().getType().get(), equalTo("integer"));
+        }
     }
 
     @Test
