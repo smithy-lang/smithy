@@ -38,8 +38,9 @@ An *enum definition* is a structure that supports the following members:
       - Description
     * - value
       - string
-      - **Required**. Defines the enum value that is sent over the wire.
-        Values MUST be unique across all enum definitions in an ``enum`` trait.
+      - **Required**. Defines the enum value that is sent over the wire. Values
+        MUST NOT be empty. Values MUST be unique across all enum definitions in
+        an ``enum`` trait.
     * - name
       - string
       - Defines a constant name that can be used in programming languages to
