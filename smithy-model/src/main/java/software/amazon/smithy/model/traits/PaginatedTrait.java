@@ -93,14 +93,15 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
      *              of an operation.
      * @return The optional member shape that the path resolves to.
      * @deprecated This method only returns the last {@link MemberShape} of an output path. To resolve each path
-     * identifier to it's respective {@link MemberShape} see {@link PaginatedTrait#resolvePathToMember}
+     * identifier to it's respective {@link MemberShape} see {@link PaginatedTrait#resolveFullPath}
      */
+    @Deprecated
     public static Optional<MemberShape> resolvePath(
             String path,
             Model model,
             StructureShape shape
     ) {
-        List<MemberShape> memberShapes = resolvePathToMember(path, model, shape);
+        List<MemberShape> memberShapes = resolveFullPath(path, model, shape);
         if (memberShapes.size() == 0) {
             return Optional.empty();
         }
@@ -120,7 +121,7 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
      * @return The list of member shapes corresponding to each path identifier. An unresolvable path will be returned
      * as an empty list.
      */
-    public static List<MemberShape> resolvePathToMember(
+    public static List<MemberShape> resolveFullPath(
             String path,
             Model model,
             StructureShape shape

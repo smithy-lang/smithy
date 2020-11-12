@@ -84,7 +84,7 @@ public final class PaginatedIndex implements KnowledgeIndex {
 
         MemberShape inputToken = trait.getInputToken().flatMap(input::getMember).orElse(null);
         List<MemberShape> outputTokenPath = trait.getOutputToken()
-                .map(path -> PaginatedTrait.resolvePathToMember(path, model, output))
+                .map(path -> PaginatedTrait.resolveFullPath(path, model, output))
                 .orElse(ListUtils.of());
 
         if (inputToken == null || outputTokenPath.size() == 0) {
@@ -93,7 +93,7 @@ public final class PaginatedIndex implements KnowledgeIndex {
 
         MemberShape pageSizeMember = trait.getPageSize().flatMap(input::getMember).orElse(null);
         List<MemberShape> itemsMemberPath = trait.getItems()
-                .map(path -> PaginatedTrait.resolvePathToMember(path, model, output))
+                .map(path -> PaginatedTrait.resolveFullPath(path, model, output))
                 .orElse(ListUtils.of());
 
         return Optional.of(new PaginationInfo(
