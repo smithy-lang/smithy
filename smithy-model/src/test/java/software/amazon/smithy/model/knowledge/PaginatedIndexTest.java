@@ -19,12 +19,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.commons.util.CollectionUtils;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -49,8 +46,8 @@ public class PaginatedIndexTest {
         assertThat(info.getOutput().getId(), is(ShapeId.from("ns.foo#ValidOutput")));
         assertThat(info.getInputTokenMember().getMemberName(), equalTo("nextToken"));
         assertThat(info.getOutputTokenMember().getMemberName(), equalTo("nextToken"));
-        assertThat(info.getOutputTokenPath().isEmpty(), is(false));
-        assertThat(info.getOutputTokenPath().stream()
+        assertThat(info.getOutputTokenMemberPath().isEmpty(), is(false));
+        assertThat(info.getOutputTokenMemberPath().stream()
                 .map(MemberShape::getMemberName)
                 .collect(Collectors.toList()), equalTo(ListUtils.of("nextToken")));
         assertThat(info.getPageSizeMember().isPresent(), is(true));
@@ -78,8 +75,8 @@ public class PaginatedIndexTest {
 
         PaginationInfo info = optionalInfo.get();
         assertThat(info.getOutputTokenMember().getMemberName(), equalTo("nextToken"));
-        assertThat(info.getOutputTokenPath().isEmpty(), is(false));
-        assertThat(info.getOutputTokenPath().stream()
+        assertThat(info.getOutputTokenMemberPath().isEmpty(), is(false));
+        assertThat(info.getOutputTokenMemberPath().stream()
                 .map(MemberShape::getMemberName)
                 .collect(Collectors.toList()), equalTo(ListUtils.of("result", "nextToken")));
         assertThat(info.getItemsMember().isPresent(), is(true));

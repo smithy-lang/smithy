@@ -92,7 +92,7 @@ public final class PaginationInfo {
     /**
      * @return the last {@link MemberShape} of the output path.
      *
-     * @deprecated See {@link PaginationInfo#getOutputTokenPath} to retrieve the full path.
+     * @deprecated See {@link PaginationInfo#getOutputTokenMemberPath} to retrieve the full path.
      */
     @Deprecated
     public MemberShape getOutputTokenMember() {
@@ -104,7 +104,7 @@ public final class PaginationInfo {
      *
      * @return A list of {@link MemberShape}.
      */
-    public List<MemberShape> getOutputTokenPath() {
+    public List<MemberShape> getOutputTokenMemberPath() {
         return outputToken;
     }
 

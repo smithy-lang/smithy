@@ -87,7 +87,7 @@ public final class PaginatedIndex implements KnowledgeIndex {
                 .map(path -> PaginatedTrait.resolveFullPath(path, model, output))
                 .orElse(ListUtils.of());
 
-        if (inputToken == null || outputTokenPath.size() == 0) {
+        if (inputToken == null || outputTokenPath.isEmpty()) {
             return Optional.empty();
         }
 
