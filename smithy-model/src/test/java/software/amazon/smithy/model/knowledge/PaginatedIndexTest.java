@@ -20,10 +20,13 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.ValidatedResult;
+import software.amazon.smithy.utils.ListUtils;
 
 public class PaginatedIndexTest {
     @Test
@@ -43,9 +46,17 @@ public class PaginatedIndexTest {
         assertThat(info.getOutput().getId(), is(ShapeId.from("ns.foo#ValidOutput")));
         assertThat(info.getInputTokenMember().getMemberName(), equalTo("nextToken"));
         assertThat(info.getOutputTokenMember().getMemberName(), equalTo("nextToken"));
+        assertThat(info.getOutputTokenMemberPath().isEmpty(), is(false));
+        assertThat(info.getOutputTokenMemberPath().stream()
+                .map(MemberShape::getMemberName)
+                .collect(Collectors.toList()), equalTo(ListUtils.of("nextToken")));
         assertThat(info.getPageSizeMember().isPresent(), is(true));
         assertThat(info.getPageSizeMember().get().getMemberName(), equalTo("pageSize"));
         assertThat(info.getItemsMember().get().getMemberName(), equalTo("items"));
+        assertThat(info.getItemsMemberPath().isEmpty(), is(false));
+        assertThat(info.getItemsMemberPath().stream()
+                .map(MemberShape::getMemberName)
+                .collect(Collectors.toList()), equalTo(ListUtils.of("items")));
     }
 
     @Test
@@ -59,9 +70,20 @@ public class PaginatedIndexTest {
 
         ShapeId service = ShapeId.from("ns.foo#Service");
         ShapeId operation = ShapeId.from("ns.foo#ValidNestedOutputOperation");
-        Optional<PaginationInfo> info = index.getPaginationInfo(service, operation);
+        Optional<PaginationInfo> optionalInfo = index.getPaginationInfo(service, operation);
+        assertThat(optionalInfo.isPresent(), is(true));
 
-        assertThat(info.isPresent(), is(true));
-        assertThat(info.get().getItemsMember().isPresent(), is(true));
+        PaginationInfo info = optionalInfo.get();
+        assertThat(info.getOutputTokenMember().getMemberName(), equalTo("nextToken"));
+        assertThat(info.getOutputTokenMemberPath().isEmpty(), is(false));
+        assertThat(info.getOutputTokenMemberPath().stream()
+                .map(MemberShape::getMemberName)
+                .collect(Collectors.toList()), equalTo(ListUtils.of("result", "nextToken")));
+        assertThat(info.getItemsMember().isPresent(), is(true));
+        assertThat(info.getItemsMember().get().getMemberName(), equalTo("items"));
+        assertThat(info.getItemsMemberPath().isEmpty(), is(false));
+        assertThat(info.getItemsMemberPath().stream()
+                .map(MemberShape::getMemberName)
+                .collect(Collectors.toList()), equalTo(ListUtils.of("result", "items")));
     }
 }

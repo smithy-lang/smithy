@@ -17,6 +17,7 @@ package software.amazon.smithy.model.knowledge;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -31,6 +32,7 @@ import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.PaginatedTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.validators.PaginatedTraitValidator;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.OptionalUtils;
 
 /**
@@ -81,22 +83,22 @@ public final class PaginatedIndex implements KnowledgeIndex {
         }
 
         MemberShape inputToken = trait.getInputToken().flatMap(input::getMember).orElse(null);
-        MemberShape outputToken = trait.getOutputToken()
-                .flatMap(path -> PaginatedTrait.resolvePath(path, model, output))
-                .orElse(null);
+        List<MemberShape> outputTokenPath = trait.getOutputToken()
+                .map(path -> PaginatedTrait.resolveFullPath(path, model, output))
+                .orElse(ListUtils.of());
 
-        if (inputToken == null || outputToken == null) {
+        if (inputToken == null || outputTokenPath.isEmpty()) {
             return Optional.empty();
         }
 
         MemberShape pageSizeMember = trait.getPageSize().flatMap(input::getMember).orElse(null);
-        MemberShape itemsMember = trait.getItems()
-                .flatMap(path -> PaginatedTrait.resolvePath(path, model, output))
-                .orElse(null);
+        List<MemberShape> itemsMemberPath = trait.getItems()
+                .map(path -> PaginatedTrait.resolveFullPath(path, model, output))
+                .orElse(ListUtils.of());
 
         return Optional.of(new PaginationInfo(
                 service, operation, input, output, trait,
-                inputToken, outputToken, pageSizeMember, itemsMember));
+                inputToken, outputTokenPath, pageSizeMember, itemsMemberPath));
     }
 
     public Optional<PaginationInfo> getPaginationInfo(ToShapeId service, ToShapeId operation) {

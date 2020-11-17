@@ -136,9 +136,9 @@ public final class PaginatedTraitValidator extends AbstractValidator {
 
         if (memberPath == null) {
             return service != null && validator.isRequiredToBePresent()
-                   ? Collections.singletonList(error(operation, trait, String.format(
+                    ? Collections.singletonList(error(operation, trait, String.format(
                     "%spaginated trait `%s` is not configured", prefix, validator.propertyName())))
-                   : Collections.emptyList();
+                    : Collections.emptyList();
         }
 
         if (!validator.pathsAllowed() && memberPath.contains(".")) {
@@ -184,7 +184,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         if (validator.pathsAllowed() && PATH_PATTERN.split(memberPath).length > 2) {
             events.add(warning(operation, trait, String.format(
                     "%spaginated trait `%s` contains a path with more than two parts, which can make your API "
-                        + "cumbersome to use",
+                    + "cumbersome to use",
                     prefix, validator.propertyName()
             )));
         }
@@ -228,7 +228,13 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         ) {
             Optional<StructureShape> outputShape = opIndex.getOutput(operation);
             return outputShape.flatMap(structureShape -> getMemberPath(opIndex, operation, trait)
-                    .flatMap(path -> PaginatedTrait.resolvePath(path, model, structureShape)));
+                    .map(path -> PaginatedTrait.resolveFullPath(path, model, structureShape)))
+                    .flatMap(memberShapes -> {
+                        if (memberShapes.size() == 0) {
+                            return Optional.empty();
+                        }
+                        return Optional.of(memberShapes.get(memberShapes.size() - 1));
+                    });
         }
     }
 
