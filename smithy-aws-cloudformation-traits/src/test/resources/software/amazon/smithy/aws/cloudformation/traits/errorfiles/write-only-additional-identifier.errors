@@ -1,1 +1,3 @@
 [ERROR] smithy.example#FooStructure$member: Member with the mutability value of "write" is also marked as an additional identifier | CfnMutabilityTrait
+[WARNING] smithy.example#FooStructure$member: This shape applies a trait that is unstable: aws.cloudformation#cfnAdditionalIdentifier | UnstableTrait
+[WARNING] smithy.example#FooStructure$member: This shape applies a trait that is unstable: aws.cloudformation#cfnMutability | UnstableTrait

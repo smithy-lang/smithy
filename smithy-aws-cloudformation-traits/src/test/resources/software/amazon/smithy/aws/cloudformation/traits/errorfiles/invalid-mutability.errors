@@ -1,1 +1,2 @@
 [ERROR] smithy.example#FooStructure$member: Error validating trait `aws.cloudformation#cfnMutability`: String value provided for `aws.cloudformation#cfnMutability` must be one of the following values: `create`, `create-and-read`, `full`, `read`, `write` | TraitValue
+[WARNING] smithy.example#FooStructure$member: This shape applies a trait that is unstable: aws.cloudformation#cfnMutability | UnstableTrait
