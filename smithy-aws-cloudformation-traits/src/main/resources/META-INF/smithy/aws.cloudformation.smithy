@@ -4,6 +4,7 @@ namespace aws.cloudformation
 
 /// Indicates that the CloudFormation property generated from this member is an
 /// additional identifier for the resource.
+@unstable
 @trait(
     selector: "structure > :test(member > string)",
     conflicts: [cfnExcludeProperty]
@@ -13,12 +14,14 @@ structure cfnAdditionalIdentifier {}
 
 /// The cloudFormationName trait allows a CloudFormation resource property name
 /// to differ from a structure member name used in the model.
+@unstable
 @trait(selector: "structure > member")
 @tags(["diff.error.const"])
 string cfnName
 
 /// Indicates that a structure member should not be included in generated
 /// CloudFormation resource definitions.
+@unstable
 @trait(
     selector: "structure > member",
     conflicts: [
@@ -31,6 +34,7 @@ structure cfnExcludeProperty {}
 
 /// Indicates an explicit CloudFormation mutability of the structure member
 /// when part of a CloudFormation resource.
+@unstable
 @trait(
     selector: "structure > member",
     conflicts: [cfnExcludeProperty]
@@ -83,6 +87,7 @@ structure cfnExcludeProperty {}
 string cfnMutability
 
 /// Indicates that a Smithy resource is a CloudFormation resource.
+@unstable
 @trait(selector: "resource")
 @tags(["diff.error.add", "diff.error.remove"])
 structure cfnResource {
