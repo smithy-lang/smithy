@@ -1,5 +1,49 @@
 # Smithy Changelog
 
+## 1.4.0 (2020-11-20)
+
+### Features
+
+#### New Packages
+
+* Added `smithy-jmespath`, a dependency-less, JMESPath parser with a rich AST that can be used in code generation, and
+  performs static analysis of expressions. ([#621](https://github.com/awslabs/smithy/pull/621))
+* Added `smithy-waiters`, containing the `@waitable` trait. This provides information that clients can use to poll
+  until a desired state is reached, or it is determined that that state cannot be reached. ([#623](https://github.com/awslabs/smithy/pull/623))
+* Added `smithy-aws-cloudformation-traits`, containing several (unstable) traits that indicate CloudFormation resources
+  and the additional metadata about their properties. ([#579](https://github.com/awslabs/smithy/pull/579))
+* Added `smithy-aws-cloudformation`, containing the (unstable) "cloudformation" build tool that, given a model
+  decorated with traits from `aws.cloudformation`, will generate CloudFormation Resource Schemas. ([#622](https://github.com/awslabs/smithy/pull/622))
+
+#### Other Features
+
+* Added support for `patternProperties` when generating JSON Schema. ([#611](https://github.com/awslabs/smithy/pull/611))
+* Added more utility methods to the `CodeWriter`. ([#624](https://github.com/awslabs/smithy/pull/624))
+* Added validation for `@sensitive` trait when applied to members. ([#609](https://github.com/awslabs/smithy/pull/609))
+* Added support for retrieving full paths to the `outputToken` and `items` pagination members. ([#628](https://github.com/awslabs/smithy/pull/628))
+* Added a warning for `@enum` entries without names. ([#610](https://github.com/awslabs/smithy/pull/610))
+* Added support for generating an `integer` OpenAPI type. ([#632](https://github.com/awslabs/smithy/pull/632))
+* Improved `smithy-diff` evaluation of changing member targets. ([#630](https://github.com/awslabs/smithy/pull/630))
+* Updated pagination tokens to support being `map` shapes. ([#629](https://github.com/awslabs/smithy/pull/629))
+
+### Bug Fixes
+
+* Fixed a bug where URIs would be declared conflicting if the differed through the `@endpoint` trait. ([#626](https://github.com/awslabs/smithy/pull/626))
+* Fixed a bug that would allow the `@aws.auth#sigv4` trait's `name` property to be empty. ([#635](https://github.com/awslabs/smithy/pull/635))
+* Updated protocol tests for `@sparse` trait. ([#620](https://github.com/awslabs/smithy/pull/620), [#631](https://github.com/awslabs/smithy/pull/631))
+* Fixed a bug with the interaction of `CodeWriter.writeInline` with sections. ([#617](https://github.com/awslabs/smithy/pull/617))
+
+### Documentation
+
+* Fixed links for protocol test suites. ([#615](https://github.com/awslabs/smithy/pull/615))
+* Added example and test for composing with `CodeWriter`. ([#619](https://github.com/awslabs/smithy/pull/619))
+* Clarified that `@enum` values cannot be empty. ([#633](https://github.com/awslabs/smithy/pull/633))
+* Clarified binary data in protocol tests. ([#634](https://github.com/awslabs/smithy/pull/634))
+
+### Cleanup
+
+* Lowered severity of validation that a `pageSize` member is marked `@required`. ([#612](https://github.com/awslabs/smithy/pull/612))
+
 ## 1.3.0 (2020-10-20)
 
 ### Features
