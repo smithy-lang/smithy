@@ -174,6 +174,8 @@ tools and vendors.
 
 The following key-value pairs are supported:
 
+.. _generate-openapi-setting-service:
+
 service (``string``)
     **Required**. The Smithy service :ref:`shape ID <shape-id>` to convert.
     For example, ``smithy.example#Weather``.
@@ -188,6 +190,8 @@ service (``string``)
                 }
             }
         }
+
+.. _generate-openapi-setting-protocol:
 
 protocol (``string``)
     The protocol shape ID to use when converting Smithy to OpenAPI.
@@ -213,6 +217,8 @@ protocol (``string``)
             }
         }
 
+.. _generate-openapi-setting-tags:
+
 tags (``boolean``)
     Whether or not to include Smithy :ref:`tags <tags-trait>` in the result
     as `OpenAPI tags`_. The following example adds all tags in the Smithy
@@ -229,6 +235,8 @@ tags (``boolean``)
                 }
             }
         }
+
+.. _generate-openapi-setting-supportedTags:
 
 supportedTags (``[string]``)
     Limits the exported ``tags`` to a specific set of tags. The value
@@ -248,6 +256,8 @@ supportedTags (``[string]``)
             }
         }
 
+.. _generate-openapi-setting-defaultBlobFormat:
+
 defaultBlobFormat (``string``)
     Sets the default format property used when converting blob shapes in
     Smithy to strings in OpenAPI. Defaults to "byte", meaning Base64 encoded.
@@ -264,6 +274,8 @@ defaultBlobFormat (``string``)
                 }
             }
         }
+
+.. _generate-openapi-setting-externalDocs:
 
 externalDocs (``[string]``)
     Limits the source of converted "externalDocs" fields to the specified
@@ -287,6 +299,8 @@ externalDocs (``[string]``)
             }
         }
 
+.. _generate-openapi-setting-keepUnusedComponents:
+
 keepUnusedComponents (``boolean``)
     Set to ``true`` to prevent unused OpenAPI ``components`` from being
     removed from the created specification.
@@ -302,6 +316,8 @@ keepUnusedComponents (``boolean``)
                 }
             }
         }
+
+.. _generate-openapi-setting-jsonContentType:
 
 jsonContentType (``string``)
     Sets a custom media-type to associate with the JSON payload of
@@ -319,6 +335,8 @@ jsonContentType (``string``)
             }
         }
 
+.. _generate-openapi-setting-forbidGreedyLabels:
+
 forbidGreedyLabels (``boolean``)
     Set to true to forbid greedy URI labels. By default, greedy labels will
     appear as-is in the path generated for an operation. For example,
@@ -335,6 +353,8 @@ forbidGreedyLabels (``boolean``)
                 }
             }
         }
+
+.. _generate-openapi-setting-onHttpPrefixHeaders:
 
 onHttpPrefixHeaders (``string``)
     Specifies what to do when the :ref:`httpPrefixHeaders-trait` is found in
@@ -358,6 +378,8 @@ onHttpPrefixHeaders (``string``)
             }
         }
 
+.. _generate-openapi-setting-ignoreUnsupportedTraits:
+
 ignoreUnsupportedTraits (``boolean``)
     Emits warnings rather than failing when unsupported traits like
     ``endpoint`` and ``hostLabel`` are encountered.
@@ -373,6 +395,8 @@ ignoreUnsupportedTraits (``boolean``)
                 }
             }
         }
+
+.. _generate-openapi-setting-substitutions:
 
 substitutions (``Map<String, any>``)
     Defines a map of strings to any JSON value to find and replace in the
@@ -409,6 +433,8 @@ substitutions (``Map<String, any>``)
             }
         }
 
+.. _generate-openapi-setting-jsonAdd:
+
 jsonAdd (``Map<String, Node>``)
     Adds or replaces the JSON value in the generated OpenAPI document at the
     given JSON pointer locations with a different JSON value. The value must
@@ -439,10 +465,33 @@ jsonAdd (``Map<String, Node>``)
             }
         }
 
+.. _generate-openapi-setting-useIntegerType:
+
+useIntegerType (``boolean``)
+    Set to true to use the "integer" type when converting ``byte``, ``short``,
+    ``integer``, and ``long`` shapes to OpenAPI. Configuring this setting to
+    true, like the example below, is recommended.
+
+    By default, these shape types are converted to OpenAPI with a type of
+    "number".
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "useIntegerType": true
+                }
+            }
+        }
 
 ----------------------------------
 JSON schema configuration settings
 ----------------------------------
+
+.. _generate-openapi-jsonschema-setting-alphanumericOnlyRefs:
 
 alphanumericOnlyRefs (``boolean``)
     Creates JSON schema names that strip out non-alphanumeric characters.
@@ -455,6 +504,8 @@ alphanumericOnlyRefs (``boolean``)
         This setting is enabled by default when
         ``software.amazon.smithy:smithy-aws-apigateway-openapi`` is on the classpath
         and ``apiGatewayType`` is not set to ``DISABLED``.
+
+.. _generate-openapi-jsonschema-setting-useJsonName:
 
 useJsonName (``boolean``)
     Uses the value of the :ref:`jsonName-trait` when creating JSON schema
@@ -473,6 +524,8 @@ useJsonName (``boolean``)
             }
         }
 
+.. _generate-openapi-jsonschema-setting-defaultTimestampFormat:
+
 defaultTimestampFormat (``string``)
     Sets the assumed :ref:`timestampFormat-trait` value for timestamps with
     no explicit timestampFormat trait. The provided value is expected to be
@@ -490,6 +543,8 @@ defaultTimestampFormat (``string``)
                 }
             }
         }
+
+.. _generate-openapi-jsonschema-setting-unionStrategy:
 
 unionStrategy (``string``)
     Configures how Smithy union shapes are converted to JSON Schema.
@@ -514,6 +569,35 @@ unionStrategy (``string``)
             }
         }
 
+.. _generate-openapi-jsonschema-setting-mapStrategy:
+
+mapStrategy (``string``)
+    Configures how Smithy map shapes are converted to JSON Schema.
+
+    This property must be a string set to one of the following values:
+
+    * ``propertyNames``:  Converts to a schema that uses a combination of
+      "propertyNames" and "additionalProperties". This is the default setting
+      used if not configured.
+    * ``patternProperties``: Converts to a schema that uses
+      "patternProperties". If a map's key member or its target does not have a
+      "pattern" trait, a default indicating one or more of any character (".+")
+      is applied.
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "mapStrategy": "propertyNames"
+                }
+            }
+        }
+
+.. _generate-openapi-jsonschema-setting-schemaDocumentExtensions:
+
 schemaDocumentExtensions (``Map<String, any>``)
     Adds custom top-level key-value pairs to the created OpenAPI specification.
     Any existing value is overwritten.
@@ -534,6 +618,8 @@ schemaDocumentExtensions (``Map<String, any>``)
                 }
             }
         }
+
+.. _generate-openapi-jsonschema-setting-disableFeatures:
 
 disableFeatures (``[string]``)
     Disables JSON schema and OpenAPI property names from appearing in the
@@ -1144,19 +1230,19 @@ Next, you need to create and configure an ``OpenApiConverter``:
 .. code-block:: java
 
     import software.amazon.smithy.model.shapes.ShapeId;
-    import software.amazon.smithy.openapi.fromsmithy.OpenApiConstants;
+    import software.amazon.smithy.openapi.OpenApiConfig;
     import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
-    import software.amazon.smithy.openapi.fromsmithy.model.OpenApi;
+    import software.amazon.smithy.openapi.model.OpenApi;
 
     OpenApiConverter converter = OpenApiConverter.create();
 
-    // Add any necessary settings...
-    converter.putSetting(OpenApiConstants.PROTOCOL, "aws.protocols#restJson1");
+    // Add any necessary configuration settings.
+    OpenApiConfig config = new OpenApiConfig();
+    config.setService(ShapeId.from("smithy.example#Weather"));
+    converter.config(config);
 
-    // Create a shape ID that points to the service.
-    ShapeId serviceShapeId = ShapeId.from("smithy.example#Weather");
-
-    OpenApi result = converter.convert(myModel, serviceShapeId);
+    // Generate the OpenAPI schema.
+    OpenApi result = converter.convert(myModel);
 
 The conversion process is highly extensible through
 ``software.amazon.smithy.openapi.fromsmithy.CoreExtension``

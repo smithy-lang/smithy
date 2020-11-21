@@ -21,6 +21,7 @@
     <link rel="shortcut icon" href="../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Generating CloudFormation Resource Schemas from Smithy" href="generating-cloudformation-resources.html" />
     <link rel="prev" title="Style Guide" href="style-guide.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="smithy-version" content="1.0">
@@ -195,17 +196,17 @@ specification from a Smithy model using a buildscript dependency:</p>
 
 <span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.3.0&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.4.0&quot;</span><span class="p">)</span>
         <span class="c1">// The openapi plugin configured in the smithy-build.json example below</span>
         <span class="c1">// uses the restJson1 protocol defined in the aws-traits package. This</span>
         <span class="c1">// additional dependency must added to use that protocol.</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.3.0&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.4.0&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="n">dependencies</span> <span class="p">{</span>
     <span class="c1">// The dependency for restJson1 is required here too.</span>
-    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.3.0&quot;</span><span class="p">)</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.4.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -231,7 +232,7 @@ that builds an OpenAPI specification from a service for the
 </div>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-openapi:1.3.0&quot; is
+<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-openapi:1.4.0&quot; is
 required in order for smithy-build to map the &quot;openapi&quot; plugin name to the
 correct Java library implementation.</p>
 </div>
@@ -246,7 +247,7 @@ tools and vendors.</p>
 <code class="docutils literal notranslate"><span class="pre">protocol</span></code> settings to create a valid OpenAPI specification.</p>
 </div>
 <p>The following key-value pairs are supported:</p>
-<dl class="docutils">
+<dl class="docutils" id="generate-openapi-setting-service">
 <dt>service (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
 <dd><p class="first"><strong>Required</strong>. The Smithy service <a class="reference internal" href="../spec/core/model.html#shape-id"><span class="std std-ref">shape ID</span></a> to convert.
 For example, <code class="docutils literal notranslate"><span class="pre">smithy.example#Weather</span></code>.</p>
@@ -261,6 +262,8 @@ For example, <code class="docutils literal notranslate"><span class="pre">smithy
 </pre></div>
 </div>
 </dd>
+</dl>
+<dl class="docutils" id="generate-openapi-setting-protocol">
 <dt>protocol (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
 <dd><p class="first">The protocol shape ID to use when converting Smithy to OpenAPI.
 For example, <code class="docutils literal notranslate"><span class="pre">aws.protocols#restJson1</span></code>.</p>
@@ -286,6 +289,8 @@ service provider found on the classpath.</li>
 </pre></div>
 </div>
 </dd>
+</dl>
+<dl class="docutils" id="generate-openapi-setting-tags">
 <dt>tags (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
 <dd><p class="first">Whether or not to include Smithy <a class="reference internal" href="../spec/core/documentation-traits.html#tags-trait"><span class="std std-ref">tags</span></a> in the result
 as <a class="reference external" href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#tagObject">OpenAPI tags</a>. The following example adds all tags in the Smithy
@@ -302,6 +307,8 @@ model to the OpenAPI model.</p>
 </pre></div>
 </div>
 </dd>
+</dl>
+<dl class="docutils" id="generate-openapi-setting-supportedtags">
 <dt>supportedTags (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt>
 <dd><p class="first">Limits the exported <code class="docutils literal notranslate"><span class="pre">tags</span></code> to a specific set of tags. The value
 must be a list of strings. This property requires that <code class="docutils literal notranslate"><span class="pre">tags</span></code> is set to
@@ -319,6 +326,8 @@ must be a list of strings. This property requires that <code class="docutils lit
 </pre></div>
 </div>
 </dd>
+</dl>
+<dl class="docutils" id="generate-openapi-setting-defaultblobformat">
 <dt>defaultBlobFormat (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
 <dd><p class="first">Sets the default format property used when converting blob shapes in
 Smithy to strings in OpenAPI. Defaults to &quot;byte&quot;, meaning Base64 encoded.
@@ -335,6 +344,8 @@ See <a class="reference external" href="https://github.com/OAI/OpenAPI-Specifica
 </pre></div>
 </div>
 </dd>
+</dl>
+<dl class="docutils" id="generate-openapi-setting-externaldocs">
 <dt>externalDocs (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt>
 <dd><p class="first">Limits the source of converted &quot;externalDocs&quot; fields to the specified
 priority ordered list of names in an <a class="reference internal" href="../spec/core/documentation-traits.html#externaldocumentation-trait"><span class="std std-ref">externalDocumentation trait</span></a>.
@@ -356,6 +367,8 @@ values: &quot;Homepage&quot;, &quot;API Reference&quot;, &quot;User Guide&quot;,
 </pre></div>
 </div>
 </dd>
+</dl>
+<dl class="docutils" id="generate-openapi-setting-keepunusedcomponents">
 <dt>keepUnusedComponents (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
 <dd><p class="first">Set to <code class="docutils literal notranslate"><span class="pre">true</span></code> to prevent unused OpenAPI <code class="docutils literal notranslate"><span class="pre">components</span></code> from being
 removed from the created specification.</p>
@@ -371,6 +384,8 @@ removed from the created specification.</p>
 </pre></div>
 </div>
 </dd>
+</dl>
+<dl class="docutils" id="generate-openapi-setting-jsoncontenttype">
 <dt>jsonContentType (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
 <dd><p class="first">Sets a custom media-type to associate with the JSON payload of
 JSON-based protocols.</p>
@@ -386,6 +401,8 @@ JSON-based protocols.</p>
 </pre></div>
 </div>
 </dd>
+</dl>
+<dl class="docutils" id="generate-openapi-setting-forbidgreedylabels">
 <dt>forbidGreedyLabels (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
 <dd><p class="first">Set to true to forbid greedy URI labels. By default, greedy labels will
 appear as-is in the path generated for an operation. For example,
@@ -402,6 +419,8 @@ appear as-is in the path generated for an operation. For example,
 </pre></div>
 </div>
 </dd>
+</dl>
+<dl class="docutils" id="generate-openapi-setting-onhttpprefixheaders">
 <dt>onHttpPrefixHeaders (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
 <dd><p class="first">Specifies what to do when the <a class="reference internal" href="../spec/core/http-traits.html#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a> is found in
 a model. OpenAPI does not support <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code>. By default, the
@@ -424,6 +443,8 @@ setting:</p>
 </pre></div>
 </div>
 </dd>
+</dl>
+<dl class="docutils" id="generate-openapi-setting-ignoreunsupportedtraits">
 <dt>ignoreUnsupportedTraits (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
 <dd><p class="first">Emits warnings rather than failing when unsupported traits like
 <code class="docutils literal notranslate"><span class="pre">endpoint</span></code> and <code class="docutils literal notranslate"><span class="pre">hostLabel</span></code> are encountered.</p>
@@ -439,6 +460,8 @@ setting:</p>
 </pre></div>
 </div>
 </dd>
+</dl>
+<dl class="docutils" id="generate-openapi-setting-substitutions">
 <dt>substitutions (<code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">any&gt;</span></code>)</dt>
 <dd><p class="first">Defines a map of strings to any JSON value to find and replace in the
 generated OpenAPI model.</p>
@@ -471,6 +494,8 @@ change.</p>
 </pre></div>
 </div>
 </dd>
+</dl>
+<dl class="docutils" id="generate-openapi-setting-jsonadd">
 <dt>jsonAdd (<code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">Node&gt;</span></code>)</dt>
 <dd><p class="first">Adds or replaces the JSON value in the generated OpenAPI document at the
 given JSON pointer locations with a different JSON value. The value must
@@ -500,10 +525,30 @@ result as needed.</p>
 </div>
 </dd>
 </dl>
+<dl class="docutils" id="generate-openapi-setting-useintegertype">
+<dt>useIntegerType (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
+<dd><p class="first">Set to true to use the &quot;integer&quot; type when converting <code class="docutils literal notranslate"><span class="pre">byte</span></code>, <code class="docutils literal notranslate"><span class="pre">short</span></code>,
+<code class="docutils literal notranslate"><span class="pre">integer</span></code>, and <code class="docutils literal notranslate"><span class="pre">long</span></code> shapes to OpenAPI. Configuring this setting to
+true, like the example below, is recommended.</p>
+<p>By default, these shape types are converted to OpenAPI with a type of
+&quot;number&quot;.</p>
+<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Weather&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;useIntegerType&quot;</span><span class="p">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
 </div>
 <div class="section" id="json-schema-configuration-settings">
 <h2><a href="#json-schema-configuration-settings">JSON schema configuration settings</a></h2>
-<dl class="docutils">
+<dl class="docutils" id="generate-openapi-jsonschema-setting-alphanumericonlyrefs">
 <dt>alphanumericOnlyRefs (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
 <dd><p class="first">Creates JSON schema names that strip out non-alphanumeric characters.</p>
 <p>This is necessary for compatibility with some vendors like
@@ -515,6 +560,8 @@ Amazon API Gateway that only allow alphanumeric shape names.</p>
 and <code class="docutils literal notranslate"><span class="pre">apiGatewayType</span></code> is not set to <code class="docutils literal notranslate"><span class="pre">DISABLED</span></code>.</p>
 </div>
 </dd>
+</dl>
+<dl class="docutils" id="generate-openapi-jsonschema-setting-usejsonname">
 <dt>useJsonName (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
 <dd><p class="first">Uses the value of the <a class="reference internal" href="../spec/core/protocol-traits.html#jsonname-trait"><span class="std std-ref">jsonName trait</span></a> when creating JSON schema
 properties for structure and union shapes. This property MAY be
@@ -531,6 +578,8 @@ automatically set to <code class="docutils literal notranslate"><span class="pre
 </pre></div>
 </div>
 </dd>
+</dl>
+<dl class="docutils" id="generate-openapi-jsonschema-setting-defaulttimestampformat">
 <dt>defaultTimestampFormat (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
 <dd><p class="first">Sets the assumed <a class="reference internal" href="../spec/core/protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a> value for timestamps with
 no explicit timestampFormat trait. The provided value is expected to be
@@ -548,6 +597,8 @@ a string. Defaults to &quot;date-time&quot; if not set. Can be set to &quot;date
 </pre></div>
 </div>
 </dd>
+</dl>
+<dl class="docutils" id="generate-openapi-jsonschema-setting-unionstrategy">
 <dt>unionStrategy (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
 <dd><p class="first">Configures how Smithy union shapes are converted to JSON Schema.</p>
 <p>This property must be a string set to one of the following values:</p>
@@ -570,6 +621,34 @@ structure.</li>
 </pre></div>
 </div>
 </dd>
+</dl>
+<dl class="docutils" id="generate-openapi-jsonschema-setting-mapstrategy">
+<dt>mapStrategy (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
+<dd><p class="first">Configures how Smithy map shapes are converted to JSON Schema.</p>
+<p>This property must be a string set to one of the following values:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">propertyNames</span></code>:  Converts to a schema that uses a combination of
+&quot;propertyNames&quot; and &quot;additionalProperties&quot;. This is the default setting
+used if not configured.</li>
+<li><code class="docutils literal notranslate"><span class="pre">patternProperties</span></code>: Converts to a schema that uses
+&quot;patternProperties&quot;. If a map's key member or its target does not have a
+&quot;pattern&quot; trait, a default indicating one or more of any character (&quot;.+&quot;)
+is applied.</li>
+</ul>
+<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Weather&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;mapStrategy&quot;</span><span class="p">:</span> <span class="s2">&quot;propertyNames&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="docutils" id="generate-openapi-jsonschema-setting-schemadocumentextensions">
 <dt>schemaDocumentExtensions (<code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">any&gt;</span></code>)</dt>
 <dd><p class="first">Adds custom top-level key-value pairs to the created OpenAPI specification.
 Any existing value is overwritten.</p>
@@ -590,6 +669,8 @@ Any existing value is overwritten.</p>
 </pre></div>
 </div>
 </dd>
+</dl>
+<dl class="docutils" id="generate-openapi-jsonschema-setting-disablefeatures">
 <dt>disableFeatures (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt>
 <dd><p class="first">Disables JSON schema and OpenAPI property names from appearing in the
 generated OpenAPI model.</p>
@@ -689,7 +770,7 @@ dependency on <code class="docutils literal notranslate"><span class="pre">softw
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#apigateway-build-gradle" title="Permalink to this code">¶</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-apigateway-openapi:1.3.0&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-apigateway-openapi:1.4.0&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -1136,7 +1217,7 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#code-build-gradle" title="Permalink to this code">¶</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.3.0&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.4.0&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -1144,19 +1225,19 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
 </div>
 <p>Next, you need to create and configure an <code class="docutils literal notranslate"><span class="pre">OpenApiConverter</span></code>:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">software.amazon.smithy.model.shapes.ShapeId</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">software.amazon.smithy.openapi.fromsmithy.OpenApiConstants</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.openapi.OpenApiConfig</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">software.amazon.smithy.openapi.fromsmithy.OpenApiConverter</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">software.amazon.smithy.openapi.fromsmithy.model.OpenApi</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.openapi.model.OpenApi</span><span class="o">;</span>
 
 <span class="n">OpenApiConverter</span> <span class="n">converter</span> <span class="o">=</span> <span class="n">OpenApiConverter</span><span class="o">.</span><span class="na">create</span><span class="o">();</span>
 
-<span class="c1">// Add any necessary settings...</span>
-<span class="n">converter</span><span class="o">.</span><span class="na">putSetting</span><span class="o">(</span><span class="n">OpenApiConstants</span><span class="o">.</span><span class="na">PROTOCOL</span><span class="o">,</span> <span class="s">&quot;aws.protocols#restJson1&quot;</span><span class="o">);</span>
+<span class="c1">// Add any necessary configuration settings.</span>
+<span class="n">OpenApiConfig</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OpenApiConfig</span><span class="o">();</span>
+<span class="n">config</span><span class="o">.</span><span class="na">setService</span><span class="o">(</span><span class="n">ShapeId</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="s">&quot;smithy.example#Weather&quot;</span><span class="o">));</span>
+<span class="n">converter</span><span class="o">.</span><span class="na">config</span><span class="o">(</span><span class="n">config</span><span class="o">);</span>
 
-<span class="c1">// Create a shape ID that points to the service.</span>
-<span class="n">ShapeId</span> <span class="n">serviceShapeId</span> <span class="o">=</span> <span class="n">ShapeId</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="s">&quot;smithy.example#Weather&quot;</span><span class="o">);</span>
-
-<span class="n">OpenApi</span> <span class="n">result</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="na">convert</span><span class="o">(</span><span class="n">myModel</span><span class="o">,</span> <span class="n">serviceShapeId</span><span class="o">);</span>
+<span class="c1">// Generate the OpenAPI schema.</span>
+<span class="n">OpenApi</span> <span class="n">result</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="na">convert</span><span class="o">(</span><span class="n">myModel</span><span class="o">);</span>
 </pre></div>
 </div>
 <p>The conversion process is highly extensible through
@@ -1171,6 +1252,7 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
                         
                         <a href="style-guide.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Style Guide</a>
                         
+                        <a href="generating-cloudformation-resources.html" title="next chapter" class="next-page clearfix">Generating CloudFormation Resource Schemas from Smithy →</a>
                     </section>
                     
                 </article><aside id="right-column" class="side-column hidden-sm">
@@ -1181,6 +1263,7 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
                                 
                                 <a href="style-guide.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
                                 
+                                <a href="generating-cloudformation-resources.html" title="next chapter" class="next-page clearfix">Next →</a>
                             </section>
                             
                             <ul>

@@ -1,0 +1,963 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Waiters &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/smithy.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="MQTT Protocol Bindings" href="mqtt.html" />
+    <link rel="prev" title="HTTP Protocol Compliance Tests" href="http-protocol-compliance-tests.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="smithy-version" content="1.0">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                </a>
+                <span class="version-text">1.0</span>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="index.html">Specifications</a></li>
+                <li class="site-page"><a href="../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article class="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="index.html" accesskey="U">Specifications</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="waiters">
+<span id="id1"></span><h1><a href="#waiters">Waiters</a></h1>
+<p>Waiters are a client-side abstraction used to poll a resource until a desired
+state is reached, or until it is determined that the resource will never
+enter into the desired state. This is a common task when working with
+services that are eventually consistent like Amazon S3 or services that
+asynchronously create resources like Amazon EC2. Writing logic to
+continuously poll the status of a resource can be cumbersome and
+error-prone. The goal of waiters is to move this responsibility out of
+customer code and onto service teams who know their service best.</p>
+<p>For example, waiters can be used in code to turn the workflow of waiting
+for an Amazon EC2 instance to be terminated into something like the
+following client pseudocode:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">InstanceTerminatedWaiter</span> <span class="n">waiter</span> <span class="o">=</span> <span class="n">InstanceTerminatedWaiter</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>
+        <span class="o">.</span><span class="na">client</span><span class="o">(</span><span class="n">myClient</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">instanceIds</span><span class="o">(</span><span class="n">Collections</span><span class="o">.</span><span class="na">singletonList</span><span class="o">(</span><span class="s">&quot;i-foo&quot;</span><span class="o">))</span>
+        <span class="o">.</span><span class="na">totalAllowedWaitTime</span><span class="o">(</span><span class="mi">10</span><span class="o">,</span> <span class="n">Duration</span><span class="o">.</span><span class="na">MINUTES</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">wait</span><span class="o">();</span>
+</pre></div>
+</div>
+<div class="section" id="smithy-waiters-waitable-trait">
+<span id="id2"></span><h2><a href="#smithy-waiters-waitable-trait"><code class="docutils literal notranslate"><span class="pre">smithy.waiters#waitable</span></code> trait</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Indicates that an operation has various named &quot;waiters&quot; that can be used
+to poll a resource until it enters a desired state.</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">operation</span> <span class="pre">:not(-[input,</span> <span class="pre">output]-&gt;</span> <span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">union[trait|streaming])</span></code></p>
+<p class="last">(Operations that do not use <a class="reference internal" href="core/stream-traits.html#event-streams"><span class="std std-ref">event streams</span></a> in their input or output)</p>
+</dd>
+<dt>Value type</dt>
+<dd>A <code class="docutils literal notranslate"><span class="pre">map</span></code> of <a class="reference internal" href="#waiter-names"><span class="std std-ref">waiter names</span></a> to
+<a class="reference internal" href="#waiter-structure"><span class="std std-ref">Waiter structures</span></a>.</dd>
+</dl>
+<p>The following example defines a waiter that waits until an Amazon S3 bucket
+exists:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> com.amazonaws.s3</span>
+
+<span class="hll"><span class="kd">use</span><span class="nc"> smithy.waiters#waitable</span>
+</span>
+<span class="nd">@waitable</span>(
+    <span class="nl">BucketExists:</span> {
+        <span class="nl">documentation:</span> <span class="s2">&quot;Wait until a bucket exists&quot;</span>,
+        <span class="nl">acceptors:</span> [
+            {
+                <span class="nl">state:</span> <span class="s2">&quot;success&quot;</span>,
+                <span class="nl">matcher:</span> {
+                    <span class="nl">success:</span> <span class="kc">true</span>
+                }
+            },
+            {
+                <span class="nl">state:</span> <span class="s2">&quot;retry&quot;</span>,
+                <span class="nl">matcher:</span> {
+                    <span class="nl">errorType:</span> <span class="s2">&quot;NotFound&quot;</span>
+                }
+            }
+        ]
+    }
+)
+<span class="kd">operation</span><span class="nc"> HeadBucket</span> {
+    <span class="nl">input:</span> <span class="vc">HeadBucketInput</span>,
+    <span class="nl">output:</span> <span class="vc">HeadBucketOutput</span>,
+    <span class="nl">errors:</span> [<span class="vc">NotFound</span>]
+}
+</pre></div>
+</div>
+<p>Applying the steps defined in <a class="reference internal" href="#waiter-workflow">Waiter workflow</a> to the above example,
+a client performs the following steps:</p>
+<ol class="arabic simple">
+<li>A <code class="docutils literal notranslate"><span class="pre">HeadBucket</span></code> operation is created, given the necessary input
+parameters, and sent to the service.</li>
+<li>If the operation completes successfully, the waiter transitions to the
+<code class="docutils literal notranslate"><span class="pre">success</span></code> state and terminates. This is defined in the first acceptor
+of the waiter that uses the <code class="docutils literal notranslate"><span class="pre">success</span></code> matcher.</li>
+<li>If the operation encounters an error named <code class="docutils literal notranslate"><span class="pre">NotFound</span></code>, the waiter
+transitions to the <code class="docutils literal notranslate"><span class="pre">retry</span></code> state.</li>
+<li>If the operation fails with any other error, the waiter transitions to
+the <code class="docutils literal notranslate"><span class="pre">failure</span></code> state and terminates.</li>
+<li>The waiter is in the <code class="docutils literal notranslate"><span class="pre">retry</span></code> state and continues at step 1 after
+delaying with exponential backoff until the total allowed time to wait
+is exceeded.</li>
+</ol>
+<div class="section" id="waiter-names">
+<span id="id3"></span><h3><a href="#waiter-names">Waiter names</a></h3>
+<p>Waiter names MUST be defined using UpperCamelCase and only contain
+alphanumeric characters. That is, waiters MUST adhere to the following
+ABNF:</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">waiter-name</span>: <span class="nc">upper-alpha</span> <span class="o">*</span><span class="p">(</span><span class="k">ALPHA</span> <span class="o">/</span> <span class="k">DIGIT</span><span class="p">)</span>
+<span class="nc">upper-alpha</span>: <span class="l">%x41-5A</span> <span class="c1">; A-Z</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#waiter-best-practices"><span class="std std-ref">Waiter best-practices</span></a> for additional best practices
+to follow when naming waiters.</p>
+</div>
+</div>
+</div>
+<div class="section" id="waiter-workflow">
+<h2><a href="#waiter-workflow">Waiter workflow</a></h2>
+<p>Implementations MUST require callers to provide the total amount of time
+they are willing to wait for a waiter to complete. Requiring the caller
+to set a deadline removes any surprises as to how long a waiter can
+potentially take to complete.</p>
+<p>While the total execution time of a waiter is less than the allowed time,
+waiter implementations perform the following steps:</p>
+<ol class="arabic simple">
+<li>Call the operation the <a class="reference internal" href="#smithy-waiters-waitable-trait"><span class="std std-ref">smithy.waiters#waitable trait</span></a> is attached
+to using user-provided input for the operation. Any errors that can be
+encountered by the operation must be caught so that they can be inspected.</li>
+<li>If the total time of the waiter exceeds the allowed time, the waiter
+SHOULD attempt to cancel any in-progress requests and MUST transition to a
+to a terminal <code class="docutils literal notranslate"><span class="pre">failure</span></code> state.</li>
+<li>For every <a class="reference internal" href="#waiter-acceptor"><span class="std std-ref">acceptor</span></a> in the waiter:<ol class="arabic">
+<li>If the acceptor <a class="reference internal" href="#waiter-matcher"><span class="std std-ref">matcher</span></a> is a match, transition
+to the <a class="reference internal" href="#waiter-acceptor-state"><span class="std std-ref">state</span></a> of the acceptor.</li>
+<li>If the acceptor transitions the waiter to the <code class="docutils literal notranslate"><span class="pre">retry</span></code> state, then
+continue to step 5.</li>
+<li>Stop waiting if the acceptor transitions the waiter to the <code class="docutils literal notranslate"><span class="pre">success</span></code>
+or <code class="docutils literal notranslate"><span class="pre">failure</span></code> state.</li>
+</ol>
+</li>
+<li>If none of the acceptors are matched <em>and</em> an error was encountered while
+calling the operation, then transition to the <code class="docutils literal notranslate"><span class="pre">failure</span></code> state and stop
+waiting.</li>
+<li>Transition the waiter to the <code class="docutils literal notranslate"><span class="pre">retry</span></code> state, follow the process
+described in <a class="reference internal" href="#waiter-retries"><span class="std std-ref">Waiter retries</span></a>, and continue to step 1.</li>
+</ol>
+<div class="section" id="waiter-retries">
+<span id="id4"></span><h3><a href="#waiter-retries">Waiter retries</a></h3>
+<p>Waiter implementations MUST delay for a period of time before attempting a
+retry. The amount of time a waiter delays between retries is computed using
+<a class="reference external" href="https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/">exponential backoff</a> through the following algorithm:</p>
+<ul class="simple">
+<li>Let <code class="docutils literal notranslate"><span class="pre">attempt</span></code> be the number of retry attempts.</li>
+<li>Let <code class="docutils literal notranslate"><span class="pre">minDelay</span></code> be the minimum amount of time to delay between retries in
+seconds, specified by the <code class="docutils literal notranslate"><span class="pre">minDelay</span></code> property of a
+<a class="reference internal" href="#waiter-structure"><span class="std std-ref">waiter</span></a> with a default of 2.</li>
+<li>Let <code class="docutils literal notranslate"><span class="pre">maxDelay</span></code> be the maximum amount of time to delay between retries in
+seconds, specified by the <code class="docutils literal notranslate"><span class="pre">maxDelay</span></code> property of a
+<a class="reference internal" href="#waiter-structure"><span class="std std-ref">waiter</span></a> with a default of 120.</li>
+<li>Let <code class="docutils literal notranslate"><span class="pre">min</span></code> be a function that returns the smaller of two integers.</li>
+<li>Let <code class="docutils literal notranslate"><span class="pre">max</span></code> be a function that returns the larger of two integers.</li>
+<li>Let <code class="docutils literal notranslate"><span class="pre">maxWaitTime</span></code> be the amount of time in seconds a user is willing to
+wait for a waiter to complete.</li>
+<li>Let <code class="docutils literal notranslate"><span class="pre">remainingTime</span></code> be the amount of seconds remaining before the waiter
+has exceeded <code class="docutils literal notranslate"><span class="pre">maxWaitTime</span></code>.</li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">delay</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">maxDelay</span><span class="p">,</span> <span class="n">minDelay</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">attempt</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="k">if</span> <span class="n">remainingTime</span> <span class="o">-</span> <span class="n">delay</span> <span class="o">&lt;=</span> <span class="n">minDelay</span><span class="p">:</span>
+    <span class="n">delay</span> <span class="o">=</span> <span class="n">remainingTime</span> <span class="o">-</span> <span class="n">minDelay</span>
+</pre></div>
+</div>
+<p>If the computed <code class="docutils literal notranslate"><span class="pre">delay</span></code> subtracted from <code class="docutils literal notranslate"><span class="pre">remainingTime</span></code> is less than
+or equal to <code class="docutils literal notranslate"><span class="pre">minDelay</span></code>, then set <code class="docutils literal notranslate"><span class="pre">delay</span></code> to <code class="docutils literal notranslate"><span class="pre">remainingTime</span></code> minus
+<code class="docutils literal notranslate"><span class="pre">minDelay</span></code> and perform one last retry. This prevents a waiter from waiting
+needlessly only to exceed <code class="docutils literal notranslate"><span class="pre">maxWaitTime</span></code> before issuing a final request.</p>
+<p>Using the default <code class="docutils literal notranslate"><span class="pre">minDelay</span></code> of 2, <code class="docutils literal notranslate"><span class="pre">maxDelay</span></code> of 120, a <code class="docutils literal notranslate"><span class="pre">maxWaitTime</span></code>
+of 300 (5 minutes), and assuming that requests complete in 0 seconds
+(for example purposes only), delays are computed as follows:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Retry <code class="docutils literal notranslate"><span class="pre">attempt</span></code></th>
+<th class="head"><code class="docutils literal notranslate"><span class="pre">delay</span></code></th>
+<th class="head">Cumulative time</th>
+<th class="head"><code class="docutils literal notranslate"><span class="pre">remainingTime</span></code></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>2</td>
+<td>2</td>
+<td>298</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>4</td>
+<td>6</td>
+<td>294</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>8</td>
+<td>14</td>
+<td>286</td>
+</tr>
+<tr class="row-odd"><td>4</td>
+<td>16</td>
+<td>30</td>
+<td>270</td>
+</tr>
+<tr class="row-even"><td>5</td>
+<td>32</td>
+<td>62</td>
+<td>238</td>
+</tr>
+<tr class="row-odd"><td>6</td>
+<td>64</td>
+<td>126</td>
+<td>174</td>
+</tr>
+<tr class="row-even"><td>7</td>
+<td>120</td>
+<td>254</td>
+<td>46</td>
+</tr>
+<tr class="row-odd"><td>8 (last attempt)</td>
+<td>44</td>
+<td>298</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="waiter-structure">
+<span id="id5"></span><h2><a href="#waiter-structure">Waiter structure</a></h2>
+<p>A <em>waiter</em> defines a set of acceptors that are used to check if a resource
+has entered into a desired state.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>documentation</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Documentation about the waiter defined using <a class="reference external" href="https://spec.commonmark.org/">CommonMark</a>.</td>
+</tr>
+<tr class="row-odd"><td>acceptors</td>
+<td><code class="docutils literal notranslate"><span class="pre">[</span></code> <a class="reference internal" href="#waiter-acceptor"><span class="std std-ref">Acceptor structure</span></a> <code class="docutils literal notranslate"><span class="pre">]</span></code></td>
+<td><strong>Required</strong>. An ordered array of acceptors to check after executing
+an operation. The list of <code class="docutils literal notranslate"><span class="pre">acceptors</span></code> MUST contain at least one
+acceptor with a <code class="docutils literal notranslate"><span class="pre">success</span></code> state transition.</td>
+</tr>
+<tr class="row-even"><td>minDelay</td>
+<td><code class="docutils literal notranslate"><span class="pre">integer</span></code></td>
+<td>The minimum amount of time in seconds to delay between each retry.
+This value defaults to <code class="docutils literal notranslate"><span class="pre">2</span></code> if not specified. If specified, this
+value MUST be greater than or equal to 1 and less than or equal to
+<code class="docutils literal notranslate"><span class="pre">maxDelay</span></code>.</td>
+</tr>
+<tr class="row-odd"><td>maxDelay</td>
+<td><code class="docutils literal notranslate"><span class="pre">integer</span></code></td>
+<td>The maximum amount of time in seconds to delay between each retry.
+This value defaults to <code class="docutils literal notranslate"><span class="pre">120</span></code> if not specified (2 minutes). If
+specified, this value MUST be greater than or equal to 1.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="acceptor-structure">
+<span id="waiter-acceptor"></span><h2><a href="#acceptor-structure">Acceptor structure</a></h2>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>state</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The state the acceptor transitions to when matched. The
+string value MUST be a valid <a class="reference internal" href="#waiter-acceptor-state"><span class="std std-ref">AcceptorState enum</span></a>.</td>
+</tr>
+<tr class="row-odd"><td>matcher</td>
+<td><a class="reference internal" href="#waiter-matcher"><span class="std std-ref">Matcher structure</span></a></td>
+<td><strong>Required.</strong> The matcher used to test if the resource is in a state
+that matches the requirements needed for a state transition.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="acceptorstate-enum">
+<span id="waiter-acceptor-state"></span><h2><a href="#acceptorstate-enum">AcceptorState enum</a></h2>
+<p>Acceptors cause a waiter to transition into one of the following states:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>success</td>
+<td>The waiter successfully finished waiting. This is a terminal state
+that causes the waiter to stop.</td>
+</tr>
+<tr class="row-odd"><td>failure</td>
+<td>The waiter failed to enter into the desired state. This is a terminal
+state that causes the waiter to stop.</td>
+</tr>
+<tr class="row-even"><td>retry</td>
+<td>The waiter will retry the operation. This state transition is
+implicit if no accepter causes a state transition.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="matcher-union">
+<span id="waiter-matcher"></span><h2><a href="#matcher-union">Matcher union</a></h2>
+<p>A <em>matcher</em> defines how an acceptor determines if it matches the current
+state of a resource. A matcher is a union where exactly one of the following
+members MUST be set:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>output</td>
+<td><a class="reference internal" href="#waiter-pathmatcher"><span class="std std-ref">PathMatcher structure</span></a></td>
+<td>Matches on the successful output of an operation using a
+<a class="reference external" href="https://jmespath.org/">JMESPath</a> expression. This matcher MUST NOT be used on operations
+with no output. This matcher is checked only if an operation
+completes successfully.</td>
+</tr>
+<tr class="row-odd"><td>inputOutput</td>
+<td><a class="reference internal" href="#waiter-pathmatcher"><span class="std std-ref">PathMatcher structure</span></a></td>
+<td>Matches on both the input and output of an operation using a <a class="reference external" href="https://jmespath.org/">JMESPath</a>
+expression. Input parameters are available through the top-level
+<code class="docutils literal notranslate"><span class="pre">input</span></code> field, and output data is available through the top-level
+<code class="docutils literal notranslate"><span class="pre">output</span></code> field. This matcher MUST NOT be used on operations that
+do not define input or output. This matcher is checked only if an
+operation completes successfully.</td>
+</tr>
+<tr class="row-even"><td>success</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>When set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, matches when an operation returns a successful
+response. When set to <code class="docutils literal notranslate"><span class="pre">false</span></code>, matches when an operation fails with
+any error. This matcher is checked regardless of if an operation
+succeeds or fails with an error.</td>
+</tr>
+<tr class="row-odd"><td>errorType</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">Matches if an operation returns an error of an expected type. If an
+absolute <a class="reference internal" href="core/model.html#shape-id"><span class="std std-ref">shape ID</span></a> is provided, the error is
+matched only based on the name part of the shape ID. A relative shape
+name MAY be provided to match errors that are not defined in the
+model.</p>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">errorType</span></code> matcher SHOULD refer to errors that are associated
+with an operation through its <code class="docutils literal notranslate"><span class="pre">errors</span></code> property, though some
+operations might need to refer to framework errors or lower-level
+errors that are not defined in the model.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="pathmatcher-structure">
+<span id="waiter-pathmatcher"></span><h2><a href="#pathmatcher-structure">PathMatcher structure</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">output</span></code> and <code class="docutils literal notranslate"><span class="pre">inputOutput</span></code> matchers test the result of a <a class="reference external" href="https://jmespath.org/">JMESPath</a>
+expression against an expected value. These matchers are structures that
+support the following members:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>path</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required.</strong> A JMESPath expression applied to the input or output
+of an operation.</td>
+</tr>
+<tr class="row-odd"><td>expected</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required.</strong> The expected return value of the expression.</td>
+</tr>
+<tr class="row-even"><td>comparator</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required.</strong> The comparator used to compare the result of the
+<code class="docutils literal notranslate"><span class="pre">expression</span></code> with the <code class="docutils literal notranslate"><span class="pre">expected</span></code> value. The string value MUST
+be a valid <a class="reference internal" href="#pathcomparator-enum"><span class="std std-ref">PathComparator enum</span></a>.</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="jmespath-data-model">
+<h3><a href="#jmespath-data-model">JMESPath data model</a></h3>
+<p>The data model exposed to <a class="reference external" href="https://jmespath.org/">JMESPath</a> for input and output structures is
+converted from Smithy types to <a class="reference external" href="https://jmespath.org/specification.html#data-types">JMESPath types</a> using the following
+conversion table:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Smithy type</th>
+<th class="head">JMESPath type</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>blob</td>
+<td>string (base64 encoded)</td>
+</tr>
+<tr class="row-odd"><td>boolean</td>
+<td>boolean</td>
+</tr>
+<tr class="row-even"><td>byte</td>
+<td>number</td>
+</tr>
+<tr class="row-odd"><td>short</td>
+<td>number</td>
+</tr>
+<tr class="row-even"><td>integer</td>
+<td>number</td>
+</tr>
+<tr class="row-odd"><td>long</td>
+<td>number <a class="footnote-reference" href="#fnumbers" id="id6">[1]</a></td>
+</tr>
+<tr class="row-even"><td>float</td>
+<td>number</td>
+</tr>
+<tr class="row-odd"><td>double</td>
+<td>number</td>
+</tr>
+<tr class="row-even"><td>bigDecimal</td>
+<td>number <a class="footnote-reference" href="#fnumbers" id="id7">[1]</a></td>
+</tr>
+<tr class="row-odd"><td>bigInteger</td>
+<td>number <a class="footnote-reference" href="#fnumbers" id="id8">[1]</a></td>
+</tr>
+<tr class="row-even"><td>string</td>
+<td>string</td>
+</tr>
+<tr class="row-odd"><td>timestamp</td>
+<td>number <a class="footnote-reference" href="#ftimestamp" id="id9">[2]</a></td>
+</tr>
+<tr class="row-even"><td>document</td>
+<td>any type</td>
+</tr>
+<tr class="row-odd"><td>list and set</td>
+<td>array</td>
+</tr>
+<tr class="row-even"><td>map</td>
+<td>object</td>
+</tr>
+<tr class="row-odd"><td>structure</td>
+<td>object <a class="footnote-reference" href="#fstructure" id="id10">[3]</a></td>
+</tr>
+<tr class="row-even"><td>union</td>
+<td>object <a class="footnote-reference" href="#funion" id="id11">[4]</a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Footnotes</p>
+<table class="docutils footnote" frame="void" id="fnumbers" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id6">1</a>, <a class="fn-backref" href="#id7">2</a>, <a class="fn-backref" href="#id8">3</a>)</em> <code class="docutils literal notranslate"><span class="pre">long</span></code>, <code class="docutils literal notranslate"><span class="pre">bigInteger</span></code>, <code class="docutils literal notranslate"><span class="pre">bigDecimal</span></code> are exposed as
+numbers to JMESPath. If a value for one of these types truly exceeds
+the value of a double (the native numeric type of JMESPath), then
+querying these types in a waiter is a bad idea.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ftimestamp" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id9">[2]</a></td><td><code class="docutils literal notranslate"><span class="pre">timestamp</span></code> values are represented in JMESPath expressions
+as epoch seconds with optional decimal precision. This allows for
+timestamp values to be used with relative comparators like <code class="docutils literal notranslate"><span class="pre">&lt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&gt;</span></code>.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="fstructure" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id10">[3]</a></td><td>Structure members are referred to by member name and not
+the data sent over the wire. For example, the <a class="reference internal" href="core/protocol-traits.html#jsonname-trait"><span class="std std-ref">jsonName trait</span></a> is not
+respected in JMESPath expressions that select structure members.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="funion" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id11">[4]</a></td><td><code class="docutils literal notranslate"><span class="pre">union</span></code> values are represented exactly like structures except
+only a single member is set to a non-null value.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="jmespath-static-analysis">
+<h3><a href="#jmespath-static-analysis">JMESPath static analysis</a></h3>
+<p>Smithy implementations that can statically analyze JMESPath expressions
+MAY emit a <a class="reference internal" href="core/model-validation.html#validation"><span class="std std-ref">validation event</span></a> with an event ID of
+<code class="docutils literal notranslate"><span class="pre">WaitableTraitJmespathProblem</span></code> and a <a class="reference internal" href="core/model-validation.html#severity-definition"><span class="std std-ref">severity of DANGER</span></a>
+if one of the following problems are detected in an expression:</p>
+<ol class="arabic simple">
+<li>A JMESPath expression does not return a value that matches the expected
+return type of a <a class="reference internal" href="#pathcomparator-enum"><span class="std std-ref">PathComparator enum</span></a></li>
+<li>A JMESPath expression attempts to extract or operate on invalid model data.</li>
+</ol>
+<p>If such a problem is detected but is intentional, a
+<a class="reference internal" href="core/model-validation.html#suppression-definition"><span class="std std-ref">suppression</span></a> can be used to ignore the error.</p>
+</div>
+</div>
+<div class="section" id="pathcomparator-enum">
+<span id="id12"></span><h2><a href="#pathcomparator-enum">PathComparator enum</a></h2>
+<p>Each <code class="docutils literal notranslate"><span class="pre">PathMatcher</span></code> structure contains a <code class="docutils literal notranslate"><span class="pre">comparator</span></code> that is used to
+check the result of a JMESPath expression against an expected value. A
+comparator can be set to any of the following values:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="60%" />
+<col width="20%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Description</th>
+<th class="head">Required JMESPath return type</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>stringEquals</td>
+<td>Matches if the return value of a JMESPath expression is a string
+that is equal to an expected string.</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+</tr>
+<tr class="row-odd"><td>booleanEquals</td>
+<td>Matches if the return value of a JMESPath expression is a boolean
+that is equal to an expected boolean. The <code class="docutils literal notranslate"><span class="pre">expected</span></code> value of a
+<code class="docutils literal notranslate"><span class="pre">PathMatcher</span></code> MUST be set to &quot;true&quot; or &quot;false&quot; to match the
+corresponding boolean value.</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+</tr>
+<tr class="row-even"><td>allStringEquals</td>
+<td>Matches if the return value of a JMESPath expression is an array and
+every value in the array is a string that equals an expected string.</td>
+<td><code class="docutils literal notranslate"><span class="pre">array</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+</tr>
+<tr class="row-odd"><td>anyStringEquals</td>
+<td>Matches if the return value of a JMESPath expression is an array and
+any value in the array is a string that equals an expected string.</td>
+<td><code class="docutils literal notranslate"><span class="pre">array</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="waiter-examples">
+<h2><a href="#waiter-examples">Waiter examples</a></h2>
+<p>This section provides examples for various features of waiters.</p>
+<p>The following example defines a <code class="docutils literal notranslate"><span class="pre">ThingExists</span></code> waiter that waits until the
+<code class="docutils literal notranslate"><span class="pre">status</span></code> member in the output of the <code class="docutils literal notranslate"><span class="pre">GetThing</span></code> operation returns
+<code class="docutils literal notranslate"><span class="pre">&quot;success&quot;</span></code>. This example makes use of a &quot;fail-fast&quot;; in this example, if
+a &quot;Thing&quot; has a <code class="docutils literal notranslate"><span class="pre">failed</span></code> status, then it can never enter the desired
+<code class="docutils literal notranslate"><span class="pre">success</span></code> state. To address this and prevent needlessly waiting on a
+success state that can never happen, a <code class="docutils literal notranslate"><span class="pre">failure</span></code> state transition is
+triggered if the <code class="docutils literal notranslate"><span class="pre">status</span></code> property equals <code class="docutils literal notranslate"><span class="pre">failed</span></code>.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">use</span><span class="nc"> smithy.waiters#waitable</span>
+
+<span class="nd">@waitable</span>(
+    <span class="nl">ThingExists:</span> {
+        <span class="nl">description:</span> <span class="s2">&quot;Waits until a thing has been created&quot;</span>,
+        <span class="nl">acceptors:</span> [
+            <span class="c">// Fail-fast if the thing transitions to a &quot;failed&quot; state.</span>
+            {
+                <span class="nl">state:</span> <span class="s2">&quot;failure&quot;</span>,
+                <span class="nl">matcher:</span> {
+                    <span class="nl">output:</span> {
+                        <span class="nl">path:</span> <span class="s2">&quot;status&quot;</span>,
+                        <span class="nl">comparator:</span> <span class="s2">&quot;stringEquals&quot;</span>,
+                        <span class="nl">expected:</span> <span class="s2">&quot;failed&quot;</span>
+                    }
+                }
+            },
+            <span class="c">// Succeed when the thing enters into a &quot;success&quot; state.</span>
+            {
+                <span class="nl">state:</span> <span class="s2">&quot;success&quot;</span>,
+                <span class="nl">matcher:</span> {
+                    <span class="nl">output:</span> {
+                        <span class="nl">path:</span> <span class="s2">&quot;status&quot;</span>,
+                        <span class="nl">comparator:</span> <span class="s2">&quot;stringEquals&quot;</span>,
+                        <span class="nl">expected:</span> <span class="s2">&quot;success&quot;</span>
+                    }
+                }
+            }
+        ]
+    }
+)
+<span class="kd">operation</span><span class="nc"> GetThing</span> {
+    <span class="nl">input:</span> <span class="vc">GetThingInput</span>,
+    <span class="nl">output:</span> <span class="vc">GetThingOutput</span>,
+}
+
+<span class="kd">structure</span><span class="nc"> GetThingInput</span> {
+    <span class="nd">@required</span>
+    <span class="nl">name:</span> <span class="vc">String</span>,
+}
+
+<span class="kd">structure</span><span class="nc"> GetThingOutput</span> {
+    <span class="nl">status:</span> <span class="vc">String</span>
+}
+</pre></div>
+</div>
+<p>Both input and output data can be queried using the <code class="docutils literal notranslate"><span class="pre">inputOutput</span></code> matcher.
+The following example waiter completes successfully when the number of
+provided groups on input matches the number of provided groups on output:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">use</span><span class="nc"> smithy.waiters#waitable</span>
+
+<span class="nd">@waitable</span>(
+    <span class="nl">GroupExists:</span> {
+        <span class="nl">acceptors:</span> [
+            {
+                <span class="nl">inputOutput:</span> {
+                    <span class="nl">path:</span> <span class="s2">&quot;length(input.groups) == length(output.groups)&quot;</span>,
+                    <span class="nl">expected:</span> <span class="s2">&quot;true&quot;</span>,
+                    <span class="nl">comparator:</span> <span class="s2">&quot;booleanEquals&quot;</span>
+                }
+            }
+        ]
+    }
+)
+<span class="kd">operation</span><span class="nc"> ListGroups</span> {
+    <span class="nl">input:</span> <span class="vc">ListGroupsInput</span>,
+    <span class="nl">output:</span> <span class="vc">ListGroupsOutput</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="waiter-best-practices">
+<span id="id13"></span><h2><a href="#waiter-best-practices">Waiter best-practices</a></h2>
+<p>The following non-normative section outlines best practices for defining
+and implementing waiters.</p>
+<div class="section" id="keep-jmespath-expressions-simple">
+<h3><a href="#keep-jmespath-expressions-simple">Keep JMESPath expressions simple</a></h3>
+<p>Overly complex <a class="reference external" href="https://jmespath.org/">JMESPath</a> expressions can easily lead to bugs. While static
+analysis of JMESPath expressions can give some level of confidence in
+expressions, it does not guarantee that the logic encoded in the
+expression is correct. If it's overly difficult to describe a waiter for
+a particular use-case, consider if the API itself is overly complex and
+needs to be simplified.</p>
+</div>
+<div class="section" id="name-waiters-after-the-resource-and-state">
+<h3><a href="#name-waiters-after-the-resource-and-state">Name waiters after the resource and state</a></h3>
+<p>Waiters SHOULD be named after the resource name and desired state, for example
+<code class="docutils literal notranslate"><span class="pre">&lt;Resource&gt;&lt;StateName&gt;</span></code>. &quot;StateName&quot; SHOULD match the expected state
+name of the resource where possible. For example, if a &quot;Snapshot&quot; resource
+can enter a &quot;deleted&quot; state, then the waiter name should be
+<code class="docutils literal notranslate"><span class="pre">SnapshotDeleted</span></code> and not <code class="docutils literal notranslate"><span class="pre">SnapshotRemoved</span></code>.</p>
+<dl class="docutils">
+<dt>Good</dt>
+<dd><ul class="first last simple">
+<li>ObjectExists</li>
+<li>ConversionTaskDeleted</li>
+</ul>
+</dd>
+<dt>Bad</dt>
+<dd><p class="first">The following examples are bad because they are named after the completion
+of an operation rather than the state of the resource:</p>
+<ul class="simple">
+<li>RunInstanceComplete</li>
+<li>TerminateInstanceComplete</li>
+</ul>
+<p>More appropriate names would be:</p>
+<ul class="last simple">
+<li>InstanceRunning</li>
+<li>InstanceTerminated</li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">A common and acceptable exception to this rule are <code class="docutils literal notranslate"><span class="pre">&lt;Resource&gt;Exists</span></code>
+and <code class="docutils literal notranslate"><span class="pre">&lt;Resource&gt;NotExists</span></code> waiters.</p>
+</div>
+</div>
+<div class="section" id="do-not-model-implicit-acceptors">
+<h3><a href="#do-not-model-implicit-acceptors">Do not model implicit acceptors</a></h3>
+<p>Implicit acceptors are unnecessary and can quickly become incomplete as new
+resource states and errors are added. Waiters have 2 implicit
+<a class="reference internal" href="#waiter-acceptor"><span class="std std-ref">acceptors</span></a>:</p>
+<ul class="simple">
+<li>(Step 4) - If none of the acceptors are matched <em>and</em> an error was
+encountered while calling the operation, then transition to the
+<code class="docutils literal notranslate"><span class="pre">failure</span></code> state and stop waiting.</li>
+<li>(Step 5) - Transition the waiter to the <code class="docutils literal notranslate"><span class="pre">retry</span></code> state, follow the
+process described in <a class="reference internal" href="#waiter-retries"><span class="std std-ref">Waiter retries</span></a>, and continue to step 1.</li>
+</ul>
+<p>This means it is unnecessary to model an acceptor with an &quot;errorType&quot;
+<a class="reference internal" href="#waiter-matcher"><span class="std std-ref">matcher</span></a> that transitions to a state of &quot;failure&quot;.
+This is already the default behavior. For example, the following acceptor
+is unnecessary:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+    <span class="nl">acceptors:</span> [
+        {
+            <span class="nl">state:</span> <span class="s2">&quot;failure&quot;</span>,
+            <span class="nl">matcher:</span> {
+                <span class="nl">errorType:</span> <span class="s2">&quot;ValidationError&quot;</span>
+            }
+        },
+        <span class="c">// other acceptors...</span>
+    ]
+}
+</pre></div>
+</div>
+<p>Because a successful request that does not match any acceptor by default
+transitions to the <a class="reference internal" href="#waiter-acceptor-state"><span class="std std-ref">retry state</span></a>, there is no
+need to model matchers with a state of retry unless the matcher is for
+specific errors. For example, the following matcher is unnecessary:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+    <span class="nl">acceptors:</span> [
+        {
+            <span class="nl">state:</span> <span class="s2">&quot;retry&quot;</span>,
+            <span class="nl">matcher:</span> {
+                <span class="nl">success:</span> <span class="kc">true</span>
+            }
+        },
+        <span class="c">// other acceptors...</span>
+    ]
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="only-model-terminal-failure-states">
+<h3><a href="#only-model-terminal-failure-states">Only model terminal failure states</a></h3>
+<p>Waiters SHOULD only model terminal failure states. A <em>terminal failure state</em>
+is a resource state in which the resource cannot transition to the desired
+success state without a user taking some explicit action. Only modeling
+terminal failure states keeps waiter configurations as minimal as possible,
+and it allows for more flexibility in the future. By avoiding the use of
+intermediate resource states for waiter failure state transitions, a service
+can add other intermediate states in the future without affecting existing
+waiter logic.</p>
+<p>For example, suppose a resource has the following state transitions, and
+if a resource is in the &quot;Stopped&quot; state, it can only transition to &quot;Running&quot;
+if the user invokes the &quot;StartResource&quot; API operation:</p>
+<div class="literal-block-wrapper text-figure docutils container" id="waiters-figure-1-1">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>          User calls
+         StopResource
+┌──────────┐        ┌──────────┐        ┌──────────┐
+│ Creating │───────▶│ Stopping │───────▶│ Stopped  │
+└──────────┘        └──────────┘        └──────────┘
+      │                                       │
+      │                                       │    User calls
+      │                                       │   StartResource
+      │                                       ▼
+      │                                 ┌──────────┐
+      └────────────────────────────────▶│ Starting │
+                                        └──────────┘
+                                              │
+                                              │
+                                              │
+                                              ▼
+                                        ┌──────────┐
+                                        │  Running │
+                                        └──────────┘
+</pre></div>
+</div>
+<div class="code-block-caption"><span class="caption-text"><strong>Figure Waiters-1.1</strong>: Example resource state transitions</span><a class="headerlink" href="#waiters-figure-1-1" title="Permalink to this code">¶</a></div>
+</div>
+<p>A &quot;ResourceRunning&quot; waiter for the above resource SHOULD NOT include
+the intermediate state transition &quot;Stopping&quot; to fail-fast. Instead, a failure
+transition should be defined that matches on the terminal &quot;Stopped&quot; state
+because the only way to transition from &quot;Stopped&quot; to running is by invoking
+the <code class="docutils literal notranslate"><span class="pre">StartResource</span></code> API operation.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@waitable</span>(
+    <span class="nl">ResourceRunning:</span> {
+        <span class="nl">description:</span> <span class="s2">&quot;Waits for the resource to be running&quot;</span>,
+        <span class="nl">acceptors:</span> [
+            {
+                <span class="nl">state:</span> <span class="s2">&quot;failure&quot;</span>,
+                <span class="nl">matcher:</span> {
+                    <span class="nl">output:</span> {
+                        <span class="nl">path:</span> <span class="s2">&quot;State&quot;</span>,
+                        <span class="nl">expected:</span> <span class="s2">&quot;Stopped&quot;</span>,
+                        <span class="nl">comparator:</span> <span class="s2">&quot;stringEquals&quot;</span>
+                    }
+                }
+            },
+            {
+                <span class="nl">state:</span> <span class="s2">&quot;success&quot;</span>,
+                <span class="nl">matcher:</span> {
+                    <span class="nl">output:</span> {
+                        <span class="nl">path:</span> <span class="s2">&quot;State&quot;</span>,
+                        <span class="nl">expected:</span> <span class="s2">&quot;Running&quot;</span>,
+                        <span class="nl">comparator:</span> <span class="s2">&quot;stringEquals&quot;</span>
+                    }
+                }
+            },
+            <span class="c">// other acceptors...</span>
+        ]
+    }
+)
+<span class="kd">operation</span><span class="nc"> GetResource</span> {
+    <span class="nl">input:</span> <span class="vc">GetResourceInput</span>,
+    <span class="nl">output:</span> <span class="vc">GetResourceOutput</span>,
+}
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="http-protocol-compliance-tests.html" title="previous chapter" class="previous-page clearfix hidden-xs">← HTTP Protocol Compliance Tests</a>
+                        
+                        <a href="mqtt.html" title="next chapter" class="next-page clearfix">MQTT Protocol Bindings →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="http-protocol-compliance-tests.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
+                                
+                                <a href="mqtt.html" title="next chapter" class="next-page clearfix">Next →</a>
+                            </section>
+                            
+                            <ul>
+<li><a class="reference internal" href="#">Waiters</a><ul>
+<li><a class="reference internal" href="#smithy-waiters-waitable-trait"><code class="docutils literal notranslate"><span class="pre">smithy.waiters#waitable</span></code> trait</a><ul>
+<li><a class="reference internal" href="#waiter-names">Waiter names</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#waiter-workflow">Waiter workflow</a><ul>
+<li><a class="reference internal" href="#waiter-retries">Waiter retries</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#waiter-structure">Waiter structure</a></li>
+<li><a class="reference internal" href="#acceptor-structure">Acceptor structure</a></li>
+<li><a class="reference internal" href="#acceptorstate-enum">AcceptorState enum</a></li>
+<li><a class="reference internal" href="#matcher-union">Matcher union</a></li>
+<li><a class="reference internal" href="#pathmatcher-structure">PathMatcher structure</a><ul>
+<li><a class="reference internal" href="#jmespath-data-model">JMESPath data model</a></li>
+<li><a class="reference internal" href="#jmespath-static-analysis">JMESPath static analysis</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pathcomparator-enum">PathComparator enum</a></li>
+<li><a class="reference internal" href="#waiter-examples">Waiter examples</a></li>
+<li><a class="reference internal" href="#waiter-best-practices">Waiter best-practices</a><ul>
+<li><a class="reference internal" href="#keep-jmespath-expressions-simple">Keep JMESPath expressions simple</a></li>
+<li><a class="reference internal" href="#name-waiters-after-the-resource-and-state">Name waiters after the resource and state</a></li>
+<li><a class="reference internal" href="#do-not-model-implicit-acceptors">Do not model implicit acceptors</a></li>
+<li><a class="reference internal" href="#only-model-terminal-failure-states">Only model terminal failure states</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2020, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

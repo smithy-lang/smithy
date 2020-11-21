@@ -555,14 +555,14 @@ following rules are in place:</p>
 <li><code class="docutils literal notranslate"><span class="pre">/{foo+}/{bar}</span></code> is illegal</li>
 </ul>
 </li>
-<li>Patterns MUST NOT be equivalent.<ul>
+<li>Patterns MUST NOT be equivalent if they share a host.<ul>
 <li>Pattern <code class="docutils literal notranslate"><span class="pre">/foo/bar</span></code> and <code class="docutils literal notranslate"><span class="pre">/foo/bar</span></code> conflict.</li>
 <li>Pattern <code class="docutils literal notranslate"><span class="pre">/foo/{bar}</span></code> and <code class="docutils literal notranslate"><span class="pre">/foo/{baz}</span></code> conflict regardless of any
 constraint traits on the label members.</li>
 </ul>
 </li>
 <li>A label and a literal SHOULD NOT both occupy the same segment in patterns
-which are equivalent to that point.<ul>
+which are equivalent to that point if they share a host.<ul>
 <li><code class="docutils literal notranslate"><span class="pre">/foo/bar/{baz}</span></code> and <code class="docutils literal notranslate"><span class="pre">/foo/baz/bam</span></code> can coexist.</li>
 <li><code class="docutils literal notranslate"><span class="pre">/foo/bar</span></code> and <code class="docutils literal notranslate"><span class="pre">/foo/{baz}/bam</span></code> cannot coexist unless pattern
 traits prevent <code class="docutils literal notranslate"><span class="pre">{baz}</span></code> from evaluating to <code class="docutils literal notranslate"><span class="pre">bar</span></code> because the label
@@ -572,6 +572,15 @@ occupies the same segment of another pattern with the same prefix.</li>
 <li>A query string literal with no value and a query string literal with an
 empty value are considered equivalent. For example, <code class="docutils literal notranslate"><span class="pre">/foo?baz</span></code> and
 <code class="docutils literal notranslate"><span class="pre">/foo?baz=</span></code> are considered the same route.</li>
+<li>Patterns MAY conflict if the operations use different hosts. Different hosts
+can be configured using the <a class="reference internal" href="endpoint-traits.html#endpoint-trait"><span class="std std-ref">endpoint trait</span></a>'s <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> property.<ul>
+<li><code class="docutils literal notranslate"><span class="pre">/foo/bar</span></code> and <code class="docutils literal notranslate"><span class="pre">/foo/{baz}/bam</span></code> can coexist if one operation has no
+endpoint trait and the other specifies <code class="docutils literal notranslate"><span class="pre">foo.</span></code> as the <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">/foo/bar</span></code> and <code class="docutils literal notranslate"><span class="pre">/foo/{baz}/bam</span></code> can coexist if one operation specifies
+<code class="docutils literal notranslate"><span class="pre">foo.</span></code> as the <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> and the other specifies <code class="docutils literal notranslate"><span class="pre">bar.</span></code> as the
+<code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code>.</li>
+</ul>
+</li>
 </ol>
 </div>
 </div>

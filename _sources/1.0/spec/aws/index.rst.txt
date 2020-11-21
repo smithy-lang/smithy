@@ -11,6 +11,7 @@ AWS specifications
     aws-auth
     aws-iam
     amazon-apigateway
+    aws-cloudformation
 
 
 AWS Protocols

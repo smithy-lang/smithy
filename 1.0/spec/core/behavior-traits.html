@@ -286,7 +286,8 @@ cursor.</p>
 <td><p class="first">The name of the operation input member that contains a continuation
 token. When this value is provided as input, the service returns
 results from where the previous response left off. This input member
-MUST NOT be marked as <code class="docutils literal notranslate"><span class="pre">required</span></code> and MUST target a string shape.</p>
+MUST NOT be marked as <code class="docutils literal notranslate"><span class="pre">required</span></code> and SHOULD target a string shape.
+It can, but SHOULD NOT target a map shape.</p>
 <p class="last">When contained within a service, a paginated operation MUST either
 configure <code class="docutils literal notranslate"><span class="pre">inputToken</span></code> on the operation itself or inherit it from
 the service that contains the operation.</p>
@@ -299,8 +300,8 @@ continuation token. When this value is present in operation output,
 it indicates that there are more results to retrieve. To get the next
 page of results, the client passes the received output continuation
 token to the input continuation token of the next request. This
-output member MUST NOT be marked as <code class="docutils literal notranslate"><span class="pre">required</span></code> and MUST target a
-string shape.</p>
+output member MUST NOT be marked as <code class="docutils literal notranslate"><span class="pre">required</span></code> and SHOULD target a
+string shape. It can, but SHOULD NOT target a map shape.</p>
 <p class="last">When contained within a service, a paginated operation MUST either
 configure <code class="docutils literal notranslate"><span class="pre">outputToken</span></code> on the operation itself or inherit it from
 the service that contains the operation.</p>

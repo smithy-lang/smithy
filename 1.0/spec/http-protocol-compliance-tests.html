@@ -27,7 +27,7 @@
     <link rel="shortcut icon" href="../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="MQTT Protocol Bindings" href="mqtt.html" />
+    <link rel="next" title="Waiters" href="waiters.html" />
     <link rel="prev" title="17. JSON AST" href="core/json-ast.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="smithy-version" content="1.0">
@@ -257,19 +257,27 @@ in <code class="docutils literal notranslate"><span class="pre">headers</span></
 <tr class="row-odd"><td>body</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td>The expected HTTP message body. If no request body is defined,
-then no assertions are made about the body of the message.</td>
+then no assertions are made about the body of the message. Because
+the <code class="docutils literal notranslate"><span class="pre">body</span></code> parameter is a string, binary data MUST be represented
+in <code class="docutils literal notranslate"><span class="pre">body</span></code> by base64 encoding the data (for example, use &quot;Zm9vCg==&quot;
+and not &quot;foo&quot;).</td>
 </tr>
 <tr class="row-even"><td>bodyMediaType</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td>The media type of the <code class="docutils literal notranslate"><span class="pre">body</span></code>. This is used to help test runners
-to parse and validate the expected data against generated data.
-Binary media type formats require that the contents of <code class="docutils literal notranslate"><span class="pre">body</span></code> are
-base64 encoded.</td>
+to parse and validate the expected data against generated data.</td>
 </tr>
 <tr class="row-odd"><td>params</td>
 <td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
-<td>Defines the input parameters used to generate the HTTP request. These
-parameters MUST be compatible with the input of the operation.</td>
+<td><p class="first">Defines the input parameters used to generate the HTTP request. These
+parameters MUST be compatible with the input of the operation.</p>
+<p class="last">Parameter values that contain binary data MUST be defined using
+values that can be represented in plain text (for example, use &quot;foo&quot;
+and not &quot;Zm9vCg==&quot;). While this limits the kinds of binary values
+that can be tested in protocol tests, it allows protocol tests to
+demonstrate the requirement of many protocols that binary data is
+automatically base64 encoded and decoded.</p>
+</td>
 </tr>
 <tr class="row-even"><td>vendorParams</td>
 <td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
@@ -494,9 +502,16 @@ base64 encoded.</td>
 </tr>
 <tr class="row-odd"><td>params</td>
 <td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
-<td>Defines the output or error parameters used to generate the HTTP
+<td><p class="first">Defines the output or error parameters used to generate the HTTP
 response. These parameters MUST be compatible with the targeted
-operation's output or the targeted error structure.</td>
+operation's output or the targeted error structure.</p>
+<p class="last">Parameter values that contain binary data MUST be defined using
+values that can be represented in plain text (for example, use &quot;foo&quot;
+and not &quot;Zm9vCg==&quot;). While this limits the kinds of binary values
+that can be tested in protocol tests, it allows protocol tests to
+demonstrate the requirement of many protocols that binary data is
+automatically base64 encoded and decoded.</p>
+</td>
 </tr>
 <tr class="row-even"><td>vendorParams</td>
 <td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
@@ -705,7 +720,7 @@ JSON</div>
                         
                         <a href="core/json-ast.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 17. JSON AST</a>
                         
-                        <a href="mqtt.html" title="next chapter" class="next-page clearfix">MQTT Protocol Bindings →</a>
+                        <a href="waiters.html" title="next chapter" class="next-page clearfix">Waiters →</a>
                     </section>
                     
                 </article><aside id="right-column" class="side-column hidden-sm">
@@ -716,7 +731,7 @@ JSON</div>
                                 
                                 <a href="core/json-ast.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
                                 
-                                <a href="mqtt.html" title="next chapter" class="next-page clearfix">Next →</a>
+                                <a href="waiters.html" title="next chapter" class="next-page clearfix">Next →</a>
                             </section>
                             
                             <ul>

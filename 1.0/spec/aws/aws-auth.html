@@ -109,9 +109,9 @@ to a service.</dd>
 <tr class="row-even"><td>name</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td><strong>Required</strong>. The signature version 4 service signing name to use
-in the <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/sigv4-create-string-to-sign.html">credential scope</a> when signing requests. This value
-SHOULD match the <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code> property of the
-<a class="reference internal" href="aws-core.html#aws-api-service-trait"><span class="std std-ref">aws.api#service trait</span></a>.</td>
+in the <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/sigv4-create-string-to-sign.html">credential scope</a> when signing requests. This value MUST
+NOT be empty. This value SHOULD match the <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code> property
+of the <a class="reference internal" href="aws-core.html#aws-api-service-trait"><span class="std std-ref">aws.api#service trait</span></a>.</td>
 </tr>
 </tbody>
 </table>
