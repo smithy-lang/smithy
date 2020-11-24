@@ -267,6 +267,7 @@ structure idempotent {}
 /// identify and discard replayed requests.
 @trait(selector: "structure > :test(member > string)",
        structurallyExclusive: "member")
+@tags(["diff.error.remove"])
 structure idempotencyToken {}
 
 /// Shapes marked with the internal trait are meant only for internal use and
