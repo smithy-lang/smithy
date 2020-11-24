@@ -29,6 +29,7 @@ import software.amazon.smithy.model.knowledge.EventStreamInfo;
 import software.amazon.smithy.model.knowledge.HttpBinding;
 import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
+import software.amazon.smithy.model.pattern.SmithyPattern;
 import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -38,6 +39,7 @@ import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiProtocol;
 import software.amazon.smithy.openapi.model.MediaTypeObject;
@@ -120,10 +122,26 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     private List<ParameterObject> createPathParameters(Context<T> context, OperationShape operation) {
         List<ParameterObject> result = new ArrayList<>();
         HttpBindingIndex bindingIndex = HttpBindingIndex.of(context.getModel());
+        HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
 
         for (HttpBinding binding : bindingIndex.getRequestBindings(operation, HttpBinding.Location.LABEL)) {
             Schema schema = createPathParameterSchema(context, binding);
+            String memberName = binding.getMemberName();
+
+            SmithyPattern.Segment label = httpTrait.getUri()
+                    .getLabel(memberName)
+                    .orElseThrow(() -> new OpenApiException(String.format(
+                            "Unable to find URI label on %s for %s: %s",
+                            operation.getId(),
+                            binding.getMemberName(),
+                            httpTrait.getUri())));
+
+            // Greedy labels in OpenAPI need to include the label in the generated parameter.
+            // For example, given "/{foo+}", the parameter name must be "foo+".
+            String name = label.isGreedyLabel() ? label.getContent() + "+" : label.getContent();
+
             result.add(ModelUtils.createParameterMember(context, binding.getMember())
+                    .name(name)
                     .in("path")
                     .schema(schema)
                     .build());

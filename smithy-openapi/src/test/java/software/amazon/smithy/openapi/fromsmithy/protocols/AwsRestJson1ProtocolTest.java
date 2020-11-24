@@ -27,7 +27,8 @@ public class AwsRestJson1ProtocolTest {
             "adds-header-mediatype-format.json",
             "supports-payloads.json",
             "aws-rest-json-uses-jsonname.json",
-            "synthesizes-contents.json"
+            "synthesizes-contents.json",
+            "greedy-labels.json"
     })
 
     public void testProtocolResult(String smithy) {
