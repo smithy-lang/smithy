@@ -167,8 +167,8 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         public static final class Builder implements SmithyBuilder<Example> {
             private String title;
             private String documentation;
-            private ObjectNode input;
-            private ObjectNode output;
+            private ObjectNode input = Node.objectNode();
+            private ObjectNode output = Node.objectNode();
 
             @Override
             public Example build() {
