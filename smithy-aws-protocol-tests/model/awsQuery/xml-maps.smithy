@@ -269,3 +269,57 @@ map FlattenedXmlMapWithXmlNameOutputMap {
     @xmlName("V")
     value: String,
 }
+
+/// Flattened maps with @xmlNamespace and @xmlName
+operation FlattenedXmlMapWithXmlNamespace {
+    output: FlattenedXmlMapWithXmlNamespaceOutput
+}
+
+apply FlattenedXmlMapWithXmlNamespace @httpResponseTests([
+    {
+        id: "QueryQueryFlattenedXmlMapWithXmlNamespace",
+        documentation: "Serializes flattened XML maps in responses that have xmlNamespace and xmlName on members",
+        protocol: awsQuery,
+        code: 200,
+        body: """
+              <FlattenedXmlMapWithXmlNamespaceResponse xmlns="https://example.com/">
+                  <FlattenedXmlMapWithXmlNamespaceResult>
+                      <KVP xmlns="https://the-member.example.com">
+                          <K xmlns="https://the-key.example.com">a</K>
+                          <V xmlns="https://the-value.example.com">A</V>
+                      </KVP>
+                      <KVP xmlns="https://the-member.example.com">
+                          <K xmlns="https://the-key.example.com">b</K>
+                          <V xmlns="https://the-value.example.com">B</V>
+                      </KVP>
+                  </FlattenedXmlMapWithXmlNamespaceResult>
+              </FlattenedXmlMapWithXmlNamespaceResponse>""",
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "text/xml"
+        },
+        params: {
+            myMap: {
+                a: "A",
+                b: "B",
+            }
+        }
+    }
+])
+
+structure FlattenedXmlMapWithXmlNamespaceOutput {
+    @xmlFlattened
+    @xmlName("KVP")
+    @xmlNamespace(uri: "https://the-member.example.com")
+    myMap: FlattenedXmlMapWithXmlNamespaceOutputMap,
+}
+
+map FlattenedXmlMapWithXmlNamespaceOutputMap {
+    @xmlName("K")
+    @xmlNamespace(uri: "https://the-key.example.com")
+    key: String,
+
+    @xmlName("V")
+    @xmlNamespace(uri: "https://the-value.example.com")
+    value: String,
+}

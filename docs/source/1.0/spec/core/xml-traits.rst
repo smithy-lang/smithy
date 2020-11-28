@@ -937,7 +937,9 @@ The XML serialization is:
 Summary
     Adds an `XML namespace`_ to an XML element.
 Trait selector
-    ``*``
+    ``:is(service, member, simpleType, collection, map, structure, union)``
+
+    *Service, simple types, list, map, set, structure, or union*
 Value type
     ``structure``
 Conflicts with

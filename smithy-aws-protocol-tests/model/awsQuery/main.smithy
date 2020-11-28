@@ -35,6 +35,7 @@ service AwsQuery {
         XmlMapsXmlName,
         FlattenedXmlMap,
         FlattenedXmlMapWithXmlName,
+        FlattenedXmlMapWithXmlNamespace,
         XmlEmptyMaps,
 
         // Output XML list tests

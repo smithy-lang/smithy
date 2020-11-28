@@ -433,3 +433,56 @@ map FlattenedXmlMapWithXmlNameInputOutputMap {
     @xmlName("V")
     value: String,
 }
+
+/// Flattened maps with @xmlNamespace and @xmlName
+@http(uri: "/FlattenedXmlMapWithXmlNamespace", method: "POST")
+operation FlattenedXmlMapWithXmlNamespace {
+    output: FlattenedXmlMapWithXmlNamespaceOutput
+}
+
+apply FlattenedXmlMapWithXmlNamespace @httpResponseTests([
+    {
+        id: "RestXmlFlattenedXmlMapWithXmlNamespace",
+        documentation: "Serializes flattened XML maps in responses that have xmlNamespace and xmlName on members",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <FlattenedXmlMapWithXmlNamespaceOutput>
+                  <KVP xmlns="https://the-member.example.com">
+                      <K xmlns="https://the-key.example.com">a</K>
+                      <V xmlns="https://the-value.example.com">A</V>
+                  </KVP>
+                  <KVP xmlns="https://the-member.example.com">
+                      <K xmlns="https://the-key.example.com">b</K>
+                      <V xmlns="https://the-value.example.com">B</V>
+                  </KVP>
+              </FlattenedXmlMapWithXmlNamespaceOutput>""",
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            myMap: {
+                a: "A",
+                b: "B",
+            }
+        }
+    }
+])
+
+structure FlattenedXmlMapWithXmlNamespaceOutput {
+    @xmlFlattened
+    @xmlName("KVP")
+    @xmlNamespace(uri: "https://the-member.example.com")
+    myMap: FlattenedXmlMapWithXmlNamespaceOutputMap,
+}
+
+map FlattenedXmlMapWithXmlNamespaceOutputMap {
+    @xmlName("K")
+    @xmlNamespace(uri: "https://the-key.example.com")
+    key: String,
+
+    @xmlName("V")
+    @xmlNamespace(uri: "https://the-value.example.com")
+    value: String,
+}

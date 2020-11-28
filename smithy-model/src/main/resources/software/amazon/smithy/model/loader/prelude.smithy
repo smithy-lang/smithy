@@ -299,7 +299,8 @@ structure xmlFlattened {}
 string xmlName
 
 /// Adds an xmlns namespace definition URI to an XML element.
-@trait(conflicts: [xmlAttribute])
+@trait(selector: ":is(service, member, simpleType, collection, map, structure, union)",
+       conflicts: [xmlAttribute])
 @tags(["diff.error.const"])
 structure xmlNamespace {
     /// The namespace URI for scoping this XML element.

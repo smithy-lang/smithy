@@ -26,7 +26,8 @@ use smithy.test#httpResponseTests
 /// 4. XML lists with @xmlName on its members
 /// 5. Flattened XML lists.
 /// 6. Flattened XML lists with @xmlName.
-/// 7. Lists of structures.
+/// 7. Flattened XML lists with @xmlNamespace.
+/// 8. Lists of structures.
 @idempotent
 @http(uri: "/XmlLists", method: "PUT")
 operation XmlLists {
@@ -176,6 +177,10 @@ apply XmlLists @httpResponseTests([
                   <flattenedList>bye</flattenedList>
                   <customName>yep</customName>
                   <customName>nope</customName>
+                  <flattenedListWithMemberNamespace xmlns="https://xml-member.example.com">a</flattenedListWithMemberNamespace>
+                  <flattenedListWithMemberNamespace xmlns="https://xml-member.example.com">b</flattenedListWithMemberNamespace>
+                  <flattenedListWithNamespace>a</flattenedListWithNamespace>
+                  <flattenedListWithNamespace>b</flattenedListWithNamespace>
                   <myStructureList>
                       <item>
                           <value>1</value>
@@ -203,6 +208,8 @@ apply XmlLists @httpResponseTests([
             renamedListMembers: ["foo", "bar"],
             flattenedList: ["hi", "bye"],
             flattenedList2: ["yep", "nope"],
+            flattenedListWithMemberNamespace: ["a", "b"],
+            flattenedListWithNamespace: ["a", "b"],
             structureList: [
                 {
                     a: "1",
@@ -300,6 +307,17 @@ structure XmlListsInputOutput {
     // serializing flattened lists in structures.
     flattenedList2: RenamedListMembers,
 
+    // The XML namespace of the flattened list's member is used, and
+    // list's XML namespace is disregarded.
+    @xmlFlattened
+    flattenedListWithMemberNamespace: ListWithMemberNamespace,
+
+    // Again, the XML namespace of the flattened list is ignored.
+    // The namespace of the member is used, which is empty, so
+    // no xmlns attribute appears on the serialized XML.
+    @xmlFlattened
+    flattenedListWithNamespace: ListWithNamespace,
+
     @xmlName("myStructureList")
     structureList: StructureList
 }
@@ -320,4 +338,15 @@ structure StructureListMember {
 
     @xmlName("other")
     b: String,
+}
+
+@xmlNamespace(uri: "https://xml-list.example.com")
+list ListWithMemberNamespace {
+    @xmlNamespace(uri: "https://xml-member.example.com")
+    member: String,
+}
+
+@xmlNamespace(uri: "https://xml-list.example.com")
+list ListWithNamespace {
+    member: String,
 }
