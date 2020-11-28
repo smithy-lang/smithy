@@ -7,6 +7,7 @@ use aws.protocols#awsQuery
 
 @awsQuery
 @suppress(["DeprecatedTrait"]) // ignore the fact that the awsQuery trait is deprecated
+@xmlNamespace(uri: "https://example.com")
 service InvalidExample {
     version: "2020-06-15",
     operations: [Operation1]

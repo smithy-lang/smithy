@@ -23,7 +23,9 @@ Summary
     OR in a ``x-form-url-encoded`` body and responses in XML documents. This
     protocol is an Amazon EC2-specific extension of the ``awsQuery`` protocol.
 Trait selector
-    ``service``
+    ``service [trait|xmlNamespace]``
+
+    *Service shapes with the xmlNamespace trait*
 Value type
     Annotation trait.
 
