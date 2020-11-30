@@ -34,7 +34,9 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.DocumentationTrait;
+import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.StringTrait;
+import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidatedResultException;
@@ -181,5 +183,44 @@ public class IdlModelLoaderTest {
 
         assertThat(identifiers.get("s"), equalTo(ShapeId.from("smithy.api#String")));
         assertThat(identifiers.get("x"), equalTo(ShapeId.from("smithy.example.other#X")));
+    }
+
+    @Test
+    public void addressesConfusingEdgeCaseForUnknownTraits() {
+        TraitFactory defaultFactory = TraitFactory.createServiceFactory();
+
+        // This trait factory ensures that the trait under test is coerced to
+        // an object instead of a null. The definition of @foo can't be found,
+        // but we know it's an annotation trait, so it's coerced to the most
+        // common annotation trait type (an object). This makes the error
+        // message for annotation traits that have no trait definition but do
+        // have TraitService SPI more intelligible.
+        TraitFactory factory = (id, target, value) -> {
+            if (id.equals(ShapeId.from("smithy.example#foo"))) {
+                assertThat("Did not coerce the unknown annotation trait to an object", value.isObjectNode(), is(true));
+                return Optional.of(new DynamicTrait(id, value));
+            } else {
+                return defaultFactory.createTrait(id, target, value);
+            }
+        };
+
+        List<ValidationEvent> events = Model.assembler()
+                .traitFactory(factory)
+                .addUnparsedModel("foo.smithy", "namespace smithy.example\n@foo\nstring MyString\n")
+                .assemble()
+                .getValidationEvents();
+
+        // Ensure that there is also an event that the @foo trait couldn't be found.
+        // This is a bit overkill, but ensures that it works end-to-end.
+        for (ValidationEvent event : events) {
+            if (event.getShapeId().filter(id -> id.equals(ShapeId.from("smithy.example#MyString"))).isPresent()) {
+                if (event.getMessage().contains("Unable to resolve trait")) {
+                    // Just break out of the test early when it's found. We're done.
+                    return;
+                }
+            }
+        }
+
+        Assertions.fail("Did not find expected unknown trait event: " + events);
     }
 }

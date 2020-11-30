@@ -692,12 +692,20 @@ final class IdlModelParser extends SimpleParser {
             ShapeId traitId, Node value, boolean isAnnotation, Function<ShapeId, ShapeType> typeProvider) {
         if (isAnnotation && value.isNullNode()) {
             ShapeType targetType = typeProvider.apply(traitId);
-            if (targetType != null) {
-                if (targetType == ShapeType.STRUCTURE || targetType == ShapeType.MAP) {
-                    return new ObjectNode(Collections.emptyMap(), value.getSourceLocation());
-                } else if (targetType == ShapeType.LIST || targetType == ShapeType.SET) {
-                    return new ArrayNode(Collections.emptyList(), value.getSourceLocation());
-                }
+            if (targetType == null || targetType == ShapeType.STRUCTURE || targetType == ShapeType.MAP) {
+                // The targetType == null condition helps mitigate a confusing
+                // failure mode where a trait isn't defined in the model, but a
+                // TraitService is found as a service provider for the trait.
+                // If the TraitService creates an annotation trait, then using null
+                // instead of object results in a failure about passing null for an
+                // annotation trait, and that's confusing because the actual error
+                // message should be about the missing trait definition. Because the
+                // vast majority of annotation traits are modeled as objects, this
+                // makes the assumption that the value is an object (which addresses
+                // the above failure case).
+                return new ObjectNode(Collections.emptyMap(), value.getSourceLocation());
+            } else if (targetType == ShapeType.LIST || targetType == ShapeType.SET) {
+                return new ArrayNode(Collections.emptyList(), value.getSourceLocation());
             }
         }
 
