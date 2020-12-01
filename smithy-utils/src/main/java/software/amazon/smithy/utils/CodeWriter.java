@@ -650,11 +650,11 @@ public class CodeWriter {
                 // back into a parent state.
                 popped.builder.setLength(0);
                 popped.builder.append(result);
-            } else {
+            } else if (!result.isEmpty()) {
                 // Sections can be added that are just placeholders. In those cases,
                 // do not write anything unless the section emitted a non-empty string.
-                // Note that this has already been formatted, so escape "$".
-                writeOptional(result.replace("$", "$$"));
+                // This has already been formatted, so writeWithNoFormatting is used.
+                writeWithNoFormatting(result);
             }
         }
 

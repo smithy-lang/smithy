@@ -539,6 +539,21 @@ public class CodeWriterTest {
     }
 
     @Test
+    public void poppedSectionsEscapeCustomExpressionStarts() {
+        CodeWriter writer = CodeWriter.createDefault();
+        String result = writer
+                .setExpressionStart('#')
+                .pushState("foo")
+                .write("##Hello")
+                .write("$Hello")
+                .write("$$Hello")
+                .popState()
+                .toString();
+
+        assertThat(result, equalTo("#Hello\n$Hello\n$$Hello\n"));
+    }
+
+    @Test
     public void canWriteInline() {
         String result = CodeWriter.createDefault()
                 .insertTrailingNewline(false)
