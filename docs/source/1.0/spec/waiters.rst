@@ -111,6 +111,11 @@ ABNF:
 .. seealso:: :ref:`waiter-best-practices` for additional best practices
     to follow when naming waiters.
 
+Each waiter in the :ref:`closure of a service <service-closure>` MUST have
+a case-insensitively unique waiter name. This limitation helps make it
+easier to both understand a service and to generate code for a service
+without needing to consider duplicate waiter names across operations.
+
 
 Waiter workflow
 ===============

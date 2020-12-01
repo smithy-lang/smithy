@@ -1,1 +1,2 @@
 software.amazon.smithy.waiters.WaitableTraitValidator
+software.amazon.smithy.waiters.UniqueWaiterNamesValidator
