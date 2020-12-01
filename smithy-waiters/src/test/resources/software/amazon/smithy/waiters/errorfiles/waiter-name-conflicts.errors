@@ -1,0 +1,4 @@
+[ERROR] smithy.example#A: `smithy.waiters#waitable` trait waiter name `a` case-insensitively conflicts with waiters on other operations in the closure of service, `smithy.example#InvalidService`: [smithy.example#B] | UniqueWaiterNames
+[ERROR] smithy.example#A: `smithy.waiters#waitable` trait waiter name `b` case-insensitively conflicts with waiters on other operations in the closure of service, `smithy.example#InvalidService`: [smithy.example#B] | UniqueWaiterNames
+[ERROR] smithy.example#B: `smithy.waiters#waitable` trait waiter name `a` case-insensitively conflicts with waiters on other operations in the closure of service, `smithy.example#InvalidService`: [smithy.example#A] | UniqueWaiterNames
+[ERROR] smithy.example#B: `smithy.waiters#waitable` trait waiter name `b` case-insensitively conflicts with waiters on other operations in the closure of service, `smithy.example#InvalidService`: [smithy.example#A] | UniqueWaiterNames
