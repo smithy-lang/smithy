@@ -435,6 +435,9 @@ structure EnumDefinition {
 
     /// Applies a list of tags to the enum constant.
     tags: NonEmptyStringList,
+
+    /// Whether the enum value should be considered deprecated.
+    deprecated: PrimitiveBoolean,
 }
 
 /// The optional name or label of the enum constant value.
