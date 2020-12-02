@@ -406,6 +406,14 @@ conditionals, directives, recursion, lookahead, look-behind, back-references,
 and look-around in order to ensure maximum compatibility across programming
 languages.
 
+.. important::
+
+    The ``pattern`` trait does not implicitly add a leading ``^`` or trailing
+    ``$`` to match an entire string. For example, ``@pattern("\\w+")`` matches
+    both "hello" and "!hello!" because it requires that just part of the
+    string matches the regular expression, whereas ``@pattern("^\\w+$")``
+    requires that the entire string matches the regular expression.
+
 .. tabs::
 
     .. code-tab:: smithy
