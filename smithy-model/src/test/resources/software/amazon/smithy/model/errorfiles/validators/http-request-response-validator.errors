@@ -18,7 +18,7 @@
 [ERROR] ns.foo#KInput: `httpHeader` field name binding conflicts found for the `x-foo` header in the following structure members: `a`, `b` | HttpHeaderTrait
 [ERROR] ns.foo#KInput: `httpQuery` parameter name binding conflicts found for the `foo` parameter in the following structure members: `c`, `d` | HttpQueryTrait
 [ERROR] ns.foo#L: Operation URI, `/k`, conflicts with other operation URIs in the same service: [`ns.foo#K` (/k)] | HttpUriConflict
-[DANGER] ns.foo#MInput$a: httpHeader cannot be set to `Authorization` | HttpHeaderTrait
+[DANGER] ns.foo#MInput$a: `Authorization` is not an allowed HTTP header binding | HttpHeaderTrait
 [ERROR] ns.foo#NInput$a: This `a` structure member is marked with the `httpLabel` trait, but no corresponding `http` URI label could be found when used as the input of the `ns.foo#N` operation. | HttpLabelTrait
 [ERROR] ns.foo#PInput$a: The `a` structure member corresponds to a greedy label when used as the input of the `ns.foo#P` operation. This member targets (integer: `ns.foo#Integer`), but greedy labels must target string shapes. | HttpLabelTrait
 [ERROR] ns.foo#RInput$b: `httpHeader` binding of `x-foo` conflicts with the `httpPrefixHeaders` binding of `ns.foo#RInput$a` to ``. `httpHeader` bindings must not case-insensitively start with any `httpPrefixHeaders` bindings. | HttpPrefixHeadersTrait
