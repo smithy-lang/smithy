@@ -22,6 +22,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
@@ -32,6 +33,7 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SetUtils;
 
 /**
@@ -39,7 +41,21 @@ import software.amazon.smithy.utils.SetUtils;
  */
 public final class HttpHeaderTraitValidator extends AbstractValidator {
 
-    private static final Set<String> BLACKLIST = SetUtils.of(
+    /** Gather the allowed characters for HTTP headers (tchar from RFC 7230). **/
+    private static final Set<Character> TCHAR = SetUtils.of(
+            // "!" / "#" / "$" / "%" / "&" / "'" / "*" / "+" / "-" / "." / "^" / "_" / "`" / "|" / "~"
+            '!', '#', '$', '%', '&', '\'', '*', '+', '-', '.', '^', '_', '`', '|', '~',
+            // DIGIT (0-9)
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+            // ALPHA (A-Z)
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+            'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+            // ALPHA (a-z)
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+            'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+    );
+
+    private static final Set<String> BLOCKLIST = SetUtils.of(
             "authorization",
             "connection",
             "content-length",
@@ -68,13 +84,28 @@ public final class HttpHeaderTraitValidator extends AbstractValidator {
 
         events.addAll(model.shapes(MemberShape.class)
                 .flatMap(member -> Trait.flatMapStream(member, HttpHeaderTrait.class))
-                .filter(pair -> BLACKLIST.contains(pair.getRight().getValue().toLowerCase(Locale.US)))
-                .map(pair -> danger(pair.getLeft(), String.format(
-                        "httpHeader cannot be set to `%s`", pair.getRight().getValue()
-                )))
+                .flatMap(pair -> OptionalUtils.stream(validateHeader(pair.left, pair.right)))
                 .collect(Collectors.toList()));
 
         return events;
+    }
+
+    private Optional<ValidationEvent> validateHeader(MemberShape member, HttpHeaderTrait trait) {
+        String header = trait.getValue();
+
+        if (BLOCKLIST.contains(header.toLowerCase(Locale.ENGLISH))) {
+            return Optional.of(danger(member, trait, String.format(
+                    "`%s` is not an allowed HTTP header binding", header)));
+        }
+
+        for (int i = 0; i < header.length(); i++) {
+            if (!TCHAR.contains(header.charAt(i))) {
+                return Optional.of(danger(member, trait, String.format(
+                        "`%s` is not a valid HTTP header field name according to section 3.2 of RFC 7230", header)));
+            }
+        }
+
+        return Optional.empty();
     }
 
     private List<ValidationEvent> validateStructure(StructureShape structure) {
