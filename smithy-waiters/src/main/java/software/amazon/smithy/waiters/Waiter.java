@@ -30,31 +30,39 @@ import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.Tagged;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Defines an individual operation waiter.
  */
-public final class Waiter implements ToNode, ToSmithyBuilder<Waiter> {
+public final class Waiter implements Tagged, ToNode, ToSmithyBuilder<Waiter> {
 
     private static final String DOCUMENTATION = "documentation";
     private static final String ACCEPTORS = "acceptors";
     private static final String MIN_DELAY = "minDelay";
     private static final String MAX_DELAY = "maxDelay";
+    private static final String DEPRECATED = "deprecated";
+    private static final String TAGS = "tags";
     private static final int DEFAULT_MIN_DELAY = 2;
     private static final int DEFAULT_MAX_DELAY = 120;
-    private static final Set<String> KEYS = SetUtils.of(DOCUMENTATION, ACCEPTORS, MIN_DELAY, MAX_DELAY);
+    private static final Set<String> KEYS = SetUtils.of(
+            DOCUMENTATION, ACCEPTORS, MIN_DELAY, MAX_DELAY, TAGS, DEPRECATED);
 
     private final String documentation;
     private final List<Acceptor> acceptors;
     private final int minDelay;
     private final int maxDelay;
+    private final boolean deprecated;
+    private final List<String> tags;
 
     private Waiter(Builder builder) {
         this.documentation = builder.documentation;
         this.acceptors = ListUtils.copyOf(builder.acceptors);
         this.minDelay = builder.minDelay;
         this.maxDelay = builder.maxDelay;
+        this.deprecated = builder.deprecated;
+        this.tags = ListUtils.copyOf(builder.tags);
     }
 
     public static Builder builder() {
@@ -67,7 +75,9 @@ public final class Waiter implements ToNode, ToSmithyBuilder<Waiter> {
                 .documentation(getDocumentation().orElse(null))
                 .acceptors(getAcceptors())
                 .minDelay(getMinDelay())
-                .maxDelay(getMaxDelay());
+                .maxDelay(getMaxDelay())
+                .tags(tags)
+                .deprecated(deprecated);
     }
 
     /**
@@ -81,12 +91,16 @@ public final class Waiter implements ToNode, ToSmithyBuilder<Waiter> {
         ObjectNode value = node.expectObjectNode().warnIfAdditionalProperties(KEYS);
         Builder builder = builder();
         value.getStringMember(DOCUMENTATION).map(StringNode::getValue).ifPresent(builder::documentation);
+
         for (Node entry : value.expectArrayMember(ACCEPTORS).getElements()) {
             builder.addAcceptor(Acceptor.fromNode(entry));
         }
 
         value.getNumberMember(MIN_DELAY).map(NumberNode::getValue).map(Number::intValue).ifPresent(builder::minDelay);
         value.getNumberMember(MAX_DELAY).map(NumberNode::getValue).map(Number::intValue).ifPresent(builder::maxDelay);
+
+        builder.deprecated(value.getBooleanMemberOrDefault(DEPRECATED));
+        value.getMember(TAGS).ifPresent(tags -> builder.tags(Node.loadArrayOfString(TAGS, tags)));
 
         return builder.build();
     }
@@ -130,6 +144,20 @@ public final class Waiter implements ToNode, ToSmithyBuilder<Waiter> {
     }
 
     @Override
+    public List<String> getTags() {
+        return tags;
+    }
+
+    /**
+     * Checks if the waiter is deprecated.
+     *
+     * @return Returns true if the waiter is deprecated.
+     */
+    public boolean isDeprecated() {
+        return deprecated;
+    }
+
+    @Override
     public Node toNode() {
         ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .withOptionalMember(DOCUMENTATION, getDocumentation().map(Node::from))
@@ -141,6 +169,14 @@ public final class Waiter implements ToNode, ToSmithyBuilder<Waiter> {
         }
         if (maxDelay != DEFAULT_MAX_DELAY) {
             builder.withMember(MAX_DELAY, maxDelay);
+        }
+
+        if (isDeprecated()) {
+            builder.withMember(DEPRECATED, true);
+        }
+
+        if (!tags.isEmpty()) {
+            builder.withMember(TAGS, Node.fromStrings(tags));
         }
 
         return builder.build();
@@ -158,12 +194,14 @@ public final class Waiter implements ToNode, ToSmithyBuilder<Waiter> {
         return minDelay == waiter.minDelay
                && maxDelay == waiter.maxDelay
                && Objects.equals(documentation, waiter.documentation)
-               && acceptors.equals(waiter.acceptors);
+               && acceptors.equals(waiter.acceptors)
+               && tags.equals(waiter.tags)
+               && deprecated == waiter.deprecated;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(documentation, acceptors, minDelay, maxDelay);
+        return Objects.hash(documentation, acceptors, minDelay, maxDelay, deprecated, tags);
     }
 
     public static final class Builder implements SmithyBuilder<Waiter> {
@@ -172,6 +210,8 @@ public final class Waiter implements ToNode, ToSmithyBuilder<Waiter> {
         private final List<Acceptor> acceptors = new ArrayList<>();
         private int minDelay = DEFAULT_MIN_DELAY;
         private int maxDelay = DEFAULT_MAX_DELAY;
+        private boolean deprecated = false;
+        private final List<String> tags = new ArrayList<>();
 
         private Builder() {}
 
@@ -208,6 +248,27 @@ public final class Waiter implements ToNode, ToSmithyBuilder<Waiter> {
 
         public Builder maxDelay(int maxDelay) {
             this.maxDelay = maxDelay;
+            return this;
+        }
+
+        public Builder clearTags() {
+            this.tags.clear();
+            return this;
+        }
+
+        public Builder tags(List<String> tags) {
+            clearTags();
+            tags.forEach(this::addTag);
+            return this;
+        }
+
+        public Builder addTag(String tag) {
+            this.tags.add(Objects.requireNonNull(tag));
+            return this;
+        }
+
+        public Builder deprecated(boolean deprecated) {
+            this.deprecated = deprecated;
             return this;
         }
     }

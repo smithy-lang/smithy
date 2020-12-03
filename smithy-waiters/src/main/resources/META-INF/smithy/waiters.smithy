@@ -32,6 +32,16 @@ structure Waiter {
     /// This value defaults to 120 if not specified (or, 2 minutes). If
     /// specified, this value MUST be greater than or equal to 1.
     maxDelay: WaiterDelay,
+
+    /// Indicates if the waiter is considered deprecated. A waiter SHOULD
+    /// be marked as deprecated if it has been replaced by another waiter or
+    /// if it is no longer needed (for example, if a resource changes from
+    /// eventually consistent to strongly consistent).
+    deprecated: PrimitiveBoolean,
+
+    /// A list of tags associated with the waiter that allow waiters to be
+    /// categorized and grouped.
+    tags: NonEmptyStringList,
 }
 
 @box
@@ -150,3 +160,12 @@ structure PathMatcher {
 ])
 @private
 string PathComparator
+
+@private
+list NonEmptyStringList {
+    member: NonEmptyString,
+}
+
+@private
+@length(min: 1)
+string NonEmptyString

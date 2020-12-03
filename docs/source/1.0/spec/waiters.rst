@@ -265,6 +265,16 @@ has entered into a desired state.
       - The maximum amount of time in seconds to delay between each retry.
         This value defaults to ``120`` if not specified (2 minutes). If
         specified, this value MUST be greater than or equal to 1.
+    * - ``deprecated``
+      - ``boolean``
+      - Indicates if the waiter is considered deprecated. A waiter SHOULD
+        be marked as deprecated if it has been replaced by another waiter or
+        if it is no longer needed (for example, if a resource changes from
+        eventually consistent to strongly consistent).
+    * - ``tags``
+      - ``[string]``
+      - A list of tags associated with the waiter that allow waiters to be
+        categorized and grouped.
 
 
 .. _waiter-acceptor:
