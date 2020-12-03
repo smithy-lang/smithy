@@ -97,6 +97,8 @@ use smithy.waiters#waitable
         ]
     },
     F: {
+        "deprecated": true,
+        "tags": ["A", "B"],
         "acceptors": [
             {
                 "state": "success",
