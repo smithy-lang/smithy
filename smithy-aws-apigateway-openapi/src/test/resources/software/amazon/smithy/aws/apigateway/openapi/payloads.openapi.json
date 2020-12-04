@@ -15,7 +15,8 @@
                 "$ref": "#/components/schemas/FooOperationPayload"
               }
             }
-          }
+          },
+          "required": true
         },
         "parameters": [
           {

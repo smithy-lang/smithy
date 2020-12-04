@@ -300,6 +300,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         });
         RequestBodyObject requestBodyObject = RequestBodyObject.builder()
                 .putContent(Objects.requireNonNull(mediaTypeRange), mediaTypeObject)
+                .required(binding.getMember().isRequired())
                 .build();
         return Optional.of(requestBodyObject);
     }
@@ -325,8 +326,18 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
                 .schema(Schema.builder().ref(pointer).build())
                 .build();
 
+        // If any of the top level bindings are required, then the body itself must be required.
+        boolean required = false;
+        for (HttpBinding binding : bindings) {
+            if (binding.getMember().isRequired()) {
+                required = true;
+                break;
+            }
+        }
+
         return Optional.of(RequestBodyObject.builder()
                 .putContent(mediaType, mediaTypeObject)
+                .required(required)
                 .build());
     }
 
