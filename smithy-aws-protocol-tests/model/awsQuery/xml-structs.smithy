@@ -114,11 +114,11 @@ apply XmlEmptyBlobs @httpResponseTests([
         protocol: awsQuery,
         code: 200,
         body: """
-              <XmlBlobsResponse xmlns="https://example.com/">
-                  <XmlBlobsResult>
+              <XmlEmptyBlobsResponse xmlns="https://example.com/">
+                  <XmlEmptyBlobsResult>
                       <data></data>
-                  </XmlBlobsResult>
-              </XmlBlobsResponse>
+                  </XmlEmptyBlobsResult>
+              </XmlEmptyBlobsResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
@@ -134,11 +134,11 @@ apply XmlEmptyBlobs @httpResponseTests([
         protocol: awsQuery,
         code: 200,
         body: """
-              <XmlBlobsResponse xmlns="https://example.com/">
-                  <XmlBlobsResult>
+              <XmlEmptyBlobsResponse xmlns="https://example.com/">
+                  <XmlEmptyBlobsResult>
                       <data/>
-                  </XmlBlobsResult>
-              </XmlBlobsResponse>
+                  </XmlEmptyBlobsResult>
+              </XmlEmptyBlobsResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {

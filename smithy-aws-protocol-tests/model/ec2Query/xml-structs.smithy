@@ -116,10 +116,10 @@ apply XmlEmptyBlobs @httpResponseTests([
         protocol: ec2Query,
         code: 200,
         body: """
-              <XmlBlobsResponse xmlns="https://example.com/">
+              <XmlEmptyBlobsResponse xmlns="https://example.com/">
                   <data></data>
                   <RequestId>requestid</RequestId>
-              </XmlBlobsResponse>
+              </XmlEmptyBlobsResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
@@ -135,10 +135,10 @@ apply XmlEmptyBlobs @httpResponseTests([
         protocol: ec2Query,
         code: 200,
         body: """
-              <XmlBlobsResponse xmlns="https://example.com/">
+              <XmlEmptyBlobsResponse xmlns="https://example.com/">
                   <data/>
                   <RequestId>requestid</RequestId>
-              </XmlBlobsResponse>
+              </XmlEmptyBlobsResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {

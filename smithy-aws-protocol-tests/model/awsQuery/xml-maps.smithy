@@ -70,12 +70,12 @@ apply XmlEmptyMaps @httpResponseTests([
         protocol: awsQuery,
         code: 200,
         body: """
-              <XmlMapsResponse xmlns="https://example.com/">
-                  <XmlMapsResult>
+              <XmlEmptyMapsResponse xmlns="https://example.com/">
+                  <XmlEmptyMapsResult>
                       <myMap>
                       </myMap>
-                  </XmlMapsResult>
-              </XmlMapsResponse>
+                  </XmlEmptyMapsResult>
+              </XmlEmptyMapsResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
@@ -91,11 +91,11 @@ apply XmlEmptyMaps @httpResponseTests([
         protocol: awsQuery,
         code: 200,
         body: """
-              <XmlMapsResponse xmlns="https://example.com/">
-                  <XmlMapsResult>
+              <XmlEmptyMapsResponse xmlns="https://example.com/">
+                  <XmlEmptyMapsResult>
                       <myMap/>
-                  </XmlMapsResult>
-              </XmlMapsResponse>
+                  </XmlEmptyMapsResult>
+              </XmlEmptyMapsResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
