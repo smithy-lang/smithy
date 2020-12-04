@@ -157,25 +157,36 @@ Waiter retries
 
 Waiter implementations MUST delay for a period of time before attempting a
 retry. The amount of time a waiter delays between retries is computed using
-`exponential backoff`_ through the following algorithm:
+exponential backoff with jitter through the following algorithm:
 
 * Let ``attempt`` be the number of retry attempts.
+* Let ``attemptCeiling`` be the computed number of attempts necessary before
+  ``delay`` with exponential backoff exceeds ``maxDelay``. This is necessary
+  to prevent integer overflows for larger numbers of retries.
 * Let ``minDelay`` be the minimum amount of time to delay between retries in
   seconds, specified by the ``minDelay`` property of a
   :ref:`waiter <waiter-structure>` with a default of 2.
 * Let ``maxDelay`` be the maximum amount of time to delay between retries in
   seconds, specified by the ``maxDelay`` property of a
   :ref:`waiter <waiter-structure>` with a default of 120.
-* Let ``min`` be a function that returns the smaller of two integers.
-* Let ``max`` be a function that returns the larger of two integers.
-* Let ``maxWaitTime`` be the amount of time in seconds a user is willing to
-  wait for a waiter to complete.
-* Let ``remainingTime`` be the amount of seconds remaining before the waiter
-  has exceeded ``maxWaitTime``.
+* Let ``random`` be a function that returns a random value between two
+  inclusive integers.
+* Let ``log`` be a function that returns the natural logarithm for an integer.
+* Let ``maxWaitTime`` be a user-provided amount of time in seconds a user is
+  willing to wait for a waiter to complete.
+* Let ``remainingTime`` be the computed amount of seconds remaining before the
+  waiter has exceeded ``maxWaitTime``.
 
 .. code-block:: python
 
-    delay = min(maxDelay, minDelay * 2 ** (attempt - 1))
+    attemptCeiling = (log(maxDelay / minDelay) / log(2)) + 1
+
+    if attempt > attemptCeiling:
+        delay = maxDelay
+    else:
+        delay = minDelay * 2 ** (attempt - 1)
+
+    delay = random(minDelay, delay)
 
     if remainingTime - delay <= minDelay:
         delay = remainingTime - minDelay
@@ -187,7 +198,7 @@ needlessly only to exceed ``maxWaitTime`` before issuing a final request.
 
 Using the default ``minDelay`` of 2, the default ``maxDelay`` of 120, a caller
 provided ``maxWaitTime`` of 300 (5 minutes), and assuming that requests
-complete in 0 seconds (for example purposes only), delays are computed as
+complete in 0 seconds (for example purposes only), delays might be computed as
 follows:
 
 .. list-table::
@@ -202,33 +213,84 @@ follows:
       - 2
       - 298
     * - 2
-      - 4
-      - 6
-      - 294
+      - 3
+      - 5
+      - 295
     * - 3
-      - 8
-      - 14
-      - 286
+      - 6
+      - 11
+      - 289
     * - 4
-      - 16
-      - 30
-      - 270
+      - 6
+      - 17
+      - 283
     * - 5
-      - 32
-      - 62
-      - 238
+      - 22
+      - 39
+      - 261
     * - 6
-      - 64
-      - 126
-      - 174
+      - 62
+      - 101
+      - 199
     * - 7
-      - 120
-      - 254
-      - 46
-    * - 8 (last attempt)
-      - 44
+      - 43
+      - 144
+      - 156
+    * - 8
+      - 24
+      - 168
+      - 132
+    * - 9
+      - 71
+      - 239
+      - 61
+    * - 10
+      - 42
+      - 281
+      - 19
+    * - 11
+      - 9
+      - 290
+      - 10
+    * - 12
+      - 6
+      - 296
+      - 4
+    * - 13 (last attempt)
+      - 2
       - 298
       - N/A
+
+.. note::
+
+    Because waiters use jitter, waiters might use different delays than the
+    example table above.
+
+
+Why exponential backoff with jitter?
+------------------------------------
+
+`Exponential backoff with full jitter`_ is used as opposed to other retry
+strategies like linear backoff because it should work for most use cases,
+balancing the cost to the caller spent waiting on a resource to stabilize,
+the cost of the service in responding to polling requests, and the overhead
+associated with potentially violating a service level agreement and getting
+throttled. Waiters that poll for resources that quickly stabilize will
+complete within the first few calls, whereas waiters that could take hours
+to complete will send fewer requests as the number of retries increases.
+
+By generally increasing the amount of delay between retries as the number of
+retry attempts increases, waiters will not overload services with unnecessary
+polling calls, and it protects customers from violating service level
+agreements that could counter-intuitively cause waiters to take longer to
+complete or even fail due to request throttling. By using introducing
+randomness with jitter, waiters will retry slightly more aggressively to
+improve the time to completion while still maintaining the general increase
+in delay between retries.
+
+Note that linear backoff is still possible to configure with waiters. By
+setting ``minDelay`` and ``maxDelay`` to the same value, a waiter will retry
+using linear backoff.
 
 
 .. _waiter-structure:
@@ -796,4 +858,4 @@ the ``StartResource`` API operation.
 .. _CommonMark: https://spec.commonmark.org/
 .. _JMESPath: https://jmespath.org/
 .. _JMESPath types: https://jmespath.org/specification.html#data-types
-.. _exponential backoff: https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/
+.. _Exponential backoff with full jitter: https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/#Jitter
