@@ -140,10 +140,10 @@ apply XmlEmptyLists @httpResponseTests([
         protocol: ec2Query,
         code: 200,
         body: """
-              <XmlListsResponse xmlns="https://example.com/">
+              <XmlEmptyListsResponse xmlns="https://example.com/">
                 <stringList/>
                 <stringSet></stringSet>
-              </XmlListsResponse>
+              </XmlEmptyListsResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
