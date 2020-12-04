@@ -15,7 +15,8 @@
                 "$ref": "#/components/schemas/CreateDocumentRequestContent"
               }
             }
-          }
+          },
+          "required": true
         },
         "parameters": [
           {
@@ -61,7 +62,8 @@
                 "$ref": "#/components/schemas/PutPayloadInputPayload"
               }
             }
-          }
+          },
+          "required": true
         },
         "parameters": [
           {
@@ -147,8 +149,14 @@
           "stringDateTime": {
             "type": "string",
             "format": "date-time"
+          },
+          "required": {
+            "type": "string"
           }
-        }
+        },
+        "required": [
+          "required"
+        ]
       },
       "CreateDocumentResponseContent": {
         "type": "object",

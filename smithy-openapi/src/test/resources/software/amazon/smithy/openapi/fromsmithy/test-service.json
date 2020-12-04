@@ -75,7 +75,8 @@
                 "body": {
                     "target": "example.rest#Blob",
                     "traits": {
-                        "smithy.api#httpPayload": {}
+                        "smithy.api#httpPayload": {},
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -142,6 +143,12 @@
                 },
                 "stringDateTime": {
                     "target": "example.rest#StringDateTime"
+                },
+                "required": {
+                    "target": "example.rest#String",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
                 }
             }
         },
