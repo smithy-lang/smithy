@@ -15,12 +15,14 @@
 
 package software.amazon.smithy.model.knowledge;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -62,14 +64,105 @@ public final class OperationIndex implements KnowledgeIndex {
         return model.getKnowledge(OperationIndex.class, OperationIndex::new);
     }
 
+    /**
+     * Gets the optional input structure of an operation.
+     *
+     * @param operation Operation to get the input structure of.
+     * @return Returns the optional operation input structure.
+     */
     public Optional<StructureShape> getInput(ToShapeId operation) {
         return Optional.ofNullable(inputs.get(operation.toShapeId()));
     }
 
+    /**
+     * Gets the input members of an operation as a map of member names
+     * to {@link MemberShape}.
+     *
+     * <p>The return map is ordered using the same order defined in
+     * the model. If the operation has no input, an empty map is returned.
+     *
+     * @param operation Operation to get the input members of.
+     * @return Returns the map of members, or an empty map.
+     */
+    public Map<String, MemberShape> getInputMembers(ToShapeId operation) {
+        return getInput(operation)
+                .map(input -> input.getAllMembers())
+                .orElse(Collections.emptyMap());
+    }
+
+    /**
+     * Returns true if the given structure is used as input by any
+     * operation in the model.
+     *
+     * @param structureId Structure to check.
+     * @return Returns true if the structure is used as input.
+     */
+    public boolean isInputStructure(ToShapeId structureId) {
+        ShapeId id = structureId.toShapeId();
+
+        for (StructureShape shape : inputs.values()) {
+            if (shape.getId().equals(id)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets the optional output structure of an operation.
+     *
+     * @param operation Operation to get the output structure of.
+     * @return Returns the optional operation output structure.
+     */
     public Optional<StructureShape> getOutput(ToShapeId operation) {
         return Optional.ofNullable(outputs.get(operation.toShapeId()));
     }
 
+    /**
+     * Gets the output members of an operation as a map of member names
+     * to {@link MemberShape}.
+     *
+     * <p>The return map is ordered using the same order defined in
+     * the model. If the operation has no output, an empty map is returned.
+     *
+     * @param operation Operation to get the output members of.
+     * @return Returns the map of members, or an empty map.
+     */
+    public Map<String, MemberShape> getOutputMembers(ToShapeId operation) {
+        return getOutput(operation)
+                .map(output -> output.getAllMembers())
+                .orElse(Collections.emptyMap());
+    }
+
+    /**
+     * Returns true if the given structure is used as output by any
+     * operation in the model.
+     *
+     * @param structureId Structure to check.
+     * @return Returns true if the structure is used as output.
+     */
+    public boolean isOutputStructure(ToShapeId structureId) {
+        ShapeId id = structureId.toShapeId();
+
+        for (StructureShape shape : outputs.values()) {
+            if (shape.getId().equals(id)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets the list of error structures defined on an operation.
+     *
+     * <p>An empty list is returned if the operation is not found or
+     * has no errors.
+     *
+     * @param operation Operation to get the errors of.
+     * @return Returns the list of error structures, or an empty list.
+     */
     public List<StructureShape> getErrors(ToShapeId operation) {
         return errors.getOrDefault(operation.toShapeId(), ListUtils.of());
     }
