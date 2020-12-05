@@ -18,8 +18,10 @@ package software.amazon.smithy.model.knowledge;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -27,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.StructureShape;
 
 public class OperationIndexTest {
 
@@ -65,5 +68,43 @@ public class OperationIndexTest {
         assertThat(opIndex.getInput(ShapeId.from("ns.foo#B")), is(Optional.of(input)));
         assertThat(opIndex.getOutput(ShapeId.from("ns.foo#B")), is(Optional.of(output)));
         assertThat(opIndex.getErrors(ShapeId.from("ns.foo#B")), containsInAnyOrder(error1, error2));
+    }
+
+    @Test
+    public void returnsAllInputMembers() {
+        OperationIndex opIndex = OperationIndex.of(model);
+        StructureShape input = model.expectShape(ShapeId.from("ns.foo#Input"), StructureShape.class);
+
+        assertThat(opIndex.getInputMembers(ShapeId.from("ns.foo#B")), equalTo(input.getAllMembers()));
+        assertThat(opIndex.getInputMembers(ShapeId.from("ns.foo#Missing")), equalTo(Collections.emptyMap()));
+    }
+
+    @Test
+    public void returnsAllOutputMembers() {
+        OperationIndex opIndex = OperationIndex.of(model);
+        StructureShape output = model.expectShape(ShapeId.from("ns.foo#Output"), StructureShape.class);
+
+        assertThat(opIndex.getOutputMembers(ShapeId.from("ns.foo#B")), equalTo(output.getAllMembers()));
+        assertThat(opIndex.getOutputMembers(ShapeId.from("ns.foo#Missing")), equalTo(Collections.emptyMap()));
+    }
+
+    @Test
+    public void determinesIfShapeIsUsedAsInput() {
+        OperationIndex opIndex = OperationIndex.of(model);
+        StructureShape input = model.expectShape(ShapeId.from("ns.foo#Input"), StructureShape.class);
+        StructureShape output = model.expectShape(ShapeId.from("ns.foo#Output"), StructureShape.class);
+
+        assertThat(opIndex.isInputStructure(input), is(true));
+        assertThat(opIndex.isInputStructure(output), is(false));
+    }
+
+    @Test
+    public void determinesIfShapeIsUsedAsOutput() {
+        OperationIndex opIndex = OperationIndex.of(model);
+        StructureShape input = model.expectShape(ShapeId.from("ns.foo#Input"), StructureShape.class);
+        StructureShape output = model.expectShape(ShapeId.from("ns.foo#Output"), StructureShape.class);
+
+        assertThat(opIndex.isOutputStructure(output), is(true));
+        assertThat(opIndex.isOutputStructure(input), is(false));
     }
 }
