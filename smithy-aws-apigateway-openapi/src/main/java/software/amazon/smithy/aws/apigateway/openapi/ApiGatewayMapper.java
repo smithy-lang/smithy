@@ -113,6 +113,18 @@ public interface ApiGatewayMapper extends OpenApiMapper {
             }
 
             @Override
+            public OperationObject postProcessOperation(
+                    Context<? extends Trait> context,
+                    OperationShape shape,
+                    OperationObject operation,
+                    String httpMethodName, String path
+            ) {
+                return matchesApiType(context)
+                       ? delegate.postProcessOperation(context, shape, operation, httpMethodName, path)
+                       : operation;
+            }
+
+            @Override
             public PathItem updatePathItem(Context<? extends Trait> context, String path, PathItem pathItem) {
                 return matchesApiType(context)
                        ? delegate.updatePathItem(context, path, pathItem)

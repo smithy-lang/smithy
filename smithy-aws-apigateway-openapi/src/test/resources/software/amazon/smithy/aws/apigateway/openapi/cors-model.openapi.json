@@ -199,7 +199,7 @@
             "default": {
               "statusCode": "200",
               "responseParameters": {
-                "method.response.header.Access-Control-Expose-Headers": "'X-Service-Output-Metadata'",
+                "method.response.header.Access-Control-Expose-Headers": "'X-Foo-Header,X-Service-Output-Metadata'",
                 "method.response.header.Access-Control-Allow-Origin": "'https://www.example.com'"
               }
             }
