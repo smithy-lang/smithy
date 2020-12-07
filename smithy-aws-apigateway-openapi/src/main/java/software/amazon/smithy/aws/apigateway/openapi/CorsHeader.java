@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import software.amazon.smithy.model.traits.CorsTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
+import software.amazon.smithy.openapi.model.OperationObject;
+import software.amazon.smithy.openapi.model.ResponseObject;
 
 enum CorsHeader {
 
@@ -43,8 +45,9 @@ enum CorsHeader {
         return headerName;
     }
 
-    static <T extends Trait> Set<String> deduceOperationHeaders(
+    static <T extends Trait> Set<String> deduceOperationResponseHeaders(
             Context<T> context,
+            OperationObject operationObject,
             OperationShape shape,
             CorsTrait cors
     ) {
@@ -56,6 +59,11 @@ enum CorsHeader {
 
         for (SecuritySchemeConverter<? extends Trait> converter : context.getSecuritySchemeConverters()) {
             result.addAll(getSecuritySchemeResponseHeaders(context, converter));
+        }
+
+        // Include all headers found in the generated OpenAPI response.
+        for (ResponseObject responseObject : operationObject.getResponses().values()) {
+            result.addAll(responseObject.getHeaders().keySet());
         }
 
         return result;

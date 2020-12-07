@@ -426,10 +426,12 @@ public final class OpenApiConverter {
                 String method = result.getMethod();
                 String path = result.getUri();
                 PathItem.Builder pathItem = paths.computeIfAbsent(result.getUri(), (uri) -> PathItem.builder());
+
                 // Mark the operation deprecated if the trait's present.
                 if (shape.hasTrait(DeprecatedTrait.class)) {
                     result.getOperation().deprecated(true);
                 }
+
                 // Add security requirements to the operation.
                 addOperationSecurity(context, result.getOperation(), shape, plugin);
 
@@ -438,9 +440,10 @@ public final class OpenApiConverter {
                         .map(DocumentationTrait::getValue)
                         .ifPresent(description -> result.getOperation().description(description));
 
-                // Pass the operation through the plugin system and then build it.
-                OperationObject builtOperation = plugin.updateOperation(
-                        context, shape, result.getOperation().build(), method, path);
+                OperationObject builtOperation = result.getOperation().build();
+
+                // Pass the operation through the plugin system.
+                builtOperation = plugin.updateOperation(context, shape, builtOperation, method, path);
                 // Add tags that are on the operation.
                 builtOperation = addOperationTags(context, shape, builtOperation);
                 // Update each parameter of the operation and rebuild if necessary.
@@ -449,6 +452,8 @@ public final class OpenApiConverter {
                 builtOperation = updateResponses(context, shape, builtOperation, method, path, plugin);
                 // Update the request body of the operation and rebuild if necessary.
                 builtOperation = updateRequestBody(context, shape, builtOperation, method, path, plugin);
+                // Pass the operation through the plugin system for post-processing.
+                builtOperation = plugin.postProcessOperation(context, shape, builtOperation, method, path);
 
                 switch (method.toLowerCase(Locale.ENGLISH)) {
                     case "get":

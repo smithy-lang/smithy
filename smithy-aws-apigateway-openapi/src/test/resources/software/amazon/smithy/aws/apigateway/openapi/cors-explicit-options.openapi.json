@@ -63,7 +63,8 @@
             "default": {
               "statusCode": "200",
               "responseParameters": {
-                "method.response.header.Access-Control-Allow-Origin": "'https://foo.com'"
+                "method.response.header.Access-Control-Allow-Origin": "'https://foo.com'",
+                "method.response.header.Access-Control-Expose-Headers": "'X-Hd'"
               }
             }
           }

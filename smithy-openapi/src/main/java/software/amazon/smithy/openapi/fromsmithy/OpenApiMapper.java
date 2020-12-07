@@ -71,7 +71,10 @@ public interface OpenApiMapper {
     default void updateDefaultSettings(Model model, OpenApiConfig config) {}
 
     /**
-     * Updates an operation.
+     * Updates an operation before invoking the plugin system on the contents
+     * of the operation (specifically, before {@link #updateParameter},
+     * {@link #updateRequestBody}, {@link #updateResponse},
+     * {@link #updateRequestBody}, and {@link #postProcessOperation}).
      *
      * @param context Conversion context.
      * @param shape Operation being converted.
@@ -81,6 +84,29 @@ public interface OpenApiMapper {
      * @return Returns the updated operation object.
      */
     default OperationObject updateOperation(
+            Context<? extends Trait> context,
+            OperationShape shape,
+            OperationObject operation,
+            String httpMethodName,
+            String path
+    ) {
+        return operation;
+    }
+
+    /**
+     * Updates an operation after invoking the plugin system on the contents
+     * of the operation (specifically, after {@link #updateOperation},
+     * {@link #updateParameter}, {@link #updateRequestBody},
+     * {@link #updateResponse}, and {@link #updateRequestBody}).
+     *
+     * @param context Conversion context.
+     * @param shape Operation being converted.
+     * @param operation OperationObject being built.
+     * @param httpMethodName The HTTP method of the operation.
+     * @param path The HTTP URI of the operation.
+     * @return Returns the updated operation object.
+     */
+    default OperationObject postProcessOperation(
             Context<? extends Trait> context,
             OperationShape shape,
             OperationObject operation,
@@ -265,6 +291,23 @@ public interface OpenApiMapper {
                         return null;
                     }
                     operation = plugin.updateOperation(context, shape, operation, httpMethodName, path);
+                }
+                return operation;
+            }
+
+            @Override
+            public OperationObject postProcessOperation(
+                    Context<? extends Trait> context,
+                    OperationShape shape,
+                    OperationObject operation,
+                    String httpMethodName,
+                    String path
+            ) {
+                for (OpenApiMapper plugin : sorted) {
+                    if (operation == null) {
+                        return null;
+                    }
+                    operation = plugin.postProcessOperation(context, shape, operation, httpMethodName, path);
                 }
                 return operation;
             }

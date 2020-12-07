@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ final class AddIntegrations implements ApiGatewayMapper {
         IntegrationTraitIndex index = IntegrationTraitIndex.of(context.getModel());
         return index.getIntegrationTrait(context.getService(), shape)
                 .map(trait -> operation.toBuilder()
-                        .putExtension(EXTENSION_NAME, createIntegration(context, shape, trait))
+                        .putExtension(EXTENSION_NAME, createIntegration(context, operation, shape, trait))
                         .build())
                 .orElseGet(() -> {
                     LOGGER.warning("No API Gateway integration trait found for " + shape.getId());
@@ -84,6 +84,7 @@ final class AddIntegrations implements ApiGatewayMapper {
 
     private ObjectNode createIntegration(
             Context<? extends Trait> context,
+            OperationObject operationObject,
             OperationShape shape,
             Trait integration
     ) {
@@ -91,7 +92,7 @@ final class AddIntegrations implements ApiGatewayMapper {
         return context.getService().getTrait(CorsTrait.class)
                 .map(cors -> {
                     LOGGER.fine(() -> String.format("Adding CORS to `%s` operation responses", shape.getId()));
-                    return updateIntegrationWithCors(context, shape, integrationObject, cors);
+                    return updateIntegrationWithCors(context, operationObject, shape, integrationObject, cors);
                 })
                 .orElse(integrationObject);
     }
@@ -122,6 +123,7 @@ final class AddIntegrations implements ApiGatewayMapper {
 
     private ObjectNode updateIntegrationWithCors(
             Context<? extends Trait> context,
+            OperationObject operationObject,
             OperationShape shape,
             ObjectNode integrationNode,
             CorsTrait cors
@@ -141,7 +143,7 @@ final class AddIntegrations implements ApiGatewayMapper {
 
         LOGGER.finer(() -> String.format("Adding the following CORS headers to the API Gateway integration of %s: %s",
                                          shape.getId(), corsHeaders));
-        Set<String> deducedHeaders = CorsHeader.deduceOperationHeaders(context, shape, cors);
+        Set<String> deducedHeaders = CorsHeader.deduceOperationResponseHeaders(context, operationObject, shape, cors);
         LOGGER.fine(() -> String.format("Detected the following headers for operation %s: %s",
                                         shape.getId(), deducedHeaders));
 
