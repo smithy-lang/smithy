@@ -115,6 +115,11 @@ final class ConfigLoader {
             while (matcher.find()) {
                 String variable = matcher.group(1);
                 String replacement = expand(node.getSourceLocation(), variable);
+                // INLINE over-matches to allow for escaping. If the over-matched first group does not start with
+                // '${', we need to prepend the first character from that group on the replacement.
+                if (!matcher.group(0).startsWith("${")) {
+                    replacement = matcher.group(0).charAt(0) + replacement;
+                }
                 matcher.appendReplacement(builder, replacement);
             }
 
