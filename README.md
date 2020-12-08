@@ -1,5 +1,5 @@
 # Smithy
-[![Build Status](https://travis-ci.com/awslabs/smithy.svg?branch=master)](https://travis-ci.com/awslabs/smithy)
+[![Build Status](https://github.com/awslabs/smithy/workflows/ci/badge.svg)](https://github.com/awslabs/smithy/workflows/ci)
 
 Smithy defines and generates clients, services, and documentation for
 any protocol.
