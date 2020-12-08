@@ -4,6 +4,7 @@ software.amazon.smithy.build.transforms.ExcludeShapesByTrait
 software.amazon.smithy.build.transforms.ExcludeTags
 software.amazon.smithy.build.transforms.ExcludeTraits
 software.amazon.smithy.build.transforms.ExcludeTraitsByTag
+software.amazon.smithy.build.transforms.FlattenNamespaces
 software.amazon.smithy.build.transforms.IncludeMetadata
 software.amazon.smithy.build.transforms.IncludeNamespaces
 software.amazon.smithy.build.transforms.IncludeServices
@@ -13,4 +14,3 @@ software.amazon.smithy.build.transforms.IncludeTraits
 software.amazon.smithy.build.transforms.IncludeTraitsByTag
 software.amazon.smithy.build.transforms.RemoveTraitDefinitions
 software.amazon.smithy.build.transforms.RemoveUnusedShapes
-software.amazon.smithy.build.transforms.FlattenNamespaces
