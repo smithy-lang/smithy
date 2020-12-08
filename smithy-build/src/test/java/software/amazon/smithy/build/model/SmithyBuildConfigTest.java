@@ -120,6 +120,7 @@ public class SmithyBuildConfigTest {
     @Test
     public void expandsEnvironmentVariables() {
         System.setProperty("FOO", "Hi");
+        System.setProperty("BAR", "TagFromEnv");
         System.setProperty("NAME_KEY", "name");
         SmithyBuildConfig config = SmithyBuildConfig.load(
                 Paths.get(getResourcePath("config-with-env.json")));
@@ -129,7 +130,7 @@ public class SmithyBuildConfigTest {
         assertThat(transform.getName(), equalTo("includeShapesByTag"));
         // Did the array and string values in it expand?
         assertThat(transform.getArgs(), equalTo(Node.objectNode()
-                .withMember("tags", Node.fromStrings("Hi", "${BAZ}"))));
+                .withMember("tags", Node.fromStrings("Hi", "compoundTagFromEnv", "${BAZ}"))));
     }
 
     @Test
