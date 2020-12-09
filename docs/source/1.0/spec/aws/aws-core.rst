@@ -30,6 +30,7 @@ Value type
     * :ref:`service-cloudformation-name`
     * :ref:`service-arn-namespace`
     * :ref:`service-cloudtrail-event-source`
+    * :ref:`service-endpoint-id`
 
 The following example defines an AWS service that uses the default values of
 ``cloudFormationService``, ``arnNamespace``, and ``cloudTrailEventSource``:
@@ -80,7 +81,9 @@ The following example provides explicit values for all properties:
             sdkId: "Some Value",
             cloudFormationName: "FooBaz",
             arnNamespace: "myservice",
-            cloudTrailEventSource: "myservice.amazon.aws")
+            cloudTrailEventSource: "myservice.amazon.aws",
+            endpointId: "my-endpoint"
+        )
         service FooBaz {
             version: "2018-03-17",
         }
@@ -228,6 +231,24 @@ This value SHOULD follow the convention of ``{arnNamespace}.amazonaws.com``,
 but there are some exceptions. For example, the event source for
 Amazon CloudWatch is ``monitoring.amazonaws.com``. Such services will
 need to explicitly configure the ``cloudTrailEventSource`` setting.
+
+
+.. _service-endpoint-id:
+
+``endpointId``
+==============
+
+The ``endpointId`` property is a ``string`` value that specifies which endpoint
+in a given region should be used to connect to the service. For example, most
+services in the AWS standard partition have endpoints which follow the format:
+``{endpointId}.{region}.amazonaws.com``. A service with the endpoint id
+``example`` in the region ``us-west-2`` might have the endpoint
+``example.us-west-2.amazonaws.com``. For a full listing of possible endpoints,
+check the `AWS Regions and Endpoints`_ page.
+
+This value is not unique across services and is subject to change. Therefore,
+it MUST NOT be used for client naming or for any other purpose that requires
+a unique identifier. :ref:`service-sdk-id` should be used for those purposes.
 
 
 .. _aws.api#arn-trait:
@@ -1311,3 +1332,4 @@ existing AWS services.
 .. _Amazon Resource Name (ARN): https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
 .. _AWS Service Namespaces: https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#genref-aws-service-namespaces
 .. _CloudFormation resource type: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html
+.. _AWS Regions and Endpoints:

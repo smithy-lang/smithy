@@ -32,7 +32,8 @@
                 "aws.api#service": {
                     "sdkId": "Some Value",
                     "arnNamespace": "service",
-                    "cloudFormationName": "SomeService"
+                    "cloudFormationName": "SomeService",
+                    "endpointId": "some-service"
                 }
             }
         },

@@ -41,6 +41,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
     private final String arnNamespace;
     private final String sdkId;
     private final String cloudTrailEventSource;
+    private final String endpointId;
 
     private ServiceTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
@@ -49,6 +50,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
         this.cloudFormationName = SmithyBuilder.requiredState("cloudFormationName", builder.cloudFormationName);
         this.cloudTrailEventSource = SmithyBuilder.requiredState(
                 "cloudTrailEventSource", builder.cloudTrailEventSource);
+        this.endpointId = SmithyBuilder.requiredState("endpointId", builder.endpointId);
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -74,6 +76,9 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
                     .ifPresent(builder::cloudFormationName);
             objectNode.getStringMember("cloudTrailEventSource").map(StringNode::getValue)
                     .ifPresent(builder::cloudTrailEventSource);
+            objectNode.getStringMember("endpointId")
+                    .map(StringNode::getValue)
+                    .ifPresent(builder::endpointId);
             return builder.build(target);
         }
     }
@@ -132,6 +137,20 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
         return cloudTrailEventSource;
     }
 
+    /**
+     * Returns the endpoint id for the service.
+     *
+     * This value is not unique across service and it can change at any time.
+     * Therefore it MUST NOT be used to generate class names, namespaces, or
+     * for any other purpose that requires a static, unique identifier. The
+     * sdkId property should be used for those purposes.
+     *
+     * @return Returns the aws sdk endpoint identifier.
+     */
+    public String getEndpointId() {
+        return endpointId;
+    }
+
     @Deprecated
     public Optional<String> getAbbreviation() {
         return Optional.empty();
@@ -144,7 +163,8 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
                 .sourceLocation(getSourceLocation())
                 .cloudFormationName(cloudFormationName)
                 .arnNamespace(arnNamespace)
-                .cloudTrailEventSource(cloudTrailEventSource);
+                .cloudTrailEventSource(cloudTrailEventSource)
+                .endpointId(endpointId);
     }
 
     @Override
@@ -153,7 +173,8 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
                 .withMember("sdkId", Node.from(sdkId))
                 .withMember("arnNamespace", Node.from(getArnNamespace()))
                 .withMember("cloudFormationName", Node.from(getCloudFormationName()))
-                .withMember("cloudTrailEventSource", Node.from(getCloudTrailEventSource()));
+                .withMember("cloudTrailEventSource", Node.from(getCloudTrailEventSource()))
+                .withMember("endpointId", Node.from(getEndpointId()));
     }
 
     /** Builder for {@link ServiceTrait}. */
@@ -162,11 +183,16 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
         private String cloudFormationName;
         private String arnNamespace;
         private String cloudTrailEventSource;
+        private String endpointId;
 
         private Builder() {}
 
         @Override
         public ServiceTrait build() {
+            if (endpointId == null) {
+                endpointId(arnNamespace);
+            }
+
             return new ServiceTrait(this);
         }
 
@@ -182,6 +208,10 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
 
             if (cloudTrailEventSource == null) {
                 cloudTrailEventSource = arnNamespace + ".amazonaws.com";
+            }
+
+            if (endpointId == null) {
+                endpointId(arnNamespace);
             }
 
             return new ServiceTrait(this);
@@ -234,6 +264,17 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
          */
         public Builder cloudTrailEventSource(String cloudTrailEventSource) {
             this.cloudTrailEventSource = cloudTrailEventSource;
+            return this;
+        }
+
+        /**
+         * Set the endpoint id used to construct client endpoints.
+         *
+         * @param endpointId The endpoint id of the service.
+         * @return Returns the builder.
+         */
+        public Builder endpointId(String endpointId) {
+            this.endpointId = endpointId;
             return this;
         }
 
