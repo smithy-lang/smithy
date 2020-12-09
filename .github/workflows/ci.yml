@@ -22,5 +22,5 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
 
-      - name: clean and build
+      - name: Clean and build
         run: ./gradlew clean build -Plog-tests
