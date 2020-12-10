@@ -241,7 +241,7 @@ need to explicitly configure the ``cloudTrailEventSource`` setting.
 The ``endpointPrefix`` property is a ``string`` value that identifies which endpoint
 in a given region should be used to connect to the service. For example, most
 services in the AWS standard partition have endpoints which follow the format:
-``{endpointPrefix}.{region}.amazonaws.com``. A service with the endpoint id
+``{endpointPrefix}.{region}.amazonaws.com``. A service with the endpoint prefix
 ``example`` in the region ``us-west-2`` might have the endpoint
 ``example.us-west-2.amazonaws.com``. For a full listing of possible endpoints,
 check the `AWS Regions and Endpoints`_ page.
@@ -249,7 +249,7 @@ check the `AWS Regions and Endpoints`_ page.
 This value is not unique across services and is subject to change. Therefore,
 it MUST NOT be used for client naming or for any other purpose that requires
 a static, unique identifier. :ref:`service-sdk-id` should be used for those
-purposes.
+purposes. Additionally, this value can be used to attempt to resolve endpoints.
 
 
 .. _aws.api#arn-trait:
