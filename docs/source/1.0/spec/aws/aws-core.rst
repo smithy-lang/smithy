@@ -30,7 +30,7 @@ Value type
     * :ref:`service-cloudformation-name`
     * :ref:`service-arn-namespace`
     * :ref:`service-cloudtrail-event-source`
-    * :ref:`service-endpoint-id`
+    * :ref:`service-endpoint-prefix`
 
 The following example defines an AWS service that uses the default values of
 ``cloudFormationService``, ``arnNamespace``, and ``cloudTrailEventSource``:
@@ -82,7 +82,7 @@ The following example provides explicit values for all properties:
             cloudFormationName: "FooBaz",
             arnNamespace: "myservice",
             cloudTrailEventSource: "myservice.amazon.aws",
-            endpointId: "my-endpoint"
+            endpointPrefix: "my-endpoint"
         )
         service FooBaz {
             version: "2018-03-17",
@@ -233,15 +233,15 @@ Amazon CloudWatch is ``monitoring.amazonaws.com``. Such services will
 need to explicitly configure the ``cloudTrailEventSource`` setting.
 
 
-.. _service-endpoint-id:
+.. _service-endpoint-prefix:
 
-``endpointId``
+``endpointPrefix``
 ==============
 
-The ``endpointId`` property is a ``string`` value that identifies which endpoint
+The ``endpointPrefix`` property is a ``string`` value that identifies which endpoint
 in a given region should be used to connect to the service. For example, most
 services in the AWS standard partition have endpoints which follow the format:
-``{endpointId}.{region}.amazonaws.com``. A service with the endpoint id
+``{endpointPrefix}.{region}.amazonaws.com``. A service with the endpoint id
 ``example`` in the region ``us-west-2`` might have the endpoint
 ``example.us-west-2.amazonaws.com``. For a full listing of possible endpoints,
 check the `AWS Regions and Endpoints`_ page.

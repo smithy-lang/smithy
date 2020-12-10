@@ -45,14 +45,14 @@ public class ServiceTraitTest {
         assertThat(serviceTrait.getCloudFormationName(), equalTo("Foo"));
         assertThat(serviceTrait.getArnNamespace(), equalTo("foo"));
         assertThat(serviceTrait.getCloudTrailEventSource(), equalTo("foo.amazonaws.com"));
-        assertThat(serviceTrait.getEndpointId(), equalTo("foo"));
+        assertThat(serviceTrait.getEndpointPrefix(), equalTo("foo"));
         assertThat(serviceTrait.toBuilder().build(), equalTo(serviceTrait));
     }
 
     @Test
     public void loadsTraitWithOptionalValues() {
         Node node = Node.parse("{\"sdkId\": \"Foo\", \"arnNamespace\": \"service\", \"cloudFormationName\": \"Baz\", "
-                        + "\"endpointId\": \"endpoint-id\"}");
+                        + "\"endpointPrefix\": \"endpoint-prefix\"}");
         TraitFactory provider = TraitFactory.createServiceFactory();
         Optional<Trait> trait = provider.createTrait(ServiceTrait.ID, ShapeId.from("ns.foo#foo"), node);
 
@@ -62,7 +62,7 @@ public class ServiceTraitTest {
         assertThat(serviceTrait.getSdkId(), equalTo("Foo"));
         assertThat(serviceTrait.getArnNamespace(), equalTo("service"));
         assertThat(serviceTrait.getCloudFormationName(), equalTo("Baz"));
-        assertThat(serviceTrait.getEndpointId(), equalTo("endpoint-id"));
+        assertThat(serviceTrait.getEndpointPrefix(), equalTo("endpoint-prefix"));
     }
 
     @Test
@@ -97,6 +97,6 @@ public class ServiceTraitTest {
         assertThat(trait.getSdkId(), equalTo("Some Value"));
         assertThat(trait.getCloudFormationName(), equalTo("SomeService"));
         assertThat(trait.getArnNamespace(), equalTo("service"));
-        assertThat(trait.getEndpointId(), equalTo("some-service"));
+        assertThat(trait.getEndpointPrefix(), equalTo("some-service"));
     }
 }
