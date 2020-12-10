@@ -33,7 +33,7 @@
                     "sdkId": "Some Value",
                     "arnNamespace": "service",
                     "cloudFormationName": "SomeService",
-                    "endpointId": "some-service"
+                    "endpointPrefix": "some-service"
                 }
             }
         },

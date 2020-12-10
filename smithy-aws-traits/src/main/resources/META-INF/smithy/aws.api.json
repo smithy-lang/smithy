@@ -48,7 +48,7 @@
                 "cloudTrailEventSource": {
                     "target": "smithy.api#String"
                 },
-                "endpointId": {
+                "endpointPrefix": {
                     "target": "smithy.api#String"
                 }
             },
