@@ -1,0 +1,234 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "MyService",
+        "version": "2006-03-01"
+    },
+    "paths": {
+        "/payload": {
+            "get": {
+                "operationId": "ListPayloads",
+                "responses": {
+                    "200": {
+                        "description": "ListPayloads 200 response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ListPayloadsResponseContent"
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-amazon-apigateway-integration": {
+                    "credentials": "arn:aws:iam::123456789012:role/MyServiceListPayloadsLambdaRole",
+                    "httpMethod": "POST",
+                    "type": "aws_proxy",
+                    "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:MyServiceListPayloads/invocations"
+                }
+            }
+        },
+        "/payload/{id}": {
+            "delete": {
+                "operationId": "DeletePayload",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "DeletePayload response"
+                    }
+                },
+                "x-amazon-apigateway-integration": {
+                    "credentials": "arn:aws:iam::123456789012:role/MyServiceDeletePayloadLambdaRole",
+                    "httpMethod": "POST",
+                    "type": "aws_proxy",
+                    "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:MyServiceDeletePayload/invocations"
+                }
+            },
+            "get": {
+                "operationId": "GetPayload",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "GetPayload 200 response",
+                        "headers": {
+                            "X-Foo-Header": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/octet-stream": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetPayloadOutputPayload"
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-amazon-apigateway-integration": {
+                    "credentials": "arn:aws:iam::123456789012:role/MyServiceGetPayloadLambdaRole",
+                    "httpMethod": "POST",
+                    "type": "aws_proxy",
+                    "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:MyServiceGetPayload/invocations"
+                }
+            },
+            "put": {
+                "operationId": "PutPayload",
+                "requestBody": {
+                    "content": {
+                        "application/octet-stream": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PutPayloadInputPayload"
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "schema": {
+                            "type": "number",
+                            "format": "int32",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "X-EnumString",
+                        "in": "header",
+                        "schema": {
+                            "$ref": "#/components/schemas/EnumString"
+                        }
+                    },
+                    {
+                        "name": "X-Foo-Header",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "PutPayload response"
+                    }
+                },
+                "x-amazon-apigateway-integration": {
+                    "credentials": "arn:aws:iam::123456789012:role/MyServicePutPayloadLambdaRole",
+                    "httpMethod": "POST",
+                    "type": "aws_proxy",
+                    "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:MyServicePutPayload/invocations"
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "EnumString": {
+                "type": "string",
+                "enum": [
+                    "a",
+                    "c"
+                ]
+            },
+            "GetPayloadOutputPayload": {
+                "type": "string",
+                "format": "byte"
+            },
+            "ListPayloadsResponseContent": {
+                "type": "object",
+                "properties": {
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PayloadDescription"
+                        }
+                    }
+                }
+            },
+            "PayloadDescription": {
+                "type": "object",
+                "properties": {
+                    "createdAt": {
+                        "type": "number"
+                    },
+                    "id": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "createdAt",
+                    "id"
+                ]
+            },
+            "PutPayloadInputPayload": {
+                "type": "string",
+                "format": "byte"
+            }
+        },
+        "securitySchemes": {
+            "aws.auth.sigv4": {
+                "type": "apiKey",
+                "description": "AWS Signature Version 4 authentication",
+                "name": "Authorization",
+                "in": "header",
+                "x-amazon-apigateway-authtype": "awsSigv4"
+            }
+        }
+    },
+    "security": [
+        {
+            "aws.auth.sigv4": []
+        }
+    ],
+    "x-amazon-apigateway-cors": {
+        "allowOrigins": [
+            "https://www.example.com"
+        ],
+        "maxAge": 86400,
+        "allowMethods": [
+            "*"
+        ],
+        "exposeHeaders": [
+            "X-Foo-Header",
+            "X-Service-Output-Metadata"
+        ],
+        "allowHeaders": [
+            "Authorization",
+            "Date",
+            "X-Amz-Date",
+            "X-Amz-Security-Token",
+            "X-Amz-Target",
+            "X-EnumString",
+            "X-Foo-Header",
+            "X-Service-Input-Metadata"
+        ]
+    }
+}

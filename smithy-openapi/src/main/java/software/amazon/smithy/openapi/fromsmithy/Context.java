@@ -19,7 +19,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import software.amazon.smithy.jsonschema.JsonSchemaConverter;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.jsonschema.SchemaDocument;
@@ -192,6 +194,54 @@ public final class Context<T extends Trait> {
      */
     public boolean usesHttpCredentials() {
         return getSecuritySchemeConverters().stream().anyMatch(SecuritySchemeConverter::usesHttpCredentials);
+    }
+
+    /**
+     * Gets an alphabetically sorted set of request headers used by every
+     * security scheme associated with the API.
+     *
+     * <p>This is useful when integrating with things like CORS.</p>
+     *
+     * @return Returns the set of every request header used by every security scheme.
+     */
+    public Set<String> getAllSecuritySchemeRequestHeaders() {
+        Set<String> headers = new TreeSet<>();
+        for (SecuritySchemeConverter<?> converter : getSecuritySchemeConverters()) {
+            headers.addAll(getSecuritySchemeRequestHeaders(this, converter));
+        }
+        return headers;
+    }
+
+    /**
+     * Gets an alphabetically sorted set of response headers used by every
+     * security scheme associated with the API.
+     *
+     * <p>This is useful when integrating with things like CORS.</p>
+     *
+     * @return Returns the set of every response header used by every security scheme.
+     */
+    public Set<String> getAllSecuritySchemeResponseHeaders() {
+        Set<String> headers = new TreeSet<>();
+        for (SecuritySchemeConverter<?> converter : getSecuritySchemeConverters()) {
+            headers.addAll(getSecuritySchemeResponseHeaders(this, converter));
+        }
+        return headers;
+    }
+
+    private static <T extends Trait> Set<String> getSecuritySchemeRequestHeaders(
+            Context<? extends Trait> context,
+            SecuritySchemeConverter<T> converter
+    ) {
+        T t = context.getService().expectTrait(converter.getAuthSchemeType());
+        return converter.getAuthRequestHeaders(context, t);
+    }
+
+    private static <T extends Trait> Set<String> getSecuritySchemeResponseHeaders(
+            Context<? extends Trait> context,
+            SecuritySchemeConverter<T> converter
+    ) {
+        T t = context.getService().expectTrait(converter.getAuthSchemeType());
+        return converter.getAuthResponseHeaders(context, t);
     }
 
     /**
