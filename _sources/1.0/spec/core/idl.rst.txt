@@ -1559,7 +1559,7 @@ The following examples define objects with zero, one, and two key value pairs:
 
 * ``{}``
 * ``{foo: true}``
-* ``{foo: "hello", "bar": [1, 2, {},}``
+* ``{foo: "hello", "bar": [1, 2, {}]}``
 
 .. rubric:: Number node
 

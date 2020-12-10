@@ -448,10 +448,13 @@ authentication scheme trait that is not applied to the service:</p>
 <p>The following operation <code class="docutils literal notranslate"><span class="pre">auth</span></code> trait is invalid because it references an
 authentication scheme trait that is not applied to the service:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@httpDigestAuth</span>
-<span class="nd">@auth</span>([<span class="vc">httpBasicAuth</span>]) <span class="c">// &lt;-- Invalid!</span>
 <span class="kd">service</span><span class="nc"> InvalidExample</span> {
-    <span class="nl">version:</span> <span class="s2">&quot;2017-02-11&quot;</span>
+    <span class="nl">version:</span> <span class="s2">&quot;2017-02-11&quot;</span>,
+    <span class="nl">operations:</span> [<span class="vc">OperationA</span>]
 }
+
+<span class="nd">@auth</span>([<span class="vc">httpBasicAuth</span>]) <span class="c">// &lt;-- Invalid!</span>
+<span class="kd">operation</span><span class="nc"> OperationA</span> {}
 </pre></div>
 </div>
 </div>

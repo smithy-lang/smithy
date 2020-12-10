@@ -158,6 +158,10 @@ ABNF:</p>
 <p class="last"><a class="reference internal" href="#waiter-best-practices"><span class="std std-ref">Waiter best-practices</span></a> for additional best practices
 to follow when naming waiters.</p>
 </div>
+<p>Each waiter in the <a class="reference internal" href="core/model.html#service-closure"><span class="std std-ref">closure of a service</span></a> MUST have
+a case-insensitively unique waiter name. This limitation helps make it
+easier to both understand a service and to generate code for a service
+without needing to consider duplicate waiter names across operations.</p>
 </div>
 </div>
 <div class="section" id="waiter-workflow">
@@ -194,23 +198,34 @@ described in <a class="reference internal" href="#waiter-retries"><span class="s
 <span id="id4"></span><h3><a href="#waiter-retries">Waiter retries</a></h3>
 <p>Waiter implementations MUST delay for a period of time before attempting a
 retry. The amount of time a waiter delays between retries is computed using
-<a class="reference external" href="https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/">exponential backoff</a> through the following algorithm:</p>
+exponential backoff with jitter through the following algorithm:</p>
 <ul class="simple">
 <li>Let <code class="docutils literal notranslate"><span class="pre">attempt</span></code> be the number of retry attempts.</li>
+<li>Let <code class="docutils literal notranslate"><span class="pre">attemptCeiling</span></code> be the computed number of attempts necessary before
+<code class="docutils literal notranslate"><span class="pre">delay</span></code> with exponential backoff exceeds <code class="docutils literal notranslate"><span class="pre">maxDelay</span></code>. This is necessary
+to prevent integer overflows for larger numbers of retries.</li>
 <li>Let <code class="docutils literal notranslate"><span class="pre">minDelay</span></code> be the minimum amount of time to delay between retries in
 seconds, specified by the <code class="docutils literal notranslate"><span class="pre">minDelay</span></code> property of a
 <a class="reference internal" href="#waiter-structure"><span class="std std-ref">waiter</span></a> with a default of 2.</li>
 <li>Let <code class="docutils literal notranslate"><span class="pre">maxDelay</span></code> be the maximum amount of time to delay between retries in
 seconds, specified by the <code class="docutils literal notranslate"><span class="pre">maxDelay</span></code> property of a
 <a class="reference internal" href="#waiter-structure"><span class="std std-ref">waiter</span></a> with a default of 120.</li>
-<li>Let <code class="docutils literal notranslate"><span class="pre">min</span></code> be a function that returns the smaller of two integers.</li>
-<li>Let <code class="docutils literal notranslate"><span class="pre">max</span></code> be a function that returns the larger of two integers.</li>
-<li>Let <code class="docutils literal notranslate"><span class="pre">maxWaitTime</span></code> be the amount of time in seconds a user is willing to
-wait for a waiter to complete.</li>
-<li>Let <code class="docutils literal notranslate"><span class="pre">remainingTime</span></code> be the amount of seconds remaining before the waiter
-has exceeded <code class="docutils literal notranslate"><span class="pre">maxWaitTime</span></code>.</li>
+<li>Let <code class="docutils literal notranslate"><span class="pre">random</span></code> be a function that returns a random value between two
+inclusive integers.</li>
+<li>Let <code class="docutils literal notranslate"><span class="pre">log</span></code> be a function that returns the natural logarithm for an integer.</li>
+<li>Let <code class="docutils literal notranslate"><span class="pre">maxWaitTime</span></code> be a user-provided amount of time in seconds a user is
+willing to wait for a waiter to complete.</li>
+<li>Let <code class="docutils literal notranslate"><span class="pre">remainingTime</span></code> be the computed amount of seconds remaining before the
+waiter has exceeded <code class="docutils literal notranslate"><span class="pre">maxWaitTime</span></code>.</li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">delay</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">maxDelay</span><span class="p">,</span> <span class="n">minDelay</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">attempt</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">attemptCeiling</span> <span class="o">=</span> <span class="p">(</span><span class="n">log</span><span class="p">(</span><span class="n">maxDelay</span> <span class="o">/</span> <span class="n">minDelay</span><span class="p">)</span> <span class="o">/</span> <span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="k">if</span> <span class="n">attempt</span> <span class="o">&gt;</span> <span class="n">attemptCeiling</span><span class="p">:</span>
+    <span class="n">delay</span> <span class="o">=</span> <span class="n">maxDelay</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">delay</span> <span class="o">=</span> <span class="n">minDelay</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">attempt</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">delay</span> <span class="o">=</span> <span class="n">random</span><span class="p">(</span><span class="n">minDelay</span><span class="p">,</span> <span class="n">delay</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">remainingTime</span> <span class="o">-</span> <span class="n">delay</span> <span class="o">&lt;=</span> <span class="n">minDelay</span><span class="p">:</span>
     <span class="n">delay</span> <span class="o">=</span> <span class="n">remainingTime</span> <span class="o">-</span> <span class="n">minDelay</span>
@@ -220,9 +235,10 @@ has exceeded <code class="docutils literal notranslate"><span class="pre">maxWai
 or equal to <code class="docutils literal notranslate"><span class="pre">minDelay</span></code>, then set <code class="docutils literal notranslate"><span class="pre">delay</span></code> to <code class="docutils literal notranslate"><span class="pre">remainingTime</span></code> minus
 <code class="docutils literal notranslate"><span class="pre">minDelay</span></code> and perform one last retry. This prevents a waiter from waiting
 needlessly only to exceed <code class="docutils literal notranslate"><span class="pre">maxWaitTime</span></code> before issuing a final request.</p>
-<p>Using the default <code class="docutils literal notranslate"><span class="pre">minDelay</span></code> of 2, <code class="docutils literal notranslate"><span class="pre">maxDelay</span></code> of 120, a <code class="docutils literal notranslate"><span class="pre">maxWaitTime</span></code>
-of 300 (5 minutes), and assuming that requests complete in 0 seconds
-(for example purposes only), delays are computed as follows:</p>
+<p>Using the default <code class="docutils literal notranslate"><span class="pre">minDelay</span></code> of 2, the default <code class="docutils literal notranslate"><span class="pre">maxDelay</span></code> of 120, a caller
+provided <code class="docutils literal notranslate"><span class="pre">maxWaitTime</span></code> of 300 (5 minutes), and assuming that requests
+complete in 0 seconds (for example purposes only), delays might be computed as
+follows:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="25%" />
@@ -244,42 +260,94 @@ of 300 (5 minutes), and assuming that requests complete in 0 seconds
 <td>298</td>
 </tr>
 <tr class="row-odd"><td>2</td>
-<td>4</td>
-<td>6</td>
-<td>294</td>
+<td>3</td>
+<td>5</td>
+<td>295</td>
 </tr>
 <tr class="row-even"><td>3</td>
-<td>8</td>
-<td>14</td>
-<td>286</td>
+<td>6</td>
+<td>11</td>
+<td>289</td>
 </tr>
 <tr class="row-odd"><td>4</td>
-<td>16</td>
-<td>30</td>
-<td>270</td>
+<td>6</td>
+<td>17</td>
+<td>283</td>
 </tr>
 <tr class="row-even"><td>5</td>
-<td>32</td>
-<td>62</td>
-<td>238</td>
+<td>22</td>
+<td>39</td>
+<td>261</td>
 </tr>
 <tr class="row-odd"><td>6</td>
-<td>64</td>
-<td>126</td>
-<td>174</td>
+<td>62</td>
+<td>101</td>
+<td>199</td>
 </tr>
 <tr class="row-even"><td>7</td>
-<td>120</td>
-<td>254</td>
-<td>46</td>
+<td>43</td>
+<td>144</td>
+<td>156</td>
 </tr>
-<tr class="row-odd"><td>8 (last attempt)</td>
-<td>44</td>
+<tr class="row-odd"><td>8</td>
+<td>24</td>
+<td>168</td>
+<td>132</td>
+</tr>
+<tr class="row-even"><td>9</td>
+<td>71</td>
+<td>239</td>
+<td>61</td>
+</tr>
+<tr class="row-odd"><td>10</td>
+<td>42</td>
+<td>281</td>
+<td>19</td>
+</tr>
+<tr class="row-even"><td>11</td>
+<td>9</td>
+<td>290</td>
+<td>10</td>
+</tr>
+<tr class="row-odd"><td>12</td>
+<td>6</td>
+<td>296</td>
+<td>4</td>
+</tr>
+<tr class="row-even"><td>13 (last attempt)</td>
+<td>2</td>
 <td>298</td>
 <td>N/A</td>
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Because waiters use jitter, waiters might use different delays than the
+example table above.</p>
+</div>
+</div>
+<div class="section" id="why-exponential-backoff-with-jitter">
+<h3><a href="#why-exponential-backoff-with-jitter">Why exponential backoff with jitter?</a></h3>
+<p><a class="reference external" href="https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/#Jitter">Exponential backoff with full jitter</a> is used as opposed to other retry
+strategies like linear backoff because it should work for most use cases,
+balancing the cost to the caller spent waiting on a resource to stabilize,
+the cost of the service in responding to polling requests, and the overhead
+associated with potentially violating a service level agreement and getting
+throttled. Waiters that poll for resources that quickly stabilize will
+complete within the first few calls, whereas waiters that could take hours
+to complete will send fewer requests as the number of retries increases.</p>
+<p>By generally increasing the amount of delay between retries as the number of
+retry attempts increases, waiters will not overload services with unnecessary
+polling calls, and it protects customers from violating service level
+agreements that could counter-intuitively cause waiters to take longer to
+complete or even fail due to request throttling. By using introducing
+randomness with jitter, waiters will retry slightly more aggressively to
+improve the time to completion while still maintaining the general increase
+in delay between retries.</p>
+<p>Note that linear backoff is still possible to configure with waiters. By
+setting <code class="docutils literal notranslate"><span class="pre">minDelay</span></code> and <code class="docutils literal notranslate"><span class="pre">maxDelay</span></code> to the same value, a waiter will retry
+using linear backoff.</p>
 </div>
 </div>
 <div class="section" id="waiter-structure">
@@ -321,6 +389,18 @@ value MUST be greater than or equal to 1 and less than or equal to
 <td>The maximum amount of time in seconds to delay between each retry.
 This value defaults to <code class="docutils literal notranslate"><span class="pre">120</span></code> if not specified (2 minutes). If
 specified, this value MUST be greater than or equal to 1.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">deprecated</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Indicates if the waiter is considered deprecated. A waiter SHOULD
+be marked as deprecated if it has been replaced by another waiter or
+if it is no longer needed (for example, if a resource changes from
+eventually consistent to strongly consistent).</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">tags</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
+<td>A list of tags associated with the waiter that allow waiters to be
+categorized and grouped.</td>
 </tr>
 </tbody>
 </table>
@@ -623,8 +703,9 @@ corresponding boolean value.</td>
 <td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
 </tr>
 <tr class="row-even"><td>allStringEquals</td>
-<td>Matches if the return value of a JMESPath expression is an array and
-every value in the array is a string that equals an expected string.</td>
+<td>Matches if the return value of a JMESPath expression is an array that
+contains at least one value, and every value in the array is a string
+that equals an expected string.</td>
 <td><code class="docutils literal notranslate"><span class="pre">array</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 </tr>
 <tr class="row-odd"><td>anyStringEquals</td>
@@ -922,6 +1003,7 @@ the <code class="docutils literal notranslate"><span class="pre">StartResource</
 </li>
 <li><a class="reference internal" href="#waiter-workflow">Waiter workflow</a><ul>
 <li><a class="reference internal" href="#waiter-retries">Waiter retries</a></li>
+<li><a class="reference internal" href="#why-exponential-backoff-with-jitter">Why exponential backoff with jitter?</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#waiter-structure">Waiter structure</a></li>

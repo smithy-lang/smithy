@@ -53,7 +53,6 @@ The ``http`` trait is a structure that supports the following members:
 
 The following example defines an operation that uses HTTP bindings:
 
-
 .. tabs::
 
     .. code-tab:: smithy
@@ -137,13 +136,15 @@ constraints:
 #. MUST NOT case-sensitively conflict with other ``http`` / ``uri``
    properties.
 
-::
+.. tabs::
 
-    @readonly
-    @http(method: "GET", uri: "/foo/{baz}")
-    operation GetService {
-        output: GetServiceOutput
-    }
+    .. code-tab:: smithy
+
+        @readonly
+        @http(method: "GET", uri: "/foo/{baz}")
+        operation GetService {
+            output: GetServiceOutput
+        }
 
 
 Literal character sequences
@@ -178,6 +179,8 @@ Given an endpoint of ``https://yourhost`` and a pattern of ``/my/uri/path``:
       - No
       - Trailing segment "/other"
 
+
+.. _http-uri-label:
 
 Labels
 ~~~~~~
@@ -458,17 +461,13 @@ Trait selector
 
         structure[trait|error]
 
-    *Structure shapes that also have the error trait*
+    The ``httpError`` trait can only be applied to :ref:`structure <structure>`
+    shapes that also have the :ref:`error-trait`.
 Value type
-    ``integer`` value (e.g., ``404``).
+    ``integer`` value representing the HTTP response status code
+    (for example, ``404``).
 
-The ``httpError`` trait can only be applied to structures that also have the
-:ref:`error-trait`.
-
-By default, error structures with no ``httpError`` trait use the default
-HTTP status code of the :ref:`error-trait` value. The ``httpError``
-trait can be used to set a custom HTTP response status code.
-
+The following example defines an error with an HTTP status code of ``404``.
 
 .. tabs::
 
@@ -477,6 +476,15 @@ trait can be used to set a custom HTTP response status code.
         @error("client")
         @httpError(404)
         structure MyError {}
+
+.. rubric:: Default HTTP status codes
+
+The ``httpError`` trait is used to set a *custom* HTTP response status code.
+By default, error structures with no ``httpError`` trait use the default
+HTTP status code of the :ref:`error-trait`.
+
+* ``400`` is used for "client" errors
+* ``500`` is used for "server" errors
 
 
 .. _httpHeader-trait:
@@ -492,11 +500,14 @@ Trait selector
         structure > :test(member > :test(boolean, number, string, timestamp,
                 collection > member > :test(boolean, number, string, timestamp)))
 
-    *Structure members that target boolean, number, string, or timestamp; or a structure member that targets a list/set of these types*
+    The ``httpHeader`` trait can be applied to ``structure`` members that
+    target a ``boolean``, ``number``, ``string``, or ``timestamp``; or a
+    ``structure`` member that targets a list/set of these types.
 Value type
-    ``string`` value defining the field name of the HTTP header. The value
-    MUST NOT be empty and MUST be case-insensitively unique across all other
-    members of the structure.
+    ``string`` value defining a valid HTTP header field name according to
+    :rfc:`section 3.2 of RFC7230 <7230#section-3.2>`. The value MUST NOT be
+    empty and MUST be case-insensitively unique across all other members of
+    the structure.
 Conflicts with
    :ref:`httpLabel-trait`,
    :ref:`httpQuery-trait`,
@@ -504,25 +515,25 @@ Conflicts with
    :ref:`httpPayload-trait`,
    :ref:`httpResponseCode-trait`
 
-Serialization rules:
+.. rubric:: ``httpHeader`` serialization rules:
 
-* The header field name MUST be compatible with :rfc:`7230#section-3.2`.
-* When a :ref:`list` shape is targeted, each member of the shape is serialized
-  as a separate HTTP header either by concatenating the values with a comma on a
-  single line or by serializing each header value on its own line.
-* boolean values are serialized as ``true`` or ``false``.
-* string values with a :ref:`mediaType-trait` are base64 encoded.
-* timestamp values are serialized using the ``http-date``
-  format as defined in the ``IMF-fixdate`` production of
+* When a :ref:`list <list>` shape is targeted, each member of the shape is
+  serialized as a separate HTTP header either by concatenating the values
+  with a comma on a single line or by serializing each header value on its
+  own line.
+* ``boolean`` values are serialized as ``true`` or ``false``.
+* ``string`` values with a :ref:`mediaType-trait` are always base64 encoded.
+* ``timestamp`` values are serialized using the ``http-date``
+  format by default, as defined in the ``IMF-fixdate`` production of
   :rfc:`7231#section-7.1.1.1`. The :ref:`timestampFormat-trait` MAY be used
   to use a custom serialization format.
 
-.. note::
+.. rubric:: Do not put too much data in HTTP headers
 
-    While there is no limit placed on the length of an HTTP header field, many
-    HTTP client and server implementations enforce limits in practice.
-    Smithy models SHOULD carefully consider the maximum allowed length of each
-    member that is bound to an HTTP header.
+While there is no limit placed on the length of an HTTP header field, many
+HTTP client and server implementations enforce limits in practice.
+Carefully consider the maximum allowed length of each member that is bound
+to an HTTP header.
 
 
 .. _restricted-headers:
@@ -582,13 +593,17 @@ Various HTTP headers are highly discouraged for the ``httpHeader`` and
 ===================
 
 Summary
-    Binds an operation input structure member to an HTTP label.
+    Binds an operation input structure member to an
+    :ref:`HTTP label <http-uri-label>` so that it is used as part of an
+    HTTP request URI.
 Trait selector
     .. code-block:: none
 
         structure > member[trait|required] :test(> :test(string, number, boolean, timestamp))
 
-    *Required structure members that target a string, number, boolean, or timestamp*
+    The ``httpLabel`` trait can be applied to ``structure`` members marked
+    with the :ref:`required-trait` that target a ``string``, ``number``,
+    ``boolean``, or ``timestamp``.
 Value type
     Annotation trait.
 Conflicts with
@@ -598,30 +613,8 @@ Conflicts with
     :ref:`httpPayload-trait`,
     :ref:`httpResponseCode-trait`
 
-``httpLabel`` members MUST be marked as :ref:`required-trait`.
-
-When a structure is associated with an operation, any member of the structure
-with the ``httpLabel`` trait MUST have a corresponding URI label with the same
-name as the member. ``httpLabel`` traits are ignored when serializing the
-output or an error of an operation.
-
-``httpLabel`` traits can only be applied to structure members that are marked
-as :ref:`required-trait`.
-
-If the corresponding URI label in the operation is not greedy, then the
-``httpLabel`` trait MUST target a string, byte, short, integer, long, float,
-double, bigDecimal, bigInteger, boolean, or timestamp. If the
-corresponding URI label in the operation is greedy, then the ``httpLabel``
-trait MUST target a string shape.
-
-Serialization rules:
-
-- boolean is serialized as ``true`` or ``false``.
-- timestamp values are serialized as an :rfc:`3339` string
-  (e.g., ``1985-04-12T23:20:50.52Z``). The :ref:`timestampFormat-trait` MAY
-  be used to use a custom serialization format.
-- Unless the label is greedy, "/" MUST be percent encoded.
-
+The following example defines an operation that send an HTTP label named
+``foo`` as part of the URI of an HTTP request:
 
 .. tabs::
 
@@ -642,6 +635,45 @@ Serialization rules:
             foo: String
         }
 
+.. rubric:: Relationship to :ref:`http-trait`
+
+When a structure is used as the input of an operation, any member of the
+structure with the ``httpLabel`` trait MUST have a corresponding
+:ref:`URI label <http-uri-label>` with the same name as the member.
+``httpLabel`` traits are ignored when serializing operation output or errors.
+
+.. rubric:: Applying the ``httpLabel`` trait to members
+
+* ``httpLabel`` can only be applied to structure members that are marked as
+  :ref:`required <required-trait>`.
+* If the corresponding URI label in the operation is not greedy, then the
+  ``httpLabel`` trait MUST target a member that targets a ``string``,
+  ``byte``, ``short``, ``integer``, ``long``, ``float``, ``double``,
+  ``bigDecimal``, ``bigInteger``, ``boolean``, or ``timestamp``.
+* If the corresponding URI label in the operation is greedy, then the
+  ``httpLabel`` trait MUST target a member that targets a ``string`` shape.
+
+.. rubric:: ``httpLabel`` serialization rules:
+
+- ``boolean`` values are serialized as ``true`` or ``false``.
+- ``timestamp`` values are serialized as an :rfc:`3339` string by default
+  (for example, ``1985-04-12T23:20:50.52Z``, and with percent-encoding,
+  ``1985-04-12T23%3A20%3A50.52Z``). The :ref:`timestampFormat-trait`
+  MAY be used to use a custom serialization format.
+- Reserved characters defined in :rfc:`section 2.2 of RFC3986 <3986#section-2.2>`
+  MUST be percent-encoded_ (that is, ``:/?#[]@!$&'()*+,;=``).
+- However, if the label is greedy, then "/" MUST NOT be percent-encoded
+  because greedy labels are meant to span multiple path segments.
+
+.. rubric:: ``httpLabel`` is only used on input
+
+``httpLabel`` is ignored when resolving the HTTP bindings of an operation's
+output or an error. This means that if a structure that contains members
+marked with the ``httpLabel`` trait is used as the top-level output structure
+of an operation, then those members are sent as part of the
+:ref:`protocol-specific document <http-protocol-document-payloads>` sent in
+the body of the response.
+
 
 .. _httpPayload-trait:
 
@@ -649,19 +681,50 @@ Serialization rules:
 =====================
 
 Summary
-    Binds a single structure member to the body of an HTTP request.
+    Binds a single structure member to the body of an HTTP message.
 Trait selector
     .. code-block:: none
 
         structure > :test(member > :test(string, blob, structure, union, document))
 
-    *Structure members that target a string, blob, structure, union, or document*
+    The ``httpPayload`` trait can be applied to ``structure`` members that
+    target a ``string``, ``blob``, ``structure``, ``union``, or ``document``.
 Value type
     Annotation trait.
 Conflicts with
     :ref:`httpLabel-trait`, :ref:`httpQuery-trait`,
     :ref:`httpHeader-trait`, :ref:`httpPrefixHeaders-trait`,
     :ref:`httpResponseCode-trait`
+Structurally exclusive
+    Only a single structure member can be bound to ``httpPayload``.
+
+The following example defines an operation that returns a ``blob`` of binary
+data in a response:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        namespace smithy.example
+
+        @readonly
+        @http(method: "GET", uri: "/random-binary-data")
+        operation GetRandomBinaryData {
+            output: GetRandomBinaryDataOutput,
+        }
+
+        structure GetRandomBinaryDataOutput {
+            @required
+            @httpHeader("Content-Type")
+            contentType: String,
+
+            @httpPayload
+            content: Blob,
+        }
+
+.. _http-protocol-document-payloads:
+
+.. rubric:: Protocol-specific document payloads
 
 By default, all structure members that are not bound as part of the HTTP
 message are serialized in a protocol-specific document sent in the body of
@@ -669,6 +732,8 @@ the message (e.g., a JSON object). The ``httpPayload`` trait can be used to
 bind a single top-level operation input, output, or error structure member to
 the body of the HTTP message. Multiple members of the same structure MUST NOT
 be bound to ``httpPayload``.
+
+.. rubric:: Binding members to ``httpPayload``
 
 If the ``httpPayload`` trait is present on the structure referenced by the
 input of an operation, then all other structure members MUST be bound with
@@ -680,7 +745,7 @@ output of an operation or a structure targeted by the :ref:`error-trait`,
 then all other structure members MUST be bound to a :ref:`httpHeader-trait`
 or :ref:`httpPrefixHeaders-trait`.
 
-Serialization rules:
+.. rubric:: Serialization rules
 
 #. When a string or blob member is referenced, the raw value is serialized
    as the body of the message.
@@ -703,7 +768,9 @@ Trait selector
         structure > member
         :test(> map > member[id|member=value] > :test(string, collection > member > string))
 
-    *Structure member that targets a map of strings, or a map of list/set of strings*
+    The ``httpPrefixHeaders`` trait can be applied to ``structure`` members
+    that target a ``map`` of ``string``, or a ``map`` of ``list``/``set`` of
+    ``string``.
 Value type
     ``string`` value that defines the prefix to prepend to each header field
     name stored in the targeted map member. For example, given a prefix value
@@ -713,14 +780,8 @@ Conflicts with
    :ref:`httpLabel-trait`, :ref:`httpQuery-trait`,
    :ref:`httpHeader-trait`, :ref:`httpPayload-trait`,
    :ref:`httpResponseCode-trait`
-
-In order to differentiate ``httpPrefixHeaders`` from other headers, when
-``httpPrefixHeaders`` are used, no other :ref:`httpHeader-trait` bindings can
-start with the same prefix provided in ``httpPrefixHeaders`` trait. If
-``httpPrefixHeaders`` is set to an empty string, then no other members can be
-bound to ``headers``.
-
-Only a single structure member can be bound to ``httpPrefixHeaders``.
+Structurally exclusive
+    Only a single structure member can be bound to ``httpPrefixHeaders``.
 
 Given the following Smithy model:
 
@@ -765,6 +826,14 @@ An example HTTP request would be serialized as:
     X-Foo-first: hi
     X-Foo-second: there
 
+.. rubric:: Disambiguation of ``httpPrefixHeaders``
+
+In order to differentiate ``httpPrefixHeaders`` from other headers, when
+``httpPrefixHeaders`` are used, no other :ref:`httpHeader-trait` bindings can
+start with the same prefix provided in ``httpPrefixHeaders`` trait. If
+``httpPrefixHeaders`` is set to an empty string, then no other members can be
+bound to ``headers``.
+
 
 .. _httpQuery-trait:
 
@@ -780,44 +849,88 @@ Trait selector
         :test(> :test(string, number, boolean, timestamp),
               > collection > member > :test(string, number, boolean, timestamp))
 
-    *Structure members that target string, number, boolean, or timestamp; or a list/set of said types*
+    The ``httpQuery`` trait can be applied to ``structure`` members that
+    target a ``string``, ``number``, ``boolean``, or ``timestamp``; or a
+    ``list``/``set`` of these types.
 Value type
-    ``string`` value defining the name of the query string parameter. The
-    query string value MUST NOT be empty. This trait is ignored when
-    resolving the HTTP bindings of an operation's output or an error.
+    A non-empty ``string`` value that defines the name of the query string
+    parameter. The query string parameter name MUST be case-sensitively unique
+    across all other members marked with the ``httpQuery`` trait.
 Conflicts with
    :ref:`httpLabel-trait`, :ref:`httpHeader-trait`,
    :ref:`httpPrefixHeaders-trait`, :ref:`httpPayload-trait`,
    :ref:`httpResponseCode-trait`
 
-Serialization rules:
+The following example defines an operation that optionally sends the
+``color``, ``shape``, and ``size`` query string parameters in an HTTP
+request:
 
-* "&" is used to separate query string parameters.
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @readonly
+        @http(method: "GET", uri: "/things")
+        operation ListThings {
+            input: ListThingsInput,
+            output: ListThingsOutput, // omitted for brevity
+        }
+
+        structure ListThingsInput {
+            @httpQuery("color")
+            color: String,
+
+            @httpQuery("shape")
+            shape: String,
+
+            @httpQuery("size")
+            size: Integer,
+        }
+
+.. rubric:: Serialization rules
+
+* "&" is used to separate query string parameter key-value pairs.
 * "=" is used to separate query string parameter names from values.
-* Query string keys and values MUST be percent-encoded_ so that they conform to
-  the ``query`` grammar defined in :rfc:`3986#section-3.4`. Characters that are
-  valid as part of the query string MUST NOT be percent encoded. For example,
-  a value of ``foo/baz%20`` serialized in a query string would become
-  ``foo/baz%2520``. However, ``&`` MUST be percent-encoded when present in a
-  query string value.
-* Multiple members of a structure MUST NOT case-sensitively target the same
-  query string parameter.
-* boolean values are serialized as ``true`` or ``false``.
-* timestamp values are serialized as an :rfc:`3339`
-  ``date-time`` string (e.g., ``1985-04-12T23:20:50.52Z``). The
+* Reserved characters in keys and values as defined in :rfc:`section 2.2 of RFC3986 <3986#section-2.2>`
+  MUST be percent-encoded_ (that is, ``:/?#[]@!$&'()*+,;=``).
+* ``boolean`` values are serialized as ``true`` or ``false``.
+* ``timestamp`` values are serialized as an :rfc:`3339`
+  ``date-time`` string by default (for example, ``1985-04-12T23:20:50.52Z``,
+  and with percent-encoding, ``1985-04-12T23%3A20%3A50.52Z``). The
   :ref:`timestampFormat-trait` MAY be used to use a custom serialization
   format.
-* :ref:`list` members are serialized by adding multiple query string parameters
-  to the query string using the same name. For example, given a member bound
-  to ``foo`` that targets a list of strings with a value of ``["a", "b"]``,
-  the value is serialized in the query string as ``foo=a&foo=b``.
+* :ref:`list` and :ref:`set <set>` members are serialized by adding multiple
+  query string parameters to the query string using the same name. For
+  example, given a member bound to ``foo`` that targets a list of strings
+  with a value of ``["a", "b"]``, the value is serialized in the query string
+  as ``foo=a&foo=b``.
 
-.. note::
+.. important:: Percent-encoding is an implementation detail
 
-    While there is no limit placed on the length of an `HTTP request line`_,
-    many HTTP client and server implementations enforce limits in practice.
-    Smithy models SHOULD carefully consider the maximum allowed length of each
-    member that is bound to an HTTP query string or path.
+    The encoding and serialization rules of shapes defined in a Smithy model are
+    implementation details. When designing clients, servers, and other kinds of
+    software based on Smithy models, the format in which the value of a member
+    is serialized SHOULD NOT be a concern of the end-user. As such, members bound
+    to the query string MUST be automatically percent-encoded when serializing
+    HTTP requests and automatically percent-decoded when deserializing HTTP
+    requests.
+
+.. rubric:: ``httpQuery`` is only used on input
+
+``httpQuery`` is ignored when resolving the HTTP bindings of an operation's
+output or an error. This means that if a structure that contains members
+marked with the ``httpQuery`` trait is used as the top-level output structure
+of an operation, then those members are sent as part of the
+:ref:`protocol-specific document <http-protocol-document-payloads>` sent in
+the body of the response.
+
+.. rubric:: Do not put too much data in the query string
+
+While there is no limit placed on the length of an `HTTP request line`_,
+many HTTP client and server implementations enforce limits in practice.
+Carefully consider the maximum allowed length of each member that is bound to
+an HTTP query string or path.
+
 
 .. _httpResponseCode-trait:
 
@@ -825,10 +938,16 @@ Serialization rules:
 ==========================
 
 Summary
-    Indicates that the structure member represents an HTTP response
-    status code.
+    Binds a structure member to the HTTP response status code so that an
+    HTTP response status code can be set dynamically at runtime to something
+    other than ``code`` of the :ref:`http-trait`.
 Trait selector
-    ``structure > member :test(> integer)``
+    .. code-block:: none
+
+        structure > member :test(> integer)
+
+    The ``httpResponseCode`` trait can be applied to ``structure`` members
+    that target an ``integer``.
 Value type
     Annotation trait.
 Conflicts with
@@ -836,10 +955,20 @@ Conflicts with
    :ref:`httpPrefixHeaders-trait`, :ref:`httpPayload-trait`,
    :ref:`httpQuery-trait`
 
-The value MAY differ from the HTTP status code provided on the response.
-Explicitly modeling this as a field can be helpful for services that wish to
-provide different response codes for an operation, like 200 or 201 for a PUT
+.. rubric:: ``httpResponseCode`` use cases
+
+Marking an output ``structure`` member with this trait can be used to provide
+different response codes for an operation, like a 200 or 201 for a PUT
 operation.
+
+.. rubric:: ``httpResponseCode`` is only used on output
+
+``httpResponseCode`` is ignored when resolving the HTTP bindings of an
+operation's input structure. This means that if a structure that contains
+members marked with the ``httpResponseCode`` trait is used as the top-level
+input structure of an operation, then those members are sent as part of the
+:ref:`protocol-specific document <http-protocol-document-payloads>` sent in
+the body of the request.
 
 .. _cors-trait:
 

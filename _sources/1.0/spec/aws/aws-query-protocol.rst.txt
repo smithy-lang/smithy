@@ -22,7 +22,9 @@ Summary
     Adds support for an HTTP protocol that sends requests in the query
     string and responses in XML documents.
 Trait selector
-    ``service``
+    ``service [trait|xmlNamespace]``
+
+    *Service shapes with the xmlNamespace trait*
 Value type
     Annotation trait.
 See

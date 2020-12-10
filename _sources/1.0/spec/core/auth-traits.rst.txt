@@ -375,7 +375,10 @@ authentication scheme trait that is not applied to the service:
 .. code-block:: smithy
 
     @httpDigestAuth
-    @auth([httpBasicAuth]) // <-- Invalid!
     service InvalidExample {
-        version: "2017-02-11"
+        version: "2017-02-11",
+        operations: [OperationA]
     }
+
+    @auth([httpBasicAuth]) // <-- Invalid!
+    operation OperationA {}

@@ -81,31 +81,32 @@ AWS products like AWS CloudFormation and tools like the AWS SDKs.</p>
 <li><a class="reference internal" href="#cloudformationname" id="id10"><code class="docutils literal notranslate"><span class="pre">cloudFormationName</span></code></a></li>
 <li><a class="reference internal" href="#arnnamespace" id="id11"><code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code></a></li>
 <li><a class="reference internal" href="#cloudtraileventsource" id="id12"><code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code></a></li>
+<li><a class="reference internal" href="#endpointprefix" id="id13"><code class="docutils literal notranslate"><span class="pre">endpointPrefix</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#aws-api-arn-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait</a><ul>
-<li><a class="reference internal" href="#format-of-an-arn" id="id14">Format of an ARN</a></li>
-<li><a class="reference internal" href="#relative-arn-templates" id="id15">Relative ARN templates</a></li>
-<li><a class="reference internal" href="#using-an-arn-as-a-resource-identifier" id="id16">Using an ARN as a resource identifier</a></li>
+<li><a class="reference internal" href="#aws-api-arn-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait</a><ul>
+<li><a class="reference internal" href="#format-of-an-arn" id="id15">Format of an ARN</a></li>
+<li><a class="reference internal" href="#relative-arn-templates" id="id16">Relative ARN templates</a></li>
+<li><a class="reference internal" href="#using-an-arn-as-a-resource-identifier" id="id17">Using an ARN as a resource identifier</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#aws-api-arnreference-trait" id="id17"><code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-api-data-trait" id="id18"><code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait</a><ul>
-<li><a class="reference internal" href="#data-classifications" id="id19">Data Classifications</a></li>
+<li><a class="reference internal" href="#aws-api-arnreference-trait" id="id18"><code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-data-trait" id="id19"><code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait</a><ul>
+<li><a class="reference internal" href="#data-classifications" id="id20">Data Classifications</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#aws-api-controlplane-trait" id="id20"><code class="docutils literal notranslate"><span class="pre">aws.api#controlPlane</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-api-dataplane-trait" id="id21"><code class="docutils literal notranslate"><span class="pre">aws.api#dataPlane</span></code> trait</a></li>
-<li><a class="reference internal" href="#client-endpoint-discovery" id="id22">Client Endpoint Discovery</a><ul>
-<li><a class="reference internal" href="#aws-api-clientendpointdiscovery-trait" id="id23"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscovery</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-api-clientdiscoveredendpoint-trait" id="id24"><code class="docutils literal notranslate"><span class="pre">aws.api#clientDiscoveredEndpoint</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-api-clientendpointdiscoveryid-trait" id="id25"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscoveryId</span></code> trait</a></li>
-<li><a class="reference internal" href="#example-model" id="id26">Example Model</a></li>
-<li><a class="reference internal" href="#client-behavior" id="id27">Client Behavior</a></li>
+<li><a class="reference internal" href="#aws-api-controlplane-trait" id="id21"><code class="docutils literal notranslate"><span class="pre">aws.api#controlPlane</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-dataplane-trait" id="id22"><code class="docutils literal notranslate"><span class="pre">aws.api#dataPlane</span></code> trait</a></li>
+<li><a class="reference internal" href="#client-endpoint-discovery" id="id23">Client Endpoint Discovery</a><ul>
+<li><a class="reference internal" href="#aws-api-clientendpointdiscovery-trait" id="id24"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscovery</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-clientdiscoveredendpoint-trait" id="id25"><code class="docutils literal notranslate"><span class="pre">aws.api#clientDiscoveredEndpoint</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-clientendpointdiscoveryid-trait" id="id26"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscoveryId</span></code> trait</a></li>
+<li><a class="reference internal" href="#example-model" id="id27">Example Model</a></li>
+<li><a class="reference internal" href="#client-behavior" id="id28">Client Behavior</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#appendix" id="id28">Appendix</a><ul>
-<li><a class="reference internal" href="#appendix-a-example-sdk-service-ids" id="id29">Appendix A: Example SDK service IDs</a></li>
+<li><a class="reference internal" href="#appendix" id="id29">Appendix</a><ul>
+<li><a class="reference internal" href="#appendix-a-example-sdk-service-ids" id="id30">Appendix A: Example SDK service IDs</a></li>
 </ul>
 </li>
 </ul>
@@ -126,6 +127,7 @@ generate AWS SDK client classes and the namespace used in ARNs.</dd>
 <li><a class="reference internal" href="#service-cloudformation-name"><span class="std std-ref">cloudFormationName</span></a></li>
 <li><a class="reference internal" href="#service-arn-namespace"><span class="std std-ref">arnNamespace</span></a></li>
 <li><a class="reference internal" href="#service-cloudtrail-event-source"><span class="std std-ref">cloudTrailEventSource</span></a></li>
+<li><a class="reference internal" href="#service-endpoint-prefix"><span class="std std-ref">endpointPrefix</span></a></li>
 </ul>
 </dd>
 </dl>
@@ -196,7 +198,9 @@ JSON</div>
     <span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>,
     <span class="nl">cloudFormationName:</span> <span class="s2">&quot;FooBaz&quot;</span>,
     <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>,
-    <span class="nl">cloudTrailEventSource:</span> <span class="s2">&quot;myservice.amazon.aws&quot;</span>)
+    <span class="nl">cloudTrailEventSource:</span> <span class="s2">&quot;myservice.amazon.aws&quot;</span>,
+    <span class="nl">endpointPrefix:</span> <span class="s2">&quot;my-endpoint&quot;</span>
+)
 <span class="kd">service</span><span class="nc"> FooBaz</span> {
     <span class="nl">version:</span> <span class="s2">&quot;2018-03-17&quot;</span>,
 }
@@ -324,6 +328,20 @@ an event source of <code class="docutils literal notranslate"><span class="pre">
 but there are some exceptions. For example, the event source for
 Amazon CloudWatch is <code class="docutils literal notranslate"><span class="pre">monitoring.amazonaws.com</span></code>. Such services will
 need to explicitly configure the <code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code> setting.</p>
+</div>
+<div class="section" id="endpointprefix">
+<span id="service-endpoint-prefix"></span><h3><a href="#endpointprefix"><code class="docutils literal notranslate"><span class="pre">endpointPrefix</span></code></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">endpointPrefix</span></code> property is a <code class="docutils literal notranslate"><span class="pre">string</span></code> value that identifies which endpoint
+in a given region should be used to connect to the service. For example, most
+services in the AWS standard partition have endpoints which follow the format:
+<code class="docutils literal notranslate"><span class="pre">{endpointPrefix}.{region}.amazonaws.com</span></code>. A service with the endpoint prefix
+<code class="docutils literal notranslate"><span class="pre">example</span></code> in the region <code class="docutils literal notranslate"><span class="pre">us-west-2</span></code> might have the endpoint
+<code class="docutils literal notranslate"><span class="pre">example.us-west-2.amazonaws.com</span></code>. For a full listing of possible endpoints,
+check the <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/rande.html">AWS Regions and Endpoints</a> page.</p>
+<p>This value is not unique across services and is subject to change. Therefore,
+it MUST NOT be used for client naming or for any other purpose that requires
+a static, unique identifier. <a class="reference internal" href="#service-sdk-id"><span class="std std-ref">sdkId</span></a> should be used for those
+purposes. Additionally, this value can be used to attempt to resolve endpoints.</p>
 </div>
 </div>
 <div class="section" id="aws-api-arn-trait">
@@ -1741,6 +1759,7 @@ existing AWS services.</p>
 <li><a class="reference internal" href="#cloudformationname"><code class="docutils literal notranslate"><span class="pre">cloudFormationName</span></code></a></li>
 <li><a class="reference internal" href="#arnnamespace"><code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code></a></li>
 <li><a class="reference internal" href="#cloudtraileventsource"><code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code></a></li>
+<li><a class="reference internal" href="#endpointprefix"><code class="docutils literal notranslate"><span class="pre">endpointPrefix</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#aws-api-arn-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait</a><ul>

@@ -214,12 +214,22 @@ constraints:</p>
 <li>MUST NOT case-sensitively conflict with other <code class="docutils literal notranslate"><span class="pre">http</span></code> / <code class="docutils literal notranslate"><span class="pre">uri</span></code>
 properties.</li>
 </ol>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@readonly</span>
-<span class="nd">@http</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="s2">&quot;/foo/</span><span class="si">{baz}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="n">operation</span> <span class="n">GetService</span> <span class="p">{</span>
-    <span class="n">output</span><span class="p">:</span> <span class="n">GetServiceOutput</span>
-<span class="p">}</span>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@readonly</span>
+<span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;GET&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/foo/{baz}&quot;</span>)
+<span class="kd">operation</span><span class="nc"> GetService</span> {
+    <span class="nl">output:</span> <span class="vc">GetServiceOutput</span>
+}
 </pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="literal-character-sequences">
 <h4><a href="#literal-character-sequences">11.1.2.1. Literal character sequences</a></h4>
@@ -264,7 +274,7 @@ which are always optional.</p>
 </table>
 </div>
 <div class="section" id="labels">
-<h4><a href="#labels">11.1.2.2. Labels</a></h4>
+<span id="http-uri-label"></span><h4><a href="#labels">11.1.2.2. Labels</a></h4>
 <p>Patterns MAY contain label placeholders. <em class="dfn">Labels</em> consist of label name
 characters surrounded by open and closed braces (i.e., &quot;{label_name}&quot; is a
 label and <code class="docutils literal notranslate"><span class="pre">label_name</span></code> is the label name). The label name corresponds to a
@@ -594,16 +604,14 @@ endpoint trait and the other specifies <code class="docutils literal notranslate
 <dd><div class="first highlight-none notranslate"><div class="highlight"><pre><span></span>structure[trait|error]
 </pre></div>
 </div>
-<p class="last"><em>Structure shapes that also have the error trait</em></p>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait can only be applied to <a class="reference internal" href="model.html#structure"><span class="std std-ref">structure</span></a>
+shapes that also have the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>.</p>
 </dd>
 <dt>Value type</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">integer</span></code> value (e.g., <code class="docutils literal notranslate"><span class="pre">404</span></code>).</dd>
+<dd><code class="docutils literal notranslate"><span class="pre">integer</span></code> value representing the HTTP response status code
+(for example, <code class="docutils literal notranslate"><span class="pre">404</span></code>).</dd>
 </dl>
-<p>The <code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait can only be applied to structures that also have the
-<a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>.</p>
-<p>By default, error structures with no <code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait use the default
-HTTP status code of the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a> value. The <code class="docutils literal notranslate"><span class="pre">httpError</span></code>
-trait can be used to set a custom HTTP response status code.</p>
+<p>The following example defines an error with an HTTP status code of <code class="docutils literal notranslate"><span class="pre">404</span></code>.</p>
 <div class="sphinx-tabs docutils container">
 <div class="ui top attached tabular menu sphinx-menu docutils container">
 <div class="active item sphinx-data-tab-U21pdGh5 docutils container">
@@ -619,6 +627,14 @@ Smithy</div>
 </div>
 </div>
 </div>
+<p class="rubric">Default HTTP status codes</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait is used to set a <em>custom</em> HTTP response status code.
+By default, error structures with no <code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait use the default
+HTTP status code of the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>.</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">400</span></code> is used for &quot;client&quot; errors</li>
+<li><code class="docutils literal notranslate"><span class="pre">500</span></code> is used for &quot;server&quot; errors</li>
+</ul>
 </div>
 <div class="section" id="httpheader-trait">
 <span id="id4"></span><h2><a href="#httpheader-trait">11.3. <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait</a></h2>
@@ -630,12 +646,15 @@ Smithy</div>
         collection &gt; member &gt; :test(boolean, number, string, timestamp)))
 </pre></div>
 </div>
-<p class="last"><em>Structure members that target boolean, number, string, or timestamp; or a structure member that targets a list/set of these types</em></p>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait can be applied to <code class="docutils literal notranslate"><span class="pre">structure</span></code> members that
+target a <code class="docutils literal notranslate"><span class="pre">boolean</span></code>, <code class="docutils literal notranslate"><span class="pre">number</span></code>, <code class="docutils literal notranslate"><span class="pre">string</span></code>, or <code class="docutils literal notranslate"><span class="pre">timestamp</span></code>; or a
+<code class="docutils literal notranslate"><span class="pre">structure</span></code> member that targets a list/set of these types.</p>
 </dd>
 <dt>Value type</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">string</span></code> value defining the field name of the HTTP header. The value
-MUST NOT be empty and MUST be case-insensitively unique across all other
-members of the structure.</dd>
+<dd><code class="docutils literal notranslate"><span class="pre">string</span></code> value defining a valid HTTP header field name according to
+<span class="target" id="index-2"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc7230.html#section-3.2"><strong>section 3.2 of RFC7230</strong></a>. The value MUST NOT be
+empty and MUST be case-insensitively unique across all other members of
+the structure.</dd>
 <dt>Conflicts with</dt>
 <dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>,
 <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>,
@@ -643,26 +662,24 @@ members of the structure.</dd>
 <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
 <a class="reference internal" href="#httpresponsecode-trait"><span class="std std-ref">httpResponseCode trait</span></a></dd>
 </dl>
-<p>Serialization rules:</p>
+<p class="rubric"><code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> serialization rules:</p>
 <ul class="simple">
-<li>The header field name MUST be compatible with <span class="target" id="index-2"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc7230.html#section-3.2"><strong>RFC 7230#section-3.2</strong></a>.</li>
-<li>When a <a class="reference internal" href="model.html#list"><span class="std std-ref">List</span></a> shape is targeted, each member of the shape is serialized
-as a separate HTTP header either by concatenating the values with a comma on a
-single line or by serializing each header value on its own line.</li>
-<li>boolean values are serialized as <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>.</li>
-<li>string values with a <a class="reference internal" href="protocol-traits.html#mediatype-trait"><span class="std std-ref">mediaType trait</span></a> are base64 encoded.</li>
-<li>timestamp values are serialized using the <code class="docutils literal notranslate"><span class="pre">http-date</span></code>
-format as defined in the <code class="docutils literal notranslate"><span class="pre">IMF-fixdate</span></code> production of
+<li>When a <a class="reference internal" href="model.html#list"><span class="std std-ref">list</span></a> shape is targeted, each member of the shape is
+serialized as a separate HTTP header either by concatenating the values
+with a comma on a single line or by serializing each header value on its
+own line.</li>
+<li><code class="docutils literal notranslate"><span class="pre">boolean</span></code> values are serialized as <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">string</span></code> values with a <a class="reference internal" href="protocol-traits.html#mediatype-trait"><span class="std std-ref">mediaType trait</span></a> are always base64 encoded.</li>
+<li><code class="docutils literal notranslate"><span class="pre">timestamp</span></code> values are serialized using the <code class="docutils literal notranslate"><span class="pre">http-date</span></code>
+format by default, as defined in the <code class="docutils literal notranslate"><span class="pre">IMF-fixdate</span></code> production of
 <span class="target" id="index-3"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc7231.html#section-7.1.1.1"><strong>RFC 7231#section-7.1.1.1</strong></a>. The <a class="reference internal" href="protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a> MAY be used
 to use a custom serialization format.</li>
 </ul>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">While there is no limit placed on the length of an HTTP header field, many
+<p class="rubric">Do not put too much data in HTTP headers</p>
+<p>While there is no limit placed on the length of an HTTP header field, many
 HTTP client and server implementations enforce limits in practice.
-Smithy models SHOULD carefully consider the maximum allowed length of each
-member that is bound to an HTTP header.</p>
-</div>
+Carefully consider the maximum allowed length of each member that is bound
+to an HTTP header.</p>
 <div class="section" id="restricted-http-headers">
 <span id="restricted-headers"></span><h3><a href="#restricted-http-headers">11.3.1. Restricted HTTP headers</a></h3>
 <p>Various HTTP headers are highly discouraged for the <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> and
@@ -736,12 +753,16 @@ need to be modeled.</td>
 <span id="id5"></span><h2><a href="#httplabel-trait">11.4. <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
-<dd>Binds an operation input structure member to an HTTP label.</dd>
+<dd>Binds an operation input structure member to an
+<a class="reference internal" href="#http-uri-label"><span class="std std-ref">HTTP label</span></a> so that it is used as part of an
+HTTP request URI.</dd>
 <dt>Trait selector</dt>
 <dd><div class="first highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; member[trait|required] :test(&gt; :test(string, number, boolean, timestamp))
 </pre></div>
 </div>
-<p class="last"><em>Required structure members that target a string, number, boolean, or timestamp</em></p>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait can be applied to <code class="docutils literal notranslate"><span class="pre">structure</span></code> members marked
+with the <a class="reference internal" href="constraint-traits.html#required-trait"><span class="std std-ref">required trait</span></a> that target a <code class="docutils literal notranslate"><span class="pre">string</span></code>, <code class="docutils literal notranslate"><span class="pre">number</span></code>,
+<code class="docutils literal notranslate"><span class="pre">boolean</span></code>, or <code class="docutils literal notranslate"><span class="pre">timestamp</span></code>.</p>
 </dd>
 <dt>Value type</dt>
 <dd>Annotation trait.</dd>
@@ -752,26 +773,8 @@ need to be modeled.</td>
 <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
 <a class="reference internal" href="#httpresponsecode-trait"><span class="std std-ref">httpResponseCode trait</span></a></dd>
 </dl>
-<p><code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> members MUST be marked as <a class="reference internal" href="constraint-traits.html#required-trait"><span class="std std-ref">required trait</span></a>.</p>
-<p>When a structure is associated with an operation, any member of the structure
-with the <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait MUST have a corresponding URI label with the same
-name as the member. <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> traits are ignored when serializing the
-output or an error of an operation.</p>
-<p><code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> traits can only be applied to structure members that are marked
-as <a class="reference internal" href="constraint-traits.html#required-trait"><span class="std std-ref">required trait</span></a>.</p>
-<p>If the corresponding URI label in the operation is not greedy, then the
-<code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait MUST target a string, byte, short, integer, long, float,
-double, bigDecimal, bigInteger, boolean, or timestamp. If the
-corresponding URI label in the operation is greedy, then the <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code>
-trait MUST target a string shape.</p>
-<p>Serialization rules:</p>
-<ul class="simple">
-<li>boolean is serialized as <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>.</li>
-<li>timestamp values are serialized as an <span class="target" id="index-4"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3339.html"><strong>RFC 3339</strong></a> string
-(e.g., <code class="docutils literal notranslate"><span class="pre">1985-04-12T23:20:50.52Z</span></code>). The <a class="reference internal" href="protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a> MAY
-be used to use a custom serialization format.</li>
-<li>Unless the label is greedy, &quot;/&quot; MUST be percent encoded.</li>
-</ul>
+<p>The following example defines an operation that send an HTTP label named
+<code class="docutils literal notranslate"><span class="pre">foo</span></code> as part of the URI of an HTTP request:</p>
 <div class="sphinx-tabs docutils container">
 <div class="ui top attached tabular menu sphinx-menu docutils container">
 <div class="active item sphinx-data-tab-U21pdGh5 docutils container">
@@ -798,17 +801,53 @@ Smithy</div>
 </div>
 </div>
 </div>
+<p class="rubric">Relationship to <a class="reference internal" href="#http-trait"><span class="std std-ref">http trait</span></a></p>
+<p>When a structure is used as the input of an operation, any member of the
+structure with the <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait MUST have a corresponding
+<a class="reference internal" href="#http-uri-label"><span class="std std-ref">URI label</span></a> with the same name as the member.
+<code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> traits are ignored when serializing operation output or errors.</p>
+<p class="rubric">Applying the <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait to members</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> can only be applied to structure members that are marked as
+<a class="reference internal" href="constraint-traits.html#required-trait"><span class="std std-ref">required</span></a>.</li>
+<li>If the corresponding URI label in the operation is not greedy, then the
+<code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait MUST target a member that targets a <code class="docutils literal notranslate"><span class="pre">string</span></code>,
+<code class="docutils literal notranslate"><span class="pre">byte</span></code>, <code class="docutils literal notranslate"><span class="pre">short</span></code>, <code class="docutils literal notranslate"><span class="pre">integer</span></code>, <code class="docutils literal notranslate"><span class="pre">long</span></code>, <code class="docutils literal notranslate"><span class="pre">float</span></code>, <code class="docutils literal notranslate"><span class="pre">double</span></code>,
+<code class="docutils literal notranslate"><span class="pre">bigDecimal</span></code>, <code class="docutils literal notranslate"><span class="pre">bigInteger</span></code>, <code class="docutils literal notranslate"><span class="pre">boolean</span></code>, or <code class="docutils literal notranslate"><span class="pre">timestamp</span></code>.</li>
+<li>If the corresponding URI label in the operation is greedy, then the
+<code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait MUST target a member that targets a <code class="docutils literal notranslate"><span class="pre">string</span></code> shape.</li>
+</ul>
+<p class="rubric"><code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> serialization rules:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">boolean</span></code> values are serialized as <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">timestamp</span></code> values are serialized as an <span class="target" id="index-4"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3339.html"><strong>RFC 3339</strong></a> string by default
+(for example, <code class="docutils literal notranslate"><span class="pre">1985-04-12T23:20:50.52Z</span></code>, and with percent-encoding,
+<code class="docutils literal notranslate"><span class="pre">1985-04-12T23%3A20%3A50.52Z</span></code>). The <a class="reference internal" href="protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a>
+MAY be used to use a custom serialization format.</li>
+<li>Reserved characters defined in <span class="target" id="index-5"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html#section-2.2"><strong>section 2.2 of RFC3986</strong></a>
+MUST be <a class="reference external" href="https://tools.ietf.org/html/rfc3986#section-2.1">percent-encoded</a> (that is, <code class="docutils literal notranslate"><span class="pre">:/?#[]&#64;!$&amp;'()*+,;=</span></code>).</li>
+<li>However, if the label is greedy, then &quot;/&quot; MUST NOT be percent-encoded
+because greedy labels are meant to span multiple path segments.</li>
+</ul>
+<p class="rubric"><code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> is only used on input</p>
+<p><code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> is ignored when resolving the HTTP bindings of an operation's
+output or an error. This means that if a structure that contains members
+marked with the <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait is used as the top-level output structure
+of an operation, then those members are sent as part of the
+<a class="reference internal" href="#http-protocol-document-payloads"><span class="std std-ref">protocol-specific document</span></a> sent in
+the body of the response.</p>
 </div>
 <div class="section" id="httppayload-trait">
 <span id="id6"></span><h2><a href="#httppayload-trait">11.5. <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
-<dd>Binds a single structure member to the body of an HTTP request.</dd>
+<dd>Binds a single structure member to the body of an HTTP message.</dd>
 <dt>Trait selector</dt>
 <dd><div class="first highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; :test(member &gt; :test(string, blob, structure, union, document))
 </pre></div>
 </div>
-<p class="last"><em>Structure members that target a string, blob, structure, union, or document</em></p>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait can be applied to <code class="docutils literal notranslate"><span class="pre">structure</span></code> members that
+target a <code class="docutils literal notranslate"><span class="pre">string</span></code>, <code class="docutils literal notranslate"><span class="pre">blob</span></code>, <code class="docutils literal notranslate"><span class="pre">structure</span></code>, <code class="docutils literal notranslate"><span class="pre">union</span></code>, or <code class="docutils literal notranslate"><span class="pre">document</span></code>.</p>
 </dd>
 <dt>Value type</dt>
 <dd>Annotation trait.</dd>
@@ -816,13 +855,47 @@ Smithy</div>
 <dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>,
 <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>, <a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>,
 <a class="reference internal" href="#httpresponsecode-trait"><span class="std std-ref">httpResponseCode trait</span></a></dd>
+<dt>Structurally exclusive</dt>
+<dd>Only a single structure member can be bound to <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code>.</dd>
 </dl>
+<p>The following example defines an operation that returns a <code class="docutils literal notranslate"><span class="pre">blob</span></code> of binary
+data in a response:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="nd">@readonly</span>
+<span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;GET&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/random-binary-data&quot;</span>)
+<span class="kd">operation</span><span class="nc"> GetRandomBinaryData</span> {
+    <span class="nl">output:</span> <span class="vc">GetRandomBinaryDataOutput</span>,
+}
+
+<span class="kd">structure</span><span class="nc"> GetRandomBinaryDataOutput</span> {
+    <span class="nd">@required</span>
+    <span class="nd">@httpHeader</span>(<span class="s2">&quot;Content-Type&quot;</span>)
+    <span class="nl">contentType:</span> <span class="vc">String</span>,
+
+    <span class="nd">@httpPayload</span>
+    <span class="nl">content:</span> <span class="vc">Blob</span>,
+}
+</pre></div>
+</div>
+</div>
+</div>
+<p class="rubric" id="http-protocol-document-payloads">Protocol-specific document payloads</p>
 <p>By default, all structure members that are not bound as part of the HTTP
 message are serialized in a protocol-specific document sent in the body of
 the message (e.g., a JSON object). The <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait can be used to
 bind a single top-level operation input, output, or error structure member to
 the body of the HTTP message. Multiple members of the same structure MUST NOT
 be bound to <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code>.</p>
+<p class="rubric">Binding members to <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code></p>
 <p>If the <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait is present on the structure referenced by the
 input of an operation, then all other structure members MUST be bound with
 the <a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>,
@@ -831,7 +904,7 @@ the <a class="reference internal" href="#httplabel-trait"><span class="std std-r
 output of an operation or a structure targeted by the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>,
 then all other structure members MUST be bound to a <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>
 or <a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>.</p>
-<p>Serialization rules:</p>
+<p class="rubric">Serialization rules</p>
 <ol class="arabic simple">
 <li>When a string or blob member is referenced, the raw value is serialized
 as the body of the message.</li>
@@ -851,7 +924,9 @@ sent as the body of the message.</li>
 :test(&gt; map &gt; member[id|member=value] &gt; :test(string, collection &gt; member &gt; string))
 </pre></div>
 </div>
-<p class="last"><em>Structure member that targets a map of strings, or a map of list/set of strings</em></p>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait can be applied to <code class="docutils literal notranslate"><span class="pre">structure</span></code> members
+that target a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code>, or a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">list</span></code>/<code class="docutils literal notranslate"><span class="pre">set</span></code> of
+<code class="docutils literal notranslate"><span class="pre">string</span></code>.</p>
 </dd>
 <dt>Value type</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">string</span></code> value that defines the prefix to prepend to each header field
@@ -862,13 +937,9 @@ field name serialized in the message is &quot;X-Amz-Meta-Baz&quot;.</dd>
 <dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>,
 <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>, <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
 <a class="reference internal" href="#httpresponsecode-trait"><span class="std std-ref">httpResponseCode trait</span></a></dd>
+<dt>Structurally exclusive</dt>
+<dd>Only a single structure member can be bound to <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code>.</dd>
 </dl>
-<p>In order to differentiate <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> from other headers, when
-<code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> are used, no other <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a> bindings can
-start with the same prefix provided in <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait. If
-<code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> is set to an empty string, then no other members can be
-bound to <code class="docutils literal notranslate"><span class="pre">headers</span></code>.</p>
-<p>Only a single structure member can be bound to <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code>.</p>
 <p>Given the following Smithy model:</p>
 <div class="sphinx-tabs docutils container">
 <div class="ui top attached tabular menu sphinx-menu docutils container">
@@ -913,6 +984,12 @@ Smithy</div>
 <span class="n">X</span><span class="o">-</span><span class="n">Foo</span><span class="o">-</span><span class="n">second</span><span class="p">:</span> <span class="n">there</span>
 </pre></div>
 </div>
+<p class="rubric">Disambiguation of <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code></p>
+<p>In order to differentiate <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> from other headers, when
+<code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> are used, no other <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a> bindings can
+start with the same prefix provided in <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait. If
+<code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> is set to an empty string, then no other members can be
+bound to <code class="docutils literal notranslate"><span class="pre">headers</span></code>.</p>
 </div>
 <div class="section" id="httpquery-trait">
 <span id="id8"></span><h2><a href="#httpquery-trait">11.7. <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait</a></h2>
@@ -925,55 +1002,107 @@ Smithy</div>
       &gt; collection &gt; member &gt; :test(string, number, boolean, timestamp))
 </pre></div>
 </div>
-<p class="last"><em>Structure members that target string, number, boolean, or timestamp; or a list/set of said types</em></p>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait can be applied to <code class="docutils literal notranslate"><span class="pre">structure</span></code> members that
+target a <code class="docutils literal notranslate"><span class="pre">string</span></code>, <code class="docutils literal notranslate"><span class="pre">number</span></code>, <code class="docutils literal notranslate"><span class="pre">boolean</span></code>, or <code class="docutils literal notranslate"><span class="pre">timestamp</span></code>; or a
+<code class="docutils literal notranslate"><span class="pre">list</span></code>/<code class="docutils literal notranslate"><span class="pre">set</span></code> of these types.</p>
 </dd>
 <dt>Value type</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">string</span></code> value defining the name of the query string parameter. The
-query string value MUST NOT be empty. This trait is ignored when
-resolving the HTTP bindings of an operation's output or an error.</dd>
+<dd>A non-empty <code class="docutils literal notranslate"><span class="pre">string</span></code> value that defines the name of the query string
+parameter. The query string parameter name MUST be case-sensitively unique
+across all other members marked with the <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait.</dd>
 <dt>Conflicts with</dt>
 <dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>,
 <a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>, <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
 <a class="reference internal" href="#httpresponsecode-trait"><span class="std std-ref">httpResponseCode trait</span></a></dd>
 </dl>
-<p>Serialization rules:</p>
+<p>The following example defines an operation that optionally sends the
+<code class="docutils literal notranslate"><span class="pre">color</span></code>, <code class="docutils literal notranslate"><span class="pre">shape</span></code>, and <code class="docutils literal notranslate"><span class="pre">size</span></code> query string parameters in an HTTP
+request:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@readonly</span>
+<span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;GET&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/things&quot;</span>)
+<span class="kd">operation</span><span class="nc"> ListThings</span> {
+    <span class="nl">input:</span> <span class="vc">ListThingsInput</span>,
+    <span class="nl">output:</span> <span class="vc">ListThingsOutput</span>, <span class="c">// omitted for brevity</span>
+}
+
+<span class="kd">structure</span><span class="nc"> ListThingsInput</span> {
+    <span class="nd">@httpQuery</span>(<span class="s2">&quot;color&quot;</span>)
+    <span class="nl">color:</span> <span class="vc">String</span>,
+
+    <span class="nd">@httpQuery</span>(<span class="s2">&quot;shape&quot;</span>)
+    <span class="nl">shape:</span> <span class="vc">String</span>,
+
+    <span class="nd">@httpQuery</span>(<span class="s2">&quot;size&quot;</span>)
+    <span class="nl">size:</span> <span class="vc">Integer</span>,
+}
+</pre></div>
+</div>
+</div>
+</div>
+<p class="rubric">Serialization rules</p>
 <ul class="simple">
-<li>&quot;&amp;&quot; is used to separate query string parameters.</li>
+<li>&quot;&amp;&quot; is used to separate query string parameter key-value pairs.</li>
 <li>&quot;=&quot; is used to separate query string parameter names from values.</li>
-<li>Query string keys and values MUST be <a class="reference external" href="https://tools.ietf.org/html/rfc3986#section-2.1">percent-encoded</a> so that they conform to
-the <code class="docutils literal notranslate"><span class="pre">query</span></code> grammar defined in <span class="target" id="index-5"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html#section-3.4"><strong>RFC 3986#section-3.4</strong></a>. Characters that are
-valid as part of the query string MUST NOT be percent encoded. For example,
-a value of <code class="docutils literal notranslate"><span class="pre">foo/baz%20</span></code> serialized in a query string would become
-<code class="docutils literal notranslate"><span class="pre">foo/baz%2520</span></code>. However, <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> MUST be percent-encoded when present in a
-query string value.</li>
-<li>Multiple members of a structure MUST NOT case-sensitively target the same
-query string parameter.</li>
-<li>boolean values are serialized as <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>.</li>
-<li>timestamp values are serialized as an <span class="target" id="index-6"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3339.html"><strong>RFC 3339</strong></a>
-<code class="docutils literal notranslate"><span class="pre">date-time</span></code> string (e.g., <code class="docutils literal notranslate"><span class="pre">1985-04-12T23:20:50.52Z</span></code>). The
+<li>Reserved characters in keys and values as defined in <span class="target" id="index-6"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html#section-2.2"><strong>section 2.2 of RFC3986</strong></a>
+MUST be <a class="reference external" href="https://tools.ietf.org/html/rfc3986#section-2.1">percent-encoded</a> (that is, <code class="docutils literal notranslate"><span class="pre">:/?#[]&#64;!$&amp;'()*+,;=</span></code>).</li>
+<li><code class="docutils literal notranslate"><span class="pre">boolean</span></code> values are serialized as <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">timestamp</span></code> values are serialized as an <span class="target" id="index-7"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3339.html"><strong>RFC 3339</strong></a>
+<code class="docutils literal notranslate"><span class="pre">date-time</span></code> string by default (for example, <code class="docutils literal notranslate"><span class="pre">1985-04-12T23:20:50.52Z</span></code>,
+and with percent-encoding, <code class="docutils literal notranslate"><span class="pre">1985-04-12T23%3A20%3A50.52Z</span></code>). The
 <a class="reference internal" href="protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a> MAY be used to use a custom serialization
 format.</li>
-<li><a class="reference internal" href="model.html#list"><span class="std std-ref">List</span></a> members are serialized by adding multiple query string parameters
-to the query string using the same name. For example, given a member bound
-to <code class="docutils literal notranslate"><span class="pre">foo</span></code> that targets a list of strings with a value of <code class="docutils literal notranslate"><span class="pre">[&quot;a&quot;,</span> <span class="pre">&quot;b&quot;]</span></code>,
-the value is serialized in the query string as <code class="docutils literal notranslate"><span class="pre">foo=a&amp;foo=b</span></code>.</li>
+<li><a class="reference internal" href="model.html#list"><span class="std std-ref">List</span></a> and <a class="reference internal" href="model.html#set"><span class="std std-ref">set</span></a> members are serialized by adding multiple
+query string parameters to the query string using the same name. For
+example, given a member bound to <code class="docutils literal notranslate"><span class="pre">foo</span></code> that targets a list of strings
+with a value of <code class="docutils literal notranslate"><span class="pre">[&quot;a&quot;,</span> <span class="pre">&quot;b&quot;]</span></code>, the value is serialized in the query string
+as <code class="docutils literal notranslate"><span class="pre">foo=a&amp;foo=b</span></code>.</li>
 </ul>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">While there is no limit placed on the length of an <a class="reference external" href="https://tools.ietf.org/html/rfc7230.html#section-3.1.1">HTTP request line</a>,
-many HTTP client and server implementations enforce limits in practice.
-Smithy models SHOULD carefully consider the maximum allowed length of each
-member that is bound to an HTTP query string or path.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p>Percent-encoding is an implementation detail</p>
+<p class="last">The encoding and serialization rules of shapes defined in a Smithy model are
+implementation details. When designing clients, servers, and other kinds of
+software based on Smithy models, the format in which the value of a member
+is serialized SHOULD NOT be a concern of the end-user. As such, members bound
+to the query string MUST be automatically percent-encoded when serializing
+HTTP requests and automatically percent-decoded when deserializing HTTP
+requests.</p>
 </div>
+<p class="rubric"><code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> is only used on input</p>
+<p><code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> is ignored when resolving the HTTP bindings of an operation's
+output or an error. This means that if a structure that contains members
+marked with the <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait is used as the top-level output structure
+of an operation, then those members are sent as part of the
+<a class="reference internal" href="#http-protocol-document-payloads"><span class="std std-ref">protocol-specific document</span></a> sent in
+the body of the response.</p>
+<p class="rubric">Do not put too much data in the query string</p>
+<p>While there is no limit placed on the length of an <a class="reference external" href="https://tools.ietf.org/html/rfc7230.html#section-3.1.1">HTTP request line</a>,
+many HTTP client and server implementations enforce limits in practice.
+Carefully consider the maximum allowed length of each member that is bound to
+an HTTP query string or path.</p>
 </div>
 <div class="section" id="httpresponsecode-trait">
 <span id="id9"></span><h2><a href="#httpresponsecode-trait">11.8. <code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
-<dd>Indicates that the structure member represents an HTTP response
-status code.</dd>
+<dd>Binds a structure member to the HTTP response status code so that an
+HTTP response status code can be set dynamically at runtime to something
+other than <code class="docutils literal notranslate"><span class="pre">code</span></code> of the <a class="reference internal" href="#http-trait"><span class="std std-ref">http trait</span></a>.</dd>
 <dt>Trait selector</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span> <span class="pre">:test(&gt;</span> <span class="pre">integer)</span></code></dd>
+<dd><div class="first highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; member :test(&gt; integer)
+</pre></div>
+</div>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait can be applied to <code class="docutils literal notranslate"><span class="pre">structure</span></code> members
+that target an <code class="docutils literal notranslate"><span class="pre">integer</span></code>.</p>
+</dd>
 <dt>Value type</dt>
 <dd>Annotation trait.</dd>
 <dt>Conflicts with</dt>
@@ -981,10 +1110,17 @@ status code.</dd>
 <a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>, <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
 <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a></dd>
 </dl>
-<p>The value MAY differ from the HTTP status code provided on the response.
-Explicitly modeling this as a field can be helpful for services that wish to
-provide different response codes for an operation, like 200 or 201 for a PUT
+<p class="rubric"><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> use cases</p>
+<p>Marking an output <code class="docutils literal notranslate"><span class="pre">structure</span></code> member with this trait can be used to provide
+different response codes for an operation, like a 200 or 201 for a PUT
 operation.</p>
+<p class="rubric"><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> is only used on output</p>
+<p><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> is ignored when resolving the HTTP bindings of an
+operation's input structure. This means that if a structure that contains
+members marked with the <code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait is used as the top-level
+input structure of an operation, then those members are sent as part of the
+<a class="reference internal" href="#http-protocol-document-payloads"><span class="std std-ref">protocol-specific document</span></a> sent in
+the body of the request.</p>
 </div>
 <div class="section" id="cors-trait">
 <span id="id10"></span><h2><a href="#cors-trait">11.9. <code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></h2>

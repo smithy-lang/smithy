@@ -557,6 +557,14 @@ JSON</div>
 conditionals, directives, recursion, lookahead, look-behind, back-references,
 and look-around in order to ensure maximum compatibility across programming
 languages.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">pattern</span></code> trait does not implicitly add a leading <code class="docutils literal notranslate"><span class="pre">^</span></code> or trailing
+<code class="docutils literal notranslate"><span class="pre">$</span></code> to match an entire string. For example, <code class="docutils literal notranslate"><span class="pre">&#64;pattern(&quot;\\w+&quot;)</span></code> matches
+both &quot;hello&quot; and &quot;!hello!&quot; because it requires that just part of the
+string matches the regular expression, whereas <code class="docutils literal notranslate"><span class="pre">&#64;pattern(&quot;^\\w+$&quot;)</span></code>
+requires that the entire string matches the regular expression.</p>
+</div>
 <div class="sphinx-tabs docutils container">
 <div class="ui top attached tabular menu sphinx-menu docutils container">
 <div class="active item sphinx-data-tab-U21pdGh5 docutils container">
