@@ -89,6 +89,16 @@ final class AddIntegrations implements ApiGatewayMapper {
             Trait integration
     ) {
         ObjectNode integrationObject = getIntegrationAsObject(context, shape, integration);
+
+        ApiGatewayConfig.ApiType apiType = context.getConfig()
+                .getExtensions(ApiGatewayConfig.class)
+                .getApiGatewayType();
+
+        // TODO: Refactor this so it's self contained in a REST API CORS plugin.
+        if (apiType != ApiGatewayConfig.ApiType.REST) {
+            return integrationObject;
+        }
+
         return context.getService().getTrait(CorsTrait.class)
                 .map(cors -> {
                     LOGGER.fine(() -> String.format("Adding CORS to `%s` operation responses", shape.getId()));
