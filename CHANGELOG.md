@@ -1,5 +1,47 @@
 # Smithy Changelog
 
+## 1.5.0 (2020-12-10)
+
+### Features
+
+* Added the `endpointPrefix` property to the `@aws.api#service` trait. ([#663](https://github.com/awslabs/smithy/pull/663))
+* Added support for `tags` and `deprecated` members to `@waitable` definitions. ([#652](https://github.com/awslabs/smithy/pull/652))
+* Added validation for `@httpHeader` trait values. ([#650](https://github.com/awslabs/smithy/pull/650))
+* Add `required` property for `requestBody` when converting to OpenAPI. ([#655](https://github.com/awslabs/smithy/pull/655))
+* Added more helper methods to `OperationIndex`. ([#657](https://github.com/awslabs/smithy/pull/657))
+
+### Bug Fixes
+
+* Ensure that names in the `@waitable` trait are unique in the closure of the service. ([#645](https://github.com/awslabs/smithy/pull/645))
+* Fixed a regression with `@aws.apigateway#authorizors` behavior when setting the `customAuthType` property without
+  having set its `type` property. ([#613](https://github.com/awslabs/smithy/pull/613))
+* Fixed an issue where modeled headers were not populated in to `Access-Control-Expose-Headers` in CORS responses.
+  ([#659](https://github.com/awslabs/smithy/pull/659))
+* Added missing `deprecated` member to `@enum` definitions in the prelude model. ([#651](https://github.com/awslabs/smithy/pull/651))
+* Fixed an issue with the conversion of greedy label parameter names in to OpenAPI. ([#641](https://github.com/awslabs/smithy/pull/641))
+* Fixed an issue in `CodeWriter.popState` where it would not honor custom expression start characters. ([#648](https://github.com/awslabs/smithy/pull/648))
+* Fixed a potential `NullPointerException` when validating the `@examples` trait. ([#642](https://github.com/awslabs/smithy/pull/642))
+* Fixed issues with some `@awsQuery` and `@ec2Query` protocol test responses. ([#653](https://github.com/awslabs/smithy/pull/653))
+* Fixed an issue where the `removeTraitDefinitions` build transform was not registered with the SPI. ([#660](https://github.com/awslabs/smithy/pull/660))
+* Fixed an issue where using an environment variable in `smithy-build.json` would consume an extra preceding
+  character when performing a replacement. ([#662](https://github.com/awslabs/smithy/pull/662)) 
+
+### Documentation
+
+* Update `@waitable` documentation to specify using jitter and account for overflows. ([#656](https://github.com/awslabs/smithy/pull/656))
+* Added examples and clarified documentation for several HTTP traits, most importantly `@httpLabel` and `@httpQuery`.
+  ([#654](https://github.com/awslabs/smithy/pull/654))
+* Clarified various aspects of the `@xmlNamespace` trait documentation. ([#643](https://github.com/awslabs/smithy/pull/643))
+* Clarified `@waitable` documentation. ([#646](https://github.com/awslabs/smithy/pull/646), [#664](https://github.com/awslabs/smithy/pull/664))
+* Clarified that the `@pattern` trait does not implicitly match an entire string. ([#649](https://github.com/awslabs/smithy/pull/649))
+* Fixed various examples in the specification. ([#639](https://github.com/awslabs/smithy/pull/639))
+
+### Cleanup
+
+* Sort `TopDownIndex` contents to provide deterministic results. ([#667](https://github.com/awslabs/smithy/pull/667))
+* Improved error messages when an unknown annotation trait is encountered. ([#644](https://github.com/awslabs/smithy/pull/644))
+* Added `smithy-diff` error when the `@idempotencyTrait` token is removed from a shape. ([#640](https://github.com/awslabs/smithy/pull/640))
+
 ## 1.4.0 (2020-11-20)
 
 ### Features
