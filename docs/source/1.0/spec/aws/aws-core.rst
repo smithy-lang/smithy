@@ -238,7 +238,7 @@ need to explicitly configure the ``cloudTrailEventSource`` setting.
 ``endpointId``
 ==============
 
-The ``endpointId`` property is a ``string`` value that specifies which endpoint
+The ``endpointId`` property is a ``string`` value that identifies which endpoint
 in a given region should be used to connect to the service. For example, most
 services in the AWS standard partition have endpoints which follow the format:
 ``{endpointId}.{region}.amazonaws.com``. A service with the endpoint id
@@ -248,7 +248,8 @@ check the `AWS Regions and Endpoints`_ page.
 
 This value is not unique across services and is subject to change. Therefore,
 it MUST NOT be used for client naming or for any other purpose that requires
-a unique identifier. :ref:`service-sdk-id` should be used for those purposes.
+a static, unique identifier. :ref:`service-sdk-id` should be used for those
+purposes.
 
 
 .. _aws.api#arn-trait:
@@ -1332,4 +1333,4 @@ existing AWS services.
 .. _Amazon Resource Name (ARN): https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
 .. _AWS Service Namespaces: https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#genref-aws-service-namespaces
 .. _CloudFormation resource type: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html
-.. _AWS Regions and Endpoints:
+.. _AWS Regions and Endpoints: https://docs.aws.amazon.com/general/latest/gr/rande.html

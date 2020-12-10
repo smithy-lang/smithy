@@ -140,7 +140,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
     /**
      * Returns the endpoint id for the service.
      *
-     * This value is not unique across service and it can change at any time.
+     * This value is not unique across services and it can change at any time.
      * Therefore it MUST NOT be used to generate class names, namespaces, or
      * for any other purpose that requires a static, unique identifier. The
      * sdkId property should be used for those purposes.
