@@ -571,8 +571,9 @@ comparator can be set to any of the following values:
         corresponding boolean value.
       - ``boolean``
     * - allStringEquals
-      - Matches if the return value of a JMESPath expression is an array and
-        every value in the array is a string that equals an expected string.
+      - Matches if the return value of a JMESPath expression is an array that
+        contains at least one value, and every value in the array is a string
+        that equals an expected string.
       - ``array`` of ``string``
     * - anyStringEquals
       - Matches if the return value of a JMESPath expression is an array and
