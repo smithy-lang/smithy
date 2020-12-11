@@ -8,11 +8,12 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    name: Java ${{ matrix.java }}
+    runs-on: ${{ matrix.os }}
+    name: Java ${{ matrix.java }} ${{ matrix.os }}
     strategy:
       matrix:
         java: [8, 11]
+        os: [ubuntu-latest, windows-latest]
 
     steps:
       - uses: actions/checkout@v2
