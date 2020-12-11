@@ -236,7 +236,7 @@ need to explicitly configure the ``cloudTrailEventSource`` setting.
 .. _service-endpoint-prefix:
 
 ``endpointPrefix``
-==============
+==================
 
 The ``endpointPrefix`` property is a ``string`` value that identifies which endpoint
 in a given region should be used to connect to the service. For example, most
