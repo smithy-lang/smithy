@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -44,6 +45,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -268,7 +270,14 @@ public class ModelAssemblerTest {
         if (Files.exists(link)) {
             Files.delete(link);
         }
-        return Files.createSymbolicLink(link, target);
+        try {
+            return Files.createSymbolicLink(link, target);
+        } catch (FileSystemException e) {
+            // Skip tests if symlinks are unable to be created. This can happen on Windows, for instance, where the
+            // permissions to create them are not enabled by default.
+            Assumptions.assumeFalse(System.getProperty("os.name").toLowerCase().contains("windows"), e.getMessage());
+            throw e;
+        }
     }
 
     @Test

@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 
+import java.nio.file.Paths;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.MockManifest;
@@ -57,7 +58,7 @@ public class CodegenWriterDelegatorTest {
         delegator.useShapeWriter(shape, writer -> { });
 
         assertThat(observer.onShapeWriterUseCalled, is(true));
-        assertThat(delegator.getWriters(), hasKey("com/foo/Baz.bam"));
+        assertThat(delegator.getWriters(), hasKey(Paths.get("com/foo/Baz.bam").toString()));
     }
 
     @Test
@@ -77,7 +78,7 @@ public class CodegenWriterDelegatorTest {
             writer.write("Hello");
         });
 
-        assertThat(delegator.getWriters().get("com/foo/Baz.bam").toString(),
+        assertThat(delegator.getWriters().get(Paths.get("com/foo/Baz.bam").toString()).toString(),
                    equalTo("/// Writing com.foo#Baz\nHello\n"));
     }
 
@@ -114,7 +115,8 @@ public class CodegenWriterDelegatorTest {
             writer.write(".");
         });
 
-        assertThat(delegator.getWriters().get("foo/baz").toString(), equalTo(".\n\n.\n"));
+        assertThat(delegator.getWriters().get(Paths.get("foo/baz").toString()).toString(),
+                equalTo(".\n\n.\n"));
     }
 
     @Test
@@ -133,7 +135,8 @@ public class CodegenWriterDelegatorTest {
             writer.writeInline(".");
         });
 
-        assertThat(delegator.getWriters().get("foo/baz").toString(), equalTo("..\n"));
+        assertThat(delegator.getWriters().get(Paths.get("foo/baz").toString()).toString(),
+                equalTo("..\n"));
     }
 
     @Test

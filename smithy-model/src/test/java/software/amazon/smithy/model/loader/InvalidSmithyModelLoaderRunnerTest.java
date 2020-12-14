@@ -49,8 +49,8 @@ public class InvalidSmithyModelLoaderRunnerTest {
                     .unwrap();
             throw new IllegalStateException("Expected a parse error for " + file);
         } catch (RuntimeException e) {
-            String actualMessage = e.getMessage().replace("\n", "\\n");
-            String expectedMessage = expectedError.replace("\n", "\\n");
+            String actualMessage = cleanErrorMessage(e.getMessage());
+            String expectedMessage = cleanErrorMessage(expectedError);
             if (!actualMessage.contains(expectedMessage)) {
                 throw new IllegalStateException(
                         String.format("Expected a different parse error for %s.\nExpected (%s)\nFound (%s)",
@@ -58,6 +58,18 @@ public class InvalidSmithyModelLoaderRunnerTest {
                         e);
             }
         }
+    }
+
+    private String cleanErrorMessage(String errorMessage) {
+        return errorMessage
+                // We'll never see EOF on Windows since we only get 2 context characters and those
+                // will be taken up by the line separator characters.
+                .replace("[EOF]", "")
+                // Make sure the line separators and representations of them are consistent across
+                // operating systems.
+                .replace("\r\n", "\\n")
+                .replace("\r", "\\n")
+                .replace("\n", "\\n");
     }
 
     public static Collection<String> data() throws Exception {
