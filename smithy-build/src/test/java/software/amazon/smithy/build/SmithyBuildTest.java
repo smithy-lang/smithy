@@ -149,7 +149,7 @@ public class SmithyBuildTest {
 
         assertThat(files, hasItem(outputDirectory.resolve("source/sources/manifest")));
         assertThat("\n", equalTo(IoUtils.readUtf8File(results.allArtifacts()
-                .filter(path -> path.toString().endsWith("/manifest"))
+                .filter(path -> path.toString().endsWith(System.getProperty("file.separator") + "manifest"))
                 .findFirst()
                 .get())));
     }

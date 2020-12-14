@@ -70,23 +70,25 @@ public class IoUtilsTest {
         // Windows doesn't like the result of URL#getPath, so to test this
         // we create a Path from the URI, convert that to a string, then pass
         // it to the helper method which uses Paths.get again.
-        assertEquals("This is a test.\n",
+        assertEquals("This is a test." + System.lineSeparator(),
                      IoUtils.readUtf8File(Paths.get(getClass().getResource("test.txt").toURI()).toString()));
     }
 
     @Test
     public void readsFromPath() throws URISyntaxException {
-        assertEquals("This is a test.\n", IoUtils.readUtf8File(Paths.get(getClass().getResource("test.txt").toURI())));
+        assertEquals("This is a test." + System.lineSeparator(),
+                IoUtils.readUtf8File(Paths.get(getClass().getResource("test.txt").toURI())));
     }
 
     @Test
     public void readsFromClass() {
-        assertEquals("This is a test.\n", IoUtils.readUtf8Resource(getClass(), "test.txt"));
+        assertEquals("This is a test." + System.lineSeparator(),
+                IoUtils.readUtf8Resource(getClass(), "test.txt"));
     }
 
     @Test
     public void readsFromClassLoader() {
-        assertEquals("This is a test.\n", IoUtils.readUtf8Resource(
+        assertEquals("This is a test." + System.lineSeparator(), IoUtils.readUtf8Resource(
                 getClass().getClassLoader(), "software/amazon/smithy/utils/test.txt"));
     }
 

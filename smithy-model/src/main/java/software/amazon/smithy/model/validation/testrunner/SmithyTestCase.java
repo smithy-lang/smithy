@@ -144,7 +144,7 @@ public final class SmithyTestCase {
 
     private static List<ValidationEvent> loadExpectedEvents(String errorsFileLocation) {
         String contents = IoUtils.readUtf8File(errorsFileLocation);
-        return Arrays.stream(contents.split("\n"))
+        return Arrays.stream(contents.split(System.lineSeparator()))
                 .filter(line -> !line.trim().isEmpty())
                 .map(SmithyTestCase::parseValidationEvent)
                 .collect(Collectors.toList());

@@ -18,6 +18,7 @@ package software.amazon.smithy.aws.cloudformation.schema.fromsmithy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -62,12 +63,12 @@ public class TestRunnerTest {
 
     public static List<String> integFiles() {
         try {
-            return Files.walk(Paths.get(TestRunnerTest.class.getResource("integ").getPath()))
+            return Files.walk(Paths.get(TestRunnerTest.class.getResource("integ").toURI()))
                     .filter(Files::isRegularFile)
                     .filter(file -> file.toString().endsWith(".smithy"))
                     .map(Object::toString)
                     .collect(Collectors.toList());
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         }
     }
