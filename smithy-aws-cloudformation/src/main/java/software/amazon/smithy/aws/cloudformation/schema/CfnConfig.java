@@ -16,6 +16,7 @@
 package software.amazon.smithy.aws.cloudformation.schema;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -24,6 +25,7 @@ import software.amazon.smithy.jsonschema.JsonSchemaConfig;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.ListUtils;
 
@@ -303,6 +305,18 @@ public final class CfnConfig extends JsonSchemaConfig {
         ObjectNode node = settings.expectObjectNode();
         CfnConfig config = new CfnConfig();
         mapper.deserializeInto(node, config);
+
+        // Load a ShapeId map for the jsonAdd setting.
+        node.getObjectMember("jsonAdd").ifPresent(jsonAddNode -> {
+            Map<ShapeId, Map<String, Node>> jsonAddMap = new HashMap<>();
+
+            for (Map.Entry<StringNode, Node> jsonAddMember : jsonAddNode.getMembers().entrySet()) {
+                jsonAddMap.put(ShapeId.from(jsonAddMember.getKey().getValue()),
+                        jsonAddMember.getValue().expectObjectNode().getStringMap());
+            }
+
+            config.setJsonAdd(jsonAddMap);
+        });
 
         // Add all properties to "extensions" to make them accessible
         // in plugins.

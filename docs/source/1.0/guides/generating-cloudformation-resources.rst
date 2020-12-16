@@ -275,11 +275,13 @@ jsonAdd (``Map<String, Map<String, Node>>``)
                     "service": "smithy.example#Queues",
                     "organizationName": "Smithy",
                     "jsonAdd": {
-                        "/info/title": "Replaced title value",
-                        "/info/nested/foo": {
-                            "hi": "Adding this object created intermediate objects too!"
-                        },
-                        "/info/nested/foo/baz": true
+                        "smithy.example#Queue": {
+                            "/info/title": "Replaced title value",
+                            "/info/nested/foo": {
+                                "hi": "Adding this object created intermediate objects too!"
+                            },
+                            "/info/nested/foo/baz": true
+                        }
                     }
                 }
             }
