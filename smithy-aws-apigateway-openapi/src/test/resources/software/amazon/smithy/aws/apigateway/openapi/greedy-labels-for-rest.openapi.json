@@ -1,0 +1,29 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Service",
+    "version": "2006-03-01"
+  },
+  "paths": {
+    "/{baz+}": {
+      "post": {
+        "operationId": "Operation",
+        "parameters": [
+          {
+            "name": "baz",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation response"
+          }
+        }
+      }
+    }
+  }
+}

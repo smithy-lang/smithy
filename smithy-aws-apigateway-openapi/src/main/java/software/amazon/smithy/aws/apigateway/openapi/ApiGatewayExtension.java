@@ -27,6 +27,7 @@ public final class ApiGatewayExtension implements Smithy2OpenApiExtension {
     public List<OpenApiMapper> getOpenApiMappers() {
         return ListUtils.of(
                 ApiGatewayMapper.wrap(new AddDefaultConfigSettings()),
+                ApiGatewayMapper.wrap(new AddDefaultRestConfigSettings()),
                 ApiGatewayMapper.wrap(new AddApiKeySource()),
                 ApiGatewayMapper.wrap(new AddAuthorizers()),
                 ApiGatewayMapper.wrap(new AddBinaryTypes()),
