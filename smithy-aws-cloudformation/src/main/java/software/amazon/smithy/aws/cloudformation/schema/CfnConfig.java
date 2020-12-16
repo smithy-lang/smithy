@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Logger;
 import software.amazon.smithy.jsonschema.JsonSchemaConfig;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
@@ -36,8 +35,6 @@ public final class CfnConfig extends JsonSchemaConfig {
 
     /** The JSON pointer to where CloudFormation schema shared resource properties should be written. */
     public static final String SCHEMA_COMPONENTS_POINTER = "#/definitions";
-
-    private static final Logger LOGGER = Logger.getLogger(CfnConfig.class.getName());
 
     private boolean disableDeprecatedPropertyGeneration = false;
     private boolean disableCapitalizedProperties = false;
