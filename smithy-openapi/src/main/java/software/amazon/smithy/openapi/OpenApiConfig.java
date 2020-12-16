@@ -79,6 +79,7 @@ public class OpenApiConfig extends JsonSchemaConfig {
     private boolean keepUnusedComponents;
     private String jsonContentType = "application/json";
     private boolean forbidGreedyLabels;
+    private boolean removeGreedyParameterSuffix;
     private HttpPrefixHeadersStrategy onHttpPrefixHeaders = HttpPrefixHeadersStrategy.FAIL;
     private boolean ignoreUnsupportedTraits;
     private Map<String, Node> substitutions = Collections.emptyMap();
@@ -216,6 +217,14 @@ public class OpenApiConfig extends JsonSchemaConfig {
      */
     public void setForbidGreedyLabels(boolean forbidGreedyLabels) {
         this.forbidGreedyLabels = forbidGreedyLabels;
+    }
+
+    public boolean getRemoveGreedyParameterSuffix() {
+        return removeGreedyParameterSuffix;
+    }
+
+    public void setRemoveGreedyParameterSuffix(boolean removeGreedyParameterSuffix) {
+        this.removeGreedyParameterSuffix = removeGreedyParameterSuffix;
     }
 
     public HttpPrefixHeadersStrategy getOnHttpPrefixHeaders() {

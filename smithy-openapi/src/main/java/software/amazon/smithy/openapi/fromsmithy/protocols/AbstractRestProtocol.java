@@ -138,7 +138,11 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
 
             // Greedy labels in OpenAPI need to include the label in the generated parameter.
             // For example, given "/{foo+}", the parameter name must be "foo+".
-            String name = label.isGreedyLabel() ? label.getContent() + "+" : label.getContent();
+            // Some vendors/tooling, require the "+" suffix be excluded in the generated parameter.
+            // If required, the setRemoveGreedyParameterSuffix config option should be set to `true`.
+            // When this option is enabled, given "/{foo+}", the parameter name will be "foo".
+            String name = (label.isGreedyLabel() && !context.getConfig().getRemoveGreedyParameterSuffix())
+                    ? label.getContent() + "+" : label.getContent();
 
             result.add(ModelUtils.createParameterMember(context, binding.getMember())
                     .name(name)
