@@ -22,6 +22,9 @@ import software.amazon.smithy.utils.ListUtils;
 
 /**
  * REST APIs require that name parameters for greedy labels are not suffixed with "+".
+ *  @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/setup-http-integrations.html">REST APIs</a>
+ *  which is counter to the default, like for
+ *  <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-http.html">HTTP APIs</a>.
  */
 final class AddDefaultRestConfigSettings implements ApiGatewayMapper {
     @Override

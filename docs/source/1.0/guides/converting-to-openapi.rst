@@ -354,6 +354,26 @@ forbidGreedyLabels (``boolean``)
             }
         }
 
+.. _generate-openapi-setting-removeGreedyParameterSuffix:
+
+removeGreedyParameterSuffix (``boolean``)
+    Set to true to remove the ``+`` suffix on the parameter name. By default, greedy
+    labels will have a corresponding parameter name generated that will include
+    the ``+`` suffix. Given a label "/{foo+}", the parameter name will be "foo+".
+    If enabled, the parameter name will instead be "foo".
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "removeGreedyParameterSuffix": true
+                }
+            }
+        }
+
 .. _generate-openapi-setting-onHttpPrefixHeaders:
 
 onHttpPrefixHeaders (``string``)

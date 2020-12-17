@@ -223,6 +223,15 @@ public class OpenApiConfig extends JsonSchemaConfig {
         return removeGreedyParameterSuffix;
     }
 
+    /**
+     * Set to true to remove the "+" suffix that is added to the generated
+     * parameter name for greedy labels.
+     *
+     * <p>By default, greedy labels will have a parameter name generated that
+     * matches the label, including the "+" suffix.</p>
+     * @param removeGreedyParameterSuffix Set to true to remove the "+" suffix
+     *                                    on generated parameter name.
+     */
     public void setRemoveGreedyParameterSuffix(boolean removeGreedyParameterSuffix) {
         this.removeGreedyParameterSuffix = removeGreedyParameterSuffix;
     }
