@@ -141,8 +141,10 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             // Some vendors/tooling, require the "+" suffix be excluded in the generated parameter.
             // If required, the setRemoveGreedyParameterSuffix config option should be set to `true`.
             // When this option is enabled, given "/{foo+}", the parameter name will be "foo".
-            String name = (label.isGreedyLabel() && !context.getConfig().getRemoveGreedyParameterSuffix())
-                    ? label.getContent() + "+" : label.getContent();
+            String name = label.getContent();
+            if (label.isGreedyLabel() && !context.getConfig().getRemoveGreedyParameterSuffix()) {
+                name = name + "+";
+            }
 
             result.add(ModelUtils.createParameterMember(context, binding.getMember())
                     .name(name)
