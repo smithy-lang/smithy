@@ -196,17 +196,17 @@ specification from a Smithy model using a buildscript dependency:</p>
 
 <span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.5.0&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.5.1&quot;</span><span class="p">)</span>
         <span class="c1">// The openapi plugin configured in the smithy-build.json example below</span>
         <span class="c1">// uses the restJson1 protocol defined in the aws-traits package. This</span>
         <span class="c1">// additional dependency must added to use that protocol.</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.5.0&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.5.1&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="n">dependencies</span> <span class="p">{</span>
     <span class="c1">// The dependency for restJson1 is required here too.</span>
-    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.5.0&quot;</span><span class="p">)</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.5.1&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -232,7 +232,7 @@ that builds an OpenAPI specification from a service for the
 </div>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-openapi:1.5.0&quot; is
+<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-openapi:1.5.1&quot; is
 required in order for smithy-build to map the &quot;openapi&quot; plugin name to the
 correct Java library implementation.</p>
 </div>
@@ -413,6 +413,25 @@ appear as-is in the path generated for an operation. For example,
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Weather&quot;</span><span class="p">,</span>
             <span class="nt">&quot;forbidGreedyLabels&quot;</span><span class="p">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="docutils" id="generate-openapi-setting-removegreedyparametersuffix">
+<dt>removeGreedyParameterSuffix (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
+<dd><p class="first">Set to true to remove the <code class="docutils literal notranslate"><span class="pre">+</span></code> suffix on the parameter name. By default, greedy
+labels will have a corresponding parameter name generated that will include
+the <code class="docutils literal notranslate"><span class="pre">+</span></code> suffix. Given a label &quot;/{foo+}&quot;, the parameter name will be &quot;foo+&quot;.
+If enabled, the parameter name will instead be &quot;foo&quot;.</p>
+<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Weather&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;removeGreedyParameterSuffix&quot;</span><span class="p">:</span> <span class="kc">true</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -770,7 +789,7 @@ dependency on <code class="docutils literal notranslate"><span class="pre">softw
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#apigateway-build-gradle" title="Permalink to this code">¶</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-apigateway-openapi:1.5.0&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-apigateway-openapi:1.5.1&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -1217,7 +1236,7 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#code-build-gradle" title="Permalink to this code">¶</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.5.0&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.5.1&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
