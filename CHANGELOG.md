@@ -1,5 +1,14 @@
 # Smithy Changelog
 
+## 1.5.1 (2020-12-21)
+
+### Bug Fixes
+
+* Fixed several issues related to building and running on Windows. ([#671](https://github.com/awslabs/smithy/pull/671))
+* Fixed an issue loading the `jsonAdd` map from configuration for the `cloudformation` plugin. ([#673](https://github.com/awslabs/smithy/pull/673))
+* Fixed an issue where API Gateway REST APIs would have greedy label parameter names rendered into OpenAPI with
+  a `+` suffix. ([#674](https://github.com/awslabs/smithy/pull/674))
+
 ## 1.5.0 (2020-12-10)
 
 ### Features
