@@ -70,7 +70,7 @@ service ExampleService {
 
 Find out more about building artifacts of your Smithy model in the [Building
 Smithy Models][building] guide. For more examples, see the
-[examples directory](https://github.com/awslabs/smithy-gradle-plugin/tree/master/examples)
+[examples directory](https://github.com/awslabs/smithy-gradle-plugin/tree/main/examples)
 of the Smithy Gradle Plugin repository.
 
 # License
