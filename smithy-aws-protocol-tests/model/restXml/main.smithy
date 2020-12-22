@@ -62,6 +62,7 @@ service RestXml {
 
         // Synthesized XML document body tests
         SimpleScalarProperties,
+        XmlUnions,
         XmlBlobs,
         XmlTimestamps,
         XmlEnums,
