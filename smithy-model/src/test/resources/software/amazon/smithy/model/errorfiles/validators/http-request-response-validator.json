@@ -55,6 +55,15 @@
                 },
                 {
                     "target": "ns.foo#Q"
+                },
+                {
+                    "target": "ns.foo#ListPayload"
+                },
+                {
+                    "target": "ns.foo#SetPayload"
+                },
+                {
+                    "target": "ns.foo#MapPayload"
                 }
             ]
         },
@@ -640,6 +649,84 @@
                 }
             }
         },
+        "ns.foo#ListPayload": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#ListPayloadInputOutput"
+            },
+            "output": {
+                "target": "ns.foo#ListPayloadInputOutput"
+            },
+            "traits": {
+                "smithy.api#http": {
+                    "method": "POST",
+                    "uri": "/list-payload"
+                }
+            }
+        },
+        "ns.foo#ListPayloadInputOutput": {
+            "type": "structure",
+            "members": {
+                "listPayload": {
+                    "target": "ns.foo#StringList",
+                    "traits": {
+                        "smithy.api#httpPayload": {}
+                    }
+                }
+            }
+        },
+        "ns.foo#SetPayload": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#SetPayloadInputOutput"
+            },
+            "output": {
+                "target": "ns.foo#SetPayloadInputOutput"
+            },
+            "traits": {
+                "smithy.api#http": {
+                    "method": "POST",
+                    "uri": "/set-payload"
+                }
+            }
+        },
+        "ns.foo#SetPayloadInputOutput": {
+            "type": "structure",
+            "members": {
+                "setPayload": {
+                    "target": "ns.foo#StringSet",
+                    "traits": {
+                        "smithy.api#httpPayload": {}
+                    }
+                }
+            }
+        },
+        "ns.foo#MapPayload": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#MapPayloadInputOutput"
+            },
+            "output": {
+                "target": "ns.foo#MapPayloadInputOutput"
+            },
+            "traits": {
+                "smithy.api#http": {
+                    "method": "POST",
+                    "uri": "/map-payload"
+                }
+            }
+        },
+        "ns.foo#MapPayloadInputOutput": {
+            "type": "structure",
+            "members": {
+                "mapPayload": {
+                    "target": "ns.foo#MapOfString",
+                    "traits": {
+                        "smithy.api#httpPayload": {}
+                    }
+                }
+            }
+        },
         "ns.foo#Integer": {
             "type": "integer"
         },
@@ -651,6 +738,12 @@
         },
         "ns.foo#StringList": {
             "type": "list",
+            "member": {
+                "target": "ns.foo#String"
+            }
+        },
+        "ns.foo#StringSet": {
+            "type": "set",
             "member": {
                 "target": "ns.foo#String"
             }
