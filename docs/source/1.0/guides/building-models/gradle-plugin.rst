@@ -165,7 +165,7 @@ The following example ``build.gradle.kts`` will build a Smithy model using a
 Generating a projection
 -----------------------
 
-A "projection" build is run when a :ref:```projection`` <projections>` is
+A "projection" build is run when a :ref:`projection <projections>` is
 specified in the ``SmithyExtension``. You might want to create a projection of
 a model if you need to maintain an internal version of a model that contains
 more information and features than an external version of a model published to
