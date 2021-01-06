@@ -169,6 +169,12 @@ that affect serialization:
     * - :ref:`httpPayload <httpPayload-trait>`
       - Binds a top-level input or output structure member as the payload
         of a request or response.
+
+        .. important::
+
+            This protocol only permits the :ref:`httpPayload-trait` to be applied to
+            members that target structures, documents, strings, blobs, or unions.
+
     * - :ref:`httpPrefixHeaders <httpPrefixHeaders-trait>`
       - Binds a top-level input, output, or error member to a map of
         prefixed HTTP headers.
