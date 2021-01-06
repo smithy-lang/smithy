@@ -56,4 +56,9 @@ See
             }
         }
 
+.. important::
+
+    This protocol only permits the :ref:`httpPayload-trait` to be applied to
+    members that target structures, documents, strings, blobs, or unions.
+
 *TODO: Add specifications, protocol examples, etc.*

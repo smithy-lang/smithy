@@ -33,6 +33,11 @@ Value type
 
     This protocol does not support document types.
 
+.. important::
+
+    This protocol only permits the :ref:`httpPayload-trait` to be applied to
+    members that target structures, documents, strings, blobs, or unions.
+
 .. tabs::
 
     .. code-tab:: smithy
