@@ -286,6 +286,8 @@ structure JsonMapsInputOutput {
     sparseNumberMap: SparseNumberMap,
     sparseBooleanMap: SparseBooleanMap,
     sparseStringMap: SparseStringMap,
+    denseSetMap: DenseSetMap,
+    sparseSetMap: SparseSetMap,
 }
 
 map DenseStructMap {
@@ -324,4 +326,15 @@ map SparseBooleanMap {
 map SparseNumberMap {
     key: String,
     value: Integer
+}
+
+map DenseSetMap {
+    key: String,
+    value: aws.protocoltests.shared#StringSet
+}
+
+@sparse
+map SparseSetMap {
+    key: String,
+    value: aws.protocoltests.shared#StringSet
 }
