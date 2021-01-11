@@ -1,0 +1,145 @@
+{
+  "smithy": "1.0",
+  "shapes": {
+    "smithy.example#Service": {
+      "type": "service",
+      "version": "2018-03-17",
+      "operations": [
+        {
+          "target": "smithy.example#Operation1"
+        }
+      ],
+      "traits": {
+        "aws.protocols#restJson1": {},
+        "aws.api#service": {
+          "sdkId": "Some Value"
+        },
+        "aws.apigateway#integration": {
+          "type": "aws",
+          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:012345678901:function:HelloWorld/invocations",
+          "httpMethod": "POST",
+          "credentials": "arn:aws:iam::012345678901:role/apigateway-invoke-lambda-exec-role",
+          "requestTemplates": {
+            "application/json": "#set ($root=$input.path('$')) { \"stage\": \"$root.name\", \"user-id\": \"$root.key\" }",
+            "application/xml": "#set ($root=$input.path('$')) <stage>$root.name</stage> "
+          },
+          "requestParameters": {
+            "integration.request.path.stage": "method.request.querystring.version",
+            "integration.request.querystring.provider": "method.request.querystring.vendor"
+          },
+          "cacheNamespace": "cache namespace",
+          "cacheKeyParameters": [],
+          "passThroughBehavior": "never",
+          "responses": {
+            "2\\d{2}": {
+              "statusCode": "200",
+              "responseParameters": {
+                "method.response.header.requestId": "integration.response.header.cid"
+              },
+              "responseTemplates": {
+                "application/json": "#set ($root=$input.path('$')) { \"stage\": \"$root.name\", \"user-id\": \"$root.key\" }",
+                "application/xml": "#set ($root=$input.path('$')) <stage>$root.name</stage> "
+              }
+            },
+            "302": {
+              "statusCode": "302",
+              "responseParameters": {
+                "method.response.header.Location": "integration.response.body.redirect.url"
+              }
+            },
+            "default": {
+              "statusCode": "400",
+              "responseParameters": {
+                "method.response.header.test-method-response-header": "'static value'"
+              }
+            }
+          }
+        }
+      }
+    },
+    "smithy.example#Operation1": {
+      "type": "operation",
+      "input": {
+        "target": "smithy.example#OperationInput"
+      },
+      "output": {
+        "target": "smithy.example#OperationOutput"
+      },
+      "errors": [
+        {
+          "target": "smithy.example#Default"
+        },
+        {
+          "target": "smithy.example#Redirect"
+        }
+      ],
+      "traits": {
+        "smithy.api#http": {
+          "method": "POST",
+          "uri": "/1"
+        }
+      }
+    },
+    "smithy.example#Default": {
+      "type": "structure",
+      "members": {
+        "testMethodResponseHeader": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpHeader": "test-method-response-header"
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#error": "client",
+        "smithy.api#httpError": 400
+      }
+    },
+    "smithy.example#Redirect": {
+      "type": "structure",
+      "members": {
+        "location": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpHeader": "Location"
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#error": "client",
+        "smithy.api#httpError": 302,
+        "smithy.api#suppress": ["HttpResponseCodeSemantics"]
+      }
+    },
+    "smithy.example#OperationInput": {
+      "type": "structure",
+      "members": {
+        "vendor": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpQuery": "vendor",
+            "smithy.api#required": {}
+          }
+        },
+        "version": {
+          "target": "smithy.api#Integer",
+          "traits": {
+            "smithy.api#httpQuery": "version",
+            "smithy.api#required": {}
+          }
+        }
+      }
+    },
+    "smithy.example#OperationOutput": {
+      "type": "structure",
+      "members": {
+        "requestId": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpHeader": "requestId"
+          }
+        }
+      }
+    }
+  }
+}

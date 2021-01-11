@@ -15,11 +15,16 @@
 
 package software.amazon.smithy.aws.apigateway.openapi;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.openapi.OpenApiConfig;
+import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.utils.IoUtils;
@@ -55,5 +60,26 @@ public class AddIntegrationsTest {
                 getClass().getResourceAsStream("integrations-without-credentials.openapi.json")));
 
         Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
+    public void throwsOnInvalidIntegrationTraitForHttpApi() {
+        Model model = Model.assembler(getClass().getClassLoader())
+                .discoverModels(getClass().getClassLoader())
+                .addImport(getClass().getResource("invalid-integration-for-http-api.json"))
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
+        ApiGatewayConfig apiGatewayConfig = new ApiGatewayConfig();
+        apiGatewayConfig.setApiGatewayType(ApiGatewayConfig.ApiType.HTTP);
+        config.putExtensions(apiGatewayConfig);
+        try {
+            OpenApiConverter.create().config(config).convertToNode(model);
+            Assertions.fail("Expected to throw");
+        } catch (OpenApiException e) {
+            assertThat(e.getMessage(), containsString("a payloadFormatVersion must be set on the integration"
+                    + " applied to the operation:"));
+        }
     }
 }

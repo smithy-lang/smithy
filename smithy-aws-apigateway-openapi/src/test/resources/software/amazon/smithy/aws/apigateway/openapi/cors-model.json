@@ -28,7 +28,8 @@
                     "type": "aws_proxy",
                     "credentials": "arn:aws:iam::123456789012:role/{serviceName}{operationName}LambdaRole",
                     "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:{serviceName}{operationName}/invocations",
-                    "httpMethod": "POST"
+                    "httpMethod": "POST",
+                    "payloadFormatVersion": "1.0"
                 }
             }
         },
