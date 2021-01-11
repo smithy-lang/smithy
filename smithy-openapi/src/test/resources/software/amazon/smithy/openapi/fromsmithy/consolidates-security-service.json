@@ -1,0 +1,79 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "smithy.example#Service": {
+            "type": "service",
+            "version": "2006-03-01",
+            "operations": [
+                {
+                    "target": "smithy.example#Operation1"
+                },
+                {
+                    "target": "smithy.example#Operation2"
+                },
+                {
+                    "target": "smithy.example#Operation3"
+                },
+                {
+                    "target": "smithy.example#UnauthenticatedOperation"
+                }
+            ],
+            "traits": {
+                "aws.protocols#restJson1": {},
+                "aws.auth#sigv4": {
+                    "name": "example"
+                },
+                "smithy.api#httpBasicAuth": {},
+                "smithy.api#httpDigestAuth": {},
+                "smithy.api#auth": [
+                    "aws.auth#sigv4",
+                    "smithy.api#httpDigestAuth"
+                ]
+            }
+        },
+        "smithy.example#Operation1": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/1",
+                    "method": "GET"
+                }
+            }
+        },
+        "smithy.example#Operation2": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/2",
+                    "method": "GET"
+                },
+                "smithy.api#auth": [
+                    "smithy.api#httpBasicAuth"
+                ]
+            }
+        },
+        "smithy.example#Operation3": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/3",
+                    "method": "GET"
+                },
+                "smithy.api#auth": [
+                    "smithy.api#httpBasicAuth",
+                    "aws.auth#sigv4"
+                ]
+            }
+        },
+        "smithy.example#UnauthenticatedOperation": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/4",
+                    "method": "GET"
+                },
+                "smithy.api#auth": []
+            }
+        }
+    }
+}

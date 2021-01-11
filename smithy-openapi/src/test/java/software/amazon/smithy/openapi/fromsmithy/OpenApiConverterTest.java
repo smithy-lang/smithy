@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.Collections;
 import java.util.List;
@@ -254,14 +255,14 @@ public class OpenApiConverterTest {
                 .convert(model);
 
         for (PathItem pathItem : result.getPaths().values()) {
-            Assertions.assertFalse(pathItem.getGet().isPresent());
-            Assertions.assertFalse(pathItem.getHead().isPresent());
-            Assertions.assertFalse(pathItem.getDelete().isPresent());
-            Assertions.assertFalse(pathItem.getPatch().isPresent());
-            Assertions.assertFalse(pathItem.getPost().isPresent());
-            Assertions.assertFalse(pathItem.getPut().isPresent());
-            Assertions.assertFalse(pathItem.getTrace().isPresent());
-            Assertions.assertFalse(pathItem.getOptions().isPresent());
+            assertFalse(pathItem.getGet().isPresent());
+            assertFalse(pathItem.getHead().isPresent());
+            assertFalse(pathItem.getDelete().isPresent());
+            assertFalse(pathItem.getPatch().isPresent());
+            assertFalse(pathItem.getPost().isPresent());
+            assertFalse(pathItem.getPut().isPresent());
+            assertFalse(pathItem.getTrace().isPresent());
+            assertFalse(pathItem.getOptions().isPresent());
         }
     }
 
@@ -351,6 +352,34 @@ public class OpenApiConverterTest {
 
         assertThat(result.getSecurity().get(0).keySet(), contains("foo_baz"));
         assertThat(result.getPaths().get("/2").getGet().get().getSecurity().get().get(0).keySet(), contains("foo_baz"));
+    }
+
+    @Test
+    public void consolidatesSameSecurityRequirements() {
+        // This service model has multiple auth types throughout it for both
+        // the top level and operation level security setting. Validate that,
+        // after they're set to use the same name, they're consolidated for
+        // being the same.
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("consolidates-security-service.json"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
+        OpenApi result = OpenApiConverter.create()
+                .addOpenApiMapper(new ConstantSecurity())
+                .config(config)
+                .convert(model);
+
+        assertThat(result.getSecurity().size(), equalTo(1));
+        assertThat(result.getSecurity().get(0).keySet(), contains("foo_baz"));
+        // This security matches the service, so isn't applied.
+        assertFalse(result.getPaths().get("/1").getGet().get().getSecurity().isPresent());
+        assertThat(result.getPaths().get("/2").getGet().get().getSecurity().get().size(), equalTo(1));
+        assertThat(result.getPaths().get("/2").getGet().get().getSecurity().get().get(0).keySet(), contains("foo_baz"));
+        assertThat(result.getPaths().get("/3").getGet().get().getSecurity().get().size(), equalTo(1));
+        assertThat(result.getPaths().get("/3").getGet().get().getSecurity().get().get(0).keySet(), contains("foo_baz"));
     }
 
     @Test

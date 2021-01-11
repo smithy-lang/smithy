@@ -18,9 +18,11 @@ package software.amazon.smithy.openapi.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
@@ -143,7 +145,9 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
         private final List<ServerObject> servers = new ArrayList<>();
         private Map<String, PathItem> paths = new TreeMap<>();
         private ComponentsObject components;
-        private final List<Map<String, List<String>>> security = new ArrayList<>();
+        // Use a set for security as duplicate entries are unnecessary (effectively
+        // represent an "A or A" security posture) and can cause downstream issues.
+        private final Set<Map<String, List<String>>> security = new LinkedHashSet<>();
         private final List<TagObject> tags = new ArrayList<>();
         private ExternalDocumentation externalDocs;
 
