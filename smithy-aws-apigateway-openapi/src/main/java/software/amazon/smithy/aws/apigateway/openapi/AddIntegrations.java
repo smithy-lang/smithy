@@ -129,8 +129,9 @@ final class AddIntegrations implements ApiGatewayMapper {
         // https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration.html
         // If the payloadFormatVersion has not been set on an integration and the apiGatewayType has been set to "HTTP",
         // the conversion fails.
-        if (!trait.getPayloadFormatVersion().isPresent() && context.getConfig().getExtensions(ApiGatewayConfig.class)
-                .getApiGatewayType().equals(ApiGatewayConfig.ApiType.HTTP)) {
+        ApiGatewayConfig.ApiType apiType = context.getConfig().getExtensions(ApiGatewayConfig.class)
+                .getApiGatewayType();
+        if (!trait.getPayloadFormatVersion().isPresent() && apiType.equals(ApiGatewayConfig.ApiType.HTTP)) {
             throw new OpenApiException("When using the HTTP apiGatewayType, a payloadFormatVersion must be set on the"
                     + " integration applied to the operation: " + operation.getId());
         }
