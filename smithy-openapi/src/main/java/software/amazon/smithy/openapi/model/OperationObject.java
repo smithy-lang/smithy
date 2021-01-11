@@ -19,9 +19,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
@@ -189,7 +191,9 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
         private final List<ParameterObject> parameters = new ArrayList<>();
         private final Map<String, ResponseObject> responses = new TreeMap<>();
         private final Map<String, CallbackObject> callbacks = new TreeMap<>();
-        private List<Map<String, List<String>>> security;
+        // Use a set for security as duplicate entries are unnecessary (effectively
+        // represent an "A or A" security posture) and can cause downstream issues.
+        private Set<Map<String, List<String>>> security;
         private final List<ServerObject> servers = new ArrayList<>();
         private String summary;
         private String description;
@@ -280,14 +284,14 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
         }
 
         public Builder security(Collection<Map<String, List<String>>> security) {
-            this.security = new ArrayList<>();
+            this.security = new LinkedHashSet<>();
             this.security.addAll(security);
             return this;
         }
 
         public Builder addSecurity(Map<String, List<String>> security) {
             if (this.security == null) {
-                this.security = new ArrayList<>();
+                this.security = new LinkedHashSet<>();
             }
             this.security.add(security);
             return this;
