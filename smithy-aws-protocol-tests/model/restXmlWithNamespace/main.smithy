@@ -52,6 +52,7 @@ apply SimpleScalarProperties @httpRequestTests([
                   <longValue>4</longValue>
                   <floatValue>5.5</floatValue>
                   <DoubleDribble>6.5</DoubleDribble>
+                  <Nested xmlns:xsi="https://example.com" xsi:someName="nestedAttrValue"></Nested>
               </SimpleScalarPropertiesInputOutput>
               """,
         bodyMediaType: "application/xml",
@@ -70,6 +71,9 @@ apply SimpleScalarProperties @httpRequestTests([
             longValue: 4,
             floatValue: 5.5,
             doubleValue: 6.5,
+            Nested: {
+                attrField: "nestedAttrValue",
+            },
         }
     }
 ])
@@ -91,6 +95,7 @@ apply SimpleScalarProperties @httpResponseTests([
                   <longValue>4</longValue>
                   <floatValue>5.5</floatValue>
                   <DoubleDribble>6.5</DoubleDribble>
+                  <Nested xmlns:xsi="https://example.com" xsi:someName="nestedAttrValue"></Nested>
               </SimpleScalarPropertiesInputOutput>
               """,
         bodyMediaType: "application/xml",
@@ -109,6 +114,9 @@ apply SimpleScalarProperties @httpResponseTests([
             longValue: 4,
             floatValue: 5.5,
             doubleValue: 6.5,
+            Nested: {
+                attrField: "nestedAttrValue",
+            },
         }
     }
 ])
@@ -126,6 +134,15 @@ structure SimpleScalarPropertiesInputOutput {
     longValue: Long,
     floatValue: Float,
 
+    Nested: NestedWithNamespace,
+
     @xmlName("DoubleDribble")
     doubleValue: Double,
+}
+
+@xmlNamespace(prefix: "xsi", uri: "https://example.com")
+structure NestedWithNamespace {
+    @xmlAttribute
+    @xmlName("someName")
+    attrField: String,
 }
