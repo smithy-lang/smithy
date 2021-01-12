@@ -132,8 +132,8 @@ final class AddIntegrations implements ApiGatewayMapper {
         ApiGatewayConfig.ApiType apiType = context.getConfig().getExtensions(ApiGatewayConfig.class)
                 .getApiGatewayType();
         if (!trait.getPayloadFormatVersion().isPresent() && apiType.equals(ApiGatewayConfig.ApiType.HTTP)) {
-            throw new OpenApiException("When using the HTTP apiGatewayType, a payloadFormatVersion must be set on the"
-                    + " integration applied to the operation: " + operation.getId());
+            throw new OpenApiException("When the 'apiGatewayType' OpenAPI conversion setting is 'HTTP', a "
+                    + "'payloadFormatVersion' must be set on the aws.apigateway#integration trait.");
         }
     }
 

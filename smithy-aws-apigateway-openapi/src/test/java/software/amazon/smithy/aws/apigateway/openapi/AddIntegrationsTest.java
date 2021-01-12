@@ -78,7 +78,7 @@ public class AddIntegrationsTest {
             OpenApiConverter.create().config(config).convertToNode(model);
         });
 
-        assertThat(thrown.getMessage(), containsString("a payloadFormatVersion must be set on the integration"
-                    + " applied to the operation:"));
+        assertThat(thrown.getMessage(), containsString("When the 'apiGatewayType' OpenAPI conversion setting is"
+                + " 'HTTP', a 'payloadFormatVersion' must be set on the aws.apigateway#integration trait."));
     }
 }
