@@ -106,6 +106,7 @@ final class AddIntegrations implements ApiGatewayMapper {
         if (integration instanceof MockIntegrationTrait) {
             integrationNode = integration.toNode().expectObjectNode().withMember("type", Node.from("mock"));
         } else if (integration instanceof IntegrationTrait) {
+            validateTraitConfiguration((IntegrationTrait) integration, context, shape);
             integrationNode = ((IntegrationTrait) integration).toExpandedNode(context.getService(), shape);
         } else {
             throw new OpenApiException("Unexpected integration trait: " + integration);
@@ -119,6 +120,21 @@ final class AddIntegrations implements ApiGatewayMapper {
                     .withMember(PASSTHROUGH_BEHAVIOR, passthroughBehavior.get());
         }
         return integrationNode;
+    }
+
+    private static void validateTraitConfiguration(IntegrationTrait trait,
+                                                   Context<? extends Trait> context,
+                                                   OperationShape operation) {
+        // For HTTP APIs, API Gateway requires that the payloadFormatVersion is set on integrations.
+        // https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration.html
+        // If the payloadFormatVersion has not been set on an integration and the apiGatewayType has been set to "HTTP",
+        // the conversion fails.
+        ApiGatewayConfig.ApiType apiType = context.getConfig().getExtensions(ApiGatewayConfig.class)
+                .getApiGatewayType();
+        if (!trait.getPayloadFormatVersion().isPresent() && apiType.equals(ApiGatewayConfig.ApiType.HTTP)) {
+            throw new OpenApiException("When the 'apiGatewayType' OpenAPI conversion setting is 'HTTP', a "
+                    + "'payloadFormatVersion' must be set on the aws.apigateway#integration trait.");
+        }
     }
 
     private ObjectNode updateIntegrationWithCors(
