@@ -143,6 +143,6 @@ structure SimpleScalarPropertiesInputOutput {
 @xmlNamespace(prefix: "xsi", uri: "https://example.com")
 structure NestedWithNamespace {
     @xmlAttribute
-    @xmlName("someName")
+    @xmlName("xsi:someName")
     attrField: String,
 }
