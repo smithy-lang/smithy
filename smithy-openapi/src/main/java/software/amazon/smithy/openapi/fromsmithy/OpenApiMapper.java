@@ -68,7 +68,8 @@ public interface OpenApiMapper {
      * @param model Model being converted.
      * @param config Configuration object to modify.
      */
-    default void updateDefaultSettings(Model model, OpenApiConfig config) {}
+    default void updateDefaultSettings(Model model, OpenApiConfig config) {
+    }
 
     /**
      * Updates an operation before invoking the plugin system on the contents
@@ -196,7 +197,8 @@ public interface OpenApiMapper {
      * @param context Conversion context.
      * @param builder OpenAPI builder to modify.
      */
-    default void before(Context<? extends Trait> context, OpenApi.Builder builder) {}
+    default void before(Context<? extends Trait> context, OpenApi.Builder builder) {
+    }
 
     /**
      * Updates a security scheme object.

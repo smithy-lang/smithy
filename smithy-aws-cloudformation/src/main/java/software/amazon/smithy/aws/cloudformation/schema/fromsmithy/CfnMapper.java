@@ -48,7 +48,8 @@ public interface CfnMapper {
      * @param context Conversion context.
      * @param builder ResourceSchema builder to modify.
      */
-    default void before(Context context, ResourceSchema.Builder builder) {}
+    default void before(Context context, ResourceSchema.Builder builder) {
+    }
 
     /**
      * Updates an ResourceSchema.Builder after converting the model.
