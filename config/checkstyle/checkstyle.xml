@@ -83,11 +83,6 @@
             <property name="allowMissingReturnTag" value="true"/>
             <property name="allowedAnnotations" value="Override, Test"/>
         </module>
-        <!-- <module name="MissingJavadocMethod">
-            <property name="scope" value="public"/>
-            <property name="allowedAnnotations" value="Override, Test"/>
-            <property name="minLineCount" value="2"/>
-        </module> -->
         <module name="JavadocStyle"/>
         <module name="NonEmptyAtclauseDescription"/>
         <module name="AtclauseOrder">
