@@ -405,9 +405,11 @@ public final class Cli {
         }
 
         @Override
-        public void flush() {}
+        public void flush() {
+        }
 
         @Override
-        public void close() {}
+        public void close() {
+        }
     }
 }
