@@ -33,7 +33,7 @@ dependencies {
 }
 
 application {
-    mainClassName = "software.amazon.smithy.cli.SmithyCli"
+    mainClass = "software.amazon.smithy.cli.SmithyCli"
     applicationName = "smithy"
     applicationDefaultJvmArgs = ["-XX:TieredStopAtLevel=2", "-Xshare:auto"]
 }

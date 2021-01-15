@@ -33,5 +33,5 @@ dependencies {
 
     // For use in validating schemas used in tests against the supplied
     // CloudFormation definition schema.
-    testCompile("com.github.everit-org.json-schema:org.everit.json.schema:1.12.1")
+    testImplementation("com.github.everit-org.json-schema:org.everit.json.schema:1.12.1")
 }
