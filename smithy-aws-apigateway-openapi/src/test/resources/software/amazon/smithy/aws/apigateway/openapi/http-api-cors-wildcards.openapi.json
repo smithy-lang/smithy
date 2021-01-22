@@ -23,6 +23,7 @@
                 "x-amazon-apigateway-integration": {
                     "credentials": "arn:aws:iam::123456789012:role/MyServiceListPayloadsLambdaRole",
                     "httpMethod": "POST",
+                    "payloadFormatVersion": "1.0",
                     "type": "aws_proxy",
                     "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:MyServiceListPayloads/invocations"
                 }
@@ -49,6 +50,7 @@
                 "x-amazon-apigateway-integration": {
                     "credentials": "arn:aws:iam::123456789012:role/MyServiceDeletePayloadLambdaRole",
                     "httpMethod": "POST",
+                    "payloadFormatVersion": "1.0",
                     "type": "aws_proxy",
                     "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:MyServiceDeletePayload/invocations"
                 }
@@ -87,6 +89,7 @@
                 "x-amazon-apigateway-integration": {
                     "credentials": "arn:aws:iam::123456789012:role/MyServiceGetPayloadLambdaRole",
                     "httpMethod": "POST",
+                    "payloadFormatVersion": "1.0",
                     "type": "aws_proxy",
                     "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:MyServiceGetPayload/invocations"
                 }
@@ -143,6 +146,7 @@
                 "x-amazon-apigateway-integration": {
                     "credentials": "arn:aws:iam::123456789012:role/MyServicePutPayloadLambdaRole",
                     "httpMethod": "POST",
+                    "payloadFormatVersion": "1.0",
                     "type": "aws_proxy",
                     "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:MyServicePutPayload/invocations"
                 }
