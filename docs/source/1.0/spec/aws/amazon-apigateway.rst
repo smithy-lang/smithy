@@ -678,7 +678,7 @@ Specifies mapping templates for a request payload of the specified media types.
       - Description
     * - ``<Media type>``
       - ``string``
-      - A `mapping template <mapping templates>`_.
+      - A `mapping templates`_.
 
 The following example sets mapping templates for a request payload of the
 ``application/json`` and ``application/xml`` media types.
@@ -831,7 +831,7 @@ media types.
       - Specifies a mapping template to transform the integration response
         body to the method response body for a given media type. For
         information about creating a mapping template, see
-        `mapping Templates`_. An example of a media type is
+        `mapping templates`_. An example of a media type is
         ``application/json``.
 
 The following example sets mapping templates for a request payload of the
@@ -898,4 +898,4 @@ integration response to two ``header`` parameters of the method response.
 .. _Choose an API Key Source: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-key-source.html
 .. _x-amazon-apigateway-api-key-source: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html
 .. _IntegrationResponse: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration-response/
-.. _mapping Templates: https://docs.aws.amazon.com/apigateway/latest/developerguide/models-mappings.html#models-mappings-mappings
+.. _mapping templates: https://docs.aws.amazon.com/apigateway/latest/developerguide/models-mappings.html#models-mappings-mappings
