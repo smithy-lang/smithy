@@ -398,7 +398,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         responseBuilder.description(String.format("%s %s response", responseName, statusCode));
         createResponseHeaderParameters(context, operationOrError)
                 .forEach((k, v) -> responseBuilder.putHeader(k, Ref.local(v)));
-        addResponseContent(context, bindingIndex, eventStreamIndex, responseBuilder, statusCode, operationOrError);
+        addResponseContent(context, bindingIndex, eventStreamIndex, responseBuilder, operationOrError);
         return responseBuilder.build();
     }
 
@@ -416,7 +416,6 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             HttpBindingIndex bindingIndex,
             EventStreamIndex eventStreamIndex,
             ResponseObject.Builder responseBuilder,
-            String statusCode,
             Shape operationOrError
     ) {
         List<HttpBinding> payloadBindings = bindingIndex.getResponseBindings(
