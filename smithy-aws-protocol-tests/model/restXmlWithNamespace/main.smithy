@@ -134,13 +134,13 @@ structure SimpleScalarPropertiesInputOutput {
     longValue: Long,
     floatValue: Float,
 
+    @xmlNamespace(prefix: "xsi", uri: "https://example.com")
     Nested: NestedWithNamespace,
 
     @xmlName("DoubleDribble")
     doubleValue: Double,
 }
 
-@xmlNamespace(prefix: "xsi", uri: "https://example.com")
 structure NestedWithNamespace {
     @xmlAttribute
     @xmlName("xsi:someName")
