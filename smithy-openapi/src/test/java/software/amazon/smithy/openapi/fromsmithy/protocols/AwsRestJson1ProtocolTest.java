@@ -94,4 +94,29 @@ public class AwsRestJson1ProtocolTest {
             Node.assertEquals(result, expectedNode);
         }
     }
+
+    @Test
+    public void canRemoveNonAlphaNumericDocumentNames() {
+        String smithy = "non-alphanumeric-content-names.json";
+        Model model = Model.assembler()
+                .addImport(getClass().getResource(smithy))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
+        config.setAlphanumericOnlyRefs(true);
+        OpenApi result = OpenApiConverter.create()
+                .config(config)
+                .convert(model);
+        String openApiModel = smithy.replace(".json", ".openapi.json");
+        InputStream openApiStream = getClass().getResourceAsStream(openApiModel);
+
+        if (openApiStream == null) {
+            LOGGER.warning("OpenAPI model not found for test case: " + openApiModel);
+        } else {
+            Node expectedNode = Node.parse(IoUtils.toUtf8String(openApiStream));
+            Node.assertEquals(result, expectedNode);
+        }
+    }
 }

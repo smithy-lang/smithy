@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.knowledge.EventStreamIndex;
 import software.amazon.smithy.model.knowledge.EventStreamInfo;
@@ -67,6 +68,7 @@ import software.amazon.smithy.openapi.model.ResponseObject;
 abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<T> {
 
     private static final String AWS_EVENT_STREAM_CONTENT_TYPE = "application/vnd.amazon.eventstream";
+    private static final Pattern NON_ALPHA_NUMERIC = Pattern.compile("[^A-Za-z0-9]");
 
     /** The type of message being created. */
     enum MessageType { REQUEST, RESPONSE, ERROR }
@@ -326,7 +328,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
 
         // Synthesize a schema for the body of the request.
         Schema schema = createDocumentSchema(context, operation, bindings, MessageType.REQUEST);
-        String synthesizedName = operation.getId().getName() + "RequestContent";
+        String synthesizedName = stripNonAlphaNumericCharsIfNecessary(context, operation.getId().getName())
+                + "RequestContent";
         String pointer = context.putSynthesizedSchema(synthesizedName, schema);
         MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
                 .schema(Schema.builder().ref(pointer).build())
@@ -391,7 +394,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             Shape operationOrError
     ) {
         ResponseObject.Builder responseBuilder = ResponseObject.builder();
-        responseBuilder.description(String.format("%s %s response", operationOrError.getId().getName(), statusCode));
+        String responseName = stripNonAlphaNumericCharsIfNecessary(context, operationOrError.getId().getName());
+        responseBuilder.description(String.format("%s %s response", responseName, statusCode));
         createResponseHeaderParameters(context, operationOrError)
                 .forEach((k, v) -> responseBuilder.putHeader(k, Ref.local(v)));
         addResponseContent(context, bindingIndex, eventStreamIndex, responseBuilder, statusCode, operationOrError);
@@ -526,12 +530,19 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         //
         // **NOTE: this same blurb applies to why we do this on input.**
         Schema schema = createDocumentSchema(context, operationOrError, bindings, messageType);
-        String synthesizedName = operationOrError.getId().getName() + "ResponseContent";
+        String synthesizedName = stripNonAlphaNumericCharsIfNecessary(context, operationOrError.getId().getName())
+                + "ResponseContent";
         String pointer = context.putSynthesizedSchema(synthesizedName, schema);
         MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
                 .schema(Schema.builder().ref(pointer).build())
                 .build();
 
         responseBuilder.putContent(mediaType, mediaTypeObject);
+    }
+
+    private String stripNonAlphaNumericCharsIfNecessary(Context<T> context, String name) {
+        return context.getConfig().getAlphanumericOnlyRefs()
+                ? NON_ALPHA_NUMERIC.matcher(name).replaceAll("")
+                : name;
     }
 }
