@@ -1,7 +1,8 @@
 package software.amazon.smithy.openapi.fromsmithy.protocols;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.InputStream;
-import java.util.logging.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,7 +17,6 @@ import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.utils.IoUtils;
 
 public class AwsRestJson1ProtocolTest {
-    private static final Logger LOGGER = Logger.getLogger(AwsRestJson1ProtocolTest.class.getName());
 
     @ParameterizedTest
     @ValueSource(strings = {
@@ -46,7 +46,7 @@ public class AwsRestJson1ProtocolTest {
         InputStream openApiStream = getClass().getResourceAsStream(openApiModel);
 
         if (openApiStream == null) {
-            LOGGER.warning("OpenAPI model not found for test case: " + openApiModel);
+            fail("OpenAPI model not found for test case: " + openApiModel);
         } else {
             Node expectedNode = Node.parse(IoUtils.toUtf8String(openApiStream));
             Node.assertEquals(result, expectedNode);
@@ -88,7 +88,7 @@ public class AwsRestJson1ProtocolTest {
         InputStream openApiStream = getClass().getResourceAsStream(openApiModel);
 
         if (openApiStream == null) {
-            LOGGER.warning("OpenAPI model not found for test case: " + openApiModel);
+            fail("OpenAPI model not found for test case: " + openApiModel);
         } else {
             Node expectedNode = Node.parse(IoUtils.toUtf8String(openApiStream));
             Node.assertEquals(result, expectedNode);
@@ -113,7 +113,7 @@ public class AwsRestJson1ProtocolTest {
         InputStream openApiStream = getClass().getResourceAsStream(openApiModel);
 
         if (openApiStream == null) {
-            LOGGER.warning("OpenAPI model not found for test case: " + openApiModel);
+            fail("OpenAPI model not found for test case: " + openApiModel);
         } else {
             Node expectedNode = Node.parse(IoUtils.toUtf8String(openApiStream));
             Node.assertEquals(result, expectedNode);
