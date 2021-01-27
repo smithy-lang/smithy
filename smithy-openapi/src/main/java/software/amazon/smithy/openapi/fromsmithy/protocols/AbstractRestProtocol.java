@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.knowledge.EventStreamIndex;
@@ -69,6 +70,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
 
     private static final String AWS_EVENT_STREAM_CONTENT_TYPE = "application/vnd.amazon.eventstream";
     private static final Pattern NON_ALPHA_NUMERIC = Pattern.compile("[^A-Za-z0-9]");
+
+    private static final Logger LOGGER = Logger.getLogger(AbstractRestProtocol.class.getName());
 
     /** The type of message being created. */
     enum MessageType { REQUEST, RESPONSE, ERROR }
@@ -540,8 +543,11 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     }
 
     private String stripNonAlphaNumericCharsIfNecessary(Context<T> context, String name) {
-        return context.getConfig().getAlphanumericOnlyRefs()
-                ? NON_ALPHA_NUMERIC.matcher(name).replaceAll("")
-                : name;
+        String alphanumericOnly = NON_ALPHA_NUMERIC.matcher(name).replaceAll("");
+        if (context.getConfig().getAlphanumericOnlyRefs() && !alphanumericOnly.equals(name)) {
+            LOGGER.info("Removing non-alphanumeric characters from " + name);
+            return alphanumericOnly;
+        }
+        return name;
     }
 }
