@@ -1,0 +1,78 @@
+{
+  "smithy": "1.0",
+  "shapes": {
+    "smithy.example#Service": {
+      "type": "service",
+      "version": "2006-03-01",
+      "operations": [
+        {
+          "target": "smithy.example#_CreateDocument"
+        }
+      ],
+      "traits": {
+        "aws.protocols#restJson1": {}
+      }
+    },
+    "smithy.example#_CreateDocument": {
+      "type": "operation",
+      "input": {
+        "target": "smithy.example#_CreateDocumentInputOutput"
+      },
+      "output": {
+        "target": "smithy.example#_CreateDocumentInputOutput"
+      },
+      "errors": [
+        {
+          "target": "smithy.example#_CreateDocumentError"
+        }
+      ],
+      "traits": {
+        "smithy.api#http": {
+          "uri": "/document",
+          "method": "POST"
+        }
+      }
+    },
+    "smithy.example#_CreateDocumentInputOutput": {
+      "type": "structure",
+      "members": {
+        "abc": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpQuery": "ABC"
+          }
+        },
+        "def": {
+          "target": "smithy.api#Integer"
+        },
+        "hij": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpHeader": "X-Hij1"
+          }
+        }
+      }
+    },
+    "smithy.example#_CreateDocumentError": {
+      "type": "structure",
+      "members": {
+        "abc": {
+          "target": "smithy.api#String"
+        },
+        "def": {
+          "target": "smithy.api#Integer"
+        },
+        "hij": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpHeader": "X-Hij2"
+          }
+        }
+      },
+      "traits": {
+        "smithy.api#error": "client",
+        "smithy.api#httpError": 400
+      }
+    }
+  }
+}

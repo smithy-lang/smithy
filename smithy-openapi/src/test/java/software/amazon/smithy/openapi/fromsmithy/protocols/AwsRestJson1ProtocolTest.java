@@ -1,7 +1,8 @@
 package software.amazon.smithy.openapi.fromsmithy.protocols;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.InputStream;
-import java.util.logging.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,7 +17,6 @@ import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.utils.IoUtils;
 
 public class AwsRestJson1ProtocolTest {
-    private static final Logger LOGGER = Logger.getLogger(AwsRestJson1ProtocolTest.class.getName());
 
     @ParameterizedTest
     @ValueSource(strings = {
@@ -46,7 +46,7 @@ public class AwsRestJson1ProtocolTest {
         InputStream openApiStream = getClass().getResourceAsStream(openApiModel);
 
         if (openApiStream == null) {
-            LOGGER.warning("OpenAPI model not found for test case: " + openApiModel);
+            fail("OpenAPI model not found for test case: " + openApiModel);
         } else {
             Node expectedNode = Node.parse(IoUtils.toUtf8String(openApiStream));
             Node.assertEquals(result, expectedNode);
@@ -88,7 +88,32 @@ public class AwsRestJson1ProtocolTest {
         InputStream openApiStream = getClass().getResourceAsStream(openApiModel);
 
         if (openApiStream == null) {
-            LOGGER.warning("OpenAPI model not found for test case: " + openApiModel);
+            fail("OpenAPI model not found for test case: " + openApiModel);
+        } else {
+            Node expectedNode = Node.parse(IoUtils.toUtf8String(openApiStream));
+            Node.assertEquals(result, expectedNode);
+        }
+    }
+
+    @Test
+    public void canRemoveNonAlphaNumericDocumentNames() {
+        String smithy = "non-alphanumeric-content-names.json";
+        Model model = Model.assembler()
+                .addImport(getClass().getResource(smithy))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
+        config.setAlphanumericOnlyRefs(true);
+        OpenApi result = OpenApiConverter.create()
+                .config(config)
+                .convert(model);
+        String openApiModel = smithy.replace(".json", ".openapi.json");
+        InputStream openApiStream = getClass().getResourceAsStream(openApiModel);
+
+        if (openApiStream == null) {
+            fail("OpenAPI model not found for test case: " + openApiModel);
         } else {
             Node expectedNode = Node.parse(IoUtils.toUtf8String(openApiStream));
             Node.assertEquals(result, expectedNode);
