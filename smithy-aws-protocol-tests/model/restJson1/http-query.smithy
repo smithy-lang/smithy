@@ -246,17 +246,32 @@ operation IgnoreQueryParamsInResponse {
 apply IgnoreQueryParamsInResponse @httpResponseTests([
     {
         id: "RestJsonIgnoreQueryParamsInResponse",
-        documentation: "Query parameters must be ignored when serializing the output of an operation",
+        documentation: """
+                Query parameters must be ignored when serializing the output
+                of an operation. As of January 2021, server implementations
+                are expected to respond with a JSON object regardless of
+                if the output parameters are empty.""",
         protocol: restJson1,
         code: 200,
         headers: {
             "Content-Type": "application/json"
         },
+        body: "{}",
+        bodyMediaType: "application/json",
+        params: {}
+    },
+    {
+        id: "RestJsonIgnoreQueryParamsInResponseNoPayload",
+        documentation: """
+                This test is similar to RestJsonIgnoreQueryParamsInResponse,
+                but it ensures that clients gracefully handle responses from
+                the server that do not serialize an empty JSON object.""",
+        protocol: restJson1,
+        code: 200,
         body: "",
-        bodyMediaType: "json",
-        params: {
-        }
-    }
+        params: {},
+        appliesTo: "client",
+    },
 ])
 
 structure IgnoreQueryParamsInResponseOutput {

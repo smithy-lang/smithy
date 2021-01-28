@@ -28,22 +28,40 @@ operation GreetingWithErrors {
 apply GreetingWithErrors @httpResponseTests([
     {
         id: "RestJsonGreetingWithErrors",
-        documentation: "Ensures that operations with errors successfully know how to deserialize the successful response",
+        documentation: """
+                Ensures that operations with errors successfully know how
+                to deserialize a successful response. As of January 2021,
+                server implementations are expected to respond with a
+                JSON object regardless of if the output parameters are
+                empty.""",
         protocol: restJson1,
         code: 200,
-        body: """
-              {
-                  "greeting": "Hello"
-              }""",
+        body: "{}",
         bodyMediaType: "application/json",
         headers: {
-            "Content-Type": "application/json",
             "X-Greeting": "Hello",
         },
         params: {
             greeting: "Hello"
         }
-    }
+    },
+    {
+        id: "RestJsonGreetingWithErrorsNoPayload",
+        documentation: """
+                This test is similar to RestJsonGreetingWithErrors, but it
+                ensures that clients can gracefully deal with a server
+                omitting a response payload.""",
+        protocol: restJson1,
+        code: 200,
+        body: "",
+        headers: {
+            "X-Greeting": "Hello",
+        },
+        params: {
+            greeting: "Hello"
+        },
+        appliesTo: "client"
+    },
 ])
 
 structure GreetingWithErrorsOutput {

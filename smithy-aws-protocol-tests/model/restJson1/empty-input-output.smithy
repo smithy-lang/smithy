@@ -20,19 +20,27 @@ operation NoInputAndNoOutput {}
 apply NoInputAndNoOutput @httpRequestTests([
     {
         id: "RestJsonNoInputAndNoOutput",
-        documentation: "No input serializes no payload",
+        documentation: """
+                No input serializes no payload. When clients do not need to
+                serialize any data in the payload, they should omit a payload
+                altogether.""",
         protocol: restJson1,
         method: "POST",
-        uri: "/NoInputAndNoOutput"
+        uri: "/NoInputAndNoOutput",
+        body: ""
     }
 ])
 
 apply NoInputAndNoOutput @httpResponseTests([
    {
        id: "RestJsonNoInputAndNoOutput",
-       documentation: "No output serializes no payload",
+       documentation: """
+            When an operation does not define output, the service will respond
+            with an empty payload, and may optionally include the content-type
+            header.""",
        protocol: restJson1,
-       code: 200
+       code: 200,
+       body: ""
    }
 ])
 
@@ -48,20 +56,42 @@ operation NoInputAndOutput {
 apply NoInputAndOutput @httpRequestTests([
     {
         id: "RestJsonNoInputAndOutput",
-        documentation: "No input serializes no payload",
+        documentation: """
+                No input serializes no payload. When clients do not need to
+                serialize any data in the payload, they should omit a payload
+                altogether.""",
         protocol: restJson1,
         method: "POST",
-        uri: "/NoInputAndOutputOutput"
+        uri: "/NoInputAndOutputOutput",
+        body: ""
     }
 ])
 
 apply NoInputAndOutput @httpResponseTests([
     {
-        id: "RestJsonNoInputAndOutput",
-        documentation: "Empty output serializes no payload",
+        id: "RestJsonNoInputAndOutputWithJson",
+        documentation: """
+                Operations that define output and do not bind anything to
+                the payload return a JSON object in the response.""",
         protocol: restJson1,
-        code: 200
-    }
+        code: 200,
+        body: "{}",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+    },
+    {
+       id: "RestJsonNoInputAndOutputNoPayload",
+       documentation: """
+            This test is similar to RestJsonNoInputAndOutputWithJson, but
+            it ensures that clients can gracefully handle responses that
+            omit a JSON payload.""",
+       protocol: restJson1,
+       code: 200,
+       body: "",
+       appliesTo: "client",
+   }
 ])
 
 structure NoInputAndOutputOutput {}
@@ -79,31 +109,56 @@ operation EmptyInputAndEmptyOutput {
 apply EmptyInputAndEmptyOutput @httpRequestTests([
     {
         id: "RestJsonEmptyInputAndEmptyOutput",
-        documentation: "Empty input serializes no payload",
+        documentation: """
+                Clients should not serialize a JSON payload when no parameters
+                are given that are sent in the body. A service will tolerate
+                clients that omit a payload or that send a JSON object.""",
         protocol: restJson1,
         method: "POST",
         uri: "/EmptyInputAndEmptyOutput",
         body: "",
-        bodyMediaType: "application/json"
+    },
+    {
+        id: "RestJsonEmptyInputAndEmptyOutputWithJson",
+        documentation: """
+                Similar to RestJsonEmptyInputAndEmptyOutput, but ensures that
+                services gracefully handles receiving a JSON object.""",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/EmptyInputAndEmptyOutput",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: "{}",
+        bodyMediaType: "application/json",
+        appliesTo: "server",
     },
 ])
 
 apply EmptyInputAndEmptyOutput @httpResponseTests([
     {
         id: "RestJsonEmptyInputAndEmptyOutput",
-        documentation: "Empty output serializes no payload",
+        documentation: """
+                As of January 2021, server implementations are expected to
+                respond with a JSON object regardless of if the output
+                parameters are empty.""",
+        protocol: restJson1,
+        code: 200,
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: "{}",
+        bodyMediaType: "application/json",
+    },
+    {
+        id: "RestJsonEmptyInputAndEmptyOutputJsonObjectOutput",
+        documentation: """
+                This test ensures that clients can gracefully handle
+                situations where a service omits a JSON payload entirely.""",
         protocol: restJson1,
         code: 200,
         body: "",
-        bodyMediaType: "application/json"
-    },
-    {
-        id: "RestJsonEmptyInputAndEmptyJsonObjectOutput",
-        documentation: "Empty output serializes no payload",
-        protocol: restJson1,
-        code: 200,
-        body: "{}",
-        bodyMediaType: "application/json"
+        appliesTo: "client",
     },
 ])
 
