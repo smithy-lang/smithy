@@ -545,7 +545,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     private String stripNonAlphaNumericCharsIfNecessary(Context<T> context, String name) {
         String alphanumericOnly = NON_ALPHA_NUMERIC.matcher(name).replaceAll("");
         if (context.getConfig().getAlphanumericOnlyRefs() && !alphanumericOnly.equals(name)) {
-            LOGGER.info("Removing non-alphanumeric characters from " + name);
+            LOGGER.info(() -> String.format("Removing non-alphanumeric characters from %s to assure compatibility with"
+                    + " vendors that only allow alphanumeric shape names.", name));
             return alphanumericOnly;
         }
         return name;
