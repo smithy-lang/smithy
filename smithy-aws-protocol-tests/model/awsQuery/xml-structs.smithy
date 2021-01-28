@@ -126,7 +126,8 @@ apply XmlEmptyBlobs @httpResponseTests([
         },
         params: {
             data: ""
-        }
+        },
+        appliesTo: "client",
     },
     {
         id: "QueryXmlEmptySelfClosedBlobs",
@@ -146,7 +147,8 @@ apply XmlEmptyBlobs @httpResponseTests([
         },
         params: {
             data: ""
-        }
+        },
+        appliesTo: "client",
     }
 ])
 

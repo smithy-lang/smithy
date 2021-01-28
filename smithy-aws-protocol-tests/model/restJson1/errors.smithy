@@ -155,6 +155,7 @@ apply FooError @httpResponseTests([
         headers: {
             "X-Amzn-Errortype": "FooError",
         },
+        appliesTo: "client",
     },
     {
         id: "RestJsonFooErrorUsingXAmznErrorTypeWithUri",
@@ -169,6 +170,7 @@ apply FooError @httpResponseTests([
         headers: {
             "X-Amzn-Errortype": "FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/",
         },
+        appliesTo: "client",
     },
     {
         id: "RestJsonFooErrorUsingXAmznErrorTypeWithUriAndNamespace",
@@ -180,6 +182,7 @@ apply FooError @httpResponseTests([
         headers: {
             "X-Amzn-Errortype": "aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/",
         },
+        appliesTo: "client",
     },
     {
         id: "RestJsonFooErrorUsingCode",
@@ -199,6 +202,7 @@ apply FooError @httpResponseTests([
                   "code": "FooError"
               }""",
         bodyMediaType: "application/json",
+        appliesTo: "client",
     },
     {
         id: "RestJsonFooErrorUsingCodeAndNamespace",
@@ -215,6 +219,7 @@ apply FooError @httpResponseTests([
                   "code": "aws.protocoltests.restjson#FooError"
               }""",
         bodyMediaType: "application/json",
+        appliesTo: "client",
     },
     {
         id: "RestJsonFooErrorUsingCodeUriAndNamespace",
@@ -232,6 +237,7 @@ apply FooError @httpResponseTests([
                   "code": "aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
               }""",
         bodyMediaType: "application/json",
+        appliesTo: "client",
     },
     {
         id: "RestJsonFooErrorWithDunderType",
@@ -246,6 +252,7 @@ apply FooError @httpResponseTests([
                   "__type": "FooError"
               }""",
         bodyMediaType: "application/json",
+        appliesTo: "client",
     },
     {
         id: "RestJsonFooErrorWithDunderTypeAndNamespace",
@@ -262,6 +269,7 @@ apply FooError @httpResponseTests([
                   "__type": "aws.protocoltests.restjson#FooError"
               }""",
         bodyMediaType: "application/json",
+        appliesTo: "client",
     },
     {
         id: "RestJsonFooErrorWithDunderTypeUriAndNamespace",
@@ -279,5 +287,6 @@ apply FooError @httpResponseTests([
                   "__type": "aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
               }""",
         bodyMediaType: "application/json",
+        appliesTo: "client",
     }
 ])

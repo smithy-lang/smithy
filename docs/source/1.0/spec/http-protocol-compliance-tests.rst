@@ -202,6 +202,21 @@ that support the following members:
       - ``string``
       - A description of the test and what is being asserted defined in
         CommonMark_.
+    * - tags
+      - ``[string]``
+      - Attaches a list of tags that allow test cases to be categorized and
+        grouped.
+    * - appliesTo
+      - ``string``, one of "client" or "server"
+      - Indicates that the test case is only to be implemented by "client" or
+        "server" implementations. This property is useful for identifying and
+        testing edge cases of clients and servers that are impossible or
+        undesirable to test in *both* client and server implementations. For
+        example, a "server" test might be useful to ensure a service can
+        gracefully receive a request that optionally contains a payload.
+
+        Is is assumed that test cases that do not define an ``appliesTo``
+        member are implemented by both client and server implementations.
 
 
 HTTP request example
@@ -410,6 +425,21 @@ structures that support the following members:
       - ``string``
       - A description of the test and what is being asserted defined in
         CommonMark_.
+    * - tags
+      - ``[string]``
+      - Attaches a list of tags that allow test cases to be categorized and
+        grouped.
+    * - appliesTo
+      - ``string``, one of "client" or "server"
+      - Indicates that the test case is only to be implemented by "client" or
+        "server" implementations. This property is useful for identifying and
+        testing edge cases of clients and servers that are impossible or
+        undesirable to test in *both* client and server implementations. For
+        example, a "client" test might be useful to ensure a client can
+        gracefully receive a response that optionally contains a payload.
+
+        Is is assumed that test cases that do not define an ``appliesTo``
+        member are implemented by both client and server implementations.
 
 
 HTTP response example

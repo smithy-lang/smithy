@@ -284,7 +284,8 @@ apply NullAndEmptyHeadersClient @httpRequestTests([
             a: null,
             b: "",
             c: [],
-        }
+        },
+        appliesTo: "client",
     },
 ])
 
@@ -309,7 +310,8 @@ apply NullAndEmptyHeadersServer @httpResponseTests([
             a: null,
             b: "",
             c: [],
-        }
+        },
+        appliesTo: "server",
     },
 ])
 
