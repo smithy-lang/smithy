@@ -29,6 +29,7 @@ apply HttpPayloadTraits @httpRequestTests([
         uri: "/HttpPayloadTraits",
         body: "blobby blob blob",
         headers: {
+            "Content-Type": "application/octet-stream",
             "X-Foo": "Foo"
         },
         requireHeaders: [
