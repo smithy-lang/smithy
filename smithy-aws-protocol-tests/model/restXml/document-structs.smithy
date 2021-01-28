@@ -251,7 +251,8 @@ apply XmlEmptyStrings @httpRequestTests([
            },
            params: {
                emptyString: "",
-           }
+           },
+           appliesTo: "client",
        }
 ])
 
@@ -272,7 +273,8 @@ apply XmlEmptyStrings @httpResponseTests([
         },
         params: {
             emptyString: ""
-        }
+        },
+        appliesTo: "client",
     },
     {
         id: "XmlEmptySelfClosedStrings",
@@ -290,7 +292,8 @@ apply XmlEmptyStrings @httpResponseTests([
         },
         params: {
             emptyString: ""
-        }
+        },
+        appliesTo: "client",
     }
 ])
 
@@ -373,7 +376,8 @@ apply XmlEmptyBlobs @httpResponseTests([
         },
         params: {
             data: ""
-        }
+        },
+        appliesTo: "client",
     },
     {
         id: "XmlEmptySelfClosedBlobs",
@@ -391,7 +395,8 @@ apply XmlEmptyBlobs @httpResponseTests([
         },
         params: {
             data: ""
-        }
+        },
+        appliesTo: "client",
     }
 ])
 

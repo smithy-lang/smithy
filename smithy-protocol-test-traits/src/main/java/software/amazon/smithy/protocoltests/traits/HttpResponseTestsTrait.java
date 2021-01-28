@@ -16,6 +16,7 @@
 package software.amazon.smithy.protocoltests.traits;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
@@ -56,6 +57,23 @@ public final class HttpResponseTestsTrait extends AbstractTrait {
 
     public List<HttpResponseTestCase> getTestCases() {
         return testCases;
+    }
+
+    /**
+     * Gets all test cases that apply to a client or server.
+     *
+     * <p>Test cases that define an {@code appliesTo} member are tests that
+     * should only be implemented by clients or servers. Is is assumed that
+     * test cases that do not define an {@code appliesTo} member are
+     * implemented by both client and server implementations.
+     *
+     * @param appliesTo The type of test case to retrieve.
+     * @return Returns the matching test cases.
+     */
+    public List<HttpResponseTestCase> getTestCasesFor(AppliesTo appliesTo) {
+        return testCases.stream()
+                .filter(test -> !test.getAppliesTo().filter(value -> value != appliesTo).isPresent())
+                .collect(Collectors.toList());
     }
 
     @Override

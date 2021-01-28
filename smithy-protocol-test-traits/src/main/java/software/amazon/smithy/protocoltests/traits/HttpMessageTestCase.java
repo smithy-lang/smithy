@@ -29,8 +29,9 @@ import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.Tagged;
 
-public abstract class HttpMessageTestCase implements ToNode {
+public abstract class HttpMessageTestCase implements ToNode, Tagged {
 
     private static final String ID = "id";
     private static final String PROTOCOL = "protocol";
@@ -43,6 +44,8 @@ public abstract class HttpMessageTestCase implements ToNode {
     private static final String HEADERS = "headers";
     private static final String FORBID_HEADERS = "forbidHeaders";
     private static final String REQUIRE_HEADERS = "requireHeaders";
+    private static final String TAGS = "tags";
+    private static final String APPLIES_TO = "appliesTo";
 
     private final String id;
     private final String documentation;
@@ -55,6 +58,8 @@ public abstract class HttpMessageTestCase implements ToNode {
     private final Map<String, String> headers;
     private final List<String> forbidHeaders;
     private final List<String> requireHeaders;
+    private final List<String> tags;
+    private final AppliesTo appliesTo;
 
     HttpMessageTestCase(Builder<?, ?> builder) {
         id = SmithyBuilder.requiredState(ID, builder.id);
@@ -68,6 +73,8 @@ public abstract class HttpMessageTestCase implements ToNode {
         headers = Collections.unmodifiableMap(new TreeMap<>(builder.headers));
         forbidHeaders = ListUtils.copyOf(builder.forbidHeaders);
         requireHeaders = ListUtils.copyOf(builder.requireHeaders);
+        tags = ListUtils.copyOf(builder.tags);
+        appliesTo = builder.appliesTo;
     }
 
     public String getId() {
@@ -114,6 +121,15 @@ public abstract class HttpMessageTestCase implements ToNode {
         return requireHeaders;
     }
 
+    @Override
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public Optional<AppliesTo> getAppliesTo() {
+        return Optional.ofNullable(appliesTo);
+    }
+
     static void updateBuilderFromNode(Builder<?, ?> builder, Node node) {
         ObjectNode o = node.expectObjectNode();
         builder.id(o.expectStringMember(ID).getValue());
@@ -124,6 +140,7 @@ public abstract class HttpMessageTestCase implements ToNode {
         o.getStringMember(BODY_MEDIA_TYPE).map(StringNode::getValue).ifPresent(builder::bodyMediaType);
         o.getObjectMember(PARAMS).ifPresent(builder::params);
         o.getObjectMember(VENDOR_PARAMS).ifPresent(builder::vendorParams);
+        o.getStringMember(APPLIES_TO).map(AppliesTo::fromNode).ifPresent(builder::appliesTo);
 
         o.getObjectMember(HEADERS).ifPresent(headers -> {
             headers.getStringMap().forEach((k, v) -> {
@@ -138,6 +155,10 @@ public abstract class HttpMessageTestCase implements ToNode {
         o.getArrayMember(REQUIRE_HEADERS).ifPresent(headers -> {
             builder.requireHeaders(headers.getElementsAs(StringNode::getValue));
         });
+
+        o.getArrayMember(TAGS).ifPresent(tags -> {
+            builder.tags(tags.getElementsAs(StringNode::getValue));
+        });
     }
 
     @Override
@@ -148,7 +169,8 @@ public abstract class HttpMessageTestCase implements ToNode {
                 .withOptionalMember(DOCUMENTATION, getDocumentation().map(Node::from))
                 .withOptionalMember(AUTH_SCHEME, getAuthScheme().map(ShapeId::toString).map(Node::from))
                 .withOptionalMember(BODY, getBody().map(Node::from))
-                .withOptionalMember(BODY_MEDIA_TYPE, getBodyMediaType().map(Node::from));
+                .withOptionalMember(BODY_MEDIA_TYPE, getBodyMediaType().map(Node::from))
+                .withOptionalMember(APPLIES_TO, getAppliesTo());
 
         if (!headers.isEmpty()) {
             builder.withMember(HEADERS, ObjectNode.fromStringMap(getHeaders()));
@@ -168,6 +190,10 @@ public abstract class HttpMessageTestCase implements ToNode {
 
         if (!vendorParams.isEmpty()) {
             builder.withMember(VENDOR_PARAMS, getVendorParams());
+        }
+
+        if (!tags.isEmpty()) {
+            builder.withMember(TAGS, ArrayNode.fromStrings(tags));
         }
 
         return builder.build();
@@ -201,7 +227,9 @@ public abstract class HttpMessageTestCase implements ToNode {
                 .authScheme(authScheme)
                 .protocol(protocol)
                 .body(body)
-                .bodyMediaType(bodyMediaType);
+                .bodyMediaType(bodyMediaType)
+                .tags(tags)
+                .appliesTo(appliesTo);
     }
 
     abstract static class Builder<B extends Builder, T extends HttpMessageTestCase> implements SmithyBuilder<T> {
@@ -214,9 +242,11 @@ public abstract class HttpMessageTestCase implements ToNode {
         private String bodyMediaType;
         private ObjectNode params = Node.objectNode();
         private ObjectNode vendorParams = Node.objectNode();
+        private AppliesTo appliesTo;
         private final Map<String, String> headers = new TreeMap<>();
         private final List<String> forbidHeaders = new ArrayList<>();
         private final List<String> requireHeaders = new ArrayList<>();
+        private final List<String> tags = new ArrayList<>();
 
         @SuppressWarnings("unchecked")
         public B id(String id) {
@@ -290,6 +320,19 @@ public abstract class HttpMessageTestCase implements ToNode {
         public B requireHeaders(List<String> requireHeaders) {
             this.requireHeaders.clear();
             this.requireHeaders.addAll(requireHeaders);
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B tags(List<String> tags) {
+            this.tags.clear();
+            this.tags.addAll(tags);
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B appliesTo(AppliesTo appliesTo) {
+            this.appliesTo = appliesTo;
             return (B) this;
         }
     }

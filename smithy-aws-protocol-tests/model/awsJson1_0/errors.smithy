@@ -121,6 +121,7 @@ apply FooError @httpResponseTests([
         headers: {
             "X-Amzn-Errortype": "FooError",
         },
+        appliesTo: "client",
     },
     {
         id: "AwsJson10FooErrorUsingXAmznErrorTypeWithUri",
@@ -135,6 +136,7 @@ apply FooError @httpResponseTests([
         headers: {
             "X-Amzn-Errortype": "FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/",
         },
+        appliesTo: "client",
     },
     {
         id: "AwsJson10FooErrorUsingXAmznErrorTypeWithUriAndNamespace",
@@ -146,6 +148,7 @@ apply FooError @httpResponseTests([
         headers: {
             "X-Amzn-Errortype": "aws.protocoltests.json10#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/",
         },
+        appliesTo: "client",
     },
     {
         id: "AwsJson10FooErrorUsingCode",
@@ -165,6 +168,7 @@ apply FooError @httpResponseTests([
                   "code": "FooError"
               }""",
         bodyMediaType: "application/json",
+        appliesTo: "client",
     },
     {
         id: "AwsJson10FooErrorUsingCodeAndNamespace",
@@ -181,6 +185,7 @@ apply FooError @httpResponseTests([
                   "code": "aws.protocoltests.json10#FooError"
               }""",
         bodyMediaType: "application/json",
+        appliesTo: "client",
     },
     {
         id: "AwsJson10FooErrorUsingCodeUriAndNamespace",
@@ -198,6 +203,7 @@ apply FooError @httpResponseTests([
                   "code": "aws.protocoltests.json10#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
               }""",
         bodyMediaType: "application/json",
+        appliesTo: "client",
     },
     {
         id: "AwsJson10FooErrorWithDunderType",
@@ -212,6 +218,7 @@ apply FooError @httpResponseTests([
                   "__type": "FooError"
               }""",
         bodyMediaType: "application/json",
+        appliesTo: "client",
     },
     {
         id: "AwsJson10FooErrorWithDunderTypeAndNamespace",
@@ -228,6 +235,7 @@ apply FooError @httpResponseTests([
                   "__type": "aws.protocoltests.json10#FooError"
               }""",
         bodyMediaType: "application/json",
+        appliesTo: "client",
     },
     {
         id: "AwsJson10FooErrorWithDunderTypeUriAndNamespace",
@@ -245,5 +253,6 @@ apply FooError @httpResponseTests([
                   "__type": "aws.protocoltests.json10#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
               }""",
         bodyMediaType: "application/json",
+        appliesTo: "client",
     }
 ])

@@ -314,7 +314,8 @@ apply QueryIdempotencyTokenAutoFill @httpRequestTests([
         body: "",
         queryParams: [
             "token=00000000-0000-4000-8000-000000000000",
-        ]
+        ],
+        appliesTo: "client",
     },
     {
         id: "RestJsonQueryIdempotencyTokenAutoFillIsSet",
@@ -328,7 +329,8 @@ apply QueryIdempotencyTokenAutoFill @httpRequestTests([
         ],
         params: {
             token: "00000000-0000-4000-8000-000000000000"
-        }
+        },
+        appliesTo: "client",
     }
 ])
 

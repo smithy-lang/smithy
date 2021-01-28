@@ -119,6 +119,15 @@ structure HttpRequestTestCase {
 
     /// A description of the test and what is being asserted.
     documentation: String,
+
+    /// Applies a list of tags to the test.
+    tags: NonEmptyStringList,
+
+    /// Indicates that the test case is only to be implemented by "client" or
+    /// "server" implementations. This property is useful for identifying and
+    /// testing edge cases of clients and servers that are impossible or
+    /// undesirable to test in *both* client and server implementations.
+    appliesTo: AppliesTo,
 }
 
 @private
@@ -211,4 +220,37 @@ structure HttpResponseTestCase {
 
     /// A description of the test and what is being asserted.
     documentation: String,
+
+    /// Applies a list of tags to the test.
+    tags: NonEmptyStringList,
+
+    /// Indicates that the test case is only to be implemented by "client" or
+    /// "server" implementations. This property is useful for identifying and
+    /// testing edge cases of clients and servers that are impossible or
+    /// undesirable to test in *both* client and server implementations.
+    appliesTo: AppliesTo,
 }
+
+@private
+list NonEmptyStringList {
+    member: NonEmptyString,
+}
+
+@private
+@length(min: 1)
+string NonEmptyString
+
+@private
+@enum([
+    {
+        value: "client",
+        name: "CLIENT",
+        documentation: "The test only applies to client implementations."
+    },
+    {
+        value: "server",
+        name: "SERVER",
+        documentation: "The test only applies to server implementations."
+    },
+])
+string AppliesTo

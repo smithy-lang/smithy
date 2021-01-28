@@ -252,7 +252,8 @@ apply XmlEmptyLists @httpRequestTests([
         params: {
             stringList: [],
             stringSet: [],
-        }
+        },
+        appliesTo: "client",
     }
 ])
 
@@ -275,7 +276,8 @@ apply XmlEmptyLists @httpResponseTests([
         params: {
             stringList: [],
             stringSet: [],
-        }
+        },
+        appliesTo: "client",
     }
 ])
 

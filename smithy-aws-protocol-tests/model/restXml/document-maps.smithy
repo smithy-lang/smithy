@@ -125,7 +125,8 @@ apply XmlEmptyMaps @httpRequestTests([
         },
         params: {
             myMap: {}
-        }
+        },
+        appliesTo: "client"
     }
 ])
 
@@ -146,7 +147,8 @@ apply XmlEmptyMaps @httpResponseTests([
         },
         params: {
             myMap: {}
-        }
+        },
+        appliesTo: "client",
     },
     {
         id: "XmlEmptySelfClosedMaps",
@@ -164,7 +166,8 @@ apply XmlEmptyMaps @httpResponseTests([
         },
         params: {
             myMap: {}
-        }
+        },
+        appliesTo: "client",
     }
 ])
 
