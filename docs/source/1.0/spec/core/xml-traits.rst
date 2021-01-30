@@ -1003,7 +1003,7 @@ The XML serialization is:
 
 .. code-block:: xml
 
-    <MyStructure xmlns="http//foo.com">
+    <MyStructure xmlns="http://foo.com">
         <foo>example</foo>
         <bar>example</bar>
     </MyStructure>
@@ -1024,7 +1024,7 @@ The XML serialization is:
 
 .. code-block:: xml
 
-    <MyStructure xmlns:baz="http//foo.com">
+    <MyStructure xmlns:baz="http://foo.com">
         <foo>example</foo>
         <baz:bar>example</baz:bar>
     </MyStructure>
