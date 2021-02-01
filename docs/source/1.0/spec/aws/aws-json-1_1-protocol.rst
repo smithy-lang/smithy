@@ -19,7 +19,7 @@ This specification defines the ``aws.protocols#awsJson1_1`` protocol.
 ----------------------------------
 
 Summary
-    Adds support for an HTTP protocol that sends POST requests and
+    Adds support for an HTTP protocol that sends "POST" requests and
     responses with JSON documents.
 Trait selector
     ``service``
@@ -56,9 +56,8 @@ See
             }
         }
 
-.. important::
-
-    This protocol only permits the :ref:`httpPayload-trait` to be applied to
-    members that target structures, documents, strings, blobs, or unions.
-
-*TODO: Add specifications, protocol examples, etc.*
+.. |quoted shape name| replace:: ``awsJson1_1``
+.. |protocol content type| replace:: ``application/x-amz-json-1.1``
+.. |protocol error type contents| replace:: :token:`shape name <identifier>`
+.. |protocol test link| replace:: https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/awsJson1_1
+.. include:: aws-json.rst.template
