@@ -92,7 +92,9 @@
                 },
                 "smithy.api#protocolDefinition": {
                     "traits": [
-                        "smithy.api#jsonName"
+                        "smithy.api#jsonName",
+                        "smithy.api#timestampFormat",
+                        "smithy.api#cors"
                     ]
                 },
                 "smithy.api#documentation": "An RPC-based protocol that sends JSON payloads. This protocol does not use HTTP binding traits."
@@ -114,7 +116,9 @@
                 },
                 "smithy.api#protocolDefinition": {
                     "traits": [
-                        "smithy.api#jsonName"
+                        "smithy.api#jsonName",
+                        "smithy.api#timestampFormat",
+                        "smithy.api#cors"
                     ]
                 },
                 "smithy.api#documentation": "An RPC-based protocol that sends JSON payloads. This protocol does not use HTTP binding traits."
