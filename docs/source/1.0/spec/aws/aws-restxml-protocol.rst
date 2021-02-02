@@ -201,7 +201,7 @@ that affect serialization:
 Content-Type
 ------------
 
-The ``aws.protocols#restXml`` protocol uses a default Content-Type
+The ``aws.protocols#restXml`` protocol uses a default ``Content-Type``
 of ``application/xml``.
 
 Input or output shapes that apply the :ref:`httpPayload-trait` on one of
@@ -223,8 +223,7 @@ with the ``httpPayload`` trait:
     * - ``blob``
       - ``application/octet-stream``
     * - ``document``
-      - Undefined. Document shapes are not recommended for use in XML based
-        protocols.
+      - Undefined. Document shapes are not supported in this protocol.
     * - ``structure``
       - ``application/xml``
     * - ``union``

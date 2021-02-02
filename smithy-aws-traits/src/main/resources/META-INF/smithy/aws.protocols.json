@@ -59,6 +59,10 @@
                 "smithy.api#protocolDefinition": {
                     "noInlineDocumentSupport": true,
                     "traits": [
+                        "smithy.api#cors",
+                        "smithy.api#endpoint",
+                        "smithy.api#hostLabel",
+                        "smithy.api#http",
                         "smithy.api#httpError",
                         "smithy.api#httpHeader",
                         "smithy.api#httpLabel",
