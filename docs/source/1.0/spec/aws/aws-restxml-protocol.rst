@@ -331,10 +331,10 @@ as defined in the ``aws.protocols#restXml`` protocol.
 Operation error serialization
 -----------------------------
 
-Error responses in the ``restXml`` protocol are wrapped in an XML element
-named ``ErrorResponse`` by default. All error structure members are serialized
-within this element, unless bound to another location with HTTP protocol
-bindings.
+Error responses in the ``restXml`` protocol are wrapped within an XML root
+node named ``ErrorResponse`` by default. A nested element, named ``Error``,
+contains the serialized error structure members, unless bound to another
+location with HTTP protocol bindings.
 
 Serialized error shapes MUST also contain an additional child element ``Code``
 that contains only the :token:`shape name <identifier>` of the error's
@@ -354,7 +354,7 @@ serialized in the response.
     </ErrorResponse>
 
 The ``noErrorWrapping`` setting of the ``restXml`` protocol trait disables
-using this additional nested XML element.
+using this additional nested XML element as the root node.
 
 .. code-block:: xml
 
