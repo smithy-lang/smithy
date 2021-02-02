@@ -140,10 +140,12 @@
                         "smithy.api#xmlAttribute",
                         "smithy.api#xmlFlattened",
                         "smithy.api#xmlName",
-                        "smithy.api#xmlNamespace"
+                        "smithy.api#xmlNamespace",
+                        "smithy.api#timestampFormat",
+                        "smithy.api#cors"
                     ]
                 },
-                "smithy.api#documentation": "An RPC-based protocol that sends query string requests and XML responses. This protocol does not use HTTP binding traits.",
+                "smithy.api#documentation": "An RPC-based protocol that sends 'POST' requests in the body as `x-www-form-urlencoded` strings and responses in XML documents. This protocol does not use HTTP binding traits.",
                 "smithy.api#deprecated": {}
             }
         },
