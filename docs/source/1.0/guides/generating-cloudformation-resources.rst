@@ -56,7 +56,7 @@ Resource Schemas from a Smithy model :ref:`using a buildscript dependency
 
 .. code-block:: kotlin
     :caption: build.gradle.kts
-    :name: smithy-build-gradle
+    :name: cfn-smithy-build-gradle
 
     plugins {
         java
@@ -437,7 +437,7 @@ Gradle:
 
 .. code-block:: kotlin
     :caption: build.gradle.kts
-    :name: code-build-gradle
+    :name: cfn-code-build-gradle
 
     buildscript {
         dependencies {

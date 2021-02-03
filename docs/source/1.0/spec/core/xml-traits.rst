@@ -26,6 +26,8 @@ however, protocols MAY choose to deviate from these recommendations
 if necessary.
 
 
+.. _xml-structure-and-union-serialization:
+
 Structure and union serialization
 =================================
 
@@ -202,6 +204,8 @@ The following table defines how simple types are serialized in XML documents.
             Document shapes are not recommended for use in XML based protocols.
 
 
+.. _xml-list-and-set-serialization:
+
 List and set serialization
 ==========================
 
@@ -368,6 +372,8 @@ The XML serialization of ``Choice`` is:
         <flat>example3</flat>
     </Choice>
 
+
+.. _xml-map-serialization:
 
 Map serialization
 =================

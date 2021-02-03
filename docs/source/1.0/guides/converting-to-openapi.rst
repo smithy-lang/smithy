@@ -111,7 +111,7 @@ specification from a Smithy model using a buildscript dependency:
 
 .. code-block:: kotlin
     :caption: build.gradle.kts
-    :name: smithy-build-gradle
+    :name: openapi-smithy-build-gradle
 
     plugins {
         java
@@ -1237,7 +1237,7 @@ shows how to install ``software.amazon.smithy:smithy-openapi`` through Gradle:
 
 .. code-block:: kotlin
     :caption: build.gradle.kts
-    :name: code-build-gradle
+    :name: openapi-code-build-gradle
 
     buildscript {
         dependencies {
