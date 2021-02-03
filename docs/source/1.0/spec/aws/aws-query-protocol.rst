@@ -83,7 +83,8 @@ that affect serialization:
     * - :ref:`xmlName <xmlName-trait>`
       - By default, the XML element names and form-urlencoded key segments used
         in serialized structures are the same as a structure member name. The
-        ``xmlName`` trait changes the XML element name to a custom value.
+        ``xmlName`` trait changes these names to a custom value.  See
+        :ref:`aws.protocols#awsQueryName-query-key-naming` for more information.
     * - :ref:`xmlNamespace <xmlNamespace-trait>`
       - Adds an xmlns namespace definition URI to XML element(s) generated
         for the targeted shape.
@@ -95,144 +96,198 @@ that affect serialization:
     This protocol does not support document types.
 
 
------------------
-Protocol Behavior
------------------
+.. |quoted shape name| replace:: ``awsQuery``
+.. |name resolution text| replace:: The :ref:`xmlName-trait` can be used to serialize a property using a custom name
+.. include:: aws-query-serialization.rst.template
 
-Every request for the ``awsQuery`` protocol MUST be sent to the
-root URL (``/``) using the HTTP "POST" method.
+.. _aws.protocols#awsQueryName-query-key-naming:
 
-The ``awsQuery`` protocol does not support custom HTTP bindings.
-:ref:`HTTP binding traits <http-traits>` MUST be ignored if they are present.
+Query key resolution
+--------------------
 
-The ``awsQuery`` protocol uses the following headers:
+The key component used to serialize a member in a request in ``awsQuery`` is
+resolved using the following process:
 
-.. list-table::
-    :header-rows: 1
-    :widths: 20 20 80
+1. Use the value of the :ref:`xmlName <xmlName-trait>` trait applied to the
+   member, if present.
+2. Use the default value for the member:
 
-    * - Header
-      - Required
-      - Description
-    * - ``Content-Type``
-      - true
-      - This header uses the static values of ``application/x-www-form-urlencoded``
-        for requests and ``text/xml`` for responses.
-    * - ``Content-Length``
-      - true
-      - The standard ``Content-Length`` header defined by
-        `RFC 7230 Section 3.3.2`_.
+   .. list-table::
+       :header-rows: 1
+       :widths: 50 50
+
+       * - Member location
+         - Default value
+       * - ``list`` member
+         - The string literal "member"
+       * - ``set`` member
+         - The string literal "member"
+       * - ``map`` key
+         - The string literal "key"
+       * - ``map`` value
+         - The string literal "value"
+       * - ``structure`` member
+         - The :token:`member name <shape_id_member>`
+       * - ``union`` member
+         - The :token:`member name <shape_id_member>`
 
 
----------------------
-Request serialization
----------------------
+Examples
+--------
 
-The ``awsQuery`` protocol serializes inputs in ``x-www-form-urlencoded``
-request bodies. All keys and values MUST be encoded according to :rfc:`3986`.
-Requests MUST have the following key value pairs added to the inputs in the
-serialized body:
+.. important::
 
-.. list-table::
-    :header-rows: 1
-    :widths: 30 70
+    These examples are non-exhaustive. See the :ref:`awsQuery-compliance-tests`
+    for a suite of compliance tests for the ``awsQuery`` protocol.
 
-    * - Key
-      - Value
-    * - ``Action``
-      - The name of the operation.
-    * - ``Version``
-      - The value of the :ref:`"version" property of the service <service>`.
 
-These, along with other input members, are serialized in the request body,
-concatenated with the following rules:
+Structures and Unions
+=====================
 
-* "&" is used to separate parameter key-value pairs.
-* "=" is used to separate parameter names from values.
-* "." is used to separate nested parameter name segments.
+|query aggregate text|
 
-x-www-form-urlencoded shape serialization
------------------------------------------
+For example, given the following:
 
-Simple shapes are serialized according to the following rules:
+.. code-block:: smithy
 
-.. list-table::
-    :header-rows: 1
-    :widths: 25 75
+    structure QueryStructuresInput {
+        foo: String,
 
-    * - Smithy type
-      - Request entity
-    * - ``blob``
-      - Text value that is base64 encoded.
-    * - ``boolean``
-      - Text value of either "true" or "false".
-    * - ``byte``
-      - Text value of the number.
-    * - ``short``
-      - Text value of the number.
-    * - ``integer``
-      - Text value of the number.
-    * - ``long``
-      - Text value of the number.
-    * - ``float``
-      - Text value of the number.
-    * - ``double``
-      - Text value of the number.
-    * - ``bigDecimal``
-      - Text value of the number, using scientific notation if an exponent is
-        needed. Unfortunately, many parsers will either truncate the value or be
-        unable to parse numbers that exceed the size of a double.
-    * - ``bigInteger``
-      - Text value of the number, using scientific notation if an exponent is
-        needed. Unfortunately, many parsers will either truncate the value or be
-        unable to parse numbers that exceed the size of a double.
-    * - ``string``
-      - UTF-8 value of the string.
-    * - ``timestamp``
-      - Text value of the timestamp. This protocol uses ``date-time`` as the
-        default serialization. However, the :ref:`timestampFormat <timestampFormat-trait>`
-        MAY be used to customize timestamp serialization.
-    * - ``document``
-      - Undefined. Document shapes are not supported in this protocol.
+        @xmlName("Custom")
+        bar: String,
 
-Aggregate shapes are serialized with additional segments for members appended
-to the input's key.
+        baz: MyStructure,
+    }
 
-.. list-table::
-    :header-rows: 1
-    :widths: 25 75
+    structure MyStructure {
+        temp: String,
+    }
 
-    * - Smithy type
-      - Request entity
-    * - ``list``
-      - Each value provided in the list is serialized as a separate key with
-        a "." separator, ``member``, a "." separator, and a ``1`` indexed
-        incrementing counter appended to the container's key. The :ref:`xmlName-trait`
-        can be used to serialize a property using a custom name instead of
-        ``member``. The :ref:`xmlFlattened-trait` can be used to unwrap the
-        values into a containing structure or union, with the key not
-        containing the initial "." separator and ``member`` segment.
-    * - ``set``
-      - A set is serialized identically as a ``list`` shape, but only contains
-        unique values.
-    * - ``map``
-      - Each key and value in each pair provided in the map is serialized as a
-        separate key with a "." separator, ``entry``, a "." separator, a ``1``
-        indexed incrementing counter, a "." separator, and a ``key`` or
-        ``value`` segment appended to the container's key. The :ref:`xmlName-trait`
-        can be used to serialize a property using custom names instead of
-        ``member``, ``key``, or ``value``. The :ref:`xmlFlattened-trait` can be
-        used to unwrap the values into a containing structure or union, with
-        the key not containing the initial "." separator and ``entry`` segment.
-    * - ``structure``
-      - Each member value provided for the structure is serialized as a
-        separate key with a "." separator and the member name appended to the
-        container's key. The :ref:`xmlName-trait` can be used to serialize a
-        property using a custom name.
-    * - ``union``
-      - A union is serialized identically as a ``structure`` shape, but only a
-        single member can be set to a non-null value.
+The ``x-www-form-urlencoded`` serialization is:
 
+.. code-block:: text
+
+    Action=QueryStructures
+    &Version=2020-07-02
+    &foo=example1
+    &Custom=example2
+    &baz.temp=example3
+
+
+Collections
+===========
+
+|query collection text|
+
+For example, given the following:
+
+.. code-block:: smithy
+
+    structure QueryListsInput {
+        ListArg: StringList,
+
+        @xmlFlattened
+        ComplexListArg: GreetingList,
+
+        // Notice that the xmlName on the targeted list member is ignored.
+        ListArgWithXmlNameMember: ListWithXmlName,
+
+        @xmlName("Hi")
+        ListArgWithXmlName: ListWithXmlName,
+    }
+
+    list ListWithXmlName {
+        @xmlName("item")
+        member: String
+    }
+
+    list StringList {
+        member: String
+    }
+
+    list GreetingList {
+        member: GreetingStruct
+    }
+
+    structure GreetingStruct {
+        hi: String,
+    }
+
+The ``x-www-form-urlencoded`` serialization is:
+
+.. code-block:: text
+
+    Action=QueryLists
+    &Version=2020-07-02
+    &ListArg.member.1=foo
+    &ListArg.member.2=bar
+    &ListArg.member.3=baz
+    &ComplexListArg.1.hi=hello
+    &ComplexListArg.2.hi=hola
+    &ListArgWithXmlNameMember.1=A
+    &ListArgWithXmlNameMember.2=B
+    &Hi.1=A
+    &Hi.2=B
+
+
+Maps
+====
+
+|query map text|
+
+For example, given the following:
+
+.. code-block:: smithy
+
+    structure QueryMapsInput {
+        MapArg: StringMap,
+
+        @xmlName("reNamed")
+        RenamedMapArg: StringMap,
+
+        ComplexMapArg: ComplexMap,
+
+        MapWithXmlMemberName: MapWithXmlName,
+    }
+
+    map StringMap {
+        key: String,
+        value: String
+    }
+
+    map ComplexMap {
+        key: String,
+        value: GreetingStruct,
+    }
+
+    map MapWithXmlName {
+        @xmlName("K")
+        key: String,
+
+        @xmlName("V")
+        value: String
+    }
+
+The ``x-www-form-urlencoded`` serialization is:
+
+.. code-block:: text
+
+    Action=QueryMaps
+    &Version=2020-07-02
+    &MapArg.entry.1.key=bar
+    &MapArg.entry.1.value=Bar
+    &MapArg.entry.2.key=foo
+    &MapArg.entry.2.value=Foo
+    &reNamed.entry.1.key=foo
+    &reNamed.entry.1.value=Foo
+    &ComplexMapArg.entry.1.key=bar
+    &ComplexMapArg.entry.1.value.hi=Bar
+    &ComplexMapArg.entry.2.key=foo
+    &ComplexMapArg.entry.2.value.hi=Foo
+    &MapWithXmlMemberName.entry.1.K=bar
+    &MapWithXmlMemberName.entry.1.V=Bar
+    &MapWithXmlMemberName.entry.2.K=foo
+    &MapWithXmlMemberName.entry.2.V=Foo
 
 ----------------------
 Response serialization
@@ -255,86 +310,10 @@ following is a sample response to an operation named ``XmlTest``.
         </XmlTestResult>
     </XmlTestResponse>
 
-
 XML shape serialization
 -----------------------
 
-.. list-table::
-    :header-rows: 1
-    :widths: 25 75
-
-    * - Smithy type
-      - XML entity
-    * - ``blob``
-      - XML text node with a value that is base64 encoded.
-    * - ``boolean``
-      - XML text node with a value either "true" or "false".
-    * - ``byte``
-      - XML text node with a value of the number.
-    * - ``short``
-      - XML text node with a value of the number.
-    * - ``integer``
-      - XML text node with a value of the number.
-    * - ``long``
-      - XML text node with a value of the number.
-    * - ``float``
-      - XML text node with a value of the number.
-    * - ``double``
-      - XML text node with a value of the number.
-    * - ``bigDecimal``
-      - XML text node with a value of the number, using scientific notation if
-        an exponent is needed. Unfortunately, many XML parsers will either
-        truncate the value or be unable to parse numbers that exceed the size
-        of a double.
-    * - ``bigInteger``
-      - XML text node with a value of the number, using scientific notation if
-        an exponent is needed. Unfortunately, many XML parsers will either
-        truncate the value or be unable to parse numbers that exceed the size
-        of a double.
-    * - ``string``
-      - XML text node with an XML-safe, UTF-8 value of the string.
-    * - ``timestamp``
-      - XML text node with a value of the timestamp. This protocol uses
-        ``date-time`` as the default serialization. However, the
-        :ref:`timestampFormat <timestampFormat-trait>` MAY be used to
-        customize timestamp serialization.
-    * - ``document``
-      - Undefined. Document shapes are not recommended for use in XML based
-        protocols.
-    * - ``list``
-      - XML element. Each value provided in the list is serialized as a nested
-        XML element with the name ``member``. The :ref:`xmlName-trait` can be
-        used to serialize a property using a custom name. The
-        :ref:`xmlFlattened-trait` can be used to unwrap the values into a
-        containing structure or union, with the value XML element using the
-        structure or union member name.
-    * - ``set``
-      - XML element. A set is serialized identically as a ``list`` shape,
-        but only contains unique values.
-    * - ``map``
-      - XML element. Each key-value pair provided in the map is serialized in
-        a nested XML element with the name ``entry`` that contains nested
-        elements ``key`` and ``value`` for the pair. The :ref:`xmlName-trait`
-        can be used to serialize key or value properties using a custom name,
-        it cannot be used to influence the ``entry`` name. The
-        :ref:`xmlFlattened-trait` can be used to unwrap the entries into a
-        containing structure or union, with the entry XML element using the
-        structure or union member name.
-    * - ``structure``
-      - XML element. Each member value provided for the structure is
-        serialized as a nested XML element where the element name is the
-        same as the member name. The :ref:`xmlName-trait` can be used to
-        serialize a property using a custom name. The :ref:`xmlAttribute-trait`
-        can be used to serialize a property in an attribute of the containing
-        element.
-    * - ``union``
-      - XML element. A union is serialized identically as a ``structure``
-        shape, but only a single member can be set to a non-null value.
-
-.. important::
-
-    See :ref:`serializing-xml-shapes` for comprehensive documentation,
-    including examples and behaviors when using multiple XML traits.
+.. include:: aws-xml-serialization.rst.template
 
 
 .. _awsQuery-errors:
@@ -365,6 +344,8 @@ serialized in the response.
     </ErrorResponse>
 
 
+.. _awsQuery-compliance-tests:
+
 -------------------------
 Protocol compliance tests
 -------------------------
@@ -377,4 +358,3 @@ the expected serialized HTTP requests and responses for each case.
 
 *TODO: Add event stream handling specifications.*
 
-.. _`RFC 7230 Section 3.3.2`: https://tools.ietf.org/html/rfc7230#section-3.3.2
