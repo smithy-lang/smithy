@@ -1,5 +1,10 @@
 $version: "1.0"
 
+metadata suppressions = [{
+    id: "HttpMethodSemantics",
+    namespace: "com.amazonaws.glacier",
+}]
+
 namespace com.amazonaws.glacier
 
 use aws.api#service
@@ -103,7 +108,7 @@ operation UploadArchive {
 
 @httpRequestTests([
     {
-        id: "GlacierChecksums",
+        id: "GlacierMultipartChecksums",
         documentation: "Glacier requires checksum headers that are cumbersome to provide.",
         protocol: restJson1,
         method: "POST",
