@@ -39,12 +39,14 @@ structure EnvironmentConfig {
     AWS_SECRET_ACCESS_KEY: String,
     AWS_DEFAULT_REGION: String,
     AWS_RETRY_MODE: RetryMode,
+    AWS_SESSION_TOKEN: String,
 }
 
 /// Config settings that can be set in the AWS config file.
 structure FileConfig {
-    access_key_id: String,
-    secret_access_key: String,
+    aws_access_key_id: String,
+    aws_secret_access_key: String,
+    aws_session_token: String,
     region: String,
     s3: S3Config,
     retry_mode: RetryMode,
@@ -59,8 +61,9 @@ structure S3Config {
 
 /// Configuration that is set on the constructed client.
 structure ClientConfig {
-    access_key_id: String,
-    secret_access_key: String,
+    aws_access_key_id: String,
+    aws_secret_access_key: String,
+    aws_session_token: String,
     region: String,
     s3: S3Config,
     retry_config: RetryConfig,
