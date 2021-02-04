@@ -115,7 +115,17 @@ structure HttpRequestTestCase {
     /// request. For example, some vendors might utilize environment
     /// variables, configuration files on disk, or other means to influence
     /// the serialization formats used by clients or servers.
+    ///
+    /// If a `vendorParamsShape` is set, these parameters MUST be compatible
+    /// with that shape's definition.
     vendorParams: Document,
+
+    /// A shape to be used to validate the `vendorParams` member contents.
+    ///
+    /// If set, the parameters in `vendorParams` MUST be compatible with this
+    /// shape's definition.
+    @idRef(failWhenMissing: true)
+    vendorParamsShape: String,
 
     /// A description of the test and what is being asserted.
     documentation: String,
@@ -216,7 +226,17 @@ structure HttpResponseTestCase {
     /// response. For example, some vendors might utilize environment
     /// variables, configuration files on disk, or other means to influence
     /// the serialization formats used by clients or servers.
+    ///
+    /// If a `vendorParamsShape` is set, these parameters MUST be compatible
+    /// with that shape's definition.
     vendorParams: Document,
+
+    /// A shape to be used to validate the `vendorParams` member contents.
+    ///
+    /// If set, the parameters in `vendorParams` MUST be compatible with this
+    /// shape's definition.
+    @idRef(failWhenMissing: true)
+    vendorParamsShape: String,
 
     /// A description of the test and what is being asserted.
     documentation: String,

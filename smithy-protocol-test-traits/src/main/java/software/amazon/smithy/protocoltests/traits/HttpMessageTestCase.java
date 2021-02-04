@@ -40,6 +40,7 @@ public abstract class HttpMessageTestCase implements ToNode, Tagged {
     private static final String BODY = "body";
     private static final String BODY_MEDIA_TYPE = "bodyMediaType";
     private static final String PARAMS = "params";
+    private static final String VENDOR_PARAMS_SHAPE = "vendorParamsShape";
     private static final String VENDOR_PARAMS = "vendorParams";
     private static final String HEADERS = "headers";
     private static final String FORBID_HEADERS = "forbidHeaders";
@@ -54,6 +55,7 @@ public abstract class HttpMessageTestCase implements ToNode, Tagged {
     private final String body;
     private final String bodyMediaType;
     private final ObjectNode params;
+    private final ShapeId vendorParamsShape;
     private final ObjectNode vendorParams;
     private final Map<String, String> headers;
     private final List<String> forbidHeaders;
@@ -69,6 +71,7 @@ public abstract class HttpMessageTestCase implements ToNode, Tagged {
         body = builder.body;
         bodyMediaType = builder.bodyMediaType;
         params = builder.params;
+        vendorParamsShape = builder.vendorParamsShape;
         vendorParams = builder.vendorParams;
         headers = Collections.unmodifiableMap(new TreeMap<>(builder.headers));
         forbidHeaders = ListUtils.copyOf(builder.forbidHeaders);
@@ -105,6 +108,10 @@ public abstract class HttpMessageTestCase implements ToNode, Tagged {
         return params;
     }
 
+    public Optional<ShapeId> getVendorParamsShape() {
+        return Optional.ofNullable(vendorParamsShape);
+    }
+
     public ObjectNode getVendorParams() {
         return vendorParams;
     }
@@ -139,6 +146,7 @@ public abstract class HttpMessageTestCase implements ToNode, Tagged {
         o.getStringMember(BODY).map(StringNode::getValue).ifPresent(builder::body);
         o.getStringMember(BODY_MEDIA_TYPE).map(StringNode::getValue).ifPresent(builder::bodyMediaType);
         o.getObjectMember(PARAMS).ifPresent(builder::params);
+        o.getStringMember(VENDOR_PARAMS_SHAPE).map(StringNode::expectShapeId).ifPresent(builder::vendorParamsShape);
         o.getObjectMember(VENDOR_PARAMS).ifPresent(builder::vendorParams);
         o.getStringMember(APPLIES_TO).map(AppliesTo::fromNode).ifPresent(builder::appliesTo);
 
@@ -170,7 +178,8 @@ public abstract class HttpMessageTestCase implements ToNode, Tagged {
                 .withOptionalMember(AUTH_SCHEME, getAuthScheme().map(ShapeId::toString).map(Node::from))
                 .withOptionalMember(BODY, getBody().map(Node::from))
                 .withOptionalMember(BODY_MEDIA_TYPE, getBodyMediaType().map(Node::from))
-                .withOptionalMember(APPLIES_TO, getAppliesTo());
+                .withOptionalMember(APPLIES_TO, getAppliesTo())
+                .withOptionalMember(VENDOR_PARAMS_SHAPE, getVendorParamsShape().map(ShapeId::toString).map(Node::from));
 
         if (!headers.isEmpty()) {
             builder.withMember(HEADERS, ObjectNode.fromStringMap(getHeaders()));
@@ -222,6 +231,7 @@ public abstract class HttpMessageTestCase implements ToNode, Tagged {
                 .forbidHeaders(forbidHeaders)
                 .requireHeaders(requireHeaders)
                 .params(params)
+                .vendorParamsShape(vendorParamsShape)
                 .vendorParams(vendorParams)
                 .documentation(documentation)
                 .authScheme(authScheme)
@@ -241,6 +251,7 @@ public abstract class HttpMessageTestCase implements ToNode, Tagged {
         private String body;
         private String bodyMediaType;
         private ObjectNode params = Node.objectNode();
+        private ShapeId vendorParamsShape;
         private ObjectNode vendorParams = Node.objectNode();
         private AppliesTo appliesTo;
         private final Map<String, String> headers = new TreeMap<>();
@@ -287,6 +298,12 @@ public abstract class HttpMessageTestCase implements ToNode, Tagged {
         @SuppressWarnings("unchecked")
         public B params(ObjectNode params) {
             this.params = params;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B vendorParamsShape(ShapeId vendorParamsShape) {
+            this.vendorParamsShape = vendorParamsShape;
             return (B) this;
         }
 
