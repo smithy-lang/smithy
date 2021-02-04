@@ -44,7 +44,7 @@ service Glacier {
         params: {
             accountId: "foo",
             vaultName: "bar",
-        }
+        },
     },
     {
         id: "GlacierChecksums",
@@ -61,7 +61,8 @@ service Glacier {
         params: {
             accountId: "foo",
             vaultName: "bar",
-        }
+        },
+        appliesTo: "client",
     },
     {
         id: "GlacierAccountId",
@@ -79,7 +80,8 @@ service Glacier {
         params: {
             accountId: "",
             vaultName: "bar",
-        }
+        },
+        appliesTo: "client",
     }
 ])
 @http(
@@ -116,7 +118,8 @@ operation UploadArchive {
             accountId: "foo",
             vaultName: "bar",
             uploadId: "baz",
-        }
+        },
+        appliesTo: "client",
     }
 ])
 @http(
