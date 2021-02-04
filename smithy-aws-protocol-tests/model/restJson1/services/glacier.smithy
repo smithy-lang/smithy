@@ -26,6 +26,7 @@ service Glacier {
     version: "2012-06-01",
     operations: [
         UploadArchive,
+        UploadMultipartPart,
     ],
 }
 
@@ -98,6 +99,43 @@ operation UploadArchive {
     ],
 }
 
+@httpRequestTests([
+    {
+        id: "GlacierChecksums",
+        documentation: "Glacier requires checksum headers that are cumbersome to provide.",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/foo/vaults/bar/multipart-uploads/baz",
+        headers: {
+            "X-Amz-Glacier-Version": "2012-06-01",
+            "X-Amz-Content-Sha256": "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
+            "X-Amz-Sha256-Tree-Hash": "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
+        },
+        body: "hello world",
+        params: {
+            accountId: "foo",
+            vaultName: "bar",
+            uploadId: "baz",
+        }
+    }
+])
+@http(
+    method: "PUT",
+    uri: "/{accountId}/vaults/{vaultName}/multipart-uploads/{uploadId}",
+    code: 204,
+)
+operation UploadMultipartPart {
+    input: UploadMultipartPartInput,
+    output: UploadMultipartPartOutput,
+    errors: [
+        InvalidParameterValueException,
+        MissingParameterValueException,
+        RequestTimeoutException,
+        ResourceNotFoundException,
+        ServiceUnavailableException,
+    ],
+}
+
 structure ArchiveCreationOutput {
     @httpHeader("Location")
     location: string,
@@ -160,6 +198,29 @@ structure UploadArchiveInput {
     checksum: string,
     @httpPayload
     body: Stream,
+}
+
+structure UploadMultipartPartInput {
+    @httpLabel
+    @required
+    accountId: string,
+    @httpLabel
+    @required
+    vaultName: string,
+    @httpLabel
+    @required
+    uploadId: string,
+    @httpHeader("x-amz-sha256-tree-hash")
+    checksum: string,
+    @httpHeader("Content-Range")
+    range: string,
+    @httpPayload
+    body: Stream,
+}
+
+structure UploadMultipartPartOutput {
+    @httpHeader("x-amz-sha256-tree-hash")
+    checksum: string,
 }
 
 @streaming
