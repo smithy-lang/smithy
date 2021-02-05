@@ -28,7 +28,8 @@ structure AwsConfig {
 /// variables or the AWS config file.
 structure ScopedConfig {
     environment: EnvironmentConfig,
-    file: FileConfig,
+    configFile: ConfigFile,
+    credentialsFile: ConfigFile,
     client: ClientConfig,
     operation: OperationConfig,
 }
@@ -40,10 +41,23 @@ structure EnvironmentConfig {
     AWS_DEFAULT_REGION: String,
     AWS_RETRY_MODE: RetryMode,
     AWS_SESSION_TOKEN: String,
+    AWS_PROFILE: String,
 }
 
-/// Config settings that can be set in the AWS config file.
-structure FileConfig {
+/// A shape representing a parsed config file, which is a map of profile names
+/// to configuration sets.
+map ConfigFile {
+    /// The top level key in a config file is the "profile", which is a string.
+    /// If a profile is not explicitly set, then implementations should check the
+    /// profile named "default".
+    key: String,
+    /// The value is a collection of settings.
+    value: FileConfigSettings,
+}
+
+/// Config settings that can be set in the AWS config / credentials file as
+/// part of a profile.
+structure FileConfigSettings {
     aws_access_key_id: String,
     aws_secret_access_key: String,
     aws_session_token: String,
@@ -67,6 +81,7 @@ structure ClientConfig {
     region: String,
     s3: S3Config,
     retry_config: RetryConfig,
+    aws_profile: String,
 }
 
 /// Configuration that is set for the scope of a single operation.
