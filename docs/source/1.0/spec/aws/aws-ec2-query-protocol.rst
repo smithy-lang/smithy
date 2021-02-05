@@ -180,6 +180,11 @@ that affect serialization:
       - Description
     * - :ref:`cors <cors-trait>`
       - Indicates that the service supports CORS.
+    * - :ref:`endpoint <endpoint-trait>`
+      - Configures a custom operation endpoint.
+    * - :ref:`hostLabel <hostLabel-trait>`
+      - Binds a top-level operation input structure member to a label in
+        the hostPrefix of an endpoint trait.
     * - :ref:`ec2QueryName <xmlName-trait>`
       - By default, the form-urlencoded key segments used in serialized
         structures are the same as a structure member name. The ``ec2QueryName``
