@@ -69,6 +69,7 @@ structure FileConfigSettings {
 
 /// Configuration specific to S3.
 structure S3Config {
+    addressing_style: S3AddressingStyle,
     use_accelerate_endpoint: Boolean,
     use_dualstack_endpoint: Boolean,
 }
@@ -94,6 +95,23 @@ structure RetryConfig {
     mode: RetryMode,
     max_attempts: Short,
 }
+
+/// Controls the S3 addressing bucket style.
+@enum([
+    {
+        value: "auto",
+        name: "AUTO",
+    },
+    {
+        value: "path",
+        name: "PATH",
+    },
+    {
+        value: "virtual",
+        name: "VIRTUAL",
+    }
+])
+string S3AddressingStyle
 
 /// Controls the strategy used for retries.
 @enum([
