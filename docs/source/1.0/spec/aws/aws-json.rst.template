@@ -13,6 +13,11 @@ that affect serialization:
       - Description
     * - :ref:`cors <cors-trait>`
       - Indicates that the service supports CORS.
+    * - :ref:`endpoint <endpoint-trait>`
+      - Configures a custom operation endpoint.
+    * - :ref:`hostLabel <hostLabel-trait>`
+      - Binds a top-level operation input structure member to a label in
+        the hostPrefix of an endpoint trait.
     * - :ref:`jsonName <jsonName-trait>`
       - By default, the JSON property names used in serialized structures are
         the same as a structure member name. The ``jsonName`` trait changes

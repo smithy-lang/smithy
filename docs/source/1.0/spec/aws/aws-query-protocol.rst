@@ -73,6 +73,11 @@ that affect serialization:
       - Description
     * - :ref:`cors <cors-trait>`
       - Indicates that the service supports CORS.
+    * - :ref:`endpoint <endpoint-trait>`
+      - Configures a custom operation endpoint.
+    * - :ref:`hostLabel <hostLabel-trait>`
+      - Binds a top-level operation input structure member to a label in
+        the hostPrefix of an endpoint trait.
     * - :ref:`xmlAttrubute <xmlAttribute-trait>`
       - Serializes an object property as an XML attribute rather than a nested
         XML element.

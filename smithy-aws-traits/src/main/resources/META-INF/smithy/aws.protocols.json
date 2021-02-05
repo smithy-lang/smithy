@@ -98,7 +98,9 @@
                     "traits": [
                         "smithy.api#jsonName",
                         "smithy.api#timestampFormat",
-                        "smithy.api#cors"
+                        "smithy.api#cors",
+                        "smithy.api#endpoint",
+                        "smithy.api#hostLabel"
                     ]
                 },
                 "smithy.api#documentation": "An RPC-based protocol that sends JSON payloads. This protocol does not use HTTP binding traits."
@@ -122,7 +124,9 @@
                     "traits": [
                         "smithy.api#jsonName",
                         "smithy.api#timestampFormat",
-                        "smithy.api#cors"
+                        "smithy.api#cors",
+                        "smithy.api#endpoint",
+                        "smithy.api#hostLabel"
                     ]
                 },
                 "smithy.api#documentation": "An RPC-based protocol that sends JSON payloads. This protocol does not use HTTP binding traits."
@@ -142,7 +146,9 @@
                         "smithy.api#xmlName",
                         "smithy.api#xmlNamespace",
                         "smithy.api#timestampFormat",
-                        "smithy.api#cors"
+                        "smithy.api#cors",
+                        "smithy.api#endpoint",
+                        "smithy.api#hostLabel"
                     ]
                 },
                 "smithy.api#documentation": "An RPC-based protocol that sends 'POST' requests in the body as `x-www-form-urlencoded` strings and responses in XML documents. This protocol does not use HTTP binding traits.",
@@ -164,7 +170,9 @@
                         "smithy.api#xmlName",
                         "smithy.api#xmlNamespace",
                         "smithy.api#timestampFormat",
-                        "smithy.api#cors"
+                        "smithy.api#cors",
+                        "smithy.api#endpoint",
+                        "smithy.api#hostLabel"
                     ]
                 },
                 "smithy.api#documentation": "An RPC-based protocol that sends 'POST' requests in the body as Amazon EC2 formatted `x-www-form-urlencoded` strings and responses in XML documents. This protocol does not use HTTP binding traits.",
