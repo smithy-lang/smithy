@@ -20,5 +20,9 @@ service JsonRpc10 {
         // Errors
         GreetingWithErrors,
         JsonUnions,
+
+        // @endpoint and @hostLabel trait tests
+        EndpointOperation,
+        EndpointWithHostLabelOperation,
     ]
 }

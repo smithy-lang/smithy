@@ -73,5 +73,9 @@ service RestJson {
 
         // Unions
         JsonUnions,
+
+        // @endpoint and @hostLabel trait tests
+        EndpointOperation,
+        EndpointWithHostLabelOperation,
     ]
 }
