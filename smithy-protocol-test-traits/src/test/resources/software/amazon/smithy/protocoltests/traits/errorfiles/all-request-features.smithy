@@ -19,6 +19,8 @@ structure testScheme {}
         authScheme: testScheme,
         method: "POST",
         uri: "/",
+        host: "example.com",
+        resolvedHost: "prefix.example.com",
         queryParams: ["foo=baz"],
         forbidQueryParams: ["Nope"],
         requireQueryParams: ["Yap"],
