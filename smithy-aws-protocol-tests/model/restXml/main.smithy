@@ -80,5 +80,10 @@ service RestXml {
 
         // @xmlNamespace trait tests
         XmlNamespaces,
+
+        // @endpoint and @hostLabel trait tests
+        EndpointOperation,
+        EndpointWithHostLabelOperation,
+        EndpointWithHostLabelHeaderOperation,
     ]
 }

@@ -28,6 +28,10 @@ service JsonProtocol {
         NullOperation,
         GreetingWithErrors,
         JsonUnions,
+
+        // @endpoint and @hostLabel trait tests
+        EndpointOperation,
+        EndpointWithHostLabelOperation,
     ],
 }
 
