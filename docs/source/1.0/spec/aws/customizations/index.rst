@@ -10,3 +10,4 @@ AWS Service Customizations
     apigateway-customizations
     glacier-customizations
     machinelearning-customizations
+    s3-customizations

@@ -42,6 +42,214 @@ service AmazonS3 {
     ],
 }
 
+
+// TODO This needs more test cases to enforce the setting
+// resolution of config options, ARN based addressing, and more.
+@httpRequestTests([
+    {
+        id: "S3DefaultAddressing",
+        documentation: "S3 clients should map the default addressing style to virtual host.",
+        protocol: restXml,
+        method: "GET",
+        uri: "/",
+        host: "s3.us-west-2.amazonaws.com",
+        resolvedHost: "mybucket.s3.us-west-2.amazonaws.com",
+        body: "",
+        queryParams: [
+            "list-type=2",
+        ],
+        params: {
+            Bucket: "mybucket",
+        },
+        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParams: {
+            scopedConfig: {
+                client: {
+                    region: "us-west-2",
+                },
+            },
+        },
+    },
+    {
+        id: "S3VirtualHostAddressing",
+        documentation: "S3 clients should support the explicit virtual host addressing style.",
+        protocol: restXml,
+        method: "GET",
+        uri: "/",
+        host: "s3.us-west-2.amazonaws.com",
+        resolvedHost: "mybucket.s3.us-west-2.amazonaws.com",
+        body: "",
+        queryParams: [
+            "list-type=2",
+        ],
+        params: {
+            Bucket: "mybucket",
+        },
+        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParams: {
+            scopedConfig: {
+                client: {
+                    region: "us-west-2",
+                    s3: {
+                        addressing_style: "virtual",
+                    },
+                },
+            },
+        },
+    },
+    {
+        id: "S3PathAddressing",
+        documentation: "S3 clients should support the explicit path addressing style.",
+        protocol: restXml,
+        method: "GET",
+        uri: "/mybucket",
+        host: "s3.us-west-2.amazonaws.com",
+        resolvedHost: "s3.us-west-2.amazonaws.com",
+        body: "",
+        queryParams: [
+            "list-type=2",
+        ],
+        params: {
+            Bucket: "mybucket",
+        },
+        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParams: {
+            scopedConfig: {
+                client: {
+                    region: "us-west-2",
+                    s3: {
+                        addressing_style: "path",
+                    },
+                },
+            },
+        },
+    },
+    {
+        id: "S3VirtualHostDualstackAddressing",
+        documentation: """
+            S3 clients should support the explicit virtual host
+            addressing style with Dualstack.""",
+        protocol: restXml,
+        method: "GET",
+        uri: "/",
+        host: "s3.us-west-2.amazonaws.com",
+        resolvedHost: "mybucket.s3.dualstack.us-west-2.amazonaws.com",
+        body: "",
+        queryParams: [
+            "list-type=2",
+        ],
+        params: {
+            Bucket: "mybucket",
+        },
+        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParams: {
+            scopedConfig: {
+                client: {
+                    region: "us-west-2",
+                    s3: {
+                        addressing_style: "virtual",
+                        use_dualstack_endpoint: true,
+                    },
+                },
+            },
+        },
+    },
+    {
+        id: "S3VirtualHostAccelerateAddressing",
+        documentation: """
+            S3 clients should support the explicit virtual host
+            addressing style with S3 Accelerate.""",
+        protocol: restXml,
+        method: "GET",
+        uri: "/",
+        host: "s3.us-west-2.amazonaws.com",
+        resolvedHost: "mybucket.s3-accelerate.amazonaws.com",
+        body: "",
+        queryParams: [
+            "list-type=2",
+        ],
+        params: {
+            Bucket: "mybucket",
+        },
+        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParams: {
+            scopedConfig: {
+                client: {
+                    region: "us-west-2",
+                    s3: {
+                        addressing_style: "virtual",
+                        use_accelerate_endpoint: true,
+                    },
+                },
+            },
+        },
+    },
+    {
+        id: "S3VirtualHostDualstackAccelerateAddressing",
+        documentation: """
+            S3 clients should support the explicit virtual host
+            addressing style with Dualstack and S3 Accelerate.""",
+        protocol: restXml,
+        method: "GET",
+        uri: "/",
+        host: "s3.us-west-2.amazonaws.com",
+        resolvedHost: "mybucket.s3-accelerate.dualstack.amazonaws.com",
+        body: "",
+        queryParams: [
+            "list-type=2",
+        ],
+        params: {
+            Bucket: "mybucket",
+        },
+        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParams: {
+            scopedConfig: {
+                client: {
+                    region: "us-west-2",
+                    s3: {
+                        addressing_style: "virtual",
+                        use_dualstack_endpoint: true,
+                        use_accelerate_endpoint: true,
+                    },
+                },
+            },
+        },
+    },
+    {
+        id: "S3OperationAddressingPreferred",
+        documentation: """
+            S3 clients should resolve to the addressing style of the
+            operation if defined on both the client and operation.""",
+        protocol: restXml,
+        method: "GET",
+        uri: "/",
+        host: "s3.us-west-2.amazonaws.com",
+        resolvedHost: "mybucket.s3.us-west-2.amazonaws.com",
+        body: "",
+        queryParams: [
+            "list-type=2",
+        ],
+        params: {
+            Bucket: "mybucket",
+        },
+        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParams: {
+            scopedConfig: {
+                client: {
+                    region: "us-west-2",
+                    s3: {
+                        addressing_style: "path",
+                    },
+                },
+                operation: {
+                    s3: {
+                        addressing_style: "virtual",
+                    },
+                },
+            },
+        },
+    },
+])
 @http(
     method: "GET",
     uri: "/{Bucket}?list-type=2",
