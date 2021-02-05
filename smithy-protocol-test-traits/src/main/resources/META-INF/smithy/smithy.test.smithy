@@ -37,6 +37,17 @@ structure HttpRequestTestCase {
     @length(min: 1)
     uri: String,
 
+    /// The host / endpoint provided to the client, not including the path
+    /// or scheme (for example, "example.com").
+    host: String,
+
+    /// The host / endpoint that the client should send to, not including
+    /// the path or scheme (for example, "prefix.example.com").
+    ///
+    /// This can differ from the host provided to the client if the `hostPrefix`
+    /// member of the `endpoint` trait is set, for instance.
+    resolvedHost: String,
+
     /// The optional authentication scheme shape ID to assume. It's
     /// possible that specific authentication schemes might influence
     /// the serialization logic of an HTTP request.

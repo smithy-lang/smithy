@@ -17,6 +17,7 @@ package software.amazon.smithy.protocoltests.traits;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -32,12 +33,16 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
 
     private static final String METHOD = "method";
     private static final String URI = "uri";
+    private static final String HOST = "host";
+    private static final String RESOLVED_HOST = "resolvedHost";
     private static final String QUERY_PARAMS = "queryParams";
     private static final String FORBID_QUERY_PARAMS = "forbidQueryParams";
     private static final String REQUIRE_QUERY_PARAMS = "requireQueryParams";
 
     private final String method;
     private final String uri;
+    private final String host;
+    private final String resolvedHost;
     private final List<String> queryParams;
     private final List<String> forbidQueryParams;
     private final List<String> requireQueryParams;
@@ -46,6 +51,8 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
         super(builder);
         method = SmithyBuilder.requiredState(METHOD, builder.method);
         uri = SmithyBuilder.requiredState(URI, builder.uri);
+        host = builder.host;
+        resolvedHost = builder.resolvedHost;
         queryParams = ListUtils.copyOf(builder.queryParams);
         forbidQueryParams = ListUtils.copyOf(builder.forbidQueryParams);
         requireQueryParams = ListUtils.copyOf(builder.requireQueryParams);
@@ -57,6 +64,14 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
 
     public String getUri() {
         return uri;
+    }
+
+    public Optional<String> getHost() {
+        return Optional.ofNullable(host);
+    }
+
+    public Optional<String> getResolvedHost() {
+        return Optional.ofNullable(resolvedHost);
     }
 
     public List<String> getQueryParams() {
@@ -77,6 +92,8 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
         ObjectNode o = node.expectObjectNode();
         builder.method(o.expectStringMember(METHOD).getValue());
         builder.uri(o.expectStringMember(URI).getValue());
+        o.getStringMember(HOST).ifPresent(stringNode -> builder.host(stringNode.getValue()));
+        o.getStringMember(RESOLVED_HOST).ifPresent(stringNode -> builder.resolvedHost(stringNode.getValue()));
         o.getArrayMember(QUERY_PARAMS).ifPresent(queryParams -> {
             builder.queryParams(queryParams.getElementsAs(StringNode::getValue));
         });
@@ -94,6 +111,8 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
         ObjectNode.Builder node = super.toNode().expectObjectNode().toBuilder();
         node.withMember(METHOD, getMethod());
         node.withMember(URI, getUri());
+        node.withOptionalMember(HOST, getHost().map(StringNode::from));
+        node.withOptionalMember(RESOLVED_HOST, getResolvedHost().map(StringNode::from));
         if (!queryParams.isEmpty()) {
             node.withMember(QUERY_PARAMS, ArrayNode.fromStrings(getQueryParams()));
         }
@@ -114,6 +133,8 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
                 .queryParams(getQueryParams())
                 .forbidQueryParams(getForbidQueryParams())
                 .requireQueryParams(getRequireQueryParams());
+        getHost().ifPresent(builder::host);
+        getResolvedHost().ifPresent(builder::resolvedHost);
         updateBuilder(builder);
         return builder;
     }
@@ -129,6 +150,8 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
 
         private String method;
         private String uri;
+        private String host;
+        private String resolvedHost;
         private final List<String> queryParams = new ArrayList<>();
         private final List<String> forbidQueryParams = new ArrayList<>();
         private final List<String> requireQueryParams = new ArrayList<>();
@@ -142,6 +165,16 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
 
         public Builder uri(String uri) {
             this.uri = uri;
+            return this;
+        }
+
+        public Builder host(String host) {
+            this.host = host;
+            return this;
+        }
+
+        public Builder resolvedHost(String resolvedHost) {
+            this.resolvedHost = resolvedHost;
             return this;
         }
 

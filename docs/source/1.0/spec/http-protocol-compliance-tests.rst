@@ -103,6 +103,17 @@ that support the following members:
       - ``string``
       - **Required**. The request-target of the HTTP request, not including
         the query string (for example, "/foo/bar").
+    * - host
+      - ``string``
+      - The host / endpoint provided to the client, not including the path or
+        scheme (for example, "example.com").
+    * - resolvedHost
+      - ``string``
+      - The host / endpoint that the client should send to, not including the
+        path or scheme (for example, "prefix.example.com").
+
+        This can differ from the host provided to the client if, for instance,
+        the operation has a member with the :ref:`endpoint-trait`.
     * - authScheme
       - shape ID
       - A shape ID that specifies the optional authentication scheme to
