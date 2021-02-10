@@ -93,6 +93,8 @@ structure Acceptor {
 ])
 string AcceptorState
 
+/// Defines how an acceptor determines if it matches the current state of
+/// a resource.
 @private
 union Matcher {
     /// Matches on the successful output of an operation using a
@@ -119,6 +121,8 @@ union Matcher {
     success: Boolean,
 }
 
+/// Defines how to test the result of a JMESPath expression against
+/// an expected value.
 @private
 structure PathMatcher {
     /// A JMESPath expression applied to the input or output of an operation.
