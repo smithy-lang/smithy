@@ -50,7 +50,7 @@ public final class AddedOperationError extends AbstractDiffEvaluator {
                         + "encountered as a result of a change in behavior of "
                         + "the client (for example, the client sends a new "
                         + "parameter to an operation).",
-                        change.getShapeId(), id)));
+                        id, change.getShapeId())));
             }
         }
 
