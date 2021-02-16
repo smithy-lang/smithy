@@ -542,7 +542,7 @@ final class IdlModelParser extends SimpleParser {
     private void parseOperationStatement(ShapeId id, SourceLocation location) {
         ws();
         OperationShape.Builder builder = OperationShape.builder().id(id).source(location);
-        ObjectNode node = IdlNodeParser.parseObjectNode(this);
+        ObjectNode node = IdlNodeParser.parseObjectNode(this, id.toString());
         LoaderUtils.checkForAdditionalProperties(node, id, OPERATION_PROPERTY_NAMES, modelFile.events());
         modelFile.onShape(builder);
         optionalId(node, "input", builder::input);
@@ -553,7 +553,7 @@ final class IdlModelParser extends SimpleParser {
     private void parseServiceStatement(ShapeId id, SourceLocation location) {
         ws();
         ServiceShape.Builder builder = new ServiceShape.Builder().id(id).source(location);
-        ObjectNode shapeNode = IdlNodeParser.parseObjectNode(this);
+        ObjectNode shapeNode = IdlNodeParser.parseObjectNode(this, id.toString());
         LoaderUtils.checkForAdditionalProperties(shapeNode, id, SERVICE_PROPERTY_NAMES, modelFile.events());
         builder.version(shapeNode.expectStringMember(VERSION_KEY).getValue());
         modelFile.onShape(builder);
@@ -580,7 +580,7 @@ final class IdlModelParser extends SimpleParser {
         ws();
         ResourceShape.Builder builder = ResourceShape.builder().id(id).source(location);
         modelFile.onShape(builder);
-        ObjectNode shapeNode = IdlNodeParser.parseObjectNode(this);
+        ObjectNode shapeNode = IdlNodeParser.parseObjectNode(this, id.toString());
 
         LoaderUtils.checkForAdditionalProperties(shapeNode, id, RESOURCE_PROPERTY_NAMES, modelFile.events());
         optionalId(shapeNode, PUT_KEY, builder::put);

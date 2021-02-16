@@ -44,7 +44,7 @@ final class IdlNodeParser {
         char c = parser.peek();
         switch (c) {
             case '{':
-                return parseObjectNode(parser);
+                return parseObjectNode(parser, "object node");
             case '[':
                 return parseArrayNode(parser);
             case '"': {
@@ -119,7 +119,7 @@ final class IdlNodeParser {
         return new StringNode(IdlTextParser.parseQuotedTextAndTextBlock(parser, true), location);
     }
 
-    static ObjectNode parseObjectNode(IdlModelParser parser) {
+    static ObjectNode parseObjectNode(IdlModelParser parser, String parent) {
         parser.increaseNestingLevel();
         SourceLocation location = parser.currentLocation();
         Map<StringNode, Node> entries = new LinkedHashMap<>();
@@ -137,7 +137,11 @@ final class IdlNodeParser {
                 parser.expect(':');
                 parser.ws();
                 Node value = parseNode(parser);
-                entries.put(new StringNode(key, keyLocation), value);
+                StringNode keyNode = new StringNode(key, keyLocation);
+                Node previous = entries.put(keyNode, value);
+                if (previous != null) {
+                    throw parser.syntax("Duplicate member of " + parent + ": '" + keyNode.getValue() + '\'');
+                }
                 parser.ws();
                 if (parser.peek() == ',') {
                     parser.skip();

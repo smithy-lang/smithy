@@ -121,6 +121,8 @@ final class IdlTraitParser {
     private static ObjectNode parseStructuredTrait(IdlModelParser parser, StringNode startingKey) {
         Map<StringNode, Node> entries = new LinkedHashMap<>();
         Node firstValue = IdlNodeParser.parseNode(parser);
+        // This put call can be done safely without checking for duplicates,
+        // as it's always the first member of the trait.
         entries.put(startingKey, firstValue);
         parser.ws();
 
@@ -150,6 +152,9 @@ final class IdlTraitParser {
         parser.ws();
         Node nextValue = IdlNodeParser.parseNode(parser);
         parser.ws();
-        entries.put(nextKey, nextValue);
+        Node previous = entries.put(nextKey, nextValue);
+        if (previous != null) {
+            throw parser.syntax("Duplicate member of trait: '" + nextKey.getValue() + '\'');
+        }
     }
 }
