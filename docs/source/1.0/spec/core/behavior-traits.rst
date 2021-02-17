@@ -607,6 +607,28 @@ to request additional results from the operation.
    A service MUST NOT evaluate authorization differently depending on the
    presence, absence, or contents of a continuation token.
 
+
+Backward compatibility
+======================
+
+Many tools use the ``paginated`` trait to expose additional functionality to
+things like generated code. To support these use cases, the following changes
+to the ``paginated`` trait are considered backward incompatible:
+
+1. Removing the ``paginated`` trait.
+2. Adding, removing, or changing the ``items`` member of the ``paginated``
+   trait. Some tools expose typed pagination contracts that are specific to
+   the ``items`` member.
+3. Changing the ``inputToken``, ``outputToken``, or ``pageSize`` members from
+   one value to another.
+4. Removing the ``pageSize`` member.
+
+The following changes are considered backward compatible:
+
+1. Adding the ``paginated`` trait to an existing operation.
+2. Adding the ``pageSize`` member to an existing ``paginated`` trait.
+
+
 .. _UUID: https://tools.ietf.org/html/rfc4122
 
 
