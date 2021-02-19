@@ -11,7 +11,6 @@ software.amazon.smithy.diff.evaluators.ChangedMemberTarget
 software.amazon.smithy.diff.evaluators.ChangedMetadata
 software.amazon.smithy.diff.evaluators.ChangedOperationInput
 software.amazon.smithy.diff.evaluators.ChangedOperationOutput
-software.amazon.smithy.diff.evaluators.ChangedPaginatedTrait
 software.amazon.smithy.diff.evaluators.ChangedRangeTrait
 software.amazon.smithy.diff.evaluators.ChangedResourceIdentifiers
 software.amazon.smithy.diff.evaluators.ChangedShapeType
