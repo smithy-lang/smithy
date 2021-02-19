@@ -495,13 +495,14 @@ structure unstable {}
 /// of results returned in a single response and that multiple invocations might be
 /// necessary to retrieve all results.
 @trait(selector: ":is(service, operation)")
-@tags(["diff.error.remove"])
+@tags(["diff.error.remove", "diff.contents"])
 structure paginated {
     /// The name of the operation input member that represents the continuation token.
     ///
     /// When this value is provided as operation input, the service returns results
     /// from where the previous response left off. This input member MUST NOT be
     /// required and MUST target a string shape.
+    @tags(["diff.error.update"])
     inputToken: NonEmptyString,
 
     /// The name of the operation output member that represents the continuation token.
@@ -510,17 +511,20 @@ structure paginated {
     /// results to retrieve. To get the next page of results, the client uses the output
     /// token as the input token of the next request. This output member MUST NOT be
     /// required and MUST target a string shape.
+    @tags(["diff.error.update"])
     outputToken: NonEmptyString,
 
     /// The name of a top-level output member of the operation that is the data
     /// that is being paginated across many responses.
     ///
     /// The named output member, if specified, MUST target a list or map.
+    @tags(["diff.error.const"])
     items: NonEmptyString,
 
     /// The name of an operation input member that limits the maximum number of
     /// results to include in the operation output. This input member MUST NOT be
     /// required and MUST target an integer shape.
+    @tags(["diff.error.update", "diff.error.remove"])
     pageSize: NonEmptyString,
 }
 

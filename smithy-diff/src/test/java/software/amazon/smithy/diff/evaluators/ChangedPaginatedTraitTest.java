@@ -70,10 +70,11 @@ public class ChangedPaginatedTraitTest {
         });
 
         List<ValidationEvent> events = ModelDiff.compare(model, newModel);
-        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ChangedPaginatedTrait");
+        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ModifiedTrait");
 
         assertThat(changedTraitEvents.size(), equalTo(1));
-        assertThat(changedTraitEvents.get(0).getMessage(), containsString("changed from 'things' to none"));
+        assertThat(changedTraitEvents.get(0).getMessage(),
+                   containsString("`/items` was removed from the `smithy.api#paginated` trait. The removed value was: \"things\""));
     }
 
     @Test
@@ -86,10 +87,11 @@ public class ChangedPaginatedTraitTest {
         });
 
         List<ValidationEvent> events = ModelDiff.compare(oldModel, model);
-        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ChangedPaginatedTrait");
+        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ModifiedTrait");
 
         assertThat(changedTraitEvents.size(), equalTo(1));
-        assertThat(changedTraitEvents.get(0).getMessage(), containsString("changed from none to 'things'"));
+        assertThat(changedTraitEvents.get(0).getMessage(),
+                   containsString("`/items` was added to the `smithy.api#paginated` trait with a value of \"things\""));
     }
 
     @Test
@@ -102,11 +104,11 @@ public class ChangedPaginatedTraitTest {
         });
 
         List<ValidationEvent> events = ModelDiff.compare(model, newModel);
-        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ChangedPaginatedTrait");
+        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ModifiedTrait");
 
         assertThat(changedTraitEvents.size(), equalTo(1));
         assertThat(changedTraitEvents.get(0).getMessage(),
-                   containsString("changed from 'things' to 'otherThings"));
+                   containsString("`/items` was changed on the `smithy.api#paginated` trait from \"things\" to \"otherThings\""));
     }
 
     @Test
@@ -119,10 +121,11 @@ public class ChangedPaginatedTraitTest {
         });
 
         List<ValidationEvent> events = ModelDiff.compare(model, newModel);
-        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ChangedPaginatedTrait");
+        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ModifiedTrait");
 
         assertThat(changedTraitEvents.size(), equalTo(1));
-        assertThat(changedTraitEvents.get(0).getMessage(), containsString("changed from 'maxResults' to none"));
+        assertThat(changedTraitEvents.get(0).getMessage(),
+                   containsString("`/pageSize` was removed from the `smithy.api#paginated` trait. The removed value was: \"maxResults\""));
     }
 
     @Test
@@ -135,7 +138,7 @@ public class ChangedPaginatedTraitTest {
         });
 
         List<ValidationEvent> events = ModelDiff.compare(oldModel, model);
-        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ChangedPaginatedTrait");
+        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ModifiedTrait");
 
         assertThat(changedTraitEvents, empty());
     }
@@ -150,11 +153,11 @@ public class ChangedPaginatedTraitTest {
         });
 
         List<ValidationEvent> events = ModelDiff.compare(model, newModel);
-        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ChangedPaginatedTrait");
+        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ModifiedTrait");
 
         assertThat(changedTraitEvents.size(), equalTo(1));
         assertThat(changedTraitEvents.get(0).getMessage(),
-                   containsString("changed from 'maxResults' to 'otherMaxResults"));
+                   containsString("`/pageSize` was changed on the `smithy.api#paginated` trait from \"maxResults\" to \"otherMaxResults\""));
     }
 
     @Test
@@ -166,10 +169,11 @@ public class ChangedPaginatedTraitTest {
         });
 
         List<ValidationEvent> events = ModelDiff.compare(model, newModel);
-        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ChangedPaginatedTrait");
+        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ModifiedTrait");
 
         assertThat(changedTraitEvents.size(), equalTo(1));
-        assertThat(changedTraitEvents.get(0).getMessage(), containsString("changed from 'token' to 'otherToken'"));
+        assertThat(changedTraitEvents.get(0).getMessage(),
+                   containsString("`/inputToken` was changed on the `smithy.api#paginated` trait from \"token\" to \"otherToken\""));
     }
 
     @Test
@@ -181,9 +185,10 @@ public class ChangedPaginatedTraitTest {
         });
 
         List<ValidationEvent> events = ModelDiff.compare(model, newModel);
-        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ChangedPaginatedTrait");
+        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ModifiedTrait");
 
         assertThat(changedTraitEvents.size(), equalTo(1));
-        assertThat(changedTraitEvents.get(0).getMessage(), containsString("changed from 'token' to 'otherToken'"));
+        assertThat(changedTraitEvents.get(0).getMessage(),
+                   containsString("`/outputToken` was changed on the `smithy.api#paginated` trait from \"token\" to \"otherToken\""));
     }
 }

@@ -616,12 +616,9 @@ things like generated code. To support these use cases, the following changes
 to the ``paginated`` trait are considered backward incompatible:
 
 1. Removing the ``paginated`` trait.
-2. Adding, removing, or changing the ``items`` member of the ``paginated``
-   trait. Some tools expose typed pagination contracts that are specific to
-   the ``items`` member.
-3. Changing the ``inputToken``, ``outputToken``, or ``pageSize`` members from
-   one value to another.
-4. Removing the ``pageSize`` member.
+2. Adding, removing, or changing the ``inputToken``, ``outputToken``, or
+   ``items`` members.
+3. Removing or changing the ``pageSize`` member.
 
 The following changes are considered backward compatible:
 
