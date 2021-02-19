@@ -78,7 +78,7 @@ that affect serialization:
     * - :ref:`hostLabel <hostLabel-trait>`
       - Binds a top-level operation input structure member to a label in
         the hostPrefix of an endpoint trait.
-    * - :ref:`xmlAttrubute <xmlAttribute-trait>`
+    * - :ref:`xmlAttribute <xmlAttribute-trait>`
       - Serializes an object property as an XML attribute rather than a nested
         XML element.
     * - :ref:`xmlFlattened <xmlFlattened-trait>`

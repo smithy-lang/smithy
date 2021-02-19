@@ -190,7 +190,7 @@ that affect serialization:
         structures are the same as a structure member name. The ``ec2QueryName``
         changes the key segment name to a custom value. See
         :ref:`aws.protocols#ec2QueryName-query-key-naming` for more information.
-    * - :ref:`xmlAttrubute <xmlAttribute-trait>`
+    * - :ref:`xmlAttribute <xmlAttribute-trait>`
       - Serializes an object property as an XML attribute rather than a nested
         XML element.
     * - :ref:`xmlFlattened <xmlFlattened-trait>`
