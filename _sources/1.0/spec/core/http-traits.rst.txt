@@ -685,10 +685,11 @@ Summary
 Trait selector
     .. code-block:: none
 
-        structure > :test(member > :test(string, blob, structure, union, document))
+        structure > :test(member > :test(string, blob, structure, union, document, list, set, map))
 
     The ``httpPayload`` trait can be applied to ``structure`` members that
-    target a ``string``, ``blob``, ``structure``, ``union``, or ``document``.
+    target a ``string``, ``blob``, ``structure``, ``union``, ``document``,
+    ``set``, ``map``, or ``list``.
 Value type
     Annotation trait.
 Conflicts with
@@ -749,10 +750,10 @@ or :ref:`httpPrefixHeaders-trait`.
 
 #. When a string or blob member is referenced, the raw value is serialized
    as the body of the message.
-#. When a :ref:`structure <structure>`, :ref:`union <union>`, or
-   document type is targeted, the shape value is serialized
-   as a :ref:`protocol-specific <protocolDefinition-trait>` document that is
-   sent as the body of the message.
+#. When a :ref:`structure <structure>`, :ref:`union <union>`, :ref:`list <list>`,
+   :ref:`set <set>`, :ref:`map <map>`, or document type is targeted,
+   the shape value is serialized as a :ref:`protocol-specific <protocolDefinition-trait>`
+   document that is sent as the body of the message.
 
 
 .. _httpPrefixHeaders-trait:

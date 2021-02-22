@@ -112,8 +112,8 @@ package can be used with smithy-build and the <a class="reference external" href
 generate CloudFormation Resource Schemas from Smithy models.</p>
 <p>The following example shows how to configure Gradle to generate CloudFormation
 Resource Schemas from a Smithy model <a class="reference internal" href="building-models/gradle-plugin.html#artifacts-from-smithy-models"><span class="std std-ref">using a buildscript dependency</span></a>:</p>
-<div class="literal-block-wrapper docutils container" id="smithy-build-gradle">
-<div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#smithy-build-gradle" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="cfn-smithy-build-gradle">
+<div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#cfn-smithy-build-gradle" title="Permalink to this code">¶</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span> <span class="p">{</span>
     <span class="n">java</span>
     <span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="n">version</span><span class="p">(</span><span class="s">&quot;0.5.1&quot;</span><span class="p">)</span>
@@ -121,7 +121,7 @@ Resource Schemas from a Smithy model <a class="reference internal" href="buildin
 
 <span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.5.1&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.6.0&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -179,7 +179,7 @@ generate one Resource Schema with the <code class="docutils literal notranslate"
 </div>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-aws-cloudformation:1.5.1&quot; is
+<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-aws-cloudformation:1.6.0&quot; is
 required in order for smithy-build to map the &quot;cloudformation&quot; plugin name
 to the correct Java library implementation.</p>
 </div>
@@ -463,11 +463,11 @@ the generation.</p>
 <p>First, you'll need to get a copy of the library. The following example shows
 how to install <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy:smithy-aws-cloudformation</span></code> through
 Gradle:</p>
-<div class="literal-block-wrapper docutils container" id="code-build-gradle">
-<div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#code-build-gradle" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="cfn-code-build-gradle">
+<div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#cfn-code-build-gradle" title="Permalink to this code">¶</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.5.1&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.6.0&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -493,7 +493,7 @@ Gradle:</p>
 </div>
 <p>The conversion process is highly extensible through
 <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.aws.cloudformation.schema.fromsmithy.Smithy2CfnExtension</span></code>
-service providers. See the <a class="reference external" href="https://awslabs.github.io/smithy/javadoc/1.5.1/software/amazon/smithy/aws/cloudformation/schema/fromsmithy/Smithy2CfnExtension.html">Javadocs</a> for more information.</p>
+service providers. See the <a class="reference external" href="https://awslabs.github.io/smithy/javadoc/1.6.0/software/amazon/smithy/aws/cloudformation/schema/fromsmithy/Smithy2CfnExtension.html">Javadocs</a> for more information.</p>
 </div>
 </div>
 

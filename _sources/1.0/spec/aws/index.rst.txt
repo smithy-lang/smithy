@@ -28,3 +28,13 @@ AWS Protocols
     aws-restxml-protocol
     aws-query-protocol
     aws-ec2-query-protocol
+
+AWS Service Customizations
+==========================
+
+.. rst-class:: large-toctree
+
+.. toctree::
+    :maxdepth: 2
+
+    customizations/index

@@ -269,7 +269,7 @@ prefixed HTTP headers.</td>
 <tr class="row-odd"><td><a class="reference internal" href="../core/http-traits.html#httpquery-trait"><span class="std std-ref">httpQuery</span></a></td>
 <td>Binds a top-level input structure member to a query string parameter.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../core/xml-traits.html#xmlattribute-trait"><span class="std std-ref">xmlAttrubute</span></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../core/xml-traits.html#xmlattribute-trait"><span class="std std-ref">xmlAttribute</span></a></td>
 <td>Serializes an object property as an XML attribute rather than a nested
 XML element.</td>
 </tr>
@@ -299,7 +299,7 @@ for the targeted shape.</td>
 </div>
 <div class="section" id="content-type">
 <h2><a href="#content-type">Content-Type</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> protocol uses a default Content-Type
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> protocol uses a default <code class="docutils literal notranslate"><span class="pre">Content-Type</span></code>
 of <code class="docutils literal notranslate"><span class="pre">application/xml</span></code>.</p>
 <p>Input or output shapes that apply the <a class="reference internal" href="../core/http-traits.html#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a> on one of
 their top-level members MUST use a Content-Type that is appropriate for
@@ -327,8 +327,7 @@ with the <code class="docutils literal notranslate"><span class="pre">httpPayloa
 <td><code class="docutils literal notranslate"><span class="pre">application/octet-stream</span></code></td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
-<td>Undefined. Document shapes are not recommended for use in XML based
-protocols.</td>
+<td>Undefined. Document shapes are not supported in this protocol.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">structure</span></code></td>
 <td><code class="docutils literal notranslate"><span class="pre">application/xml</span></code></td>
@@ -341,8 +340,6 @@ protocols.</td>
 </div>
 <div class="section" id="xml-shape-serialization">
 <h2><a href="#xml-shape-serialization">XML shape serialization</a></h2>
-<p>XML requests and responses are serialized within an XML root node with the
-name of the operation's input, output, or error shape that is being serialized.</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="25%" />
@@ -400,8 +397,7 @@ of a double.</td>
 customize timestamp serialization.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
-<td>Undefined. Document shapes are not recommended for use in XML based
-protocols.</td>
+<td>Undefined. Document shapes are not supported in this protocol.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">list</span></code></td>
 <td>XML element. Each value provided in the list is serialized as a nested
@@ -409,10 +405,11 @@ XML element with the name <code class="docutils literal notranslate"><span class
 used to serialize a property using a custom name. The
 <a class="reference internal" href="../core/xml-traits.html#xmlflattened-trait"><span class="std std-ref">xmlFlattened trait</span></a> can be used to unwrap the values into a
 containing structure or union, with the value XML element using the
-structure or union member name.</td>
+structure or union member name. See <a class="reference internal" href="../core/xml-traits.html#xml-list-and-set-serialization"><span class="std std-ref">List and set serialization</span></a>
+for more.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">set</span></code></td>
-<td>XML element. A set is serialized identically as a <code class="docutils literal notranslate"><span class="pre">list</span></code> shape,
+<td>XML element. A set is serialized identically to a <code class="docutils literal notranslate"><span class="pre">list</span></code> shape,
 but only contains unique values.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">map</span></code></td>
@@ -423,7 +420,8 @@ can be used to serialize key or value properties using a custom name,
 it cannot be used to influence the <code class="docutils literal notranslate"><span class="pre">entry</span></code> name. The
 <a class="reference internal" href="../core/xml-traits.html#xmlflattened-trait"><span class="std std-ref">xmlFlattened trait</span></a> can be used to unwrap the entries into a
 containing structure or union, with the entry XML element using the
-structure or union member name.</td>
+structure or union member name. See <a class="reference internal" href="../core/xml-traits.html#xml-map-serialization"><span class="std std-ref">Map serialization</span></a> for
+more.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">structure</span></code></td>
 <td>XML element. Each member value provided for the structure is
@@ -431,10 +429,10 @@ serialized as a nested XML element where the element name is the
 same as the member name. The <a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><span class="std std-ref">xmlName trait</span></a> can be used to
 serialize a property using a custom name. The <a class="reference internal" href="../core/xml-traits.html#xmlattribute-trait"><span class="std std-ref">xmlAttribute trait</span></a>
 can be used to serialize a property in an attribute of the containing
-element.</td>
+element. See <a class="reference internal" href="../core/xml-traits.html#xml-structure-and-union-serialization"><span class="std std-ref">Structure and union serialization</span></a> for more.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">union</span></code></td>
-<td>XML element. A union is serialized identically as a <code class="docutils literal notranslate"><span class="pre">structure</span></code>
+<td>XML element. A union is serialized identically to a <code class="docutils literal notranslate"><span class="pre">structure</span></code>
 shape, but only a single member can be set to a non-null value.</td>
 </tr>
 </tbody>
@@ -454,10 +452,10 @@ as defined in the <code class="docutils literal notranslate"><span class="pre">a
 </div>
 <div class="section" id="operation-error-serialization">
 <span id="restxml-errors"></span><h2><a href="#operation-error-serialization">Operation error serialization</a></h2>
-<p>Error responses in the <code class="docutils literal notranslate"><span class="pre">restXml</span></code> protocol are wrapped in an XML element
-named <code class="docutils literal notranslate"><span class="pre">ErrorResponse</span></code> by default. All error structure members are serialized
-within this element, unless bound to another location with HTTP protocol
-bindings.</p>
+<p>Error responses in the <code class="docutils literal notranslate"><span class="pre">restXml</span></code> protocol are wrapped within an XML root
+node named <code class="docutils literal notranslate"><span class="pre">ErrorResponse</span></code> by default. A nested element, named <code class="docutils literal notranslate"><span class="pre">Error</span></code>,
+contains the serialized error structure members, unless bound to another
+location with HTTP protocol bindings.</p>
 <p>Serialized error shapes MUST also contain an additional child element <code class="docutils literal notranslate"><span class="pre">Code</span></code>
 that contains only the <a class="reference internal" href="../core/model.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
 <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>. This can be used to distinguish which specific error has been
@@ -474,7 +472,7 @@ serialized in the response.</p>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">noErrorWrapping</span></code> setting of the <code class="docutils literal notranslate"><span class="pre">restXml</span></code> protocol trait disables
-using this additional nested XML element.</p>
+using this additional nested XML element as the root node.</p>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;Error&gt;</span>
     <span class="nt">&lt;Type&gt;</span>Sender<span class="nt">&lt;/Type&gt;</span>
     <span class="nt">&lt;Code&gt;</span>InvalidGreeting<span class="nt">&lt;/Code&gt;</span>
@@ -488,7 +486,7 @@ using this additional nested XML element.</p>
 <div class="section" id="protocol-compliance-tests">
 <h2><a href="#protocol-compliance-tests">Protocol compliance tests</a></h2>
 <p>A full compliance test suite is provided and SHALL be considered a normative
-reference: <a class="reference external" href="https://github.com/awslabs/smithy/tree/master/smithy-aws-protocol-tests/model/restXml">https://github.com/awslabs/smithy/tree/master/smithy-aws-protocol-tests/model/restXml</a></p>
+reference: <a class="reference external" href="https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/restXml">https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/restXml</a></p>
 <p>These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.</p>
 <p><em>TODO: Add event stream handling specifications.</em></p>

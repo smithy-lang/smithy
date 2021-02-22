@@ -257,8 +257,14 @@ an HTTP header instead of the payload.</td>
 of the payload.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../core/http-traits.html#httppayload-trait"><span class="std std-ref">httpPayload</span></a></td>
-<td>Binds a top-level input or output structure member as the payload
-of a request or response.</td>
+<td><p class="first">Binds a top-level input or output structure member as the payload
+of a request or response.</p>
+<div class="last admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">This protocol only permits the <a class="reference internal" href="../core/http-traits.html#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a> to be applied to
+members that target structures, documents, strings, blobs, or unions.</p>
+</div>
+</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../core/http-traits.html#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders</span></a></td>
 <td>Binds a top-level input, output, or error member to a map of
@@ -442,7 +448,7 @@ first <code class="docutils literal notranslate"><span class="pre">#</span></cod
 <div class="section" id="protocol-compliance-tests">
 <h2><a href="#protocol-compliance-tests">Protocol compliance tests</a></h2>
 <p>A full compliance test suite is provided and SHALL be considered a normative
-reference: <a class="reference external" href="https://github.com/awslabs/smithy/tree/master/smithy-aws-protocol-tests/model/awsJson1_1">https://github.com/awslabs/smithy/tree/master/smithy-aws-protocol-tests/model/awsJson1_1</a></p>
+reference: <a class="reference external" href="https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/restJson1">https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/restJson1</a></p>
 <p>These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.</p>
 <p><em>TODO: Add event stream handling specifications.</em></p>

@@ -76,14 +76,28 @@
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
 <li><a class="reference internal" href="#aws-protocols-awsquery-trait" id="id3"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> trait</a></li>
+<li><a class="reference internal" href="#supported-traits" id="id4">Supported traits</a></li>
+<li><a class="reference internal" href="#protocol-behavior" id="id5">Protocol Behavior</a></li>
+<li><a class="reference internal" href="#request-serialization" id="id6">Request serialization</a><ul>
+<li><a class="reference internal" href="#x-www-form-urlencoded-shape-serialization" id="id7">x-www-form-urlencoded shape serialization</a></li>
+<li><a class="reference internal" href="#query-key-resolution" id="id8">Query key resolution</a></li>
+<li><a class="reference internal" href="#examples" id="id9">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#response-serialization" id="id10">Response serialization</a><ul>
+<li><a class="reference internal" href="#xml-shape-serialization" id="id11">XML shape serialization</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#operation-error-serialization" id="id12">Operation error serialization</a></li>
+<li><a class="reference internal" href="#protocol-compliance-tests" id="id13">Protocol compliance tests</a></li>
 </ul>
 </div>
 <div class="section" id="aws-protocols-awsquery-trait">
 <span id="id2"></span><h2><a href="#aws-protocols-awsquery-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
-<dd>Adds support for an HTTP protocol that sends requests in the query
-string and responses in XML documents.</dd>
+<dd>Adds support for an HTTP protocol that sends &quot;POST&quot; requests in the body
+as <code class="docutils literal notranslate"><span class="pre">x-www-form-urlencoded</span></code> strings and responses in XML documents.</dd>
 <dt>Trait selector</dt>
 <dd><p class="first"><code class="docutils literal notranslate"><span class="pre">service</span> <span class="pre">[trait|xmlNamespace]</span></code></p>
 <p class="last"><em>Service shapes with the xmlNamespace trait</em></p>
@@ -91,7 +105,7 @@ string and responses in XML documents.</dd>
 <dt>Value type</dt>
 <dd>Annotation trait.</dd>
 <dt>See</dt>
-<dd><a class="reference external" href="https://github.com/awslabs/smithy/tree/1.5.1/smithy-aws-protocol-tests/model/awsQuery">Protocol tests</a></dd>
+<dd><a class="reference external" href="https://github.com/awslabs/smithy/tree/1.6.0/smithy-aws-protocol-tests/model/awsQuery">Protocol tests</a></dd>
 </dl>
 <div class="sphinx-tabs docutils container">
 <div class="ui top attached tabular menu sphinx-menu docutils container">
@@ -133,11 +147,585 @@ JSON</div>
 </div>
 </div>
 </div>
+</div>
+<div class="section" id="supported-traits">
+<h2><a href="#supported-traits">Supported traits</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> protocol supports the following traits
+that affect serialization:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Trait</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="../core/http-traits.html#cors-trait"><span class="std std-ref">cors</span></a></td>
+<td>Indicates that the service supports CORS.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../core/endpoint-traits.html#endpoint-trait"><span class="std std-ref">endpoint</span></a></td>
+<td>Configures a custom operation endpoint.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../core/endpoint-traits.html#hostlabel-trait"><span class="std std-ref">hostLabel</span></a></td>
+<td>Binds a top-level operation input structure member to a label in
+the hostPrefix of an endpoint trait.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../core/xml-traits.html#xmlattribute-trait"><span class="std std-ref">xmlAttribute</span></a></td>
+<td>Serializes an object property as an XML attribute rather than a nested
+XML element.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../core/xml-traits.html#xmlflattened-trait"><span class="std std-ref">xmlFlattened</span></a></td>
+<td>By default, entries in lists, sets, and maps have values serialized in
+nested elements specific to their type. The <code class="docutils literal notranslate"><span class="pre">xmlFlattened</span></code> trait
+unwraps these elements into the containing structure.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><span class="std std-ref">xmlName</span></a></td>
+<td>By default, the XML element names and form-urlencoded key segments used
+in serialized structures are the same as a structure member name. The
+<code class="docutils literal notranslate"><span class="pre">xmlName</span></code> trait changes these names to a custom value.  See
+<a class="reference internal" href="#aws-protocols-awsqueryname-query-key-naming"><span class="std std-ref">Query key resolution</span></a> for more information.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../core/xml-traits.html#xmlnamespace-trait"><span class="std std-ref">xmlNamespace</span></a></td>
+<td>Adds an xmlns namespace definition URI to XML element(s) generated
+for the targeted shape.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../core/protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat</span></a></td>
+<td>Defines a custom timestamp serialization format.</td>
+</tr>
+</tbody>
+</table>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
 <p class="last">This protocol does not support document types.</p>
 </div>
-<p><em>TODO: Add specifications, protocol examples, etc.</em></p>
+</div>
+<div class="section" id="protocol-behavior">
+<h2><a href="#protocol-behavior">Protocol Behavior</a></h2>
+<p>Every request for the <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol MUST be sent to the
+root URL (<code class="docutils literal notranslate"><span class="pre">/</span></code>) using the HTTP &quot;POST&quot; method.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol does not support custom HTTP bindings.
+<a class="reference internal" href="../core/http-traits.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a> MUST be ignored if they are present.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol uses the following headers:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="17%" />
+<col width="17%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Header</th>
+<th class="head">Required</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">Content-Type</span></code></td>
+<td>true</td>
+<td>This header uses the static values of <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code>
+for requests and <code class="docutils literal notranslate"><span class="pre">text/xml</span></code> for responses.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">Content-Length</span></code></td>
+<td>true</td>
+<td>The standard <code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> header defined by
+<a class="reference external" href="https://tools.ietf.org/html/rfc7230#section-3.3.2">RFC 7230 Section 3.3.2</a>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="request-serialization">
+<h2><a href="#request-serialization">Request serialization</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol serializes inputs in <code class="docutils literal notranslate"><span class="pre">x-www-form-urlencoded</span></code>
+request bodies. All keys and values MUST be encoded according to <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html"><strong>RFC 3986</strong></a>.
+Requests MUST have the following key value pairs added to the inputs in the
+serialized body:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="30%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Key</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">Action</span></code></td>
+<td>The <a class="reference internal" href="../core/model.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the operation's <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">Version</span></code></td>
+<td>The value of the <a class="reference internal" href="../core/model.html#service"><span class="std std-ref">&quot;version&quot; property of the service</span></a>.</td>
+</tr>
+</tbody>
+</table>
+<p>These, along with other input members, are serialized in the request body,
+concatenated with the following rules:</p>
+<ul class="simple">
+<li>&quot;&amp;&quot; is used to separate member key-value pairs.</li>
+<li>&quot;=&quot; is used to separate member keys from values.</li>
+<li>&quot;.&quot; is used to separate member name segments within keys.</li>
+</ul>
+<div class="section" id="x-www-form-urlencoded-shape-serialization">
+<h3><a href="#x-www-form-urlencoded-shape-serialization">x-www-form-urlencoded shape serialization</a></h3>
+<p>Simple shapes are serialized according to the following rules:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Smithy type</th>
+<th class="head">Request entity</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">blob</span></code></td>
+<td>Text value that is base64 encoded.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Text value of either &quot;true&quot; or &quot;false&quot;.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">byte</span></code></td>
+<td>Text value of the number.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">short</span></code></td>
+<td>Text value of the number.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">integer</span></code></td>
+<td>Text value of the number.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">long</span></code></td>
+<td>Text value of the number.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">float</span></code></td>
+<td>Text value of the number.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">double</span></code></td>
+<td>Text value of the number.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">bigDecimal</span></code></td>
+<td>Text value of the number, using scientific notation if an exponent is
+needed. Unfortunately, many parsers will either truncate the value or be
+unable to parse numbers that exceed the size of a double.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">bigInteger</span></code></td>
+<td>Text value of the number, using scientific notation if an exponent is
+needed. Unfortunately, many parsers will either truncate the value or be
+unable to parse numbers that exceed the size of a double.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>UTF-8 value of the string. Empty strings are serialized as empty
+values, meaning a <code class="docutils literal notranslate"><span class="pre">Foo</span></code> member set to an empty string would be
+serialized as &quot;&amp;Foo=&quot;.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">timestamp</span></code></td>
+<td>Text value of the timestamp. This protocol uses <code class="docutils literal notranslate"><span class="pre">date-time</span></code> as the
+default serialization. However, the <a class="reference internal" href="../core/protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat</span></a>
+MAY be used to customize timestamp serialization.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
+<td>Undefined. Document shapes are not supported in this protocol.</td>
+</tr>
+</tbody>
+</table>
+<p>Aggregate shapes are serialized with additional segments for members appended
+to the input's key.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Smithy type</th>
+<th class="head">Request entity</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">list</span></code></td>
+<td>Each value provided in the collection is serialized as a separate key with
+a &quot;.&quot; separator, the string &quot;member&quot;, a &quot;.&quot; separator, and a &quot;1&quot; indexed
+incrementing counter appended to the container's key.
+The <a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><span class="std std-ref">xmlName trait</span></a> can be used to serialize a property using a custom name instead of &quot;member&quot;. The <a class="reference internal" href="../core/xml-traits.html#xmlflattened-trait"><span class="std std-ref">xmlFlattened trait</span></a>
+can be used to unwrap the values into a containing structure or union,
+with the key not containing the initial &quot;.&quot; separator and <code class="docutils literal notranslate"><span class="pre">member</span></code>
+segment.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">set</span></code></td>
+<td>A set is serialized identically to a <code class="docutils literal notranslate"><span class="pre">list</span></code> shape, but only contains
+unique values.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">map</span></code></td>
+<td>Each key and value in each pair provided in the map is serialized as a
+separate key with a &quot;.&quot; separator, the string &quot;entry&quot;, a &quot;.&quot; separator,
+a &quot;1&quot; indexed incrementing counter, a &quot;.&quot; separator, and the string
+&quot;key&quot; or &quot;value&quot; (for member keys or values, respectively) appended to
+the container's key. The <a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><span class="std std-ref">xmlName trait</span></a> can be used to serialize a property using a custom name instead of &quot;member&quot;, &quot;key&quot;,
+or &quot;value&quot;. The <a class="reference internal" href="../core/xml-traits.html#xmlflattened-trait"><span class="std std-ref">xmlFlattened trait</span></a> can be used to unwrap the
+values into a containing structure or union, with the key not
+containing the initial &quot;.&quot; separator and &quot;entry&quot; segment.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">structure</span></code></td>
+<td>Each member value provided for the shape is serialized as a separate key
+with a &quot;.&quot; separator and the member name appended to the container's key.
+The <a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><span class="std std-ref">xmlName trait</span></a> can be used to serialize a property using a custom name. Members with null values are not serialized.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">union</span></code></td>
+<td>A union is serialized identically to a <code class="docutils literal notranslate"><span class="pre">structure</span></code> shape, but only a
+single member can be set to a non-null value.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="query-key-resolution">
+<span id="aws-protocols-awsqueryname-query-key-naming"></span><h3><a href="#query-key-resolution">Query key resolution</a></h3>
+<p>The key component used to serialize a member in a request in <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> is
+resolved using the following process:</p>
+<ol class="arabic">
+<li><p class="first">Use the value of the <a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><span class="std std-ref">xmlName</span></a> trait applied to the
+member, if present.</p>
+</li>
+<li><p class="first">Use the default value for the member:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Member location</th>
+<th class="head">Default value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">list</span></code> member</td>
+<td>The string literal &quot;member&quot;</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">set</span></code> member</td>
+<td>The string literal &quot;member&quot;</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">map</span></code> key</td>
+<td>The string literal &quot;key&quot;</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">map</span></code> value</td>
+<td>The string literal &quot;value&quot;</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">structure</span></code> member</td>
+<td>The <a class="reference internal" href="../core/model.html#grammar-token-shape_id_member"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">union</span></code> member</td>
+<td>The <a class="reference internal" href="../core/model.html#grammar-token-shape_id_member"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ol>
+</div>
+<div class="section" id="examples">
+<h3><a href="#examples">Examples</a></h3>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">These examples are non-exhaustive. See the <a class="reference internal" href="#awsquery-compliance-tests"><span class="std std-ref">Protocol compliance tests</span></a>
+for a suite of compliance tests for the <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol.</p>
+</div>
+<div class="section" id="structures-and-unions">
+<h4><a href="#structures-and-unions">Structures and Unions</a></h4>
+<p>Each member value provided for the shape is serialized as a separate key
+with a &quot;.&quot; separator and the member name appended to the container's key.
+The <a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><span class="std std-ref">xmlName trait</span></a> can be used to serialize a property using a custom name. Members with null values are not serialized.</p>
+<p>For example, given the following:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> QueryStructuresInput</span> {
+    <span class="nl">foo:</span> <span class="vc">String</span>,
+
+    <span class="nd">@xmlName</span>(<span class="s2">&quot;Custom&quot;</span>)
+    <span class="nl">bar:</span> <span class="vc">String</span>,
+
+    <span class="nl">baz:</span> <span class="vc">MyStructure</span>,
+}
+
+<span class="kd">structure</span><span class="nc"> MyStructure</span> {
+    <span class="nl">temp:</span> <span class="vc">String</span>,
+}
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">x-www-form-urlencoded</span></code> serialization is:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Action=QueryStructures
+&amp;Version=2020-07-02
+&amp;foo=example1
+&amp;Custom=example2
+&amp;baz.temp=example3
+</pre></div>
+</div>
+</div>
+<div class="section" id="collections">
+<h4><a href="#collections">Collections</a></h4>
+<p>Each value provided in the collection is serialized as a separate key with
+a &quot;.&quot; separator, the string &quot;member&quot;, a &quot;.&quot; separator, and a &quot;1&quot; indexed
+incrementing counter appended to the container's key.
+The <a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><span class="std std-ref">xmlName trait</span></a> can be used to serialize a property using a custom name instead of &quot;member&quot;. The <a class="reference internal" href="../core/xml-traits.html#xmlflattened-trait"><span class="std std-ref">xmlFlattened trait</span></a>
+can be used to unwrap the values into a containing structure or union,
+with the key not containing the initial &quot;.&quot; separator and <code class="docutils literal notranslate"><span class="pre">member</span></code>
+segment.</p>
+<p>For example, given the following:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> QueryListsInput</span> {
+    <span class="nl">ListArg:</span> <span class="vc">StringList</span>,
+
+    <span class="nd">@xmlFlattened</span>
+    <span class="nl">ComplexListArg:</span> <span class="vc">GreetingList</span>,
+
+    <span class="c">// Notice that the xmlName on the targeted list member is ignored.</span>
+    <span class="nl">ListArgWithXmlNameMember:</span> <span class="vc">ListWithXmlName</span>,
+
+    <span class="nd">@xmlName</span>(<span class="s2">&quot;Hi&quot;</span>)
+    <span class="nl">ListArgWithXmlName:</span> <span class="vc">ListWithXmlName</span>,
+}
+
+<span class="kd">list</span><span class="nc"> ListWithXmlName</span> {
+    <span class="nd">@xmlName</span>(<span class="s2">&quot;item&quot;</span>)
+    <span class="nl">member:</span> <span class="vc">String</span>
+}
+
+<span class="kd">list</span><span class="nc"> StringList</span> {
+    <span class="nl">member:</span> <span class="vc">String</span>
+}
+
+<span class="kd">list</span><span class="nc"> GreetingList</span> {
+    <span class="nl">member:</span> <span class="vc">GreetingStruct</span>
+}
+
+<span class="kd">structure</span><span class="nc"> GreetingStruct</span> {
+    <span class="nl">hi:</span> <span class="vc">String</span>,
+}
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">x-www-form-urlencoded</span></code> serialization is:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Action=QueryLists
+&amp;Version=2020-07-02
+&amp;ListArg.member.1=foo
+&amp;ListArg.member.2=bar
+&amp;ListArg.member.3=baz
+&amp;ComplexListArg.1.hi=hello
+&amp;ComplexListArg.2.hi=hola
+&amp;ListArgWithXmlNameMember.1=A
+&amp;ListArgWithXmlNameMember.2=B
+&amp;Hi.1=A
+&amp;Hi.2=B
+</pre></div>
+</div>
+</div>
+<div class="section" id="maps">
+<h4><a href="#maps">Maps</a></h4>
+<p>Each key and value in each pair provided in the map is serialized as a
+separate key with a &quot;.&quot; separator, the string &quot;entry&quot;, a &quot;.&quot; separator,
+a &quot;1&quot; indexed incrementing counter, a &quot;.&quot; separator, and the string
+&quot;key&quot; or &quot;value&quot; (for member keys or values, respectively) appended to
+the container's key. The <a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><span class="std std-ref">xmlName trait</span></a> can be used to serialize a property using a custom name instead of &quot;member&quot;, &quot;key&quot;,
+or &quot;value&quot;. The <a class="reference internal" href="../core/xml-traits.html#xmlflattened-trait"><span class="std std-ref">xmlFlattened trait</span></a> can be used to unwrap the
+values into a containing structure or union, with the key not
+containing the initial &quot;.&quot; separator and &quot;entry&quot; segment.</p>
+<p>For example, given the following:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> QueryMapsInput</span> {
+    <span class="nl">MapArg:</span> <span class="vc">StringMap</span>,
+
+    <span class="nd">@xmlName</span>(<span class="s2">&quot;reNamed&quot;</span>)
+    <span class="nl">RenamedMapArg:</span> <span class="vc">StringMap</span>,
+
+    <span class="nl">ComplexMapArg:</span> <span class="vc">ComplexMap</span>,
+
+    <span class="nl">MapWithXmlMemberName:</span> <span class="vc">MapWithXmlName</span>,
+}
+
+<span class="kd">map</span><span class="nc"> StringMap</span> {
+    <span class="nl">key:</span> <span class="vc">String</span>,
+    <span class="nl">value:</span> <span class="vc">String</span>
+}
+
+<span class="kd">map</span><span class="nc"> ComplexMap</span> {
+    <span class="nl">key:</span> <span class="vc">String</span>,
+    <span class="nl">value:</span> <span class="vc">GreetingStruct</span>,
+}
+
+<span class="kd">map</span><span class="nc"> MapWithXmlName</span> {
+    <span class="nd">@xmlName</span>(<span class="s2">&quot;K&quot;</span>)
+    <span class="nl">key:</span> <span class="vc">String</span>,
+
+    <span class="nd">@xmlName</span>(<span class="s2">&quot;V&quot;</span>)
+    <span class="nl">value:</span> <span class="vc">String</span>
+}
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">x-www-form-urlencoded</span></code> serialization is:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Action=QueryMaps
+&amp;Version=2020-07-02
+&amp;MapArg.entry.1.key=bar
+&amp;MapArg.entry.1.value=Bar
+&amp;MapArg.entry.2.key=foo
+&amp;MapArg.entry.2.value=Foo
+&amp;reNamed.entry.1.key=foo
+&amp;reNamed.entry.1.value=Foo
+&amp;ComplexMapArg.entry.1.key=bar
+&amp;ComplexMapArg.entry.1.value.hi=Bar
+&amp;ComplexMapArg.entry.2.key=foo
+&amp;ComplexMapArg.entry.2.value.hi=Foo
+&amp;MapWithXmlMemberName.entry.1.K=bar
+&amp;MapWithXmlMemberName.entry.1.V=Bar
+&amp;MapWithXmlMemberName.entry.2.K=foo
+&amp;MapWithXmlMemberName.entry.2.V=Foo
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="response-serialization">
+<h2><a href="#response-serialization">Response serialization</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol serializes XML responses within an XML root node with
+the name of the operation's output suffixed with &quot;Response&quot;. A nested element,
+with the name of the operation's output suffixed with &quot;Result&quot;, contains the
+contents of the successful response.</p>
+<p>The value of the <code class="docutils literal notranslate"><span class="pre">uri</span></code> member of the <a class="reference internal" href="../core/xml-traits.html#xmlnamespace-trait"><span class="std std-ref">xmlNamespace trait</span></a>
+is serialized in an <code class="docutils literal notranslate"><span class="pre">xmlns</span></code> attribute on the response's XML root node. The
+following is a sample response to an operation named <code class="docutils literal notranslate"><span class="pre">XmlTest</span></code>.</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;XmlTestResponse</span> <span class="na">xmlns=</span><span class="s">&quot;https://example.com/&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;XmlTestResult&gt;</span>
+        <span class="nt">&lt;testValue&gt;</span>Hello!<span class="nt">&lt;/testValue&gt;</span>
+    <span class="nt">&lt;/XmlTestResult&gt;</span>
+<span class="nt">&lt;/XmlTestResponse&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="xml-shape-serialization">
+<h3><a href="#xml-shape-serialization">XML shape serialization</a></h3>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Smithy type</th>
+<th class="head">XML entity</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">blob</span></code></td>
+<td>XML text node with a value that is base64 encoded.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>XML text node with a value either &quot;true&quot; or &quot;false&quot;.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">byte</span></code></td>
+<td>XML text node with a value of the number.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">short</span></code></td>
+<td>XML text node with a value of the number.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">integer</span></code></td>
+<td>XML text node with a value of the number.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">long</span></code></td>
+<td>XML text node with a value of the number.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">float</span></code></td>
+<td>XML text node with a value of the number.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">double</span></code></td>
+<td>XML text node with a value of the number.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">bigDecimal</span></code></td>
+<td>XML text node with a value of the number, using scientific notation if
+an exponent is needed. Unfortunately, many XML parsers will either
+truncate the value or be unable to parse numbers that exceed the size
+of a double.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">bigInteger</span></code></td>
+<td>XML text node with a value of the number, using scientific notation if
+an exponent is needed. Unfortunately, many XML parsers will either
+truncate the value or be unable to parse numbers that exceed the size
+of a double.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>XML text node with an XML-safe, UTF-8 value of the string.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">timestamp</span></code></td>
+<td>XML text node with a value of the timestamp. This protocol uses
+<code class="docutils literal notranslate"><span class="pre">date-time</span></code> as the default serialization. However, the
+<a class="reference internal" href="../core/protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat</span></a> MAY be used to
+customize timestamp serialization.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
+<td>Undefined. Document shapes are not supported in this protocol.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">list</span></code></td>
+<td>XML element. Each value provided in the list is serialized as a nested
+XML element with the name <code class="docutils literal notranslate"><span class="pre">member</span></code>. The <a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><span class="std std-ref">xmlName trait</span></a> can be
+used to serialize a property using a custom name. The
+<a class="reference internal" href="../core/xml-traits.html#xmlflattened-trait"><span class="std std-ref">xmlFlattened trait</span></a> can be used to unwrap the values into a
+containing structure or union, with the value XML element using the
+structure or union member name. See <a class="reference internal" href="../core/xml-traits.html#xml-list-and-set-serialization"><span class="std std-ref">List and set serialization</span></a>
+for more.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">set</span></code></td>
+<td>XML element. A set is serialized identically to a <code class="docutils literal notranslate"><span class="pre">list</span></code> shape,
+but only contains unique values.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">map</span></code></td>
+<td>XML element. Each key-value pair provided in the map is serialized in
+a nested XML element with the name <code class="docutils literal notranslate"><span class="pre">entry</span></code> that contains nested
+elements <code class="docutils literal notranslate"><span class="pre">key</span></code> and <code class="docutils literal notranslate"><span class="pre">value</span></code> for the pair. The <a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><span class="std std-ref">xmlName trait</span></a>
+can be used to serialize key or value properties using a custom name,
+it cannot be used to influence the <code class="docutils literal notranslate"><span class="pre">entry</span></code> name. The
+<a class="reference internal" href="../core/xml-traits.html#xmlflattened-trait"><span class="std std-ref">xmlFlattened trait</span></a> can be used to unwrap the entries into a
+containing structure or union, with the entry XML element using the
+structure or union member name. See <a class="reference internal" href="../core/xml-traits.html#xml-map-serialization"><span class="std std-ref">Map serialization</span></a> for
+more.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">structure</span></code></td>
+<td>XML element. Each member value provided for the structure is
+serialized as a nested XML element where the element name is the
+same as the member name. The <a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><span class="std std-ref">xmlName trait</span></a> can be used to
+serialize a property using a custom name. The <a class="reference internal" href="../core/xml-traits.html#xmlattribute-trait"><span class="std std-ref">xmlAttribute trait</span></a>
+can be used to serialize a property in an attribute of the containing
+element. See <a class="reference internal" href="../core/xml-traits.html#xml-structure-and-union-serialization"><span class="std std-ref">Structure and union serialization</span></a> for more.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">union</span></code></td>
+<td>XML element. A union is serialized identically to a <code class="docutils literal notranslate"><span class="pre">structure</span></code>
+shape, but only a single member can be set to a non-null value.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">See <a class="reference internal" href="../core/xml-traits.html#serializing-xml-shapes"><span class="std std-ref">Serializing XML shapes</span></a> for comprehensive documentation,
+including examples and behaviors when using multiple XML traits.</p>
+</div>
+</div>
+</div>
+<div class="section" id="operation-error-serialization">
+<span id="awsquery-errors"></span><h2><a href="#operation-error-serialization">Operation error serialization</a></h2>
+<p>Error responses in the <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol are wrapped within an XML root
+node named <code class="docutils literal notranslate"><span class="pre">ErrorResponse</span></code>. A nested element, named <code class="docutils literal notranslate"><span class="pre">Error</span></code>, contains the
+serialized error structure members.</p>
+<p>Serialized error shapes MUST also contain an additional child element <code class="docutils literal notranslate"><span class="pre">Code</span></code>
+that contains only the <a class="reference internal" href="../core/model.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
+<a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>. This can be used to distinguish which specific error has been
+serialized in the response.</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;ErrorResponse&gt;</span>
+    <span class="nt">&lt;Error&gt;</span>
+        <span class="nt">&lt;Type&gt;</span>Sender<span class="nt">&lt;/Type&gt;</span>
+        <span class="nt">&lt;Code&gt;</span>InvalidGreeting<span class="nt">&lt;/Code&gt;</span>
+        <span class="nt">&lt;Message&gt;</span>Hi<span class="nt">&lt;/Message&gt;</span>
+        <span class="nt">&lt;AnotherSetting&gt;</span>setting<span class="nt">&lt;/AnotherSetting&gt;</span>
+    <span class="nt">&lt;/Error&gt;</span>
+    <span class="nt">&lt;RequestId&gt;</span>foo-id<span class="nt">&lt;/RequestId&gt;</span>
+<span class="nt">&lt;/ErrorResponse&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="protocol-compliance-tests">
+<span id="awsquery-compliance-tests"></span><h2><a href="#protocol-compliance-tests">Protocol compliance tests</a></h2>
+<p>A full compliance test suite is provided and SHALL be considered a normative
+reference: <a class="reference external" href="https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/awsQuery">https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/awsQuery</a></p>
+<p>These compliance tests define a model that is used to define test cases and
+the expected serialized HTTP requests and responses for each case.</p>
+<p><em>TODO: Add event stream handling specifications.</em></p>
 </div>
 </div>
 
@@ -164,6 +752,25 @@ JSON</div>
                             <ul>
 <li><a class="reference internal" href="#">AWS query protocol</a><ul>
 <li><a class="reference internal" href="#aws-protocols-awsquery-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> trait</a></li>
+<li><a class="reference internal" href="#supported-traits">Supported traits</a></li>
+<li><a class="reference internal" href="#protocol-behavior">Protocol Behavior</a></li>
+<li><a class="reference internal" href="#request-serialization">Request serialization</a><ul>
+<li><a class="reference internal" href="#x-www-form-urlencoded-shape-serialization">x-www-form-urlencoded shape serialization</a></li>
+<li><a class="reference internal" href="#query-key-resolution">Query key resolution</a></li>
+<li><a class="reference internal" href="#examples">Examples</a><ul>
+<li><a class="reference internal" href="#structures-and-unions">Structures and Unions</a></li>
+<li><a class="reference internal" href="#collections">Collections</a></li>
+<li><a class="reference internal" href="#maps">Maps</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#response-serialization">Response serialization</a><ul>
+<li><a class="reference internal" href="#xml-shape-serialization">XML shape serialization</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#operation-error-serialization">Operation error serialization</a></li>
+<li><a class="reference internal" href="#protocol-compliance-tests">Protocol compliance tests</a></li>
 </ul>
 </li>
 </ul>

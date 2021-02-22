@@ -103,6 +103,17 @@ that support the following members:
       - ``string``
       - **Required**. The request-target of the HTTP request, not including
         the query string (for example, "/foo/bar").
+    * - host
+      - ``string``
+      - The host / endpoint provided to the client, not including the path or
+        scheme (for example, "example.com").
+    * - resolvedHost
+      - ``string``
+      - The host / endpoint that the client should send to, not including the
+        path or scheme (for example, "prefix.example.com").
+
+        This can differ from the host provided to the client if, for instance,
+        the operation has a member with the :ref:`endpoint-trait`.
     * - authScheme
       - shape ID
       - A shape ID that specifies the optional authentication scheme to
@@ -198,10 +209,34 @@ that support the following members:
         request. For example, some vendors might utilize environment
         variables, configuration files on disk, or other means to influence
         the serialization formats used by clients or servers.
+
+        If a ``vendorParamsShape`` is set, these parameters MUST be compatible
+        with that shape's definition.
+    * - vendorParamsShape
+      - shape ID
+      - A shape to be used to validate the ``vendorParams`` member contents.
+
+        If set, the parameters in ``vendorParams`` MUST be compatible with this
+        shape's definition.
     * - documentation
       - ``string``
       - A description of the test and what is being asserted defined in
         CommonMark_.
+    * - tags
+      - ``[string]``
+      - Attaches a list of tags that allow test cases to be categorized and
+        grouped.
+    * - appliesTo
+      - ``string``, one of "client" or "server"
+      - Indicates that the test case is only to be implemented by "client" or
+        "server" implementations. This property is useful for identifying and
+        testing edge cases of clients and servers that are impossible or
+        undesirable to test in *both* client and server implementations. For
+        example, a "server" test might be useful to ensure a service can
+        gracefully receive a request that optionally contains a payload.
+
+        Is is assumed that test cases that do not define an ``appliesTo``
+        member are implemented by both client and server implementations.
 
 
 HTTP request example
@@ -406,10 +441,34 @@ structures that support the following members:
         response. For example, some vendors might utilize environment
         variables, configuration files on disk, or other means to influence
         the serialization formats used by clients or servers.
+
+        If a ``vendorParamsShape`` is set, these parameters MUST be compatible
+        with that shape's definition.
+    * - vendorParamsShape
+      - shape ID
+      - A shape to be used to validate the ``vendorParams`` member contents.
+
+        If set, the parameters in ``vendorParams`` MUST be compatible with this
+        shape's definition.
     * - documentation
       - ``string``
       - A description of the test and what is being asserted defined in
         CommonMark_.
+    * - tags
+      - ``[string]``
+      - Attaches a list of tags that allow test cases to be categorized and
+        grouped.
+    * - appliesTo
+      - ``string``, one of "client" or "server"
+      - Indicates that the test case is only to be implemented by "client" or
+        "server" implementations. This property is useful for identifying and
+        testing edge cases of clients and servers that are impossible or
+        undesirable to test in *both* client and server implementations. For
+        example, a "client" test might be useful to ensure a client can
+        gracefully receive a response that optionally contains a payload.
+
+        Is is assumed that test cases that do not define an ``appliesTo``
+        member are implemented by both client and server implementations.
 
 
 HTTP response example

@@ -843,11 +843,12 @@ the body of the response.</p>
 <dt>Summary</dt>
 <dd>Binds a single structure member to the body of an HTTP message.</dd>
 <dt>Trait selector</dt>
-<dd><div class="first highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; :test(member &gt; :test(string, blob, structure, union, document))
+<dd><div class="first highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; :test(member &gt; :test(string, blob, structure, union, document, list, set, map))
 </pre></div>
 </div>
 <p class="last">The <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait can be applied to <code class="docutils literal notranslate"><span class="pre">structure</span></code> members that
-target a <code class="docutils literal notranslate"><span class="pre">string</span></code>, <code class="docutils literal notranslate"><span class="pre">blob</span></code>, <code class="docutils literal notranslate"><span class="pre">structure</span></code>, <code class="docutils literal notranslate"><span class="pre">union</span></code>, or <code class="docutils literal notranslate"><span class="pre">document</span></code>.</p>
+target a <code class="docutils literal notranslate"><span class="pre">string</span></code>, <code class="docutils literal notranslate"><span class="pre">blob</span></code>, <code class="docutils literal notranslate"><span class="pre">structure</span></code>, <code class="docutils literal notranslate"><span class="pre">union</span></code>, <code class="docutils literal notranslate"><span class="pre">document</span></code>,
+<code class="docutils literal notranslate"><span class="pre">set</span></code>, <code class="docutils literal notranslate"><span class="pre">map</span></code>, or <code class="docutils literal notranslate"><span class="pre">list</span></code>.</p>
 </dd>
 <dt>Value type</dt>
 <dd>Annotation trait.</dd>
@@ -908,10 +909,10 @@ or <a class="reference internal" href="#httpprefixheaders-trait"><span class="st
 <ol class="arabic simple">
 <li>When a string or blob member is referenced, the raw value is serialized
 as the body of the message.</li>
-<li>When a <a class="reference internal" href="model.html#structure"><span class="std std-ref">structure</span></a>, <a class="reference internal" href="model.html#union"><span class="std std-ref">union</span></a>, or
-document type is targeted, the shape value is serialized
-as a <a class="reference internal" href="protocol-traits.html#protocoldefinition-trait"><span class="std std-ref">protocol-specific</span></a> document that is
-sent as the body of the message.</li>
+<li>When a <a class="reference internal" href="model.html#structure"><span class="std std-ref">structure</span></a>, <a class="reference internal" href="model.html#union"><span class="std std-ref">union</span></a>, <a class="reference internal" href="model.html#list"><span class="std std-ref">list</span></a>,
+<a class="reference internal" href="model.html#set"><span class="std std-ref">set</span></a>, <a class="reference internal" href="model.html#map"><span class="std std-ref">map</span></a>, or document type is targeted,
+the shape value is serialized as a <a class="reference internal" href="protocol-traits.html#protocoldefinition-trait"><span class="std std-ref">protocol-specific</span></a>
+document that is sent as the body of the message.</li>
 </ol>
 </div>
 <div class="section" id="httpprefixheaders-trait">

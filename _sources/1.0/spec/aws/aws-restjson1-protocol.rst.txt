@@ -169,6 +169,12 @@ that affect serialization:
     * - :ref:`httpPayload <httpPayload-trait>`
       - Binds a top-level input or output structure member as the payload
         of a request or response.
+
+        .. important::
+
+            This protocol only permits the :ref:`httpPayload-trait` to be applied to
+            members that target structures, documents, strings, blobs, or unions.
+
     * - :ref:`httpPrefixHeaders <httpPrefixHeaders-trait>`
       - Binds a top-level input, output, or error member to a map of
         prefixed HTTP headers.
@@ -326,7 +332,7 @@ Protocol compliance tests
 -------------------------
 
 A full compliance test suite is provided and SHALL be considered a normative
-reference: https://github.com/awslabs/smithy/tree/master/smithy-aws-protocol-tests/model/awsJson1_1
+reference: https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/restJson1
 
 These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.

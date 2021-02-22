@@ -76,20 +76,29 @@
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
 <li><a class="reference internal" href="#aws-protocols-awsjson1-0-trait" id="id2"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsJson1_0</span></code> trait</a></li>
+<li><a class="reference internal" href="#supported-traits" id="id3">Supported traits</a></li>
+<li><a class="reference internal" href="#protocol-behaviors" id="id4">Protocol Behaviors</a></li>
+<li><a class="reference internal" href="#shape-serialization" id="id5">Shape serialization</a><ul>
+<li><a class="reference internal" href="#empty-body-serialization" id="id6">Empty body serialization</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#operation-error-serialization" id="id7">Operation error serialization</a></li>
+<li><a class="reference internal" href="#differences-between-awsjson1-0-and-awsjson1-1" id="id8">Differences between <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> and <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code></a></li>
+<li><a class="reference internal" href="#protocol-compliance-tests" id="id9">Protocol compliance tests</a></li>
 </ul>
 </div>
 <div class="section" id="aws-protocols-awsjson1-0-trait">
 <span id="id1"></span><h2><a href="#aws-protocols-awsjson1-0-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsJson1_0</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
-<dd>Adds support for an HTTP protocol that sends POST requests and
+<dd>Adds support for an HTTP protocol that sends &quot;POST&quot; requests and
 responses with JSON documents.</dd>
 <dt>Trait selector</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
 <dt>Value type</dt>
 <dd>Annotation trait.</dd>
 <dt>See</dt>
-<dd><a class="reference external" href="https://github.com/awslabs/smithy/tree/1.5.1/smithy-aws-protocol-tests/model/awsJson1_0">Protocol tests</a></dd>
+<dd><a class="reference external" href="https://github.com/awslabs/smithy/tree/1.6.0/smithy-aws-protocol-tests/model/awsJson1_0">Protocol tests</a></dd>
 </dl>
 <div class="sphinx-tabs docutils container">
 <div class="ui top attached tabular menu sphinx-menu docutils container">
@@ -131,7 +140,232 @@ JSON</div>
 </div>
 </div>
 </div>
-<p><em>TODO: Add specifications, protocol examples, etc.</em></p>
+</div>
+<div class="section" id="supported-traits">
+<h2><a href="#supported-traits">Supported traits</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> protocol supports the following traits
+that affect serialization:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Trait</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="../core/http-traits.html#cors-trait"><span class="std std-ref">cors</span></a></td>
+<td>Indicates that the service supports CORS.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../core/endpoint-traits.html#endpoint-trait"><span class="std std-ref">endpoint</span></a></td>
+<td>Configures a custom operation endpoint.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../core/endpoint-traits.html#hostlabel-trait"><span class="std std-ref">hostLabel</span></a></td>
+<td>Binds a top-level operation input structure member to a label in
+the hostPrefix of an endpoint trait.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../core/protocol-traits.html#jsonname-trait"><span class="std std-ref">jsonName</span></a></td>
+<td>By default, the JSON property names used in serialized structures are
+the same as a structure member name. The <code class="docutils literal notranslate"><span class="pre">jsonName</span></code> trait changes
+the JSON property name to a custom value.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../core/protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat</span></a></td>
+<td>Defines a custom timestamp serialization format.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="protocol-behaviors">
+<h2><a href="#protocol-behaviors">Protocol Behaviors</a></h2>
+<p>Every request for the <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> protocol MUST be sent to the
+root URL (<code class="docutils literal notranslate"><span class="pre">/</span></code>) using the HTTP &quot;POST&quot; method.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> protocol does not support custom HTTP bindings.
+<a class="reference internal" href="../core/http-traits.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a> MUST be ignored if they are present.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> protocol uses the following headers:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="17%" />
+<col width="17%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Header</th>
+<th class="head">Required</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">Content-Type</span></code></td>
+<td>true</td>
+<td>This header has a static value of <code class="docutils literal notranslate"><span class="pre">application/x-amz-json-1.0</span></code>.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">Content-Length</span></code></td>
+<td>true</td>
+<td>The standard <code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> header defined by
+<a class="reference external" href="https://tools.ietf.org/html/rfc7230#section-3.3.2">RFC 7230 Section 3.3.2</a>.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">X-Amz-Target</span></code></td>
+<td>true for requests</td>
+<td><p class="first">The value of this header is the <a class="reference internal" href="../core/model.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the
+service's <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a> joined to the
+<a class="reference internal" href="../core/model.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the operation's <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>,
+separated by a single period (<code class="docutils literal notranslate"><span class="pre">.</span></code>) character.</p>
+<p class="last">For example, the value for the operation <code class="docutils literal notranslate"><span class="pre">ns.example#MyOp</span></code> of the
+service <code class="docutils literal notranslate"><span class="pre">ns.example#MyService</span></code> is <code class="docutils literal notranslate"><span class="pre">MyService.MyOp</span></code>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="shape-serialization">
+<h2><a href="#shape-serialization">Shape serialization</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> protocol serializes all shapes into a JSON
+document body with no HTTP bindings supported. The following table shows how
+to convert each shape type:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Smithy type</th>
+<th class="head">JSON type</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">blob</span></code></td>
+<td>JSON <code class="docutils literal notranslate"><span class="pre">string</span></code> value that is base64 encoded.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>JSON boolean</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">byte</span></code></td>
+<td>JSON number</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">short</span></code></td>
+<td>JSON number</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">integer</span></code></td>
+<td>JSON number</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">long</span></code></td>
+<td>JSON number</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">float</span></code></td>
+<td>JSON number</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">double</span></code></td>
+<td>JSON number</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">bigDecimal</span></code></td>
+<td>JSON number. Unfortunately, this protocol serializes bigDecimal
+shapes as a normal JSON number. Many JSON parsers will either
+truncate the value or be unable to parse numbers that exceed the
+size of a double.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">bigInteger</span></code></td>
+<td>JSON number. Unfortunately, this protocol serializes bigInteger
+shapes as a normal JSON number. Many JSON parsers will either
+truncate the value or be unable to parse numbers that exceed the
+size of a double.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>JSON string</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">timestamp</span></code></td>
+<td>JSON number (default). This protocol uses <code class="docutils literal notranslate"><span class="pre">epoch-seconds</span></code>, also
+known as Unix timestamps, in JSON payloads represented as a double.
+However, the <a class="reference internal" href="../core/protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat</span></a> MAY be
+used to customize timestamp serialization.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
+<td>Any JSON value</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">list</span></code></td>
+<td>JSON array</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">set</span></code></td>
+<td>JSON array. A set is serialized identically as a <code class="docutils literal notranslate"><span class="pre">list</span></code> shape,
+but only contains unique values.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">map</span></code></td>
+<td>JSON object</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">structure</span></code></td>
+<td>JSON object. Each member value provided for the structure is
+serialized as a JSON property where the property name is the same
+as the member name. The <a class="reference internal" href="../core/protocol-traits.html#jsonname-trait"><span class="std std-ref">jsonName trait</span></a> can be used to serialize
+a property using a custom name. A null value MAY be provided or
+omitted for a <a class="reference internal" href="../core/type-refinement-traits.html#box-trait"><span class="std std-ref">boxed</span></a> member with no observable
+difference.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">union</span></code></td>
+<td>JSON object. A union is serialized identically as a <code class="docutils literal notranslate"><span class="pre">structure</span></code>
+shape, but only a single member can be set to a non-null value.</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="empty-body-serialization">
+<h3><a href="#empty-body-serialization">Empty body serialization</a></h3>
+<p>When an operation has no modeled input or if no input parameters are provided,
+a client MUST send an empty JSON object (<code class="docutils literal notranslate"><span class="pre">{}</span></code>) as the request body. Server
+implementations MUST also accept empty request bodies.</p>
+<p>When an operation has no modeled output or no output parameters are provided,
+server implementations SHOULD send an empty response body. The server MUST
+still send the protocol's <code class="docutils literal notranslate"><span class="pre">Content-Type</span></code> header in this case. Clients MUST
+also accept an empty JSON object as the response body.</p>
+</div>
+</div>
+<div class="section" id="operation-error-serialization">
+<h2><a href="#operation-error-serialization">Operation error serialization</a></h2>
+<p>Error responses in the <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> protocol are serialized identically to
+standard responses with one additional component to distinguish which error
+is contained. New server-side protocol implementations SHOULD use a body field
+named <code class="docutils literal notranslate"><span class="pre">__type</span></code>. The component MUST be one of the following: an additional
+header with the name <code class="docutils literal notranslate"><span class="pre">X-Amzn-Errortype</span></code>, a body field with the name <code class="docutils literal notranslate"><span class="pre">code</span></code>,
+or a body field named <code class="docutils literal notranslate"><span class="pre">__type</span></code>.  The value of this component SHOULD contain
+the error's <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>.</p>
+<p>Legacy server-side protocol implementations sometimes include different
+information in this value. All client-side implementations SHOULD support
+sanitizing the value to retrieve the disambiguated error type using the
+following steps:</p>
+<ol class="arabic simple">
+<li>If a <code class="docutils literal notranslate"><span class="pre">:</span></code> character is present, then take only the contents <strong>before</strong> the
+first <code class="docutils literal notranslate"><span class="pre">:</span></code> character in the value.</li>
+<li>If a <code class="docutils literal notranslate"><span class="pre">#</span></code> character is present, then take only the contents <strong>after</strong> the
+first <code class="docutils literal notranslate"><span class="pre">#</span></code> character in the value.</li>
+</ol>
+<p>All of the following error values resolve to <code class="docutils literal notranslate"><span class="pre">FooError</span></code>:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">FooError</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">aws.protocoltests.restjson#FooError</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/</span></code></li>
+</ul>
+</div>
+<div class="section" id="differences-between-awsjson1-0-and-awsjson1-1">
+<h2>Differences between <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> and <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code><a class="headerlink" href="#differences-between-awsjson1-0-and-awsjson1-1" title="Permalink to this headline">¶</a></h2>
+<p>There are two difference between <a class="reference internal" href="#aws-protocols-awsjson1-0-trait"><span class="std std-ref">awsJson1_0</span></a> and
+<a class="reference internal" href="aws-json-1_1-protocol.html#aws-protocols-awsjson1-1-trait"><span class="std std-ref">awsJson1_1</span></a>. First, the static value of the
+<code class="docutils literal notranslate"><span class="pre">Content-Type</span></code> header is different. In <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> it MUST be
+<code class="docutils literal notranslate"><span class="pre">application/x-amz-json-1.0</span></code> and in <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code> it MUST be
+<code class="docutils literal notranslate"><span class="pre">application/x-amz-json-1.1</span></code>.</p>
+<p>Second, error type serialization is different. In <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code>, servers SHOULD
+send the error shape's full <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a> in the <code class="docutils literal notranslate"><span class="pre">__type</span></code> field of the body.
+In <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code>, servers SHOULD only send the error's
+<a class="reference internal" href="../core/model.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a>. However, clients MUST accept either behavior
+for both protocols. See <a class="reference internal" href="#operation-error-serialization">Operation error serialization</a> for full details on how to
+deserialize errors for <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code>.</p>
+</div>
+<div class="section" id="protocol-compliance-tests">
+<h2><a href="#protocol-compliance-tests">Protocol compliance tests</a></h2>
+<p>A full compliance test suite is provided and SHALL be considered a normative
+reference: <a class="reference external" href="https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/awsJson1_0">https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/awsJson1_0</a></p>
+<p>These compliance tests define a model that is used to define test cases and
+the expected serialized HTTP requests and responses for each case.</p>
+<p><em>TODO: Add event stream handling specifications.</em></p>
 </div>
 </div>
 
@@ -158,6 +392,15 @@ JSON</div>
                             <ul>
 <li><a class="reference internal" href="#">AWS JSON 1.0 protocol</a><ul>
 <li><a class="reference internal" href="#aws-protocols-awsjson1-0-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsJson1_0</span></code> trait</a></li>
+<li><a class="reference internal" href="#supported-traits">Supported traits</a></li>
+<li><a class="reference internal" href="#protocol-behaviors">Protocol Behaviors</a></li>
+<li><a class="reference internal" href="#shape-serialization">Shape serialization</a><ul>
+<li><a class="reference internal" href="#empty-body-serialization">Empty body serialization</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#operation-error-serialization">Operation error serialization</a></li>
+<li><a class="reference internal" href="#differences-between-awsjson1-0-and-awsjson1-1">Differences between <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> and <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code></a></li>
+<li><a class="reference internal" href="#protocol-compliance-tests">Protocol compliance tests</a></li>
 </ul>
 </li>
 </ul>

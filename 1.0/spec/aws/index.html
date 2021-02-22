@@ -173,10 +173,28 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="aws-json-1_0-protocol.html#aws-protocols-awsjson1-0-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsJson1_0</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-json-1_0-protocol.html#supported-traits">Supported traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-json-1_0-protocol.html#protocol-behaviors">Protocol Behaviors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-json-1_0-protocol.html#shape-serialization">Shape serialization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aws-json-1_0-protocol.html#empty-body-serialization">Empty body serialization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aws-json-1_0-protocol.html#operation-error-serialization">Operation error serialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-json-1_0-protocol.html#differences-between-awsjson1-0-and-awsjson1-1">Differences between <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> and <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-json-1_0-protocol.html#protocol-compliance-tests">Protocol compliance tests</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="aws-json-1_1-protocol.html#aws-protocols-awsjson1-1-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsJson1_1</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-json-1_1-protocol.html#supported-traits">Supported traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-json-1_1-protocol.html#protocol-behaviors">Protocol Behaviors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-json-1_1-protocol.html#shape-serialization">Shape serialization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aws-json-1_1-protocol.html#empty-body-serialization">Empty body serialization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aws-json-1_1-protocol.html#operation-error-serialization">Operation error serialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-json-1_1-protocol.html#differences-between-awsjson1-0-and-awsjson1-1">Differences between <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> and <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-json-1_1-protocol.html#protocol-compliance-tests">Protocol compliance tests</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="aws-restxml-protocol.html">AWS restXml protocol</a><ul>
@@ -191,11 +209,55 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="aws-query-protocol.html">AWS query protocol</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="aws-query-protocol.html#aws-protocols-awsquery-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-query-protocol.html#supported-traits">Supported traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-query-protocol.html#protocol-behavior">Protocol Behavior</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-query-protocol.html#request-serialization">Request serialization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aws-query-protocol.html#x-www-form-urlencoded-shape-serialization">x-www-form-urlencoded shape serialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-query-protocol.html#query-key-resolution">Query key resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-query-protocol.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aws-query-protocol.html#response-serialization">Response serialization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aws-query-protocol.html#xml-shape-serialization">XML shape serialization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aws-query-protocol.html#operation-error-serialization">Operation error serialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-query-protocol.html#protocol-compliance-tests">Protocol compliance tests</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="aws-ec2-query-protocol.html">AWS EC2 query protocol</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="aws-ec2-query-protocol.html#aws-protocols-ec2query-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#ec2Query</span></code> trait</a></li>
-<li class="toctree-l2"><a class="reference internal" href="aws-ec2-query-protocol.html#aws-protocols-ec2queryname-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#ec2QueryName</span></code> trait</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-ec2-query-protocol.html#aws-protocols-ec2queryname-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#ec2QueryName</span></code> trait</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aws-ec2-query-protocol.html#query-key-resolution">Query key resolution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aws-ec2-query-protocol.html#supported-traits">Supported traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-ec2-query-protocol.html#protocol-behavior">Protocol Behavior</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-ec2-query-protocol.html#request-serialization">Request serialization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aws-ec2-query-protocol.html#x-www-form-urlencoded-shape-serialization">x-www-form-urlencoded shape serialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-ec2-query-protocol.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aws-ec2-query-protocol.html#response-serialization">Response serialization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aws-ec2-query-protocol.html#xml-shape-serialization">XML shape serialization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aws-ec2-query-protocol.html#operation-error-serialization">Operation error serialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-ec2-query-protocol.html#protocol-compliance-tests">Protocol compliance tests</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="aws-service-customizations">
+<h2><a href="#aws-service-customizations">AWS Service Customizations</a></h2>
+<div class="toctree-wrapper large-toctree compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="customizations/index.html">AWS Service Customizations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
 </ul>
 </li>
 </ul>
@@ -226,6 +288,7 @@
                             <ul>
 <li><a class="reference internal" href="#">AWS specifications</a><ul>
 <li><a class="reference internal" href="#aws-protocols">AWS Protocols</a></li>
+<li><a class="reference internal" href="#aws-service-customizations">AWS Service Customizations</a></li>
 </ul>
 </li>
 </ul>

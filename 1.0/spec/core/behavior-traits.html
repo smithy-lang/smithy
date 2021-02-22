@@ -723,6 +723,23 @@ presence, absence, or contents of a continuation token.</p>
 </li>
 </ol>
 </div>
+<div class="section" id="backward-compatibility">
+<h3><a href="#backward-compatibility">8.5.4. Backward compatibility</a></h3>
+<p>Many tools use the <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait to expose additional functionality to
+things like generated code. To support these use cases, the following changes
+to the <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait are considered backward incompatible:</p>
+<ol class="arabic simple">
+<li>Removing the <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait.</li>
+<li>Adding, removing, or changing the <code class="docutils literal notranslate"><span class="pre">inputToken</span></code>, <code class="docutils literal notranslate"><span class="pre">outputToken</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">items</span></code> members.</li>
+<li>Removing or changing the <code class="docutils literal notranslate"><span class="pre">pageSize</span></code> member.</li>
+</ol>
+<p>The following changes are considered backward compatible:</p>
+<ol class="arabic simple">
+<li>Adding the <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait to an existing operation.</li>
+<li>Adding the <code class="docutils literal notranslate"><span class="pre">pageSize</span></code> member to an existing <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait.</li>
+</ol>
+</div>
 </div>
 <div class="section" id="httpchecksumrequired-trait">
 <span id="id6"></span><h2><a href="#httpchecksumrequired-trait">8.6. <code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait</a></h2>
@@ -788,6 +805,7 @@ Smithy</div>
 <li><a class="reference internal" href="#pagination-behavior">8.5.1. Pagination Behavior</a></li>
 <li><a class="reference internal" href="#client-behavior">8.5.2. Client behavior</a></li>
 <li><a class="reference internal" href="#continuation-tokens">8.5.3. Continuation tokens</a></li>
+<li><a class="reference internal" href="#backward-compatibility">8.5.4. Backward compatibility</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#httpchecksumrequired-trait">8.6. <code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait</a></li>
