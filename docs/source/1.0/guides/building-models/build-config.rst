@@ -1038,8 +1038,9 @@ shapes that are being renamed.
       - Description
     * - renamed
       - ``Map<shapeId, shapeId>``
-      - The map of :ref:`shape IDs ` to rename. Each key ``shapeId`` will be
-        renamed to the value ``shapeId``.
+      - The map of :ref:`shape IDs <shape-id>` to rename. Each key ``shapeId`` will be
+        renamed to the value ``shapeId``. Each :ref:`shape ID <shape-id>` must be
+        be an absolute shape ID.
 
 The following example renames the ``ns.foo#Bar`` shape to ``ns.foo#Baz``.
 Any references to ``ns.foo#Bar`` on other shapes will also be updated.

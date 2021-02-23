@@ -103,4 +103,38 @@ public class RenameShapesTest {
                 .build();
         Assertions.assertThrows(SmithyBuildException.class, () -> new RenameShapes().transform(context));
     }
+
+    @Test
+    public void throwsWhenFromShapeIsInvalid() {
+        Model model = Model.assembler()
+                .addUnparsedModel("N/A", "{ \"smithy\": \"1.0\" }")
+                .assemble()
+                .unwrap();
+        ObjectNode renamed = Node.objectNode()
+                .withMember("Bar", "ns.foo#Baz");
+        ObjectNode config = Node.objectNode()
+                .withMember("renamed", renamed);
+        TransformContext context = TransformContext.builder()
+                .model(model)
+                .settings(config)
+                .build();
+        Assertions.assertThrows(SmithyBuildException.class, () -> new RenameShapes().transform(context));
+    }
+
+    @Test
+    public void throwsWhenToShapeIsInvalid() {
+        Model model = Model.assembler()
+                .addUnparsedModel("N/A", "{ \"smithy\": \"1.0\" }")
+                .assemble()
+                .unwrap();
+        ObjectNode renamed = Node.objectNode()
+                .withMember("ns.foo#Bar", "Baz");
+        ObjectNode config = Node.objectNode()
+                .withMember("renamed", renamed);
+        TransformContext context = TransformContext.builder()
+                .model(model)
+                .settings(config)
+                .build();
+        Assertions.assertThrows(SmithyBuildException.class, () -> new RenameShapes().transform(context));
+    }
 }

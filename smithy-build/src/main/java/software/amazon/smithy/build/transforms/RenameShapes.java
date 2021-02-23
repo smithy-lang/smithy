@@ -21,6 +21,7 @@ import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeIdSyntaxException;
 import software.amazon.smithy.model.transform.ModelTransformer;
 
 /**
@@ -80,14 +81,22 @@ public class RenameShapes extends ConfigurableProjectionTransformer<RenameShapes
     private Map<ShapeId, ShapeId> getShapeIdsToRename(Config config, Model model) {
         Map<ShapeId, ShapeId> shapeIdMap = new HashMap<>();
         for (String fromShape : config.getRenamed().keySet()) {
-            ShapeId fromShapeId = ShapeId.from(fromShape);
+            ShapeId fromShapeId = getShapeIdFromString(fromShape);
             if (!model.getShape(fromShapeId.toShapeId()).isPresent()) {
                 throw new SmithyBuildException(
                         String.format("'%s' to be renamed does not exist in model.", fromShapeId)
                 );
             }
-            shapeIdMap.put(fromShapeId, ShapeId.from(config.getRenamed().get(fromShape)));
+            shapeIdMap.put(fromShapeId, getShapeIdFromString(config.getRenamed().get(fromShape)));
         }
         return shapeIdMap;
+    }
+
+    private ShapeId getShapeIdFromString(String id) {
+        try {
+            return ShapeId.from(id);
+        } catch (ShapeIdSyntaxException e) {
+            throw new SmithyBuildException(String.format("'%s' must be a valid, absolute shape ID", id));
+        }
     }
 }
