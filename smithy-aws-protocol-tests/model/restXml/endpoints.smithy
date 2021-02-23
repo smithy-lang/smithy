@@ -36,7 +36,7 @@ operation EndpointOperation {}
                 further customization based on user input.""",
         protocol: restXml,
         method: "POST",
-        uri: "/EndpointOperation",
+        uri: "/EndpointWithHostLabelOperation",
         body: """
               <HostLabelInput>
                   <label>bar</label>
@@ -73,7 +73,7 @@ structure HostLabelInput {
                 as the body or in this case an http header.""",
         protocol: restXml,
         method: "POST",
-        uri: "/EndpointOperation",
+        uri: "/EndpointWithHostLabelHeaderOperation",
         body: "",
         bodyMediaType: "application/xml",
         host: "example.com",
