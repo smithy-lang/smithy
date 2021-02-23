@@ -18,8 +18,6 @@ package software.amazon.smithy.build.transforms;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.not;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Paths;
 import java.util.List;
@@ -27,16 +25,13 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.SmithyBuildException;
-import software.amazon.smithy.build.SourcesConflictException;
 import software.amazon.smithy.build.TransformContext;
-import software.amazon.smithy.build.plugins.SourcesPlugin;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.FunctionalUtils;
 
 public class FlattenNamespacesTest {
