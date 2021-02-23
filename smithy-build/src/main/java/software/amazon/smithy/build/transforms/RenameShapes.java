@@ -33,6 +33,9 @@ import software.amazon.smithy.model.transform.ModelTransformer;
  */
 public class RenameShapes extends ConfigurableProjectionTransformer<RenameShapes.Config> {
 
+    /**
+     * {@code renameShapes} configuration settings.
+     */
     public static final class Config {
 
         private Map<String, String> renamed;
