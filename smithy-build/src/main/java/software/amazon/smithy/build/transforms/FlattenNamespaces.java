@@ -44,7 +44,7 @@ import software.amazon.smithy.utils.Pair;
 public final class FlattenNamespaces extends ConfigurableProjectionTransformer<FlattenNamespaces.Config> {
 
     /**
-     * {@code removeTraitShapes} configuration settings.
+     * {@code flattenNamespaces} configuration settings.
      */
     public static final class Config {
 
