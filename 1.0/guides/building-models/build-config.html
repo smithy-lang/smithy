@@ -1299,6 +1299,63 @@ JSON</div>
 </div>
 </div>
 </div>
+<div class="section" id="renameshapes">
+<span id="renameshapes-transform"></span><h3><a href="#renameshapes">renameShapes</a></h3>
+<p>Renames shapes within the model, including updating any references to the
+shapes that are being renamed.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>renamed</td>
+<td><code class="docutils literal notranslate"><span class="pre">Map&lt;shapeId,</span> <span class="pre">shapeId&gt;</span></code></td>
+<td>The map of <a class="reference internal" href="../../spec/core/model.html#shape-id"><span class="std std-ref">shape IDs</span></a> to rename. Each key <code class="docutils literal notranslate"><span class="pre">shapeId</span></code> will be
+renamed to the value <code class="docutils literal notranslate"><span class="pre">shapeId</span></code>. Each <a class="reference internal" href="../../spec/core/model.html#shape-id"><span class="std std-ref">shape ID</span></a> must be
+be an absolute shape ID.</td>
+</tr>
+</tbody>
+</table>
+<p>The following example renames the <code class="docutils literal notranslate"><span class="pre">ns.foo#Bar</span></code> shape to <code class="docutils literal notranslate"><span class="pre">ns.foo#Baz</span></code>.
+Any references to <code class="docutils literal notranslate"><span class="pre">ns.foo#Bar</span></code> on other shapes will also be updated.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;renameShapes&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;renamed&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;ns.foo#Bar&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#Baz&quot;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div class="section" id="environment-variables">
 <span id="build-envars"></span><h2><a href="#environment-variables">Environment variables</a></h2>
@@ -1443,6 +1500,7 @@ All model names referenced by the manifest are relative to <code class="docutils
 <li><a class="reference internal" href="#flattennamespaces">flattenNamespaces</a></li>
 <li><a class="reference internal" href="#removetraitdefinitions">removeTraitDefinitions</a></li>
 <li><a class="reference internal" href="#removeunusedshapes">removeUnusedShapes</a></li>
+<li><a class="reference internal" href="#renameshapes">renameShapes</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#environment-variables">Environment variables</a></li>
