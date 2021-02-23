@@ -14,3 +14,4 @@ software.amazon.smithy.build.transforms.IncludeTraits
 software.amazon.smithy.build.transforms.IncludeTraitsByTag
 software.amazon.smithy.build.transforms.RemoveTraitDefinitions
 software.amazon.smithy.build.transforms.RemoveUnusedShapes
+software.amazon.smithy.build.transforms.RenameShapes
