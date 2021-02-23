@@ -1021,6 +1021,50 @@ but keeps the shape if it has any of the provided tags:
             }
         }
 
+.. _renameShapes-transform:
+
+renameShapes
+------------
+
+Renames shapes within the model, including updating any references to the
+shapes that are being renamed.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - renamed
+      - ``Map<shapeId, shapeId>``
+      - The map of shape ids of shapes that will be renamed, from the key,
+        to its value.
+
+The following example renames the ``ns.foo#Bar`` shape to ``ns.foo#Baz``.
+Any references to ``ns.foo#Bar`` on other shapes will also be updated.
+
+.. tabs::
+
+    .. code-tab:: json
+
+        {
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {
+                            "name": "renameShapes",
+                            "args": {
+                                "renamed": {
+                                    "ns.foo#Bar": "ns.foo#Baz"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
 
 .. _build_envars:
 
