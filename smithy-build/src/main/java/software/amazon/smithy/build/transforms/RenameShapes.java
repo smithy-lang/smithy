@@ -31,7 +31,7 @@ import software.amazon.smithy.model.transform.ModelTransformer;
  * the shape id values. Any references to a renamed shape will also be
  * updated.
  */
-public class RenameShapes extends ConfigurableProjectionTransformer<RenameShapes.Config> {
+public final class RenameShapes extends ConfigurableProjectionTransformer<RenameShapes.Config> {
 
     /**
      * {@code renameShapes} configuration settings.
