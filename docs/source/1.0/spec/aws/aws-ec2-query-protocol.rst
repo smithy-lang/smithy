@@ -143,7 +143,8 @@ resolved using the following process:
    member, if present.
 2. Use the value of the :ref:`xmlName trait <xmlName-trait>` applied to the
    member with the first letter capitalized, if present.
-3. Use the default value for the member:
+3. Use the default value for the member with the first letter capitalized, if
+   present:
 
    .. list-table::
        :header-rows: 1

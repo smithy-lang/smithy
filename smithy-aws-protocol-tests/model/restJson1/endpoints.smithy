@@ -36,7 +36,7 @@ operation EndpointOperation {}
                 further customization based on user input.""",
         protocol: restJson1,
         method: "POST",
-        uri: "/EndpointOperation",
+        uri: "/EndpointWithHostLabelOperation",
         body: "{\"label\": \"bar\"}",
         bodyMediaType: "application/json",
         host: "example.com",

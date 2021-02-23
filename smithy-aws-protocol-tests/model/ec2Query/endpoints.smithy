@@ -48,7 +48,7 @@ operation EndpointOperation {}
         body: """
             Action=EndpointWithHostLabelOperation
             &Version=2020-01-08
-            &label=bar""",
+            &Label=bar""",
         bodyMediaType: "application/x-www-form-urlencoded",
         host: "example.com",
         resolvedHost: "foo.bar.example.com",
