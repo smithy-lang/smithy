@@ -1,0 +1,28 @@
+{
+  "smithy": "1.0",
+  "shapes": {
+    "ns.foo#MyService": {
+      "type": "service",
+      "version": "2017-01-19",
+      "operations": [
+        {
+          "target": "ns.foo#Bar"
+        }
+      ]
+    },
+    "ns.foo#Bar": {
+      "type": "operation",
+      "output": {
+        "target": "ns.foo#Qux"
+      }
+    },
+    "ns.foo#Qux": {
+      "type": "structure",
+      "members": {
+        "foo": {
+          "target": "smithy.api#String"
+        }
+      }
+    }
+  }
+}
