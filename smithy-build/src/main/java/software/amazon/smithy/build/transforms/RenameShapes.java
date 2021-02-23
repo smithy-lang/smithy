@@ -39,15 +39,16 @@ public class RenameShapes extends ConfigurableProjectionTransformer<RenameShapes
         /**
          * Sets the map of `from` shape ids to the `to` shape id values that they shapes
          * will be renamed to.
+         *
          * @param renamed The map of shapes to rename.
          */
         public void setRenamed(Map<String, String> renamed) {
-
             this.renamed = renamed;
         }
 
         /**
          * Gets the map of shape ids to be renamed.
+         *
          * @return The map of shapes to rename.
          */
         public Map<String, String> getRenamed() {
