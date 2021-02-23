@@ -1,5 +1,15 @@
 # Smithy Changelog
 
+## 1.6.1 (2020-02-23)
+
+### Features
+
+* Added the `renameShapes` build transform to rename shapes within a model. ([#721](https://github.com/awslabs/smithy/pull/721))
+
+### Bug Fixes
+
+* Fixed several issues in protocol tests around `@endpoint`. ([#720](https://github.com/awslabs/smithy/pull/720))
+
 ## 1.6.0 (2020-02-22)
 
 ### Features
