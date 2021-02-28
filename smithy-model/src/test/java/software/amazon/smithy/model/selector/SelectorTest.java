@@ -27,11 +27,13 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -52,8 +54,15 @@ import software.amazon.smithy.utils.SetUtils;
 
 public class SelectorTest {
 
+    private static final String OPERATIONS_MISSING_BINDINGS = "service\n"
+                                                              + "$operations(~> operation)\n"
+                                                              + ":test(${operations}[trait|http])\n"
+                                                              + "${operations}\n"
+                                                              + ":not([trait|http])";
+
     private static Model modelJson;
     private static Model traitModel;
+    private static Model httpModel;
 
     @BeforeAll
     public static void before() {
@@ -65,6 +74,11 @@ public class SelectorTest {
                 .addImport(SelectorTest.class.getResource("nested-traits.smithy"))
                 .assemble()
                 .unwrap();
+        httpModel = Model.assembler()
+                .addImport(SelectorTest.class.getResource("http-model.smithy"))
+                .assemble()
+                .getResult() // ignore built-in errors
+                .get();
     }
 
     @Test
@@ -73,6 +87,23 @@ public class SelectorTest {
 
         assertThat(a, equalTo(a));
         assertThat(a.hashCode(), equalTo(a.hashCode()));
+    }
+
+    @Test
+    public void defaultSelectorInterfaceSelectCollectsStreamToSet() {
+        Selector test = new Selector() {
+            @Override
+            public Stream<Shape> shapes(Model model) {
+                return model.shapes();
+            }
+
+            @Override
+            public Stream<ShapeMatch> matches(Model model) {
+                return Stream.empty();
+            }
+        };
+
+        assertThat(test.select(modelJson), equalTo(modelJson.toSet()));
     }
 
     @Test
@@ -968,17 +999,31 @@ public class SelectorTest {
 
     @Test
     public void findsOperationsMissingHttpBindings() {
-        Model model = Model.assembler()
-                .addImport(getClass().getResource("http-model.smithy"))
-                .assemble()
-                .getResult() // ignore built-in errors
-                .get();
-        Set<String> ids = exampleIds(model, "service\n"
-                                            + "$operations(~> operation)\n"
-                                            + ":test(${operations}[trait|http])\n"
-                                            + "${operations}\n"
-                                            + ":not([trait|http])");
+        Set<String> ids = exampleIds(httpModel, OPERATIONS_MISSING_BINDINGS);
 
         assertThat(ids, contains("smithy.example#NoHttp"));
+    }
+
+    @Test
+    public void returnsStreamOfShapes() {
+        Selector selector = Selector.parse(":test(string, map)");
+        Set<Shape> shapes = selector
+                .shapes(modelJson)
+                .collect(Collectors.toSet());
+
+        assertThat(shapes, equalTo(selector.select(modelJson)));
+    }
+
+    @Test
+    public void returnsStreamOfMatches() {
+        Selector selector = Selector.parse(OPERATIONS_MISSING_BINDINGS);
+        Set<Selector.ShapeMatch> matches = selector
+                .matches(httpModel)
+                .collect(Collectors.toSet());
+
+        Set<Selector.ShapeMatch> matches2 = new HashSet<>();
+        selector.consumeMatches(httpModel, matches2::add);
+
+        assertThat(matches, equalTo(matches2));
     }
 }

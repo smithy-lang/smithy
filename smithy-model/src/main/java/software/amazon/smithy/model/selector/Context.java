@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Selector evaluation context object.
@@ -28,7 +27,7 @@ import software.amazon.smithy.utils.MapUtils;
 final class Context {
 
     NeighborProviderIndex neighborIndex;
-    private Map<String, Set<Shape>> variables;
+    private final Map<String, Set<Shape>> variables;
 
     Context(NeighborProviderIndex neighborIndex) {
         this.neighborIndex = neighborIndex;
@@ -43,15 +42,6 @@ final class Context {
     Context clearVars() {
         variables.clear();
         return this;
-    }
-
-    /**
-     * Copies the current set of variables to an immutable map.
-     *
-     * @return Returns a copy of the variables.
-     */
-    Map<String, Set<Shape>> copyVars() {
-        return MapUtils.copyOf(variables);
     }
 
     /**
