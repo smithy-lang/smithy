@@ -54,10 +54,8 @@ final class ValidatorDefinition {
 
         // If there's a selector, create a list of candidate shape IDs that can be emitted.
         if (selector != null) {
-            candidates = selector.runner()
-                    .model(model)
-                    .selectShapes()
-                    .stream()
+            candidates = selector
+                    .shapes(model)
                     .map(Shape::getId)
                     .collect(Collectors.toSet());
         }

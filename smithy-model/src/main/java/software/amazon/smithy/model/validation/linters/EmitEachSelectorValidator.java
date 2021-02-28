@@ -18,10 +18,8 @@ package software.amazon.smithy.model.validation.linters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.FromSourceLocation;
@@ -163,15 +161,14 @@ public final class EmitEachSelectorValidator extends AbstractValidator {
     // into a BiConsumer and building up a mutated List of events.
     private List<ValidationEvent> validateWithTemplate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
-        config.getSelector()
-                .runner()
-                .model(model)
-                .selectMatches((shape, vars) -> createTemplatedEvent(shape, vars).ifPresent(events::add));
+        config.getSelector().consumeMatches(model, match -> {
+            createTemplatedEvent(match).ifPresent(events::add);
+        });
         return events;
     }
 
-    private Optional<ValidationEvent> createTemplatedEvent(Shape shape, Map<String, Set<Shape>> vars) {
-        FromSourceLocation location = determineEventLocation(shape);
+    private Optional<ValidationEvent> createTemplatedEvent(Selector.ShapeMatch match) {
+        FromSourceLocation location = determineEventLocation(match.getShape());
         // Only create a validation event if the bound trait (if any) is present on the shape.
         if (location == null) {
             return Optional.empty();
@@ -179,8 +176,8 @@ public final class EmitEachSelectorValidator extends AbstractValidator {
 
         // Create an AttributeValue from the matched shape and context vars.
         // This is then used to expand message template scoped attributes.
-        AttributeValue value = AttributeValue.shape(shape, vars);
-        return Optional.of(danger(shape, location, config.messageTemplate.expand(value)));
+        AttributeValue value = AttributeValue.shape(match.getShape(), match);
+        return Optional.of(danger(match.getShape(), location, config.messageTemplate.expand(value)));
     }
 
     /**

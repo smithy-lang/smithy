@@ -87,10 +87,10 @@ public final class SelectCommand implements Command {
         } else {
             // Show the JSON output for writing with --vars.
             List<Node> result = new ArrayList<>();
-            selector.runner().model(model).selectMatches((shape, vars) -> {
+            selector.consumeMatches(model, match -> {
                 result.add(Node.objectNodeBuilder()
-                        .withMember("shape", Node.from(shape.getId().toString()))
-                        .withMember("vars", collectVars(vars))
+                        .withMember("shape", Node.from(match.getShape().getId().toString()))
+                        .withMember("vars", collectVars(match))
                         .build());
             });
             Cli.stdout(Node.prettyPrintJson(new ArrayNode(result, SourceLocation.NONE)));

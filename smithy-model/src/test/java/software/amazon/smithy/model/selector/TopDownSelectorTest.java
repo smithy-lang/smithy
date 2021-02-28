@@ -79,9 +79,9 @@ public class TopDownSelectorTest {
     public void topDownWithNoDisqualifiersWithServiceVariableFollowedByFilter() {
         Map<ShapeId, ShapeId> matches = new HashMap<>();
         Selector.parse("service $service(*) :topdown([trait|smithy.example#a]) resource")
-                .runner()
-                .model(model2)
-                .selectMatches((s, vars) -> matches.put(s.getId(), vars.get("service").iterator().next().getId()));
+                .consumeMatches(model2, match -> {
+                    matches.put(match.getShape().getId(), match.get("service").iterator().next().getId());
+                });
 
         assertThat(matches, hasKey(ShapeId.from("smithy.example#R1")));
         assertThat(matches.get(ShapeId.from("smithy.example#R1")), equalTo(ShapeId.from("smithy.example#Service1")));
