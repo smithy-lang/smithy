@@ -381,4 +381,73 @@ public class CodeFormatterTest {
             writer.write("${L@foo!}", "default");
         });
     }
+
+    @Test
+    public void inlineAlignmentMustOccurInBraces() {
+        CodeWriter writer = createWriter();
+        writer.write("  $L|", "a\nb");
+
+        assertThat(writer.toString(), equalTo("  a\nb|\n"));
+    }
+
+    @Test
+    public void detectsBlockAlignmentEof() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            CodeWriter writer = createWriter();
+            writer.write("${L|", "default");
+        });
+    }
+
+    @Test
+    public void expandsAlignedRelativeFormatters() {
+        CodeWriter writer = new CodeWriter();
+        writer.write("$L: ${L|}", "Names", "Bob\nKaren\nLuis");
+
+        assertThat(writer.toString(), equalTo("Names: Bob\n       Karen\n       Luis\n"));
+    }
+
+    @Test
+    public void expandsAlignedPositionalFormatters() {
+        CodeWriter writer = new CodeWriter();
+        writer.write("$1L: ${2L|}", "Names", "Bob\nKaren\nLuis");
+
+        assertThat(writer.toString(), equalTo("Names: Bob\n       Karen\n       Luis\n"));
+    }
+
+    @Test
+    public void expandsAlignedRelativeFormattersWithWindowsNewlines() {
+        CodeWriter writer = new CodeWriter();
+        writer.write("$L: ${L|}", "Names", "Bob\r\nKaren\r\nLuis");
+
+        assertThat(writer.toString(), equalTo("Names: Bob\r\n       Karen\r\n       Luis\n"));
+    }
+
+    @Test
+    public void expandsAlignedRelativeFormattersWithCarriageReturns() {
+        CodeWriter writer = new CodeWriter();
+        writer.write("$L: ${L|}", "Names", "Bob\rKaren\rLuis");
+
+        assertThat(writer.toString(), equalTo("Names: Bob\r       Karen\r       Luis\n"));
+    }
+
+    @Test
+    public void expandsAlignedBlocksWithNewlines() {
+        CodeWriter writer = new CodeWriter();
+        writer.write("$1L() {\n" +
+                     "    ${2L|}\n" +
+                     "}", "method", "// this\n// is a test.");
+
+        assertThat(writer.toString(), equalTo("method() {\n    // this\n    // is a test.\n}\n"));
+    }
+
+    @Test
+    public void alignedBlocksComposeWithPrefixes() {
+        CodeWriter writer = new CodeWriter();
+        writer.setNewlinePrefix("| ");
+        writer.write("$1L() {\n" +
+                     "    ${2L|}\n" +
+                     "}", "method", "// this\n// is a test.");
+
+        assertThat(writer.toString(), equalTo("| method() {\n|     // this\n|     // is a test.\n| }\n"));
+    }
 }

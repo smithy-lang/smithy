@@ -365,6 +365,21 @@ import java.util.regex.Pattern;
  * System.out.println(writer.toString());
  * // Outputs: "[1, 2, 3]\n"
  * }</pre>
+ *
+ * <h3>Inline block alignment</h3>
+ *
+ * <p>The long-form interpolation syntax allows for
+ * <em>inline block alignment</em>, which means that any newline emitted by
+ * the interpolation is automatically aligned with the column of where the
+ * interpolation occurs. Inline block indentation is defined by preceding
+ * the closing '}' character with '|' (e.g., <code>${L|}</code>):
+ *
+ * <pre>{@code
+ * CodeWriter writer = new CodeWriter();
+ * writer.write("$L: ${L|}", "Names", "Bob\nKaren\nLuis");
+ * System.out.println(writer.toString());
+ * // Outputs: "Names: Bob\n       Karen\n       Luis\n"
+ * }</pre>
  */
 public class CodeWriter {
     private static final Pattern LINES = Pattern.compile("\\r?\\n");

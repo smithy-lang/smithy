@@ -59,7 +59,7 @@ final class CodeFormatter {
             if (c == expressionStart) {
                 parseArgumentWrapper(expressionStart, state);
             } else {
-                state.result.append(c);
+                state.append(c);
             }
         }
 
@@ -82,42 +82,43 @@ final class CodeFormatter {
         char c = state.c();
         if (c == expressionStart) {
             // $$ -> $
-            state.result.append(expressionStart);
+            state.append(expressionStart);
             state.next();
         } else if (c == '{') {
             parseBracedArgument(state);
         } else {
-            parseArgument(state, false);
+            parseArgument(state, -1);
         }
     }
 
     private void parseBracedArgument(State state) {
+        int startingBraceColumn = state.column;
         state.next(); // Skip "{"
-        parseArgument(state, true);
+        parseArgument(state, startingBraceColumn);
 
-        if (state.c() != '}') {
+        if (state.eof() || state.c() != '}') {
             throw new IllegalArgumentException("Unclosed expression argument: " + state);
         }
 
         state.next(); // Skip "}"
     }
 
-    private void parseArgument(State state, boolean insideBrace) {
+    private void parseArgument(State state, int startingBraceColumn) {
         if (state.eof()) {
             throw new IllegalArgumentException("Invalid format string: " + state);
         }
 
         char c = state.c();
         if (Character.isLowerCase(c)) {
-            parseNamedArgument(state, insideBrace);
+            parseNamedArgument(state, startingBraceColumn);
         } else if (Character.isDigit(c)) {
-            parsePositionalArgument(state, insideBrace);
+            parsePositionalArgument(state, startingBraceColumn);
         } else {
-            parseRelativeArgument(state, insideBrace);
+            parseRelativeArgument(state, startingBraceColumn);
         }
     }
 
-    private void parseNamedArgument(State state, boolean insideBrace) {
+    private void parseNamedArgument(State state, int startingBraceColumn) {
         // Expand a named context value: "$" key ":" identifier
         String name = parseNameUntil(state, ':');
         state.next();
@@ -128,7 +129,7 @@ final class CodeFormatter {
         }
 
         char identifier = consumeFormatterIdentifier(state);
-        state.result.append(applyFormatter(state, identifier, state.writer.getContext(name), insideBrace));
+        state.append(applyFormatter(state, identifier, state.writer.getContext(name), startingBraceColumn));
     }
 
     private char consumeFormatterIdentifier(State state) {
@@ -137,7 +138,7 @@ final class CodeFormatter {
         return identifier;
     }
 
-    private void parsePositionalArgument(State state, boolean insideBrace) {
+    private void parsePositionalArgument(State state, int startingBraceColumn) {
         // Expand a positional argument: "$" 1*digit identifier
         expectConsistentRelativePositionals(state, state.relativeIndex <= 0);
         state.relativeIndex = -1;
@@ -154,16 +155,16 @@ final class CodeFormatter {
         Object arg = getPositionalArgument(state.expression, index, state.args);
         state.positionals[index] = true;
         char identifier = consumeFormatterIdentifier(state);
-        state.result.append(applyFormatter(state, identifier, arg, insideBrace));
+        state.append(applyFormatter(state, identifier, arg, startingBraceColumn));
     }
 
-    private void parseRelativeArgument(State state, boolean insideBrace) {
+    private void parseRelativeArgument(State state, int startingBraceColumn) {
         // Expand to a relative argument.
         expectConsistentRelativePositionals(state, state.relativeIndex > -1);
         state.relativeIndex++;
         Object argument = getPositionalArgument(state.expression, state.relativeIndex - 1, state.args);
         char identifier = consumeFormatterIdentifier(state);
-        state.result.append(applyFormatter(state, identifier, argument, insideBrace));
+        state.append(applyFormatter(state, identifier, argument, startingBraceColumn));
     }
 
     private String parseNameUntil(State state, char endToken) {
@@ -209,7 +210,7 @@ final class CodeFormatter {
         return args[index];
     }
 
-    private String applyFormatter(State state, char formatter, Object argument, boolean inBrace) {
+    private String applyFormatter(State state, char formatter, Object argument, int startingBraceColumn) {
         if (!formatters.containsKey(formatter)) {
             throw new IllegalArgumentException(String.format(
                     "Unknown formatter `%s` found in format string: %s", formatter, state));
@@ -218,10 +219,35 @@ final class CodeFormatter {
         String result = formatters.get(formatter).apply(argument, state.indent);
 
         if (!state.eof() && state.c() == '@') {
-            if (!inBrace) {
+            if (startingBraceColumn == -1) {
                 throw new IllegalArgumentException("Inline blocks can only be created inside braces: " + state);
             }
             result = expandInlineSection(state, result);
+        }
+
+        // Only look for alignment when inside a brace interpolation.
+        if (startingBraceColumn != -1 && !state.eof() && state.c() == '|') {
+            state.next(); // skip '|', which should precede '}'.
+
+            String repeated = StringUtils.repeat(' ', startingBraceColumn);
+            StringBuilder aligned = new StringBuilder();
+
+            for (int i = 0; i < result.length(); i++) {
+                char c = result.charAt(i);
+                if (c == '\n') {
+                    aligned.append('\n').append(repeated);
+                } else if (c == '\r') {
+                    aligned.append('\r');
+                    if (i + 1 < result.length() && result.charAt(i + 1) == '\n') {
+                        aligned.append('\n');
+                        i++; // Skip \n
+                    }
+                    aligned.append(repeated);
+                } else {
+                    aligned.append(c);
+                }
+            }
+            result = aligned.toString();
         }
 
         return result;
@@ -251,6 +277,7 @@ final class CodeFormatter {
         String indent;
         Object[] args;
         boolean[] positionals;
+        int column = 0;
 
         State(Object expression, String indent, CodeWriter writer, Object[] args) {
             this.expression = String.valueOf(expression);
@@ -270,6 +297,30 @@ final class CodeFormatter {
 
         boolean next() {
             return ++position < expression.length() - 1;
+        }
+
+        void append(char c) {
+            if (c == '\r' || c == '\n') {
+                column = 0;
+            } else {
+                column++;
+            }
+            result.append(c);
+        }
+
+        void append(String string) {
+            int lastNewline = string.lastIndexOf('\n');
+            if (lastNewline == -1) {
+                lastNewline = string.lastIndexOf('\r');
+            }
+            if (lastNewline == -1) {
+                // if no newline was found, then the column is the length of the string.
+                column = string.length();
+            } else {
+                // Otherwise, it's the length minus the last newline.
+                column = string.length() - lastNewline;
+            }
+            result.append(string);
         }
 
         @Override
