@@ -288,8 +288,20 @@ operation OmitsNullSerializesEmptyString {
 
 apply OmitsNullSerializesEmptyString @httpRequestTests([
     {
-        id: "RestJsonOmitsNullSerializesEmptyString",
-        documentation: "Serializes empty query strings but omits null",
+        id: "RestJsonOmitsNullQuery",
+        documentation: "Omits null query values",
+        protocol: restJson1,
+        method: "GET",
+        uri: "/OmitsNullSerializesEmptyString",
+        body: "",
+        params: {
+            nullValue: null
+        },
+        "appliesTo": "client",
+    },
+    {
+        id: "RestJsonSerializesEmptyQueryValue",
+        documentation: "Serializes empty query strings",
         protocol: restJson1,
         method: "GET",
         uri: "/OmitsNullSerializesEmptyString",
@@ -298,10 +310,9 @@ apply OmitsNullSerializesEmptyString @httpRequestTests([
             "Empty=",
         ],
         params: {
-            nullValue: null,
             emptyString: "",
-        }
-    }
+        },
+    },
 ])
 
 structure OmitsNullSerializesEmptyStringInput {
