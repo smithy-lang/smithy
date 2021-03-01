@@ -274,8 +274,20 @@ operation OmitsNullSerializesEmptyString {
 
 apply OmitsNullSerializesEmptyString @httpRequestTests([
     {
-        id: "OmitsNullSerializesEmptyString",
-        documentation: "Serializes empty query strings but omits null",
+        id: "RestXmlOmitsNullQuery",
+        documentation: "Omits null query values",
+        protocol: restXml,
+        method: "GET",
+        uri: "/OmitsNullSerializesEmptyString",
+        body: "",
+        params: {
+            nullValue: null,
+        },
+        appliesTo: "client",
+    },
+    {
+        id: "RestXmlSerializesEmptyString",
+        documentation: "Serializes empty query strings",
         protocol: restXml,
         method: "GET",
         uri: "/OmitsNullSerializesEmptyString",
@@ -284,9 +296,8 @@ apply OmitsNullSerializesEmptyString @httpRequestTests([
             "Empty=",
         ],
         params: {
-            nullValue: null,
             emptyString: "",
-        }
+        },
     }
 ])
 

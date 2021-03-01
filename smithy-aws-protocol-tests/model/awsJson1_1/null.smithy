@@ -22,6 +22,22 @@ use smithy.test#httpResponseTests
         },
         method: "POST",
         uri: "/",
+        appliesTo: "client",
+    },
+    {
+        id: "AwsJson11ServersDontDeserializeNullStructureValues",
+        documentation: "Null structure values are dropped",
+        protocol: awsJson1_1,
+        body: """
+            {
+                "string": null
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        params: {},
+        method: "POST",
+        uri: "/",
+        appliesTo: "server",
     },
     {
         id: "AwsJson11MapsSerializeNullValues",
@@ -77,6 +93,20 @@ use smithy.test#httpResponseTests
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {},
+        appliesTo: "client",
+    },
+    {
+        id: "AwsJson11ServersDontSerializeNullStructureValues",
+        documentation: "Null structure values are dropped",
+        protocol: awsJson1_1,
+        code: 200,
+        body: "{}",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        params: {
+            string: null
+        },
+        appliesTo: "server",
     },
     {
         id: "AwsJson11MapsDeserializeNullValues",

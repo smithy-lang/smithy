@@ -72,6 +72,23 @@ apply SimpleScalarProperties @httpRequestTests([
         params: {
             stringValue: null
         },
+        appliesTo: "client",
+    },
+    {
+        id: "RestJsonServersDontSerializeNullStructureValues",
+        documentation: "Rest Json should not deserialize null structure values",
+        protocol: restJson1,
+        method: "PUT",
+        uri: "/SimpleScalarProperties",
+        body: """
+            {
+                "string": null
+            }""",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        params: {},
+        appliesTo: "server",
     },
 ])
 
@@ -124,6 +141,21 @@ apply SimpleScalarProperties @httpResponseTests([
             "Content-Type": "application/json",
         },
         params: {},
+        appliesTo: "client",
+    },
+    {
+        id: "RestJsonServersDontSerializeNullStructureValues",
+        documentation: "Rest Json should not serialize null structure values",
+        protocol: restJson1,
+        code: 200,
+        body: "{}",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        params: {
+            stringValue: null
+        },
+        appliesTo: "server",
     },
 ])
 
