@@ -1,8 +1,8 @@
 .. _http-traits:
 
-============================
-HTTP protocol binding traits
-============================
+===================
+HTTP binding traits
+===================
 
 Smithy provides various HTTP binding traits that can be used by protocols to
 explicitly configure HTTP request and response messages.
