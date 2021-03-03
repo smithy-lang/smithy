@@ -468,22 +468,29 @@ Shape IDs are formally defined by the following ABNF:
 
 .. rubric:: Best practices for defining shape names
 
-Consumers of a Smithy model MAY choose to inflect shape names, structure
-member names, and other facets of a Smithy model in order to expose a more
-idiomatic experience to particular programming languages. In order to make this
-easier for consumers of a model, model authors SHOULD utilize a strict form of
-PascalCase in which only the first letter of acronyms, abbreviations, and
-initialisms are capitalized.
+1. **Use a strict form of PascalCase for shape names.**
+   Consumers of a Smithy model MAY choose to inflect shape names, structure
+   member names, and other facets of a Smithy model in order to expose a more
+   idiomatic experience to particular programming languages. In order to make
+   this easier for consumers of a model, model authors SHOULD utilize a
+   strict form of PascalCase in which only the first letter of acronyms,
+   abbreviations, and initialisms are capitalized.
 
-===========   ===============
-Recommended   Not recommended
-===========   ===============
-UserId        UserID
-ResourceArn   ResourceARN
-IoChannel     IOChannel
-HtmlEntity    HTMLEntity
-HtmlEntity    HTML_Entity
-===========   ===============
+   ===========   ===============
+   Recommended   Not recommended
+   ===========   ===============
+   UserId        UserID
+   ResourceArn   ResourceARN
+   IoChannel     IOChannel
+   HtmlEntity    HTMLEntity
+   HtmlEntity    HTML_Entity
+   ===========   ===============
+
+2. **Limit the number of namespaces used to model a single domain.**
+   Ideally only a single namespace is used to model a single logical domain.
+   Limiting the number of namespaces used to define a logical grouping of
+   shapes limits the potential for ambiguity if the shapes are used by the
+   same service or need to be referenced within the same model.
 
 
 .. _shape-id-conflicts:
