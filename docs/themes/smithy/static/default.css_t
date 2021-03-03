@@ -79,7 +79,7 @@ a {
   text-decoration: none;
 }
 
-.document-body a {
+.document-body a.reference {
   text-decoration: underline;
 }
 
@@ -111,23 +111,25 @@ a:hover, .reference.external:hover {
 h1, h2, h3, h4, h5, h6 {
   color: #222;
   line-height: 1.25;
-  margin-bottom: 1em;
   font-weight: 600;
 }
 
 h1 a, h2 a, h3 a, h4 a, h5 a, h6 a, h7 a {
   color: #222;
-  text-underline-position: under;
-  text-decoration-thickness: 1px !important;
+  text-decoration: none;
 }
 
 h2, h3, h4, h5, h6, h7 {
-  margin-top: 2em;
+  padding-top: 1.5em;
+  border-top: 1px solid #ccc;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
 }
 
 h1 {
   margin-top: 0;
   font-size: 2.4em;
+  margin-bottom: 1em;
 }
 
 h2 {
@@ -202,7 +204,7 @@ h7 {
 
 .headline {
   font-weight: 400;
-  color: #dfd9d6;
+  color: #e5e5e5;
   font-size: 2.1em;
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
 }
@@ -635,7 +637,7 @@ table.highlighttable pre {
   background-color: #eee;
 }
 
-.contents a {
+.contents a.reference {
   text-decoration: none;
 }
 
@@ -786,10 +788,11 @@ table.highlighttable pre {
 
 .admonition {
   margin: 20px 0;
-  padding: 0 0 0 1em;
+  padding: 1em 1em 1em 1.5em;
   border-width: 0 0 0 6px;
   border-style: solid;
   border-color: #ccc;
+  background-color: #f5f5f5;
 }
 
 .admonition dt {
@@ -823,23 +826,23 @@ table.highlighttable pre {
 
 .admonition.danger,
 .admonition.error {
-  border-color: #f8d7da;
+  border-color: #df636e;
 }
 
 .admonition.important,
 .admonition.warning,
 .admonition.attention,
 .admonition.caution {
-  border-color: #f6eab7;
+  border-color: #ffd936;
 }
 
 .admonition.note,
 .admonition.hint {
-  border-color: #ddecfc;
+  border-color: #a8cff9;
 }
 
 .admonition.tip {
-  border-color: #dff6da;
+  border-color: #a4db98;
 }
 
 div.seealso {
@@ -958,6 +961,14 @@ dt:target, .highlighted {
   color: #222;
 }
 
+.toctree-wrapper a.reference {
+    text-decoration: none;
+}
+
+.toctree-wrapper a.reference:hover {
+    text-decoration: underline;
+}
+
 /* -------- Parent links --------- */
 
 .rel-parents {
@@ -1011,7 +1022,7 @@ dt:target, .highlighted {
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 660px) {
   /* Make the header navigation usable on a small screen. */
   header {
     display: block;
@@ -1031,7 +1042,7 @@ dt:target, .highlighted {
   }
 
   .site-logo .logo-text {
-    padding-left: 16px;
+    padding-left: 12px;
   }
 
   .splash-row {
@@ -1044,7 +1055,7 @@ dt:target, .highlighted {
     padding: 0;
   }
 
-  body, pre {
+  pre {
     font-size: 0.9em;
   }
 }
