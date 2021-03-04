@@ -28,6 +28,7 @@ apply HttpPayloadTraits @httpRequestTests([
         method: "POST",
         uri: "/HttpPayloadTraits",
         body: "blobby blob blob",
+        bodyMediaType: "application/octet-stream",
         headers: {
             "Content-Type": "application/octet-stream",
             "X-Foo": "Foo"
@@ -47,6 +48,7 @@ apply HttpPayloadTraits @httpRequestTests([
         method: "POST",
         uri: "/HttpPayloadTraits",
         body: "",
+        bodyMediaType: "application/octet-stream",
         headers: {
             "X-Foo": "Foo"
         },
@@ -63,6 +65,7 @@ apply HttpPayloadTraits @httpResponseTests([
         protocol: restJson1,
         code: 200,
         body: "blobby blob blob",
+        bodyMediaType: "application/octet-stream",
         headers: {
             "X-Foo": "Foo"
         },
@@ -77,6 +80,7 @@ apply HttpPayloadTraits @httpResponseTests([
         protocol: restJson1,
         code: 200,
         body: "",
+        bodyMediaType: "application/octet-stream",
         headers: {
             "X-Foo": "Foo"
         },
@@ -110,6 +114,7 @@ apply HttpPayloadTraitsWithMediaType @httpRequestTests([
         method: "POST",
         uri: "/HttpPayloadTraitsWithMediaType",
         body: "blobby blob blob",
+        bodyMediaType: "application/octet-stream",
         headers: {
             "X-Foo": "Foo",
             "Content-Type": "text/plain"
@@ -131,6 +136,7 @@ apply HttpPayloadTraitsWithMediaType @httpResponseTests([
         protocol: restJson1,
         code: 200,
         body: "blobby blob blob",
+        bodyMediaType: "application/octet-stream",
         headers: {
             "X-Foo": "Foo",
             "Content-Type": "text/plain"

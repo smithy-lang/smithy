@@ -27,6 +27,7 @@ apply StreamingTraits @httpRequestTests([
         method: "POST",
         uri: "/StreamingTraits",
         body: "blobby blob blob",
+        bodyMediaType: "application/octet-stream",
         headers: {
             "X-Foo": "Foo",
             "Content-Type": "application/octet-stream"
@@ -43,6 +44,7 @@ apply StreamingTraits @httpRequestTests([
         method: "POST",
         uri: "/StreamingTraits",
         body: "",
+        bodyMediaType: "application/octet-stream",
         headers: {
             "X-Foo": "Foo"
         },
@@ -59,6 +61,7 @@ apply StreamingTraits @httpResponseTests([
         protocol: restJson1,
         code: 200,
         body: "blobby blob blob",
+        bodyMediaType: "application/octet-stream",
         headers: {
             "X-Foo": "Foo",
             "Content-Type": "application/octet-stream"
@@ -74,6 +77,7 @@ apply StreamingTraits @httpResponseTests([
         protocol: restJson1,
         code: 200,
         body: "",
+        bodyMediaType: "application/octet-stream",
         headers: {
             "X-Foo": "Foo"
         },
@@ -113,6 +117,7 @@ apply StreamingTraitsRequireLength @httpRequestTests([
         method: "POST",
         uri: "/StreamingTraitsRequireLength",
         body: "blobby blob blob",
+        bodyMediaType: "application/octet-stream",
         headers: {
             "X-Foo": "Foo",
             "Content-Type": "application/octet-stream"
@@ -132,6 +137,7 @@ apply StreamingTraitsRequireLength @httpRequestTests([
         method: "POST",
         uri: "/StreamingTraitsRequireLength",
         body: "",
+        bodyMediaType: "application/octet-stream",
         headers: {
             "X-Foo": "Foo"
         },
@@ -148,6 +154,7 @@ apply StreamingTraitsRequireLength @httpResponseTests([
         protocol: restJson1,
         code: 200,
         body: "blobby blob blob",
+        bodyMediaType: "application/octet-stream",
         headers: {
             "X-Foo": "Foo",
             "Content-Type": "application/octet-stream"
@@ -166,6 +173,7 @@ apply StreamingTraitsRequireLength @httpResponseTests([
         protocol: restJson1,
         code: 200,
         body: "",
+        bodyMediaType: "application/octet-stream",
         headers: {
             "X-Foo": "Foo"
         },
@@ -205,6 +213,7 @@ apply StreamingTraitsWithMediaType @httpRequestTests([
         method: "POST",
         uri: "/StreamingTraitsWithMediaType",
         body: "blobby blob blob",
+        bodyMediaType: "application/octet-stream",
         headers: {
             "X-Foo": "Foo",
             "Content-Type": "text/plain"
@@ -223,6 +232,7 @@ apply StreamingTraitsWithMediaType @httpResponseTests([
         protocol: restJson1,
         code: 200,
         body: "blobby blob blob",
+        bodyMediaType: "application/octet-stream",
         headers: {
             "X-Foo": "Foo",
             "Content-Type": "text/plain"
