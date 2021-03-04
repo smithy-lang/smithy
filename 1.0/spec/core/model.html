@@ -548,12 +548,14 @@ For example, <code class="docutils literal notranslate"><span class="pre">smithy
     &quot;$&quot; <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>
 </pre>
 <p class="rubric">Best practices for defining shape names</p>
-<p>Consumers of a Smithy model MAY choose to inflect shape names, structure
+<ol class="arabic">
+<li><p class="first"><strong>Use a strict form of PascalCase for shape names.</strong>
+Consumers of a Smithy model MAY choose to inflect shape names, structure
 member names, and other facets of a Smithy model in order to expose a more
-idiomatic experience to particular programming languages. In order to make this
-easier for consumers of a model, model authors SHOULD utilize a strict form of
-PascalCase in which only the first letter of acronyms, abbreviations, and
-initialisms are capitalized.</p>
+idiomatic experience to particular programming languages. In order to make
+this easier for consumers of a model, model authors SHOULD utilize a
+strict form of PascalCase in which only the first letter of acronyms,
+abbreviations, and initialisms are capitalized.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="42%" />
@@ -582,6 +584,14 @@ initialisms are capitalized.</p>
 </tr>
 </tbody>
 </table>
+</li>
+<li><p class="first"><strong>Limit the number of namespaces used to model a single domain.</strong>
+Ideally only a single namespace is used to model a single logical domain.
+Limiting the number of namespaces used to define a logical grouping of
+shapes limits the potential for ambiguity if the shapes are used by the
+same service or need to be referenced within the same model.</p>
+</li>
+</ol>
 </div>
 <div class="section" id="shape-id-conflicts">
 <span id="id6"></span><h3><a href="#shape-id-conflicts">1.6.2. Shape ID conflicts</a></h3>
