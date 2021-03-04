@@ -190,15 +190,17 @@ For example, given the following:
 
     structure QueryListsInput {
         ListArg: StringList,
-
-        @xmlFlattened
         ComplexListArg: GreetingList,
 
-        // Notice that the xmlName on the targeted list member is ignored.
+        @xmlFlattened
+        FlattenedListArg: StringList,
+
         ListArgWithXmlNameMember: ListWithXmlName,
 
+        // Notice that the xmlName on the targeted list member is ignored.
+        @xmlFlattened
         @xmlName("Hi")
-        ListArgWithXmlName: ListWithXmlName,
+        FlattenedListArgWithXmlName: ListWithXmlName,
     }
 
     list ListWithXmlName {
@@ -227,10 +229,12 @@ The ``x-www-form-urlencoded`` serialization is:
     &ListArg.member.1=foo
     &ListArg.member.2=bar
     &ListArg.member.3=baz
-    &ComplexListArg.1.hi=hello
-    &ComplexListArg.2.hi=hola
-    &ListArgWithXmlNameMember.1=A
-    &ListArgWithXmlNameMember.2=B
+    &ComplexListArg.member.1.hi=hello
+    &ComplexListArg.member.2.hi=hola
+    &FlattenedListArg.1=A
+    &FlattenedListArg.2=B
+    &ListArgWithXmlNameMember.item.1=A
+    &ListArgWithXmlNameMember.item.2=B
     &Hi.1=A
     &Hi.2=B
 
@@ -271,6 +275,10 @@ For example, given the following:
 
         @xmlName("V")
         value: String
+    }
+
+    structure GreetingStruct {
+        hi: String,
     }
 
 The ``x-www-form-urlencoded`` serialization is:
