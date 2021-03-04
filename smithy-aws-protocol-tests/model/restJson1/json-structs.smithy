@@ -66,6 +66,7 @@ apply SimpleScalarProperties @httpRequestTests([
         method: "PUT",
         uri: "/SimpleScalarProperties",
         body: "{}",
+        bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/json",
         },
@@ -137,6 +138,7 @@ apply SimpleScalarProperties @httpResponseTests([
               {
                   "stringValue": null
               }""",
+        bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/json",
         },
@@ -149,6 +151,7 @@ apply SimpleScalarProperties @httpResponseTests([
         protocol: restJson1,
         code: 200,
         body: "{}",
+        bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/json",
         },
