@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -17,11 +17,13 @@ package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
@@ -31,17 +33,16 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.SimpleShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.utils.Pair;
 
 /**
  * Validates that service closures do not contain duplicate case-insensitive
- * shape names.
+ * shape names. The rename property of the service is used to deconflict
+ * shapes.
  *
  * <p>This validator allows some kinds of conflicts when they are likely
  * inconsequential. Some classes of conflicts are permitted, and in those
@@ -50,9 +51,8 @@ import software.amazon.smithy.utils.Pair;
  * both shapes have the same exact traits; and both shapes have equivalent
  * members (that is, the members follow these same rules). Permitted conflicts
  * detected between simple shapes are emitted as a NOTE, permitted conflicts
- * detected on other shapes are emitted as a WARNING, forbidden conflicts
- * detected for an operation or resource are emitted as an ERROR, and all
- * other forbidden conflicts are emitted as DANGER.
+ * detected on other shapes are emitted as a WARNING, and other conflicts are
+ * emitted as ERROR.
  */
 public final class ServiceValidator extends AbstractValidator {
 
@@ -66,11 +66,18 @@ public final class ServiceValidator extends AbstractValidator {
     private List<ValidationEvent> validateService(Model model, ServiceShape service) {
         // Ensure that shapes bound to the service have unique shape names.
         Walker walker = new Walker(NeighborProviderIndex.of(model).getProvider());
-        Set<Shape> serviceClosure = walker.walkShapes(service);
-        Map<String, List<ShapeId>> conflicts = ValidationUtils.findDuplicateShapeNames(serviceClosure);
+        Map<ShapeId, Shape> serviceClosure = new HashMap<>();
+        walker.iterateShapes(service).forEachRemaining(shape -> serviceClosure.put(shape.getId(), shape));
 
-        if (conflicts.isEmpty()) {
-            return Collections.emptyList();
+        // Create a mapping of lowercase contextual shape names to shape IDs.
+        Map<String, Set<ShapeId>> normalizedNamesToIds = new HashMap<>();
+        for (ShapeId id : serviceClosure.keySet()) {
+            if (!id.getMember().isPresent()) {
+                String possiblyRename = service.getContextName(id);
+                normalizedNamesToIds
+                        .computeIfAbsent(possiblyRename.toLowerCase(Locale.ENGLISH), name -> new TreeSet<>())
+                        .add(id);
+            }
         }
 
         // Determine the severity of each conflict.
@@ -79,59 +86,104 @@ public final class ServiceValidator extends AbstractValidator {
 
         // Figure out if each conflict can be ignored, and then emit events for
         // both sides of the conflict using the appropriate severity.
-        for (Map.Entry<String, List<ShapeId>> entry : conflicts.entrySet()) {
-            List<ShapeId> ids = entry.getValue();
-            for (int i = 0; i < ids.size(); i++) {
-                Shape subject = model.expectShape(ids.get(i));
-                for (int j = 0; j < ids.size(); j++) {
-                    if (i != j) {
-                        Shape other = model.expectShape(ids.get(j));
-                        Severity severity = detector.detect(subject, other);
-                        if (severity != null) {
-                            events.add(conflictingNames(severity, service, subject, other));
-                            events.add(conflictingNames(severity, service, other, subject));
+        for (Map.Entry<String, Set<ShapeId>> entry : normalizedNamesToIds.entrySet()) {
+            Set<ShapeId> ids = entry.getValue();
+            // Only look at groupings that contain conflicts.
+            if (ids.size() <= 1) {
+                continue;
+            }
+            for (ShapeId subjectId : ids) {
+                model.getShape(subjectId).ifPresent(subject -> {
+                    for (ShapeId otherId : ids) {
+                        if (!otherId.equals(subjectId)) {
+                            model.getShape(otherId).ifPresent(other -> {
+                                Severity severity = detector.detect(subject, other);
+                                if (severity != null) {
+                                    events.add(conflictingNames(severity, service, subject, other));
+                                    events.add(conflictingNames(severity, service, other, subject));
+                                }
+                            });
                         }
                     }
-                }
+                });
+            }
+        }
+
+        events.addAll(validateRenames(service, serviceClosure));
+
+        return events;
+    }
+
+    private List<ValidationEvent> validateRenames(ServiceShape service, Map<ShapeId, Shape> closure) {
+        if (service.getRename().isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<ValidationEvent> events = new ArrayList<>();
+
+        Map<String, Set<ShapeId>> renameMappings = new HashMap<>();
+        for (Map.Entry<ShapeId, String> rename : service.getRename().entrySet()) {
+            ShapeId from = rename.getKey();
+            String to = rename.getValue();
+            renameMappings.computeIfAbsent(to.toLowerCase(Locale.ENGLISH), t -> new HashSet<>()).add(from);
+
+            if (!ShapeId.isValidIdentifier(to)) {
+                events.add(error(service, String.format(
+                        "Service attempts to rename `%s` to an invalid identifier, \"%s\"",
+                        from, to)));
+            }
+
+            // Each renamed shape ID must actually exist in the closure.
+            if (!closure.containsKey(from)) {
+                events.add(error(service, "Service attempts to rename a shape not in the service: " + from));
+            } else if (!isValidShapeToRename(closure.get(from))) {
+                events.add(error(service, String.format(
+                        "Service attempts to rename an invalid %s shape from `%s` to \"%s\"",
+                        closure.get(from).getType(), from, to)));
             }
         }
 
         return events;
     }
 
-    private ValidationEvent conflictingNames(Severity severity, ServiceShape shape, Shape subject, Shape other) {
-        // Whether it's a should or a must based on the severity.
-        String declaration = severity == Severity.DANGER || severity == Severity.ERROR ? "must" : "should";
+    private boolean isValidShapeToRename(Shape shape) {
+        return !shape.isMemberShape() && !shape.isResourceShape() && !shape.isOperationShape();
+    }
+
+    private ValidationEvent conflictingNames(Severity severity, ServiceShape service, Shape subject, Shape other) {
+        StringBuilder message = new StringBuilder();
+
+        if (service.getRename().get(subject.getId()) != null) {
+            message.append("Renamed shape name \"")
+                    .append(service.getRename().get(subject.getId()))
+                    .append('"');
+        } else {
+            message.append("Shape name `").append(subject.getId()).append('`');
+        }
+
+        message.append(" conflicts with `").append(other.getId()).append("` ");
+
+        if (service.getRename().get(other.getId()) != null) {
+            message.append("(renamed to \"")
+                    .append(service.getRename().get(other.getId()))
+                    .append("\") ");
+        }
+
+        message.append("in the `").append(service.getId()).append("` service closure. ")
+                .append("Shapes in the closure of a service ")
+                .append(severity.ordinal() >= Severity.DANGER.ordinal() ? "must " : "should ")
+                .append("have case-insensitively unique names regardless of their namespaces. ")
+                .append("Use the `rename` property of the service to disambiguate shape names.");
 
         return ValidationEvent.builder()
                 .id(getName())
                 .severity(severity)
                 .shape(subject)
-                .message(String.format(
-                        "Shape name `%s` conflicts with `%s` in the `%s` service closure. These shapes in the closure "
-                        + "of a service %s have case-insensitively unique names regardless of their namespaces.",
-                        subject.getId().getName(),
-                        other.getId(),
-                        shape.getId(),
-                        declaration))
+                .message(message.toString())
                 .build();
     }
 
     private static final class ConflictDetector {
-
-        private static final EnumMap<ShapeType, Severity> FORBIDDEN = new EnumMap<>(ShapeType.class);
-
-        static {
-            // Service types are never allowed to conflict.
-            FORBIDDEN.put(ShapeType.RESOURCE, Severity.ERROR);
-            FORBIDDEN.put(ShapeType.OPERATION, Severity.ERROR);
-            FORBIDDEN.put(ShapeType.SERVICE, Severity.ERROR);
-            // These aggregate types are never allowed to conflict either, but
-            // we will present the ability to suppress the violation if needed.
-            FORBIDDEN.put(ShapeType.MAP, Severity.DANGER);
-            FORBIDDEN.put(ShapeType.STRUCTURE, Severity.DANGER);
-            FORBIDDEN.put(ShapeType.UNION, Severity.DANGER);
-        }
 
         private final Model model;
         private final Map<Pair<ShapeId, ShapeId>, Severity> cache = new HashMap<>();
@@ -166,30 +218,19 @@ public final class ServiceValidator extends AbstractValidator {
         }
 
         private Severity detectConflicts(Shape a, Shape b) {
-            // Some types can never have conflicts since they're almost
-            // universally code generated as named types.
-            if (FORBIDDEN.containsKey(a.getType())) {
-                return FORBIDDEN.get(a.getType());
-            } else if (FORBIDDEN.containsKey(b.getType())) {
-                return FORBIDDEN.get(b.getType());
+            // 1. Check for conflicts that are not allowed.
+            // 2. Conflicting shapes must have the same types.
+            // 3. Conflicting shapes must have the same traits.
+            if (isShapeTypeConflictForbidden(a)
+                    || isShapeTypeConflictForbidden(b)
+                    || a.getType() != b.getType()
+                    || !a.getAllTraits().equals(b.getAllTraits())) {
+                return Severity.ERROR;
             }
 
-            // Conflicting shapes must have the same types.
-            if (a.getType() != b.getType()) {
-                return Severity.DANGER;
-            }
-
-            // When shapes conflict, they must have the same traits.
-            if (!a.getAllTraits().equals(b.getAllTraits())) {
-                return Severity.DANGER;
-            }
-
-            // Detect type-specific member conflicts. Return early if the
-            // severity is a greater violation than the remaining checks.
+            // Return early if WARNING or greater member conflicts are detected.
             Severity memberConflict = detectMemberConflicts(a, b);
-            if (memberConflict == Severity.WARNING
-                    || memberConflict == Severity.DANGER
-                    || memberConflict == Severity.ERROR) {
+            if (memberConflict != null && memberConflict.ordinal() >= Severity.WARNING.ordinal()) {
                 return memberConflict;
             }
 
@@ -199,7 +240,12 @@ public final class ServiceValidator extends AbstractValidator {
                 return Severity.NOTE;
             }
 
+            // The conflict occurred on a list or set.
             return Severity.WARNING;
+        }
+
+        private boolean isShapeTypeConflictForbidden(Shape shape) {
+            return !(shape instanceof SimpleShape || shape instanceof CollectionShape || shape.isMemberShape());
         }
 
         private Severity detectMemberConflicts(Shape a, Shape b) {

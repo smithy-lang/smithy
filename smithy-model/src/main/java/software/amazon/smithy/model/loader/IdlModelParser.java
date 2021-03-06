@@ -82,6 +82,7 @@ final class IdlModelParser extends SimpleParser {
     private static final String LIST_KEY = "list";
     private static final String RESOURCES_KEY = "resources";
     private static final String OPERATIONS_KEY = "operations";
+    private static final String RENAME_KEY = "rename";
     private static final String COLLECTION_OPERATIONS_KEY = "collectionOperations";
     private static final String IDENTIFIERS_KEY = "identifiers";
     private static final String VERSION_KEY = "version";
@@ -91,7 +92,7 @@ final class IdlModelParser extends SimpleParser {
             TYPE_KEY, CREATE_KEY, READ_KEY, UPDATE_KEY, DELETE_KEY, LIST_KEY,
             IDENTIFIERS_KEY, RESOURCES_KEY, OPERATIONS_KEY, PUT_KEY, COLLECTION_OPERATIONS_KEY);
     static final List<String> SERVICE_PROPERTY_NAMES = ListUtils.of(
-            TYPE_KEY, VERSION_KEY, OPERATIONS_KEY, RESOURCES_KEY);
+            TYPE_KEY, VERSION_KEY, OPERATIONS_KEY, RESOURCES_KEY, RENAME_KEY);
     private static final Collection<String> OPERATION_PROPERTY_NAMES = ListUtils.of("input", "output", "errors");
     private static final Set<String> SHAPE_TYPES = new HashSet<>();
 
@@ -559,6 +560,7 @@ final class IdlModelParser extends SimpleParser {
         modelFile.onShape(builder);
         optionalIdList(shapeNode, OPERATIONS_KEY, builder::addOperation);
         optionalIdList(shapeNode, RESOURCES_KEY, builder::addResource);
+        AstModelLoader.loadServiceRenameIntoBuilder(builder, shapeNode);
     }
 
     private void optionalId(ObjectNode node, String name, Consumer<ShapeId> consumer) {

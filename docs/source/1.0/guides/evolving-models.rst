@@ -11,6 +11,20 @@ customers.
     :backlinks: none
 
 
+Updating services
+=================
+
+The following changes to operation shapes are backward-compatible:
+
+#. Adding operations.
+#. Adding resources.
+
+The following changes are not backward-compatible:
+
+#. Removing a resource or operation.
+#. Renaming a shape that was was already part of the service.
+
+
 Updating operations
 ===================
 
@@ -27,7 +41,6 @@ The following changes are not backward-compatible:
 #. Removing or renaming a resource or operation.
 #. Removing an operation from a service or resource.
 #. Removing a resource from a service.
-#. Changing the parent of a resource.
 #. Changing an operation from referencing an input/output structure to no
    longer referencing an input/output structure.
 #. Renaming an error that is referenced by an operation.

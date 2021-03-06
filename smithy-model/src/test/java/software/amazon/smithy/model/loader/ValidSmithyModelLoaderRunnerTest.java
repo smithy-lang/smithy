@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.Model;
@@ -38,12 +39,25 @@ import software.amazon.smithy.model.shapes.ModelSerializer;
  */
 public class ValidSmithyModelLoaderRunnerTest {
 
+    private static Model shared;
+
+    @BeforeAll
+    public static void before() {
+        shared = Model.assembler()
+                .addImport(ValidSmithyModelLoaderRunnerTest.class.getResource("valid/__shared.json"))
+                .assemble()
+                .unwrap();
+    }
+
     @ParameterizedTest
     @MethodSource("data")
     public void parserRunnerTest(String file) {
         Path smithyFilename = Paths.get(file.replace(".json", ".smithy"));
         Model expected = Model.assembler()
                 .addImport(file)
+                // Always include the __shared.json file. This is used for
+                // cross-model loading testing.
+                .addModel(shared)
                 .assemble()
                 .unwrap();
 
@@ -51,6 +65,7 @@ public class ValidSmithyModelLoaderRunnerTest {
         try {
             result = Model.assembler()
                     .addImport(smithyFilename)
+                    .addModel(shared)
                     .assemble()
                     .unwrap();
         } catch (Exception e) {
@@ -69,7 +84,9 @@ public class ValidSmithyModelLoaderRunnerTest {
     }
 
     private static String formatModel(Model model) {
-        ModelSerializer serializer = ModelSerializer.builder().build();
+        ModelSerializer serializer = ModelSerializer.builder()
+                .shapeFilter(shape -> !shape.getSourceLocation().getFilename().contains("__shared.json"))
+                .build();
         return Node.prettyPrintJson(serializer.serialize(model));
     }
 
@@ -80,6 +97,7 @@ public class ValidSmithyModelLoaderRunnerTest {
             return paths
                     .filter(Files::isRegularFile)
                     .filter(file -> file.toString().endsWith(".json"))
+                    .filter(file -> !file.toString().contains("__shared.json"))
                     .map(Object::toString)
                     .collect(Collectors.toList());
         } catch (IOException e) {

@@ -83,7 +83,7 @@ enum AstModelLoader {
             TYPE, "create", "read", "update", "delete", "list", "put",
             "identifiers", "resources", "operations", "collectionOperations", TRAITS);
     private static final Set<String> SERVICE_PROPERTIES = SetUtils.of(
-            TYPE, "version", "operations", "resources", TRAITS);
+            TYPE, "version", "operations", "resources", "rename", TRAITS);
 
     ModelFile load(TraitFactory traitFactory, ObjectNode model) {
         FullyResolvedModelFile modelFile = new FullyResolvedModelFile(traitFactory);
@@ -284,7 +284,18 @@ enum AstModelLoader {
         builder.version(node.expectStringMember("version").getValue());
         builder.operations(loadOptionalTargetList(modelFile, id, node, "operations"));
         builder.resources(loadOptionalTargetList(modelFile, id, node, "resources"));
+        loadServiceRenameIntoBuilder(builder, node);
         modelFile.onShape(builder);
+    }
+
+    static void loadServiceRenameIntoBuilder(ServiceShape.Builder builder, ObjectNode node) {
+        node.getObjectMember("rename").ifPresent(rename -> {
+            for (Map.Entry<StringNode, Node> entry : rename.getMembers().entrySet()) {
+                ShapeId fromId = entry.getKey().expectShapeId();
+                String toName = entry.getValue().expectStringNode().getValue();
+                builder.putRename(fromId, toName);
+            }
+        });
     }
 
     private void loadSimpleShape(

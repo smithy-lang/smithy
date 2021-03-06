@@ -23,3 +23,4 @@ software.amazon.smithy.diff.evaluators.RemovedOperationInput
 software.amazon.smithy.diff.evaluators.RemovedOperationOutput
 software.amazon.smithy.diff.evaluators.RemovedShape
 software.amazon.smithy.diff.evaluators.RemovedTraitDefinition
+software.amazon.smithy.diff.evaluators.ServiceRename

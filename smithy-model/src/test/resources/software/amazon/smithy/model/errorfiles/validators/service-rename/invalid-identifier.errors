@@ -1,0 +1,1 @@
+[ERROR] smithy.example#MyService: Service attempts to rename `smithy.example#Foo` to an invalid identifier, "no!" | Service
