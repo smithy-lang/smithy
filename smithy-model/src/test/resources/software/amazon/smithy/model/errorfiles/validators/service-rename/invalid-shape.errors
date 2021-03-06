@@ -1,0 +1,1 @@
+[ERROR] smithy.example#MyService: Service attempts to rename a shape not in the service: com.foo#Baz | Service

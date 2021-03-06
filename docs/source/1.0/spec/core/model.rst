@@ -1219,6 +1219,25 @@ The service shape supports the following properties:
       - Binds a set of ``resource`` shapes to the service. Each element in
         the given list MUST be a valid :ref:`shape ID <shape-id>` that targets
         a :ref:`resource <resource>` shape.
+    * - rename
+      - map of :ref:`shape ID <shape-id>` to ``string``
+      - Disambiguates shape name conflicts in the
+        :ref:`service closure <service-closure>`. Map keys are shape IDs
+        contained in the service, and map values are the disambiguated shape
+        names to use in the context of the service. Each given shape ID MUST
+        reference a shape contained in the closure of the service. Each given
+        map value MUST match the :token:`identifier` production used for
+        shape IDs. Renaming a shape *does not* give the shape a new shape ID.
+
+        * No renamed shape name can case-insensitively match any other renamed
+          shape name or the name of a non-renamed shape contained in the
+          service.
+        * Member shapes MAY NOT be renamed.
+        * Resource and operation shapes MAY NOT be renamed. Renaming shapes
+          is intended for incidental naming conflicts, not for renaming the
+          fundamental concepts of a service.
+        * Shapes from other namespaces marked as :ref:`private <private-trait>`
+          MAY be renamed.
 
 The following example defines a service with no operations or resources.
 
@@ -1349,7 +1368,8 @@ through resources, operations, and members.
 
     With some exceptions, the shapes that are referenced in the *closure*
     of a service MUST have case-insensitively unique names regardless of
-    their namespace.
+    their namespace, and conflicts MUST be disambiguated using the
+    ``rename`` property of a service.
 
 By requiring unique names within a service, each service forms a
 `ubiquitous language`_, making it easier for developers to understand the
@@ -1361,12 +1381,100 @@ case-insensitively because many model transformations (like code generation)
 change the casing and inflection of shape names to make artifacts more
 idiomatic.
 
+.. rubric:: Shape types allowed to conflict in a closure
+
 :ref:`Simple types <simple-types>` and :ref:`lists <list>` or
 :ref:`sets <set>` of compatible simple types are allowed to conflict because
 a conflict for these type would rarely have an impact on generated artifacts.
 These kinds of conflicts are only allowed if both conflicting shapes are the
 same type and have the exact same traits. In the case of a list or set, a
-conflict is only allowed if both types target compatible shapes.
+conflict is only allowed if the members of the conflicting shapes target
+compatible shapes.
+
+.. rubric:: Disambiguating shapes with ``rename``
+
+The ``rename`` property of a service is used to disambiguate conflicting
+shape names found in the closure of a service. The ``rename`` property is
+essentially a `context map`_ used to ensure that the service still presents
+a ubiquitous language despite bringing together shapes from multiple
+namespaces.
+
+.. note::
+
+    Renames SHOULD be used sparingly. Renaming shapes is something typically
+    only needed when aggregating models from multiple independent teams into
+    a single service.
+
+The following example defines a service that contains two shapes named
+"Widget" in its closure. The ``rename`` property is used to disambiguate
+the conflicting shapes.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        namespace smithy.example
+
+        service MyService {
+            version: "2017-02-11",
+            operations: [GetSomething],
+            rename: {
+                "foo.example#Widget": "FooWidget"
+            }
+        }
+
+        operation GetSomething {
+            output: GetSomethingOutput,
+        }
+
+        structure GetSomethingOutput {
+            widget1: Widget,
+            fooWidget: foo.example#Widget,
+        }
+
+        structure Widget {}
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#MyService": {
+                    "type": "service",
+                    "version": "2017-02-11",
+                    "operations": [
+                        {
+                            "target": "smithy.example#GetSomething"
+                        }
+                    ],
+                    "rename": {
+                        "foo.example#Widget": "FooWidget"
+                    }
+                },
+                "smithy.example#GetSomething": {
+                    "type": "operation",
+                    "output": {
+                        "target": "smithy.example#GetSomethingOutput"
+                    }
+                },
+                "smithy.example#GetSomethingOutput": {
+                    "type": "structure",
+                    "members": {
+                        "widget1": {
+                            "target": "smithy.example#Widget"
+                        },
+                        "fooWidget": {
+                            "target": "foo.example#Widget"
+                        }
+                    }
+                },
+                "smithy.example#Widget": {
+                    "type": "structure"
+                }
+            }
+        }
+
+.. rubric:: Resources and operations can be bound once
 
 An operation or resource MUST NOT be bound to multiple shapes within the
 closure of a service. This constraint allows services to discern between
@@ -2766,3 +2874,4 @@ after adding a member to the ``foo`` trait:
 
 .. _tagged union data structure: https://en.wikipedia.org/wiki/Tagged_union
 .. _ubiquitous language: https://martinfowler.com/bliki/UbiquitousLanguage.html
+.. _context map: https://martinfowler.com/bliki/BoundedContext.html

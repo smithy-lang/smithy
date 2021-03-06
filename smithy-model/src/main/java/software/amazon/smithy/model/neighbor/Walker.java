@@ -89,6 +89,34 @@ public final class Walker {
     }
 
     /**
+     * Walks connected shapes in the model, returning their IDs in a set.
+     *
+     * @param shape The shape to start the traversal from.
+     * @return Returns a set of connected shape IDs.
+     */
+    public Set<ShapeId> walkShapeIds(Shape shape) {
+        return walkShapeIds(shape, FunctionalUtils.alwaysTrue());
+    }
+
+    /**
+     * Walks connected shapes in the model (including the given shape),
+     * and returns a set of shape IDs.
+     *
+     * @param shape The shape to start the traversal from.
+     * @param predicate Predicate used to prevent traversing relationships.
+     * @return Returns a set of connected shape IDs.
+     */
+    public Set<ShapeId> walkShapeIds(Shape shape, Predicate<Relationship> predicate) {
+        Set<ShapeId> result = new LinkedHashSet<>();
+        Iterator<Shape> shapeIterator = iterateShapes(shape, predicate);
+        while (shapeIterator.hasNext()) {
+            result.add(shapeIterator.next().getId());
+        }
+
+        return result;
+    }
+
+    /**
      * Lazily iterates over all of the relationships in the closure of
      * the given shape, including the given shape.
      *

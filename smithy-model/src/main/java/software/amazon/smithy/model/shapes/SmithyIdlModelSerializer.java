@@ -428,6 +428,13 @@ public final class SmithyIdlModelSerializer {
                     .write("version: $S,", shape.getVersion());
             codeWriter.writeOptionalIdList("operations", shape.getOperations());
             codeWriter.writeOptionalIdList("resources", shape.getResources());
+            if (!shape.getRename().isEmpty()) {
+                codeWriter.openBlock("rename: {", "}", () -> {
+                    for (Map.Entry<ShapeId, String> entry : shape.getRename().entrySet()) {
+                        codeWriter.write("$S: $S,", entry.getKey(), entry.getValue());
+                    }
+                });
+            }
             codeWriter.closeBlock("}").write("");
             return null;
         }

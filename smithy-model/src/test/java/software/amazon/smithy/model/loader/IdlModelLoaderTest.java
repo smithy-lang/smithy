@@ -31,6 +31,7 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.DocumentationTrait;
@@ -42,6 +43,7 @@ import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidatedResultException;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
 
 public class IdlModelLoaderTest {
     @Test
@@ -222,5 +224,18 @@ public class IdlModelLoaderTest {
         }
 
         Assertions.fail("Did not find expected unknown trait event: " + events);
+    }
+
+    @Test
+    public void loadsServiceRenames() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("valid/__shared.json"))
+                .addImport(getClass().getResource("valid/service-with-rename.smithy"))
+                .assemble()
+                .unwrap();
+
+        // Spot check for a specific "use" shape.
+        assertThat(model.expectShape(ShapeId.from("smithy.example#MyService"), ServiceShape.class).getRename(),
+                   equalTo(MapUtils.of(ShapeId.from("foo.example#Widget"), "FooWidget")));
     }
 }

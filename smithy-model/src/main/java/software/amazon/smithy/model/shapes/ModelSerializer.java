@@ -218,10 +218,20 @@ public final class ModelSerializer {
 
         @Override
         public Node serviceShape(ServiceShape shape) {
-            return withTraits(shape, createTypedNode(shape)
+            ObjectNode result = withTraits(shape, createTypedNode(shape)
                     .withMember("version", Node.from(shape.getVersion()))
                     .withOptionalMember("operations", createOptionalIdList(shape.getOperations()))
                     .withOptionalMember("resources", createOptionalIdList(shape.getResources())));
+
+            if (!shape.getRename().isEmpty()) {
+                ObjectNode.Builder builder = Node.objectNodeBuilder();
+                for (Map.Entry<ShapeId, String> entry : shape.getRename().entrySet()) {
+                    builder.withMember(entry.getKey().toString(), entry.getValue());
+                }
+                result = result.withMember("rename", builder.build());
+            }
+
+            return result;
         }
 
         private Optional<Node> createOptionalIdList(Collection<ShapeId> list) {

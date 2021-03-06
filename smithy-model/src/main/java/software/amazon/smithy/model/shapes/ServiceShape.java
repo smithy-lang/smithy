@@ -15,7 +15,11 @@
 
 package software.amazon.smithy.model.shapes;
 
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.TreeMap;
+import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -25,10 +29,12 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class ServiceShape extends EntityShape implements ToSmithyBuilder<ServiceShape> {
 
     private final String version;
+    private final Map<ShapeId, String> rename;
 
     private ServiceShape(Builder builder) {
         super(builder);
         version = SmithyBuilder.requiredState("version", builder.version);
+        rename = MapUtils.orderedCopyOf(builder.rename);
     }
 
     public static Builder builder() {
@@ -40,6 +46,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
         Builder builder = builder().from(this).version(version);
         getOperations().forEach(builder::addOperation);
         getResources().forEach(builder::addResource);
+        builder.rename(rename);
         return builder;
     }
 
@@ -60,7 +67,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
         }
 
         ServiceShape o = (ServiceShape) other;
-        return version.equals(o.version);
+        return version.equals(o.version) && rename.equals(o.rename);
     }
 
     /**
@@ -71,10 +78,34 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
     }
 
     /**
+     * @return The rename map of the service.
+     */
+    public Map<ShapeId, String> getRename() {
+        return rename;
+    }
+
+    /**
+     * Gets the contextual name of a shape within the closure.
+     *
+     * <p>If there is a rename property entry for the given shape ID, then
+     * the renamed shape name is returned. Otherwise, the name part of the
+     * given shape ID is returned, regardless of if the shape exists in the
+     * closure of the service.
+     *
+     * @param shape Shape to get the contextual name of.
+     * @return Returns the contextual name of the shape within the service.
+     */
+    public String getContextName(ToShapeId shape) {
+        ShapeId id = shape.toShapeId();
+        return rename.getOrDefault(id, id.getName());
+    }
+
+    /**
      * Builder used to create a {@link ServiceShape}.
      */
     public static final class Builder extends EntityShape.Builder<Builder, ServiceShape> {
         private String version;
+        private final Map<ShapeId, String> rename = new TreeMap<>();
 
         @Override
         public ServiceShape build() {
@@ -88,6 +119,22 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
 
         public Builder version(String version) {
             this.version = version;
+            return this;
+        }
+
+        public Builder clearRename() {
+            this.rename.clear();
+            return this;
+        }
+
+        public Builder rename(Map<ShapeId, String> rename) {
+            clearRename();
+            rename.forEach(this::putRename);
+            return this;
+        }
+
+        public Builder putRename(ShapeId from, String to) {
+            this.rename.put(Objects.requireNonNull(from), Objects.requireNonNull(to));
             return this;
         }
     }
