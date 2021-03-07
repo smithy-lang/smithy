@@ -135,4 +135,18 @@ public class DefaultRefStrategyTest {
 
         assertThat(ref.toPointer(baz.getMember("bam").get().getId()), equalTo("#/definitions/Bam"));
     }
+
+    @Test
+    public void usesServiceRenames() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("service-renames.json"))
+                .assemble()
+                .unwrap();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setService(ShapeId.from("smithy.example#MyService"));
+        RefStrategy ref = RefStrategy.createDefaultStrategy(model, config, propertyNamingStrategy);
+
+        assertThat(ref.toPointer(ShapeId.from("smithy.example#Widget")), equalTo("#/definitions/Widget"));
+        assertThat(ref.toPointer(ShapeId.from("foo.example#Widget")), equalTo("#/definitions/FooWidget"));
+    }
 }

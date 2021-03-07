@@ -35,6 +35,7 @@ import software.amazon.smithy.model.pattern.SmithyPattern;
 import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
@@ -109,12 +110,14 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
 
     @Override
     public Optional<Operation> createOperation(Context<T> context, OperationShape operation) {
+        ServiceShape serviceShape = context.getService();
         return operation.getTrait(HttpTrait.class).map(httpTrait -> {
-            String method = context.getOpenApiProtocol().getOperationMethod(context, operation);
-            String uri = context.getOpenApiProtocol().getOperationUri(context, operation);
-            OperationObject.Builder builder = OperationObject.builder().operationId(operation.getId().getName());
             HttpBindingIndex bindingIndex = HttpBindingIndex.of(context.getModel());
             EventStreamIndex eventStreamIndex = EventStreamIndex.of(context.getModel());
+            String method = context.getOpenApiProtocol().getOperationMethod(context, operation);
+            String uri = context.getOpenApiProtocol().getOperationUri(context, operation);
+            OperationObject.Builder builder = OperationObject.builder()
+                    .operationId(serviceShape.getContextName(operation));
             createPathParameters(context, operation).forEach(builder::addParameter);
             createQueryParameters(context, operation).forEach(builder::addParameter);
             createRequestHeaderParameters(context, operation).forEach(builder::addParameter);
@@ -306,7 +309,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         // any schemas with string types will pass validation.
         Schema schema = context.inlineOrReferenceSchema(binding.getMember());
         MediaTypeObject mediaTypeObject = getMediaTypeObject(context, schema, operation, shape -> {
-            String shapeName = shape.getId().getName();
+            String shapeName = context.getService().getContextName(shape.getId());
             return shapeName + "InputPayload";
         });
         RequestBodyObject requestBodyObject = RequestBodyObject.builder()
@@ -331,8 +334,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
 
         // Synthesize a schema for the body of the request.
         Schema schema = createDocumentSchema(context, operation, bindings, MessageType.REQUEST);
-        String synthesizedName = stripNonAlphaNumericCharsIfNecessary(context, operation.getId().getName())
-                + "RequestContent";
+        String contextName = context.getService().getContextName(operation);
+        String synthesizedName = stripNonAlphaNumericCharsIfNecessary(context, contextName) + "RequestContent";
         String pointer = context.putSynthesizedSchema(synthesizedName, schema);
         MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
                 .schema(Schema.builder().ref(pointer).build())
@@ -397,7 +400,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             Shape operationOrError
     ) {
         ResponseObject.Builder responseBuilder = ResponseObject.builder();
-        String responseName = stripNonAlphaNumericCharsIfNecessary(context, operationOrError.getId().getName());
+        String contextName = context.getService().getContextName(operationOrError);
+        String responseName = stripNonAlphaNumericCharsIfNecessary(context, contextName);
         responseBuilder.description(String.format("%s %s response", responseName, statusCode));
         createResponseHeaderParameters(context, operationOrError)
                 .forEach((k, v) -> responseBuilder.putHeader(k, Ref.local(v)));
@@ -457,7 +461,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         // any schemas with string types will pass validation.
         Schema schema = context.inlineOrReferenceSchema(binding.getMember());
         MediaTypeObject mediaTypeObject = getMediaTypeObject(context, schema, operationOrError, shape -> {
-            String shapeName = shape.getId().getName();
+            String shapeName = context.getService().getContextName(shape.getId());
             return shape instanceof OperationShape
                     ? shapeName + "OutputPayload"
                     : shapeName + "ErrorPayload";
@@ -532,7 +536,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         //
         // **NOTE: this same blurb applies to why we do this on input.**
         Schema schema = createDocumentSchema(context, operationOrError, bindings, messageType);
-        String synthesizedName = stripNonAlphaNumericCharsIfNecessary(context, operationOrError.getId().getName())
+        String contextName = context.getService().getContextName(operationOrError);
+        String synthesizedName = stripNonAlphaNumericCharsIfNecessary(context, contextName)
                 + "ResponseContent";
         String pointer = context.putSynthesizedSchema(synthesizedName, schema);
         MediaTypeObject mediaTypeObject = MediaTypeObject.builder()

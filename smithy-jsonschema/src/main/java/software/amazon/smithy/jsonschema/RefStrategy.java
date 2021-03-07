@@ -49,6 +49,9 @@ interface RefStrategy {
     /**
      * Creates a default strategy for converting shape IDs to $refs.
      *
+     * <p>When a "service" is given in the configuration, shape names
+     * used in refs are based on the "rename" property of the service.
+     *
      * <p>This default strategy will make the created value consist
      * of only alphanumeric characters. When a namespace is included
      * (because "stripNamespaces" is not set), the namespace is added

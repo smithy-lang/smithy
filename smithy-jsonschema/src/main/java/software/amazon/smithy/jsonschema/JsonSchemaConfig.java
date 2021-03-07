@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 
 /**
@@ -104,6 +105,7 @@ public class JsonSchemaConfig {
     private Set<String> disableFeatures = new HashSet<>();
     private final ConcurrentHashMap<Class, Object> extensionCache = new ConcurrentHashMap<>();
     private final NodeMapper nodeMapper = new NodeMapper();
+    private ShapeId service;
 
     public JsonSchemaConfig() {
         nodeMapper.setWhenMissingSetter(NodeMapper.WhenMissing.INGORE);
@@ -306,5 +308,25 @@ public class JsonSchemaConfig {
      */
     public void putExtension(String key, String value) {
         putExtension(key, Node.from(value));
+    }
+
+    /**
+     * Gets the service shape ID that is used to contextualize the created
+     * schemas by using things like the "rename" property of the service.
+     *
+     * @return the nullable Smithy service shape ID.
+     */
+    public ShapeId getService() {
+        return service;
+    }
+
+    /**
+     * Sets the service shape ID that is used to contextualize the created
+     * schemas by using things like the "rename" property of the service.
+     *
+     * @param service the Smithy service shape ID.
+     */
+    public void setService(ShapeId service) {
+        this.service = service;
     }
 }

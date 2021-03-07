@@ -191,6 +191,11 @@ service (``string``)
             }
         }
 
+    .. note::
+
+        Any :ref:`rename <service-closure>` defined in the given service
+        affects the generated schema names when converting to OpenAPI.
+
 .. _generate-openapi-setting-protocol:
 
 protocol (``string``)
