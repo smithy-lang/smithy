@@ -15,10 +15,12 @@
 
 package software.amazon.smithy.jsonschema;
 
+import java.util.Optional;
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.SimpleShape;
@@ -59,12 +61,16 @@ final class DefaultRefStrategy implements RefStrategy {
     private final String rootPointer;
     private final PropertyNamingStrategy propertyNamingStrategy;
     private final JsonSchemaConfig config;
+    private final ServiceShape serviceContext;
 
     DefaultRefStrategy(Model model, JsonSchemaConfig config, PropertyNamingStrategy propertyNamingStrategy) {
         this.model = model;
         this.propertyNamingStrategy = propertyNamingStrategy;
         this.config = config;
         rootPointer = computePointer(config);
+        serviceContext = Optional.ofNullable(config.getService())
+                .map(shape -> model.expectShape(shape, ServiceShape.class))
+                .orElse(null);
     }
 
     private static String computePointer(JsonSchemaConfig config) {
@@ -82,7 +88,14 @@ final class DefaultRefStrategy implements RefStrategy {
             return createMemberPointer(member);
         }
 
-        return rootPointer + stripNonAlphaNumericCharsIfNecessary(id.getName());
+        // Use the "rename" property when providing refs for shapes within
+        // the context of a service.
+        String shapeName = id.getName();
+        if (serviceContext != null) {
+            shapeName = serviceContext.getContextName(id);
+        }
+
+        return rootPointer + stripNonAlphaNumericCharsIfNecessary(shapeName);
     }
 
     private String createMemberPointer(MemberShape member) {

@@ -71,7 +71,6 @@ public class OpenApiConfig extends JsonSchemaConfig {
                                         "disableCloudFormationSubstitution");
     }
 
-    private ShapeId service;
     private ShapeId protocol;
     private boolean tags;
     private List<String> supportedTags;
@@ -91,21 +90,6 @@ public class OpenApiConfig extends JsonSchemaConfig {
     public OpenApiConfig() {
         super();
         setDefinitionPointer(SCHEMA_COMPONENTS_POINTER);
-    }
-
-    public ShapeId getService() {
-        return service;
-    }
-
-    /**
-     * Sets the service shape ID to convert.
-     *
-     * <p>For example, smithy.example#Weather.
-     *
-     * @param service the Smithy service shape ID to convert.
-     */
-    public void setService(ShapeId service) {
-        this.service = service;
     }
 
     public ShapeId getProtocol() {

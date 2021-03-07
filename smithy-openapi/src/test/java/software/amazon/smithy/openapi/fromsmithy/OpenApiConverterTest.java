@@ -482,4 +482,20 @@ public class OpenApiConverterTest {
 
         Node.assertEquals(result, expectedNode);
     }
+
+    @Test
+    public void properlyDealsWithServiceRenames() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("service-with-renames.json"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#MyService"));
+        Node result = OpenApiConverter.create().config(config).convertToNode(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("service-with-renames.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
 }
