@@ -39,7 +39,7 @@ blockquote {
 }
 
 .width-wrapper  {
-  max-width: 1140px;
+  max-width: 1250px;
   margin: auto;
   position: relative;
   padding: 0 1em;
@@ -293,7 +293,7 @@ h7 {
 /* ----- Visual separations ------ */
 
 #page-container {
-  padding: 3rem 2rem 2rem 2em;
+  padding: 2rem 0;
   background: #fff;
   flex: 1;
 }
@@ -372,7 +372,6 @@ header {
 
 .site-logo .logo-text {
   font-weight: 700;
-  padding-left: 6px;
 }
 
 .site-logo .version-text {
@@ -392,6 +391,7 @@ header {
   padding: 2px 3px 2px 4px;
   border-radius: 6px;
   background-color: #C44536;
+  margin-right: 6px;
 }
 
 #page-navigation {
@@ -407,12 +407,13 @@ header {
 
 #page-navigation .site-page {
   line-height: 1.8;
-  margin-right: 0 18px 0 0;
+  margin-right: 18px;
+  display: inline;
 }
 
 #page-navigation .site-page a {
-  display: block;
-  padding: 0 1em;
+  display: inline;
+  padding: 0 1em 0 0;
   color: #222;
 }
 
@@ -953,8 +954,9 @@ dt:target, .highlighted {
 
 .large-toctree .toctree-l1 > a {
   font-weight: bold;
-  padding-bottom: 1em;
+  padding-bottom: 0.5em;
   display: block;
+  font-size: 1.25em;
 }
 
 .caption-text {
@@ -1005,7 +1007,6 @@ dt:target, .highlighted {
 
 @media (max-width: 1100px) {
     #right-column { display: none; }
-    #page-container { padding: 1.5em; }
 }
 
 @media (max-width: 991px) {
@@ -1041,8 +1042,8 @@ dt:target, .highlighted {
     display: none;
   }
 
-  .site-logo .logo-text {
-    padding-left: 12px;
+  .site-logo a {
+    padding: 0;
   }
 
   .splash-row {

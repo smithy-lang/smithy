@@ -469,15 +469,17 @@ segment.</p>
 <p>For example, given the following:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> QueryListsInput</span> {
     <span class="nl">ListArg:</span> <span class="vc">StringList</span>,
-
-    <span class="nd">@xmlFlattened</span>
     <span class="nl">ComplexListArg:</span> <span class="vc">GreetingList</span>,
 
-    <span class="c">// Notice that the xmlName on the targeted list member is ignored.</span>
+    <span class="nd">@xmlFlattened</span>
+    <span class="nl">FlattenedListArg:</span> <span class="vc">StringList</span>,
+
     <span class="nl">ListArgWithXmlNameMember:</span> <span class="vc">ListWithXmlName</span>,
 
+    <span class="c">// Notice that the xmlName on the targeted list member is ignored.</span>
+    <span class="nd">@xmlFlattened</span>
     <span class="nd">@xmlName</span>(<span class="s2">&quot;Hi&quot;</span>)
-    <span class="nl">ListArgWithXmlName:</span> <span class="vc">ListWithXmlName</span>,
+    <span class="nl">FlattenedListArgWithXmlName:</span> <span class="vc">ListWithXmlName</span>,
 }
 
 <span class="kd">list</span><span class="nc"> ListWithXmlName</span> {
@@ -504,10 +506,12 @@ segment.</p>
 &amp;ListArg.member.1=foo
 &amp;ListArg.member.2=bar
 &amp;ListArg.member.3=baz
-&amp;ComplexListArg.1.hi=hello
-&amp;ComplexListArg.2.hi=hola
-&amp;ListArgWithXmlNameMember.1=A
-&amp;ListArgWithXmlNameMember.2=B
+&amp;ComplexListArg.member.1.hi=hello
+&amp;ComplexListArg.member.2.hi=hola
+&amp;FlattenedListArg.1=A
+&amp;FlattenedListArg.2=B
+&amp;ListArgWithXmlNameMember.item.1=A
+&amp;ListArgWithXmlNameMember.item.2=B
 &amp;Hi.1=A
 &amp;Hi.2=B
 </pre></div>
@@ -551,6 +555,10 @@ containing the initial &quot;.&quot; separator and &quot;entry&quot; segment.</p
 
     <span class="nd">@xmlName</span>(<span class="s2">&quot;V&quot;</span>)
     <span class="nl">value:</span> <span class="vc">String</span>
+}
+
+<span class="kd">structure</span><span class="nc"> GreetingStruct</span> {
+    <span class="nl">hi:</span> <span class="vc">String</span>,
 }
 </pre></div>
 </div>
