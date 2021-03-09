@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -34,6 +35,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.SimpleShape;
+import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -73,7 +75,7 @@ public final class ServiceValidator extends AbstractValidator {
         Map<String, Set<ShapeId>> normalizedNamesToIds = new HashMap<>();
         for (ShapeId id : serviceClosure.keySet()) {
             if (!id.getMember().isPresent()) {
-                String possiblyRename = service.getContextName(id);
+                String possiblyRename = service.getContextualName(id);
                 normalizedNamesToIds
                         .computeIfAbsent(possiblyRename.toLowerCase(Locale.ENGLISH), name -> new TreeSet<>())
                         .add(id);
@@ -136,18 +138,26 @@ public final class ServiceValidator extends AbstractValidator {
             // Each renamed shape ID must actually exist in the closure.
             if (!closure.containsKey(from)) {
                 events.add(error(service, "Service attempts to rename a shape not in the service: " + from));
-            } else if (!isValidShapeToRename(closure.get(from))) {
-                events.add(error(service, String.format(
-                        "Service attempts to rename an invalid %s shape from `%s` to \"%s\"",
-                        closure.get(from).getType(), from, to)));
+            } else {
+                getInvalidRenameReason(closure.get(from)).ifPresent(reason -> {
+                    events.add(error(service, String.format(
+                            "Service attempts to rename an invalid %s shape from `%s` to \"%s\"; %s",
+                            closure.get(from).getType(), from, to, reason)));
+                });
             }
         }
 
         return events;
     }
 
-    private boolean isValidShapeToRename(Shape shape) {
-        return !shape.isMemberShape() && !shape.isResourceShape() && !shape.isOperationShape();
+    private Optional<String> getInvalidRenameReason(Shape shape) {
+        if (shape.isMemberShape() || shape.isResourceShape() || shape.isOperationShape()) {
+            return Optional.of(shape.getType() + "s cannot be renamed");
+        } else if (shape.hasTrait(ErrorTrait.class)) {
+            return Optional.of("errors cannot be renamed");
+        } else {
+            return Optional.empty();
+        }
     }
 
     private ValidationEvent conflictingNames(Severity severity, ServiceShape service, Shape subject, Shape other) {

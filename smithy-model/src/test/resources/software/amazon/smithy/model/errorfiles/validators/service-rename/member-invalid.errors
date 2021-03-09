@@ -1,1 +1,1 @@
-[ERROR] smithy.example#MyService: Service attempts to rename an invalid member shape from `smithy.example#SayHelloInput$foo` to "thisDoesNotWork" | Service
+[ERROR] smithy.example#MyService: Service attempts to rename an invalid member shape from `smithy.example#SayHelloInput$foo` to "thisDoesNotWork"; members cannot be renamed | Service

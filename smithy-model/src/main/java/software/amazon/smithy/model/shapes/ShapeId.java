@@ -292,10 +292,32 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
     /**
      * Get the name of the shape.
      *
+     * <p>Use {@link #getName(ServiceShape)} when performing transformations
+     * like code generation of the shapes used in services or clients.
+     *
      * @return Returns the name.
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Get the name of the shape when it is used within the contextual
+     * closure of a service.
+     *
+     * <p>This method should be used when performing transformations like
+     * code generation of a Smithy model. Service shapes can rename shapes
+     * used within the closure of a service to give shapes unambiguous names
+     * independent of a namespace.
+     *
+     * <p>This is a mirror of {@link ServiceShape#getContextualName(ToShapeId)}
+     * that serves to make this functionality more discoverable.
+     *
+     * @param service Service shape used to contextualize the name.
+     * @return Returns the contextualized shape name when used in a service.
+     */
+    public String getName(ServiceShape service) {
+        return service.getContextualName(this);
     }
 
     /**

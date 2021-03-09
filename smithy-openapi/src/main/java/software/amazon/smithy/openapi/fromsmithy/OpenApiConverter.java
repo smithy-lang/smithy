@@ -619,7 +619,7 @@ public final class OpenApiConverter {
         Map<String, ResponseObject> originalResponses = operation.getResponses();
         if (operation.getResponses().isEmpty()) {
             String code = context.getOpenApiProtocol().getOperationResponseStatusCode(context, shape);
-            String contextName = context.getService().getContextName(shape);
+            String contextName = context.getService().getContextualName(shape);
             originalResponses = MapUtils.of(code, ResponseObject.builder()
                     .description(contextName + " response")
                     .build());

@@ -117,7 +117,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             String method = context.getOpenApiProtocol().getOperationMethod(context, operation);
             String uri = context.getOpenApiProtocol().getOperationUri(context, operation);
             OperationObject.Builder builder = OperationObject.builder()
-                    .operationId(serviceShape.getContextName(operation));
+                    .operationId(serviceShape.getContextualName(operation));
             createPathParameters(context, operation).forEach(builder::addParameter);
             createQueryParameters(context, operation).forEach(builder::addParameter);
             createRequestHeaderParameters(context, operation).forEach(builder::addParameter);
@@ -309,7 +309,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         // any schemas with string types will pass validation.
         Schema schema = context.inlineOrReferenceSchema(binding.getMember());
         MediaTypeObject mediaTypeObject = getMediaTypeObject(context, schema, operation, shape -> {
-            String shapeName = context.getService().getContextName(shape.getId());
+            String shapeName = context.getService().getContextualName(shape.getId());
             return shapeName + "InputPayload";
         });
         RequestBodyObject requestBodyObject = RequestBodyObject.builder()
@@ -334,7 +334,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
 
         // Synthesize a schema for the body of the request.
         Schema schema = createDocumentSchema(context, operation, bindings, MessageType.REQUEST);
-        String contextName = context.getService().getContextName(operation);
+        String contextName = context.getService().getContextualName(operation);
         String synthesizedName = stripNonAlphaNumericCharsIfNecessary(context, contextName) + "RequestContent";
         String pointer = context.putSynthesizedSchema(synthesizedName, schema);
         MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
@@ -400,7 +400,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             Shape operationOrError
     ) {
         ResponseObject.Builder responseBuilder = ResponseObject.builder();
-        String contextName = context.getService().getContextName(operationOrError);
+        String contextName = context.getService().getContextualName(operationOrError);
         String responseName = stripNonAlphaNumericCharsIfNecessary(context, contextName);
         responseBuilder.description(String.format("%s %s response", responseName, statusCode));
         createResponseHeaderParameters(context, operationOrError)
@@ -461,7 +461,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         // any schemas with string types will pass validation.
         Schema schema = context.inlineOrReferenceSchema(binding.getMember());
         MediaTypeObject mediaTypeObject = getMediaTypeObject(context, schema, operationOrError, shape -> {
-            String shapeName = context.getService().getContextName(shape.getId());
+            String shapeName = context.getService().getContextualName(shape.getId());
             return shape instanceof OperationShape
                     ? shapeName + "OutputPayload"
                     : shapeName + "ErrorPayload";
@@ -536,7 +536,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         //
         // **NOTE: this same blurb applies to why we do this on input.**
         Schema schema = createDocumentSchema(context, operationOrError, bindings, messageType);
-        String contextName = context.getService().getContextName(operationOrError);
+        String contextName = context.getService().getContextualName(operationOrError);
         String synthesizedName = stripNonAlphaNumericCharsIfNecessary(context, contextName)
                 + "ResponseContent";
         String pointer = context.putSynthesizedSchema(synthesizedName, schema);

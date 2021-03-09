@@ -92,7 +92,7 @@ final class DefaultRefStrategy implements RefStrategy {
         // the context of a service.
         String shapeName = id.getName();
         if (serviceContext != null) {
-            shapeName = serviceContext.getContextName(id);
+            shapeName = serviceContext.getContextualName(id);
         }
 
         return rootPointer + stripNonAlphaNumericCharsIfNecessary(shapeName);
