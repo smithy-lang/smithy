@@ -133,6 +133,10 @@ public final class ServiceValidator extends AbstractValidator {
                 events.add(error(service, String.format(
                         "Service attempts to rename `%s` to an invalid identifier, \"%s\"",
                         from, to)));
+            } else if (to.equals(from.getName())) {
+                events.add(error(service, String.format(
+                        "Service rename for `%s` does not actually change the name from `%s`",
+                        from, to)));
             }
 
             // Each renamed shape ID must actually exist in the closure.

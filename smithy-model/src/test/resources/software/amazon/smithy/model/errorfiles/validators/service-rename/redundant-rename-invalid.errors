@@ -1,0 +1,1 @@
+[ERROR] smithy.example#MyService: Service rename for `smithy.example#SayHelloInput` does not actually change the name from `SayHelloInput` | Service

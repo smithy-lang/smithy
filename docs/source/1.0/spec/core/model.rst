@@ -1238,6 +1238,8 @@ The service shape supports the following properties:
           conflicts, not for renaming the fundamental concepts of a service.
         * Shapes from other namespaces marked as :ref:`private <private-trait>`
           MAY be renamed.
+        * A rename MUST use a name that is case-sensitively different from the
+          original shape ID name.
 
 The following example defines a service with no operations or resources.
 

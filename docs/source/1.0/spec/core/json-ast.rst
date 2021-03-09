@@ -403,7 +403,7 @@ shapes defined in JSON support the same properties as the Smithy IDL.
       - map of :ref:`shape ID <shape-id>` to trait values
       - Traits to apply to the service
     * - rename
-      - map of :ref:`shape ID <shape-id>` to ``string``
+      - map of :ref:`shape ID <shape-id>` to ``string`` :token:`identifier`
       - Disambiguates shape name conflicts in the
         :ref:`service closure <service-closure>`.
 
