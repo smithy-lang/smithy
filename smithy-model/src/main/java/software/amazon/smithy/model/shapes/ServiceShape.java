@@ -140,5 +140,10 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
             this.rename.put(Objects.requireNonNull(from), Objects.requireNonNull(to));
             return this;
         }
+
+        public Builder removeRename(ToShapeId from) {
+            rename.remove(from.toShapeId());
+            return this;
+        }
     }
 }
