@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.transform;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.Arrays;
@@ -30,6 +31,7 @@ import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -172,7 +174,6 @@ public class RemoveShapesTest {
         ShapeId removedId = ShapeId.from("ns.foo#baz");
         Shape removedShape = model.expectShape(removedId);
 
-
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.removeShapes(model, Collections.singletonList(removedShape));
 
@@ -181,5 +182,22 @@ public class RemoveShapesTest {
         ProtocolDefinitionTrait trait = subject.getTrait(ProtocolDefinitionTrait.class).get();
 
         assertFalse(trait.getTraits().contains(removedId));
+    }
+
+    @Test
+    public void removingShapeUpdatesServiceRename() {
+        StringShape string = StringShape.builder().id("example.foo#A").build();
+        ServiceShape service = ServiceShape.builder()
+                .id("com.foo#Example")
+                .version("1")
+                .putRename(ShapeId.from("example.foo#A"), "AA")
+                .build();
+        Model model = Model.builder().addShapes(string, service).build();
+
+        ModelTransformer transformer = ModelTransformer.create();
+        Model result = transformer.removeShapes(model, Collections.singletonList(string));
+        ServiceShape updatedService = result.expectShape(service.getId(), ServiceShape.class);
+
+        assertThat(updatedService.getRename().keySet(), empty());
     }
 }
