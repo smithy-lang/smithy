@@ -64,6 +64,9 @@
                 },
                 {
                     "target": "ns.foo#MapPayload"
+                },
+                {
+                    "target": "ns.foo#QueryParams"
                 }
             ]
         },
@@ -724,6 +727,46 @@
                     "traits": {
                         "smithy.api#httpPayload": {}
                     }
+                }
+            }
+        },
+        "ns.foo#QueryParams": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#QueryParamsInput"
+            },
+            "output": {
+                "target": "ns.foo#QueryParamsOutput"
+            },
+            "traits": {
+                "smithy.api#http": {
+                    "method": "POST",
+                    "uri": "/query-params"
+                }
+            }
+        },
+        "ns.foo#QueryParamsInput": {
+            "type": "structure",
+            "members": {
+                "namedQuery": {
+                    "target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpQuery": "named"
+                    }
+                },
+                "queryParams": {
+                    "target": "ns.foo#MapOfString",
+                    "traits": {
+                        "smithy.api#httpQueryParams": {}
+                    }
+                }
+            }
+        },
+        "ns.foo#QueryParamsOutput": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "ns.foo#String"
                 }
             }
         },
