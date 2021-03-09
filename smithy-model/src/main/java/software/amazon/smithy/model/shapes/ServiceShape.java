@@ -92,10 +92,13 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
      * given shape ID is returned, regardless of if the shape exists in the
      * closure of the service.
      *
+     * <p>This is a mirror of {@link ShapeId#getName(ServiceShape)}
+     * that serves to make this functionality more discoverable.
+     *
      * @param shape Shape to get the contextual name of.
      * @return Returns the contextual name of the shape within the service.
      */
-    public String getContextName(ToShapeId shape) {
+    public String getContextualName(ToShapeId shape) {
         ShapeId id = shape.toShapeId();
         return rename.getOrDefault(id, id.getName());
     }

@@ -302,4 +302,16 @@ public class ShapeIdTest {
     public void validatesNamespacesWhenReplaced() {
         Assertions.assertThrows(ShapeIdSyntaxException.class, () -> ShapeId.from("foo#Baz").withNamespace("!"));
     }
+
+    @Test
+    public void providesContextualServiceName() {
+        ShapeId id = ShapeId.from("foo.bar#Name");
+        ServiceShape serviceShape = ServiceShape.builder()
+                .id("smithy.example#Service")
+                .version("1")
+                .putRename(id, "FooName")
+                .build();
+
+        assertThat(id.getName(serviceShape), equalTo("FooName"));
+    }
 }

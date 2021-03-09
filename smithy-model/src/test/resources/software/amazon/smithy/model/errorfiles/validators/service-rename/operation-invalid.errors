@@ -1,1 +1,1 @@
-[ERROR] smithy.example#MyService: Service attempts to rename an invalid operation shape from `smithy.example#SayHello` to "SayHello2" | Service
+[ERROR] smithy.example#MyService: Service attempts to rename an invalid operation shape from `smithy.example#SayHello` to "SayHello2"; operations cannot be renamed | Service
