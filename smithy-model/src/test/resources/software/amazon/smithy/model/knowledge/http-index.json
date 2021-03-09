@@ -107,6 +107,12 @@
                         "smithy.api#httpQuery": "bar"
                     }
                 },
+                "corge": {
+                    "target": "ns.foo#StringMap",
+                    "traits": {
+                        "smithy.api#httpQueryParams": {}
+                    }
+                },
                 "bam": {
                     "target": "ns.foo#String",
                     "traits": {

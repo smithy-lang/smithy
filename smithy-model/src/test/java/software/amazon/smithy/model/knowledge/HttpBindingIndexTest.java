@@ -43,6 +43,8 @@ import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
+import software.amazon.smithy.model.traits.HttpQueryParamsTrait;
+import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpResponseCodeTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
@@ -185,6 +187,42 @@ public class HttpBindingIndexTest {
         assertThat(bindings.get("baz"), equalTo(new HttpBinding(
                 expectMember(model, "ns.foo#WithLabelsInput$baz"),
                 HttpBinding.Location.LABEL, "baz", null)));
+    }
+
+    @Test
+    public void findsQueryBindings() {
+        HttpBindingIndex index = HttpBindingIndex.of(model);
+        ShapeId id = ShapeId.from("ns.foo#ServiceOperationExplicitMembers");
+        Map<String, HttpBinding> bindings = index.getRequestBindings(id);
+
+        assertThat(bindings.get("baz"), equalTo(new HttpBinding(
+                expectMember(model, "ns.foo#ServiceOperationExplicitMembersInput$baz"),
+                HttpBinding.Location.QUERY, "baz", new HttpQueryTrait("baz"))));
+        assertThat(bindings.get("bar"), equalTo(new HttpBinding(
+                expectMember(model, "ns.foo#ServiceOperationExplicitMembersInput$bar"),
+                HttpBinding.Location.QUERY, "bar", new HttpQueryTrait("bar"))));
+        assertThat(bindings.get("corge"), equalTo(new HttpBinding(
+                expectMember(model, "ns.foo#ServiceOperationExplicitMembersInput$corge"),
+                HttpBinding.Location.QUERY, "corge", new HttpQueryParamsTrait())));
+    }
+
+    @Test
+    public void checksForRequestQueryBindings() {
+        Shape queryShape = MemberShape.builder()
+                .target("smithy.api#Timestamp")
+                .id("smithy.example#Baz$bar")
+                .addTrait(new HttpQueryTrait("foo"))
+                .build();
+        Shape queryParamsShape = MemberShape.builder()
+                .target("smithy.api#Timestamp")
+                .id("smithy.example#Baz$bar")
+                .addTrait(new HttpQueryParamsTrait())
+                .build();
+
+        assertThat(HttpBindingIndex.hasHttpRequestBindings(queryShape), is(true));
+        assertThat(HttpBindingIndex.hasHttpResponseBindings(queryShape), is(false));
+        assertThat(HttpBindingIndex.hasHttpRequestBindings(queryParamsShape), is(true));
+        assertThat(HttpBindingIndex.hasHttpResponseBindings(queryParamsShape), is(false));
     }
 
     @Test

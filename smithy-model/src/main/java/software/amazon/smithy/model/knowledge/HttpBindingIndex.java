@@ -37,6 +37,7 @@ import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
+import software.amazon.smithy.model.traits.HttpQueryParamsTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpResponseCodeTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
@@ -99,6 +100,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
                 || shape.hasTrait(HttpPrefixHeadersTrait.class)
                 || shape.hasTrait(HttpPayloadTrait.class)
                 || shape.hasTrait(HttpQueryTrait.class)
+                || shape.hasTrait(HttpQueryParamsTrait.class)
                 || shape.hasTrait(HttpLabelTrait.class);
     }
 
@@ -426,6 +428,9 @@ public final class HttpBindingIndex implements KnowledgeIndex {
             } else if (isRequest && member.getTrait(HttpQueryTrait.class).isPresent()) {
                 HttpQueryTrait trait = member.getTrait(HttpQueryTrait.class).get();
                 bindings.add(new HttpBinding(member, HttpBinding.Location.QUERY, trait.getValue(), trait));
+            } else if (isRequest && member.getTrait(HttpQueryParamsTrait.class).isPresent()) {
+                HttpQueryParamsTrait trait = member.getTrait(HttpQueryParamsTrait.class).get();
+                bindings.add(new HttpBinding(member, HttpBinding.Location.QUERY, member.getMemberName(), trait));
             } else if (member.getTrait(HttpPayloadTrait.class).isPresent()) {
                 foundPayload = true;
                 HttpPayloadTrait trait = member.getTrait(HttpPayloadTrait.class).get();
