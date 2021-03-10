@@ -37,6 +37,11 @@ map StringMap {
     value: String,
 }
 
+map StringListMap {
+    key: String,
+    value: StringList
+}
+
 @sparse
 map SparseStringMap {
     key: String,

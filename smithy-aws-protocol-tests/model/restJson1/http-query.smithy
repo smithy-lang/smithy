@@ -1,5 +1,6 @@
 // This file defines test cases that test HTTP query string bindings.
-// See: https://awslabs.github.io/smithy/1.0/spec/http.html#httpquery-trait
+// See: https://awslabs.github.io/smithy/1.0/spec/http.html#httpquery-trait and
+// https://awslabs.github.io/smithy/1.0/spec/http.html#httpqueryparams-trait
 
 $version: "1.0"
 
@@ -13,6 +14,8 @@ use aws.protocoltests.shared#FooEnumList
 use aws.protocoltests.shared#IntegerList
 use aws.protocoltests.shared#IntegerSet
 use aws.protocoltests.shared#StringList
+use aws.protocoltests.shared#StringListMap
+use aws.protocoltests.shared#StringMap
 use aws.protocoltests.shared#StringSet
 use aws.protocoltests.shared#TimestampList
 use smithy.test#httpRequestTests
@@ -68,6 +71,8 @@ apply AllQueryStringTypes @httpRequestTests([
             "EnumList=Foo",
             "EnumList=Baz",
             "EnumList=Bar",
+            "QueryParamsStringKeyA=Foo",
+            "QueryParamsStringKeyB=Bar",
         ],
         params: {
             queryString: "Hello there",
@@ -88,6 +93,10 @@ apply AllQueryStringTypes @httpRequestTests([
             queryTimestampList: [1, 2, 3],
             queryEnum: "Foo",
             queryEnumList: ["Foo", "Baz", "Bar"],
+            queryParamsMapOfStrings: {
+                "QueryParamsStringKeyA": "Foo",
+                "QueryParamsStringKeyB": "Bar"
+            },
         }
     }
 ])
@@ -146,6 +155,9 @@ structure AllQueryStringTypesInput {
 
     @httpQuery("EnumList")
     queryEnumList: FooEnumList,
+
+    @httpQueryParams
+    queryParamsMapOfStrings: StringMap,
 }
 
 /// This example uses a constant query string parameters and a label.
@@ -364,4 +376,71 @@ structure QueryIdempotencyTokenAutoFillInput {
     @httpQuery("token")
     @idempotencyToken
     token: String,
+}
+
+// Named query members take precedence over unnamed.
+@http(uri: "/Precedence", method: "POST")
+operation QueryPrecedence {
+    input: QueryPrecedenceInput
+}
+
+apply QueryPrecedence @httpRequestTests([
+    {
+        id: "RestJsonQueryPrecedence",
+        documentation: "Prefer named query parameters when serializing",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/Precedence",
+        body: "",
+        queryParams: [
+            "foo=named",
+            "qux=alsoFromMap"
+        ],
+        params: {
+            foo: "named",
+            baz: {
+                foo: "fromMap",
+                qux: "alsoFromMap"
+            }
+        }
+    }
+])
+
+structure QueryPrecedenceInput {
+    @httpQuery("foo")
+    foo: String,
+
+    @httpQueryParams
+    baz: StringMap
+}
+
+// httpQueryParams as Map of ListStrings
+@http(uri: "/StringListMap", method: "POST")
+operation QueryParamsAsStringListMap {
+    input: QueryParamsAsStringListMapInput
+}
+
+apply QueryParamsAsStringListMap @httpRequestTests([
+    {
+        id: "RestJsonQueryParamsStringListMap",
+        documentation: "Serialize query params from map of list strings",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/StringListMap",
+        body: "",
+        queryParams: [
+            "baz=bar",
+            "baz=qux"
+        ],
+        params: {
+            foo: {
+                "baz": ["bar", "qux"]
+            }
+        }
+    }
+])
+
+structure QueryParamsAsStringListMapInput {
+    @httpQueryParams
+    foo: StringListMap
 }
