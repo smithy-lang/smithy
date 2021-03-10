@@ -35,6 +35,14 @@
               "description": "Query list docs!"
             },
             "explode": true
+          },
+          {
+            "name": "freeForm",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "$ref": "#/components/schemas/QueryMap"
+            }
           }
         ],
         "responses": {
@@ -44,6 +52,43 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CreateDocumentResponseContent"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/foo": {
+      "post": {
+        "operationId": "CreateFoo",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFooRequestContent"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "freeForm",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "$ref": "#/components/schemas/QueryStringListMap"
+            },
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CreateFoo 200 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateFooResponseContent"
                 }
               }
             }
@@ -186,6 +231,22 @@
           "time"
         ]
       },
+      "CreateFooRequestContent": {
+        "type": "object",
+        "properties": {
+          "foo": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateFooResponseContent": {
+        "type": "object",
+        "properties": {
+          "foo": {
+            "type": "string"
+          }
+        }
+      },
       "EnumString": {
         "type": "string",
         "enum": [
@@ -207,6 +268,21 @@
       "PutPayloadOutputPayload": {
         "type": "string",
         "format": "byte"
+      },
+      "QueryMap": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        }
+      },
+      "QueryStringListMap": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       },
       "TaggedUnion": {
         "oneOf": [
