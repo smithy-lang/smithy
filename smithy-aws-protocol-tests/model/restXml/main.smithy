@@ -32,13 +32,15 @@ service RestXml {
         HttpRequestWithLabelsAndTimestampFormat,
         HttpRequestWithGreedyLabelInPath,
 
-        // @httpQuery tests
+        // @httpQuery and @httpQueryParams tests
         AllQueryStringTypes,
         ConstantQueryString,
         ConstantAndVariableQueryString,
         IgnoreQueryParamsInResponse,
         OmitsNullSerializesEmptyString,
         QueryIdempotencyTokenAutoFill,
+        QueryPrecedence,
+        QueryParamsAsStringListMap,
 
         // @httpPrefixHeaders tests
         HttpPrefixHeaders,
