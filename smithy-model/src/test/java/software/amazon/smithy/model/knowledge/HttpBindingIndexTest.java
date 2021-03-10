@@ -215,30 +215,6 @@ public class HttpBindingIndexTest {
     }
 
     @Test
-    public void checksForRequestQueryBindings() {
-        Shape queryShape = MemberShape.builder()
-                .target("smithy.api#Timestamp")
-                .id("smithy.example#Baz$bar")
-                .addTrait(new HttpQueryTrait("foo"))
-                .build();
-
-        assertThat(HttpBindingIndex.hasHttpRequestBindings(queryShape), is(true));
-        assertThat(HttpBindingIndex.hasHttpResponseBindings(queryShape), is(false));
-    }
-
-    @Test
-    public void checksForRequestQueryParamsBindings() {
-        Shape queryParamsShape = MemberShape.builder()
-                .target("smithy.api#Timestamp")
-                .id("smithy.example#Baz$bar")
-                .addTrait(new HttpQueryParamsTrait())
-                .build();
-
-        assertThat(HttpBindingIndex.hasHttpRequestBindings(queryParamsShape), is(true));
-        assertThat(HttpBindingIndex.hasHttpResponseBindings(queryParamsShape), is(false));
-    }
-
-    @Test
     public void findsUnboundMembers() {
         ServiceShape service = ServiceShape.builder()
                 .id("ns.foo#Service")
@@ -309,6 +285,30 @@ public class HttpBindingIndexTest {
 
         assertThat(HttpBindingIndex.hasHttpRequestBindings(shape), is(false));
         assertThat(HttpBindingIndex.hasHttpResponseBindings(shape), is(true));
+    }
+
+    @Test
+    public void checksForRequestQueryBindings() {
+        Shape queryShape = MemberShape.builder()
+                .target("smithy.api#Timestamp")
+                .id("smithy.example#Baz$bar")
+                .addTrait(new HttpQueryTrait("foo"))
+                .build();
+
+        assertThat(HttpBindingIndex.hasHttpRequestBindings(queryShape), is(true));
+        assertThat(HttpBindingIndex.hasHttpResponseBindings(queryShape), is(false));
+    }
+
+    @Test
+    public void checksForRequestQueryParamsBindings() {
+        Shape queryParamsShape = MemberShape.builder()
+                .target("smithy.api#Timestamp")
+                .id("smithy.example#Baz$bar")
+                .addTrait(new HttpQueryParamsTrait())
+                .build();
+
+        assertThat(HttpBindingIndex.hasHttpRequestBindings(queryParamsShape), is(true));
+        assertThat(HttpBindingIndex.hasHttpResponseBindings(queryParamsShape), is(false));
     }
 
     @Test
