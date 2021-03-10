@@ -39,7 +39,8 @@ public final class HttpBinding {
     }
 
     /** HTTP binding types. */
-    public enum Location { LABEL, DOCUMENT, PAYLOAD, HEADER, PREFIX_HEADERS, QUERY, RESPONSE_CODE, UNBOUND }
+    public enum Location { LABEL, DOCUMENT, PAYLOAD, HEADER, PREFIX_HEADERS, QUERY, QUERY_PARAMS, RESPONSE_CODE,
+        UNBOUND }
 
     public MemberShape getMember() {
         return member;

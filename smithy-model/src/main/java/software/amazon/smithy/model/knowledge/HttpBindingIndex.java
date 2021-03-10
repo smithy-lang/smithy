@@ -430,7 +430,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
                 bindings.add(new HttpBinding(member, HttpBinding.Location.QUERY, trait.getValue(), trait));
             } else if (isRequest && member.getTrait(HttpQueryParamsTrait.class).isPresent()) {
                 HttpQueryParamsTrait trait = member.getTrait(HttpQueryParamsTrait.class).get();
-                bindings.add(new HttpBinding(member, HttpBinding.Location.QUERY, member.getMemberName(), trait));
+                bindings.add(new HttpBinding(member, HttpBinding.Location.QUERY_PARAMS, member.getMemberName(), trait));
             } else if (member.getTrait(HttpPayloadTrait.class).isPresent()) {
                 foundPayload = true;
                 HttpPayloadTrait trait = member.getTrait(HttpPayloadTrait.class).get();
