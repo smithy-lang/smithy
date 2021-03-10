@@ -21,10 +21,13 @@ import java.util.List;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.HttpQueryParamsTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.ValidationUtils;
 
 /**
  * When the `httpQueryParams` trait is used, this validator emits a NOTE when another member of the container shape
@@ -47,15 +50,31 @@ public final class HttpQueryParamsTraitValidator extends AbstractValidator {
             shape.asMemberShape().flatMap(member -> model.getShape(member.getContainer())
                 .flatMap(Shape::asStructureShape))
                 .ifPresent(structure -> {
-                    for (MemberShape memberShape : structure.members()) {
-                        if (memberShape.hasTrait(HttpQueryTrait.class)) {
-                            events.add(note(shape, String.format("Trait `httpQueryParams` may potentially conflict with"
-                                    + " `httpQuery` trait applied to `%s`.", memberShape.toShapeId())));
-                        }
+                    // Gather the names of member shapes, as strings, that apply HttpQuery traits
+                    List<String> queryShapes = getMembersWithTrait(structure, HttpQueryTrait.class);
+                    if (queryShapes.size() > 0) {
+                        events.add(createNote(structure, shape.toShapeId().getMember().get(), queryShapes));
                     }
                 });
         }
 
         return events;
+    }
+
+    private List<String> getMembersWithTrait(StructureShape structure, Class<? extends Trait> trait) {
+        List<String> members = new ArrayList<>();
+        for (MemberShape member : structure.members()) {
+            if (member.hasTrait(trait)) {
+                members.add(member.getMemberName());
+            }
+        }
+        return members;
+    }
+
+    private ValidationEvent createNote(Shape target, String queryParamsShape, List<String> queryShapes) {
+        return note(target, String.format("Operation input `%s` has an `httpQueryParams` trait applied to the `%s` "
+                + "member and `httpQuery` traits applied to the following members: %s. This can cause confusion when "
+                + "keys from the `httpQueryParams` trait conflict with those defined directly by `httpQuery` traits",
+                target.toShapeId(), queryParamsShape, ValidationUtils.tickedList(queryShapes)));
     }
 }
