@@ -37,6 +37,10 @@ union MyUnion {
     listValue: StringList,
     mapValue: StringMap,
     structureValue: GreetingStruct,
+
+    // Note that this uses a conflicting structure name with
+    // GreetingStruct, so it must be renamed in the service.
+    renamedStructureValue: aws.protocoltests.restjson.nested#GreetingStruct,
 }
 
 apply JsonUnions @httpRequestTests([
@@ -226,6 +230,30 @@ apply JsonUnions @httpRequestTests([
             contents: {
                 structureValue: {
                     hi: "hello",
+                }
+            }
+        }
+    },
+    {
+        id: "RestJsonSerializeRenamedStructureUnionValue",
+        documentation: "Serializes a renamed structure union value",
+        protocol: restJson1,
+        method: "PUT",
+        uri: "/JsonUnions",
+        body: """
+            {
+                "contents": {
+                    "renamedStructureValue": {
+                        "salutation": "hello!"
+                    }
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            contents: {
+                renamedStructureValue: {
+                    salutation: "hello!",
                 }
             }
         }

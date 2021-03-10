@@ -28,7 +28,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 /**
- * Creates a DANGER event when a shape is renamed that was already
+ * Creates an ERROR event when a shape is renamed that was already
  * part of the service, when a rename changes for a shape, or when
  * a rename is removed for a shape.
  */

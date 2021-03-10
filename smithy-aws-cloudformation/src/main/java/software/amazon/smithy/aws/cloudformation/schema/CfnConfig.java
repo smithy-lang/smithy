@@ -44,7 +44,6 @@ public final class CfnConfig extends JsonSchemaConfig {
     private Map<ShapeId, Map<String, Node>> jsonAdd = Collections.emptyMap();
     private String organizationName;
     private String serviceName;
-    private ShapeId service;
     private List<String> sourceDocs = ListUtils.of(
             "Source Url", "SourceUrl", "Source", "Source Code");
 
@@ -230,21 +229,6 @@ public final class CfnConfig extends JsonSchemaConfig {
      */
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
-    }
-
-    public ShapeId getService() {
-        return service;
-    }
-
-    /**
-     * Sets the service shape ID to convert the resources of.
-     *
-     * <p>For example, smithy.example#Weather.
-     *
-     * @param service the Smithy service shape ID to convert the resources of.
-     */
-    public void setService(ShapeId service) {
-        this.service = service;
     }
 
     public List<String> getSourceDocs() {

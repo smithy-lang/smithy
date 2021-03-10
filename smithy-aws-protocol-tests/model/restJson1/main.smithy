@@ -12,6 +12,10 @@ use smithy.test#httpResponseTests
 @restJson1
 service RestJson {
     version: "2019-12-16",
+    // Ensure that generators are able to handle renames.
+    rename: {
+        "aws.protocoltests.restjson.nested#GreetingStruct": "RenamedGreeting",
+    },
     operations: [
         // Basic input and output tests
         NoInputAndNoOutput,
