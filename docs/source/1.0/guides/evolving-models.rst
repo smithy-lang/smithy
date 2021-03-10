@@ -22,7 +22,7 @@ The following changes to operation shapes are backward-compatible:
 The following changes are not backward-compatible:
 
 #. Removing a resource or operation.
-#. Renaming a shape that was was already part of the service.
+#. Renaming a shape that was already part of the service.
 
 
 Updating operations

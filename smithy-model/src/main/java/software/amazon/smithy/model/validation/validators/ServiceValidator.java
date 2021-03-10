@@ -145,7 +145,7 @@ public final class ServiceValidator extends AbstractValidator {
             } else {
                 getInvalidRenameReason(closure.get(from)).ifPresent(reason -> {
                     events.add(error(service, String.format(
-                            "Service attempts to rename an invalid %s shape from `%s` to \"%s\"; %s",
+                            "Service attempts to rename a %s shape from `%s` to \"%s\"; %s",
                             closure.get(from).getType(), from, to, reason)));
                 });
             }

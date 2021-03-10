@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.model.shapes;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Assertions;
@@ -43,5 +45,17 @@ public class ServiceShapeTest {
                 .version("2017-01-17")
                 .build();
         assertEquals(service, service.toBuilder().build());
+    }
+
+    @Test
+    public void providesContextualShapeName() {
+        ShapeId id = ShapeId.from("foo.bar#Name");
+        ServiceShape serviceShape = ServiceShape.builder()
+                .id("smithy.example#Service")
+                .version("1")
+                .putRename(id, "FooName")
+                .build();
+
+        assertThat(serviceShape.getContextualName(id), equalTo("FooName"));
     }
 }
