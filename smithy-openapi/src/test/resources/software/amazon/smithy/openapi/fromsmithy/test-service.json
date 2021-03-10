@@ -10,6 +10,9 @@
                 },
                 {
                     "target": "example.rest#PutPayload"
+                },
+                {
+                    "target": "example.rest#CreateFoo"
                 }
             ],
             "traits": {
@@ -149,6 +152,12 @@
                     "traits": {
                         "smithy.api#required": {}
                     }
+                },
+                "queryParams": {
+                    "target": "example.rest#QueryMap",
+                    "traits": {
+                        "smithy.api#httpQueryParams": {}
+                    }
                 }
             }
         },
@@ -175,11 +184,55 @@
                 }
             }
         },
+        "example.rest#CreateFoo": {
+            "type": "operation",
+            "input": {
+                "target": "example.rest#CreateFooInput"
+            },
+            "output": {
+                "target": "example.rest#CreateFooOutput"
+            },
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/foo",
+                    "method": "POST"
+                }
+            }
+        },
+        "example.rest#CreateFooInput": {
+            "type": "structure",
+            "members": {
+                "queryParams": {
+                    "target": "example.rest#QueryStringListMap",
+                    "traits": {
+                        "smithy.api#httpQueryParams": {}
+                    }
+                },
+                "foo": {
+                    "target": "example.rest#String"
+                }
+            }
+        },
+        "example.rest#CreateFooOutput": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "example.rest#String"
+                }
+            }
+
+        },
         "example.rest#Blob": {
             "type": "blob"
         },
         "example.rest#String": {
             "type": "string"
+        },
+        "example.rest#StringList": {
+            "type": "list",
+            "member": {
+                "target": "example.rest#String"
+            }
         },
         "example.rest#Integer": {
             "type": "integer"
@@ -228,6 +281,24 @@
                     "min": 0,
                     "max": 10
                 }
+            }
+        },
+        "example.rest#QueryMap": {
+            "type": "map",
+            "key": {
+                "target": "example.rest#String"
+            },
+            "value": {
+                "target": "example.rest#String"
+            }
+        },
+        "example.rest#QueryStringListMap": {
+            "type": "map",
+            "key": {
+                "target": "example.rest#String"
+            },
+            "value": {
+                "target": "example.rest#StringList"
             }
         },
         "example.rest#Timestamp": {

@@ -33,6 +33,8 @@ import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.pattern.SmithyPattern;
 import software.amazon.smithy.model.shapes.CollectionShape;
+import software.amazon.smithy.model.shapes.ListShape;
+import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -192,8 +194,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     }
 
     // Creates parameters that appear in the query string. Each input member
-    // bound to the QUERY location will generate a new ParameterObject that
-    // has a location of "query".
+    // bound to the QUERY or QUERY_PARAMS location will generate a new
+    // ParameterObject that has a location of "query".
     private List<ParameterObject> createQueryParameters(Context<T> context, OperationShape operation) {
         HttpBindingIndex httpBindingIndex = HttpBindingIndex.of(context.getModel());
         List<ParameterObject> result = new ArrayList<>();
@@ -212,14 +214,36 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
                 param.style("form").explode(true);
             }
 
-            // Create the appropriate schema based on the shape type.
-            Schema refSchema = context.inlineOrReferenceSchema(member);
-            QuerySchemaVisitor<T> visitor = new QuerySchemaVisitor<>(context, refSchema, member);
-            param.schema(target.accept(visitor));
+            param.schema(createQuerySchema(context, member, target));
+            result.add(param.build());
+        }
+
+        for (HttpBinding binding : httpBindingIndex.getRequestBindings(operation, HttpBinding.Location.QUERY_PARAMS)) {
+            MemberShape member = binding.getMember();
+            // To allow undefined parameters of a specific type, the name is set to `freeForm` using the `form` style.
+            ParameterObject.Builder param = ModelUtils.createParameterMember(context, member)
+                    .in("query")
+                    .name("freeForm")
+                    .style("form");
+            MapShape target = context.getModel().expectShape(member.getTarget(), MapShape.class);
+
+            // If the value of the map targets a list, the query string are repeated, so we need to "explode" them.
+            if (context.getModel().expectShape(target.getValue().getTarget()) instanceof ListShape) {
+                param.explode(true);
+            }
+
+            param.schema(createQuerySchema(context, member, target));
             result.add(param.build());
         }
 
         return result;
+    }
+
+    private Schema createQuerySchema(Context<T> context, MemberShape member, Shape target) {
+        // Create the appropriate schema based on the shape type.
+        Schema refSchema = context.inlineOrReferenceSchema(member);
+        QuerySchemaVisitor<T> visitor = new QuerySchemaVisitor<>(context, refSchema, member);
+        return target.accept(visitor);
     }
 
     private Collection<ParameterObject> createRequestHeaderParameters(Context<T> context, OperationShape operation) {
