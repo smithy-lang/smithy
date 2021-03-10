@@ -754,6 +754,12 @@
                         "smithy.api#httpQuery": "named"
                     }
                 },
+                "otherNamedQuery": {
+                    "target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpQuery": "otherNamed"
+                    }
+                },
                 "queryParams": {
                     "target": "ns.foo#MapOfString",
                     "traits": {
