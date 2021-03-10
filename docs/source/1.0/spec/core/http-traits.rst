@@ -741,7 +741,7 @@ be bound to ``httpPayload``.
 If the ``httpPayload`` trait is present on the structure referenced by the
 input of an operation, then all other structure members MUST be bound with
 the :ref:`httpLabel-trait`, :ref:`httpHeader-trait`,
-:ref:`httpPrefixHeaders-trait`,     :ref:`httpQueryParams-trait`, or :ref:`httpQuery-trait`.
+:ref:`httpPrefixHeaders-trait`, :ref:`httpQueryParams-trait`, or :ref:`httpQuery-trait`.
 
 If the ``httpPayload`` trait is present on the structure referenced by the
 output of an operation or a structure targeted by the :ref:`error-trait`,
@@ -940,7 +940,7 @@ an HTTP query string or path.
 =========================
 
 Summary
-    Binds a map of key-value pairs to be added to the query string contents.
+    Binds a map of key-value pairs to be added as query string parameters.
 Trait selector
     .. code-block:: none
 
@@ -1110,7 +1110,7 @@ parameters:
    2. If the member has the ``httpQuery`` trait, serialize the value into the
       HTTP request as a query string parameter.
    3. If the member has the ``httpQueryParams`` trait, serialize the values into
-      the HTTP request as the query string parameter.
+      the HTTP request as query string parameters.
    4. If the member has the ``httpHeader`` trait, serialize the value in an
       HTTP header using the value of the ``httpHeader`` trait.
    5. If the member has the ``httpPrefixHeaders`` trait and the value is a map,

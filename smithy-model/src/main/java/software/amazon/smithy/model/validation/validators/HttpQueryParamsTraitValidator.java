@@ -26,6 +26,10 @@ import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
+/**
+ * When the `httpQueryParams` trait is used, this validator emits a NOTE when another member of the container shape
+ * applies the `httpQuery` trait which may result in a conflict within the query string.
+ */
 public final class HttpQueryParamsTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
