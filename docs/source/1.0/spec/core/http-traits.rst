@@ -940,7 +940,7 @@ an HTTP query string or path.
 =========================
 
 Summary
-    Binds a map of key-value pairs to be added as query string parameters.
+    Binds a map of key-value pairs to query string parameters.
 Trait selector
     .. code-block:: none
 
