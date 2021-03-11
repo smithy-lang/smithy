@@ -994,7 +994,9 @@ the body of the response.
 .. rubric:: Serialization rules
 
 See the :ref:`httpQuery-trait` serialization rules that define how the keys and values of the
-target map will be serialized in the request query string.
+target map will be serialized in the request query string. Key-value pairs in the target map
+are treated like they were explicitly bound using the :ref:`httpQuery-trait`, including the
+requirement that reserved characters MUST be percent-encoded_.
 
 .. _httpResponseCode-trait:
 
