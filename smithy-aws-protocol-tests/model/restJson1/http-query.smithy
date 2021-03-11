@@ -378,7 +378,8 @@ structure QueryIdempotencyTokenAutoFillInput {
     token: String,
 }
 
-// Named query members take precedence over unnamed.
+// Clients must make named query members take precedence over unnamed members
+// and servers must use all query params in the unnamed map.
 @http(uri: "/Precedence", method: "POST")
 operation QueryPrecedence {
     input: QueryPrecedenceInput
@@ -402,7 +403,28 @@ apply QueryPrecedence @httpRequestTests([
                 foo: "fromMap",
                 qux: "alsoFromMap"
             }
-        }
+        },
+        appliesTo: "client",
+    },
+    {
+        id: "RestJsonServersPutAllQueryParamsInMap",
+        documentation: "Servers put all query params in map",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/Precedence",
+        body: "",
+        queryParams: [
+            "foo=named",
+            "qux=fromMap"
+        ],
+        params: {
+            foo: "named",
+            baz: {
+                foo: "named",
+                qux: "fromMap"
+            }
+        },
+        appliesTo: "server",
     }
 ])
 
