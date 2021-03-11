@@ -353,7 +353,10 @@
             "type": "structure",
             "members": {
                 "statusCode": {
-                    "target": "smithy.api#String"
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "HTTP status code for the method response; for example, \"200\". This must correspond to a matching response in the OpenAPI Operation responses field."
+                    }
                 },
                 "contentHandling": {
                     "target": "aws.apigateway#ContentHandling"
