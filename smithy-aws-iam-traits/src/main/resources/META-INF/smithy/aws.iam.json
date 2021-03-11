@@ -69,10 +69,16 @@
             "type": "structure",
             "members": {
                 "documentation": {
-                    "target": "smithy.api#String"
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Defines documentation about the condition key."
+                    }
                 },
                 "externalDocumentation": {
-                    "target": "smithy.api#String"
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "A valid URL that defines more information about the condition key."
+                    }
                 },
                 "type": {
                     "target": "aws.iam#ConditionKeyType",
@@ -82,7 +88,8 @@
                 }
             },
             "traits": {
-                "smithy.api#private": {}
+                "smithy.api#private": {},
+                "smithy.api#documentation": "A defined condition key to appear within a service in addition to inferred and global condition keys."
             }
         },
         "aws.iam#ConditionKeyType": {
