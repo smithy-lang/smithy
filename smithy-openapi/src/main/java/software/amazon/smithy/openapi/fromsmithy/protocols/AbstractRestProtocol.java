@@ -33,7 +33,6 @@ import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.pattern.SmithyPattern;
 import software.amazon.smithy.model.shapes.CollectionShape;
-import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -225,7 +224,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             MapShape target = context.getModel().expectShape(member.getTarget(), MapShape.class);
 
             // If the value of the map targets a list, the query string are repeated, so we need to "explode" them.
-            if (context.getModel().expectShape(target.getValue().getTarget()) instanceof ListShape) {
+            if (context.getModel().expectShape(target.getValue().getTarget()) instanceof CollectionShape) {
                 param.explode(true);
             }
 
