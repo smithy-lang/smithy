@@ -47,7 +47,8 @@ public final class HttpQueryParamsTraitValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
 
         for (Shape shape : model.getShapesWithTrait(HttpQueryParamsTrait.class)) {
-            shape.asMemberShape().flatMap(member -> model.getShape(member.getContainer())
+            shape.asMemberShape()
+                .flatMap(member -> model.getShape(member.getContainer())
                 .flatMap(Shape::asStructureShape))
                 .ifPresent(structure -> {
                     // Gather the names of member shapes, as strings, that apply HttpQuery traits
@@ -72,9 +73,9 @@ public final class HttpQueryParamsTraitValidator extends AbstractValidator {
     }
 
     private ValidationEvent createNote(Shape target, String queryParamsShape, List<String> queryShapes) {
-        return note(target, String.format("Operation input `%s` has an `httpQueryParams` trait applied to the `%s` "
-                + "member and `httpQuery` traits applied to the following members: %s. This can cause confusion when "
+        return note(target, String.format("Structure member `%s` is marked with the `httpQueryParams` trait, and "
+                + "`httpQuery` traits applied to the following members: %s. This can cause confusion when "
                 + "keys from the `httpQueryParams` trait conflict with those defined directly by `httpQuery` traits",
-                target.toShapeId(), queryParamsShape, ValidationUtils.tickedList(queryShapes)));
+                queryParamsShape, ValidationUtils.tickedList(queryShapes)));
     }
 }
