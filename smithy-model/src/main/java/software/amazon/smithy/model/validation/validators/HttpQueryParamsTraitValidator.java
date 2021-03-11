@@ -74,8 +74,8 @@ public final class HttpQueryParamsTraitValidator extends AbstractValidator {
 
     private ValidationEvent createNote(Shape target, String queryParamsShape, List<String> queryShapes) {
         return note(target, String.format("Structure member `%s` is marked with the `httpQueryParams` trait, and "
-                + "`httpQuery` traits applied to the following members: %s. This can cause confusion when "
-                + "keys from the `httpQueryParams` trait conflict with those defined directly by `httpQuery` traits",
+                + "`httpQuery` traits are applied to the following members: %s. This can cause confusion when keys "
+                + "from the `httpQueryParams` trait conflict with those defined directly by `httpQuery` traits",
                 queryParamsShape, ValidationUtils.tickedList(queryShapes)));
     }
 }
