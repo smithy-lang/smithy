@@ -37,7 +37,7 @@
             "explode": true
           },
           {
-            "name": "freeForm",
+            "name": "queryParams",
             "in": "query",
             "style": "form",
             "schema": {
@@ -73,7 +73,7 @@
         },
         "parameters": [
           {
-            "name": "freeForm",
+            "name": "queryParams",
             "in": "query",
             "style": "form",
             "schema": {

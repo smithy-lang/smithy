@@ -219,10 +219,11 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
 
         for (HttpBinding binding : httpBindingIndex.getRequestBindings(operation, HttpBinding.Location.QUERY_PARAMS)) {
             MemberShape member = binding.getMember();
-            // To allow undefined parameters of a specific type, the name is set to `freeForm` using the `form` style.
+            // To allow undefined parameters of a specific type, the style is set to `form`. This is set in conjunction
+            // with a schema of the `object` type.
             ParameterObject.Builder param = ModelUtils.createParameterMember(context, member)
                     .in("query")
-                    .name("freeForm")
+                    .name(binding.getLocationName())
                     .style("form");
             MapShape target = context.getModel().expectShape(member.getTarget(), MapShape.class);
 
