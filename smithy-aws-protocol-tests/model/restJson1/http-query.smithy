@@ -394,7 +394,7 @@ apply QueryPrecedence @httpRequestTests([
         uri: "/Precedence",
         body: "",
         queryParams: [
-            "foo=named",
+            "bar=named",
             "qux=alsoFromMap"
         ],
         params: {
@@ -414,13 +414,13 @@ apply QueryPrecedence @httpRequestTests([
         uri: "/Precedence",
         body: "",
         queryParams: [
-            "foo=named",
+            "bar=named",
             "qux=fromMap"
         ],
         params: {
             foo: "named",
             baz: {
-                foo: "named",
+                bar: "named",
                 qux: "fromMap"
             }
         },
@@ -429,7 +429,7 @@ apply QueryPrecedence @httpRequestTests([
 ])
 
 structure QueryPrecedenceInput {
-    @httpQuery("foo")
+    @httpQuery("bar")
     foo: String,
 
     @httpQueryParams
@@ -451,18 +451,45 @@ apply QueryParamsAsStringListMap @httpRequestTests([
         uri: "/StringListMap",
         body: "",
         queryParams: [
+            "corge=named",
             "baz=bar",
             "baz=qux"
         ],
         params: {
+            qux: "named",
             foo: {
                 "baz": ["bar", "qux"]
             }
-        }
+        },
+        appliesTo: "client"
+    },
+    {
+        id: "RestJsonServersQueryParamsStringListMap",
+        documentation: "Servers put all query params in map",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/StringListMap",
+        body: "",
+        queryParams: [
+            "corge=named",
+            "baz=bar",
+            "baz=qux"
+        ],
+        params: {
+            qux: "named",
+            foo: {
+                "corge": ["named"],
+                "baz": ["bar", "qux"]
+            }
+        },
+        appliesTo: "server"
     }
 ])
 
 structure QueryParamsAsStringListMapInput {
+    @httpQuery("corge")
+    qux: String,
+
     @httpQueryParams
     foo: StringListMap
 }
