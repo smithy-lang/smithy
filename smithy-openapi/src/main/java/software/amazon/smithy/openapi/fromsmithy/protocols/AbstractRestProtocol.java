@@ -33,7 +33,6 @@ import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.pattern.SmithyPattern;
 import software.amazon.smithy.model.shapes.CollectionShape;
-import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -199,7 +198,11 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         HttpBindingIndex httpBindingIndex = HttpBindingIndex.of(context.getModel());
         List<ParameterObject> result = new ArrayList<>();
 
-        for (HttpBinding binding : httpBindingIndex.getRequestBindings(operation, HttpBinding.Location.QUERY)) {
+        List<HttpBinding> bindings = new ArrayList<>();
+        bindings.addAll(httpBindingIndex.getRequestBindings(operation, HttpBinding.Location.QUERY));
+        bindings.addAll(httpBindingIndex.getRequestBindings(operation, HttpBinding.Location.QUERY_PARAMS));
+
+        for (HttpBinding binding : bindings) {
             MemberShape member = binding.getMember();
             ParameterObject.Builder param = ModelUtils.createParameterMember(context, member)
                     .in("query")
@@ -213,23 +216,17 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
                 param.style("form").explode(true);
             }
 
-            param.schema(createQuerySchema(context, member, target));
-            result.add(param.build());
-        }
-
-        for (HttpBinding binding : httpBindingIndex.getRequestBindings(operation, HttpBinding.Location.QUERY_PARAMS)) {
-            MemberShape member = binding.getMember();
             // To allow undefined parameters of a specific type, the style is set to `form`. This is set in conjunction
             // with a schema of the `object` type.
-            ParameterObject.Builder param = ModelUtils.createParameterMember(context, member)
-                    .in("query")
-                    .name(binding.getLocationName())
-                    .style("form");
-            MapShape target = context.getModel().expectShape(member.getTarget(), MapShape.class);
+            if (binding.getLocation().equals(HttpBinding.Location.QUERY_PARAMS)) {
+                param.style("form");
 
-            // If the value of the map targets a list, the query string are repeated, so we need to "explode" them.
-            if (context.getModel().expectShape(target.getValue().getTarget()) instanceof CollectionShape) {
-                param.explode(true);
+                // QUERY_PARAMS necessarily target maps.  If the map value is a list or set, the query string are
+                // repeated and must also be set to "explode".
+                Shape shape = context.getModel().expectShape(target.asMapShape().get().getValue().getTarget());
+                if (shape instanceof CollectionShape) {
+                    param.explode(true);
+                }
             }
 
             param.schema(createQuerySchema(context, member, target));
