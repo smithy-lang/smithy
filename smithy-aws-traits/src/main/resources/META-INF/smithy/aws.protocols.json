@@ -27,6 +27,7 @@
                         "smithy.api#httpPayload",
                         "smithy.api#httpPrefixHeaders",
                         "smithy.api#httpQuery",
+                        "smithy.api#httpQueryParams",
                         "smithy.api#httpResponseCode",
                         "smithy.api#jsonName",
                         "smithy.api#timestampFormat"
@@ -69,6 +70,7 @@
                         "smithy.api#httpPayload",
                         "smithy.api#httpPrefixHeaders",
                         "smithy.api#httpQuery",
+                        "smithy.api#httpQueryParams",
                         "smithy.api#httpResponseCode",
                         "smithy.api#xmlAttribute",
                         "smithy.api#xmlFlattened",
