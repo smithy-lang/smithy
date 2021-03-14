@@ -400,7 +400,7 @@ apply QueryPrecedence @httpRequestTests([
         params: {
             foo: "named",
             baz: {
-                foo: "fromMap",
+                bar: "fromMap",
                 qux: "alsoFromMap"
             }
         },
