@@ -1400,6 +1400,30 @@ that targets an <a class="reference internal" href="#operation"><span class="std
 the given list MUST be a valid <a class="reference internal" href="#shape-id"><span class="std std-ref">shape ID</span></a> that targets
 a <a class="reference internal" href="#resource"><span class="std std-ref">resource</span></a> shape.</td>
 </tr>
+<tr class="row-odd"><td>rename</td>
+<td>map of <a class="reference internal" href="#shape-id"><span class="std std-ref">shape ID</span></a> to <code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">Disambiguates shape name conflicts in the
+<a class="reference internal" href="#service-closure"><span class="std std-ref">service closure</span></a>. Map keys are shape IDs
+contained in the service, and map values are the disambiguated shape
+names to use in the context of the service. Each given shape ID MUST
+reference a shape contained in the closure of the service. Each given
+map value MUST match the <a class="reference internal" href="#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">identifier</span></code></a> production used for
+shape IDs. Renaming a shape <em>does not</em> give the shape a new shape ID.</p>
+<ul class="last simple">
+<li>No renamed shape name can case-insensitively match any other renamed
+shape name or the name of a non-renamed shape contained in the
+service.</li>
+<li>Member shapes MAY NOT be renamed.</li>
+<li>Resource, operation, and shapes marked with the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>
+MAY NOT be renamed. Renaming shapes is intended for incidental naming
+conflicts, not for renaming the fundamental concepts of a service.</li>
+<li>Shapes from other namespaces marked as <a class="reference internal" href="constraint-traits.html#private-trait"><span class="std std-ref">private</span></a>
+MAY be renamed.</li>
+<li>A rename MUST use a name that is case-sensitively different from the
+original shape ID name.</li>
+</ul>
+</td>
+</tr>
 </tbody>
 </table>
 <p>The following example defines a service with no operations or resources.</p>
@@ -1553,7 +1577,8 @@ through resources, operations, and members.</p>
 <p class="first admonition-title">Important</p>
 <p class="last">With some exceptions, the shapes that are referenced in the <em>closure</em>
 of a service MUST have case-insensitively unique names regardless of
-their namespace.</p>
+their namespace, and conflicts MUST be disambiguated using the
+<code class="docutils literal notranslate"><span class="pre">rename</span></code> property of a service.</p>
 </div>
 <p>By requiring unique names within a service, each service forms a
 <a class="reference external" href="https://martinfowler.com/bliki/UbiquitousLanguage.html">ubiquitous language</a>, making it easier for developers to understand the
@@ -1564,12 +1589,107 @@ that can be thrown by an operation. Uniqueness is required
 case-insensitively because many model transformations (like code generation)
 change the casing and inflection of shape names to make artifacts more
 idiomatic.</p>
+<p class="rubric">Shape types allowed to conflict in a closure</p>
 <p><a class="reference internal" href="#simple-types"><span class="std std-ref">Simple types</span></a> and <a class="reference internal" href="#list"><span class="std std-ref">lists</span></a> or
 <a class="reference internal" href="#set"><span class="std std-ref">sets</span></a> of compatible simple types are allowed to conflict because
 a conflict for these type would rarely have an impact on generated artifacts.
 These kinds of conflicts are only allowed if both conflicting shapes are the
 same type and have the exact same traits. In the case of a list or set, a
-conflict is only allowed if both types target compatible shapes.</p>
+conflict is only allowed if the members of the conflicting shapes target
+compatible shapes.</p>
+<p class="rubric">Disambiguating shapes with <code class="docutils literal notranslate"><span class="pre">rename</span></code></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">rename</span></code> property of a service is used to disambiguate conflicting
+shape names found in the closure of a service. The <code class="docutils literal notranslate"><span class="pre">rename</span></code> property is
+essentially a <a class="reference external" href="https://martinfowler.com/bliki/BoundedContext.html">context map</a> used to ensure that the service still presents
+a ubiquitous language despite bringing together shapes from multiple
+namespaces.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Renames SHOULD be used sparingly. Renaming shapes is something typically
+only needed when aggregating models from multiple independent teams into
+a single service.</p>
+</div>
+<p>The following example defines a service that contains two shapes named
+&quot;Widget&quot; in its closure. The <code class="docutils literal notranslate"><span class="pre">rename</span></code> property is used to disambiguate
+the conflicting shapes.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">service</span><span class="nc"> MyService</span> {
+    <span class="nl">version:</span> <span class="s2">&quot;2017-02-11&quot;</span>,
+    <span class="nl">operations:</span> [<span class="vc">GetSomething</span>],
+    <span class="nl">rename:</span> {
+        <span class="s2">&quot;foo.example#Widget&quot;</span>: <span class="s2">&quot;FooWidget&quot;</span>
+    }
+}
+
+<span class="kd">operation</span><span class="nc"> GetSomething</span> {
+    <span class="nl">output:</span> <span class="vc">GetSomethingOutput</span>,
+}
+
+<span class="kd">structure</span><span class="nc"> GetSomethingOutput</span> {
+    <span class="nl">widget1:</span> <span class="vc">Widget</span>,
+    <span class="nl">fooWidget:</span> <span class="vc">foo.example#Widget</span>,
+}
+
+<span class="kd">structure</span><span class="nc"> Widget</span> {}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;operations&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#GetSomething&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;rename&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;foo.example#Widget&quot;</span><span class="p">:</span> <span class="s2">&quot;FooWidget&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#GetSomething&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#GetSomethingOutput&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#GetSomethingOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;widget1&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Widget&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;fooWidget&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;foo.example#Widget&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Widget&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p class="rubric">Resources and operations can be bound once</p>
 <p>An operation or resource MUST NOT be bound to multiple shapes within the
 closure of a service. This constraint allows services to discern between
 operations and resources using only their shape name rather than a

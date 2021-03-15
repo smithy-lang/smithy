@@ -80,17 +80,18 @@ and error structures are considered when serializing HTTP messages.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#http-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">http</span></code> trait</a></li>
-<li><a class="reference internal" href="#httperror-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait</a></li>
-<li><a class="reference internal" href="#httpheader-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait</a></li>
-<li><a class="reference internal" href="#httplabel-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait</a></li>
-<li><a class="reference internal" href="#httppayload-trait" id="id15"><code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait</a></li>
-<li><a class="reference internal" href="#httpprefixheaders-trait" id="id16"><code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait</a></li>
-<li><a class="reference internal" href="#httpquery-trait" id="id17"><code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait</a></li>
-<li><a class="reference internal" href="#httpresponsecode-trait" id="id18"><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait</a></li>
-<li><a class="reference internal" href="#cors-trait" id="id19"><code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></li>
-<li><a class="reference internal" href="#serializing-http-messages" id="id20">Serializing HTTP messages</a></li>
-<li><a class="reference internal" href="#event-streams" id="id21">Event streams</a></li>
+<li><a class="reference internal" href="#http-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">http</span></code> trait</a></li>
+<li><a class="reference internal" href="#httperror-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpheader-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait</a></li>
+<li><a class="reference internal" href="#httplabel-trait" id="id15"><code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait</a></li>
+<li><a class="reference internal" href="#httppayload-trait" id="id16"><code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpprefixheaders-trait" id="id17"><code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpquery-trait" id="id18"><code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpqueryparams-trait" id="id19"><code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpresponsecode-trait" id="id20"><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait</a></li>
+<li><a class="reference internal" href="#cors-trait" id="id21"><code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></li>
+<li><a class="reference internal" href="#serializing-http-messages" id="id22">Serializing HTTP messages</a></li>
+<li><a class="reference internal" href="#event-streams" id="id23">Event streams</a></li>
 </ul>
 </div>
 <div class="section" id="http-trait">
@@ -658,6 +659,7 @@ the structure.</dd>
 <dt>Conflicts with</dt>
 <dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>,
 <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>,
+<a class="reference internal" href="#httpqueryparams-trait"><span class="std std-ref">httpQueryParams trait</span></a>,
 <a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>,
 <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
 <a class="reference internal" href="#httpresponsecode-trait"><span class="std std-ref">httpResponseCode trait</span></a></dd>
@@ -769,6 +771,7 @@ with the <a class="reference internal" href="constraint-traits.html#required-tra
 <dt>Conflicts with</dt>
 <dd><a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>,
 <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>,
+<a class="reference internal" href="#httpqueryparams-trait"><span class="std std-ref">httpQueryParams trait</span></a>,
 <a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>,
 <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
 <a class="reference internal" href="#httpresponsecode-trait"><span class="std std-ref">httpResponseCode trait</span></a></dd>
@@ -853,7 +856,7 @@ target a <code class="docutils literal notranslate"><span class="pre">string</sp
 <dt>Value type</dt>
 <dd>Annotation trait.</dd>
 <dt>Conflicts with</dt>
-<dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>,
+<dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>, <a class="reference internal" href="#httpqueryparams-trait"><span class="std std-ref">httpQueryParams trait</span></a>,
 <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>, <a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>,
 <a class="reference internal" href="#httpresponsecode-trait"><span class="std std-ref">httpResponseCode trait</span></a></dd>
 <dt>Structurally exclusive</dt>
@@ -900,7 +903,7 @@ be bound to <code class="docutils literal notranslate"><span class="pre">httpPay
 <p>If the <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait is present on the structure referenced by the
 input of an operation, then all other structure members MUST be bound with
 the <a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>,
-<a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>, or <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>.</p>
+<a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>, <a class="reference internal" href="#httpqueryparams-trait"><span class="std std-ref">httpQueryParams trait</span></a>, or <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>.</p>
 <p>If the <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait is present on the structure referenced by the
 output of an operation or a structure targeted by the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>,
 then all other structure members MUST be bound to a <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>
@@ -935,7 +938,7 @@ name stored in the targeted map member. For example, given a prefix value
 of of &quot;X-Amz-Meta-&quot; and a map key entry of &quot;Baz&quot;, the resulting header
 field name serialized in the message is &quot;X-Amz-Meta-Baz&quot;.</dd>
 <dt>Conflicts with</dt>
-<dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>,
+<dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>, <a class="reference internal" href="#httpqueryparams-trait"><span class="std std-ref">httpQueryParams trait</span></a>,
 <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>, <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
 <a class="reference internal" href="#httpresponsecode-trait"><span class="std std-ref">httpResponseCode trait</span></a></dd>
 <dt>Structurally exclusive</dt>
@@ -1012,7 +1015,7 @@ target a <code class="docutils literal notranslate"><span class="pre">string</sp
 parameter. The query string parameter name MUST be case-sensitively unique
 across all other members marked with the <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait.</dd>
 <dt>Conflicts with</dt>
-<dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>,
+<dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>, <a class="reference internal" href="#httpqueryparams-trait"><span class="std std-ref">httpQueryParams trait</span></a>,
 <a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>, <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
 <a class="reference internal" href="#httpresponsecode-trait"><span class="std std-ref">httpResponseCode trait</span></a></dd>
 </dl>
@@ -1090,8 +1093,72 @@ many HTTP client and server implementations enforce limits in practice.
 Carefully consider the maximum allowed length of each member that is bound to
 an HTTP query string or path.</p>
 </div>
+<div class="section" id="httpqueryparams-trait">
+<span id="id9"></span><h2><a href="#httpqueryparams-trait">11.8. <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Binds a map of key-value pairs to query string parameters.</dd>
+<dt>Trait selector</dt>
+<dd><div class="first highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; member
+:test(&gt; map &gt; member[id|member=value] &gt; :test(string, collection &gt; member &gt; string))
+</pre></div>
+</div>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait can be applied to <code class="docutils literal notranslate"><span class="pre">structure</span></code> members
+that target a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code>, or a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">list</span></code>/<code class="docutils literal notranslate"><span class="pre">set</span></code> of
+<code class="docutils literal notranslate"><span class="pre">string</span></code>.</p>
+</dd>
+<dt>Value type</dt>
+<dd>Annotation trait.</dd>
+<dt>Conflicts with</dt>
+<dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>, <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>,
+<a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>, <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
+<a class="reference internal" href="#httpresponsecode-trait"><span class="std std-ref">httpResponseCode trait</span></a></dd>
+</dl>
+<p>The following example defines an operation that optionally sends the
+target input map as query string parameters in an HTTP request:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@readonly</span>
+<span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;GET&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/things&quot;</span>)
+<span class="kd">operation</span><span class="nc"> ListThings</span> {
+    <span class="nl">input:</span> <span class="vc">ListThingsInput</span>,
+    <span class="nl">output:</span> <span class="vc">ListThingsOutput</span>, <span class="c">// omitted for brevity</span>
+}
+
+<span class="kd">structure</span><span class="nc"> ListThingsInput</span> {
+    <span class="nd">@httpQueryParams</span>()
+    <span class="nl">myParams:</span> <span class="vc">MapOfStrings</span>,
+}
+
+<span class="kd">map</span><span class="nc"> MapOfStrings</span> {
+    <span class="nl">key:</span> <span class="vc">String</span>,
+    <span class="nl">value:</span> <span class="vc">String</span>
+}
+</pre></div>
+</div>
+</div>
+</div>
+<p class="rubric"><code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> is only used on input</p>
+<p><code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> is ignored when resolving the HTTP bindings of an operation's
+output or an error. This means that if a structure that contains members
+marked with the <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait is used as the top-level output structure
+of an operation, then those members are sent as part of the
+<a class="reference internal" href="#http-protocol-document-payloads"><span class="std std-ref">protocol-specific document</span></a> sent in
+the body of the response.</p>
+<p class="rubric">Serialization rules</p>
+<p>See the <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a> serialization rules that define how the keys and values of the
+target map will be serialized in the request query string. Key-value pairs in the target map
+are treated like they were explicitly bound using the <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>, including the
+requirement that reserved characters MUST be <a class="reference external" href="https://tools.ietf.org/html/rfc3986#section-2.1">percent-encoded</a>.</p>
+</div>
 <div class="section" id="httpresponsecode-trait">
-<span id="id9"></span><h2><a href="#httpresponsecode-trait">11.8. <code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait</a></h2>
+<span id="id10"></span><h2><a href="#httpresponsecode-trait">11.9. <code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Binds a structure member to the HTTP response status code so that an
@@ -1109,7 +1176,7 @@ that target an <code class="docutils literal notranslate"><span class="pre">inte
 <dt>Conflicts with</dt>
 <dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>,
 <a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>, <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
-<a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a></dd>
+<a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>, <a class="reference internal" href="#httpqueryparams-trait"><span class="std std-ref">httpQueryParams trait</span></a>,</dd>
 </dl>
 <p class="rubric"><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> use cases</p>
 <p>Marking an output <code class="docutils literal notranslate"><span class="pre">structure</span></code> member with this trait can be used to provide
@@ -1124,7 +1191,7 @@ input structure of an operation, then those members are sent as part of the
 the body of the request.</p>
 </div>
 <div class="section" id="cors-trait">
-<span id="id10"></span><h2><a href="#cors-trait">11.9. <code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></h2>
+<span id="id11"></span><h2><a href="#cors-trait">11.10. <code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Defines how a service supports cross-origin resource sharing</dd>
@@ -1189,7 +1256,7 @@ such authentication schemes MUST designate a single origin from which
 cross-origin, credentialed requests will be accepted.</p>
 </div>
 <div class="section" id="serializing-http-messages">
-<h2><a href="#serializing-http-messages">11.10. Serializing HTTP messages</a></h2>
+<h2><a href="#serializing-http-messages">11.11. Serializing HTTP messages</a></h2>
 <p>The following steps are taken to serialize an HTTP request given a map of
 parameters:</p>
 <ol class="arabic simple">
@@ -1202,6 +1269,8 @@ corresponding structure member by name:<ol class="arabic">
 <li>If the member has the <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait, expand the value into the URI.</li>
 <li>If the member has the <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait, serialize the value into the
 HTTP request as a query string parameter.</li>
+<li>If the member has the <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait, serialize the values into
+the HTTP request as query string parameters.</li>
 <li>If the member has the <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait, serialize the value in an
 HTTP header using the value of the <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait.</li>
 <li>If the member has the <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait and the value is a map,
@@ -1237,7 +1306,7 @@ protocol-specific document sent in the body of the response.</li>
 </ol>
 </div>
 <div class="section" id="event-streams">
-<h2><a href="#event-streams">11.11. Event streams</a></h2>
+<h2><a href="#event-streams">11.12. Event streams</a></h2>
 <p>When using <a class="reference internal" href="stream-traits.html#event-streams"><span class="std std-ref">event streams</span></a> and HTTP bindings, the
 <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload</span></a> trait MUST be applied to any input or
 output member that targets a shape marked with the <a class="reference internal" href="stream-traits.html#streaming-trait"><span class="std std-ref">streaming trait</span></a>.</p>
@@ -1397,10 +1466,11 @@ marked with the <code class="docutils literal notranslate"><span class="pre">htt
 <li><a class="reference internal" href="#httppayload-trait">11.5. <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait</a></li>
 <li><a class="reference internal" href="#httpprefixheaders-trait">11.6. <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait</a></li>
 <li><a class="reference internal" href="#httpquery-trait">11.7. <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait</a></li>
-<li><a class="reference internal" href="#httpresponsecode-trait">11.8. <code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait</a></li>
-<li><a class="reference internal" href="#cors-trait">11.9. <code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></li>
-<li><a class="reference internal" href="#serializing-http-messages">11.10. Serializing HTTP messages</a></li>
-<li><a class="reference internal" href="#event-streams">11.11. Event streams</a></li>
+<li><a class="reference internal" href="#httpqueryparams-trait">11.8. <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpresponsecode-trait">11.9. <code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait</a></li>
+<li><a class="reference internal" href="#cors-trait">11.10. <code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></li>
+<li><a class="reference internal" href="#serializing-http-messages">11.11. Serializing HTTP messages</a></li>
+<li><a class="reference internal" href="#event-streams">11.12. Event streams</a></li>
 </ul>
 </li>
 </ul>

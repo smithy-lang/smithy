@@ -175,6 +175,8 @@ that affect serialization:
         prefixed HTTP headers.
     * - :ref:`httpQuery <httpQuery-trait>`
       - Binds a top-level input structure member to a query string parameter.
+    * - :ref:`httpQueryParams <httpQueryParams-trait>`
+      - Binds a map of key-value pairs to query string parameters.
     * - :ref:`xmlAttribute <xmlAttribute-trait>`
       - Serializes an object property as an XML attribute rather than a nested
         XML element.

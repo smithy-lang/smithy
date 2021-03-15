@@ -400,8 +400,12 @@ shapes defined in JSON support the same properties as the Smithy IDL.
       - Binds a list of resources to the service. Each reference MUST target
         a resource.
     * - traits
-      - Map\<:ref:`shape ID <shape-id>`, trait value>
+      - map of :ref:`shape ID <shape-id>` to trait values
       - Traits to apply to the service
+    * - rename
+      - map of :ref:`shape ID <shape-id>` to ``string`` :token:`identifier`
+      - Disambiguates shape name conflicts in the
+        :ref:`service closure <service-closure>`.
 
 .. code-block:: json
 
@@ -420,7 +424,14 @@ shapes defined in JSON support the same properties as the Smithy IDL.
                     {
                         "target": "smithy.example#SomeResource"
                     }
-                ]
+                ],
+                "traits": {
+                    "smithy.api#documentation": "Documentation for the service"
+                },
+                "rename": {
+                    "smithy.example#Widget": "SmithyWidget",
+                    "foo.example#Widget": "FooWidget"
+                }
             }
         }
     }
