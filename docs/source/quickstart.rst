@@ -763,7 +763,7 @@ Then create a new ``build.gradle.kts`` file:
 .. code-block:: kotlin
 
     plugins {
-        id("software.amazon.smithy").version("0.5.1")
+        id("software.amazon.smithy").version("0.5.2")
     }
 
     repositories {
