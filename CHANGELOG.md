@@ -1,5 +1,19 @@
 # Smithy Changelog
 
+## 1.7.0 (2020-03-12)
+
+### Features
+
+* Added the `rename` property to the `service` shape to disambiguate shape name conflicts in the service closure. ([#734](https://github.com/awslabs/smithy/pull/734))
+* Added the `httpQueryParams` trait that binds a map of key-value pairs to query string parameters. ([#735](https://github.com/awslabs/smithy/pull/735))
+* Improved the usability of code for building and running Selectors. ([#726](https://github.com/awslabs/smithy/pull/726))
+* Added several protocol tests for behavior around `null` serialization. ([#728](https://github.com/awslabs/smithy/pull/728))
+
+### Documentation
+
+* Added missing documentation for some trait models. ([#737](https://github.com/awslabs/smithy/pull/737))
+* Fixed `awsQuery` and `ec2Query` list serialization examples. ([#732](https://github.com/awslabs/smithy/pull/732))
+
 ## 1.6.1 (2020-02-23)
 
 ### Features
