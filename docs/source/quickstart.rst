@@ -830,7 +830,7 @@ The ``build.gradle.kts`` should have the following contents:
 .. code-block:: kotlin
 
     plugins {
-        id("software.amazon.smithy").version("0.5.1")
+        id("software.amazon.smithy").version("0.5.2")
     }
 
     repositories {
