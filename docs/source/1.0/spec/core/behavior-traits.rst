@@ -655,3 +655,95 @@ See
             input: PutSomethingInput,
             output: PutSomethingOutput
         }
+
+
+.. _httpChecksum-trait:
+
+----------------------
+``httpChecksum`` trait
+----------------------
+
+Summary
+    Indicates that an operation's HTTP Request or Response supports checksum
+    validation. At least one of request or response checksum properties must
+    be specified within the trait.
+Trait selector
+    ``operation``
+Value type
+    ``structure``
+
+The `httpChecksum` trait is a structure that contains the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Property
+      - Type
+      - Description
+    * - Request
+      - ``[`` :ref:`HttpChecksumProperties structure <checksum-properties>` ``]``
+      - Request structure values define checksum validation behavior for
+        HTTP Request.
+
+    * - Response
+      - ``[`` :ref:`HttpChecksumProperties structure <checksum-properties>` ``]``
+      - Response structure values define checksum validation behavior for
+        HTTP Response.
+
+
+.. - checksum-properties:
+
+HTTPChecksumProperties structure
+================================
+
+HTTPChecksumProperties defines checksum validation behavior using the
+following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Property
+      - Type
+      - Description
+    * - prefix
+      - ``string``
+      - **Required**. The prefix string is used to construct a header for a
+        checksum type. Prefix is a required member, and SHOULD be lower-cased. The
+        recommended ABNF to follow for prefix is `([a-z]*([a-z]/[0-9]/"-")*`.
+
+    * - location
+      - ``string``
+      - A string representing checksum location. A valid location value for
+        HTTP Request can be `"header"` or `"trailer"`. For HTTP Response,
+        only `"header"` is supported as location. By default, location
+        resolves to `"header"` value.
+
+    * - algorithms
+      - ``[string]``
+      - **Required**. List of strings representing checksum algorithms supported for the
+        HTTP Request or Response. Algorithms is a required member, and
+        A valid algorithm SHOULD follow ABNF : `([a-z]* [0-9]*)*` . Algorithm
+        name SHOULD be lower-cased and not hyphenated.
+
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @httpChecksum(
+            Request: {
+                location: "header",
+                prefix: "x-amz-checksum-",
+                algorithms: ["sha256", "crc32"]
+            },
+            Response: {
+                prefix: "x-amz-checksum-",
+                algorithms: ["sha256", "crc32"]
+            }
+        )
+        operation PutSomething {
+            input: PutSomethingInput,
+            output: PutSomethingOutput
+        }

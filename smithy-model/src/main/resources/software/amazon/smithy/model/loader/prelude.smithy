@@ -756,3 +756,28 @@ list suppress {
 @unstable
 @trait(selector: "operation")
 structure httpChecksumRequired {}
+
+// Defines supported checksum for an operation's request or response.
+// By default, the location used for a checksum is `header`.
+@unstable
+@trait(selector: "operation")
+structure httpChecksum {
+    /// Defines checksum properties for request.
+    Request: httpChecksumProperties,
+
+    /// Defines checksum properties for response.
+    Response: httpChecksumProperties,
+}
+
+// Defines properties used by httpChecksum trait members
+@private
+structure httpChecksumProperties {
+    /// prefix is a non empty string.
+    prefix: NonEmptyString,
+
+    /// location is a non empty string.
+    location: NonEmptyString,
+
+    /// algorithms is a list of non empty strings.
+    algorithms: NonEmptyStringList,
+}

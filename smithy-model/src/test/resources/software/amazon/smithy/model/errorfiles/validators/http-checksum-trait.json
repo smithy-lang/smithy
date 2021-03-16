@@ -1,0 +1,264 @@
+{
+  "smithy": "1.0",
+  "shapes": {
+    "ns.foo#Blob": {
+      "type": "blob"
+    },
+    "ns.foo#ValidOperation": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#Input"
+      },
+      "output": {
+        "target": "ns.foo#Output"
+      },
+      "traits": {
+        "smithy.api#httpChecksum": {
+          "Request": {
+            "prefix" : "mock-prefix-",
+            "location": "header",
+            "algorithms" : ["sha256", "sha1"]
+          },
+          "Response": {
+            "prefix" : "mock-prefix-",
+            "algorithms" : ["sha256", "sha1"]
+          }
+        }
+      }
+    },
+    "ns.foo#ValidOperation2": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#Input"
+      },
+      "output": {
+        "target": "ns.foo#Output"
+      },
+      "traits": {
+        "smithy.api#httpChecksum": {
+          "Request": {
+            "prefix" : "mock-prefix-",
+            "location": "header",
+            "algorithms" : ["sha256", "sha1"]
+          },
+          "Response": {
+            "prefix" : "mock-prefix-",
+            "location": "header",
+            "algorithms" : ["sha256", "sha1"]
+          }
+        }
+      }
+    },
+    "ns.foo#ValidOperation3": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#Input"
+      },
+      "output": {
+        "target": "ns.foo#Output"
+      },
+      "traits": {
+        "smithy.api#httpChecksum": {
+          "Request": {
+            "prefix": "mock-prefix-",
+            "location": "header",
+            "algorithms": [
+              "sha256",
+              "sha1"
+            ]
+          }
+        }
+      }
+    },
+    "ns.foo#ValidOperation4": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#Input"
+      },
+      "output": {
+        "target": "ns.foo#Output"
+      },
+      "traits": {
+        "smithy.api#httpChecksum": {
+          "Request": {
+            "prefix": "mock-prefix-",
+            "location": "trailer",
+            "algorithms": [
+              "sha256",
+              "sha1"
+            ]
+          }
+        }
+      }
+    },
+    "ns.foo#ValidOperation5": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#Input"
+      },
+      "output": {
+        "target": "ns.foo#Output"
+      },
+      "traits": {
+        "smithy.api#httpChecksum": {
+          "Request": {
+            "prefix": "mock-prefix-",
+            "algorithms": [
+              "sha256",
+              "sha1"
+            ]
+          }
+        }
+      }
+    },
+    "ns.foo#ValidOperation6": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#Input"
+      },
+      "output": {
+        "target": "ns.foo#Output"
+      },
+      "traits": {
+        "smithy.api#httpChecksum": {
+          "Response": {
+            "prefix" : "mock-prefix-",
+            "algorithms" : ["sha256", "sha1"]
+          }
+        }
+      }
+    },
+    "ns.foo#ValidOperation7": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#Input"
+      },
+      "output": {
+        "target": "ns.foo#Output"
+      },
+      "traits": {
+        "smithy.api#httpChecksum": {
+          "Response": {
+            "prefix" : "mock-prefix-",
+            "location" : "header",
+            "algorithms" : ["sha256", "sha1"]
+          }
+        }
+      }
+    },
+    "ns.foo#Input": {
+      "type": "structure",
+      "members": {
+        "Body": {
+          "target": "smithy.api#Blob"
+        }
+      }
+    },
+    "ns.foo#Output": {
+      "type": "structure",
+      "members": {
+        "Body": {
+          "target": "smithy.api#Blob"
+        }
+      }
+    },
+    "ns.foo#InvalidOperation": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#Input"
+      },
+      "output": {
+        "target": "ns.foo#Output"
+      },
+      "traits": {
+        "smithy.api#httpChecksum": {}
+      }
+    },
+    "ns.foo#InvalidOperation2": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#Input"
+      },
+      "output": {
+        "target": "ns.foo#Output"
+      },
+      "traits": {
+        "smithy.api#httpChecksum": {
+          "Request": {
+            "prefix" : "mock-prefix-",
+            "location": "header",
+            "algorithms" : ["sha256", "sha1"]
+          },
+          "Response": {
+            "prefix" : "mock-prefix-",
+            "location": "trailer",
+            "algorithms" : ["sha256", "sha1"]
+          }
+        }
+      }
+    },
+    "ns.foo#InvalidOperation3": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#Input"
+      },
+      "output": {
+        "target": "ns.foo#Output"
+      },
+      "traits": {
+        "smithy.api#httpChecksum": {
+          "Response": {
+            "prefix" : "mock-prefix-",
+            "location" : "trailer",
+            "algorithms" : ["sha256", "sha1"]
+          }
+        }
+      }
+    },
+    "ns.foo#InvalidInput": {
+      "type": "structure",
+      "members": {
+        "Body": {
+          "target": "smithy.api#Blob"
+        }
+      },
+      "traits": {
+        "smithy.api#httpChecksum": {}
+      }
+    },
+    "ns.foo#InvalidOutput": {
+      "type": "structure",
+      "members": {
+        "Body": {
+          "target": "smithy.api#Blob"
+        }
+      },
+      "traits": {
+        "smithy.api#httpChecksum": {}
+      }
+    },
+    "ns.foo#InvalidError": {
+      "type": "structure",
+      "members": {
+        "Body": {
+          "target": "smithy.api#Blob"
+        }
+      },
+      "traits": {
+        "smithy.api#error": "client",
+        "smithy.api#httpChecksum": {}
+      }
+    },
+    "ns.foo#InvalidStructure": {
+      "type": "structure",
+      "members": {
+        "Body": {
+          "target": "smithy.api#Blob",
+          "traits": {
+            "smithy.api#httpChecksum": {}
+          }
+        }
+      }
+    }
+  }
+}
