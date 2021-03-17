@@ -1,3 +1,4 @@
+software.amazon.smithy.model.traits.AuthDefinitionTrait$Provider
 software.amazon.smithy.model.traits.AuthTrait$Provider
 software.amazon.smithy.model.traits.BoxTrait$Provider
 software.amazon.smithy.model.traits.CorsTrait$Provider
@@ -11,7 +12,11 @@ software.amazon.smithy.model.traits.EventPayloadTrait$Provider
 software.amazon.smithy.model.traits.ExamplesTrait$Provider
 software.amazon.smithy.model.traits.ExternalDocumentationTrait$Provider
 software.amazon.smithy.model.traits.HostLabelTrait$Provider
+software.amazon.smithy.model.traits.HttpApiKeyAuthTrait$Provider
+software.amazon.smithy.model.traits.HttpBasicAuthTrait$Provider
+software.amazon.smithy.model.traits.HttpBearerAuthTrait$Provider
 software.amazon.smithy.model.traits.HttpChecksumRequiredTrait$Provider
+software.amazon.smithy.model.traits.HttpDigestAuthTrait$Provider
 software.amazon.smithy.model.traits.HttpErrorTrait$Provider
 software.amazon.smithy.model.traits.HttpHeaderTrait$Provider
 software.amazon.smithy.model.traits.HttpLabelTrait$Provider
@@ -29,9 +34,11 @@ software.amazon.smithy.model.traits.JsonNameTrait$Provider
 software.amazon.smithy.model.traits.LengthTrait$Provider
 software.amazon.smithy.model.traits.MediaTypeTrait$Provider
 software.amazon.smithy.model.traits.NoReplaceTrait$Provider
+software.amazon.smithy.model.traits.OptionalAuthTrait$Provider
 software.amazon.smithy.model.traits.PaginatedTrait$Provider
 software.amazon.smithy.model.traits.PatternTrait$Provider
 software.amazon.smithy.model.traits.PrivateTrait$Provider
+software.amazon.smithy.model.traits.ProtocolDefinitionTrait$Provider
 software.amazon.smithy.model.traits.RangeTrait$Provider
 software.amazon.smithy.model.traits.ReadonlyTrait$Provider
 software.amazon.smithy.model.traits.ReferencesTrait$Provider
@@ -54,10 +61,3 @@ software.amazon.smithy.model.traits.XmlAttributeTrait$Provider
 software.amazon.smithy.model.traits.XmlFlattenedTrait$Provider
 software.amazon.smithy.model.traits.XmlNamespaceTrait$Provider
 software.amazon.smithy.model.traits.XmlNameTrait$Provider
-software.amazon.smithy.model.traits.ProtocolDefinitionTrait$Provider
-software.amazon.smithy.model.traits.AuthDefinitionTrait$Provider
-software.amazon.smithy.model.traits.HttpBasicAuthTrait$Provider
-software.amazon.smithy.model.traits.HttpBearerAuthTrait$Provider
-software.amazon.smithy.model.traits.HttpDigestAuthTrait$Provider
-software.amazon.smithy.model.traits.HttpApiKeyAuthTrait$Provider
-software.amazon.smithy.model.traits.OptionalAuthTrait$Provider
