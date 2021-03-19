@@ -285,6 +285,64 @@ structure PayloadWithXmlName {
     name: String
 }
 
+/// The following example serializes a payload that uses an XML name
+/// on the member, changing the wrapper name.
+
+@idempotent
+@http(uri: "/HttpPayloadWithMemberXmlName", method: "PUT")
+operation HttpPayloadWithMemberXmlName {
+    input: HttpPayloadWithMemberXmlNameInputOutput,
+    output: HttpPayloadWithMemberXmlNameInputOutput
+}
+
+apply HttpPayloadWithMemberXmlName @httpRequestTests([
+    {
+        id: "HttpPayloadWithMemberXmlName",
+        documentation: "Serializes a structure in the payload using a wrapper name based on member xmlName",
+        protocol: restXml,
+        method: "PUT",
+        uri: "/HttpPayloadWithMemberXmlName",
+        body: "<Hola><name>Phreddy</name></Hola>",
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        requireHeaders: [
+            "Content-Length"
+        ],
+        params: {
+            nested: {
+                name: "Phreddy"
+            }
+        }
+    }
+])
+
+apply HttpPayloadWithMemberXmlName @httpResponseTests([
+    {
+        id: "HttpPayloadWithMemberXmlName",
+        documentation: "Serializes a structure in the payload using a wrapper name based on member xmlName",
+        protocol: restXml,
+        code: 200,
+        body: "<Hola><name>Phreddy</name></Hola>",
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            nested: {
+                name: "Phreddy"
+            }
+        }
+    }
+])
+
+structure HttpPayloadWithMemberXmlNameInputOutput {
+    @httpPayload
+    @xmlName("Hola")
+    nested: PayloadWithXmlName,
+}
+
 /// The following example serializes a payload that uses an XML namespace.
 @idempotent
 @http(uri: "/HttpPayloadWithXmlNamespace", method: "PUT")

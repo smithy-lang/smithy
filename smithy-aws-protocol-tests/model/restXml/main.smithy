@@ -50,6 +50,7 @@ service RestXml {
         HttpPayloadTraitsWithMediaType,
         HttpPayloadWithStructure,
         HttpPayloadWithXmlName,
+        HttpPayloadWithMemberXmlName,
         HttpPayloadWithXmlNamespace,
         HttpPayloadWithXmlNamespaceAndPrefix,
 
