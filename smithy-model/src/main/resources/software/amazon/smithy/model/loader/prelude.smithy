@@ -478,6 +478,13 @@ string pattern
 @tags(["diff.error.add"])
 structure required {}
 
+/// Indicates that a structure member SHOULD be set.
+@trait(selector: "structure > member", conflicts: [required])
+structure recommended {
+    /// Provides a reason why the member is recommended.
+    reason: String,
+}
+
 /// Marks a list or map as sparse.
 @trait(selector: ":is(list, map)")
 @tags(["diff.error.const"])

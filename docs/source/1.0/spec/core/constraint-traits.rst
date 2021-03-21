@@ -570,6 +570,10 @@ in a response.
             }
         }
 
+.. seealso::
+
+   :ref:`recommended-trait`
+
 
 .. _uniqueItems:
 
