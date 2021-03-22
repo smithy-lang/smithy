@@ -134,4 +134,25 @@ public class TraitTest {
                 .map(HttpMessageTestCase::getId)
                 .collect(Collectors.toList());
     }
+
+    @Test
+    public void failingRequestTestCase() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("test-failing-request.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        FailingHttpRequestTest.Client clientTest = model.expectShape(ShapeId.from("smithy.example#SayHello"))
+                .getTrait(FailingHttpRequestTestsTrait.class)
+                .get()
+                .getClientTests().get(0);
+
+        assertThat(clientTest.getParams().expectStringMember("greeting").getValue(), equalTo("Hi \uD83D\uDE39"));
+        assertThat(((FailureCause.Generic) clientTest.getFailureCause()).getMessage(), equalTo("Greeting must only contain valid ascii"));
+
+        FailingHttpRequestTest.Server serverTest = model.expectShape(ShapeId.from("smithy.example#SayHello"))
+                .getTrait(FailingHttpRequestTestsTrait.class)
+                .get()
+                .getServerTests().get(0);
+    }
 }

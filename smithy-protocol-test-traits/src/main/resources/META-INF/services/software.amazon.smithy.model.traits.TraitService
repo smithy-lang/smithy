@@ -1,2 +1,3 @@
 software.amazon.smithy.protocoltests.traits.HttpRequestTestsTrait$Provider
 software.amazon.smithy.protocoltests.traits.HttpResponseTestsTrait$Provider
+software.amazon.smithy.protocoltests.traits.FailingHttpRequestTestsTrait$Provider

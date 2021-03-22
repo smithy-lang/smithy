@@ -2,6 +2,18 @@ $version: "1.0"
 
 namespace smithy.test
 
+/// Defines a set of invalid inputs for a given operation / protocol
+/// These encompass behavior like invalid binary data being serialized into header keys, null inputs that are
+/// required because of protocol details and other inputs from which an SDK cannot and should not produce a valid
+/// request.
+///
+/// Failing request tests must apply either to clients (HTTP request is unset) or servers (`params` is unset)
+@trait(selector: "operation")
+@length(min: 1)
+list failingHttpRequestTests {
+    member: HttpRequestTestCase
+}
+
 /// Define how an HTTP request is serialized given a specific protocol,
 /// authentication scheme, and set of input parameters.
 @trait(selector: "operation")
@@ -22,18 +34,15 @@ structure HttpRequestTestCase {
     id: String,
 
     /// The name of the protocol to test.
-    @required
     @idRef(selector: "[trait|protocolDefinition]", failWhenMissing: true)
     protocol: String,
 
     /// The expected serialized HTTP request method.
-    @required
     @length(min: 1)
     method: String,
 
     /// The request-target of the HTTP request, not including
     /// the query string (for example, "/foo/bar").
-    @required
     @length(min: 1)
     uri: String,
 
@@ -149,6 +158,10 @@ structure HttpRequestTestCase {
     /// testing edge cases of clients and servers that are impossible or
     /// undesirable to test in *both* client and server implementations.
     appliesTo: AppliesTo,
+
+    /// When set, this indicates that this test represents an invalid state, either for a client serializing the input
+    /// or for a server deserializing the output
+    failureCause: FailureCause
 }
 
 @private
@@ -168,6 +181,35 @@ list StringList {
 @length(min: 1)
 list httpResponseTests {
     member: HttpResponseTestCase,
+}
+
+structure HttpResponse {
+    /// Defines the HTTP response code.
+    @required
+    @range(min: 100, max: 599)
+    code: Integer,
+
+    /// Defines the HTTP message body.
+    ///
+    /// If no response body is defined, then no assertions are made about
+    /// the body of the message.
+    body: String,
+
+    /// The media type of the `body`.
+    ///
+    /// This is used to help test runners to parse and validate the expected
+    /// data against generated data. Binary media type formats require that
+    /// the contents of `body` are base64 encoded.
+    bodyMediaType: String,
+
+    /// A map of expected HTTP headers. Each key represents a header field
+    /// name and each value represents the expected header value. An HTTP
+    /// response is not in compliance with the protocol if any listed header
+    /// is missing from the serialized response or if the expected header
+    /// value differs from the serialized response value.
+    ///
+    /// `headers` applies no constraints on additional headers.
+    headers: StringMap,
 }
 
 @private
@@ -285,3 +327,8 @@ string NonEmptyString
     },
 ])
 string AppliesTo
+
+union FailureCause {
+    /// This test fails for an unmodeled reason. The string provides a description of the failure cause
+    generic: String
+}

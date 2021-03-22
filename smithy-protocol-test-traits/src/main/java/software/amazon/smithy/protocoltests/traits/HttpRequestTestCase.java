@@ -49,8 +49,8 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
 
     private HttpRequestTestCase(Builder builder) {
         super(builder);
-        method = SmithyBuilder.requiredState(METHOD, builder.method);
-        uri = SmithyBuilder.requiredState(URI, builder.uri);
+        method = builder.method;
+        uri = builder.uri;
         host = builder.host;
         resolvedHost = builder.resolvedHost;
         queryParams = ListUtils.copyOf(builder.queryParams);
@@ -90,8 +90,14 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
         HttpRequestTestCase.Builder builder = builder();
         updateBuilderFromNode(builder, node);
         ObjectNode o = node.expectObjectNode();
-        builder.method(o.expectStringMember(METHOD).getValue());
-        builder.uri(o.expectStringMember(URI).getValue());
+
+        o.getStringMember(METHOD).ifPresent(method -> {
+            builder.method(method.getValue());
+        });
+
+        o.getStringMember(URI).ifPresent(uri -> {
+            builder.uri(uri.getValue());
+        });
         o.getStringMember(HOST).ifPresent(stringNode -> builder.host(stringNode.getValue()));
         o.getStringMember(RESOLVED_HOST).ifPresent(stringNode -> builder.resolvedHost(stringNode.getValue()));
         o.getArrayMember(QUERY_PARAMS).ifPresent(queryParams -> {
@@ -109,8 +115,8 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
     @Override
     public Node toNode() {
         ObjectNode.Builder node = super.toNode().expectObjectNode().toBuilder();
-        node.withMember(METHOD, getMethod());
-        node.withMember(URI, getUri());
+        node.withOptionalMember(METHOD, Optional.ofNullable(getMethod()).map(StringNode::from));
+        node.withOptionalMember(URI, Optional.ofNullable(getUri()).map(StringNode::from));
         node.withOptionalMember(HOST, getHost().map(StringNode::from));
         node.withOptionalMember(RESOLVED_HOST, getResolvedHost().map(StringNode::from));
         if (!queryParams.isEmpty()) {
