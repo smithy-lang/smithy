@@ -14,12 +14,12 @@
       },
       "traits": {
         "smithy.api#httpChecksum": {
-          "Request": {
+          "request": {
             "prefix" : "mock-prefix-",
             "location": "header",
             "algorithms" : ["sha256", "sha1"]
           },
-          "Response": {
+          "response": {
             "prefix" : "mock-prefix-",
             "algorithms" : ["sha256", "sha1"]
           }
@@ -36,12 +36,12 @@
       },
       "traits": {
         "smithy.api#httpChecksum": {
-          "Request": {
+          "request": {
             "prefix" : "mock-prefix-",
             "location": "header",
             "algorithms" : ["sha256", "sha1"]
           },
-          "Response": {
+          "response": {
             "prefix" : "mock-prefix-",
             "location": "header",
             "algorithms" : ["sha256", "sha1"]
@@ -59,7 +59,7 @@
       },
       "traits": {
         "smithy.api#httpChecksum": {
-          "Request": {
+          "request": {
             "prefix": "mock-prefix-",
             "location": "header",
             "algorithms": [
@@ -80,7 +80,7 @@
       },
       "traits": {
         "smithy.api#httpChecksum": {
-          "Request": {
+          "request": {
             "prefix": "mock-prefix-",
             "location": "trailer",
             "algorithms": [
@@ -101,7 +101,7 @@
       },
       "traits": {
         "smithy.api#httpChecksum": {
-          "Request": {
+          "request": {
             "prefix": "mock-prefix-",
             "algorithms": [
               "sha256",
@@ -121,7 +121,7 @@
       },
       "traits": {
         "smithy.api#httpChecksum": {
-          "Response": {
+          "response": {
             "prefix" : "mock-prefix-",
             "algorithms" : ["sha256", "sha1"]
           }
@@ -138,7 +138,7 @@
       },
       "traits": {
         "smithy.api#httpChecksum": {
-          "Response": {
+          "response": {
             "prefix" : "mock-prefix-",
             "location" : "header",
             "algorithms" : ["sha256", "sha1"]
@@ -184,12 +184,12 @@
       },
       "traits": {
         "smithy.api#httpChecksum": {
-          "Request": {
+          "request": {
             "prefix" : "mock-prefix-",
             "location": "header",
             "algorithms" : ["sha256", "sha1"]
           },
-          "Response": {
+          "response": {
             "prefix" : "mock-prefix-",
             "location": "trailer",
             "algorithms" : ["sha256", "sha1"]
@@ -207,7 +207,7 @@
       },
       "traits": {
         "smithy.api#httpChecksum": {
-          "Response": {
+          "response": {
             "prefix" : "mock-prefix-",
             "location" : "trailer",
             "algorithms" : ["sha256", "sha1"]

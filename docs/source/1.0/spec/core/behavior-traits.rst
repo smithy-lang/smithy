@@ -681,14 +681,14 @@ The `httpChecksum` trait is a structure that contains the following members:
     * - Property
       - Type
       - Description
-    * - Request
+    * - request
       - ``[`` :ref:`HttpChecksumProperties structure <checksum-properties>` ``]``
-      - Request structure values define checksum validation behavior for
+      - The `request` structure values define checksum validation behavior for
         HTTP Request.
 
-    * - Response
+    * - response
       - ``[`` :ref:`HttpChecksumProperties structure <checksum-properties>` ``]``
-      - Response structure values define checksum validation behavior for
+      - The `response` structure values define checksum validation behavior for
         HTTP Response.
 
 
@@ -733,12 +733,12 @@ following members:
     .. code-tab:: smithy
 
         @httpChecksum(
-            Request: {
+            request: {
                 location: "header",
                 prefix: "x-amz-checksum-",
                 algorithms: ["sha256", "crc32"]
             },
-            Response: {
+            response: {
                 prefix: "x-amz-checksum-",
                 algorithms: ["sha256", "crc32"]
             }

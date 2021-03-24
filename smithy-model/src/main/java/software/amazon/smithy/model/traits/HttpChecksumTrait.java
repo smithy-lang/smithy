@@ -37,8 +37,8 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBuilder<HttpChecksumTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.api#httpChecksum");
 
-    private static final String REQUEST_PROPERTY = "Request";
-    private static final String RESPONSE_PROPERTY = "Response";
+    private static final String REQUEST_PROPERTY = "request";
+    private static final String RESPONSE_PROPERTY = "response";
 
     private final HttpChecksumProperties requestProperty;
     private final HttpChecksumProperties responseProperty;

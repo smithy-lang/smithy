@@ -763,10 +763,10 @@ structure httpChecksumRequired {}
 @trait(selector: "operation")
 structure httpChecksum {
     /// Defines checksum properties for request.
-    Request: httpChecksumProperties,
+    request: httpChecksumProperties,
 
     /// Defines checksum properties for response.
-    Response: httpChecksumProperties,
+    response: httpChecksumProperties,
 }
 
 // Defines properties used by httpChecksum trait members
