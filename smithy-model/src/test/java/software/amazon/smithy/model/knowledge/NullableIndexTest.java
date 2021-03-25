@@ -91,6 +91,7 @@ public class NullableIndexTest {
                 .addMember("c", ShapeId.from("smithy.api#PrimitiveBoolean"), b -> b.addTrait(new BoxTrait()))
                 // Not nullable.
                 .addMember("d", ShapeId.from("smithy.api#PrimitiveBoolean"))
+                .addMember("e", ShapeId.from("smithy.api#Document"))
                 .build();
 
         Model model = Model.assembler()
@@ -150,6 +151,8 @@ public class NullableIndexTest {
                 {model, structure.getMember("b").get().getId().toString(), true},
                 {model, structure.getMember("c").get().getId().toString(), true},
                 {model, structure.getMember("d").get().getId().toString(), false},
+                // documents are nullable as structure members
+                {model, structure.getMember("e").get().getId().toString(), true},
         });
     }
 }

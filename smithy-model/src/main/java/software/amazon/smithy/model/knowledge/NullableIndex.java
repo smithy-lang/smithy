@@ -42,7 +42,8 @@ public class NullableIndex implements KnowledgeIndex {
             ShapeType.SET,
             ShapeType.MAP,
             ShapeType.STRUCTURE,
-            ShapeType.UNION);
+            ShapeType.UNION,
+            ShapeType.DOCUMENT);
 
     private final Set<ShapeId> nullableShapes = new HashSet<>();
 
@@ -105,7 +106,7 @@ public class NullableIndex implements KnowledgeIndex {
      * return false. When given any other shape, this method will return
      * true if the shape is inherently boxed, meaning the shape is either
      * marked with the {@code box} trait, or the shape is a string, blob,
-     * timestamp, bigDecimal, bigInteger, list, set, map, structure, or union.
+     * timestamp, bigDecimal, bigInteger, list, set, map, structure, union or document.
      *
      * @param shape Shape or shape ID to check.
      * @return Returns true if the shape can be set to null.
