@@ -215,6 +215,47 @@
         }
       }
     },
+    "ns.foo#InvalidOperation4": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#Input"
+      },
+      "output": {
+        "target": "ns.foo#Output"
+      },
+      "traits": {
+        "smithy.api#httpChecksum": {
+          "request": {
+            "prefix" : "mock-prefix-",
+            "location" : "trailer",
+            "algorithms" : []
+          }
+        }
+      }
+    },
+    "ns.foo#InvalidOperation5": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#Input"
+      },
+      "output": {
+        "target": "ns.foo#Output"
+      },
+      "traits": {
+        "smithy.api#httpChecksum": {
+          "request": {
+            "prefix" : "mock-prefix-",
+            "location" : "trailer",
+            "algorithms" : ["crc32"]
+          },
+          "response" : {
+            "prefix" : "mock-prefix-",
+            "location" : "header",
+            "algorithms" : []
+          }
+        }
+      }
+    },
     "ns.foo#InvalidInput": {
       "type": "structure",
       "members": {

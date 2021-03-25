@@ -15,17 +15,10 @@
 
 package software.amazon.smithy.model.traits;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -93,7 +86,6 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
         return builder.build();
     }
 
-
     public static final class Builder extends AbstractTraitBuilder<HttpChecksumTrait, Builder> {
         private HttpChecksumProperties requestProperty;
         private HttpChecksumProperties responseProperty;
@@ -138,147 +130,6 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
             }
 
             return builder.build();
-        }
-    }
-
-
-    /**
-     * Defines checksum properties for data checksum validation.
-     * These properties are used by the members defined for HTTPChecksum trait.
-     */
-    public static final class HttpChecksumProperties implements ToNode, ToSmithyBuilder<HttpChecksumProperties> {
-
-        private static final String PREFIX = "prefix";
-        private static final String ALGORITHMS = "algorithms";
-        private static final String LOCATION = "location";
-        private static final String HEADER = "header";
-        private static final Set<String> KEYS = SetUtils.of(
-                PREFIX, ALGORITHMS, LOCATION);
-
-        private final String prefix;
-        private final Set<String> algorithms;
-        private final String location;
-
-        private HttpChecksumProperties(HttpChecksumProperties.Builder builder) {
-            this.prefix = builder.prefix;
-            this.algorithms = builder.algorithms;
-            this.location = builder.location;
-        }
-
-        public static HttpChecksumProperties.Builder builder() {
-            return new Builder();
-        }
-
-        /**
-         * Create a {@code HttpChecksumProperties} from {@link Node}.
-         *
-         * @param node {@code Node} to create the {@code HttpChecksumProperties}
-         * @return Returns the created {@code HttpChecksumProperties}.
-         * @throws ExpectationNotMetException if the given {@code node} is invalid.
-         */
-        public static HttpChecksumProperties fromNode(Node node) {
-            ObjectNode value = node.expectObjectNode().warnIfAdditionalProperties(KEYS);
-            HttpChecksumProperties.Builder builder = builder();
-            value.getStringMember(PREFIX).map(StringNode::getValue).ifPresent(builder::prefix);
-            value.getMember(ALGORITHMS).ifPresent(
-                    algorithms -> builder.algorithms(Node.loadArrayOfString(ALGORITHMS, algorithms).stream().collect(
-                            Collectors.toSet())));
-
-            Optional<StringNode> locationNode = value.getStringMember(LOCATION);
-            if (!locationNode.isPresent()) {
-                // set default value for location as HEADER.
-                builder.location(HEADER);
-            } else {
-                String location = locationNode.get().getValue();
-                builder.location(location);
-            }
-
-            return builder.build();
-        }
-
-        /**
-         * @return location member as string. By default, location is `"header"`.
-         */
-        public String getLocation() {
-            return location;
-        }
-
-        /**
-         * @return prefix member as string.
-         */
-        public String getPrefix() {
-            return prefix;
-        }
-
-        /**
-         * @return set of string denoting the supported checksum algorithms.
-         */
-        public Set<String> getAlgorithms() {
-            return algorithms;
-        }
-
-        /**
-         * Take this object and create a builder that contains all of the
-         * current property values of this object.
-         *
-         * @return a builder for type HttpChecksumProperties
-         */
-        @Override
-        public SmithyBuilder<HttpChecksumProperties> toBuilder() {
-            return builder()
-                    .prefix(getPrefix())
-                    .algorithms(getAlgorithms())
-                    .location(getLocation());
-        }
-
-        /**
-         * Converts a value to a {@link Node}.
-         *
-         * @return Returns the creates Node.
-         */
-        @Override
-        public Node toNode() {
-            ObjectNode.Builder builder = Node.objectNodeBuilder()
-                    .withMember(PREFIX, getPrefix())
-                    .withMember(ALGORITHMS, Node.fromStrings(algorithms))
-                    .withMember(LOCATION, getLocation());
-
-            return builder.build();
-        }
-
-        public static final class Builder implements SmithyBuilder<HttpChecksumProperties> {
-            private String prefix;
-            private String location;
-            private Set<String> algorithms = new HashSet<>();
-
-            private Builder() {
-            }
-
-            @Override
-            public HttpChecksumProperties build() {
-                return new HttpChecksumProperties(this);
-            }
-
-            public Builder prefix(String prefix) {
-                this.prefix = prefix;
-                return this;
-            }
-
-            public Builder location(String location) {
-                this.location = location;
-                return this;
-            }
-
-            public Builder algorithms(Set<String> algorithms) {
-                this.algorithms.clear();
-                algorithms.forEach(this::addAlgorithm);
-                return this;
-            }
-
-            public Builder addAlgorithm(String algorithm) {
-                this.algorithms.add(algorithm);
-                return this;
-            }
         }
     }
 }

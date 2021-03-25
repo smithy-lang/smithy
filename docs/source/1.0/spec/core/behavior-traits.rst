@@ -667,6 +667,13 @@ Summary
     Indicates that an operation's HTTP Request or Response supports checksum
     validation. At least one of request or response checksum properties must
     be specified within the trait.
+
+    When this trait is modeled along with
+    :ref:`httpChecksumRequired trait <httpChecksumRequired-trait>`,
+    service MUST accept a checksum value sent as per the trait's
+    modeled request property, to satisfy checksum validation requirements
+    for the operation's HTTP Request.
+
 Trait selector
     ``operation``
 Value type
@@ -682,22 +689,22 @@ The `httpChecksum` trait is a structure that contains the following members:
       - Type
       - Description
     * - request
-      - ``[`` :ref:`HttpChecksumProperties structure <checksum-properties>` ``]``
+      - :ref:`HttpChecksumProperties structure <checksum-properties>`
       - The `request` structure values define checksum validation behavior for
         HTTP Request.
 
     * - response
-      - ``[`` :ref:`HttpChecksumProperties structure <checksum-properties>` ``]``
+      - :ref:`HttpChecksumProperties structure <checksum-properties>`
       - The `response` structure values define checksum validation behavior for
         HTTP Response.
 
 
-.. - checksum-properties:
+.. _checksum-properties:
 
-HTTPChecksumProperties structure
+HttpChecksumProperties structure
 ================================
 
-HTTPChecksumProperties defines checksum validation behavior using the
+HttpChecksumProperties defines checksum validation behavior using the
 following members:
 
 .. list-table::
@@ -710,22 +717,32 @@ following members:
     * - prefix
       - ``string``
       - **Required**. The prefix string is used to construct a header for a
-        checksum type. Prefix is a required member, and SHOULD be lower-cased. The
-        recommended ABNF to follow for prefix is `([a-z]*([a-z]/[0-9]/"-")*`.
+        checksum type. Prefix is a required member, and SHOULD be lower-cased.
+        The recommended ABNF to follow for prefix is `([a-z]*([a-z]/[0-9]/"-")*`.
+
+        To construct a header name for usage with checksum, follow the pattern:
+        `prefix + algorithm-name`. For example, if prefix is "x-checksum-"
+        and "sha256" algorithm is used for computing checksum, header name
+        would resolve as "x-checksum-sha256".
 
     * - location
       - ``string``
-      - A string representing checksum location. A valid location value for
-        HTTP Request can be `"header"` or `"trailer"`. For HTTP Response,
-        only `"header"` is supported as location. By default, location
-        resolves to `"header"` value.
+      - A string representing checksum location. The string value MUST be a
+        valid :ref:`Location enum <checksum-location-enum>`. By default,
+        location resolves to "header" value. Service MUST always support
+        checksum in header for both requests and responses.
+
+        Optionally, for request, location can be modeled as "trailer"
+        indicating service supports checksum in trailer, in addition to
+        support in header.
 
     * - algorithms
       - ``[string]``
-      - **Required**. List of strings representing checksum algorithms supported for the
-        HTTP Request or Response. Algorithms is a required member, and
-        A valid algorithm SHOULD follow ABNF : `([a-z]* [0-9]*)*` . Algorithm
-        name SHOULD be lower-cased and not hyphenated.
+      - **Required**. List of strings representing checksum algorithms
+        supported for the HTTP Request or Response. Algorithms is a
+        required member, and a valid algorithm name SHOULD follow
+        ABNF: `([a-z]* [0-9]*)*`. Algorithm name SHOULD be lower-cased
+        and not hyphenated.
 
 
 .. tabs::
@@ -734,12 +751,12 @@ following members:
 
         @httpChecksum(
             request: {
-                location: "header",
-                prefix: "x-amz-checksum-",
+                location: "trailer",
+                prefix: "x-checksum-",
                 algorithms: ["sha256", "crc32"]
             },
             response: {
-                prefix: "x-amz-checksum-",
+                prefix: "x-checksum-",
                 algorithms: ["sha256", "crc32"]
             }
         )
@@ -747,3 +764,25 @@ following members:
             input: PutSomethingInput,
             output: PutSomethingOutput
         }
+
+
+.. _checksum-location-enum:
+
+Location enum
+=========================
+
+Following enums denote valid checksum locations:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Name
+      - Value
+      - Description
+    * - HEADER
+      - "header"
+      - Indicates header is supported as checksum location.
+    * - TRAILER
+      - "trailer"
+      - Indicates trailer is supported as checksum location.

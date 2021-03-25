@@ -10,11 +10,15 @@
 [WARNING] ns.foo#InvalidOperation: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
 [WARNING] ns.foo#InvalidOperation2: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
 [WARNING] ns.foo#InvalidOperation3: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
+[WARNING] ns.foo#InvalidOperation4: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
+[WARNING] ns.foo#InvalidOperation5: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
 [WARNING] ns.foo#InvalidOutput: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
 [WARNING] ns.foo#InvalidStructure$Body: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
 [ERROR] ns.foo#InvalidOperation: `smithy.api#httpChecksum` trait must have at least one of request or response properties | HttpChecksumTrait
-[ERROR] ns.foo#InvalidOperation2: `smithy.api#httpChecksum` trait only supports header as location | HttpChecksumTrait
-[ERROR] ns.foo#InvalidOperation3: `smithy.api#httpChecksum` trait only supports header as location | HttpChecksumTrait
+[ERROR] ns.foo#InvalidOperation2: `smithy.api#httpChecksum` trait only supports header as location for response | HttpChecksumTrait
+[ERROR] ns.foo#InvalidOperation3: `smithy.api#httpChecksum` trait only supports header as location for response | HttpChecksumTrait
+[ERROR] ns.foo#InvalidOperation4: `smithy.api#httpChecksum` trait must model at least one checksum algorithm | HttpChecksumTrait
+[ERROR] ns.foo#InvalidOperation5: `smithy.api#httpChecksum` trait must model at least one checksum algorithm | HttpChecksumTrait
 [ERROR] ns.foo#InvalidInput: Trait `httpChecksum` cannot be applied to `ns.foo#InvalidInput`. This trait may only be applied to shapes that match the following selector: operation | TraitTarget
 [ERROR] ns.foo#InvalidOutput: Trait `httpChecksum` cannot be applied to `ns.foo#InvalidOutput`. This trait may only be applied to shapes that match the following selector: operation | TraitTarget
 [ERROR] ns.foo#InvalidError: Trait `httpChecksum` cannot be applied to `ns.foo#InvalidError`. This trait may only be applied to shapes that match the following selector: operation | TraitTarget

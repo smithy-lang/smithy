@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.traits.HttpChecksumProperties;
+import software.amazon.smithy.model.traits.HttpChecksumProperties.Location;
 import software.amazon.smithy.model.traits.HttpChecksumTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -49,9 +51,8 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
     private List<ValidationEvent> validateOperation(Model model, OperationShape operation) {
         List<ValidationEvent> events = new ArrayList<>();
         HttpChecksumTrait trait = operation.expectTrait(HttpChecksumTrait.class);
-
-        HttpChecksumTrait.HttpChecksumProperties requestProperty = trait.getRequestProperty();
-        HttpChecksumTrait.HttpChecksumProperties responseProperty = trait.getResponseProperty();
+        HttpChecksumProperties requestProperty = trait.getRequestProperty();
+        HttpChecksumProperties responseProperty = trait.getResponseProperty();
 
         if (requestProperty == null && responseProperty == null) {
             events.add(error(operation, trait, String.format(
@@ -60,16 +61,26 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
             )));
         }
 
-        if (responseProperty != null) {
-            // Response property only supports header as location.
-            if (!responseProperty.getLocation().equalsIgnoreCase(HEADER)) {
+        if (requestProperty != null) {
+            if (requestProperty.getAlgorithms().isEmpty()) {
                 events.add(error(operation, trait,
-                        String.format("`%s` trait only supports header as location", HttpChecksumTrait.ID)));
+                        String.format("`%s` trait must model at least one checksum algorithm", HttpChecksumTrait.ID)));
             }
-
         }
 
+        if (responseProperty != null) {
+            // Response property only supports header as location.
+            if (responseProperty.getLocation() != Location.HEADER) {
+                events.add(error(operation, trait,
+                        String.format("`%s` trait only supports header as location for response",
+                                HttpChecksumTrait.ID)));
+            }
 
+            if (responseProperty.getAlgorithms().isEmpty()) {
+                events.add(error(operation, trait,
+                        String.format("`%s` trait must model at least one checksum algorithm", HttpChecksumTrait.ID)));
+            }
+        }
         return events;
     }
 }
