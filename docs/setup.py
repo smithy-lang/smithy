@@ -2,7 +2,7 @@
 
 from setuptools import setup, find_packages
 
-requires = ["sphinx>=1.7.0,<1.8.0", "pygments==2.4.2", "sphinx-tabs==1.1.7"]
+requires = ["sphinx>=1.7.0,<1.8.0", "pygments==2.7.4", "sphinx-tabs==1.1.7"]
 
 # Register the custom Smithy loader with Pygments.
 # See: http://pygments.org/docs/plugins/
