@@ -1,5 +1,5 @@
 sphinx>=1.7.0,<1.8.0
-pygments==2.4.2
+pygments==2.7.4
 sphinx-tabs==1.1.7
 
 # This package has not been published to pypi
