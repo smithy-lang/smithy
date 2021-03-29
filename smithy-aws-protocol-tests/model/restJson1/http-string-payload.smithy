@@ -1,10 +1,13 @@
+$version: "1.0"
 namespace aws.protocoltests.restjson
+
 use smithy.test#httpRequestTests
+use smithy.test#httpResponseTests
 
 @http(uri: "/EnumPayload", method: "POST")
 @httpRequestTests([
     {
-        id: "EnumPayload",
+        id: "EnumPayloadRequest",
         uri: "/EnumPayload",
         body: "enumvalue",
         params: { payload: "enumvalue" },
@@ -12,8 +15,18 @@ use smithy.test#httpRequestTests
         protocol: "aws.protocols#restJson1"
     }
 ])
+@httpResponseTests([
+    {
+        id: "EnumPayloadResponse",
+        body: "enumvalue",
+        params: { payload: "enumvalue" },
+        protocol: "aws.protocols#restJson1",
+        code: 200
+    }
+])
 operation HttpEnumPayload {
-    input: EnumPayloadInput
+    input: EnumPayloadInput,
+    output: EnumPayloadInput
 }
 
 structure EnumPayloadInput {
@@ -27,7 +40,7 @@ string StringEnum
 @http(uri: "/StringPayload", method: "POST")
 @httpRequestTests([
     {
-        id: "StringPayload",
+        id: "StringPayloadRequest",
         uri: "/StringPayload",
         body: "rawstring",
         params: { payload: "rawstring" },
@@ -35,11 +48,22 @@ string StringEnum
         protocol: "aws.protocols#restJson1"
     }
 ])
+@httpResponseTests([
+    {
+        id: "StringPayloadResponse",
+        body: "rawstring",
+        params: { payload: "rawstring" },
+        protocol: "aws.protocols#restJson1",
+        code: 200
+    }
+])
 operation HttpStringPayload {
-    input: StringPayloadInput
+    input: StringPayloadInput,
+    output: StringPayloadInput
 }
 
 structure StringPayloadInput {
     @httpPayload
     payload: String
 }
+
