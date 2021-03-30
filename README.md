@@ -54,7 +54,7 @@ Then, apply the Smithy Gradle Plugin in your `build.gradle.kts` file and run
 
 ```kotlin
 plugins {
-   id("software.amazon.smithy").version("0.5.0")
+   id("software.amazon.smithy").version("0.5.2")
 }
 ```
 
