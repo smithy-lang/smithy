@@ -15,11 +15,9 @@
 
 package software.amazon.smithy.model.traits;
 
+import java.util.LinkedHashSet;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -34,7 +32,6 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * These properties are used by the members defined for HttpChecksum trait.
  */
 public final class HttpChecksumProperties implements ToNode, ToSmithyBuilder<HttpChecksumProperties> {
-
     private static final String PREFIX = "prefix";
     private static final String ALGORITHMS = "algorithms";
     private static final String LOCATION = "location";
@@ -66,18 +63,10 @@ public final class HttpChecksumProperties implements ToNode, ToSmithyBuilder<Htt
         ObjectNode value = node.expectObjectNode().warnIfAdditionalProperties(KEYS);
         HttpChecksumProperties.Builder builder = builder();
         value.getStringMember(PREFIX).map(StringNode::getValue).ifPresent(builder::prefix);
+        value.getMember(LOCATION).ifPresent(locNode -> builder.location(Location.fromNode(locNode)));
         value.getMember(ALGORITHMS).ifPresent(
-                algorithms -> builder.algorithms(Node.loadArrayOfString(ALGORITHMS, algorithms)
-                        .stream().collect(Collectors.toSet())));
-
-        Optional<Node> locationNode = value.getMember(LOCATION);
-        if (!locationNode.isPresent()) {
-            // set default value for location as HEADER.
-            builder.location(Location.HEADER);
-        } else {
-            builder.location(Location.fromNode(locationNode.get()));
-        }
-
+                algorithms -> Node.loadArrayOfString(ALGORITHMS, algorithms)
+                                .forEach(builder::addAlgorithm));
         return builder.build();
     }
 
@@ -133,8 +122,9 @@ public final class HttpChecksumProperties implements ToNode, ToSmithyBuilder<Htt
 
     public static final class Builder implements SmithyBuilder<HttpChecksumProperties> {
         private String prefix;
-        private Location location;
-        private Set<String> algorithms = new TreeSet<>();
+        private Set<String> algorithms = new LinkedHashSet<>();
+        // set default location to Header.
+        private Location location = Location.HEADER;
 
         private Builder() {
         }
@@ -155,7 +145,7 @@ public final class HttpChecksumProperties implements ToNode, ToSmithyBuilder<Htt
         }
 
         public Builder algorithms(Set<String> algorithms) {
-            this.algorithms.clear();
+            clearAlgorithms();
             algorithms.forEach(this::addAlgorithm);
             return this;
         }
@@ -164,17 +154,22 @@ public final class HttpChecksumProperties implements ToNode, ToSmithyBuilder<Htt
             this.algorithms.add(algorithm);
             return this;
         }
+
+        public Builder clearAlgorithms() {
+            this.algorithms.clear();
+            return this;
+        }
     }
 
     /**
-     * Location enum used by HttpChecksumProperties.
+     * Location where the checksum is supplied.
      */
     public enum Location implements ToNode {
 
-        /** Location as "header". */
+        /** The checksum is sent in an HTTP Header. */
         HEADER,
 
-        /** Location as "trailer". */
+        /** The checksum is sent in a trailer field. */
         TRAILER;
 
         @Override
@@ -195,9 +190,21 @@ public final class HttpChecksumProperties implements ToNode, ToSmithyBuilder<Htt
          * @throws ExpectationNotMetException when given an invalid Node.
          */
         public static Location fromNode(Node node) {
-            StringNode value = node.expectStringNode();
-            String constValue = value.expectOneOf("header", "trailer").toUpperCase(Locale.ENGLISH);
-            return Location.valueOf(constValue);
+            String value = node.expectStringNode()
+                    .expectOneOf("header", "trailer")
+                    .toUpperCase(Locale.ENGLISH);
+            return Location.valueOf(value);
+        }
+
+        /**
+         * Returns a Location enum from String.
+         *
+         * @param location string to map Location enum to.
+         * @return Location if location string is valid.
+         * @throws IllegalArgumentException when given an invalid location string.
+         */
+        public static Location fromString(String location) {
+            return Location.valueOf(location.toUpperCase(Locale.ENGLISH));
         }
     }
 }

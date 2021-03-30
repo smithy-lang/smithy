@@ -59,8 +59,8 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
      *
      * @return checksum properties for request.
      */
-    public HttpChecksumProperties getRequestProperty() {
-        return requestProperty;
+    public Optional<HttpChecksumProperties> getRequestProperty() {
+        return Optional.ofNullable(requestProperty);
     }
 
     /**
@@ -68,8 +68,8 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
      *
      * @return checksum properties for response.
      */
-    public HttpChecksumProperties getResponseProperty() {
-        return responseProperty;
+    public Optional<HttpChecksumProperties> getResponseProperty() {
+        return Optional.ofNullable(responseProperty);
     }
 
     @Override
@@ -109,12 +109,12 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
         }
     }
 
-    public static final class Provider implements TraitService {
-        @Override
-        public ShapeId getShapeId() {
-            return ID;
+    public static final class Provider extends AbstractTrait.Provider {
+        public Provider() {
+            super(ID);
         }
 
+        @Override
         public Trait createTrait(ShapeId target, Node value) {
             ObjectNode node = value.expectObjectNode();
             Builder builder = builder().sourceLocation(value);

@@ -17,7 +17,7 @@ package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.traits.HttpChecksumProperties;
@@ -30,8 +30,6 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public class HttpChecksumTraitValidator extends AbstractValidator {
 
-    private static final String HEADER = "header";
-
     /**
      * Validates a model and returns a list of validation events.
      *
@@ -39,46 +37,47 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
      * @return List of validation events.
      */
     @Override
-    public List<ValidationEvent> validate(
-            Model model
-    ) {
-        return model.shapes(OperationShape.class)
+    public List<ValidationEvent> validate(Model model) {
+        List<ValidationEvent> events = new ArrayList<>();
+        model.shapes(OperationShape.class)
                 .filter(operation -> operation.hasTrait(HttpChecksumTrait.class))
-                .flatMap(operation -> validateOperation(model, operation).stream())
-                .collect(Collectors.toList());
+                .forEach(operation -> events.addAll(validateOperation(operation)));
+        return events;
     }
 
-    private List<ValidationEvent> validateOperation(Model model, OperationShape operation) {
+    private List<ValidationEvent> validateOperation(OperationShape operation) {
         List<ValidationEvent> events = new ArrayList<>();
         HttpChecksumTrait trait = operation.expectTrait(HttpChecksumTrait.class);
-        HttpChecksumProperties requestProperty = trait.getRequestProperty();
-        HttpChecksumProperties responseProperty = trait.getResponseProperty();
+        Optional<HttpChecksumProperties> requestProperty = trait.getRequestProperty();
+        Optional<HttpChecksumProperties> responseProperty = trait.getResponseProperty();
 
-        if (requestProperty == null && responseProperty == null) {
-            events.add(error(operation, trait, String.format(
-                    "`%s` trait must have at least one of request or response properties",
-                    HttpChecksumTrait.ID
-            )));
+        if (!requestProperty.isPresent() && !responseProperty.isPresent()) {
+            events.add(error(operation, trait,
+                    "The `httpChecksum` trait must have at least one of the `request` or `response` properties set."));
         }
 
-        if (requestProperty != null) {
-            if (requestProperty.getAlgorithms().isEmpty()) {
+        if (requestProperty.isPresent()) {
+            HttpChecksumProperties property = requestProperty.get();
+            if (property.getAlgorithms().isEmpty()) {
                 events.add(error(operation, trait,
-                        String.format("`%s` trait must model at least one checksum algorithm", HttpChecksumTrait.ID)));
+                        "The `request` property of the `httpChecksum` trait must contain at least one `algorithms` "
+                                + "property entry, found none."));
             }
         }
 
-        if (responseProperty != null) {
+        if (responseProperty.isPresent()) {
+            HttpChecksumProperties property = responseProperty.get();
             // Response property only supports header as location.
-            if (responseProperty.getLocation() != Location.HEADER) {
+            if (!property.getLocation().equals(Location.HEADER)) {
                 events.add(error(operation, trait,
-                        String.format("`%s` trait only supports header as location for response",
-                                HttpChecksumTrait.ID)));
+                       String.format("The `httpChecksum` trait only supports the `location` of \"header\" for the "
+                               + "`response`, found \"%s\".", property.getLocation().toString())));
             }
 
-            if (responseProperty.getAlgorithms().isEmpty()) {
+            if (property.getAlgorithms().isEmpty()) {
                 events.add(error(operation, trait,
-                        String.format("`%s` trait must model at least one checksum algorithm", HttpChecksumTrait.ID)));
+                        "The `response` property of the `httpChecksum` trait must contain at least one `algorithms` "
+                                + "property entry, found none."));
             }
         }
         return events;

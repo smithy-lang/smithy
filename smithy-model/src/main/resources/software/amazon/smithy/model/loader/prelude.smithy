@@ -775,9 +775,23 @@ structure httpChecksumProperties {
     /// prefix is a non empty string.
     prefix: NonEmptyString,
 
-    /// location is a non empty string.
-    location: NonEmptyString,
+    /// Defines the location of where the checksum is serialized. This value
+    /// can be set to `"header"` or `"trailer"`.
+    location: HttpChecksumLocations,
 
     /// algorithms is a list of non empty strings.
     algorithms: NonEmptyStringList,
 }
+
+@private
+@enum([
+    {
+        name: "HEADER",
+        value: "header",
+    },
+    {
+        name: "TRAILER",
+        value: "trailer",
+    },
+])
+string HttpChecksumLocations

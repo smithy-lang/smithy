@@ -53,19 +53,22 @@ public class HttpChecksumTraitTest {
         assertThat(trait.get(), instanceOf(HttpChecksumTrait.class));
         HttpChecksumTrait checksumTrait = (HttpChecksumTrait) trait.get();
 
-        assertThat(checksumTrait.getRequestProperty().getLocation(), equalTo(Location.HEADER));
-        assertThat(checksumTrait.getRequestProperty().getPrefix(), equalTo("x-checksum-"));
-        assertThat(checksumTrait.getRequestProperty().getAlgorithms(), containsInRelativeOrder(
-                "crc32", "crc32c"
-        ));
-        assertThat(checksumTrait.getResponseProperty().getLocation(), equalTo(Location.HEADER));
-        assertThat(checksumTrait.getResponseProperty().getPrefix(), equalTo("x-checksum-"));
-        assertThat(checksumTrait.getResponseProperty().getAlgorithms(), containsInRelativeOrder(
+        HttpChecksumProperties requestProperty = checksumTrait.getRequestProperty().get();
+        assertThat(requestProperty.getLocation(), equalTo(Location.HEADER));
+        assertThat(requestProperty.getPrefix(), equalTo("x-checksum-"));
+        assertThat(requestProperty.getAlgorithms(), containsInRelativeOrder(
                 "crc32", "crc32c"
         ));
 
-        assertThat(checksumTrait.getRequestProperty().toNode(), equalTo(requestNode));
-        assertThat(checksumTrait.getResponseProperty().toNode(), equalTo(responseNode));
+        HttpChecksumProperties responseProperty = checksumTrait.getResponseProperty().get();
+        assertThat(responseProperty.getLocation(), equalTo(Location.HEADER));
+        assertThat(responseProperty.getPrefix(), equalTo("x-checksum-"));
+        assertThat(responseProperty.getAlgorithms(), containsInRelativeOrder(
+                "crc32", "crc32c"
+        ));
+
+        assertThat(requestProperty.toNode(), equalTo(requestNode));
+        assertThat(responseProperty.toNode(), equalTo(responseNode));
         assertThat(checksumTrait.toNode(), equalTo(node));
         assertThat(checksumTrait.toBuilder().build(), equalTo(checksumTrait));
     }

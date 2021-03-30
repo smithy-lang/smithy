@@ -668,12 +668,6 @@ Summary
     validation. At least one of request or response checksum properties must
     be specified within the trait.
 
-    When this trait is modeled along with
-    :ref:`httpChecksumRequired trait <httpChecksumRequired-trait>`,
-    service MUST accept a checksum value sent as per the trait's
-    modeled request property, to satisfy checksum validation requirements
-    for the operation's HTTP Request.
-
 Trait selector
     ``operation``
 Value type
@@ -697,6 +691,61 @@ The `httpChecksum` trait is a structure that contains the following members:
       - :ref:`HttpChecksumProperties structure <checksum-properties>`
       - The `response` structure values define checksum validation behavior for
         HTTP Response.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @httpChecksum(
+            request: {
+                location: "trailer",
+                prefix: "x-checksum-",
+                algorithms: ["sha256", "crc32"]
+            },
+            response: {
+                prefix: "x-checksum-",
+                algorithms: ["sha256", "crc32"]
+            }
+        )
+        operation PutSomething {
+            input: PutSomethingInput,
+            output: PutSomethingOutput
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#Example": {
+                    "type": "service",
+                    "version": "2019-06-27",
+                },
+                "smithy.example#PutSomething": {
+                    "type": "operation",
+                    "input": {
+                        "target": "smithy.example#PutSomethingInput"
+                    },
+                    "output": {
+                        "target": "smithy.example#PutSomethingOutput"
+                    },
+                    "traits": {
+                        "smithy.api#httpChecksum": {
+                            "request": {
+                                "location": "trailer",
+                                "prefix": "x-checksum-",
+                                "algorithms": ["sha256", "crc32"]
+                            },
+                            "response": {
+                                "location": "header",
+                                "prefix": "x-checksum-",
+                                "algorithms": ["sha256", "crc32"]
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
 
 .. _checksum-properties:
@@ -727,10 +776,10 @@ following members:
 
     * - location
       - ``string``
-      - A string representing checksum location. The string value MUST be a
-        valid :ref:`Location enum <checksum-location-enum>`. By default,
-        location resolves to "header" value. Service MUST always support
-        checksum in header for both requests and responses.
+      - A string representing location where checksum is supplied. The string
+        value MUST be set to "header" or "trailer". By default, location
+        resolves to "header" value. Service MUST always support checksum in
+        header for both requests and responses.
 
         Optionally, for request, location can be modeled as "trailer"
         indicating service supports checksum in trailer, in addition to
@@ -744,45 +793,13 @@ following members:
         ABNF: `([a-z]* [0-9]*)*`. Algorithm name SHOULD be lower-cased
         and not hyphenated.
 
+.. _checksum_trait with_checksum_required:
 
-.. tabs::
+HttpChecksumRequired Behavior
+=============================
 
-    .. code-tab:: smithy
-
-        @httpChecksum(
-            request: {
-                location: "trailer",
-                prefix: "x-checksum-",
-                algorithms: ["sha256", "crc32"]
-            },
-            response: {
-                prefix: "x-checksum-",
-                algorithms: ["sha256", "crc32"]
-            }
-        )
-        operation PutSomething {
-            input: PutSomethingInput,
-            output: PutSomethingOutput
-        }
-
-
-.. _checksum-location-enum:
-
-Location enum
-=========================
-
-Following enums denote valid checksum locations:
-
-.. list-table::
-    :header-rows: 1
-    :widths: 10 10 80
-
-    * - Name
-      - Value
-      - Description
-    * - HEADER
-      - "header"
-      - Indicates header is supported as checksum location.
-    * - TRAILER
-      - "trailer"
-      - Indicates trailer is supported as checksum location.
+When `httpChecksum` trait is modeled along with
+:ref:`httpChecksumRequired trait <httpChecksumRequired-trait>`,
+service MUST accept a checksum value sent as per the trait's
+modeled request property, to satisfy checksum validation requirements
+for the operation's HTTP Request.
