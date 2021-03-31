@@ -1,4 +1,5 @@
 $version: "1.0"
+
 namespace aws.protocoltests.restjson
 
 use smithy.test#httpRequestTests
