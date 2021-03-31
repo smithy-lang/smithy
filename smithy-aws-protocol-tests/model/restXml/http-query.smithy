@@ -71,8 +71,6 @@ apply AllQueryStringTypes @httpRequestTests([
             "EnumList=Foo",
             "EnumList=Baz",
             "EnumList=Bar",
-            "QueryParamsStringKeyA=Foo",
-            "QueryParamsStringKeyB=Bar",
         ],
         params: {
             queryString: "Hello there",
@@ -93,9 +91,23 @@ apply AllQueryStringTypes @httpRequestTests([
             queryTimestampList: [1, 2, 3],
             queryEnum: "Foo",
             queryEnumList: ["Foo", "Baz", "Bar"],
+        }
+    },
+    {
+        id: "RestXmlQueryStringMap",
+        documentation: "Handles query string maps",
+        protocol: restXml,
+        method: "GET",
+        uri: "/AllQueryStringTypesInput",
+        body: "",
+        queryParams: [
+            "QueryParamsStringKeyA=Foo",
+            "QueryParamsStringKeyB=Bar",
+        ],
+        params: {
             queryParamsMapOfStrings: {
                 "QueryParamsStringKeyA": "Foo",
-                "QueryParamsStringKeyB": "Bar"
+                "QueryParamsStringKeyB": "Bar",
             },
         }
     }

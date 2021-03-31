@@ -29,6 +29,7 @@ operation AllQueryStringTypes {
 }
 
 apply AllQueryStringTypes @httpRequestTests([
+
     {
         id: "RestJsonAllQueryStringTypes",
         documentation: "Serializes query string parameters with all supported types",
@@ -71,8 +72,6 @@ apply AllQueryStringTypes @httpRequestTests([
             "EnumList=Foo",
             "EnumList=Baz",
             "EnumList=Bar",
-            "QueryParamsStringKeyA=Foo",
-            "QueryParamsStringKeyB=Bar",
         ],
         params: {
             queryString: "Hello there",
@@ -93,9 +92,23 @@ apply AllQueryStringTypes @httpRequestTests([
             queryTimestampList: [1, 2, 3],
             queryEnum: "Foo",
             queryEnumList: ["Foo", "Baz", "Bar"],
+        }
+    },
+    {
+        id: "RestJsonQueryStringMap",
+        documentation: "Handles query string maps",
+        protocol: restJson1,
+        method: "GET",
+        uri: "/AllQueryStringTypesInput",
+        body: "",
+        queryParams: [
+            "QueryParamsStringKeyA=Foo",
+            "QueryParamsStringKeyB=Bar",
+        ],
+        params: {
             queryParamsMapOfStrings: {
                 "QueryParamsStringKeyA": "Foo",
-                "QueryParamsStringKeyB": "Bar"
+                "QueryParamsStringKeyB": "Bar",
             },
         }
     }
