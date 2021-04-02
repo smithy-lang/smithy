@@ -31,3 +31,7 @@ dependencies {
 jmh {
     timeUnit = "us"
 }
+
+processJmhResources {
+    duplicatesStrategy = DuplicatesStrategy.WARN
+}
