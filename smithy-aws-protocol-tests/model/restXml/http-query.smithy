@@ -276,7 +276,7 @@ apply IgnoreQueryParamsInResponse @httpResponseTests([
         headers: {
             "Content-Type": "application/xml"
         },
-        body: "<IgnoreQueryParamsInResponseInputOutput><baz>bam</baz></IgnoreQueryParamsInResponseInputOutput>",
+        body: "<IgnoreQueryParamsInResponseOutput><baz>bam</baz></IgnoreQueryParamsInResponseOutput>",
         bodyMediaType: "application/xml",
         params: {
             baz: "bam"
