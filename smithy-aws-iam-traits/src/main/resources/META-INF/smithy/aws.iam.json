@@ -98,20 +98,20 @@
                 "smithy.api#private": {},
                 "smithy.api#documentation": "The IAM policy type of the value that will supplied for this context key",
                 "smithy.api#enum": [
-                    {"value": "ARN"},
-                    {"value": "ArrayOfARN"},
-                    {"value": "Binary"},
-                    {"value": "ArrayOfBinary"},
-                    {"value": "String"},
-                    {"value": "ArrayOfString"},
-                    {"value": "Numeric"},
-                    {"value": "ArrayOfNumeric"},
-                    {"value": "Date"},
-                    {"value": "ArrayOfDate"},
-                    {"value": "Bool"},
-                    {"value": "ArrayOfBool"},
-                    {"value": "IPAddress"},
-                    {"value": "ArrayOfIPAddress"}
+                    {"value": "ARN", "name": "ARN"},
+                    {"value": "ArrayOfARN", "name": "ARRAY_OF_ARN"},
+                    {"value": "Binary", "name": "BINARY"},
+                    {"value": "ArrayOfBinary", "name": "ARRAY_OF_BINARY"},
+                    {"value": "String", "name": "STRING"},
+                    {"value": "ArrayOfString", "name": "ARRAY_OF_STRING"},
+                    {"value": "Numeric", "name": "NUMERIC"},
+                    {"value": "ArrayOfNumeric", "name": "ARRAY_OF_NUMERIC"},
+                    {"value": "Date", "name": "DATE"},
+                    {"value": "ArrayOfDate", "name": "ARRAY_OF_DATE"},
+                    {"value": "Bool", "name": "BOOL"},
+                    {"value": "ArrayOfBool", "name": "ARRAY_OF_BOOL"},
+                    {"value": "IPAddress", "name": "IP_ADDRESS"},
+                    {"value": "ArrayOfIPAddress", "name": "ARRAY_OF_IP_ADDRESS"}
                 ]
             }
         }
