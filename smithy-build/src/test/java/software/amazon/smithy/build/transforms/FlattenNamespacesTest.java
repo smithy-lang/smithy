@@ -117,6 +117,33 @@ public class FlattenNamespacesTest {
     }
 
     @Test
+    public void supportsRenamesOnService() throws Exception {
+        Model model = Model.assembler()
+                .addImport(Paths.get(getClass().getResource("flatten-namespaces-with-renames.json").toURI()))
+                .assemble()
+                .unwrap();
+        ObjectNode config = Node.objectNode()
+                .withMember("namespace", Node.from("ns.qux"))
+                .withMember("service", Node.from("ns.foo#MyService"));
+        TransformContext context = TransformContext.builder()
+                .model(model)
+                .settings(config)
+                .build();
+        Model result = new FlattenNamespaces().transform(context);
+        List<String> ids = result.shapes()
+                .filter(FunctionalUtils.not(Prelude::isPreludeShape))
+                .map(Shape::getId)
+                .map(Object::toString)
+                .collect(Collectors.toList());
+
+        assertThat(ids, containsInAnyOrder("ns.qux#MyService", "ns.qux#GetSomething", "ns.qux#GetSomethingOutput",
+                "ns.qux#GetSomethingOutput$widget1", "ns.qux#GetSomethingOutput$fooWidget", "ns.qux#Widget",
+                "ns.qux#FooWidget"));
+        assertThat(ids, not(containsInAnyOrder("ns.foo#MyService", "ns.foo#GetSomething", "ns.foo#GetSomethingOutput",
+                "ns.bar#Widget", "foo.example#Widget")));
+    }
+
+    @Test
     public void throwsWhenServiceIsNotConfigured() {
         Model model = Model.assembler()
                 .addUnparsedModel("N/A", "{ \"smithy\": \"1.0\" }")

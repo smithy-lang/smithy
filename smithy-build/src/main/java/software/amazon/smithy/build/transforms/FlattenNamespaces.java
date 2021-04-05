@@ -164,7 +164,16 @@ public final class FlattenNamespaces extends ConfigurableProjectionTransformer<F
         return shapeWalker.walkShapes(service).stream()
                 .filter(FunctionalUtils.not(Prelude::isPreludeShape))
                 .map(shape -> Pair.of(shape.getId(), updateNamespace(shape.getId(), config.getNamespace())))
+                .map(pair -> applyServiceRenames(pair, service))
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+    }
+
+    private Pair<ShapeId, ShapeId> applyServiceRenames(Pair<ShapeId, ShapeId> pair, ServiceShape service) {
+        if (!service.getRename().containsKey(pair.getLeft())) {
+            return pair;
+        }
+        ShapeId newId = ShapeId.fromParts(pair.getRight().getNamespace(), service.getRename().get(pair.getLeft()));
+        return Pair.of(pair.getLeft(), newId);
     }
 
     private Set<ShapeId> getTaggedShapesToInclude(Set<String> tags, Model model) {
