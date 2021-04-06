@@ -894,9 +894,13 @@ namespace. Shapes not connected to a service will not be flattened.
         separate :ref:`service closures <service-closure>`.
 
 The following example will flatten the namespaces of the shapes connected to
-the ``ns.bar#MyService`` service into the target namespace, ``ns.foo``. Shapes
-tagged with ``baz`` or ``qux`` will also be flattened into the ``ns.foo``
-namespace, so long as they don't conflict with a shape within the :ref:`service closure <service-closure>`.
+the ``ns.bar#MyService`` service into the target namespace, ``ns.foo``. All
+shapes within :ref:`service closure <service-closure>` with be flattened into
+the target namespace, including shapes that have been renamed to disambiguate
+them through the service shape's ``rename`` property. Shapes tagged with
+``baz`` or ``qux`` will also be flattened into the ``ns.foo`` namespace, so
+long as they don't conflict with a shape within the
+:ref:`service closure <service-closure>`.
 
 .. tabs::
 
