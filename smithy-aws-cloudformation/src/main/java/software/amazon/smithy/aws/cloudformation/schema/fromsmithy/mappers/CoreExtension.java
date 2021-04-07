@@ -27,6 +27,7 @@ public final class CoreExtension implements Smithy2CfnExtension {
     @Override
     public List<CfnMapper> getCfnMappers() {
         return ListUtils.of(
+                new AdditionalPropertiesMapper(),
                 new DeprecatedMapper(),
                 new DocumentationMapper(),
                 new IdentifierMapper(),
