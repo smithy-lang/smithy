@@ -13,7 +13,8 @@
         "Another": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
   "properties": {

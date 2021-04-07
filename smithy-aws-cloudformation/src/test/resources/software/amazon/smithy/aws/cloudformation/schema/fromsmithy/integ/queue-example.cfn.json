@@ -11,7 +11,8 @@
         "DeadLetterTargetArn": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "TagMap": {
       "type": "object",
@@ -19,7 +20,8 @@
         ".+": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
   "properties": {

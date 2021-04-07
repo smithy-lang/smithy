@@ -8,7 +8,8 @@
         ".+": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ComplexProperty": {
       "type": "object",
@@ -16,7 +17,8 @@
         "AnotherProperty": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
   "properties": {
