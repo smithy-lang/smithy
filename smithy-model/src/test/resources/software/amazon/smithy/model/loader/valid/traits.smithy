@@ -134,3 +134,9 @@ apply E @deprecated
 
 @documentation("")
 string V
+
+@trait
+bigDecimal bDecimal
+
+@com.example#bDecimal(9223372036854775808)
+string W
