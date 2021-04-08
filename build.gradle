@@ -229,6 +229,14 @@ project.afterEvaluate {
     }
 }
 
+// Disable HTML doclint to work around heading tag sequence validation
+// inconsistencies between JDK15 and earlier Java versions.
+allprojects {
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:-html', '-quiet')
+    }
+}
+
 /*
  * Sonatype Staging Finalization
  * ====================================================
