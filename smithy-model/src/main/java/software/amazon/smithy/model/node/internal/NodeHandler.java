@@ -79,7 +79,12 @@ public final class NodeHandler extends JsonHandler<List<Node>, Map<StringNode, N
         if (string.contains(".")) {
             value = new NumberNode(new BigDecimal(string), location);
         } else {
-            value = new NumberNode(Long.parseLong(string), location);
+            try {
+                value = new NumberNode(Long.parseLong(string), location);
+            } catch (NumberFormatException e) {
+                value = new NumberNode(new BigDecimal(string), location);
+            }
+
         }
     }
 

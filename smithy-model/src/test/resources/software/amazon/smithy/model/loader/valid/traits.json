@@ -171,6 +171,18 @@
                 "smithy.api#documentation": ""
             }
         },
+        "com.example#W": {
+            "type": "string",
+            "traits": {
+                "com.example#bDecimal": 9223372036854775808
+            }
+        },
+        "com.example#bDecimal": {
+            "type": "bigDecimal",
+            "traits": {
+                "smithy.api#trait": {}
+            }
+        },
         "com.example#numeric": {
             "type": "integer",
             "traits": {

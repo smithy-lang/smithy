@@ -17,6 +17,7 @@ package software.amazon.smithy.model.loader;
 
 import static java.lang.String.format;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -721,10 +722,15 @@ final class IdlModelParser extends SimpleParser {
     NumberNode parseNumberNode() {
         SourceLocation location = currentLocation();
         String lexeme = ParserUtils.parseNumber(this);
+
         if (lexeme.contains("e") || lexeme.contains(".")) {
             return new NumberNode(Double.valueOf(lexeme), location);
         } else {
-            return new NumberNode(Long.parseLong(lexeme), location);
+            try {
+                return new NumberNode(Long.parseLong(lexeme), location);
+            } catch (NumberFormatException e) {
+                return new NumberNode(new BigDecimal(lexeme), location);
+            }
         }
     }
 
