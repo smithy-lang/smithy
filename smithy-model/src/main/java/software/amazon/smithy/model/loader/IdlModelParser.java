@@ -724,7 +724,11 @@ final class IdlModelParser extends SimpleParser {
         String lexeme = ParserUtils.parseNumber(this);
 
         if (lexeme.contains("e") || lexeme.contains(".")) {
-            return new NumberNode(Double.valueOf(lexeme), location);
+            double value = Double.parseDouble(lexeme);
+            if (Double.isFinite(value)) {
+                return new NumberNode(value, location);
+            }
+            return new NumberNode(new BigDecimal(lexeme), location);
         } else {
             try {
                 return new NumberNode(Long.parseLong(lexeme), location);
