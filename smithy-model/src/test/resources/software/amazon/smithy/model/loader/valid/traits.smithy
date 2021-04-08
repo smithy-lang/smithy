@@ -140,3 +140,6 @@ bigDecimal bDecimal
 
 @com.example#bDecimal(9223372036854775808)
 string W
+
+@com.example#bDecimal(1.7976931348623157E+309)
+string X

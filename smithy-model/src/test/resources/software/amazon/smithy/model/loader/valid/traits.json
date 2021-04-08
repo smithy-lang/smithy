@@ -177,6 +177,12 @@
                 "com.example#bDecimal": 9223372036854775808
             }
         },
+        "com.example#X": {
+            "type": "string",
+            "traits": {
+                "com.example#bDecimal": 1.7976931348623157E+309
+            }
+        },
         "com.example#bDecimal": {
             "type": "bigDecimal",
             "traits": {
