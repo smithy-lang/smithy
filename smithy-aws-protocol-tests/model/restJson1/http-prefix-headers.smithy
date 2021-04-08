@@ -63,7 +63,6 @@ apply HttpPrefixHeaders @httpResponseTests([
         documentation: "Adds headers by prefix",
         protocol: restJson1,
         code: 200,
-        body: "",
         headers: {
             "X-Foo": "Foo",
             "X-Foo-Abc": "Abc value",
@@ -100,7 +99,6 @@ apply HttpPrefixHeadersResponse @httpResponseTests([
         documentation: "(de)serializes all response headers",
         protocol: restJson1,
         code: 200,
-        body: "",
         headers: {
             "X-Foo": "Foo",
             "Hello": "Hello"

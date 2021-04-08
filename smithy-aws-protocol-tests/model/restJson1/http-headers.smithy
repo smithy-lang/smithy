@@ -133,7 +133,6 @@ apply InputAndOutputWithHeaders @httpResponseTests([
             "X-StringList": "a, b, c",
             "X-StringSet": "a, b, c"
         },
-        body: "",
         params: {
             headerString: "Hello",
             headerStringList: ["a", "b", "c"],
@@ -154,7 +153,6 @@ apply InputAndOutputWithHeaders @httpResponseTests([
             "X-Double": "1.1",
             "X-IntegerList": "1, 2, 3",
         },
-        body: "",
         params: {
             headerByte: 1,
             headerShort: 123,
@@ -175,7 +173,6 @@ apply InputAndOutputWithHeaders @httpResponseTests([
             "X-Boolean2": "false",
             "X-BooleanList": "true, false, true"
         },
-        body: "",
         params: {
             headerTrueBool: true,
             headerFalseBool: false,
@@ -190,7 +187,6 @@ apply InputAndOutputWithHeaders @httpResponseTests([
         headers: {
             "X-TimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
         },
-        body: "",
         params: {
             headerTimestampList: [1576540098, 1576540098]
         }
@@ -204,7 +200,6 @@ apply InputAndOutputWithHeaders @httpResponseTests([
             "X-Enum": "Foo",
             "X-EnumList": "Foo, Bar, Baz"
         },
-        body: "",
         params: {
             headerEnum: "Foo",
             headerEnumList: ["Foo", "Bar", "Baz"],
@@ -305,7 +300,6 @@ apply NullAndEmptyHeadersServer @httpResponseTests([
         protocol: restJson1,
         code: 200,
         forbidHeaders: ["X-A", "X-B", "X-C"],
-        body: "",
         params: {
             a: null,
             b: "",
@@ -377,7 +371,6 @@ apply TimestampFormatHeaders @httpResponseTests([
             "X-targetHttpDate": "Mon, 16 Dec 2019 23:48:18 GMT",
             "X-targetDateTime": "2019-12-16T23:48:18Z",
         },
-        body: "",
         params: {
             memberEpochSeconds: 1576540098,
             memberHttpDate: 1576540098,
@@ -450,7 +443,6 @@ apply MediaTypeHeader @httpResponseTests([
         headers: {
             "X-Json": "dHJ1ZQ=="
         },
-        body: "",
         params: {
             json: "true"
         }
