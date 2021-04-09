@@ -1575,7 +1575,7 @@ Selectors are defined by the following ABNF_ grammar.
     selector_expression                  :`selector_shape_types`
                                          :/ `selector_attr`
                                          :/ `selector_scoped_attr`
-                                         :/ `selector_function_args`
+                                         :/ `selector_function`
                                          :/ `selector_forward_undirected_neighbor`
                                          :/ `selector_reverse_undirected_neighbor`
                                          :/ `selector_forward_directed_neighbor`
