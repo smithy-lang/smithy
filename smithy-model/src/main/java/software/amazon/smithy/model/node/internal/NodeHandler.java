@@ -17,6 +17,7 @@ package software.amazon.smithy.model.node.internal;
 
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -76,13 +77,17 @@ public final class NodeHandler extends JsonHandler<List<Node>, Map<StringNode, N
 
     @Override
     void endNumber(String string, SourceLocation location) {
-        if (string.contains(".")) {
+        if (string.contains("e") || string.contains("E") || string.contains(".")) {
+            double doubleValue = Double.parseDouble(string);
+            if (Double.isFinite(doubleValue)) {
+                value = new NumberNode(doubleValue, location);
+            }
             value = new NumberNode(new BigDecimal(string), location);
         } else {
             try {
                 value = new NumberNode(Long.parseLong(string), location);
             } catch (NumberFormatException e) {
-                value = new NumberNode(new BigDecimal(string), location);
+                value = new NumberNode(new BigInteger(string), location);
             }
 
         }

@@ -143,3 +143,15 @@ string W
 
 @com.example#bDecimal(1.7976931348623157E+309)
 string X
+
+@com.example#bDecimal(2e+308)
+string Y
+
+@com.example#bDecimal(2E+308)
+string Z
+
+@trait
+bigInteger bInteger
+
+@com.example#bInteger(9223372036854775808)
+string ZA
