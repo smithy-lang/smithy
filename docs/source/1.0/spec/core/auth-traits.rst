@@ -238,7 +238,7 @@ the HTTP ``Authorization`` header:
 
     @httpApiKeyAuth(scheme: "ApiKey", name: "Authorization", in: "header")
     service WeatherService {
-        version: "2017-02-11",
+        version: "2017-02-11"
     }
 
 
