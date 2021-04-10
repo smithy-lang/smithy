@@ -1,0 +1,14 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "smithy.example#MyString": {
+            "type": "string"
+        },
+        "smithy.example#Foo": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#deprecated": {}
+            }
+        }
+    }
+}

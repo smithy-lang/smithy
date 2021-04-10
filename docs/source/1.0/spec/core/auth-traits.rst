@@ -63,7 +63,7 @@ and the hypothetical ``fooExample`` authentication scheme.
         @fooExample
         @httpBasicAuth
         service WeatherService {
-            version: "2017-02-11",
+            version: "2017-02-11"
         }
 
     .. code-tab:: json
@@ -101,7 +101,7 @@ can also support configuration settings.
     @authDefinition
     @trait(selector: "service")
     structure algorithmAuth {
-        algorithm: AlgorithmAuthAlgorithm,
+        algorithm: AlgorithmAuthAlgorithm
     }
 
     @private
@@ -110,7 +110,7 @@ can also support configuration settings.
 
     @algorithmAuth(algorithm: "SHA-2")
     service WeatherService {
-        version: "2017-02-11",
+        version: "2017-02-11"
     }
 
 
@@ -133,7 +133,7 @@ Value type
 
     @httpBasicAuth
     service WeatherService {
-        version: "2017-02-11",
+        version: "2017-02-11"
     }
 
 
@@ -156,7 +156,7 @@ Value type
 
     @httpDigestAuth
     service WeatherService {
-        version: "2017-02-11",
+        version: "2017-02-11"
     }
 
 
@@ -179,7 +179,7 @@ Value type
 
     @httpBearerAuth
     service WeatherService {
-        version: "2017-02-11",
+        version: "2017-02-11"
     }
 
 
@@ -228,7 +228,7 @@ HTTP header:
 
     @httpApiKeyAuth(name: "X-Api-Key", in: "header")
     service WeatherService {
-        version: "2017-02-11",
+        version: "2017-02-11"
     }
 
 The following example defines a service that uses an API key auth scheme through
@@ -264,7 +264,7 @@ and bound to the service is an operation that supports unauthenticated access.
 
     @httpDigestAuth
     service WeatherService {
-        version: "2017-02-11",
+        version: "2017-02-11"
         operations: [PingServer]
     }
 
@@ -321,7 +321,7 @@ to services and operations:
   * ``OperationA`` is not annotated with the ``auth`` trait and inherits all
     of the authentication scheme applied to the service.
 
-  * ``OperationB`` is annotated with the ``auth`` trait and defines an explicit 
+  * ``OperationB`` is annotated with the ``auth`` trait and defines an explicit
     list of authentication schemes.
 
 * ``ServiceWithAuthTrait`` is annotated with the ``auth`` trait and binds two
@@ -331,7 +331,7 @@ to services and operations:
     of the authentication schemes applied via the ``auth`` trait on the
     service.
 
-  * ``OperationD`` is annotated with the ``auth`` trait and defines an explicit 
+  * ``OperationD`` is annotated with the ``auth`` trait and defines an explicit
     list of authentication schemes.
 
 .. tabs::
@@ -342,9 +342,9 @@ to services and operations:
         @httpDigestAuth
         @httpBearerAuth
         service ServiceWithNoAuthTrait {
-            version: "2020-01-29",
+            version: "2020-01-29"
             operations: [
-                OperationA,
+                OperationA
                 OperationB
             ]
         }
@@ -365,9 +365,9 @@ to services and operations:
         @httpBearerAuth
         @auth([httpBasicAuth, httpDigestAuth])
         service ServiceWithAuthTrait {
-            version: "2020-01-29",
+            version: "2020-01-29"
             operations: [
-                OperationC,
+                OperationC
                 OperationD
             ]
         }
