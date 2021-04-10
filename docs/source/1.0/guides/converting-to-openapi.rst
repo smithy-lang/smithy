@@ -828,8 +828,8 @@ For example, given the following Smithy model:
     @restJson1
     @httpApiKeyAuth(name: "x-api-key", in: "header")
     service Foo {
-        version: "2006-03-01",
-        operations: [ExampleOperation],
+        version: "2006-03-01"
+        operations: [ExampleOperation]
     }
 
     @http(method: "GET", uri: "/")
@@ -1162,12 +1162,13 @@ The following Smithy model:
     @sigv4(name: "service")
     @authorizer("foo")
     @authorizers(
-        foo: {scheme: sigv4, type: "aws", uri: "arn:foo"},
-        baz: {scheme: sigv4, type: "aws", uri: "arn:foo"})
+        foo: {scheme: sigv4, type: "aws", uri: "arn:foo"}
+        baz: {scheme: sigv4, type: "aws", uri: "arn:foo"}
+    )
     service Example {
-      version: "2019-06-17",
-      operations: [OperationA, OperationB],
-      resources: [ResourceA, ResourceB],
+      version: "2019-06-17"
+      operations: [OperationA, OperationB]
+      resources: [ResourceA, ResourceB]
     }
 
     // Inherits the authorizer of the service
@@ -1410,8 +1411,8 @@ The following Smithy model enables API Gateway's API key usage plans on the
     @authorizer("api_key")
     @authorizers(api_key: {scheme: "smithy.api#httpApiKeyAuth"})
     service Example {
-      version: "2019-06-17",
-      operations: [OperationA],
+      version: "2019-06-17"
+      operations: [OperationA]
     }
 
     operation OperationA {}

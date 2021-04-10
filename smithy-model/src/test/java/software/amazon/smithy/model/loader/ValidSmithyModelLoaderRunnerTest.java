@@ -75,11 +75,13 @@ public class ValidSmithyModelLoaderRunnerTest {
         }
 
         if (!result.equals(expected)) {
+            ModelSerializer serializer = ModelSerializer.builder().build();
             throw new IllegalStateException(String.format(
-                    "Result did not match the expected model for %s.\nResult:\n\n%s\n\nExpected:\n\n%s",
+                    "Result did not match the expected model for %s.\nResult:\n\n%s\n\nExpected:\n\n%s\r\nDiff: %s",
                     file,
                     formatModel(result),
-                    formatModel(expected)));
+                    formatModel(expected),
+                    Node.diff(serializer.serialize(result), serializer.serialize(expected))));
         }
     }
 
