@@ -70,26 +70,26 @@ The following example defines an operation that uses HTTP bindings:
             // Sent in the URI label named "key".
             @required
             @httpLabel
-            key: ObjectKey,
+            key: ObjectKey
 
             // Sent in the URI label named "bucketName".
             @required
             @httpLabel
-            bucketName: String,
+            bucketName: String
 
             // Sent in the X-Foo header
             @httpHeader("X-Foo")
-            foo: String,
+            foo: String
 
             // Sent in the query string as paramName
             @httpQuery("paramName")
-            someValue: String,
+            someValue: String
 
             // Sent in the body
-            data: MyBlob,
+            data: MyBlob
 
             // Sent in the body
-            additional: String,
+            additional: String
         }
 
 
@@ -631,7 +631,7 @@ The following example defines an operation that send an HTTP label named
         @readonly
         @http(method: "GET", uri: "/{foo}")
         operation GetStatus {
-            input: GetStatusInput,
+            input: GetStatusInput
             output: GetStatusOutput
         }
 
@@ -718,16 +718,16 @@ data in a response:
         @readonly
         @http(method: "GET", uri: "/random-binary-data")
         operation GetRandomBinaryData {
-            output: GetRandomBinaryDataOutput,
+            output: GetRandomBinaryDataOutput
         }
 
         structure GetRandomBinaryDataOutput {
             @required
             @httpHeader("Content-Type")
-            contentType: String,
+            contentType: String
 
             @httpPayload
-            content: Blob,
+            content: Blob
         }
 
 .. _http-protocol-document-payloads:
@@ -811,7 +811,7 @@ Given the following Smithy model:
         }
 
         map StringMap {
-            key: String,
+            key: String
             value: String
         }
 
@@ -882,19 +882,19 @@ request:
         @readonly
         @http(method: "GET", uri: "/things")
         operation ListThings {
-            input: ListThingsInput,
+            input: ListThingsInput
             output: ListThingsOutput, // omitted for brevity
         }
 
         structure ListThingsInput {
             @httpQuery("color")
-            color: String,
+            color: String
 
             @httpQuery("shape")
-            shape: String,
+            shape: String
 
             @httpQuery("size")
-            size: Integer,
+            size: Integer
         }
 
 .. rubric:: Serialization rules
@@ -979,17 +979,17 @@ target input map as query string parameters in an HTTP request:
         @readonly
         @http(method: "GET", uri: "/things")
         operation ListThings {
-            input: ListThingsInput,
+            input: ListThingsInput
             output: ListThingsOutput, // omitted for brevity
         }
 
         structure ListThingsInput {
             @httpQueryParams()
-            myParams: MapOfStrings,
+            myParams: MapOfStrings
         }
 
         map MapOfStrings {
-            key: String,
+            key: String
             value: String
         }
 
@@ -1228,16 +1228,16 @@ and HTTP bindings:
 
         structure PublishMessagesInput {
             @httpPayload
-            messages: MessageStream,
+            messages: MessageStream
         }
 
         @streaming
         union MessageStream {
-            message: Message,
+            message: Message
         }
 
         structure Message {
-            message: String,
+            message: String
         }
 
     .. code-tab:: json
@@ -1306,11 +1306,11 @@ marked with the ``httpPayload`` trait:
 
     @streaming
     union MessageStream {
-        message: Message,
+        message: Message
     }
 
     structure Message {
-        message: String,
+        message: String
     }
 
 

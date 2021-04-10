@@ -52,7 +52,7 @@ member if and only if the member is not explicitly provided.
 
         structure AllocateWidgetInput {
             @idempotencyToken
-            clientToken: String,
+            clientToken: String
         }
 
 
@@ -80,7 +80,7 @@ Conflicts with
 
         @idempotent
         operation DeleteSomething {
-            input: DeleteSomethingInput,
+            input: DeleteSomethingInput
             output: DeleteSomethingOutput
         }
 
@@ -112,7 +112,7 @@ Conflicts with
 
         @readonly
         operation GetSomething {
-            input: GetSomethingInput,
+            input: GetSomethingInput
             output: GetSomethingOutput
         }
 
@@ -249,20 +249,20 @@ explicitly on the operation.
         @paginated(inputToken: "nextToken", outputToken: "nextToken",
                    pageSize: "maxResults", items: "foos")
         operation GetFoos {
-            input: GetFoosInput,
+            input: GetFoosInput
             output: GetFoosOutput
         }
 
         structure GetFoosInput {
-            maxResults: Integer,
+            maxResults: Integer
             nextToken: String
         }
 
         structure GetFoosOutput {
-            nextToken: String,
+            nextToken: String
 
             @required
-            foos: StringList,
+            foos: StringList
         }
 
         list StringList {
@@ -343,13 +343,13 @@ settings from a service.
         @paginated(inputToken: "nextToken", outputToken: "nextToken",
                    pageSize: "maxResults")
         service Example {
-            version: "2019-06-27",
-            operations: [GetFoos],
+            version: "2019-06-27"
+            operations: [GetFoos]
         }
 
         @readonly @paginated(items: "foos")
         operation GetFoos {
-            input: GetFoosInput,
+            input: GetFoosInput
             output: GetFoosOutput
         }
 
@@ -410,12 +410,12 @@ wrapper where the output token and items are referenced by paths.
         @paginated(inputToken: "nextToken", outputToken: "result.nextToken",
                    pageSize: "maxResults", items: "result.foos")
         operation GetFoos {
-            input: GetFoosInput,
+            input: GetFoosInput
             output: GetFoosOutput
         }
 
         structure GetFoosInput {
-            maxResults: Integer,
+            maxResults: Integer
             nextToken: String
         }
 
@@ -425,10 +425,10 @@ wrapper where the output token and items are referenced by paths.
         }
 
         structure ResultWrapper {
-            nextToken: String,
+            nextToken: String
 
             @required
-            foos: StringList,
+            foos: StringList
         }
 
         list StringList {
@@ -658,7 +658,7 @@ See
 
         @httpChecksumRequired
         operation PutSomething {
-            input: PutSomethingInput,
+            input: PutSomethingInput
             output: PutSomethingOutput
         }
 

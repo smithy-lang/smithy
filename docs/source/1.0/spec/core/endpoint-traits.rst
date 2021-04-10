@@ -62,7 +62,7 @@ The following example defines an operation that uses a custom endpoint:
         @readonly
         @endpoint(hostPrefix: "{foo}.data.")
         operation GetStatus {
-            input: GetStatusInput,
+            input: GetStatusInput
             output: GetStatusOutput
         }
 
@@ -128,7 +128,7 @@ Given the following operation,
         @readonly
         @endpoint(hostPrefix: "{foo}.data.")
         operation GetStatus {
-            input: GetStatusInput,
+            input: GetStatusInput
             output: GetStatusOutput
         }
 
@@ -193,7 +193,7 @@ Given the following operation,
         @readonly
         @endpoint(hostPrefix: "{foo}-{bar}.data.")
         operation GetStatus {
-            input: GetStatusInput,
+            input: GetStatusInput
             output: GetStatusOutput
         }
 
@@ -268,7 +268,7 @@ invalid because the ``{foo}`` and ``{bar}`` labels are adjacent:
         @readonly
         @endpoint(hostPrefix: "{foo}{bar}.data.")
         operation GetStatus {
-            input: GetStatusInput,
+            input: GetStatusInput
             output: GetStatusOutput
         }
 
@@ -329,7 +329,7 @@ Given the following operation,
         @endpoint(hostPrefix: "{foo}.data.")
         @http(method: "GET", uri: "/status")
         operation GetStatus {
-            input: GetStatusInput,
+            input: GetStatusInput
             output: GetStatusOutput
         }
 
@@ -425,7 +425,7 @@ to an operation marked with the :ref:`endpoint-trait` will be ignored.
         @readonly
         @endpoint(hostPrefix: "{foo}.data.")
         operation GetStatus {
-            input: GetStatusInput,
+            input: GetStatusInput
             output: GetStatusOutput
         }
 
