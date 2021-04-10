@@ -254,13 +254,13 @@ Example:
 
     metadata validators = [{
         id: "FooReservedWords"
-        name: "ReservedWords",
+        name: "ReservedWords"
         configuration: {
             reserved: [
                 {
-                    words: ["Codename"],
-                    reason: "This is the internal project name.",
-                },
+                    words: ["Codename"]
+                    reason: "This is the internal project name."
+                }
             ]
         }
     }]
@@ -408,13 +408,13 @@ Example:
     $version: "1.0"
 
     metadata validators = [{
-        name: "StandardOperationVerb",
+        name: "StandardOperationVerb"
         configuration: {
-            verbs: ["Register", "Deregister", "Associate"],
-            prefixes: ["Batch"],
+            verbs: ["Register", "Deregister", "Associate"]
+            prefixes: ["Batch"]
             suggestAlternatives: {
-                "Make": ["Create"],
-                "Transition": ["Update"],
+                "Make": ["Create"]
+                "Transition": ["Update"]
             }
         }
     }]
@@ -757,7 +757,7 @@ example warns each time the word "meow" appears in documentation:
 
     metadata validators = [
         {
-            name: "ForbiddenDocumentation",
+            name: "ForbiddenDocumentation"
             configuration: {
                 forbid: ["meow"]
             }
@@ -776,9 +776,9 @@ example warns each time the word "meow" appears in documentation:
 
         metadata validators = [
             {
-                name: "EmitEachSelector",
-                id: "ForbiddenDocumentation",
-                message: "Documentation uses forbidden text",
+                name: "EmitEachSelector"
+                id: "ForbiddenDocumentation"
+                message: "Documentation uses forbidden text"
                 configuration: {
                     selector: "[trait|documentation*='meow']"
                 }
