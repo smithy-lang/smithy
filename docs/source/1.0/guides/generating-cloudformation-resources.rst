@@ -118,8 +118,8 @@ generate one Resource Schema with the ``typeName`` of ``AWS:Queues:Queue``.
 
     @service(sdkId: "Queues", cloudFormationName: "Queues")
     service QueueService {
-        version: "2020-07-02",
-        resources: [Queue],
+        version: "2020-07-02"
+        resources: [Queue]
     }
 
 .. important::

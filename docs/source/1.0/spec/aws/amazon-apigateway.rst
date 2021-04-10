@@ -201,14 +201,15 @@ An *authorizer* definition is a structure that supports the following members:
         @authorizer("arbitrary-name")
         @authorizers(
             "arbitrary-name": {
-                scheme: sigv4,
-                type: "request",
-                uri: "arn:foo:baz",
-                credentials: "arn:foo:bar",
-                identitySource: "mapping.expression",
-                identityValidationExpression: "[A-Z]+",
+                scheme: sigv4
+                type: "request"
+                uri: "arn:foo:baz"
+                credentials: "arn:foo:bar"
+                identitySource: "mapping.expression"
+                identityValidationExpression: "[A-Z]+"
                 resultTtlInSeconds: 100
-            })
+            }
+        )
         service Weather {
             version: "2018-03-17"
         }

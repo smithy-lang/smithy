@@ -55,7 +55,7 @@ Trait value
         @sigv4(name: "foobaz")
         @restJson1
         service FooBaz {
-            version: "2018-03-17",
+            version: "2018-03-17"
         }
 
     .. code-tab:: json
@@ -111,7 +111,7 @@ operation MUST NOT be used as part of the request signature calculation:
 
         @unsignedPayload
         operation PutThings {
-            input: PutThingsInput,
+            input: PutThingsInput
             output: PutThingsOutput
         }
 
@@ -185,7 +185,7 @@ Trait value
         providerArns: ["arn:aws:cognito-idp:us-east-1:123:userpool/123"])
     @restJson1
     service FooBaz {
-        version: "2018-03-17",
+        version: "2018-03-17"
     }
 
 
