@@ -170,16 +170,16 @@ For example, given the following:
 
     @input
     structure QueryStructuresInput {
-        foo: String,
+        foo: String
 
         @xmlName("Custom")
-        bar: String,
+        bar: String
 
-        baz: MyStructure,
+        baz: MyStructure
     }
 
     structure MyStructure {
-        temp: String,
+        temp: String
     }
 
 The ``application/x-www-form-urlencoded`` serialization is:
@@ -209,18 +209,18 @@ For example, given the following:
 
     @input
     structure QueryListsInput {
-        ListArg: StringList,
-        ComplexListArg: GreetingList,
+        ListArg: StringList
+        ComplexListArg: GreetingList
 
         @xmlFlattened
-        FlattenedListArg: StringList,
+        FlattenedListArg: StringList
 
-        ListArgWithXmlNameMember: ListWithXmlName,
+        ListArgWithXmlNameMember: ListWithXmlName
 
         // Notice that the xmlName on the targeted list member is ignored.
         @xmlFlattened
         @xmlName("Hi")
-        FlattenedListArgWithXmlName: ListWithXmlName,
+        FlattenedListArgWithXmlName: ListWithXmlName
     }
 
     list ListWithXmlName {
@@ -237,7 +237,7 @@ For example, given the following:
     }
 
     structure GreetingStruct {
-        hi: String,
+        hi: String
     }
 
 The ``application/x-www-form-urlencoded`` serialization is:
@@ -274,36 +274,36 @@ For example, given the following:
 
     @input
     structure QueryMapsInput {
-        MapArg: StringMap,
+        MapArg: StringMap
 
         @xmlName("reNamed")
-        RenamedMapArg: StringMap,
+        RenamedMapArg: StringMap
 
-        ComplexMapArg: ComplexMap,
+        ComplexMapArg: ComplexMap
 
-        MapWithXmlMemberName: MapWithXmlName,
+        MapWithXmlMemberName: MapWithXmlName
     }
 
     map StringMap {
-        key: String,
+        key: String
         value: String
     }
 
     map ComplexMap {
-        key: String,
-        value: GreetingStruct,
+        key: String
+        value: GreetingStruct
     }
 
     map MapWithXmlName {
         @xmlName("K")
-        key: String,
+        key: String
 
         @xmlName("V")
         value: String
     }
 
     structure GreetingStruct {
-        hi: String,
+        hi: String
     }
 
 The ``application/x-www-form-urlencoded`` serialization is:
