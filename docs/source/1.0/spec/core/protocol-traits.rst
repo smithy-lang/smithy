@@ -76,7 +76,7 @@ The following example defines a service that supports both the hypothetical
         @jsonExample
         @xmlExample
         service WeatherService {
-            version: "2017-02-11",
+            version: "2017-02-11"
         }
 
     .. code-tab:: json
@@ -129,7 +129,7 @@ support configuration settings.
 
     @configurableExample(version: "1.0")
     service WeatherService {
-        version: "2017-02-11",
+        version: "2017-02-11"
     }
 
 
@@ -157,9 +157,9 @@ Given the following structure definition,
 
         structure MyStructure {
             @jsonName("Foo")
-            foo: String,
+            foo: String
 
-            bar: String,
+            bar: String
         }
 
     .. code-tab:: json
