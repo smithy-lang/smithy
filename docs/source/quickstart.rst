@@ -142,14 +142,14 @@ identifiers, operations, and any number of child resources.
 
     /// Provides weather forecasts.
     service Weather {
-        version: "2006-03-01",
+        version: "2006-03-01"
         resources: [City]
     }
 
     resource City {
-        identifiers: { cityId: CityId },
-        read: GetCity,
-        list: ListCities,
+        identifiers: { cityId: CityId }
+        read: GetCity
+        list: ListCities
     }
 
     // "pattern" is a trait.
@@ -172,15 +172,15 @@ Each ``City`` has a single ``Forecast``. This can be defined by adding the
 .. code-block:: smithy
 
     resource City {
-        identifiers: { cityId: CityId },
-        read: GetCity,
-        list: ListCities,
-        resources: [Forecast],
+        identifiers: { cityId: CityId }
+        read: GetCity
+        list: ListCities
+        resources: [Forecast]
     }
 
     resource Forecast {
-        identifiers: { cityId: CityId },
-        read: GetForecast,
+        identifiers: { cityId: CityId }
+        read: GetForecast
     }
 
 Child resources must define the exact same identifiers property of their
@@ -215,8 +215,8 @@ Let's define the operation used to "read" a ``City``.
 
     @readonly
     operation GetCity {
-        input: GetCityInput,
-        output: GetCityOutput,
+        input: GetCityInput
+        output: GetCityOutput
         errors: [NoSuchResource]
     }
 
@@ -233,18 +233,18 @@ Let's define the operation used to "read" a ``City``.
         // "required" is used on output to indicate if the service
         // will always provide a value for the member.
         @required
-        name: String,
+        name: String
 
         @required
-        coordinates: CityCoordinates,
+        coordinates: CityCoordinates
     }
 
     structure CityCoordinates {
         @required
-        latitude: Float,
+        latitude: Float
 
         @required
-        longitude: Float,
+        longitude: Float
     }
 
     // "error" is a trait that is used to specialize
@@ -261,7 +261,7 @@ And define the operation used to "read" a ``Forecast``.
 
     @readonly
     operation GetForecast {
-        input: GetForecastInput,
+        input: GetForecastInput
         output: GetForecastOutput
     }
 
@@ -270,7 +270,7 @@ And define the operation used to "read" a ``Forecast``.
     @input
     structure GetForecastInput {
         @required
-        cityId: CityId,
+        cityId: CityId
     }
 
     @output
@@ -301,10 +301,13 @@ cities, so there's no way we could provide a ``City`` identifier.
 .. code-block:: smithy
 
     /// Provides weather forecasts.
-    @paginated(inputToken: "nextToken", outputToken: "nextToken",
-               pageSize: "pageSize")
+    @paginated(
+        inputToken: "nextToken"
+        outputToken: "nextToken"
+        pageSize: "pageSize"
+    )
     service Weather {
-        version: "2006-03-01",
+        version: "2006-03-01"
         resources: [City]
     }
 
@@ -314,22 +317,22 @@ cities, so there's no way we could provide a ``City`` identifier.
     @paginated(items: "items")
     @readonly
     operation ListCities {
-        input: ListCitiesInput,
+        input: ListCitiesInput
         output: ListCitiesOutput
     }
 
     @input
     structure ListCitiesInput {
-        nextToken: String,
+        nextToken: String
         pageSize: Integer
     }
 
     @output
     structure ListCitiesOutput {
-        nextToken: String,
+        nextToken: String
 
         @required
-        items: CitySummaries,
+        items: CitySummaries
     }
 
     // CitySummaries is a list of CitySummary structures.
@@ -341,10 +344,10 @@ cities, so there's no way we could provide a ``City`` identifier.
     @references([{resource: City}])
     structure CitySummary {
         @required
-        cityId: CityId,
+        cityId: CityId
 
         @required
-        name: String,
+        name: String
     }
 
 The ``ListCities`` operation is :ref:`paginated <paginated-trait>`, meaning
@@ -385,14 +388,14 @@ service.
     @paginated(inputToken: "nextToken", outputToken: "nextToken",
                pageSize: "pageSize")
     service Weather {
-        version: "2006-03-01",
-        resources: [City],
+        version: "2006-03-01"
+        resources: [City]
         operations: [GetCurrentTime]
     }
 
     @readonly
     operation GetCurrentTime {
-        input: GetCurrentTimeInput,
+        input: GetCurrentTimeInput
         output: GetCurrentTimeOutput
     }
 
@@ -522,24 +525,27 @@ Finally, the complete ``weather.smithy`` model should look like:
         namespace example.weather
 
         /// Provides weather forecasts.
-        @paginated(inputToken: "nextToken", outputToken: "nextToken",
-                   pageSize: "pageSize")
+        @paginated(
+            inputToken: "nextToken"
+            outputToken: "nextToken"
+            pageSize: "pageSize"
+        )
         service Weather {
-            version: "2006-03-01",
-            resources: [City],
+            version: "2006-03-01"
+            resources: [City]
             operations: [GetCurrentTime]
         }
 
         resource City {
-            identifiers: { cityId: CityId },
-            read: GetCity,
-            list: ListCities,
-            resources: [Forecast],
+            identifiers: { cityId: CityId }
+            read: GetCity
+            list: ListCities
+            resources: [Forecast]
         }
 
         resource Forecast {
-            identifiers: { cityId: CityId },
-            read: GetForecast,
+            identifiers: { cityId: CityId }
+            read: GetForecast
         }
 
         // "pattern" is a trait.
@@ -548,8 +554,8 @@ Finally, the complete ``weather.smithy`` model should look like:
 
         @readonly
         operation GetCity {
-            input: GetCityInput,
-            output: GetCityOutput,
+            input: GetCityInput
+            output: GetCityOutput
             errors: [NoSuchResource]
         }
 
@@ -566,19 +572,19 @@ Finally, the complete ``weather.smithy`` model should look like:
             // "required" is used on output to indicate if the service
             // will always provide a value for the member.
             @required
-            name: String,
+            name: String
 
             @required
-            coordinates: CityCoordinates,
+            coordinates: CityCoordinates
         }
 
         // This structure is nested within GetCityOutput.
         structure CityCoordinates {
             @required
-            latitude: Float,
+            latitude: Float
 
             @required
-            longitude: Float,
+            longitude: Float
         }
 
         // "error" is a trait that is used to specialize
@@ -594,22 +600,22 @@ Finally, the complete ``weather.smithy`` model should look like:
         @readonly
         @paginated(items: "items")
         operation ListCities {
-            input: ListCitiesInput,
+            input: ListCitiesInput
             output: ListCitiesOutput
         }
 
         @input
         structure ListCitiesInput {
-            nextToken: String,
+            nextToken: String
             pageSize: Integer
         }
 
         @output
         structure ListCitiesOutput {
-            nextToken: String,
+            nextToken: String
 
             @required
-            items: CitySummaries,
+            items: CitySummaries
         }
 
         // CitySummaries is a list of CitySummary structures.
@@ -621,10 +627,10 @@ Finally, the complete ``weather.smithy`` model should look like:
         @references([{resource: City}])
         structure CitySummary {
             @required
-            cityId: CityId,
+            cityId: CityId
 
             @required
-            name: String,
+            name: String
         }
 
         @readonly
@@ -644,7 +650,7 @@ Finally, the complete ``weather.smithy`` model should look like:
 
         @readonly
         operation GetForecast {
-            input: GetForecastInput,
+            input: GetForecastInput
             output: GetForecastOutput
         }
 
@@ -653,7 +659,7 @@ Finally, the complete ``weather.smithy`` model should look like:
         @input
         structure GetForecastInput {
             @required
-            cityId: CityId,
+            cityId: CityId
         }
 
         @output
@@ -680,6 +686,7 @@ Finally, the complete ``weather.smithy`` model should look like:
                         }
                     ],
                     "traits": {
+                        "smithy.api#documentation": "Provides weather forecasts.",
                         "smithy.api#paginated": {
                             "inputToken": "nextToken",
                             "outputToken": "nextToken",
@@ -712,13 +719,13 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "latitude": {
                             "target": "smithy.api#Float",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         },
                         "longitude": {
                             "target": "smithy.api#Float",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         }
                     }
@@ -741,20 +748,20 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "cityId": {
                             "target": "example.weather#CityId",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         },
                         "name": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         }
                     },
                     "traits": {
                         "smithy.api#references": [
                             {
-                                "resource": "City"
+                                "resource": "example.weather#City"
                             }
                         ]
                     }
@@ -784,7 +791,7 @@ Finally, the complete ``weather.smithy`` model should look like:
                         }
                     ],
                     "traits": {
-                        "smithy.api#readonly": true
+                        "smithy.api#readonly": {}
                     }
                 },
                 "example.weather#GetCityInput": {
@@ -793,7 +800,7 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "cityId": {
                             "target": "example.weather#CityId",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         }
                     },
@@ -804,16 +811,16 @@ Finally, the complete ``weather.smithy`` model should look like:
                 "example.weather#GetCityOutput": {
                     "type": "structure",
                     "members": {
-                        "coordinates": {
-                            "target": "example.weather#CityCoordinates",
-                            "traits": {
-                                "smithy.api#required": true
-                            }
-                        },
                         "name": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
+                            }
+                        },
+                        "coordinates": {
+                            "target": "example.weather#CityCoordinates",
+                            "traits": {
+                                "smithy.api#required": {}
                             }
                         }
                     },
@@ -830,7 +837,7 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "target": "example.weather#GetCurrentTimeOutput"
                     },
                     "traits": {
-                        "smithy.api#readonly": true
+                        "smithy.api#readonly": {}
                     }
                 },
                 "example.weather#GetCurrentTimeInput": {
@@ -845,7 +852,7 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "time": {
                             "target": "smithy.api#Timestamp",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         }
                     },
@@ -862,7 +869,7 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "target": "example.weather#GetForecastOutput"
                     },
                     "traits": {
-                        "smithy.api#readonly": true
+                        "smithy.api#readonly": {}
                     }
                 },
                 "example.weather#GetForecastInput": {
@@ -871,7 +878,7 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "cityId": {
                             "target": "example.weather#CityId",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         }
                     },
@@ -902,7 +909,7 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "smithy.api#paginated": {
                             "items": "items"
                         },
-                        "smithy.api#readonly": true
+                        "smithy.api#readonly": {}
                     }
                 },
                 "example.weather#ListCitiesInput": {
@@ -922,14 +929,14 @@ Finally, the complete ``weather.smithy`` model should look like:
                 "example.weather#ListCitiesOutput": {
                     "type": "structure",
                     "members": {
+                        "nextToken": {
+                            "target": "smithy.api#String"
+                        },
                         "items": {
                             "target": "example.weather#CitySummaries",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
-                        },
-                        "nextToken": {
-                            "target": "smithy.api#String"
                         }
                     },
                     "traits": {
@@ -942,7 +949,7 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "resourceType": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         }
                     },
