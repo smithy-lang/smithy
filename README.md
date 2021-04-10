@@ -19,16 +19,16 @@ shapes.
 namespace example.weather
 
 service Weather {
-    version: "2006-03-01",
-    resources: [City],
+    version: "2006-03-01"
+    resources: [City]
     operations: [GetCurrentTime]
 }
 
 resource City {
-    identifiers: { cityId: CityId },
-    read: GetCity,
-    list: ListCities,
-    resources: [Forecast],
+    identifiers: { cityId: CityId }
+    read: GetCity
+    list: ListCities
+    resources: [Forecast]
 }
 
 // See the full example at https://awslabs.github.io/smithy/quickstart.html#complete-example

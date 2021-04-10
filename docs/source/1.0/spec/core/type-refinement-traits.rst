@@ -132,7 +132,7 @@ in Java).
         @httpError(429)
         structure ThrottlingError {
             @required
-            message: String,
+            message: String
         }
 
 
@@ -188,7 +188,7 @@ The following example defines a :ref:`map <map>` shape that MAY contain
 
         @sparse
         map SparseMap {
-            key: String,
+            key: String
             value: String
         }
 

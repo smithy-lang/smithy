@@ -105,29 +105,15 @@ weather service.
 ``Weather`` is a :ref:`service` shape that is defined inside of a
 :ref:`namespace <namespaces>`.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    namespace example.weather
 
-        namespace example.weather
-
-        /// Provides weather forecasts.
-        /// Triple slash comments attach documentation to shapes.
-        service Weather {
-            version: "2006-03-01"
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "example.weather#Weather": {
-                    "type": "service",
-                    "version": "2006-03-01"
-                }
-            }
-        }
+    /// Provides weather forecasts.
+    /// Triple slash comments attach documentation to shapes.
+    service Weather {
+        version: "2006-03-01"
+    }
 
 .. admonition:: What's that syntax?
     :class: note
@@ -150,64 +136,25 @@ Defining resources
 A resource is contained within a service or another resource. Resources have
 identifiers, operations, and any number of child resources.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    namespace example.weather
 
-        namespace example.weather
+    /// Provides weather forecasts.
+    service Weather {
+        version: "2006-03-01"
+        resources: [City]
+    }
 
-        /// Provides weather forecasts.
-        service Weather {
-            version: "2006-03-01",
-            resources: [City]
-        }
+    resource City {
+        identifiers: { cityId: CityId }
+        read: GetCity
+        list: ListCities
+    }
 
-        resource City {
-            identifiers: { cityId: CityId },
-            read: GetCity,
-            list: ListCities,
-        }
-
-        // "pattern" is a trait.
-        @pattern("^[A-Za-z0-9 ]+$")
-        string CityId
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "example.weather#Weather": {
-                    "type": "service",
-                    "version": "2006-03-01",
-                    "resources": [
-                        {
-                            "target": "example.weather#City"
-                        }
-                    ]
-                },
-                "example.weather#City": {
-                    "type": "resource",
-                    "identifiers": {
-                        "cityId": {
-                            "target": "example.weather#CityId"
-                        }
-                    },
-                    "read": {
-                        "target": "example.weather#GetCity"
-                    },
-                    "list": {
-                        "target": "example.weather#ListCities"
-                    }
-                },
-                "example.weather#CityId": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.api#pattern": "^[A-Za-z0-9 ]+$"
-                    }
-                }
-            }
-        }
+    // "pattern" is a trait.
+    @pattern("^[A-Za-z0-9 ]+$")
+    string CityId
 
 Because the ``Weather`` service contains many cities, the ``City`` resource
 defines an :ref:`identifier <resource-identifiers>`. *Identifiers* are used
@@ -222,59 +169,19 @@ identity of the resource.
 Each ``City`` has a single ``Forecast``. This can be defined by adding the
 ``Forecast`` to the ``resources`` property of the ``City``.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    resource City {
+        identifiers: { cityId: CityId }
+        read: GetCity
+        list: ListCities
+        resources: [Forecast]
+    }
 
-        resource City {
-            identifiers: { cityId: CityId },
-            read: GetCity,
-            list: ListCities,
-            resources: [Forecast],
-        }
-
-        resource Forecast {
-            identifiers: { cityId: CityId },
-            read: GetForecast,
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "example.weather#City": {
-                    "type": "resource",
-                    "identifiers": {
-                        "cityId": {
-                            "target": "example.weather#CityId"
-                        }
-                    },
-                    "read": {
-                        "target": "example.weather#GetCity"
-                    },
-                    "list": {
-                        "target": "example.weather#ListCities"
-                    },
-                    "resources": [
-                        {
-                            "target": "example.weather#Forecast"
-                        }
-                    ]
-                },
-                "example.weather#Forecast": {
-                    "type": "resource",
-                    "identifiers": {
-                        "cityId": {
-                            "target": "example.weather#CityId"
-                        }
-                    },
-                    "read": {
-                        "target": "example.weather#GetForecast"
-                    }
-                }
-            }
-        }
+    resource Forecast {
+        identifiers: { cityId: CityId }
+        read: GetForecast
+    }
 
 Child resources must define the exact same identifiers property of their
 parent, but they are allowed to add any number of additional identifiers if
@@ -303,192 +210,68 @@ lifecycle operations helps automated tooling reason about your API.
 
 Let's define the operation used to "read" a ``City``.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    @readonly
+    operation GetCity {
+        input: GetCityInput
+        output: GetCityOutput
+        errors: [NoSuchResource]
+    }
 
-        @readonly
-        operation GetCity {
-            input: GetCityInput,
-            output: GetCityOutput,
-            errors: [NoSuchResource]
-        }
+    structure GetCityInput {
+        // "cityId" provides the identifier for the resource and
+        // has to be marked as required.
+        @required
+        cityId: CityId
+    }
 
-        structure GetCityInput {
-            // "cityId" provides the identifier for the resource and
-            // has to be marked as required.
-            @required
-            cityId: CityId
-        }
+    structure GetCityOutput {
+        // "required" is used on output to indicate if the service
+        // will always provide a value for the member.
+        @required
+        name: String
 
-        structure GetCityOutput {
-            // "required" is used on output to indicate if the service
-            // will always provide a value for the member.
-            @required
-            name: String,
+        @required
+        coordinates: CityCoordinates
+    }
 
-            @required
-            coordinates: CityCoordinates,
-        }
+    structure CityCoordinates {
+        @required
+        latitude: Float
 
-        structure CityCoordinates {
-            @required
-            latitude: Float,
+        @required
+        longitude: Float
+    }
 
-            @required
-            longitude: Float,
-        }
-
-        // "error" is a trait that is used to specialize
-        // a structure as an error.
-        @error("client")
-        structure NoSuchResource {
-            @required
-            resourceType: String
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "example.weather#GetCity": {
-                    "type": "operation",
-                    "input": {
-                        "target": "example.weather#GetCityInput"
-                    },
-                    "output": {
-                        "target": "example.weather#GetCityOutput"
-                    },
-                    "errors": [
-                        {
-                            "target": "example.weather#NoSuchResource"
-                        }
-                    ]
-                },
-                "example.weather#GetCityInput": {
-                    "type": "structure",
-                    "members": {
-                        "cityId": {
-                            "target": "example.weather#CityId",
-                            "traits": {
-                                "smithy.api#required": true
-                            }
-                        }
-                    }
-                },
-                "example.weather#GetCityOutput": {
-                    "type": "structure",
-                    "members": {
-                        "name": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#required": true
-                            }
-                        },
-                        "coordinates": {
-                            "target": "example.weather#CityCoordinates",
-                            "traits": {
-                                "smithy.api#required": true
-                            }
-                        }
-                    }
-                },
-                "example.weather#CityCoordinates": {
-                    "type": "structure",
-                    "members": {
-                        "latitude": {
-                            "target": "smithy.api#Float",
-                            "traits": {
-                                "smithy.api#required": true
-                            }
-                        },
-                        "longitude": {
-                            "target": "smithy.api#Float",
-                            "traits": {
-                                "smithy.api#required": true
-                            }
-                        }
-                    }
-                },
-                "example.weather#NoSuchResource": {
-                    "type": "structure",
-                    "members": {
-                        "resourceType": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#required": true
-                            }
-                        }
-                    },
-                    "traits": {
-                        "smithy.api#error": "client"
-                    }
-                }
-            }
-        }
+    // "error" is a trait that is used to specialize
+    // a structure as an error.
+    @error("client")
+    structure NoSuchResource {
+        @required
+        resourceType: String
+    }
 
 And define the operation used to "read" a ``Forecast``.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    @readonly
+    operation GetForecast {
+        input: GetForecastInput
+        output: GetForecastOutput
+    }
 
-        @readonly
-        operation GetForecast {
-            input: GetForecastInput,
-            output: GetForecastOutput
-        }
+    // "cityId" provides the only identifier for the resource since
+    // a Forecast doesn't have its own.
+    structure GetForecastInput {
+        @required
+        cityId: CityId
+    }
 
-        // "cityId" provides the only identifier for the resource since
-        // a Forecast doesn't have its own.
-        structure GetForecastInput {
-            @required
-            cityId: CityId,
-        }
-
-        structure GetForecastOutput {
-            chanceOfRain: Float
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "example.weather#GetForecast": {
-                    "type": "operation",
-                    "input": {
-                        "target": "example.weather#GetForecastInput"
-                    },
-                    "output": {
-                        "target": "example.weather#GetForecastOutput"
-                    },
-                    "traits": {
-                        "smithy.api#readonly": true
-                    }
-                },
-                "example.weather#GetForecastInput": {
-                    "type": "structure",
-                    "members": {
-                        "cityId": {
-                            "target": "example.weather#CityId",
-                            "traits": {
-                                "smithy.api#required": true
-                            }
-                        }
-                    }
-                },
-                "example.weather#GetForecastOutput": {
-                    "type": "structure",
-                    "members": {
-                        "chanceOfRain": {
-                            "target": "smithy.api#Float"
-                        }
-                    }
-                }
-            }
-        }
+    structure GetForecastOutput {
+        chanceOfRain: Float
+    }
 
 .. admonition:: Review
     :class: tip
@@ -510,141 +293,55 @@ is a :ref:`collection operation <collection-operations>`, and as such, MUST NOT
 bind the identifier of a ``City`` to its input structure; we are listing
 cities, so there's no way we could provide a ``City`` identifier.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    /// Provides weather forecasts.
+    @paginated(
+        inputToken: "nextToken"
+        outputToken: "nextToken"
+        pageSize: "pageSize"
+    )
+    service Weather {
+        version: "2006-03-01"
+        resources: [City]
+    }
 
-        /// Provides weather forecasts.
-        @paginated(inputToken: "nextToken", outputToken: "nextToken",
-                   pageSize: "pageSize")
-        service Weather {
-            version: "2006-03-01",
-            resources: [City]
-        }
+    // The paginated trait indicates that the operation may
+    // return truncated results. Applying this trait to the service
+    // sets default pagination configuration settings on each operation.
+    @paginated(items: "items")
+    @readonly
+    operation ListCities {
+        input: ListCitiesInput
+        output: ListCitiesOutput
+    }
 
-        // The paginated trait indicates that the operation may
-        // return truncated results. Applying this trait to the service
-        // sets default pagination configuration settings on each operation.
-        @paginated(items: "items")
-        @readonly
-        operation ListCities {
-            input: ListCitiesInput,
-            output: ListCitiesOutput
-        }
+    structure ListCitiesInput {
+        nextToken: String
+        pageSize: Integer
+    }
 
-        structure ListCitiesInput {
-            nextToken: String,
-            pageSize: Integer
-        }
+    structure ListCitiesOutput {
+        nextToken: String
 
-        structure ListCitiesOutput {
-            nextToken: String,
+        @required
+        items: CitySummaries
+    }
 
-            @required
-            items: CitySummaries,
-        }
+    // CitySummaries is a list of CitySummary structures.
+    list CitySummaries {
+        member: CitySummary
+    }
 
-        // CitySummaries is a list of CitySummary structures.
-        list CitySummaries {
-            member: CitySummary
-        }
+    // CitySummary contains a reference to a City.
+    @references([{resource: City}])
+    structure CitySummary {
+        @required
+        cityId: CityId
 
-        // CitySummary contains a reference to a City.
-        @references([{resource: City}])
-        structure CitySummary {
-            @required
-            cityId: CityId,
-
-            @required
-            name: String,
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "example.weather#Weather": {
-                    "type": "service",
-                    "version": "2006-03-01",
-                    "resources": [
-                        {
-                            "target": "example.weather#City"
-                        }
-                    ],
-                    "traits": {
-                        "smithy.api#paginated": {
-                            "inputToken": "nextToken",
-                            "outputToken": "nextToken",
-                            "pageSize": "pageSize"
-                        }
-                    }
-                },
-                "example.weather#ListCities": {
-                    "type": "operation",
-                    "input": {
-                        "target": "example.weather#ListCitiesInput"
-                    },
-                    "output": {
-                        "target": "example.weather#ListCitiesOutput"
-                    },
-                    "traits": {
-                        "smithy.api#readonly": true,
-                        "smithy.api#paginated": {
-                            "items": "items"
-                        }
-                    }
-                },
-                "example.weather#ListCitiesInput": {
-                    "type": "structure",
-                    "members": {
-                        "nextToken": {
-                            "target": "smithy.api#String"
-                        },
-                        "pageSize": {
-                            "target": "smithy.api#Integer"
-                        }
-                    }
-                },
-                "example.weather#ListCitiesOutput": {
-                    "type": "structure",
-                    "members": {
-                        "nextToken": {
-                            "target": "smithy.api#String"
-                        },
-                        "items": {
-                            "target": "example.weather#CitySummaries",
-                            "traits": {
-                                "smithy.api#required": true
-                            }
-                        }
-                    }
-                },
-                "example.weather#CitySummaries": {
-                    "type": "list",
-                    "member": {
-                        "target": "example.weather#CitySummary"
-                    }
-                },
-                "example.weather#CitySummary": {
-                    "type": "structure",
-                    "members": {
-                        "cityId": {
-                            "target": "example.weather#CityId",
-                            "traits": {
-                                "smithy.api#required": true
-                            }
-                        },
-                        "name": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#required": true
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        @required
+        name: String
+    }
 
 The ``ListCities`` operation is :ref:`paginated <paginated-trait>`, meaning
 the results of invoking the operation can be truncated, requiring subsequent
@@ -677,71 +374,27 @@ service shape with no special lifecycle designation using the ``operations``
 property. The following operation gets the current time from the ``Weather``
 service.
 
+.. code-block:: smithy
 
-.. tabs::
+    /// Provides weather forecasts.
+    @paginated(inputToken: "nextToken", outputToken: "nextToken",
+               pageSize: "pageSize")
+    service Weather {
+        version: "2006-03-01"
+        resources: [City]
+        operations: [GetCurrentTime]
+    }
 
-    .. code-tab:: smithy
+    @readonly
+    operation GetCurrentTime {
+        output: GetCurrentTimeOutput
+    }
 
-        /// Provides weather forecasts.
-        @paginated(inputToken: "nextToken", outputToken: "nextToken",
-                   pageSize: "pageSize")
-        service Weather {
-            version: "2006-03-01",
-            resources: [City],
-            operations: [GetCurrentTime]
-        }
+    structure GetCurrentTimeOutput {
+        @required
+        time: Timestamp
+    }
 
-        @readonly
-        operation GetCurrentTime {
-            output: GetCurrentTimeOutput
-        }
-
-        structure GetCurrentTimeOutput {
-            @required
-            time: Timestamp
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "example.weather#Weather": {
-                    "type": "service",
-                    "version": "2006-03-01",
-                    "resources": [
-                        {
-                            "target": "example.weather#City"
-                        }
-                    ],
-                    "operations": [
-                        {
-                            "target": "example.weather#GetCurrentTime"
-                        }
-                    ]
-                },
-                "example.weather#GetCurrentTime": {
-                    "type": "operation",
-                    "output": {
-                        "target": "example.weather#GetCurrentTimeOutput"
-                    },
-                    "traits": {
-                        "smithy.api#readonly": true
-                    }
-                },
-                "example.weather#GetCurrentTimeOutput": {
-                    "type": "structure",
-                    "members": {
-                        "time": {
-                            "target": "smithy.api#Timestamp",
-                            "traits": {
-                                "smithy.api#required": true
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
 Building the Model
 ==================
@@ -859,24 +512,27 @@ Finally, the complete ``weather.smithy`` model should look like:
         namespace example.weather
 
         /// Provides weather forecasts.
-        @paginated(inputToken: "nextToken", outputToken: "nextToken",
-                   pageSize: "pageSize")
+        @paginated(
+            inputToken: "nextToken"
+            outputToken: "nextToken"
+            pageSize: "pageSize"
+        )
         service Weather {
-            version: "2006-03-01",
-            resources: [City],
+            version: "2006-03-01"
+            resources: [City]
             operations: [GetCurrentTime]
         }
 
         resource City {
-            identifiers: { cityId: CityId },
-            read: GetCity,
-            list: ListCities,
-            resources: [Forecast],
+            identifiers: { cityId: CityId }
+            read: GetCity
+            list: ListCities
+            resources: [Forecast]
         }
 
         resource Forecast {
-            identifiers: { cityId: CityId },
-            read: GetForecast,
+            identifiers: { cityId: CityId }
+            read: GetForecast
         }
 
         // "pattern" is a trait.
@@ -885,8 +541,8 @@ Finally, the complete ``weather.smithy`` model should look like:
 
         @readonly
         operation GetCity {
-            input: GetCityInput,
-            output: GetCityOutput,
+            input: GetCityInput
+            output: GetCityOutput
             errors: [NoSuchResource]
         }
 
@@ -901,19 +557,19 @@ Finally, the complete ``weather.smithy`` model should look like:
             // "required" is used on output to indicate if the service
             // will always provide a value for the member.
             @required
-            name: String,
+            name: String
 
             @required
-            coordinates: CityCoordinates,
+            coordinates: CityCoordinates
         }
 
         // This structure is nested within GetCityOutput.
         structure CityCoordinates {
             @required
-            latitude: Float,
+            latitude: Float
 
             @required
-            longitude: Float,
+            longitude: Float
         }
 
         // "error" is a trait that is used to specialize
@@ -929,20 +585,20 @@ Finally, the complete ``weather.smithy`` model should look like:
         @readonly
         @paginated(items: "items")
         operation ListCities {
-            input: ListCitiesInput,
+            input: ListCitiesInput
             output: ListCitiesOutput
         }
 
         structure ListCitiesInput {
-            nextToken: String,
+            nextToken: String
             pageSize: Integer
         }
 
         structure ListCitiesOutput {
-            nextToken: String,
+            nextToken: String
 
             @required
-            items: CitySummaries,
+            items: CitySummaries
         }
 
         // CitySummaries is a list of CitySummary structures.
@@ -954,10 +610,10 @@ Finally, the complete ``weather.smithy`` model should look like:
         @references([{resource: City}])
         structure CitySummary {
             @required
-            cityId: CityId,
+            cityId: CityId
 
             @required
-            name: String,
+            name: String
         }
 
         @readonly
@@ -972,7 +628,7 @@ Finally, the complete ``weather.smithy`` model should look like:
 
         @readonly
         operation GetForecast {
-            input: GetForecastInput,
+            input: GetForecastInput
             output: GetForecastOutput
         }
 
@@ -980,7 +636,7 @@ Finally, the complete ``weather.smithy`` model should look like:
         // a Forecast doesn't have its own.
         structure GetForecastInput {
             @required
-            cityId: CityId,
+            cityId: CityId
         }
 
         structure GetForecastOutput {
@@ -1006,6 +662,7 @@ Finally, the complete ``weather.smithy`` model should look like:
                         }
                     ],
                     "traits": {
+                        "smithy.api#documentation": "Provides weather forecasts.",
                         "smithy.api#paginated": {
                             "inputToken": "nextToken",
                             "outputToken": "nextToken",
@@ -1038,13 +695,13 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "latitude": {
                             "target": "smithy.api#Float",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         },
                         "longitude": {
                             "target": "smithy.api#Float",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         }
                     }
@@ -1067,20 +724,20 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "cityId": {
                             "target": "example.weather#CityId",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         },
                         "name": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         }
                     },
                     "traits": {
                         "smithy.api#references": [
                             {
-                                "resource": "City"
+                                "resource": "example.weather#City"
                             }
                         ]
                     }
@@ -1110,7 +767,7 @@ Finally, the complete ``weather.smithy`` model should look like:
                         }
                     ],
                     "traits": {
-                        "smithy.api#readonly": true
+                        "smithy.api#readonly": {}
                     }
                 },
                 "example.weather#GetCityInput": {
@@ -1119,7 +776,7 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "cityId": {
                             "target": "example.weather#CityId",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         }
                     }
@@ -1127,16 +784,16 @@ Finally, the complete ``weather.smithy`` model should look like:
                 "example.weather#GetCityOutput": {
                     "type": "structure",
                     "members": {
-                        "coordinates": {
-                            "target": "example.weather#CityCoordinates",
-                            "traits": {
-                                "smithy.api#required": true
-                            }
-                        },
                         "name": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
+                            }
+                        },
+                        "coordinates": {
+                            "target": "example.weather#CityCoordinates",
+                            "traits": {
+                                "smithy.api#required": {}
                             }
                         }
                     }
@@ -1147,7 +804,7 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "target": "example.weather#GetCurrentTimeOutput"
                     },
                     "traits": {
-                        "smithy.api#readonly": true
+                        "smithy.api#readonly": {}
                     }
                 },
                 "example.weather#GetCurrentTimeOutput": {
@@ -1156,7 +813,7 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "time": {
                             "target": "smithy.api#Timestamp",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         }
                     }
@@ -1170,7 +827,7 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "target": "example.weather#GetForecastOutput"
                     },
                     "traits": {
-                        "smithy.api#readonly": true
+                        "smithy.api#readonly": {}
                     }
                 },
                 "example.weather#GetForecastInput": {
@@ -1179,7 +836,7 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "cityId": {
                             "target": "example.weather#CityId",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         }
                     }
@@ -1204,7 +861,7 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "smithy.api#paginated": {
                             "items": "items"
                         },
-                        "smithy.api#readonly": true
+                        "smithy.api#readonly": {}
                     }
                 },
                 "example.weather#ListCitiesInput": {
@@ -1221,14 +878,14 @@ Finally, the complete ``weather.smithy`` model should look like:
                 "example.weather#ListCitiesOutput": {
                     "type": "structure",
                     "members": {
+                        "nextToken": {
+                            "target": "smithy.api#String"
+                        },
                         "items": {
                             "target": "example.weather#CitySummaries",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
-                        },
-                        "nextToken": {
-                            "target": "smithy.api#String"
                         }
                     }
                 },
@@ -1238,7 +895,7 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "resourceType": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         }
                     },
