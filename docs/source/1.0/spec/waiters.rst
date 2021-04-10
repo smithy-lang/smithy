@@ -55,16 +55,16 @@ exists:
 
     @waitable(
         BucketExists: {
-            documentation: "Wait until a bucket exists",
+            documentation: "Wait until a bucket exists"
             acceptors: [
                 {
-                    state: "success",
+                    state: "success"
                     matcher: {
                         success: true
                     }
-                },
+                }
                 {
-                    state: "retry",
+                    state: "retry"
                     matcher: {
                         errorType: "NotFound"
                     }
@@ -73,8 +73,8 @@ exists:
         }
     )
     operation HeadBucket {
-        input: HeadBucketInput,
-        output: HeadBucketOutput,
+        input: HeadBucketInput
+        output: HeadBucketOutput
         errors: [NotFound]
     }
 
@@ -603,26 +603,26 @@ triggered if the ``status`` property equals ``failed``.
 
     @waitable(
         ThingExists: {
-            description: "Waits until a thing has been created",
+            description: "Waits until a thing has been created"
             acceptors: [
                 // Fail-fast if the thing transitions to a "failed" state.
                 {
-                    state: "failure",
+                    state: "failure"
                     matcher: {
                         output: {
-                            path: "status",
-                            comparator: "stringEquals",
+                            path: "status"
+                            comparator: "stringEquals"
                             expected: "failed"
                         }
                     }
-                },
+                }
                 // Succeed when the thing enters into a "success" state.
                 {
-                    state: "success",
+                    state: "success"
                     matcher: {
                         output: {
-                            path: "status",
-                            comparator: "stringEquals",
+                            path: "status"
+                            comparator: "stringEquals"
                             expected: "success"
                         }
                     }
@@ -631,13 +631,13 @@ triggered if the ``status`` property equals ``failed``.
         }
     )
     operation GetThing {
-        input: GetThingInput,
-        output: GetThingOutput,
+        input: GetThingInput
+        output: GetThingOutput
     }
 
     structure GetThingInput {
         @required
-        name: String,
+        name: String
     }
 
     structure GetThingOutput {
@@ -659,8 +659,8 @@ provided groups on input matches the number of provided groups on output:
             acceptors: [
                 {
                     inputOutput: {
-                        path: "length(input.groups) == length(output.groups)",
-                        expected: "true",
+                        path: "length(input.groups) == length(output.groups)"
+                        expected: "true"
                         comparator: "booleanEquals"
                     }
                 }
@@ -668,8 +668,8 @@ provided groups on input matches the number of provided groups on output:
         }
     )
     operation ListGroups {
-        input: ListGroupsInput,
-        output: ListGroupsOutput,
+        input: ListGroupsInput
+        output: ListGroupsOutput
     }
 
 
@@ -746,11 +746,11 @@ is unnecessary:
     {
         acceptors: [
             {
-                state: "failure",
+                state: "failure"
                 matcher: {
                     errorType: "ValidationError"
                 }
-            },
+            }
             // other acceptors...
         ]
     }
@@ -765,11 +765,11 @@ specific errors. For example, the following matcher is unnecessary:
     {
         acceptors: [
             {
-                state: "retry",
+                state: "retry"
                 matcher: {
                     success: true
                 }
-            },
+            }
             // other acceptors...
         ]
     }
@@ -825,24 +825,24 @@ the ``StartResource`` API operation.
 
     @waitable(
         ResourceRunning: {
-            description: "Waits for the resource to be running",
+            description: "Waits for the resource to be running"
             acceptors: [
                 {
-                    state: "failure",
+                    state: "failure"
                     matcher: {
                         output: {
-                            path: "State",
-                            expected: "Stopped",
+                            path: "State"
+                            expected: "Stopped"
                             comparator: "stringEquals"
                         }
                     }
                 },
                 {
-                    state: "success",
+                    state: "success"
                     matcher: {
                         output: {
-                            path: "State",
-                            expected: "Running",
+                            path: "State"
+                            expected: "Running"
                             comparator: "stringEquals"
                         }
                     }
@@ -852,8 +852,8 @@ the ``StartResource`` API operation.
         }
     )
     operation GetResource {
-        input: GetResourceInput,
-        output: GetResourceOutput,
+        input: GetResourceInput
+        output: GetResourceOutput
     }
 
 

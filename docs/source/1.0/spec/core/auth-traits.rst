@@ -63,7 +63,7 @@ and the hypothetical ``fooExample`` authentication scheme.
         @fooExample
         @httpBasicAuth
         service WeatherService {
-            version: "2017-02-11",
+            version: "2017-02-11"
         }
 
     .. code-tab:: json
@@ -101,7 +101,7 @@ can also support configuration settings.
     @authDefinition
     @trait(selector: "service")
     structure algorithmAuth {
-        algorithm: AlgorithmAuthAlgorithm,
+        algorithm: AlgorithmAuthAlgorithm
     }
 
     @private
@@ -110,7 +110,7 @@ can also support configuration settings.
 
     @algorithmAuth(algorithm: "SHA-2")
     service WeatherService {
-        version: "2017-02-11",
+        version: "2017-02-11"
     }
 
 
@@ -133,7 +133,7 @@ Value type
 
     @httpBasicAuth
     service WeatherService {
-        version: "2017-02-11",
+        version: "2017-02-11"
     }
 
 
@@ -156,7 +156,7 @@ Value type
 
     @httpDigestAuth
     service WeatherService {
-        version: "2017-02-11",
+        version: "2017-02-11"
     }
 
 
@@ -179,7 +179,7 @@ Value type
 
     @httpBearerAuth
     service WeatherService {
-        version: "2017-02-11",
+        version: "2017-02-11"
     }
 
 
@@ -228,7 +228,7 @@ HTTP header:
 
     @httpApiKeyAuth(name: "X-Api-Key", in: "header")
     service WeatherService {
-        version: "2017-02-11",
+        version: "2017-02-11"
     }
 
 The following example defines a service that uses an API key auth scheme through
@@ -264,7 +264,7 @@ and bound to the service is an operation that supports unauthenticated access.
 
     @httpDigestAuth
     service WeatherService {
-        version: "2017-02-11",
+        version: "2017-02-11"
         operations: [PingServer]
     }
 
@@ -327,7 +327,7 @@ The following example defines two operations:
         @httpDigestAuth
         @auth([httpBasicAuth])
         service AuthenticatedService {
-            version: "2017-02-11",
+            version: "2017-02-11"
             operations: [OperationA, OperationB]
         }
 

@@ -75,8 +75,8 @@ resource:
         @cfnResource
         resource Foo {
             identifiers: {
-                fooId: String,
-            },
+                fooId: String
+            }
         }
 
 
@@ -98,16 +98,16 @@ The following example provides a ``name`` value and one structure shape in the
         use aws.cloudformation#cfnResource
 
         @cfnResource(
-            name: "Foo",
+            name: "Foo"
             additionalSchemas: [AdditionalFooProperties])
         resource FooResource {
             identifiers: {
-                fooId: String,
-            },
+                fooId: String
+            }
         }
 
         structure AdditionalFooProperties {
-            barProperty: String,
+            barProperty: String
         }
 
 
@@ -181,30 +181,30 @@ The following example defines a CloudFormation resource that excludes the
         @cfnResource
         resource Foo {
             identifiers: {
-                fooId: String,
-            },
-            read: GetFoo,
+                fooId: String
+            }
+            read: GetFoo
         }
 
         @readonly
         @http(method: "GET", uri: "/foos/{fooId}", code: 200)
         operation GetFoo {
-            input: GetFooRequest,
-            output: GetFooResponse,
+            input: GetFooRequest
+            output: GetFooResponse
         }
 
         structure GetFooRequest {
             @httpLabel
             @required
-            fooId: String,
+            fooId: String
         }
 
         structure GetFooResponse {
-            fooId: String,
+            fooId: String
 
             @httpResponseCode
             @cfnExcludeProperty
-            responseCode: Integer,
+            responseCode: Integer
         }
 
 
@@ -242,62 +242,62 @@ Given the following model without mutability traits applied,
         @cfnResource
         resource Foo {
             identifiers: {
-                fooId: String,
-            },
-            create: CreateFoo,
-            read: GetFoo,
-            update: UpdateFoo,
+                fooId: String
+            }
+            create: CreateFoo
+            read: GetFoo
+            update: UpdateFoo
         }
 
         operation CreateFoo {
-            input: CreateFooRequest,
-            output: CreateFooResponse,
+            input: CreateFooRequest
+            output: CreateFooResponse
         }
 
         structure CreateFooRequest {
-            createProperty: ComplexProperty,
-            mutableProperty: ComplexProperty,
-            writeProperty: ComplexProperty,
-            createWriteProperty: ComplexProperty,
+            createProperty: ComplexProperty
+            mutableProperty: ComplexProperty
+            writeProperty: ComplexProperty
+            createWriteProperty: ComplexProperty
         }
 
         structure CreateFooResponse {
-            fooId: String,
+            fooId: String
         }
 
         @readonly
         operation GetFoo {
-            input: GetFooRequest,
-            output: GetFooResponse,
+            input: GetFooRequest
+            output: GetFooResponse
         }
 
         structure GetFooRequest {
             @required
-            fooId: String,
+            fooId: String
         }
 
         structure GetFooResponse {
-            fooId: String,
-            createProperty: ComplexProperty,
-            mutableProperty: ComplexProperty,
-            readProperty: ComplexProperty,
+            fooId: String
+            createProperty: ComplexProperty
+            mutableProperty: ComplexProperty
+            readProperty: ComplexProperty
         }
 
         @idempotent
         operation UpdateFoo {
-            input: UpdateFooRequest,
+            input: UpdateFooRequest
         }
 
         structure UpdateFooRequest {
             @required
-            fooId: String,
+            fooId: String
 
-            mutableProperty: ComplexProperty,
-            writeProperty: ComplexProperty,
+            mutableProperty: ComplexProperty
+            writeProperty: ComplexProperty
         }
 
         structure ComplexProperty {
-            anotherProperty: String,
+            anotherProperty: String
         }
 
 The computed resource property mutabilities are:
@@ -402,28 +402,28 @@ and ``barProperty`` properties as fully mutable:
         @cfnResource(additionalSchemas: [FooProperties])
         resource Foo {
             identifiers: {
-                fooId: String,
-            },
-            create: CreateFoo,
+                fooId: String
+            }
+            create: CreateFoo
         }
 
         operation CreateFoo {
-            input: CreateFooRequest,
-            output: CreateFooResponse,
+            input: CreateFooRequest
+            output: CreateFooResponse
         }
 
         structure CreateFooRequest {
             @cfnMutability("full")
-            tags: TagList,
+            tags: TagList
         }
 
         structure CreateFooResponse {
-            fooId: String,
+            fooId: String
         }
 
         structure FooProperties {
             @cfnMutability("full")
-            barProperty: String,
+            barProperty: String
         }
 
 
@@ -442,13 +442,13 @@ The following example defines a CloudFormation resource that marks the
         @cfnResource(additionalSchemas: [FooProperties])
         resource Foo {
             identifiers: {
-                fooId: String,
-            },
+                fooId: String
+            }
         }
 
         structure FooProperties {
             @cfnMutability("create-and-read")
-            immutableSetting: Boolean,
+            immutableSetting: Boolean
         }
 
 
@@ -467,15 +467,15 @@ The following example defines a CloudFormation resource that marks the
         @cfnResource(additionalSchemas: [FooProperties])
         resource Foo {
             identifiers: {
-                fooId: String,
-            },
-            read: GetFoo,
+                fooId: String
+            }
+            read: GetFoo
         }
 
         @readonly
         operation GetFoo {
-            input: GetFooRequest,
-            output: GetFooResponse,
+            input: GetFooRequest
+            output: GetFooResponse
         }
 
         structure GetFooRequest {
@@ -485,12 +485,12 @@ The following example defines a CloudFormation resource that marks the
 
         structure GetFooResponse {
             @cfnMutability("read")
-            updatedAt: Timestamp,
+            updatedAt: Timestamp
         }
 
         structure FooProperties {
             @cfnMutability("read")
-            createdAt: Timestamp,
+            createdAt: Timestamp
         }
 
 
@@ -509,28 +509,28 @@ derivable ``secret`` and ``password`` properties as write only:
         @cfnResource(additionalSchemas: [FooProperties])
         resource Foo {
             identifiers: {
-                fooId: String,
-            },
-            create: CreateFoo,
+                fooId: String
+            }
+            create: CreateFoo
         }
 
         operation CreateFoo {
-            input: CreateFooRequest,
-            output: CreateFooResponse,
+            input: CreateFooRequest
+            output: CreateFooResponse
         }
 
         structure CreateFooRequest {
             @cfnMutability("write")
-            secret: String,
+            secret: String
         }
 
         structure CreateFooResponse {
-            fooId: String,
+            fooId: String
         }
 
         structure FooProperties {
             @cfnMutability("write")
-            password: String,
+            password: String
         }
 
 
@@ -564,10 +564,10 @@ Given the following structure definition:
         use aws.cloudformation#cfnName
 
         structure AdditionalFooProperties {
-            bar: String,
+            bar: String
 
             @cfnName("Tags")
-            tagList: TagList,
+            tagList: TagList
         }
 
 the following property names are derived from it:
@@ -624,22 +624,22 @@ The following example defines a CloudFormation resource that has the
         @cfnResource
         resource Foo {
             identifiers: {
-                fooId: String,
-            },
-            read: GetFoo,
+                fooId: String
+            }
+            read: GetFoo
         }
 
         @readonly
         operation GetFoo {
-            input: GetFooRequest,
+            input: GetFooRequest
         }
 
         structure GetFooRequest {
             @required
-            fooId: String,
+            fooId: String
 
             @cfnAdditionalIdentifier
-            fooAlias: String,
+            fooAlias: String
         }
 
 
@@ -668,106 +668,106 @@ Given the following model,
         @cfnResource(additionalSchemas: [FooProperties])
         resource Foo {
             identifiers: {
-                fooId: String,
-            },
-            create: CreateFoo,
-            read: GetFoo,
-            update: UpdateFoo,
+                fooId: String
+            }
+            create: CreateFoo
+            read: GetFoo
+            update: UpdateFoo
         }
 
         @http(method: "POST", uri: "/foos", code: 200)
         operation CreateFoo {
-            input: CreateFooRequest,
-            output: CreateFooResponse,
+            input: CreateFooRequest
+            output: CreateFooResponse
         }
 
         structure CreateFooRequest {
             @cfnMutability("full")
-            tags: TagList,
+            tags: TagList
 
             @cfnMutability("write")
-            secret: String,
+            secret: String
 
-            fooAlias: String,
+            fooAlias: String
 
-            createProperty: ComplexProperty,
-            mutableProperty: ComplexProperty,
-            writeProperty: ComplexProperty,
-            createWriteProperty: ComplexProperty,
+            createProperty: ComplexProperty
+            mutableProperty: ComplexProperty
+            writeProperty: ComplexProperty
+            createWriteProperty: ComplexProperty
         }
 
         structure CreateFooResponse {
-            fooId: String,
+            fooId: String
         }
 
         @readonly
         @http(method: "GET", uri: "/foos/{fooId}", code: 200)
         operation GetFoo {
-            input: GetFooRequest,
-            output: GetFooResponse,
+            input: GetFooRequest
+            output: GetFooResponse
         }
 
         structure GetFooRequest {
             @httpLabel
             @required
-            fooId: String,
+            fooId: String
 
             @httpQuery("fooAlias")
             @cfnAdditionalIdentifier
-            fooAlias: String,
+            fooAlias: String
         }
 
         structure GetFooResponse {
-            fooId: String,
+            fooId: String
 
             @httpResponseCode
             @cfnExcludeProperty
-            responseCode: Integer,
+            responseCode: Integer
 
             @cfnMutability("read")
-            updatedAt: Timestamp,
+            updatedAt: Timestamp
 
-            fooAlias: String,
-            createProperty: ComplexProperty,
-            mutableProperty: ComplexProperty,
-            readProperty: ComplexProperty,
+            fooAlias: String
+            createProperty: ComplexProperty
+            mutableProperty: ComplexProperty
+            readProperty: ComplexProperty
         }
 
         @idempotent
         @http(method: "PUT", uri: "/foos/{fooId}", code: 200)
         operation UpdateFoo {
-            input: UpdateFooRequest,
+            input: UpdateFooRequest
         }
 
         structure UpdateFooRequest {
             @httpLabel
             @required
-            fooId: String,
+            fooId: String
 
-            fooAlias: String,
-            mutableProperty: ComplexProperty,
-            writeProperty: ComplexProperty,
+            fooAlias: String
+            mutableProperty: ComplexProperty
+            writeProperty: ComplexProperty
         }
 
         structure FooProperties {
-            addedProperty: String,
+            addedProperty: String
 
             @cfnMutability("full")
-            barProperty: String,
+            barProperty: String
 
             @cfnName("Immutable")
             @cfnMutability("create-and-read")
-            immutableSetting: Boolean,
+            immutableSetting: Boolean
 
             @cfnMutability("read")
-            createdAt: Timestamp,
+            createdAt: Timestamp
 
             @cfnMutability("write")
-            password: String,
+            password: String
         }
 
         structure ComplexProperty {
-            anotherProperty: String,
+            anotherProperty: String
         }
 
         list TagList {

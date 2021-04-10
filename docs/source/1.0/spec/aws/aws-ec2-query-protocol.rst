@@ -245,23 +245,23 @@ For example, given the following:
 .. code-block:: smithy
 
     structure Ec2QueryStructuresInput {
-        foo: String,
+        foo: String
 
         @ec2QueryName("A")
-        HasQueryName: String,
+        HasQueryName: String
 
         @ec2QueryName("B")
         @xmlName("IgnoreMe")
-        HasQueryAndXmlName: String,
+        HasQueryAndXmlName: String
 
         @xmlName("c")
-        UsesXmlName: String,
+        UsesXmlName: String
 
-        baz: MyStructure,
+        baz: MyStructure
     }
 
     structure MyStructure {
-        temp: String,
+        temp: String
     }
 
 The ``x-www-form-urlencoded`` serialization is:
@@ -287,12 +287,12 @@ For example, given the following:
 .. code-block:: smithy
 
     structure Ec2QueryListsInput {
-        ListArg: StringList,
-        ComplexListArg: GreetingList,
+        ListArg: StringList
+        ComplexListArg: GreetingList
 
         @ec2QueryName("Renamed")
         @xmlName("IgnoreMe")
-        RenamedListArg: StringList,
+        RenamedListArg: StringList
     }
 
     list StringList {
@@ -304,7 +304,7 @@ For example, given the following:
     }
 
     structure GreetingStruct {
-        hi: String,
+        hi: String
     }
 
 The ``application/x-www-form-urlencoded`` serialization is:

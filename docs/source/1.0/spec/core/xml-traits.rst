@@ -41,7 +41,7 @@ For example, given the following:
 .. code-block:: smithy
 
     structure MyStructure {
-        foo: String,
+        foo: String
     }
 
 The XML serialization is:
@@ -80,12 +80,12 @@ members that target it. Given the following:
 
         @xmlName("AStruct")
         structure A {
-            b: B,
+            b: B
         }
 
         @xmlName("BStruct")
         structure B {
-            hello: String,
+            hello: String
         }
 
     .. code-tab:: json
@@ -146,7 +146,7 @@ The following table defines how simple types are serialized in XML documents.
         .. code-block:: smithy
 
             structure Struct {
-                binary: Blob,
+                binary: Blob
             }
 
         given a value of ``value`` for ``binary``:
@@ -187,7 +187,7 @@ The following table defines how simple types are serialized in XML documents.
         .. code-block:: smithy
 
               structure Struct {
-                  date: Timestamp,
+                  date: Timestamp
               }
 
         given a value of ``1578255206`` for ``date``:
@@ -227,7 +227,7 @@ following:
     }
 
     list MyList {
-        member: String,
+        member: String
     }
 
 The XML serialization of ``Foo`` is:
@@ -255,7 +255,7 @@ change the nested element name. For example, given the following:
 
         list MyList {
             @xmlName("Item")
-            member: String,
+            member: String
         }
 
     .. code-tab:: json
@@ -308,7 +308,7 @@ example, given the following:
 
     structure Foo {
         @xmlFlattened
-        flat: MyList,
+        flat: MyList
     }
 
 The XML serialization of ``Foo`` is:
@@ -329,7 +329,7 @@ the name of the repeated XML element. For example, given the following:
     union Choice {
         @xmlFlattened
         @xmlName("Hi")
-        flat: MySet,
+        flat: MySet
     }
 
     set MySet {
@@ -354,7 +354,7 @@ following:
 
     union Choice {
         @xmlFlattened
-        flat: MySet,
+        flat: MySet
     }
 
     set MySet {
@@ -396,8 +396,8 @@ serialized in a nested element named ``entry`` that contains a nested
     }
 
     map MyMap {
-        key: String,
-        value: String,
+        key: String
+        value: String
     }
 
 The XML serialization of ``Foo`` is:
@@ -428,10 +428,10 @@ to change the nested element names.  For example, given the following:
 
     map MyMap {
         @xmlName("Name")
-        key: String,
+        key: String
 
         @xmlName("Setting")
-        value: String,
+        value: String
     }
 
 The XML serialization of ``Foo`` is:
@@ -468,8 +468,8 @@ into a containing structure/union. For example, given the following:
         }
 
         map MyMap {
-            key: String,
-            value: String,
+            key: String
+            value: String
         }
 
     .. code-tab:: json
@@ -527,11 +527,11 @@ the name of the repeated XML element. For example, given the following:
     union Choice {
         @xmlFlattened
         @xmlName("Hi")
-        flat: MyMap,
+        flat: MyMap
     }
 
     map MyMap {
-        key: String,
+        key: String
         value: String
     }
 
@@ -563,15 +563,15 @@ the following:
     union Choice {
         @xmlFlattened
         @xmlName("Hi")
-        flat: MyMap,
+        flat: MyMap
     }
 
     map MyMap {
         @xmlName("Name")
-        key: String,
+        key: String
 
         @xmlName("Setting")
-        value: String,
+        value: String
     }
 
 The XML serialization of ``Choice`` is:
@@ -624,9 +624,9 @@ member name. For example, given the following:
 
         structure MyStructure {
             @xmlAttribute
-            foo: String,
+            foo: String
 
-            bar: String,
+            bar: String
         }
 
     .. code-tab:: json
@@ -725,13 +725,13 @@ Given the following:
 
         structure Foo {
             @xmlFlattened
-            flat: MyList,
+            flat: MyList
 
-            nested: MyList,
+            nested: MyList
         }
 
         list MyList {
-            member: String,
+            member: String
         }
 
     .. code-tab:: json
@@ -785,9 +785,9 @@ Maps can be flattened into structures too. Given the following:
 
         structure Foo {
             @xmlFlattened
-            flat: MyMap,
+            flat: MyMap
 
-            notFlat: MyMap,
+            notFlat: MyMap
         }
 
         map MyMap {
@@ -882,9 +882,9 @@ elements using the same name as the structure member name. Given the following:
 
         structure MyStructure {
             @xmlName("Foo")
-            foo: String,
+            foo: String
 
-            bar: String,
+            bar: String
         }
 
     .. code-tab:: json
@@ -925,7 +925,7 @@ following
 
     structure AnotherStructure {
         @xmlName("hello:foo")
-        foo: String,
+        foo: String
     }
 
 The XML serialization is:
@@ -981,8 +981,8 @@ Given the following:
 
         @xmlNamespace(uri: "http://foo.com")
         structure MyStructure {
-            foo: String,
-            bar: String,
+            foo: String
+            bar: String
         }
 
     .. code-tab:: json
@@ -1024,10 +1024,10 @@ Given the following:
 
     @xmlNamespace(uri: "http://foo.com", prefix: "baz")
     structure MyStructure {
-        foo: String,
+        foo: String
 
         @xmlName("baz:bar")
-        bar: String,
+        bar: String
     }
 
 The XML serialization is:

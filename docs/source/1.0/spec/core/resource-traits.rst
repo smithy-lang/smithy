@@ -159,14 +159,14 @@ The following example creates a reference to a ``HistoricalForecast`` resource
 
     resource HistoricalForecast {
         identifiers: {
-            forecastId: ForecastId,
-            historicalId: HistoricalForecastId,
+            forecastId: ForecastId
+            historicalId: HistoricalForecastId
         }
     }
 
     @references([{resource: HistoricalForecast}])
     structure HistoricalReference {
-        forecastId: ForecastId,
+        forecastId: ForecastId
         historicalId: HistoricalForecastId
     }
 
@@ -186,16 +186,16 @@ defined if needed. For example:
 
     @references([
         {
-            resource: HistoricalForecast,
+            resource: HistoricalForecast
             ids: {
-                forecastId: "customForecastId",
+                forecastId: "customForecastId"
                 historicalId: "customHistoricalId"
             }
         }
     ])
     structure AnotherHistoricalReference {
-        customForecastId: String,
-        customHistoricalId: String,
+        customForecastId: String
+        customHistoricalId: String
     }
 
 .. rubric:: Additional examples
@@ -207,31 +207,31 @@ The following example defines several references:
     .. code-tab:: smithy
 
         @references([
-            {resource: Forecast},
-            {resource: ShapeName},
-            {resource: Meteorologist},
+            {resource: Forecast}
+            {resource: ShapeName}
+            {resource: Meteorologist}
             {
-                resource: com.foo.baz#Object,
-                service: com.foo.baz#Service,
-                ids: {bucket: "bucketName", object: "objectKey"},
+                resource: com.foo.baz#Object
+                service: com.foo.baz#Service
+                ids: {bucket: "bucketName", object: "objectKey"}
             ])
         structure ForecastInformation {
-            someId: SomeShapeIdentifier,
+            someId: SomeShapeIdentifier
 
             @required
-            forecastId: ForecastId,
+            forecastId: ForecastId
 
             @required
-            meteorologistId: MeteorologistId,
+            meteorologistId: MeteorologistId
 
             @required
-            otherData: SomeOtherShape,
+            otherData: SomeOtherShape
 
             @required
-            bucketName: BucketName,
+            bucketName: BucketName
 
             @required
-            objectKey: ObjectKey,
+            objectKey: ObjectKey
         }
 
 .. rubric:: References on string shapes
@@ -244,7 +244,7 @@ property in the reference.
 
     resource SimpleResource {
         identifiers: {
-            foo: String,
+            foo: String
         }
     }
 
@@ -295,28 +295,28 @@ match for the name of the resource identifier.
 
         resource File {
             identifiers: {
-                directory: "String",
-                fileName: "String",
-            },
-            read: GetFile,
+                directory: "String"
+                fileName: "String"
+            }
+            read: GetFile
         }
 
         @readonly
         operation GetFile {
-            input: GetFileInput,
-            output: GetFileOutput,
+            input: GetFileInput
+            output: GetFileOutput
             errors: [NoSuchResource]
         }
 
         structure GetFileInput {
             @required
-            directory: String,
+            directory: String
 
             // resourceIdentifier is used because the input member name
             // does not match the resource identifier name
             @resourceIdentifier("fileName")
             @required
-            name: String,
+            name: String
         }
 
 

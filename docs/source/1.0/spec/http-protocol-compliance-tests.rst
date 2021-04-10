@@ -261,22 +261,22 @@ that uses :ref:`HTTP binding traits <http-traits>`.
         @http(method: "POST", uri: "/")
         @httpRequestTests([
             {
-                id: "say_hello",
-                protocol: exampleProtocol,
+                id: "say_hello"
+                protocol: exampleProtocol
                 params: {
-                    "greeting": "Hi",
-                    "name": "Teddy",
+                    "greeting": "Hi"
+                    "name": "Teddy"
                     "query": "Hello there"
-                },
-                method: "POST",
-                uri: "/",
+                }
+                method: "POST"
+                uri: "/"
                 queryParams: [
                     "Hi=Hello%20there"
-                ],
+                ]
                 headers: {
-                    "X-Greeting": "Hi",
-                },
-                body: "{\"name\": \"Teddy\"}",
+                    "X-Greeting": "Hi"
+                }
+                body: "{\"name\": \"Teddy\"}"
                 bodyMediaType: "application/json"
             }
         ])
@@ -286,10 +286,10 @@ that uses :ref:`HTTP binding traits <http-traits>`.
 
         structure SayHelloInput {
             @httpHeader("X-Greeting")
-            greeting: String,
+            greeting: String
 
             @httpQuery("Hi")
-            query: String,
+            query: String
 
             name: String
         }
@@ -494,12 +494,12 @@ that uses :ref:`HTTP binding traits <http-traits>`.
         @http(method: "POST", uri: "/")
         @httpResponseTests([
             {
-                id: "say_goodbye",
-                protocol: exampleProtocol,
-                params: {farewell: "Bye"},
-                code: 200,
+                id: "say_goodbye"
+                protocol: exampleProtocol
+                params: {farewell: "Bye"}
+                code: 200
                 headers: {
-                    "X-Farewell": "Bye",
+                    "X-Farewell": "Bye"
                     "Content-Length": "0"
                 }
             }
@@ -510,7 +510,7 @@ that uses :ref:`HTTP binding traits <http-traits>`.
 
         structure SayGoodbyeOutput {
             @httpHeader("X-Farewell")
-            farewell: String,
+            farewell: String
         }
 
     .. code-tab:: json
@@ -583,20 +583,20 @@ that uses :ref:`HTTP binding traits <http-traits>`.
         @httpError(400)
         @httpResponseTests([
             {
-                id: "invalid_greeting",
-                protocol: exampleProtocol,
-                params: {foo: "baz", message: "Hi"},
-                code: 400,
-                headers: {"X-Foo": "baz"},
-                body: "{\"message\": \"Hi\"}",
-                bodyMediaType: "application/json",
+                id: "invalid_greeting"
+                protocol: exampleProtocol
+                params: {foo: "baz", message: "Hi"}
+                code: 400
+                headers: {"X-Foo": "baz"}
+                body: "{\"message\": \"Hi\"}"
+                bodyMediaType: "application/json"
             }
         ])
         structure InvalidGreeting {
             @httpHeader("X-Foo")
-            foo: String,
+            foo: String
 
-            message: String,
+            message: String
         }
 
     .. code-tab:: json

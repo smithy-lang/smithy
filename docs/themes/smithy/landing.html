@@ -17,16 +17,16 @@
 <pre><a class="see-full-example" href="{{ pathto('quickstart') }}#complete-example">[full example]</a><span class="kd">namespace</span><span class="nc"> example.weather</span>
 
 <span class="kd">service</span><span class="nc"> Weather</span> {
-    <span class="nl">version:</span> <span class="s2">"2006-03-01"</span>,
-    <span class="nl">resources:</span> [<span class="vc">City</span>],
+    <span class="nl">version:</span> <span class="s2">"2006-03-01"</span>
+    <span class="nl">resources:</span> [<span class="vc">City</span>]
     <span class="nl">operations:</span> [<span class="vc">GetCurrentTime</span>]
 }
 
 <span class="kd">resource</span><span class="vc"> City</span> {
-    <span class="nl">identifiers:</span> { <span class="nl">cityId:</span> <span class="vc">CityId</span> },
-    <span class="nl">read:</span> <span class="vc">GetCity</span>,
-    <span class="nl">list:</span> <span class="vc">ListCities</span>,
-    <span class="nl">resources:</span> [<span class="vc">Forecast</span>],
+    <span class="nl">identifiers:</span> { <span class="nl">cityId:</span> <span class="vc">CityId</span> }
+    <span class="nl">read:</span> <span class="vc">GetCity</span>
+    <span class="nl">list:</span> <span class="vc">ListCities</span>
+    <span class="nl">resources:</span> [<span class="vc">Forecast</span>]
 }
 </pre>
                         </div>

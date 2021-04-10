@@ -47,13 +47,13 @@ Validation
     .. code-tab:: smithy
 
         operation StreamingOperation {
-            output: StreamingOperationOutput,
+            output: StreamingOperationOutput
         }
 
         structure StreamingOperationOutput {
             @required
             streamId: String
-            output: StreamingBlob,
+            output: StreamingBlob
         }
 
         @streaming
@@ -126,18 +126,18 @@ stream in its input by referencing a member that targets a union:
         }
 
         structure PublishMessagesInput {
-            room: String,
-            messages: PublishEvents,
+            room: String
+            messages: PublishEvents
         }
 
         @streaming
         union PublishEvents {
-            message: Message,
-            leave: LeaveEvent,
+            message: Message
+            leave: LeaveEvent
         }
 
         structure Message {
-            message: String,
+            message: String
         }
 
         structure LeaveEvent {}
@@ -205,20 +205,20 @@ stream in its output:
         }
 
         structure SubscribeToMovementsOutput {
-            movements: MovementEvents,
+            movements: MovementEvents
         }
 
         @streaming
         union MovementEvents {
-            up: Movement,
-            down: Movement,
-            left: Movement,
-            right: Movement,
+            up: Movement
+            down: Movement
+            left: Movement
+            right: Movement
             throttlingError: ThrottlingError
         }
 
         structure Movement {
-            velocity: Float,
+            velocity: Float
         }
 
         /// An example error emitted when the client is throttled
@@ -345,19 +345,19 @@ service, followed by the events sent in the payload of the HTTP message.
         structure PublishMessagesInput {
             @httpLabel
             @required
-            room: String,
+            room: String
 
             @httpPayload
-            messages: MessageStream,
+            messages: MessageStream
         }
 
         @streaming
         union MessageStream {
-            message: Message,
+            message: Message
         }
 
         structure Message {
-            message: String,
+            message: String
         }
 
     .. code-tab:: json
@@ -445,7 +445,7 @@ message.
 
         @http(method: "GET", uri: "/messages/{room}")
         operation SubscribeToMessages {
-            input: SubscribeToMessagesInput,
+            input: SubscribeToMessagesInput
             output: SubscribeToMessagesOutput
         }
 
@@ -457,10 +457,10 @@ message.
 
         structure SubscribeToMessagesOutput {
             @httpHeader("X-Connection-Lifetime")
-            connectionLifetime: Integer,
+            connectionLifetime: Integer
 
             @httpPayload
-            messages: MessageStream,
+            messages: MessageStream
         }
 
     .. code-tab:: json
@@ -550,14 +550,14 @@ on the name of an event. For example, given the following event stream:
     }
 
     structure SubscribeToEventsOutput {
-        events: Events,
+        events: Events
     }
 
     @streaming
     union Events {
-        a: Event1,
-        b: Event2,
-        c: Event3,
+        a: Event1
+        b: Event2
+        c: Event3
     }
 
     structure Event1 {}
@@ -595,13 +595,13 @@ headers and the "c" member as the payload.
 
         structure ExampleEvent {
             @eventHeader
-            a: String,
+            a: String
 
             @eventHeader
-            b: String,
+            b: String
 
             @eventPayload
-            c: Blob,
+            c: Blob
         }
 
     .. code-tab:: json
@@ -644,9 +644,9 @@ based protocol, the event payload is serialized as a JSON object:
     .. code-tab:: smithy
 
         structure ExampleEvent {
-            a: String,
-            b: String,
-            c: Blob,
+            a: String
+            b: String
+            c: Blob
         }
 
     .. code-tab:: json
@@ -709,10 +709,10 @@ The following example defines multiple event headers:
 
         structure ExampleEvent {
             @eventHeader
-            a: String,
+            a: String
 
             @eventHeader
-            b: String,
+            b: String
         }
 
     .. code-tab:: json
@@ -781,10 +781,10 @@ of an event:
 
         structure ExampleEvent {
             @eventPayload
-            a: String,
+            a: String
 
             @eventHeader
-            b: String,
+            b: String
         }
 
     .. code-tab:: json
@@ -819,8 +819,8 @@ The following structure is **invalid** because the "a" member is bound to the
 
     structure ExampleEvent {
         @eventPayload
-        a: String,
+        a: String
 
-        b: String,
+        b: String
         // ^ Error: not bound to an eventHeader.
     }

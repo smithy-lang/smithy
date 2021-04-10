@@ -99,14 +99,14 @@ The following example's ``MyResource`` resource has the
         @service(sdkId: "My Value", arnNamespace: "myservice")
         @defineConditionKeys("otherservice:Bar": { type: "String" })
         service MyService {
-            version: "2017-02-11",
-            resources: [MyResource],
+            version: "2017-02-11"
+            resources: [MyResource]
         }
 
         @conditionKeys(["otherservice:Bar"])
         resource MyResource {
-            identifiers: {foo: String},
-            operations: [MyOperation],
+            identifiers: {foo: String}
+            operations: [MyOperation]
         }
 
         @conditionKeys(["aws:region"])
@@ -227,13 +227,13 @@ Each condition key structure supports the following members:
         @service(sdkId: "My Value", arnNamespace: "myservice")
         @defineConditionKeys(
             "otherservice:Bar": {
-                type: "String",
-                documentation: "The Bar string",
+                type: "String"
+                documentation: "The Bar string"
                 externalDocumentation: "http://example.com"
             })
         service MyService {
-            version: "2017-02-11",
-            resources: [MyResource],
+            version: "2017-02-11"
+            resources: [MyResource]
         }
 
     .. code-tab:: json
@@ -348,16 +348,16 @@ condition key inference disabled.
 
         @service(sdkId: "My Value", arnNamespace: "myservice")
         service MyService {
-            version: "2017-02-11",
-            resources: [MyResource],
+            version: "2017-02-11"
+            resources: [MyResource]
         }
 
         @disableConditionKeyInference
         resource MyResource {
             identifiers: {
-                foo: String,
-                bar: String,
-            },
+                foo: String
+                bar: String
+            }
         }
 
     .. code-tab:: json
@@ -431,13 +431,13 @@ operation for it to complete successfully.
 
         @service(sdkId: "My Value", arnNamespace: "myservice")
         service MyService {
-            version: "2017-02-11",
-            resources: [MyResource],
+            version: "2017-02-11"
+            resources: [MyResource]
         }
 
         resource MyResource {
-            identifiers: {foo: String},
-            operations: [MyOperation],
+            identifiers: {foo: String}
+            operations: [MyOperation]
         }
 
         @requiredActions(["otherservice:OtherOperation"])
@@ -521,15 +521,15 @@ Given the following model,
         @service(sdkId: "My Value", arnNamespace: "myservice")
         @defineConditionKeys("otherservice:Bar": { type: "String" })
         service MyService {
-            version: "2017-02-11",
-            resources: [MyResource],
+            version: "2017-02-11"
+            resources: [MyResource]
         }
 
         @conditionKeys(["otherservice:Bar"])
         resource MyResource {
-            identifiers: {foo: String},
-            operations: [MyOperation],
-            resources: [MyInnerResource],
+            identifiers: {foo: String}
+            operations: [MyOperation]
+            resources: [MyInnerResource]
         }
 
         resource MyInnerResource {

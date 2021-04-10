@@ -117,11 +117,11 @@ For example, given the following model,
 
         structure Foo {
             @documentation("Member documentation")
-            baz: Baz,
+            baz: Baz
 
-            bar: Baz,
+            bar: Baz
 
-            qux: String,
+            qux: String
         }
 
         @documentation("Shape documentation")
@@ -218,42 +218,42 @@ These values use the same semantics and format as
 
         @readonly
         operation MyOperation {
-            input: MyOperationInput,
-            output: MyOperationOutput,
+            input: MyOperationInput
+            output: MyOperationOutput
             errors: [MyOperationError]
         }
 
         apply MyOperation @examples([
             {
-                title: "Invoke MyOperation",
+                title: "Invoke MyOperation"
                 input: {
-                    tags: ["foo", "baz", "bar"],
-                },
-                output: {
-                    status: "PENDING",
+                    tags: ["foo", "baz", "bar"]
                 }
-            },
-            {
-                title: "Another example for MyOperation",
-                input: {
-                    foo: "baz",
-                },
                 output: {
-                    status: "PENDING",
+                    status: "PENDING"
                 }
-            },
+            }
             {
-                title: "Error example for MyOperation",
+                title: "Another example for MyOperation"
                 input: {
-                    foo: 1,
-                },
+                    foo: "baz"
+                }
+                output: {
+                    status: "PENDING"
+                }
+            }
+            {
+                title: "Error example for MyOperation"
+                input: {
+                    foo: 1
+                }
                 error: {
-                    shapeId: MyOperationError,
+                    shapeId: MyOperationError
                     content: {
-                        message: "Invalid 'foo'",
+                        message: "Invalid 'foo'"
                     }
                 }
-            },
+            }
         ])
 
 
@@ -304,11 +304,11 @@ Value type
     .. code-tab:: smithy
 
         @externalDocumentation(
-            "Homepage": "https://www.example.com/",
-            "API Reference": "https://www.example.com/api-ref",
+            "Homepage": "https://www.example.com/"
+            "API Reference": "https://www.example.com/api-ref"
         )
         service MyService {
-            version: "2006-03-01",
+            version: "2006-03-01"
         }
 
 
@@ -338,10 +338,10 @@ filtered version of the model.
     .. code-tab:: smithy
 
         structure MyStructure {
-            foo: String,
+            foo: String
 
             @internal
-            bar: String,
+            bar: String
         }
 
 
@@ -381,10 +381,10 @@ Conflicts with
 
         structure PutContentsInput {
             @required
-            contents: String,
+            contents: String
 
             @recommended(reason: "Validation will reject contents if they are invalid.")
-            validateContents: Boolean,
+            validateContents: Boolean
         }
 
 
@@ -486,7 +486,7 @@ Value type
 
         @title("ACME Simple Image Service")
         service MySimpleImageService {
-            version: "2006-03-01",
+            version: "2006-03-01"
         }
 
 
