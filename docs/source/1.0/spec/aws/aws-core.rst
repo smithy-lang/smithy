@@ -46,7 +46,7 @@ The following example defines an AWS service that uses the default values of
 
         @service(sdkId: "Some Value")
         service FooBaz {
-            version: "2018-03-17",
+            version: "2018-03-17"
         }
 
     .. code-tab:: json
@@ -78,14 +78,14 @@ The following example provides explicit values for all properties:
         use aws.api#service
 
         @service(
-            sdkId: "Some Value",
-            cloudFormationName: "FooBaz",
-            arnNamespace: "myservice",
-            cloudTrailEventSource: "myservice.amazon.aws",
+            sdkId: "Some Value"
+            cloudFormationName: "FooBaz"
+            arnNamespace: "myservice"
+            cloudTrailEventSource: "myservice.amazon.aws"
             endpointPrefix: "my-endpoint"
         )
         service FooBaz {
-            version: "2018-03-17",
+            version: "2018-03-17"
         }
 
     .. code-tab:: json
@@ -386,13 +386,13 @@ For example, given the following service:
 
         @service(sdkId: "Some Value")
         service FooBaz {
-            version: "2018-03-17",
-            resources: [MyResource],
+            version: "2018-03-17"
+            resources: [MyResource]
         }
 
         @arn(template: "myresource/{myId}")
         resource MyResource {
-            identifiers: {myId: MyResourceId},
+            identifiers: {myId: MyResourceId}
         }
 
     .. code-tab:: json
@@ -554,8 +554,8 @@ referenced resource.
         use aws.api#arnReference
 
         @arnReference(
-            type: "AWS::SomeService::SomeResource",
-            service: com.foo#SomeService,
+            type: "AWS::SomeService::SomeResource"
+            service: com.foo#SomeService
             resource: com.foo#SomeResource)
         string SomeResourceId
 
@@ -634,12 +634,12 @@ structure, union, or collection unless overridden.
 
         @data("permissions")
         structure MyStructure {
-            name: String,
+            name: String
 
             @data("content")
-            content: String,
+            content: String
 
-            tags: TagList,
+            tags: TagList
         }
 
         @data("tagging")
@@ -769,7 +769,7 @@ plane unless an operation or resource is marked with the
 
         @controlPlane
         operation PutThings {
-            input: PutThingsInput,
+            input: PutThingsInput
             output: PutThingsOutput
         }
 
@@ -823,7 +823,7 @@ plane unless an operation or resource is marked with the
 
         @dataPlane
         operation PutThings {
-            input: PutThingsInput,
+            input: PutThingsInput
             output: PutThingsOutput
         }
 
@@ -966,17 +966,17 @@ using an ``clientEndpointDiscoveryId``.
     .. code-tab:: smithy
 
         @aws.api#clientEndpointDiscovery(
-            operation: DescribeEndpoints,
-            error: InvalidEndpointError,
+            operation: DescribeEndpoints
+            error: InvalidEndpointError
         )
         service FooService {
-          version: "2019-09-10",
+          version: "2019-09-10"
           operations: [DescribeEndpoints, GetObject]
         }
 
         operation DescribeEndpoints {
-            input: DescribeEndpointsInput,
-            output: DescribeEndpointsOutput,
+            input: DescribeEndpointsInput
+            output: DescribeEndpointsOutput
             errors: [InvalidEndpointError]
         }
 
@@ -985,17 +985,17 @@ using an ``clientEndpointDiscoveryId``.
         structure InvalidEndpointError {}
 
         structure DescribeEndpointsInput {
-          Operation: String,
-          Identifiers: Identifiers,
+          Operation: String
+          Identifiers: Identifiers
         }
 
         map Identifiers {
-          key: String,
+          key: String
           value: String
         }
 
         structure DescribeEndpointsOutput {
-          Endpoints: Endpoints,
+          Endpoints: Endpoints
         }
 
         list Endpoints {
@@ -1003,24 +1003,24 @@ using an ``clientEndpointDiscoveryId``.
         }
 
         structure Endpoint {
-          Address: String,
-          CachePeriodInMinutes: Long,
+          Address: String
+          CachePeriodInMinutes: Long
         }
 
         @aws.api#clientDiscoveredEndpoint(required: true)
         operation GetObject {
-            input: GetObjectInput,
+            input: GetObjectInput
             output: GetObjectOutput
         }
 
         structure GetObjectInput {
           @clientEndpointDiscoveryId
           @required
-          Id: String,
+          Id: String
         }
 
         structure GetObjectOutput {
-          Object: Blob,
+          Object: Blob
         }
 
     .. code-tab:: json

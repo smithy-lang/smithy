@@ -143,12 +143,6 @@ final class IdlNodeParser {
                     throw parser.syntax("Duplicate member of " + parent + ": '" + keyNode.getValue() + '\'');
                 }
                 parser.ws();
-                if (parser.peek() == ',') {
-                    parser.skip();
-                    parser.ws();
-                } else {
-                    break;
-                }
             }
         }
 
@@ -179,12 +173,6 @@ final class IdlNodeParser {
             } else {
                 items.add(parseNode(parser));
                 parser.ws();
-                if (parser.peek() == ',') {
-                    parser.skip();
-                    parser.ws();
-                } else {
-                    break;
-                }
             }
         }
 
