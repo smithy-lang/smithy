@@ -731,17 +731,17 @@ in the closure of a service.
 
     @trait(selector: "service")
     list allowedTags {
-        member: String,
+        member: String
     }
 
     @allowedTags(["internal", "external"])
     service MyService {
-        version: "2020-04-28",
+        version: "2020-04-28"
         operations: [OperationA, OperationB, OperationC, OperationD]
     }
 
     operation OperationA {
-        input: OperationAInput,
+        input: OperationAInput
     }
 
     @tags(["internal"])
@@ -755,20 +755,20 @@ in the closure of a service.
 
     @input
     structure OperationAInput {
-        badValue: BadEnum,
-        goodValue: GoodEnum,
+        badValue: BadEnum
+        goodValue: GoodEnum
     }
 
     @enum([
-        {value: "a", tags: ["internal"]},
-        {value: "b", tags: ["invalid"]},
+        {value: "a", tags: ["internal"]}
+        {value: "b", tags: ["invalid"]}
     ])
     string BadEnum
 
     @enum([
-        {value: "a"},
-        {value: "b", tags: ["internal", "external"]},
-        {value: "c", tags: ["internal"]},
+        {value: "a"}
+        {value: "b", tags: ["internal", "external"]}
+        {value: "c", tags: ["internal"]}
     ])
     string GoodEnum
 
@@ -1437,9 +1437,9 @@ matches the disqualifier selector.
 
     @aws.api#dataPlane
     service Example {
-        version: "2020-09-08",
-        resources: [Foo],
-        operations: [OperationA],
+        version: "2020-09-08"
+        resources: [Foo]
+        operations: [OperationA]
     }
 
     operation OperationA {}
@@ -1530,7 +1530,7 @@ operation:
     @httpBasicAuth
     @httpBearerAuth
     service MyService {
-        version: "2020-04-21",
+        version: "2020-04-21"
         operations: [HasDigestAuth, HasBasicAuth, NoAuth]
     }
 

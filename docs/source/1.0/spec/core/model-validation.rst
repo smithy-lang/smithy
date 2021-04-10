@@ -106,16 +106,16 @@ The following Smithy document applies a custom validator named "SomeValidator":
     metadata validators = [
         {
             // The name of the validator.
-            name: "SomeValidator",
+            name: "SomeValidator"
             // Uses a custom event ID for each validation event emitted.
-            id: "CustomEventId",
+            id: "CustomEventId"
             // Uses a custom message that also includes the default message.
-            message: "My custom message name. {super}",
+            message: "My custom message name. {super}"
             // Applies the rule only to the following namespaces.
-            namespaces: ["foo.baz", "bar.qux"],
+            namespaces: ["foo.baz", "bar.qux"]
             // The following properties are specific to the validator.
             configuration: {
-              "someProperty": "foo",
+              "someProperty": "foo"
             }
         }
     ]
@@ -253,8 +253,8 @@ in the ``foo.baz`` namespace with an ID of ``UnreferencedShape``:
 
     metadata suppressions = [
         {
-            id: "UnreferencedShape",
-            namespace: "foo.baz",
+            id: "UnreferencedShape"
+            namespace: "foo.baz"
             reason: "This is a test namespace."
         }
     ]
@@ -268,7 +268,7 @@ ID of ``OverlyBroadValidator``:
 
     metadata suppressions = [
         {
-            id: "OverlyBroadValidator",
+            id: "OverlyBroadValidator"
             namespace: "*"
         }
     ]
@@ -335,8 +335,8 @@ following constraints:
     $version: "1.0"
 
     metadata validators = [{
-        name: "EmitEachSelector",
-        id: "MissingDocumentation",
+        name: "EmitEachSelector"
+        id: "MissingDocumentation"
         message: "This shape is missing documentation"
         configuration: {
             selector: """
@@ -357,17 +357,17 @@ input/output that has a shape name that does not case-insensitively end with
 
     metadata validators = [
         {
-            name: "EmitEachSelector",
-            id: "OperationInputName",
-            message: "This shape is referenced as input but the name does not end with 'Input'",
+            name: "EmitEachSelector"
+            id: "OperationInputName"
+            message: "This shape is referenced as input but the name does not end with 'Input'"
             configuration: {
                 selector: "operation -[input]-> :not([id|name$=Input i])"
             }
-        },
+        }
         {
-            name: "EmitEachSelector",
-            id: "OperationOutputName",
-            message: "This shape is referenced as output but the name does not end with 'Output'",
+            name: "EmitEachSelector"
+            id: "OperationOutputName"
+            message: "This shape is referenced as output but the name does not end with 'Output'"
             configuration: {
                 selector: "operation -[output]-> :not([id|name$=Output i])"
             }
@@ -384,17 +384,17 @@ as lifecycle 'read' or 'delete' that has a shape name that does not start with
 
     metadata validators = [
         {
-            name: "EmitEachSelector",
-            id: "LifecycleGetName",
-            message: "Lifecycle 'read' operation shape names should start with 'Get'",
+            name: "EmitEachSelector"
+            id: "LifecycleGetName"
+            message: "Lifecycle 'read' operation shape names should start with 'Get'"
             configuration: {
                 selector: "operation [read]-> :not([id|name^=Get i])"
             }
-        },
+        }
         {
-            name: "EmitEachSelector",
-            id: "LifecycleDeleteName",
-            message: "Lifecycle 'delete' operation shape names should start with 'Delete'",
+            name: "EmitEachSelector"
+            id: "LifecycleDeleteName"
+            message: "Lifecycle 'delete' operation shape names should start with 'Delete'"
             configuration: {
                 selector: "operation -[delete]-> :not([id|name^=Delete i])"
             }
@@ -420,11 +420,11 @@ Consider the following model:
 
     metadata validators = [
         {
-            name: "EmitEachSelector",
-            id: "DocumentedString",
+            name: "EmitEachSelector"
+            id: "DocumentedString"
             configuration: {
                 // matches all shapes
-                selector: "*",
+                selector: "*"
                 // Only emitted for shapes with the documentation
                 // trait, and each event points to where the
                 // trait is defined.
@@ -471,9 +471,9 @@ Consider the following model:
 
     metadata validators = [
         {
-            name: "EmitEachSelector",
+            name: "EmitEachSelector"
             configuration: {
-                selector: "[trait|documentation]",
+                selector: "[trait|documentation]"
                 messageTemplate: """
                     This shape has a name of @{id|name} and a @@documentation \
                     trait of "@{trait|documentation}"."""
@@ -509,12 +509,12 @@ to make message templates more descriptive. Consider the following example:
 
     metadata validators = [
         {
-            name: "EmitEachSelector",
-            id: "UnstableTrait",
+            name: "EmitEachSelector"
+            id: "UnstableTrait"
             configuration: {
                 selector: """
                       $matches(-[trait]-> [trait|unstable])
-                      ${matches}""",
+                      ${matches}"""
                 messageTemplate: "This shape applies traits(s) that are unstable: @{var|matches|id}"
             }
         }
@@ -641,12 +641,12 @@ traits.
     $version: "1.0"
 
     metadata validators = [{
-        name: "EmitNoneSelector",
-        id: "MissingConstraintTraits",
+        name: "EmitNoneSelector"
+        id: "MissingConstraintTraits"
         message: """
             No instances of the enum, pattern, length, or range trait
-            could be found. Did you forget to apply these traits?""",
+            could be found. Did you forget to apply these traits?"""
         configuration: {
-            selector: ":is([trait|enum], [trait|pattern], [trait|length], [trait|range])",
+            selector: ":is([trait|enum], [trait|pattern], [trait|length], [trait|range])"
         }
     }]

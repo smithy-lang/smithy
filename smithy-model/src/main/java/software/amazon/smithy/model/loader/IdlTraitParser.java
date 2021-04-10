@@ -127,11 +127,6 @@ final class IdlTraitParser {
         parser.ws();
 
         while (!parser.eof() && parser.peek() != ')') {
-            parser.expect(',');
-            parser.ws();
-            if (parser.peek() == ')') {
-                break;
-            }
             char c = parser.peek();
             if (ParserUtils.isIdentifierStart(c) || c == '"') {
                 parseTraitStructureKvp(parser, entries);
