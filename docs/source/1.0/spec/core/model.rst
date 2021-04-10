@@ -639,7 +639,7 @@ The following example defines a map of strings to integers:
         namespace smithy.example
 
         map IntegerMap {
-            key: String,
+            key: String
             value: Integer
         }
 
@@ -680,7 +680,7 @@ dense. The following example defines a sparse map:
 
         @sparse
         map SparseMap {
-            key: String,
+            key: String
             value: String
         }
 
@@ -739,10 +739,10 @@ is marked with the :ref:`required-trait`.
         namespace smithy.example
 
         structure MyStructure {
-            foo: String,
+            foo: String
 
             @required
-            baz: Integer,
+            baz: Integer
         }
 
     .. code-tab:: json
@@ -826,7 +826,7 @@ The following example defines a union shape with several members:
         namespace smithy.example
 
         union MyUnion {
-            i32: Integer,
+            i32: Integer
 
             @length(min: 1, max: 100)
             string: String,
@@ -1219,8 +1219,8 @@ that do not fit within a resource hierarchy.
         namespace smithy.example
 
         service MyService {
-            version: "2017-02-11",
-            operations: [GetServerTime],
+            version: "2017-02-11"
+            operations: [GetServerTime]
         }
 
         @readonly
@@ -1267,8 +1267,8 @@ shape ID of a resource to the ``resources`` property of a service.
         namespace smithy.example
 
         service MyService {
-            version: "2017-02-11",
-            resources: [MyResource],
+            version: "2017-02-11"
+            resources: [MyResource]
         }
 
         resource MyResource {}
@@ -1352,15 +1352,15 @@ the conflicting shapes.
     namespace smithy.example
 
     service MyService {
-        version: "2017-02-11",
-        operations: [GetSomething],
+        version: "2017-02-11"
+        operations: [GetSomething]
         rename: {
             "foo.example#Widget": "FooWidget"
         }
     }
 
     operation GetSomething {
-        input: GetSomethingInput,
+        input: GetSomethingInput
         output: GetSomethingOutput
     }
 
@@ -1369,8 +1369,8 @@ the conflicting shapes.
 
     @output
     structure GetSomethingOutput {
-        widget1: Widget,
-        fooWidget: foo.example#Widget,
+        widget1: Widget
+        fooWidget: foo.example#Widget
     }
 
     structure Widget {}
@@ -1448,8 +1448,8 @@ named ``MyOperationInput``, returns an output structure named
     namespace smithy.example
 
     operation MyOperation {
-        input: MyOperationInput,
-        output: MyOperationOutput,
+        input: MyOperationInput
+        output: MyOperationOutput
         errors: [NotFoundError, BadRequestError]
     }
 
@@ -1578,9 +1578,7 @@ single identifier named ``forecastId`` that targets the ``ForecastId`` shape:
         namespace smithy.example
 
         resource Forecast {
-            identifiers: {
-                forecastId: ForecastId
-            }
+            identifiers: { forecastId: ForecastId }
         }
 
         string ForecastId
@@ -1624,23 +1622,23 @@ For example, given the following model,
         resource ResourceA {
             identifiers: {
                 a: String
-            },
-            resources: [ResourceB],
+            }
+            resources: [ResourceB]
         }
 
         resource ResourceB {
             identifiers: {
-                a: String,
-                b: String,
-            },
-            resources: [ResourceC],
+                a: String
+                b: String
+            }
+            resources: [ResourceC]
         }
 
         resource ResourceC {
             identifiers: {
-                a: String,
-                b: String,
-                c: String,
+                a: String
+                b: String
+                c: String
             }
         }
 
@@ -1708,25 +1706,25 @@ define an ``identifiers`` property that is compatible with their parents:
 
         resource ResourceA {
             identifiers: {
-                a: String,
-                b: String,
-            },
-            resources: [Invalid1, Invalid2],
+                a: String
+                b: String
+            }
+            resources: [Invalid1, Invalid2]
         }
 
         resource Invalid1 {
             // Invalid: missing "a".
             identifiers: {
-                b: String,
-            },
+                b: String
+            }
         }
 
         resource Invalid2 {
             identifiers: {
-                a: String,
+                a: String
                 // Invalid: does not target the same shape.
-                b: SomeOtherString,
-            },
+                b: SomeOtherString
+            }
         }
 
     .. code-tab:: json
@@ -1827,27 +1825,27 @@ For example, given the following model,
 
     resource Forecast {
         identifiers: {
-            forecastId: ForecastId,
-        },
-        read: GetForecast,
+            forecastId: ForecastId
+        }
+        read: GetForecast
     }
 
     @readonly
     operation GetForecast {
-        input: GetForecastInput,
+        input: GetForecastInput
         output: GetForecastOutput
     }
 
     @input
     structure GetForecastInput {
         @required
-        forecastId: ForecastId,
+        forecastId: ForecastId
     }
 
     @output
     structure GetForecastOutput {
         @required
-        weather: WeatherData,
+        weather: WeatherData
     }
 
 ``GetForecast`` forms a valid instance operation because the operation is
@@ -1865,20 +1863,20 @@ Given the following model,
 
     resource Forecast {
         identifiers: {
-            forecastId: ForecastId,
-        },
-        collectionOperations: [BatchPutForecasts],
+            forecastId: ForecastId
+        }
+        collectionOperations: [BatchPutForecasts]
     }
 
     operation BatchPutForecasts {
-        input: BatchPutForecastsInput,
+        input: BatchPutForecastsInput
         output: BatchPutForecastsOutput
     }
 
     @input
     structure BatchPutForecastsInput {
         @required
-        forecasts: BatchPutForecastList,
+        forecasts: BatchPutForecastList
     }
 
 ``BatchPutForecasts`` forms a valid collection operation with implicit
@@ -1901,21 +1899,21 @@ For example, given the following,
 
     resource Forecast {
         // continued from above
-        resources: [HistoricalForecast],
+        resources: [HistoricalForecast]
     }
 
     resource HistoricalForecast {
         identifiers: {
-            forecastId: ForecastId,
-            historicalId: HistoricalForecastId,
-        },
-        read: GetHistoricalForecast,
-        list: ListHistoricalForecasts,
+            forecastId: ForecastId
+            historicalId: HistoricalForecastId
+        }
+        read: GetHistoricalForecast
+        list: ListHistoricalForecasts
     }
 
     @readonly
     operation GetHistoricalForecast {
-        input: GetHistoricalForecastInput,
+        input: GetHistoricalForecastInput
         output: GetHistoricalForecastOutput
     }
 
@@ -1923,7 +1921,7 @@ For example, given the following,
     structure GetHistoricalForecastInput {
         @required
         @resourceIdentifier("forecastId")
-        customForecastIdName: ForecastId,
+        customForecastIdName: ForecastId
 
         @required
         @resourceIdentifier("historicalId")
@@ -1956,15 +1954,13 @@ The following example defines a resource with each lifecycle method:
     namespace smithy.example
 
     resource Forecast {
-        identifiers: {
-            forecastId: ForecastId,
-        },
-        put: PutForecast,
-        create: CreateForecast,
-        read: GetForecast,
-        update: UpdateForecast,
-        delete: DeleteForecast,
-        list: ListForecasts,
+        identifiers: { forecastId: ForecastId }
+        put: PutForecast
+        create: CreateForecast
+        read: GetForecast
+        update: UpdateForecast
+        delete: DeleteForecast
+        list: ListForecasts
     }
 
 
@@ -1986,7 +1982,7 @@ The following example defines the ``PutForecast`` operation.
 
     @idempotent
     operation PutForecast {
-        input: PutForecastInput,
+        input: PutForecastInput
         output: PutForecastOutput
     }
 
@@ -1994,7 +1990,7 @@ The following example defines the ``PutForecast`` operation.
     structure PutForecastInput {
         // The client provides the resource identifier.
         @required
-        forecastId: ForecastId,
+        forecastId: ForecastId
 
         chanceOfRain: Float
     }
@@ -2029,12 +2025,12 @@ The following example defines the ``CreateForecast`` operation.
 .. code-block:: smithy
 
     operation CreateForecast {
-        input: CreateForecastInput,
+        input: CreateForecastInput
         output: CreateForecastOutput
     }
 
     operation CreateForecast {
-        input: CreateForecastInput,
+        input: CreateForecastInput
         output: CreateForecastOutput
     }
 
@@ -2042,7 +2038,7 @@ The following example defines the ``CreateForecast`` operation.
     structure CreateForecastInput {
         // No identifier is provided by the client, so the service is
         // responsible for providing the identifier of the resource.
-        chanceOfRain: Float,
+        chanceOfRain: Float
     }
 
 
@@ -2063,15 +2059,15 @@ For example:
 
     @readonly
     operation GetForecast {
-        input: GetForecastInput,
-        output: GetForecastOutput,
+        input: GetForecastInput
+        output: GetForecastOutput
         errors: [ResourceNotFound]
     }
 
     @input
     structure GetForecastInput {
         @required
-        forecastId: ForecastId,
+        forecastId: ForecastId
     }
 
 
@@ -2091,17 +2087,17 @@ For example:
 .. code-block:: smithy
 
     operation UpdateForecast {
-        input: UpdateForecastInput,
-        output: UpdateForecastOutput,
+        input: UpdateForecastInput
+        output: UpdateForecastOutput
         errors: [ResourceNotFound]
     }
 
     @input
     structure UpdateForecastInput {
         @required
-        forecastId: ForecastId,
+        forecastId: ForecastId
 
-        chanceOfRain: Float,
+        chanceOfRain: Float
     }
 
 
@@ -2122,15 +2118,15 @@ For example:
 
     @idempotent
     operation DeleteForecast {
-        input: DeleteForecastInput,
-        output: DeleteForecastOutput,
+        input: DeleteForecastInput
+        output: DeleteForecastOutput
         errors: [ResourceNotFound]
     }
 
     @input
     structure DeleteForecastInput {
         @required
-        forecastId: ForecastId,
+        forecastId: ForecastId
     }
 
 
@@ -2154,19 +2150,19 @@ For example:
 
     @readonly @paginated
     operation ListForecasts {
-        input: ListForecastsInput,
+        input: ListForecastsInput
         output: ListForecastsOutput
     }
 
     @input
     structure ListForecastsInput {
-        maxResults: Integer,
+        maxResults: Integer
         nextToken: String
     }
 
     @output
     structure ListForecastsOutput {
-        nextToken: String,
+        nextToken: String
         @required
         forecasts: ForecastList
     }
@@ -2534,24 +2530,24 @@ The following example defines two custom traits: ``beta`` and
         @trait(selector: "string", conflicts: [beta])
         structure structuredTrait {
             @required
-            lorem: StringShape,
+            lorem: StringShape
 
             @required
-            ipsum: StringShape,
+            ipsum: StringShape
 
-            dolor: StringShape,
+            dolor: StringShape
         }
 
         // Apply the "beta" trait to the "foo" member.
         structure MyShape {
             @required
             @beta
-            foo: StringShape,
+            foo: StringShape
         }
 
         // Apply the structuredTrait to the string.
         @structuredTrait(
-            lorem: "This is a custom trait!",
+            lorem: "This is a custom trait!"
             ipsum: "lorem and ipsum are both required values.")
         string StringShape
 
@@ -2684,7 +2680,7 @@ after adding a member to the ``foo`` trait:
 
         @trait
         structure foo {
-            baz: String,
+            baz: String
         }
 
         @foo(baz: "bar")

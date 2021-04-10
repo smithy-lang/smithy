@@ -140,12 +140,6 @@ final class IdlNodeParser {
                 }
                 builder.withMember(keyNode, value);
                 parser.ws();
-                if (parser.peek() == ',') {
-                    parser.skip();
-                    parser.ws();
-                } else {
-                    break;
-                }
             }
         }
 
@@ -177,12 +171,6 @@ final class IdlNodeParser {
             } else {
                 builder.withValue(parseNode(parser));
                 parser.ws();
-                if (parser.peek() == ',') {
-                    parser.skip();
-                    parser.ws();
-                } else {
-                    break;
-                }
             }
         }
 

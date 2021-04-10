@@ -39,12 +39,14 @@ Smithy models SHOULD resemble the following example:
     structure MyStructure {
         /// Documentation about the member.
         @required
-        foo: String,
+        foo: String
     }
 
     // Example of creating custom traits.
     @trait(selector: "string")
     structure myTrait {}
+
+* Each statement should appear on its own line.
 
 
 File encoding
@@ -93,10 +95,65 @@ Whitespace
 4. Members of an object are not horizontally aligned.
 
 
-Trailing commas
----------------
+Commas
+------
 
-Include trailing commas to limit diff noise.
+Omit commas everywhere except in traits or node values defined on a
+single line.
+
+Do:
+
+.. code-block:: smithy
+
+    $version: "1.0"
+
+    metadata validators = [{
+        name: "StandardOperationVerb"
+        configuration: {
+            verbs: ["Get", "Delete", "Create", "Update"]
+            prefixes: ["Batch"]
+        }
+    }]
+
+    namespace smithy.example.namespace
+
+    /// Gets a resource by ID.
+    @http(method: "GET", uri: "/message/{userId}")
+    operation GetMessage {
+        input: GetMessageInput
+        output: GetMessageOutput
+        errors: [
+            ValidationError
+            ResourceNotFoundError
+        ]
+    }
+
+Do not:
+
+.. code-block:: smithy
+
+    $version: "1.0"
+
+    metadata validators = [{
+        name: "StandardOperationVerb",
+        configuration: {
+            verbs: ["Get" "Delete" "Create" "Update"],
+            prefixes: ["Batch"],
+        },
+    },]
+
+    namespace smithy.example.namespace
+
+    /// Gets a resource by ID.
+    @http(method: "GET" uri: "/message/{userId}")
+    operation GetMessage {
+        input: GetMessageInput,
+        output: GetMessageOutput,
+        errors: [
+            ValidationError,
+            ResourceNotFoundError,
+        ],
+    }
 
 
 Naming
