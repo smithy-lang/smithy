@@ -145,17 +145,23 @@ final class IdlModelParser extends SimpleParser {
     @Override
     public void ws() {
         while (!eof()) {
-            char c = peek();
-            if (c == '/') {
-                if (peekDocComment()) {
-                    parseDocComment();
-                } else {
-                    parseComment();
-                }
-            } else if (!(c == ' ' || c == '\t' || c == '\r' || c == '\n')) {
-                break;
-            } else {
-                skip();
+            switch (peek()) {
+                case '/':
+                    if (peekDocComment()) {
+                        parseDocComment();
+                    } else {
+                        parseComment();
+                    }
+                    break;
+                case ' ':
+                case '\t':
+                case '\r':
+                case '\n':
+                case ',':
+                    skip();
+                    break;
+                default:
+                     return;
             }
         }
     }
@@ -195,7 +201,6 @@ final class IdlModelParser extends SimpleParser {
                         .build());
             }
 
-            br();
             ws();
         }
     }
@@ -230,7 +235,6 @@ final class IdlModelParser extends SimpleParser {
             expect('=');
             ws();
             modelFile.putMetadata(key, IdlNodeParser.parseNode(this));
-            br();
             ws();
         }
     }
@@ -252,11 +256,10 @@ final class IdlModelParser extends SimpleParser {
             int start = position();
             ParserUtils.consumeNamespace(this);
             modelFile.setNamespace(sliceFrom(start));
-
-            br();
             // Clear out any erroneous documentation comments.
             clearPendingDocs();
             ws();
+
             parseUseSection();
             parseShapeStatements();
         } else if (!eof()) {
@@ -281,7 +284,6 @@ final class IdlModelParser extends SimpleParser {
             expect('#');
             ParserUtils.consumeIdentifier(this);
             String lexeme = sliceFrom(start);
-            br();
             // Clear out any erroneous documentation comments.
             clearPendingDocs();
             ws();
@@ -425,7 +427,7 @@ final class IdlModelParser extends SimpleParser {
 
         addTraits(id, traits);
         clearPendingDocs();
-        br();
+        ws();
     }
 
     private ShapeId parseShapeName() {
@@ -454,31 +456,24 @@ final class IdlModelParser extends SimpleParser {
 
         ws();
         expect('{');
-        // Don't keep any previous state of captured doc comments when
-        // parsing members.
-        clearPendingDocs();
         ws();
 
-        if (peek() != '}') {
-            parseMember(id, requiredMembers, definedMembers, remaining);
-            while (!eof()) {
-                ws();
-                if (peek() == ',') {
-                    expect(',');
-                    // A comma clears out any previously captured documentation
-                    // comments that may have been found when parsing the member.
-                    clearPendingDocs();
-                    ws();
-                    if (peek() == '}') {
-                        // Trailing comma: "," "}"
-                        break;
-                    }
-                    parseMember(id, requiredMembers, definedMembers, remaining);
-                } else {
-                    // Assume '}'; break to enforce.
-                    break;
-                }
+        while (!eof()) {
+            if (peek() == '}') {
+                break;
             }
+
+            parseMember(id, requiredMembers, definedMembers, remaining);
+
+            // Clears out any previously captured documentation
+            // comments that may have been found when parsing the member.
+            clearPendingDocs();
+
+            ws();
+        }
+
+        if (eof()) {
+            expect('}');
         }
 
         if (!remaining.isEmpty()) {
@@ -489,7 +484,7 @@ final class IdlModelParser extends SimpleParser {
         expect('}');
     }
 
-    private String parseMember(ShapeId parent, Set<String> required, Set<String> defined, Set<String> remaining) {
+    private void parseMember(ShapeId parent, Set<String> required, Set<String> defined, Set<String> remaining) {
         // Parse optional member traits.
         List<TraitEntry> memberTraits = parseDocsAndTraits();
         SourceLocation memberLocation = currentLocation();
@@ -517,8 +512,6 @@ final class IdlModelParser extends SimpleParser {
         modelFile.onShape(memberBuilder);
         modelFile.addForwardReference(target, memberBuilder::target);
         addTraits(memberId, memberTraits);
-
-        return memberName;
     }
 
     private void parseMapStatement(ShapeId id, SourceLocation location) {
@@ -666,7 +659,6 @@ final class IdlModelParser extends SimpleParser {
 
         // Clear out any errantly captured pending docs.
         clearPendingDocs();
-        br();
         ws();
     }
 
@@ -759,19 +751,16 @@ final class IdlModelParser extends SimpleParser {
                     break;
                 }
             }
-            return result.toString();
-        }
-
-        // Take two characters for context.
-        for (int i = 0; i < 2; i++) {
-            char peek = peek(i);
-            if (peek == Character.MIN_VALUE) {
-                result.append("[EOF]");
-                break;
+        } else {
+            // Take two characters for context.
+            for (int i = 0; i < 2; i++) {
+                char peek = peek(i);
+                if (peek != Character.MIN_VALUE) {
+                    result.append(peek);
+                }
             }
-            result.append(peek);
         }
 
-        return result.toString();
+        return result.length() == 0 ? "[EOF]" : result.toString();
     }
 }

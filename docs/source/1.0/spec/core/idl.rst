@@ -77,8 +77,12 @@ The following example defines a model file with each section:
 Lexical notes
 -------------
 
-Smithy models MUST be encoded using UTF-8 and SHOULD use Unix style
-line endings (``\n``). The Smithy ABNF is whitespace sensitive.
+* Smithy models MUST be encoded using UTF-8 and SHOULD use Unix style
+  line endings (``\n``).
+* The Smithy ABNF is whitespace sensitive.
+* Except for within strings, commas in the Smithy IDL are considered
+  whitespace. Commas can be used anywhere where they make the model
+  easier to read (for example, in complex traits defined on a single line).
 
 
 .. _smithy-idl-abnf:
@@ -95,7 +99,7 @@ The Smithy IDL is defined by the following ABNF:
 .. rubric:: Whitespace
 
 .. productionlist:: smithy
-    ws      :*(`sp` / `newline` / `comment`) ; whitespace
+    ws      :*(`sp` / `newline` / `comment` / ",") ; whitespace
     sp      :*(%x20  / %x09) ; " " and \t
     br      :`sp` (`comment` / `newline`) `sp` ; break
     newline :%x0A / %x0D.0A ; \n and \r\n
@@ -112,13 +116,13 @@ The Smithy IDL is defined by the following ABNF:
 
 .. productionlist:: smithy
     control_section   :*(`control_statement`)
-    control_statement :"$" `ws` `node_object_key` `ws` ":" `ws` `node_value` `br`
+    control_statement :"$" `ws` `node_object_key` `ws` ":" `ws` `node_value` `ws`
 
 .. rubric:: Metadata
 
 .. productionlist:: smithy
     metadata_section   :*(`metadata_statement`)
-    metadata_statement :"metadata" `ws` `node_object_key` `ws` "=" `ws` `node_value` `br`
+    metadata_statement :"metadata" `ws` `node_object_key` `ws` "=" `ws` `node_value` `ws`
 
 .. rubric:: Node values
 
@@ -128,18 +132,8 @@ The Smithy IDL is defined by the following ABNF:
                :/ `number`
                :/ `node_keywords`
                :/ `node_string_value`
-    node_array          :`empty_node_array` / `populated_node_array`
-    empty_node_array    :"[" `ws` "]"
-    populated_node_array:"[" `ws` `node_value` `ws`
-                        :       *(`comma` `node_value` `ws`)
-                        :       `trailing_comma` "]"
-    trailing_comma      :[`comma`]
-    comma               :"," `ws`
-    node_object          :`empty_node_object` / `populated_node_object`
-    empty_node_object    :"{" `ws` "}"
-    populated_node_object:"{" `ws` `node_object_kvp` `ws`
-                         :       *(`comma` `node_object_kvp` `ws`)
-                         :       `trailing_comma` "}"
+    node_array           :"[" `ws` *(`node_value` `ws`) "]"
+    node_object          :"{" `ws` *(`node_object_kvp` `ws`) "}"
     node_object_kvp      :`node_object_key` `ws` ":" `ws` `node_value`
     node_object_key      :`quoted_text` / `identifier`
     number              :[`minus`] `int` [`frac`] [`exp`]
@@ -172,11 +166,11 @@ The Smithy IDL is defined by the following ABNF:
 
 .. productionlist:: smithy
     shape_section :[`namespace_statement` [`use_section`] [`shape_statements`]]
-    namespace_statement :"namespace" `ws` `namespace` `br`
+    namespace_statement :"namespace" `ws` `namespace` `ws`
     use_section   :*(`use_statement`)
-    use_statement :"use" `ws` `absolute_root_shape_id` `br`
+    use_statement :"use" `ws` `absolute_root_shape_id` `ws`
     shape_statements             :*(`shape_statement` / `apply_statement`)
-    shape_statement              :`trait_statements` `shape_body` `br`
+    shape_statement              :`trait_statements` `shape_body` `ws`
     shape_body                   :`simple_shape_statement`
                                  :/ `list_statement`
                                  :/ `set_statement`
@@ -191,11 +185,8 @@ The Smithy IDL is defined by the following ABNF:
                            :/ "byte" / "short" / "integer" / "long"
                            :/ "float" / "double" / "bigInteger"
                            :/ "bigDecimal" / "timestamp"
-    shape_members           :`empty_shape_members` / `populated_shape_members`
-    empty_shape_members     :"{" `ws` "}"
-    populated_shape_members :"{" `ws` `shape_member_kvp`
-                            :  *(`comma` `shape_member_kvp` `ws`) `trailing_comma` "}"
-    shape_member_kvp        :`trait_statements` `identifier` `ws` ":" `ws` `shape_id`
+    shape_members          :"{" `ws` *(`shape_member_kvp` `ws`) "}"
+    shape_member_kvp       :`trait_statements` `identifier` `ws` ":" `ws` `shape_id`
     list_statement :"list" `ws` `identifier` `ws` `shape_members`
     set_statement :"set" `ws` `identifier` `ws` `shape_members`
     map_statement :"map" `ws` `identifier` `ws` `shape_members`
@@ -212,9 +203,9 @@ The Smithy IDL is defined by the following ABNF:
     trait               :"@" `shape_id` [`trait_body`]
     trait_body          :"(" `ws` `trait_body_value` `ws` ")"
     trait_body_value    :`trait_structure` / `node_value`
-    trait_structure     :`trait_structure_kvp` *(`ws` `comma` `trait_structure_kvp`)
+    trait_structure     :`trait_structure_kvp` *(`ws` `trait_structure_kvp`)
     trait_structure_kvp :`node_object_key` `ws` ":" `ws` `node_value`
-    apply_statement :"apply" `ws` `shape_id` `ws` `trait` `br`
+    apply_statement :"apply" `ws` `shape_id` `ws` `trait` `ws`
 
 .. rubric:: Shape ID
 
