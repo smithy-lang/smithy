@@ -103,7 +103,7 @@ The Smithy IDL is defined by the following ABNF:
 .. rubric:: Comments
 
 .. productionlist:: smithy
-    comment: `documentation_comment` / `comment`
+    comment: `documentation_comment` / `line_comment`
     documentation_comment:"///" *`not_newline` `br`
     line_comment: "//" *`not_newline` `newline`
     not_newline: %x09 / %x20-10FFFF ; Any character except newline
