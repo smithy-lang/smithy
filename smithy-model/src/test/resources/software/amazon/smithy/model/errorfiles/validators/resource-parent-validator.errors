@@ -2,8 +2,4 @@
 [ERROR] ns.foo#CycleB: Circular resource hierarchy found: ns.foo#CycleB -> ns.foo#CycleC -> ns.foo#CycleA -> ns.foo#CycleB | ResourceCycle
 [ERROR] ns.foo#CycleC: Circular resource hierarchy found: ns.foo#CycleC -> ns.foo#CycleA -> ns.foo#CycleB -> ns.foo#CycleC | ResourceCycle
 [ERROR] ns.foo#InvalidResourceBindingType: resource shape `resource` relationships must target a resource shape, but found (string: `smithy.api#String`) | Target
-[ERROR] ns.foo#InvalidSelfResourceBinding: A resource can appear only once in an entire service closure. This resource is illegally bound into the `ns.foo#MyService` service closure from multiple shapes: [`ns.foo#InvalidSelfResourceBinding`, `ns.foo#MyService`] | SingleResourceBinding
 [ERROR] ns.foo#InvalidSelfResourceBinding: Circular resource hierarchy found: ns.foo#InvalidSelfResourceBinding -> ns.foo#InvalidSelfResourceBinding | ResourceCycle
-[NOTE] ns.foo#CycleA: The resource shape is not connected to from any service shape. | UnreferencedShape
-[NOTE] ns.foo#CycleB: The resource shape is not connected to from any service shape. | UnreferencedShape
-[NOTE] ns.foo#CycleC: The resource shape is not connected to from any service shape. | UnreferencedShape

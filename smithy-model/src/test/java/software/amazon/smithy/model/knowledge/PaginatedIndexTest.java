@@ -33,7 +33,7 @@ public class PaginatedIndexTest {
     public void findDirectChildren() {
         ValidatedResult<Model> result = Model.assembler()
                 .addImport(getClass().getResource(
-                        "/software/amazon/smithy/model/errorfiles/validators/paginated-trait-test.json"))
+                        "/software/amazon/smithy/model/errorfiles/validators/paginated/paginated-valid.json"))
                 .assemble();
         Model model = result.getResult().get();
         PaginatedIndex index = PaginatedIndex.of(model);
@@ -63,7 +63,7 @@ public class PaginatedIndexTest {
     public void findIndirectChildren() {
         ValidatedResult<Model> result = Model.assembler()
                 .addImport(getClass().getResource(
-                        "/software/amazon/smithy/model/errorfiles/validators/paginated-trait-test.json"))
+                        "/software/amazon/smithy/model/errorfiles/validators/paginated/paginated-valid.json"))
                 .assemble();
         Model model = result.getResult().get();
         PaginatedIndex index = PaginatedIndex.of(model);

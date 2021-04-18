@@ -1,0 +1,2 @@
+[ERROR] smithy.example#FooRequest$listVal: member shape targets an unresolved shape `smithy.example#ListOfString` | Target
+[ERROR] smithy.example#FooRequest$mapVal: member shape targets an unresolved shape `smithy.example#MapOfInteger` | Target

@@ -1,0 +1,11 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "ns.foo#InvalidShapeId": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#auth": ["not a shape ID"]
+            }
+        }
+    }
+}

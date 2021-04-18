@@ -1,0 +1,13 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "ns.foo#BadTarget": {
+            "type": "resource",
+            "identifiers": {
+                "id": {
+                    "target": "smithy.api#Float"
+                }
+            }
+        }
+    }
+}

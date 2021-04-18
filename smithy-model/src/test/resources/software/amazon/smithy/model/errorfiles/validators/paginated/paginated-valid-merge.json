@@ -1,0 +1,75 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "ns.foo#Service2": {
+            "type": "service",
+            "version": "2019-06-27",
+            "resources": [
+                {
+                    "target": "ns.foo#Resource"
+                }
+            ],
+            "traits": {
+                "smithy.api#paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "nextToken",
+                    "pageSize": "pageSize"
+                }
+            }
+        },
+        "ns.foo#Resource": {
+            "type": "resource",
+            "identifiers": {
+                "foo": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "list": {
+                "target": "ns.foo#ListResources"
+            }
+        },
+        "ns.foo#ListResources": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#ListResourcesInput"
+            },
+            "output": {
+                "target": "ns.foo#ListResourcesOutput"
+            },
+            "traits": {
+                "smithy.api#readonly": {},
+                "smithy.api#paginated": {
+                    "items": "items"
+                }
+            }
+        },
+        "ns.foo#ListResourcesInput": {
+            "type": "structure",
+            "members": {
+                "nextToken": {
+                    "target": "smithy.api#String"
+                },
+                "pageSize": {
+                    "target": "smithy.api#Integer"
+                }
+            }
+        },
+        "ns.foo#ListResourcesOutput": {
+            "type": "structure",
+            "members": {
+                "nextToken": {
+                    "target": "smithy.api#String"
+                },
+                "items": {
+                    "target": "ns.foo#StringList"
+                }
+            }
+        },
+        "ns.foo#StringList": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            }
+        }
+    }
+}

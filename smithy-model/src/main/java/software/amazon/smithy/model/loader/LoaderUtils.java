@@ -95,4 +95,19 @@ final class LoaderUtils {
         SourceLocation sb = b.getSourceLocation();
         return sa != SourceLocation.NONE && sa.equals(sb);
     }
+
+    /**
+     * Checks if a list of validation events contains an ERROR severity.
+     *
+     * @param events Events to check.
+     * @return Returns true if an ERROR event is present.
+     */
+    static boolean containsErrorEvents(List<ValidationEvent> events) {
+        for (ValidationEvent event : events) {
+            if (event.getSeverity() == Severity.ERROR) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

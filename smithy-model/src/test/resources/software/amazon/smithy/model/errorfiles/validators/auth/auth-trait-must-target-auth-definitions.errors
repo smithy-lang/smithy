@@ -1,0 +1,1 @@
+[ERROR] ns.foo#Invalid1: Error validating trait `auth`.0: Shape ID `smithy.api#String` does not match selector `[trait|authDefinition]` | TraitValue

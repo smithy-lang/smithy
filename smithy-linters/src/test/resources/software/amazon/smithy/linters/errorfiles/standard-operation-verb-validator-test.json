@@ -45,10 +45,6 @@
         "validators": [
             {
                 "name": "StandardOperationVerb",
-                "id": "Pointless"
-            },
-            {
-                "name": "StandardOperationVerb",
                 "id": "WithVerbsAndPrefixes",
                 "configuration": {
                     "verbs": [

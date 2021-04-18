@@ -600,7 +600,9 @@ public final class ModelAssembler {
     private ValidatedResult<Model> validate(Model model, TraitContainer traits, List<ValidationEvent> events) {
         validateTraits(model.getShapeIds(), traits, events);
 
-        if (disableValidation) {
+        // If ERROR validation events occur while loading, then performing more
+        // granular semantic validation will only obscure the root cause of errors.
+        if (disableValidation || LoaderUtils.containsErrorEvents(events)) {
             return new ValidatedResult<>(model, events);
         }
 

@@ -1,0 +1,1 @@
+[ERROR] ns.foo#BadTarget: resource shape `identifier` relationships must target a string shape, but found (float: `smithy.api#Float`) | Target

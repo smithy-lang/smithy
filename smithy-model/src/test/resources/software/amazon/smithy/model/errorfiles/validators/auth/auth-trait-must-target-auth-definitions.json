@@ -16,12 +16,6 @@
         "ns.foo#Invalid1": {
             "type": "operation",
             "traits": {
-                "smithy.api#auth": ["not a shape ID"]
-            }
-        },
-        "ns.foo#Invalid2": {
-            "type": "operation",
-            "traits": {
                 "smithy.api#auth": ["smithy.api#String"]
             }
         }

@@ -1,0 +1,210 @@
+{
+    "smithy": "1.0",
+    "metadata": {
+        "validators": [
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ""
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "!"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "'foo'"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "\"foo\""
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "invalid"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[]"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[foo|]"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[|]"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[a=]"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[a=b"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "string=b"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[foo=']"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[foo=\"]"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[foo==value]"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[foo^foo]"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":is(:not(string) > list"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "foo -[]->"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "foo -[input]->"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":not"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":not("
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":not()"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":not(string"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":is"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":is("
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":nay()"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":is(string"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":is(string, "
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":is(string, )"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":is(string, :not())"
+                }
+            }
+        ]
+    }
+}

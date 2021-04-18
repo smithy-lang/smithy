@@ -1,14 +1,6 @@
 {
     "smithy": "1.0",
     "shapes": {
-        "ns.foo#Invalid1": {
-            "type": "resource",
-            "identifiers": {
-                "id": {
-                    "target": "smithy.api#Float"
-                }
-            }
-        },
         "ns.foo#Valid1": {
             "type": "resource",
             "identifiers": {
@@ -21,14 +13,14 @@
             },
             "resources": [
                 {
-                    "target": "ns.foo#Invalid2"
+                    "target": "ns.foo#Invalid1"
                 },
                 {
-                    "target": "ns.foo#Invalid3"
+                    "target": "ns.foo#Invalid2"
                 }
             ]
         },
-        "ns.foo#Invalid2": {
+        "ns.foo#Invalid1": {
             "type": "resource",
             "identifiers": {
                 "a": {
@@ -36,7 +28,7 @@
                 }
             }
         },
-        "ns.foo#Invalid3": {
+        "ns.foo#Invalid2": {
             "type": "resource",
             "identifiers": {
                 "a": {
