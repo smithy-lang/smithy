@@ -95,7 +95,7 @@
                 "Id": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "aws.api#endpointDiscoveryId": {},
+                        "aws.api#clientEndpointDiscoveryId": {},
                         "smithy.api#required": {}
                     }
                 }

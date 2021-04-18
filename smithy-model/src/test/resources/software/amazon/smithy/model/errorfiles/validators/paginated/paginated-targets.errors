@@ -1,0 +1,4 @@
+[ERROR] ns.foo#UnresolvedInput$nextToken: member shape targets an unresolved shape `ns.foo#Missing` | Target
+[ERROR] ns.foo#UnresolvedInput$pageSize: member shape targets an unresolved shape `ns.foo#Missing` | Target
+[ERROR] ns.foo#UnresolvedOutput$items: member shape targets an unresolved shape `ns.foo#Missing` | Target
+[ERROR] ns.foo#UnresolvedOutput$nextToken: member shape targets an unresolved shape `ns.foo#Missing` | Target

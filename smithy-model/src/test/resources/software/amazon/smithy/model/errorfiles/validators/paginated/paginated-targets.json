@@ -1,0 +1,57 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "ns.foo#Service": {
+            "type": "service",
+            "version": "2019-06-27",
+            "operations": [
+                {
+                    "target": "ns.foo#UnresolvedTargets"
+                }
+            ]
+        },
+        "ns.foo#UnresolvedTargets": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#UnresolvedInput"
+            },
+            "output": {
+                "target": "ns.foo#UnresolvedOutput"
+            },
+            "traits": {
+                "smithy.api#readonly": {},
+                "smithy.api#paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "nextToken",
+                    "items": "items",
+                    "pageSize": "pageSize"
+                }
+            }
+        },
+        "ns.foo#UnresolvedInput": {
+            "type": "structure",
+            "members": {
+                "nextToken": {
+                    "target": "ns.foo#Missing"
+                },
+                "pageSize": {
+                    "target": "ns.foo#Missing"
+                }
+            }
+        },
+        "ns.foo#UnresolvedOutput": {
+            "type": "structure",
+            "members": {
+                "nextToken": {
+                    "target": "ns.foo#Missing"
+                },
+                "items": {
+                    "target": "ns.foo#Missing",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
+                }
+            }
+        }
+    }
+}

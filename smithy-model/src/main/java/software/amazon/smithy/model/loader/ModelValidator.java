@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
@@ -33,7 +34,10 @@ import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
+import software.amazon.smithy.model.validation.validators.ResourceCycleValidator;
+import software.amazon.smithy.model.validation.validators.TargetValidator;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Validates a model, including validators and suppressions loaded from
@@ -57,6 +61,12 @@ final class ModelValidator {
     private static final String EMPTY_REASON = "";
     private static final Collection<String> SUPPRESSION_KEYS = ListUtils.of(ID, NAMESPACE, REASON);
 
+    /** If these validators fail, then many others will too. Validate these first. */
+    private static final Set<Class<? extends Validator>> CORE_VALIDATORS = SetUtils.of(
+            TargetValidator.class,
+            ResourceCycleValidator.class
+    );
+
     private final List<Validator> validators;
     private final ArrayList<ValidationEvent> events = new ArrayList<>();
     private final ValidatorFactory validatorFactory;
@@ -71,6 +81,7 @@ final class ModelValidator {
         this.model = model;
         this.validatorFactory = validatorFactory;
         this.validators = new ArrayList<>(validators);
+        this.validators.removeIf(v -> CORE_VALIDATORS.contains(v.getClass()));
     }
 
     /**
@@ -94,6 +105,15 @@ final class ModelValidator {
         assembleNamespaceSuppressions();
         List<ValidatorDefinition> assembledValidatorDefinitions = assembleValidatorDefinitions();
         assembleValidators(assembledValidatorDefinitions);
+
+        // Perform critical validation before other more granular semantic validators.
+        // If these validators fail, then many other validators will fail as well,
+        // which will only obscure the root cause.
+        events.addAll(new TargetValidator().validate(model));
+        events.addAll(new ResourceCycleValidator().validate(model));
+        if (LoaderUtils.containsErrorEvents(events)) {
+            return events;
+        }
 
         List<ValidationEvent> result = validators
                 .parallelStream()
