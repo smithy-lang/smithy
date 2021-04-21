@@ -1,15 +1,15 @@
-$version: "1.0"
+$version: "1.1"
 
 namespace ns.foo
 
 @trait
 list ListTrait {
-    member: String,
+    member: String
 }
 
 @trait
 set SetTrait {
-    member: String,
+    member: String
 }
 
 @ListTrait([])
@@ -17,11 +17,11 @@ set SetTrait {
 string Bar
 
 @ListTrait([
-    "first",
-    "second",
+    "first"
+    "second"
 ])
 @SetTrait([
-    "first",
-    "second",
+    "first"
+    "second"
 ])
 string Foo
