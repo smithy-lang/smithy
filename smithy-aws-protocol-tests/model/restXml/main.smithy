@@ -73,6 +73,7 @@ service RestXml {
         XmlLists,
         XmlMaps,
         XmlMapsXmlName,
+        NestedXmlMaps,
         FlattenedXmlMap,
         FlattenedXmlMapWithXmlName,
         FlattenedXmlMapWithXmlNamespace,
