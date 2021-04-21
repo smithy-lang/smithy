@@ -489,3 +489,153 @@ map FlattenedXmlMapWithXmlNamespaceOutputMap {
     @xmlNamespace(uri: "https://the-value.example.com")
     value: String,
 }
+
+@http(uri: "/NestedXmlMaps", method: "POST")
+operation NestedXmlMaps {
+    input: NestedXmlMapsInputOutput,
+    output: NestedXmlMapsInputOutput,
+}
+
+structure NestedXmlMapsInputOutput {
+    nestedMap: NestedMap,
+
+    @xmlFlattened
+    flatNestedMap: NestedMap,
+}
+
+map NestedMap {
+    key: String,
+    value: FooEnumMap,
+}
+
+apply NestedXmlMaps @httpRequestTests([
+    {
+        id: "NestedXmlMapRequest",
+        documentation: "Tests requests with nested maps.",
+        protocol: restXml,
+        method: "POST",
+        uri: "/NestedXmlMaps",
+        body: """
+            <NestedXmlMapsInputOutput>
+                <nestedMap>
+                    <entry>
+                        <key>foo</key>
+                        <value>
+                            <entry>
+                                <key>bar</key>
+                                <value>Bar</value>
+                            </entry>
+                        </value>
+                    </entry>
+                </nestedMap>
+            </NestedXmlMapsInputOutput>""",
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml",
+        },
+        params: {
+            nestedMap: {
+                foo: {
+                    bar: "Bar",
+                }
+            }
+        }
+    },
+    {
+        id: "FlatNestedXmlMapRequest",
+        documentation: """
+            Tests requests with nested flat maps. Since maps can only be
+            flattened when they're structure members, only the outer map is flat.""",
+        protocol: restXml,
+        method: "POST",
+        uri: "/NestedXmlMaps",
+        body: """
+            <NestedXmlMapsInputOutput>
+                <flatNestedMap>
+                    <key>foo</key>
+                    <value>
+                        <entry>
+                            <key>bar</key>
+                            <value>Bar</value>
+                        </entry>
+                    </value>
+                </flatNestedMap>
+            </NestedXmlMapsInputOutput>""",
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml",
+        },
+        params: {
+            flatNestedMap: {
+                foo: {
+                    bar: "Bar",
+                }
+            }
+        }
+    },
+])
+
+apply NestedXmlMaps @httpResponseTests([
+    {
+        id: "NestedXmlMapResponse",
+        documentation: "Tests responses with nested maps.",
+        protocol: restXml,
+        code: 200,
+        body: """
+            <NestedXmlMapsInputOutput>
+                <nestedMap>
+                    <entry>
+                        <key>foo</key>
+                        <value>
+                            <entry>
+                                <key>bar</key>
+                                <value>Bar</value>
+                            </entry>
+                        </value>
+                    </entry>
+                </nestedMap>
+            </NestedXmlMapsInputOutput>""",
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml",
+        },
+        params: {
+            nestedMap: {
+                foo: {
+                    bar: "Bar",
+                }
+            }
+        }
+    },
+    {
+        id: "FlatNestedXmlMapResponse",
+        documentation: """
+            Tests responses with nested flat maps. Since maps can only be
+            flattened when they're structure members, only the outer map is flat.""",
+        protocol: restXml,
+        code: 200,
+        body: """
+            <NestedXmlMapsInputOutput>
+                <flatNestedMap>
+                    <key>foo</key>
+                    <value>
+                        <entry>
+                            <key>bar</key>
+                            <value>Bar</value>
+                        </entry>
+                    </value>
+                </flatNestedMap>
+            </NestedXmlMapsInputOutput>""",
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml",
+        },
+        params: {
+            flatNestedMap: {
+                foo: {
+                    bar: "Bar",
+                }
+            }
+        }
+    },
+])
