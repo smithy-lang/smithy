@@ -61,7 +61,9 @@ final class LoaderUtils {
      * @return Returns true if this is a supported model version.
      */
     static boolean isVersionSupported(String versionString) {
-        return versionString.equals("1") || versionString.equals("1.0");
+        return versionString.equals("1")
+               || versionString.equals("1.0")
+               || versionString.equals("1.1");
     }
 
     /**
