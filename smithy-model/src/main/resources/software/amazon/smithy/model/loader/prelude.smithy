@@ -757,8 +757,7 @@ list suppress {
 @trait(selector: "operation")
 structure httpChecksumRequired {}
 
-/// Defines supported checksum for an operation's request or response.
-/// By default, the location used for a checksum is `header`.
+/// Defines supported checksum behavior for an operation's request or response.
 @unstable
 @trait(selector: "operation")
 structure httpChecksum {
@@ -772,14 +771,15 @@ structure httpChecksum {
 /// Defines properties used by httpChecksum trait members
 @private
 structure httpChecksumProperties {
-    /// prefix is a non empty string.
+    /// prefix string used to construct a header or trailer name for a
+    /// checksum type.
     prefix: NonEmptyString,
 
-    /// Defines the location of where the checksum is serialized. This value
-    /// can be set to `"header"` or `"trailer"`.
-    location: HttpChecksumLocations,
+    /// Defines a list of locations where the checksum can be serialized.
+    /// If not provided, locations resolve to a list containing "header" value.
+    locations: HttpChecksumLocationList,
 
-    /// algorithms is a list of non empty strings.
+    /// algorithms list represents the supported checksum algorithms.
     algorithms: NonEmptyStringList,
 }
 
@@ -788,10 +788,18 @@ structure httpChecksumProperties {
     {
         name: "HEADER",
         value: "header",
+        documentation: "Indicates checksum value is supported in header.",
     },
     {
         name: "TRAILER",
         value: "trailer",
+        documentation: "Indicates checksum value is supported in trailer.",
     },
 ])
-string HttpChecksumLocations
+string HttpChecksumLocation
+
+/// List of locations supported with HttpChecksum trait
+@private
+list HttpChecksumLocationList {
+    member: HttpChecksumLocation,
+}

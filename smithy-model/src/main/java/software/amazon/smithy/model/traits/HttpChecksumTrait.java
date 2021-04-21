@@ -118,16 +118,13 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
         public Trait createTrait(ShapeId target, Node value) {
             ObjectNode node = value.expectObjectNode();
             Builder builder = builder().sourceLocation(value);
+            node.getObjectMember(REQUEST_PROPERTY)
+                    .map(HttpChecksumProperties::fromNode)
+                    .ifPresent(builder::requestProperty);
 
-            Optional<ObjectNode> requestNode = node.getObjectMember(REQUEST_PROPERTY);
-            if (requestNode.isPresent()) {
-                builder.requestProperty = HttpChecksumProperties.fromNode(requestNode.get());
-            }
-
-            Optional<ObjectNode> responseNode = node.getObjectMember(RESPONSE_PROPERTY);
-            if (responseNode.isPresent()) {
-                builder.responseProperty = HttpChecksumProperties.fromNode(responseNode.get());
-            }
+            node.getObjectMember(RESPONSE_PROPERTY)
+                    .map(HttpChecksumProperties::fromNode)
+                    .ifPresent(builder::responseProperty);
 
             return builder.build();
         }

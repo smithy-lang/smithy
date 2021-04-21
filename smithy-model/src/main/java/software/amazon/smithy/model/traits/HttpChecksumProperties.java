@@ -16,8 +16,10 @@
 package software.amazon.smithy.model.traits;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -34,18 +36,17 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class HttpChecksumProperties implements ToNode, ToSmithyBuilder<HttpChecksumProperties> {
     private static final String PREFIX = "prefix";
     private static final String ALGORITHMS = "algorithms";
-    private static final String LOCATION = "location";
+    private static final String LOCATIONS = "locations";
     private static final Set<String> KEYS = SetUtils.of(
-            PREFIX, ALGORITHMS, LOCATION);
-
+            PREFIX, ALGORITHMS, LOCATIONS);
     private final String prefix;
     private final Set<String> algorithms;
-    private final Location location;
+    private final Set<Location> locations;
 
     private HttpChecksumProperties(HttpChecksumProperties.Builder builder) {
         this.prefix = builder.prefix;
         this.algorithms = builder.algorithms;
-        this.location = builder.location;
+        this.locations = builder.locations;
     }
 
     public static HttpChecksumProperties.Builder builder() {
@@ -63,22 +64,24 @@ public final class HttpChecksumProperties implements ToNode, ToSmithyBuilder<Htt
         ObjectNode value = node.expectObjectNode().warnIfAdditionalProperties(KEYS);
         HttpChecksumProperties.Builder builder = builder();
         value.getStringMember(PREFIX).map(StringNode::getValue).ifPresent(builder::prefix);
-        value.getMember(LOCATION).ifPresent(locNode -> builder.location(Location.fromNode(locNode)));
-        value.getMember(ALGORITHMS).ifPresent(
-                algorithms -> Node.loadArrayOfString(ALGORITHMS, algorithms)
-                                .forEach(builder::addAlgorithm));
+        value.getArrayMember(ALGORITHMS).ifPresent(algorithms ->
+                Node.loadArrayOfString(ALGORITHMS, algorithms).forEach(builder::addAlgorithm));
+        value.getArrayMember(LOCATIONS).ifPresent(locationNodes -> {
+            builder.clearLocations();
+            locationNodes.forEach(locationNode -> builder.addLocation(Location.fromNode(locationNode)));
+        });
         return builder.build();
     }
 
     /**
-     * @return location member as string. By default, location is `header`.
+     * @return set of locations supported within the HttpChecksum trait.
      */
-    public Location getLocation() {
-        return location;
+    public Set<Location> getLocations() {
+        return locations;
     }
 
     /**
-     * @return prefix member as string.
+     * @return prefix to be used with checksum algorithm to build header or trailer name.
      */
     public String getPrefix() {
         return prefix;
@@ -102,7 +105,7 @@ public final class HttpChecksumProperties implements ToNode, ToSmithyBuilder<Htt
         return builder()
                 .prefix(getPrefix())
                 .algorithms(getAlgorithms())
-                .location(getLocation());
+                .locations(getLocations());
     }
 
     /**
@@ -112,10 +115,11 @@ public final class HttpChecksumProperties implements ToNode, ToSmithyBuilder<Htt
      */
     @Override
     public Node toNode() {
+        List<Node> locationNodes = locations.stream().map(Location::toNode).collect(Collectors.toList());
         ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .withMember(PREFIX, getPrefix())
                 .withMember(ALGORITHMS, Node.fromStrings(algorithms))
-                .withMember(LOCATION, getLocation().toNode());
+                .withMember(LOCATIONS, Node.fromNodes(locationNodes));
 
         return builder.build();
     }
@@ -123,10 +127,11 @@ public final class HttpChecksumProperties implements ToNode, ToSmithyBuilder<Htt
     public static final class Builder implements SmithyBuilder<HttpChecksumProperties> {
         private String prefix;
         private Set<String> algorithms = new LinkedHashSet<>();
-        // set default location to Header.
-        private Location location = Location.HEADER;
+        private Set<Location> locations = new LinkedHashSet<>();
 
         private Builder() {
+            // Add "header" as default supported location.
+            locations.add(Location.HEADER);
         }
 
         @Override
@@ -139,8 +144,19 @@ public final class HttpChecksumProperties implements ToNode, ToSmithyBuilder<Htt
             return this;
         }
 
-        public Builder location(Location location) {
-            this.location = location;
+        public Builder locations(Set<Location> locations) {
+            clearLocations();
+            locations.forEach(this::addLocation);
+            return this;
+        }
+
+        public Builder addLocation(Location location) {
+            this.locations.add(location);
+            return this;
+        }
+
+        public Builder clearLocations() {
+            this.locations.clear();
             return this;
         }
 

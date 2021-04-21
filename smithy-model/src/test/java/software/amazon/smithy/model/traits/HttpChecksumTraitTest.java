@@ -33,13 +33,15 @@ public class HttpChecksumTraitTest {
     @Test
     public void loadsTrait() {
         TraitFactory provider = TraitFactory.createServiceFactory();
+
         ObjectNode requestNode = Node.objectNode()
-                .withMember("location", Location.HEADER.toNode())
+                .withMember("locations", Node.arrayNode().withValue(Location.HEADER.toNode())
+                        .withValue(Location.TRAILER.toNode()))
                 .withMember("prefix", Node.from("x-checksum-"))
                 .withMember("algorithms", Node.fromStrings("crc32", "crc32c"));
 
         ObjectNode responseNode = Node.objectNode()
-                .withMember("location", Location.HEADER.toNode())
+                .withMember("locations", Node.arrayNode().withValue(Location.HEADER.toNode()))
                 .withMember("prefix", Node.from("x-checksum-"))
                 .withMember("algorithms", Node.fromStrings("crc32", "crc32c"));
 
@@ -54,15 +56,15 @@ public class HttpChecksumTraitTest {
         HttpChecksumTrait checksumTrait = (HttpChecksumTrait) trait.get();
 
         HttpChecksumProperties requestProperty = checksumTrait.getRequestProperty().get();
-        assertThat(requestProperty.getLocation(), equalTo(Location.HEADER));
+        assertThat(requestProperty.getLocations(), containsInRelativeOrder(Location.HEADER, Location.TRAILER));
         assertThat(requestProperty.getPrefix(), equalTo("x-checksum-"));
         assertThat(requestProperty.getAlgorithms(), containsInRelativeOrder(
                 "crc32", "crc32c"
         ));
 
         HttpChecksumProperties responseProperty = checksumTrait.getResponseProperty().get();
-        assertThat(responseProperty.getLocation(), equalTo(Location.HEADER));
         assertThat(responseProperty.getPrefix(), equalTo("x-checksum-"));
+        assertThat(responseProperty.getLocations(), containsInRelativeOrder(Location.HEADER));
         assertThat(responseProperty.getAlgorithms(), containsInRelativeOrder(
                 "crc32", "crc32c"
         ));

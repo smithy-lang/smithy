@@ -16,8 +16,7 @@
         "smithy.api#httpChecksum": {
           "request": {
             "prefix" : "mock-prefix-",
-            "location": "header",
-            "algorithms" : ["sha256", "sha1"]
+            "algorithms" : ["sha256"]
           },
           "response": {
             "prefix" : "mock-prefix-",
@@ -38,13 +37,12 @@
         "smithy.api#httpChecksum": {
           "request": {
             "prefix" : "mock-prefix-",
-            "location": "header",
+            "locations": ["trailer","header"],
             "algorithms" : ["sha256", "sha1"]
           },
           "response": {
             "prefix" : "mock-prefix-",
-            "location": "header",
-            "algorithms" : ["sha256", "sha1"]
+            "algorithms" : ["sha256"]
           }
         }
       }
@@ -61,11 +59,8 @@
         "smithy.api#httpChecksum": {
           "request": {
             "prefix": "mock-prefix-",
-            "location": "header",
-            "algorithms": [
-              "sha256",
-              "sha1"
-            ]
+            "locations": ["header"],
+            "algorithms": [ "sha256", "sha1"]
           }
         }
       }
@@ -82,11 +77,8 @@
         "smithy.api#httpChecksum": {
           "request": {
             "prefix": "mock-prefix-",
-            "location": "trailer",
-            "algorithms": [
-              "sha256",
-              "sha1"
-            ]
+            "locations": ["trailer"],
+            "algorithms": ["sha256"]
           }
         }
       }
@@ -101,12 +93,10 @@
       },
       "traits": {
         "smithy.api#httpChecksum": {
-          "request": {
+          "response": {
             "prefix": "mock-prefix-",
-            "algorithms": [
-              "sha256",
-              "sha1"
-            ]
+            "locations": ["header"],
+            "algorithms": ["sha256"]
           }
         }
       }
@@ -122,26 +112,9 @@
       "traits": {
         "smithy.api#httpChecksum": {
           "response": {
-            "prefix" : "mock-prefix-",
-            "algorithms" : ["sha256", "sha1"]
-          }
-        }
-      }
-    },
-    "ns.foo#ValidOperation7": {
-      "type": "operation",
-      "input": {
-        "target": "ns.foo#Input"
-      },
-      "output": {
-        "target": "ns.foo#Output"
-      },
-      "traits": {
-        "smithy.api#httpChecksum": {
-          "response": {
-            "prefix" : "mock-prefix-",
-            "location" : "header",
-            "algorithms" : ["sha256", "sha1"]
+            "prefix": "mock-prefix-",
+            "locations": ["trailer"],
+            "algorithms": ["sha256", "sha1"]
           }
         }
       }
@@ -186,13 +159,8 @@
         "smithy.api#httpChecksum": {
           "request": {
             "prefix" : "mock-prefix-",
-            "location": "header",
-            "algorithms" : ["sha256", "sha1"]
-          },
-          "response": {
-            "prefix" : "mock-prefix-",
-            "location": "trailer",
-            "algorithms" : ["sha256", "sha1"]
+            "locations" : ["trailer"],
+            "algorithms" : []
           }
         }
       }
@@ -207,10 +175,10 @@
       },
       "traits": {
         "smithy.api#httpChecksum": {
-          "response": {
+          "response" : {
             "prefix" : "mock-prefix-",
-            "location" : "trailer",
-            "algorithms" : ["sha256", "sha1"]
+            "locations" : ["header"],
+            "algorithms" : []
           }
         }
       }
@@ -227,8 +195,8 @@
         "smithy.api#httpChecksum": {
           "request": {
             "prefix" : "mock-prefix-",
-            "location" : "trailer",
-            "algorithms" : []
+            "locations" : [],
+            "algorithms" : ["sha256", "sha1"]
           }
         }
       }
@@ -243,15 +211,10 @@
       },
       "traits": {
         "smithy.api#httpChecksum": {
-          "request": {
+          "response": {
             "prefix" : "mock-prefix-",
-            "location" : "trailer",
-            "algorithms" : ["crc32"]
-          },
-          "response" : {
-            "prefix" : "mock-prefix-",
-            "location" : "header",
-            "algorithms" : []
+            "locations" : [],
+            "algorithms" : ["sha256", "sha1"]
           }
         }
       }

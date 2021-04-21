@@ -1,0 +1,108 @@
+{
+  "smithy": "1.0",
+  "shapes": {
+    "ns.foo#SomeService": {
+      "type": "service",
+      "version": "2018-03-17",
+      "traits": {
+        "aws.auth#sigv4": {
+          "name": "someservice"
+        }
+      },
+      "operations" : [
+        {
+          "target": "ns.foo#ValidOperation"
+        },
+        {
+          "target": "ns.foo#InvalidOperation"
+        },
+        {
+          "target": "ns.foo#InvalidOperation2"
+        }
+      ]
+    },
+    "ns.foo#ValidOperation": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#Input"
+      },
+      "output": {
+        "target": "ns.foo#Output"
+      },
+      "traits": {
+        "smithy.api#httpChecksum": {
+          "request": {
+            "prefix" : "mock-prefix-",
+            "locations": ["trailer", "header"],
+            "algorithms" : ["sha256", "sha1"]
+          },
+          "response": {
+            "prefix" : "mock-prefix-",
+            "locations" :  ["header"],
+            "algorithms" : ["sha256", "sha1"]
+          }
+        }
+      }
+    },
+    "ns.foo#InvalidOperation": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#Input"
+      },
+      "output": {
+        "target": "ns.foo#Output"
+      },
+      "traits": {
+        "smithy.api#httpChecksum": {
+          "request": {
+            "prefix" : "mock-prefix-",
+            "locations" : ["trailer"],
+            "algorithms" : ["crc32"]
+          },
+          "response": {
+            "prefix" : "mock-prefix-",
+            "locations" : ["trailer", "header"],
+            "algorithms" : ["crc32"]
+          }
+        }
+      }
+    },
+    "ns.foo#InvalidOperation2": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#Input"
+      },
+      "output": {
+        "target": "ns.foo#Output"
+      },
+      "traits": {
+        "smithy.api#httpChecksum": {
+          "response": {
+            "prefix" : "mock-prefix-",
+            "locations" : ["trailer"],
+            "algorithms" : ["crc32"]
+          }
+        }
+      }
+    },
+    "ns.foo#Input": {
+      "type": "structure",
+      "members": {
+        "Body": {
+          "target": "ns.foo#Blob"
+        }
+      }
+    },
+    "ns.foo#Output": {
+      "type": "structure",
+      "members": {
+        "Body": {
+          "target": "ns.foo#Blob"
+        }
+      }
+    },
+    "ns.foo#Blob": {
+      "type": "blob"
+    }
+  }
+}

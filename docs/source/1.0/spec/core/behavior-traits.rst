@@ -698,7 +698,7 @@ The `httpChecksum` trait is a structure that contains the following members:
 
         @httpChecksum(
             request: {
-                location: "trailer",
+                locations: ["header"],
                 prefix: "x-checksum-",
                 algorithms: ["sha256", "crc32"]
             },
@@ -732,12 +732,12 @@ The `httpChecksum` trait is a structure that contains the following members:
                     "traits": {
                         "smithy.api#httpChecksum": {
                             "request": {
-                                "location": "trailer",
+                                "locations": ["header"],
                                 "prefix": "x-checksum-",
                                 "algorithms": ["sha256", "crc32"]
                             },
                             "response": {
-                                "location": "header",
+                                "locations": ["header"],
                                 "prefix": "x-checksum-",
                                 "algorithms": ["sha256", "crc32"]
                             }
@@ -765,33 +765,41 @@ following members:
       - Description
     * - prefix
       - ``string``
-      - **Required**. The prefix string is used to construct a header for a
-        checksum type. Prefix is a required member, and SHOULD be lower-cased.
-        The recommended ABNF to follow for prefix is `([a-z]*([a-z]/[0-9]/"-")*`.
+      - **Required**. The prefix string is used to construct a header or
+        trailer name for a checksum type. To construct a header or trailer
+        name for usage with checksum, follow the pattern:
+        ``prefix + algorithm-name``.
 
-        To construct a header name for usage with checksum, follow the pattern:
-        `prefix + algorithm-name`. For example, if prefix is "x-checksum-"
-        and "sha256" algorithm is used for computing checksum, header name
-        would resolve as "x-checksum-sha256".
+        For example, if prefix is "x-checksum-"
+        and "sha256" algorithm is used for computing checksum, resolved header
+        or trailer name will be "x-checksum-sha256".
 
-    * - location
-      - ``string``
-      - A string representing location where checksum is supplied. The string
-        value MUST be set to "header" or "trailer". By default, location
-        resolves to "header" value. Service MUST always support checksum in
-        header for both requests and responses.
+        Recommended ABNF for prefix is as follows:
 
-        Optionally, for request, location can be modeled as "trailer"
-        indicating service supports checksum in trailer, in addition to
-        support in header.
+        .. code-block:: abnf
+
+            prefix = lower-alpha ["-"] *((lower-alpha / DIGIT)["-"])
+            lower-alpha = %x61-7A
+
+
+    * - locations
+      - ``[string]``
+      - A priority list representing supported locations where checksum can be
+        supplied. Valid members for locations list are "header", and "trailer".
+        If not provided, locations resolve to a list containing "header" value,
+        indicating "header" location is supported to supply checksum.
 
     * - algorithms
       - ``[string]``
-      - **Required**. List of strings representing checksum algorithms
-        supported for the HTTP Request or Response. Algorithms is a
-        required member, and a valid algorithm name SHOULD follow
-        ABNF: `([a-z]* [0-9]*)*`. Algorithm name SHOULD be lower-cased
-        and not hyphenated.
+      - **Required**. List of string representing checksum algorithms
+        supported for the HTTP Request or Response. A valid algorithm
+        should follow ABNF:
+
+        .. code-block:: abnf
+
+            algorithms = 1*(lower-alpha / DIGIT)
+            lower-alpha = %x61-7A
+
 
 .. _checksum_trait with_checksum_required:
 
@@ -800,6 +808,7 @@ HttpChecksumRequired Behavior
 
 When `httpChecksum` trait is modeled along with
 :ref:`httpChecksumRequired trait <httpChecksumRequired-trait>`,
-service MUST accept a checksum value sent as per the trait's
-modeled request property, to satisfy checksum validation requirements
-for the operation's HTTP Request.
+service MUST accept a checksum value sent as per the `httpChecksum` trait's
+modeled request property, to satisfy checksum validation requirements for
+the operation's HTTP Request. Client MUST prefer using checksum algorithm
+modeled in `httpChecksum` trait over MD5 digest.

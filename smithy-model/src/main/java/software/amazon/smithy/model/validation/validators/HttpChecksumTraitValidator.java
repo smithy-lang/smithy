@@ -21,21 +21,19 @@ import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.traits.HttpChecksumProperties;
-import software.amazon.smithy.model.traits.HttpChecksumProperties.Location;
 import software.amazon.smithy.model.traits.HttpChecksumTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
+/**
+ * HttpChecksumTraitValidator validates HttpChecksum trait is modeled with at
+ * least one of the request or response property. This also validates the
+ * resolved locations and algorithms list are not empty.
+ */
 @SmithyInternalApi
 public class HttpChecksumTraitValidator extends AbstractValidator {
 
-    /**
-     * Validates a model and returns a list of validation events.
-     *
-     * @param model Model to validate.
-     * @return List of validation events.
-     */
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
@@ -56,30 +54,32 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
                     "The `httpChecksum` trait must have at least one of the `request` or `response` properties set."));
         }
 
-        if (requestProperty.isPresent()) {
-            HttpChecksumProperties property = requestProperty.get();
+        requestProperty.ifPresent(property -> {
+            if (property.getLocations().isEmpty()) {
+                events.add(error(operation, trait,
+                        "The `request` property of the `httpChecksum` trait must contain at least one `location` "
+                                + "property entry, found none."));
+            }
             if (property.getAlgorithms().isEmpty()) {
                 events.add(error(operation, trait,
                         "The `request` property of the `httpChecksum` trait must contain at least one `algorithms` "
                                 + "property entry, found none."));
             }
-        }
+        });
 
-        if (responseProperty.isPresent()) {
-            HttpChecksumProperties property = responseProperty.get();
-            // Response property only supports header as location.
-            if (!property.getLocation().equals(Location.HEADER)) {
+        responseProperty.ifPresent(property -> {
+            if (property.getLocations().isEmpty()) {
                 events.add(error(operation, trait,
-                       String.format("The `httpChecksum` trait only supports the `location` of \"header\" for the "
-                               + "`response`, found \"%s\".", property.getLocation().toString())));
+                        "The `response` property of the `httpChecksum` trait must contain at least one `location` "
+                                + "property entry, found none."));
             }
-
             if (property.getAlgorithms().isEmpty()) {
                 events.add(error(operation, trait,
                         "The `response` property of the `httpChecksum` trait must contain at least one `algorithms` "
                                 + "property entry, found none."));
             }
-        }
+        });
+
         return events;
     }
 }

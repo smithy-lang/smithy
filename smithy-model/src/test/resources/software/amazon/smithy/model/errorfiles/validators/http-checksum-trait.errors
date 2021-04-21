@@ -6,7 +6,6 @@
 [WARNING] ns.foo#ValidOperation4: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
 [WARNING] ns.foo#ValidOperation5: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
 [WARNING] ns.foo#ValidOperation6: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
-[WARNING] ns.foo#ValidOperation7: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
 [WARNING] ns.foo#InvalidOperation: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
 [WARNING] ns.foo#InvalidOperation2: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
 [WARNING] ns.foo#InvalidOperation3: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
@@ -15,10 +14,10 @@
 [WARNING] ns.foo#InvalidOutput: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
 [WARNING] ns.foo#InvalidStructure$Body: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
 [ERROR] ns.foo#InvalidOperation: The `httpChecksum` trait must have at least one of the `request` or `response` properties set. | HttpChecksumTrait
-[ERROR] ns.foo#InvalidOperation2: The `httpChecksum` trait only supports the `location` of "header" for the `response`, found "trailer". | HttpChecksumTrait
-[ERROR] ns.foo#InvalidOperation3: The `httpChecksum` trait only supports the `location` of "header" for the `response`, found "trailer". | HttpChecksumTrait
-[ERROR] ns.foo#InvalidOperation4: The `request` property of the `httpChecksum` trait must contain at least one `algorithms` property entry, found none. | HttpChecksumTrait
-[ERROR] ns.foo#InvalidOperation5: The `response` property of the `httpChecksum` trait must contain at least one `algorithms` property entry, found none. | HttpChecksumTrait
+[ERROR] ns.foo#InvalidOperation2: The `request` property of the `httpChecksum` trait must contain at least one `algorithms` property entry, found none. | HttpChecksumTrait
+[ERROR] ns.foo#InvalidOperation3: The `response` property of the `httpChecksum` trait must contain at least one `algorithms` property entry, found none. | HttpChecksumTrait
+[ERROR] ns.foo#InvalidOperation4: The `request` property of the `httpChecksum` trait must contain at least one `location` property entry, found none. | HttpChecksumTrait
+[ERROR] ns.foo#InvalidOperation5: The `response` property of the `httpChecksum` trait must contain at least one `location` property entry, found none. | HttpChecksumTrait
 [ERROR] ns.foo#InvalidInput: Trait `httpChecksum` cannot be applied to `ns.foo#InvalidInput`. This trait may only be applied to shapes that match the following selector: operation | TraitTarget
 [ERROR] ns.foo#InvalidOutput: Trait `httpChecksum` cannot be applied to `ns.foo#InvalidOutput`. This trait may only be applied to shapes that match the following selector: operation | TraitTarget
 [ERROR] ns.foo#InvalidError: Trait `httpChecksum` cannot be applied to `ns.foo#InvalidError`. This trait may only be applied to shapes that match the following selector: operation | TraitTarget
