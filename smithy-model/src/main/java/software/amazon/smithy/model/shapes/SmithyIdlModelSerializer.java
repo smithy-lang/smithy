@@ -345,7 +345,7 @@ public final class SmithyIdlModelSerializer {
             codeWriter.openBlock("$L $L {", shape.getType(), shape.getId().getName());
             for (MemberShape member : members) {
                 serializeTraits(member);
-                codeWriter.write("$L: $I,", member.getMemberName(), member.getTarget());
+                codeWriter.write("$L: $I", member.getMemberName(), member.getTarget());
             }
             codeWriter.closeBlock("}").write("");
         }
@@ -425,13 +425,13 @@ public final class SmithyIdlModelSerializer {
         public Void serviceShape(ServiceShape shape) {
             serializeTraits(shape);
             codeWriter.openBlock("service $L {", shape.getId().getName())
-                    .write("version: $S,", shape.getVersion());
+                    .write("version: $S", shape.getVersion());
             codeWriter.writeOptionalIdList("operations", shape.getOperations());
             codeWriter.writeOptionalIdList("resources", shape.getResources());
             if (!shape.getRename().isEmpty()) {
                 codeWriter.openBlock("rename: {", "}", () -> {
                     for (Map.Entry<ShapeId, String> entry : shape.getRename().entrySet()) {
-                        codeWriter.write("$S: $S,", entry.getKey(), entry.getValue());
+                        codeWriter.write("$S: $S", entry.getKey(), entry.getValue());
                     }
                 });
             }
@@ -448,16 +448,16 @@ public final class SmithyIdlModelSerializer {
                 shape.getIdentifiers().entrySet().stream()
                         .sorted(Map.Entry.comparingByKey())
                         .forEach(entry -> codeWriter.write(
-                                "$L: $I,", entry.getKey(), entry.getValue()));
-                codeWriter.closeBlock("},");
+                                "$L: $I", entry.getKey(), entry.getValue()));
+                codeWriter.closeBlock("}");
             }
 
-            shape.getPut().ifPresent(shapeId -> codeWriter.write("put: $I,", shapeId));
-            shape.getCreate().ifPresent(shapeId -> codeWriter.write("create: $I,", shapeId));
-            shape.getRead().ifPresent(shapeId -> codeWriter.write("read: $I,", shapeId));
-            shape.getUpdate().ifPresent(shapeId -> codeWriter.write("update: $I,", shapeId));
-            shape.getDelete().ifPresent(shapeId -> codeWriter.write("delete: $I,", shapeId));
-            shape.getList().ifPresent(shapeId -> codeWriter.write("list: $I,", shapeId));
+            shape.getPut().ifPresent(shapeId -> codeWriter.write("put: $I", shapeId));
+            shape.getCreate().ifPresent(shapeId -> codeWriter.write("create: $I", shapeId));
+            shape.getRead().ifPresent(shapeId -> codeWriter.write("read: $I", shapeId));
+            shape.getUpdate().ifPresent(shapeId -> codeWriter.write("update: $I", shapeId));
+            shape.getDelete().ifPresent(shapeId -> codeWriter.write("delete: $I", shapeId));
+            shape.getList().ifPresent(shapeId -> codeWriter.write("list: $I", shapeId));
             codeWriter.writeOptionalIdList("operations", shape.getOperations());
             codeWriter.writeOptionalIdList("collectionOperations", shape.getCollectionOperations());
             codeWriter.writeOptionalIdList("resources", shape.getResources());
@@ -476,8 +476,8 @@ public final class SmithyIdlModelSerializer {
             }
 
             codeWriter.openBlock("operation $L {", shape.getId().getName());
-            shape.getInput().ifPresent(shapeId -> codeWriter.write("input: $I,", shapeId));
-            shape.getOutput().ifPresent(shapeId -> codeWriter.write("output: $I,", shapeId));
+            shape.getInput().ifPresent(shapeId -> codeWriter.write("input: $I", shapeId));
+            shape.getOutput().ifPresent(shapeId -> codeWriter.write("output: $I", shapeId));
             codeWriter.writeOptionalIdList("errors", shape.getErrors());
             codeWriter.closeBlock("}");
             codeWriter.write("");
@@ -593,7 +593,6 @@ public final class SmithyIdlModelSerializer {
                 codeWriter.write("");
                 codeWriter.writeIndent();
                 serialize(element, member);
-                codeWriter.writeInline(",");
             }
             codeWriter.write("");
 
@@ -651,7 +650,6 @@ public final class SmithyIdlModelSerializer {
 
                 codeWriter.writeInline("\n$K: ", name.getValue());
                 serialize(value, member);
-                codeWriter.writeInline(",");
             });
             codeWriter.write("");
         }
@@ -769,8 +767,8 @@ public final class SmithyIdlModelSerializer {
             }
 
             openBlock("$L: [", textBeforeList);
-            shapeIds.stream().sorted().forEach(shapeId -> write("$I,", shapeId));
-            closeBlock("],");
+            shapeIds.stream().sorted().forEach(shapeId -> write("$I", shapeId));
+            closeBlock("]");
 
             return this;
         }
