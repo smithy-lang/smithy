@@ -74,7 +74,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class Model implements ToSmithyBuilder<Model> {
 
     /** Specifies the highest supported version of the IDL. */
-    public static final String MODEL_VERSION = "1.0";
+    public static final String MODEL_VERSION = "1.1";
 
     /** The map of metadata keys to their "node" values. */
     private final Map<String, Node> metadata;
