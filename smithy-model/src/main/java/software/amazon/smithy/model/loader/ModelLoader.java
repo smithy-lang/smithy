@@ -84,7 +84,7 @@ final class ModelLoader {
     // is then used to delegate loading to different versions of the
     // Smithy JSON AST format.
     //
-    // This loader supports version 1.0. Support for 0.5 and 0.4 was removed in 0.10.
+    // This loader supports version 1.0 and 1.1. Support for 0.5 and 0.4 was removed in 0.10.
     static ModelFile loadParsedNode(TraitFactory traitFactory, Node node) {
         ObjectNode model = node.expectObjectNode("Smithy documents must be an object. Found {type}.");
         StringNode version = model.expectStringMember(SMITHY);
