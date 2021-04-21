@@ -1,19 +1,19 @@
-$version: "1.0"
+$version: "1.1"
 
 namespace ns.foo
 
 service EmptyService {
-    version: "2020-02-18",
+    version: "2020-02-18"
 }
 
 service MyService {
-    version: "2020-02-18",
+    version: "2020-02-18"
     operations: [
-        MyOperation,
-    ],
+        MyOperation
+    ]
     resources: [
-        MyResource,
-    ],
+        MyResource
+    ]
 }
 
 resource EmptyResource {
@@ -21,54 +21,54 @@ resource EmptyResource {
 
 resource MyResource {
     identifiers: {
-        id: String,
-    },
-    put: ResourceOperation,
-    create: ResourceOperation,
-    read: ReadonlyResourceOperation,
-    update: ResourceOperation,
-    delete: ResourceOperation,
-    list: ReadonlyResourceOperation,
+        id: String
+    }
+    put: ResourceOperation
+    create: ResourceOperation
+    read: ReadonlyResourceOperation
+    update: ResourceOperation
+    delete: ResourceOperation
+    list: ReadonlyResourceOperation
     operations: [
-        ResourceOperation,
-    ],
+        ResourceOperation
+    ]
     collectionOperations: [
-        ResourceOperation,
-    ],
+        ResourceOperation
+    ]
     resources: [
-        SubResource,
-    ],
+        SubResource
+    ]
 }
 
 resource SubResource {
     identifiers: {
-        id: String,
-    },
+        id: String
+    }
 }
 
 operation EmptyOperation {
-    input: Unit,
-    output: Unit,
+    input: Unit
+    output: Unit
 }
 
 operation MyOperation {
-    input: InputOutput,
-    output: InputOutput,
+    input: InputOutput
+    output: InputOutput
     errors: [
-        Error,
-    ],
+        Error
+    ]
 }
 
 @readonly
 operation ReadonlyResourceOperation {
-    input: ResourceOperationInput,
-    output: Unit,
+    input: ResourceOperationInput
+    output: Unit
 }
 
 @idempotent
 operation ResourceOperation {
-    input: ResourceOperationInput,
-    output: Unit,
+    input: ResourceOperationInput
+    output: Unit
 }
 
 @error("client")
@@ -77,5 +77,5 @@ structure Error {}
 structure InputOutput {}
 
 structure ResourceOperationInput {
-    id: String,
+    id: String
 }
