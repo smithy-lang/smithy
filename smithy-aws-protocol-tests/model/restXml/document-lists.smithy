@@ -28,6 +28,7 @@ use smithy.test#httpResponseTests
 /// 6. Flattened XML lists with @xmlName.
 /// 7. Flattened XML lists with @xmlNamespace.
 /// 8. Lists of structures.
+/// 9. Flattened XML list of structures
 @idempotent
 @http(uri: "/XmlLists", method: "PUT")
 operation XmlLists {
@@ -96,6 +97,14 @@ apply XmlLists @httpRequestTests([
                           <other>4</other>
                       </item>
                   </myStructureList>
+                  <flattenedStructureList>
+                      <value>5</value>
+                      <other>6</other>
+                  </flattenedStructureList>
+                  <flattenedStructureList>
+                      <value>7</value>
+                      <other>8</other>
+                  </flattenedStructureList>
               </XmlListsInputOutput>
               """,
         bodyMediaType: "application/xml",
@@ -121,6 +130,16 @@ apply XmlLists @httpRequestTests([
                 {
                     a: "3",
                     b: "4",
+                }
+            ],
+            flattenedStructureList: [
+                {
+                    a: "5",
+                    b: "6",
+                },
+                {
+                    a: "7",
+                    b: "8",
                 }
             ]
         }
@@ -191,6 +210,14 @@ apply XmlLists @httpResponseTests([
                           <other>4</other>
                       </item>
                   </myStructureList>
+                  <flattenedStructureList>
+                      <value>5</value>
+                      <other>6</other>
+                  </flattenedStructureList>
+                  <flattenedStructureList>
+                      <value>7</value>
+                      <other>8</other>
+                  </flattenedStructureList>
               </XmlListsInputOutput>
               """,
         bodyMediaType: "application/xml",
@@ -218,6 +245,16 @@ apply XmlLists @httpResponseTests([
                 {
                     a: "3",
                     b: "4",
+                }
+            ],
+            flattenedStructureList: [
+                {
+                    a: "5",
+                    b: "6",
+                },
+                {
+                    a: "7",
+                    b: "8",
                 }
             ]
         }
@@ -321,7 +358,10 @@ structure XmlListsInputOutput {
     flattenedListWithNamespace: ListWithNamespace,
 
     @xmlName("myStructureList")
-    structureList: StructureList
+    structureList: StructureList,
+
+    @xmlFlattened
+    flattenedStructureList: StructureList
 }
 
 list RenamedListMembers {
