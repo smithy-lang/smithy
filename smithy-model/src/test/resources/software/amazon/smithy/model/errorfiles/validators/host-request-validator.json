@@ -40,6 +40,9 @@
                 },
                 {
                     "target": "ns.foo#M"
+                },
+                {
+                    "target": "ns.foo#LabelWithoutTrailingPeriod"
                 }
             ]
         },
@@ -48,7 +51,7 @@
             "traits": {
                 "smithy.api#readonly": {},
                 "smithy.api#endpoint": {
-                    "hostPrefix": "A-{foo}"
+                    "hostPrefix": "A-{foo}."
                 }
             }
         },
@@ -63,7 +66,7 @@
             "traits": {
                 "smithy.api#readonly": {},
                 "smithy.api#endpoint": {
-                    "hostPrefix": "B-{foo}"
+                    "hostPrefix": "B-{foo}."
                 }
             }
         },
@@ -81,7 +84,7 @@
             "traits": {
                 "smithy.api#readonly": {},
                 "smithy.api#endpoint": {
-                    "hostPrefix": "C-{foo}"
+                    "hostPrefix": "C-{foo}."
                 }
             }
         },
@@ -105,7 +108,7 @@
             "traits": {
                 "smithy.api#readonly": {},
                 "smithy.api#endpoint": {
-                    "hostPrefix": "D-{foo}"
+                    "hostPrefix": "D-{foo}."
                 }
             }
         },
@@ -128,7 +131,7 @@
             "traits": {
                 "smithy.api#readonly": {},
                 "smithy.api#endpoint": {
-                    "hostPrefix": "E-{foo}"
+                    "hostPrefix": "E-{foo}."
                 }
             }
         },
@@ -151,7 +154,7 @@
             "traits": {
                 "smithy.api#readonly": {},
                 "smithy.api#endpoint": {
-                    "hostPrefix": "F-{foo}"
+                    "hostPrefix": "F-{foo}."
                 }
             }
         },
@@ -175,7 +178,7 @@
             "traits": {
                 "smithy.api#readonly": {},
                 "smithy.api#endpoint": {
-                    "hostPrefix": "G-{foo}-{bar}"
+                    "hostPrefix": "G-{foo}-{bar}."
                 }
             }
         },
@@ -267,6 +270,18 @@
                         "smithy.api#hostLabel": {},
                         "smithy.api#required": {}
                     }
+                }
+            }
+        },
+        "ns.foo#LabelWithoutTrailingPeriod": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#MInput"
+            },
+            "traits": {
+                "smithy.api#readonly": {},
+                "smithy.api#endpoint": {
+                    "hostPrefix": "{foo}"
                 }
             }
         },

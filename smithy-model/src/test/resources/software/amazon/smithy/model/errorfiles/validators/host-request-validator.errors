@@ -6,3 +6,4 @@
 [ERROR] ns.foo#H: The `endpoint` trait hostPrefix, H.1234567890123456789012345678901234567890123456789012345678901234., could not expand in to a valid RFC 3986 host: H.1234567890123456789012345678901234567890123456789012345678901234. | HostLabelTrait
 [ERROR] ns.foo#J: The `endpoint` trait hostPrefix, 1234567890123456789012345678901234567890123456789012345678901234.J., could not expand in to a valid RFC 3986 host: 1234567890123456789012345678901234567890123456789012345678901234.J. | HostLabelTrait
 [ERROR] ns.foo#K: The `endpoint` trait hostPrefix, data.||+., could not expand in to a valid RFC 3986 host: data.||+. | HostLabelTrait
+[DANGER] ns.foo#LabelWithoutTrailingPeriod: `endpoint` trait hostPrefix contains host labels and does not end in a period (`.`). This can result in clients inadvertently sending data to domains you do not control. | HostLabelTrait
