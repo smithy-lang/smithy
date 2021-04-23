@@ -50,6 +50,8 @@ import software.amazon.smithy.model.validation.ValidationUtils;
  *     operation have corresponding hostLabel traits.</li>
  *     <li>Validates that an expanded version of each endpoint hostPrefix of
  *     each operation is a valid RFC 3896 host.</li>
+ *     <li>Validates that the host prefix SHOULD end in a period if it contains
+ *     host labels.</li>
  * </ul>
  */
 public final class HostLabelTraitValidator extends AbstractValidator {
@@ -81,6 +83,9 @@ public final class HostLabelTraitValidator extends AbstractValidator {
 
         // Validate the host can become a valid RFC 3986 Section 3.2.2 host.
         validateExpandedPattern(operation, endpoint).ifPresent(events::add);
+
+        // Validate the host prefix SHOULD end in a period if it has labels.
+        validateTrailingPeriod(operation, endpoint).ifPresent(events::add);
 
         // If the operation has labels then it must also have input.
         if (!operation.getInput().isPresent() && !endpoint.getHostPrefix().getLabels().isEmpty()) {
@@ -151,6 +156,16 @@ public final class HostLabelTraitValidator extends AbstractValidator {
         if (!EXPANDED_PATTERN.matcher(stubHostPrefix).matches()) {
             return Optional.of(error(operation, endpoint, format("The `endpoint` trait hostPrefix, %s, could "
                     + "not expand in to a valid RFC 3986 host: %s", endpoint.getHostPrefix(), stubHostPrefix)));
+        }
+        return Optional.empty();
+    }
+
+    private Optional<ValidationEvent> validateTrailingPeriod(OperationShape operation, EndpointTrait trait) {
+        SmithyPattern hostPrefix = trait.getHostPrefix();
+        if (!hostPrefix.toString().endsWith(".") && !hostPrefix.getLabels().isEmpty()) {
+            String message = "`endpoint` trait hostPrefix contains host labels and does not end in a period (`.`). "
+                    + "This can result in clients inadvertently sending data to domains you do not control.";
+            return Optional.of(danger(operation, trait, message));
         }
         return Optional.empty();
     }

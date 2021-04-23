@@ -44,6 +44,12 @@ The ``endpoint`` trait is a structure that contains the following members:
         :ref:`hostLabel-trait`. The ``hostPrefix`` MUST NOT contain a scheme,
         userinfo, or port.
 
+        .. warning::
+
+            A host prefix that contains labels SHOULD end in a period (``.``) as
+            otherwise there is a risk of clients inadvertently sending data to
+            a domain that you do not control.
+
 The following example defines an operation that uses a custom endpoint:
 
 .. tabs::
@@ -401,7 +407,10 @@ Value type
 
 Operations marked with the :ref:`endpoint-trait` MAY contain labels in the
 ``hostPrefix`` property. These labels reference top-level operation input
-structure members that MUST be annotated with the ``hostLabel`` trait. Any
+structure members that MUST be annotated with the ``hostLabel`` trait. The
+contents of the label match the member's name. For example, a host prefix
+value of ``{spam}.eggs.`` MUST apply to an operation whose input contains a
+member named ``spam`` that is annotated with the ``hostLabel`` trait. Any
 ``hostLabel`` trait applied to a member that is not a top-level input member
 to an operation marked with the :ref:`endpoint-trait` will be ignored.
 
@@ -412,7 +421,7 @@ to an operation marked with the :ref:`endpoint-trait` will be ignored.
         namespace smithy.example
 
         @readonly
-        @endpoint(hostPrefix: "{foo}.data")
+        @endpoint(hostPrefix: "{foo}.data.")
         operation GetStatus {
             input: GetStatusInput,
             output: GetStatusOutput
