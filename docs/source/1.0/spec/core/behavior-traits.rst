@@ -664,7 +664,7 @@ See
 ----------------------
 
 Summary
-    Indicates that an operation's HTTP Request or Response supports checksum
+    Indicates that an operation's HTTP request or response supports checksum
     validation. At least one of request or response checksum properties must
     be specified within the trait.
 
@@ -673,7 +673,7 @@ Trait selector
 Value type
     ``structure``
 
-The `httpChecksum` trait is a structure that contains the following members:
+The ``httpChecksum`` trait is a structure that contains the following members:
 
 .. list-table::
     :header-rows: 1
@@ -684,13 +684,13 @@ The `httpChecksum` trait is a structure that contains the following members:
       - Description
     * - request
       - :ref:`HttpChecksumProperties structure <checksum-properties>`
-      - The `request` structure values define checksum validation behavior for
-        HTTP Request.
+      - The ``request`` property defines checksum validation behavior for
+        HTTP requests.
 
     * - response
       - :ref:`HttpChecksumProperties structure <checksum-properties>`
-      - The `response` structure values define checksum validation behavior for
-        HTTP Response.
+      - The ``response`` property defines checksum validation behavior for
+        HTTP responses.
 
 .. tabs::
 
@@ -753,7 +753,7 @@ The `httpChecksum` trait is a structure that contains the following members:
 HttpChecksumProperties structure
 ================================
 
-HttpChecksumProperties defines checksum validation behavior using the
+``HttpChecksumProperties`` defines checksum validation behavior using the
 following members:
 
 .. list-table::
@@ -770,29 +770,31 @@ following members:
         name for usage with checksum, follow the pattern:
         ``prefix + algorithm-name``.
 
-        For example, if prefix is "x-checksum-"
-        and "sha256" algorithm is used for computing checksum, resolved header
-        or trailer name will be "x-checksum-sha256".
+        For example, if prefix is ``x-checksum-``
+        and ``sha256`` algorithm is used for computing checksum, resolved header
+        or trailer name will be ``x-checksum-sha256``.
 
         Recommended ABNF for prefix is as follows:
 
         .. code-block:: abnf
 
-            prefix = lower-alpha ["-"] *((lower-alpha / DIGIT)["-"])
+            prefix = lower-alpha *(["-"](lower-alpha / DIGIT)) "-"
             lower-alpha = %x61-7A
 
+        That is, it should start with a lowercase letter followed by any
+        number of lowercase letters, digits, or non-sequential hyphens,
+        and it should end in a hyphen.
 
     * - locations
       - ``[string]``
-      - A priority list representing supported locations where checksum can be
-        supplied. Valid members for locations list are "header", and "trailer".
-        If not provided, locations resolve to a list containing "header" value,
-        indicating "header" location is supported to supply checksum.
+      - A priority-ordered list representing supported locations where checksum
+        can be supplied. Valid values are ``header``, and ``trailer``.
+        The default value is a list only containing ``header``.
 
     * - algorithms
       - ``[string]``
       - **Required**. List of string representing checksum algorithms
-        supported for the HTTP Request or Response. A valid algorithm
+        supported for the HTTP request or response. A valid algorithm
         should follow ABNF:
 
         .. code-block:: abnf
@@ -800,15 +802,55 @@ following members:
             algorithms = 1*(lower-alpha / DIGIT)
             lower-alpha = %x61-7A
 
+        That is, it should be comprised only of digits and lowercase letters.
 
-.. _checksum_trait with_checksum_required:
 
-HttpChecksumRequired Behavior
-=============================
+.. _httpChecksum_trait_behavior:
 
-When `httpChecksum` trait is modeled along with
-:ref:`httpChecksumRequired trait <httpChecksumRequired-trait>`,
-service MUST accept a checksum value sent as per the `httpChecksum` trait's
-modeled request property, to satisfy checksum validation requirements for
-the operation's HTTP Request. Client MUST prefer using checksum algorithm
-modeled in `httpChecksum` trait over MD5 digest.
+HttpChecksum Behavior
+=====================
+
+.. rubric:: Client Behavior
+
+If the ``httpChecksum`` trait has a modeled ``request`` section, for HTTP request,
+the client MUST compute the request payload checksum, using an algorithm
+defined in the algorithms property. This computed checksum MUST be supplied
+at the first supported location defined in the locations property of the trait.
+Locations property supports modeling ``header``, and ``trailer`` as locations.
+The header or trailer name MUST be constructed using the prefix property as
+suggested in the :ref:`HTTP checksum properties<checksum-properties>` section.
+
+If the ``httpChecksum`` trait has a modeled ``response`` section, for HTTP
+response, the client MUST look for checksum at supported locations as per
+defined properties. If a checksum is found, the client MUST validate the received
+checksum value by computing corresponding checksum of the received payload.
+
+
+.. rubric:: Service Behavior
+
+If the ``httpChecksum`` trait has a modeled ``request`` section, for HTTP request,
+the service SHOULD validate the received checksum, by computing corresponding
+checksum of the request payload to ensure data integrity.
+
+If the ``httpChecksum`` trait models a ``response`` section, for HTTP response,
+the service SHOULD send at least one supported payload checksums at the first
+supported location in locations property. The header or trailer name used,
+MUST be constructed using modeled prefix property as suggested in the
+:ref:`HTTP checksum properties<checksum-properties>` section.
+
+
+.. _checksum_trait_with_checksum_required:
+
+Behavior with HttpChecksumRequired
+----------------------------------
+
+When both the ``httpChecksum`` trait with a modeled ``request`` section, and
+the :ref:`httpChecksumRequired <httpChecksumRequired-trait>` trait are applied
+on an operation, the client MUST prefer using a checksum algorithm modeled for
+request in the ``httpChecksum`` trait over an MD5 digest, and place checksum
+as per the client behavior defined in the
+:ref:`httpChecksum trait behavior<httpChecksum_trait_behavior>` section.
+
+The service MUST accept a checksum value received as per the ``httpChecksum``
+trait's request property, to satisfy checksum validation requirements for the
+operation's HTTP Request.
