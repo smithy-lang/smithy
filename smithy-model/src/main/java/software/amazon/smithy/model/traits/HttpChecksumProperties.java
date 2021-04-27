@@ -18,6 +18,7 @@ package software.amazon.smithy.model.traits;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
@@ -44,9 +45,9 @@ public final class HttpChecksumProperties implements ToNode, ToSmithyBuilder<Htt
     private final Set<Location> locations;
 
     private HttpChecksumProperties(HttpChecksumProperties.Builder builder) {
-        this.prefix = builder.prefix;
-        this.algorithms = builder.algorithms;
-        this.locations = builder.locations;
+        this.prefix = Objects.requireNonNull(builder.prefix);
+        this.algorithms = Objects.requireNonNull(builder.algorithms);
+        this.locations = Objects.requireNonNull(builder.locations);
     }
 
     public static HttpChecksumProperties.Builder builder() {

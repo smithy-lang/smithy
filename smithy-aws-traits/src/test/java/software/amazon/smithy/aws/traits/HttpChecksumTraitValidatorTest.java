@@ -49,12 +49,14 @@ public class HttpChecksumTraitValidatorTest {
         List<ValidationEvent> errorEvents = result.getValidationEvents(Severity.ERROR);
         assertThat(errorEvents, not(empty()));
         assertThat(errorEvents.get(0).getMessage(), containsString(
-                "The `response` property of the `httpChecksum` trait only supports `header` as `location`, found \"[trailer, header]\"."));
+                "For aws protocols, the `response` property of the `httpChecksum` trait only supports `header` "
+                        + "as `location`, found \"[trailer, header]\"."));
         assertThat(errorEvents.get(1).getMessage(), containsString(
                 "For operation using sigv4 auth scheme, the `request` property of the "
                         + "`httpChecksum` trait must support `header` checksum location."));
         assertThat(errorEvents.get(2).getMessage(), containsString(
-                "The `response` property of the `httpChecksum` trait only supports `header` as `location`, found \"[trailer]\"."));
+                "For aws protocols, the `response` property of the `httpChecksum` trait only supports `header` "
+                        + "as `location`, found \"[trailer]\"."));
     }
 
 }

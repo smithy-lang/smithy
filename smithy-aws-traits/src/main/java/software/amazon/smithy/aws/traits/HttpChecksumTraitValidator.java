@@ -20,8 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import software.amazon.smithy.aws.traits.auth.SigV4Trait;
+import software.amazon.smithy.aws.traits.protocols.AwsProtocolTrait;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.ServiceIndex;
+import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -45,9 +47,9 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
         ServiceIndex serviceIndex = ServiceIndex.of(model);
-        model.shapes(ServiceShape.class).forEach(service -> {
-            service.getOperations().forEach(operationID -> {
-                OperationShape operation = model.expectShape(operationID, OperationShape.class);
+
+        model.shapes(ServiceShape.class).filter(this::isTargetProtocol).forEach(service -> {
+            TopDownIndex.of(model).getContainedOperations(service).forEach(operation -> {
                 if (operation.hasTrait(HttpChecksumTrait.class)) {
                     events.addAll(validateSupportedLocations(serviceIndex, service, operation));
                 }
@@ -55,7 +57,6 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
         });
         return events;
     }
-
 
     /**
      * Validates supported locations within httpChecksum trait. For response property, only "header"
@@ -67,8 +68,11 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
      * @param operation    operation shape
      * @return List of validation events that occurred when validating the model.
      */
-    private List<ValidationEvent> validateSupportedLocations(ServiceIndex serviceIndex, ServiceShape service,
-                                                             OperationShape operation) {
+    protected List<ValidationEvent> validateSupportedLocations(
+            ServiceIndex serviceIndex,
+            ServiceShape service,
+            OperationShape operation
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
         HttpChecksumTrait trait = operation.expectTrait(HttpChecksumTrait.class);
 
@@ -77,8 +81,8 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
             Set<Location> locations = property.getLocations();
             if (locations.size() > 1 || !locations.contains(Location.HEADER)) {
                 events.add(error(operation, trait,
-                        String.format("The `response` property of the `httpChecksum` trait only supports `header` "
-                                + "as `location`, found \"%s\".", locations)));
+                        String.format("For aws protocols, the `response` property of the `httpChecksum` trait "
+                                + "only supports `header` as `location`, found \"%s\".", locations)));
             }
         });
 
@@ -94,6 +98,18 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
         }
 
         return events;
+    }
+
+    /**
+     * isTargetProtocol returns true if service uses a target protocol. By default,
+     * target protocol resolves to aws protocol.
+     *
+     * @param service is the service shape for which target protocol usage is checked.
+     * @return boolean indicating target protocol is used by the service.
+     */
+    protected boolean isTargetProtocol(ServiceShape service) {
+        // By default, target protocol is AWS protocol.
+        return service.hasTrait(AwsProtocolTrait.class);
     }
 
     /**
