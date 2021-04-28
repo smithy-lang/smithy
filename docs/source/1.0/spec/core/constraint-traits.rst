@@ -616,5 +616,61 @@ Value type
             }
         }
 
+.. _precedence:
+
+----------------
+Trait precedence
+----------------
+
+Some constraints can be applied to shapes as well as structure members. If a
+constraint of the same type is applied to a structure member and the shape
+that the member targets, the trait applied to the member takes precedence.
+
+In the below example, the ``range`` trait applied to ``numberOfItems``
+takes precedence over the one applied to ``PositiveInteger``. The resolved
+minimum will be ``7``, and the maximum ``12``.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        structure ShoppingCart {
+            @range(min: 7, max:12)
+            numberOfItems: PositiveInteger
+        }
+
+        @range(min: 1)
+        integer PositiveInteger
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#MyStructure": {
+                    "type": "structure",
+                    "members": {
+                        "foo": {
+                            "target": "smithy.example#PositiveInteger",
+                            "traits": {
+                                "smithy.api#range": {
+                                    "min": 7,
+                                    "max": 12
+                                }
+                            }
+                        }
+                    }
+                },
+                "smithy.example#PositiveInteger": {
+                    "type": "integer",
+                    "traits": {
+                        "smithy.api#range": {
+                            "min": 1
+                        }
+                    }
+                }
+            }
+        }
+
 .. _ECMA 262 regular expression dialect: https://www.ecma-international.org/ecma-262/8.0/index.html#sec-patterns
 .. _CommonMark: https://spec.commonmark.org/
