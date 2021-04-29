@@ -25,3 +25,25 @@ jobs:
 
       - name: Clean and build
         run: ./gradlew clean build -Plog-tests
+
+  build-docs:
+    runs-on: ubuntu-latest
+    name: Documentation Build
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.x
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install doc dependencies
+      run: cd docs && make install
+
+    - name: Build docs
+      run: cd docs && make html
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: built-docs
+        path: docs/build/html
