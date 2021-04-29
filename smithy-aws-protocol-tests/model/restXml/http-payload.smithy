@@ -285,6 +285,62 @@ structure PayloadWithXmlName {
     name: String
 }
 
+/// The following example serializes a body that uses an XML name,
+/// changing the wrapper name.
+@idempotent
+@http(uri: "/BodyWithXmlName", method: "PUT")
+operation BodyWithXmlName {
+    input: BodyWithXmlNameInputOutput,
+    output: BodyWithXmlNameInputOutput
+}
+
+apply BodyWithXmlName @httpRequestTests([
+    {
+        id: "BodyWithXmlName",
+        documentation: "Serializes a payload using a wrapper name based on the xmlName",
+        protocol: restXml,
+        method: "PUT",
+        uri: "/BodyWithXmlName",
+        body: "<Ahoy><name>Phreddy</name></Ahoy>",
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        requireHeaders: [
+            "Content-Length"
+        ],
+        params: {
+            nested: {
+                name: "Phreddy"
+            }
+        }
+    }
+])
+
+apply BodyWithXmlName @httpResponseTests([
+    {
+        id: "BodyWithXmlName",
+        documentation: "Serializes a payload using a wrapper name based on the xmlName",
+        protocol: restXml,
+        code: 200,
+        body: "<Ahoy><name>Phreddy</name></Ahoy>",
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            nested: {
+                name: "Phreddy"
+            }
+        }
+    }
+])
+
+@xmlName("Ahoy")
+structure BodyWithXmlNameInputOutput {
+    nested: PayloadWithXmlName,
+}
+
 /// The following example serializes a payload that uses an XML name
 /// on the member, changing the wrapper name.
 
