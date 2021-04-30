@@ -788,7 +788,12 @@ following members:
     * - locations
       - ``[string]``
       - A priority-ordered list representing supported locations where checksum
-        can be supplied. Valid values are ``header``, and ``trailer``.
+        can be supplied. Valid values are:
+
+        * ``header`` - Indicates the checksum should be placed in an HTTP header.
+        * ``trailer`` - Indicates the checksum should be placed in the `chunked trailer part`_
+          of the body.
+
         The default value is a list only containing ``header``.
 
     * - algorithms
@@ -804,6 +809,8 @@ following members:
 
         That is, it should be comprised only of digits and lowercase letters.
 
+.. _chunked trailer part: https://tools.ietf.org/html/rfc7230#section-4.1.2
+
 
 .. _httpChecksum_trait_behavior:
 
@@ -815,26 +822,31 @@ HttpChecksum Behavior
 If the ``httpChecksum`` trait has a modeled ``request`` section, for HTTP request,
 the client MUST compute the request payload checksum, using an algorithm
 defined in the algorithms property. This computed checksum MUST be supplied
-at the first supported location defined in the locations property of the trait.
-Locations property supports modeling ``header``, and ``trailer`` as locations.
-The header or trailer name MUST be constructed using the prefix property as
-suggested in the :ref:`HTTP checksum properties<checksum-properties>` section.
+at one of the locations defined in the location property of the trait. It SHOULD be
+supplied at the first supported location defined in the locations property of the trait.
+If the resolved location is ``header``, the client MUST put the checksum into the
+HTTP request headers. If the resolved location is ``trailer``, the client MUST put
+the checksum into the `chunked trailer part`_ of the body. The header or trailer
+field name MUST be constructed using the prefix property as described in the
+:ref:`HTTP checksum properties<checksum-properties>` section.
 
 If the ``httpChecksum`` trait has a modeled ``response`` section, for HTTP
-response, the client MUST look for checksum at supported locations as per
+response, the client MUST look for a checksum at supported locations as per
 defined properties. If a checksum is found, the client MUST validate the received
-checksum value by computing corresponding checksum of the received payload.
+checksum value by computing the corresponding checksum of the received payload.
+
+.. _chunked trailer part: https://tools.ietf.org/html/rfc7230#section-4.1.2
 
 
 .. rubric:: Service Behavior
 
 If the ``httpChecksum`` trait has a modeled ``request`` section, for HTTP request,
-the service SHOULD validate the received checksum, by computing corresponding
+the service SHOULD validate the received checksum by computing corresponding
 checksum of the request payload to ensure data integrity.
 
 If the ``httpChecksum`` trait models a ``response`` section, for HTTP response,
-the service SHOULD send at least one supported payload checksums at the first
-supported location in locations property. The header or trailer name used,
+the service SHOULD send at least one supported payload checksum at the first
+supported location in the locations property. The header or trailer name used,
 MUST be constructed using modeled prefix property as suggested in the
 :ref:`HTTP checksum properties<checksum-properties>` section.
 
