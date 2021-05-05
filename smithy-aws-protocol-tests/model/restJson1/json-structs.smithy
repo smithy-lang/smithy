@@ -83,7 +83,7 @@ apply SimpleScalarProperties @httpRequestTests([
         uri: "/SimpleScalarProperties",
         body: """
             {
-                "string": null
+                "stringValue": null
             }""",
         headers: {
             "Content-Type": "application/json",
