@@ -1,6 +1,38 @@
 # Smithy Changelog
 
-## 1.7.0 (2020-03-12)
+## 1.7.1 (2021-05-07)
+
+### Features
+* Added the `recommended` structure member trait, which indicates that a structure member SHOULD be set. ([#745](https://github.com/awslabs/smithy/pull/745))
+* Added support for service renames when using the `flattenNamespaces` transformer. ([#760](https://github.com/awslabs/smithy/pull/760))
+* Set `additionalProperties` to `false` for CloudFormation objects. ([#764](https://github.com/awslabs/smithy/pull/764))
+* Improved model validation debugging by stopping validation when an `ERROR` occurs while loading models. ([#775](https://github.com/awslabs/smithy/pull/775))
+* Added validation warning when a `hostPrefix` contains a label that does not end in a period. ([#779](https://github.com/awslabs/smithy/pull/779))
+* Added and updated several `@restXml` protocol test. ([#744](https://github.com/awslabs/smithy/pull/744), [#755](https://github.com/awslabs/smithy/pull/755),
+  [#757](https://github.com/awslabs/smithy/pull/757), [#777](https://github.com/awslabs/smithy/pull/777), [#766](https://github.com/awslabs/smithy/pull/781),
+  [#789](https://github.com/awslabs/smithy/pull/789))
+* Added and updated several `@restJson1` protocol test. ([#747](https://github.com/awslabs/smithy/pull/747), [#755](https://github.com/awslabs/smithy/pull/755),
+  [#765](https://github.com/awslabs/smithy/pull/765), [#790](https://github.com/awslabs/smithy/pull/790))
+
+### Bug Fixes
+* Fixed number parsing in the IDL, using BigDecimal or BigInteger where needed. ([#766](https://github.com/awslabs/smithy/pull/766))
+* Fixed Gradle 7 builds. ([#758](https://github.com/awslabs/smithy/pull/758))
+* Added `Document` type to list of inherently boxed shapes. ([#749](https://github.com/awslabs/smithy/pull/749))
+* Reordered `TraitService` SPI entries for readability. ([#742](https://github.com/awslabs/smithy/pull/742))
+
+### AWS Customizations
+* Added missing `name` properties to `aws.iam#ConditionKeyType` enum. ([#759](https://github.com/awslabs/smithy/pull/759))
+
+### Documentation
+* Fixed `selector_expression` and `comment` in ABNF for Smithy IDL. ([#771](https://github.com/awslabs/smithy/pull/771),
+  [#771](https://github.com/awslabs/smithy/pull/773))
+* Documented conflict resolution of HTTP query params. ([#783](https://github.com/awslabs/smithy/pull/783))
+* Documented precedence of constraint traits. ([#784](https://github.com/awslabs/smithy/pull/784))
+
+### Other
+* Upgraded to use version `0.5.3` of the [Smithy Gradle Plugin](https://github.com/awslabs/smithy-gradle-plugin). ([#791](https://github.com/awslabs/smithy/pull/791))
+
+## 1.7.0 (2021-03-12)
 
 ### Features
 
@@ -14,7 +46,7 @@
 * Added missing documentation for some trait models. ([#737](https://github.com/awslabs/smithy/pull/737))
 * Fixed `awsQuery` and `ec2Query` list serialization examples. ([#732](https://github.com/awslabs/smithy/pull/732))
 
-## 1.6.1 (2020-02-23)
+## 1.6.1 (2021-02-23)
 
 ### Features
 
@@ -24,7 +56,7 @@
 
 * Fixed several issues in protocol tests around `@endpoint`. ([#720](https://github.com/awslabs/smithy/pull/720))
 
-## 1.6.0 (2020-02-22)
+## 1.6.0 (2021-02-22)
 
 ### Features
 
