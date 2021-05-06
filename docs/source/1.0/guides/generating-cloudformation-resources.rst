@@ -60,7 +60,7 @@ Resource Schemas from a Smithy model :ref:`using a buildscript dependency
 
     plugins {
         java
-        id("software.amazon.smithy").version("0.5.2")
+        id("software.amazon.smithy").version("0.5.3")
     }
 
     buildscript {
