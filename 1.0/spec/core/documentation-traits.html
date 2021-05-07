@@ -76,16 +76,17 @@ in a way that does not materially affect the semantics of the model.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#deprecated-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">deprecated</span></code> trait</a></li>
-<li><a class="reference internal" href="#documentation-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">documentation</span></code> trait</a></li>
-<li><a class="reference internal" href="#examples-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">examples</span></code> trait</a></li>
-<li><a class="reference internal" href="#externaldocumentation-trait" id="id15"><code class="docutils literal notranslate"><span class="pre">externalDocumentation</span></code> trait</a></li>
-<li><a class="reference internal" href="#internal-trait" id="id16"><code class="docutils literal notranslate"><span class="pre">internal</span></code> trait</a></li>
-<li><a class="reference internal" href="#sensitive-trait" id="id17"><code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait</a></li>
-<li><a class="reference internal" href="#since-trait" id="id18"><code class="docutils literal notranslate"><span class="pre">since</span></code> trait</a></li>
-<li><a class="reference internal" href="#tags-trait" id="id19"><code class="docutils literal notranslate"><span class="pre">tags</span></code> trait</a></li>
-<li><a class="reference internal" href="#title-trait" id="id20"><code class="docutils literal notranslate"><span class="pre">title</span></code> trait</a></li>
-<li><a class="reference internal" href="#unstable-trait" id="id21"><code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait</a></li>
+<li><a class="reference internal" href="#deprecated-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">deprecated</span></code> trait</a></li>
+<li><a class="reference internal" href="#documentation-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">documentation</span></code> trait</a></li>
+<li><a class="reference internal" href="#examples-trait" id="id15"><code class="docutils literal notranslate"><span class="pre">examples</span></code> trait</a></li>
+<li><a class="reference internal" href="#externaldocumentation-trait" id="id16"><code class="docutils literal notranslate"><span class="pre">externalDocumentation</span></code> trait</a></li>
+<li><a class="reference internal" href="#internal-trait" id="id17"><code class="docutils literal notranslate"><span class="pre">internal</span></code> trait</a></li>
+<li><a class="reference internal" href="#recommended-trait" id="id18"><code class="docutils literal notranslate"><span class="pre">recommended</span></code> trait</a></li>
+<li><a class="reference internal" href="#sensitive-trait" id="id19"><code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait</a></li>
+<li><a class="reference internal" href="#since-trait" id="id20"><code class="docutils literal notranslate"><span class="pre">since</span></code> trait</a></li>
+<li><a class="reference internal" href="#tags-trait" id="id21"><code class="docutils literal notranslate"><span class="pre">tags</span></code> trait</a></li>
+<li><a class="reference internal" href="#title-trait" id="id22"><code class="docutils literal notranslate"><span class="pre">title</span></code> trait</a></li>
+<li><a class="reference internal" href="#unstable-trait" id="id23"><code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait</a></li>
 </ul>
 </div>
 <div class="section" id="deprecated-trait">
@@ -420,8 +421,63 @@ Smithy</div>
 </div>
 </div>
 </div>
+<div class="section" id="recommended-trait">
+<span id="id7"></span><h2><a href="#recommended-trait">4.6. <code class="docutils literal notranslate"><span class="pre">recommended</span></code> trait</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Indicates that a structure member SHOULD be set. This trait is useful when
+the majority of use cases for a structure benefit from providing a value
+for a member, but the member is not actually <a class="reference internal" href="constraint-traits.html#required-trait"><span class="std std-ref">required</span></a>
+or cannot be made required backward compatibly.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></dd>
+<dt>Value type</dt>
+<dd><p class="first">Structure with the following members:</p>
+<table border="1" class="colwidths-given last docutils">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>reason</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Provides a reason why the member is recommended.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Conflicts with</dt>
+<dd><a class="reference internal" href="constraint-traits.html#required-trait"><span class="std std-ref">required trait</span></a></dd>
+</dl>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> PutContentsInput</span> {
+    <span class="nd">@required</span>
+    <span class="nl">contents:</span> <span class="vc">String</span>,
+
+    <span class="nd">@recommended</span>(<span class="nl">reason:</span> <span class="s2">&quot;Validation will reject contents if they are invalid.&quot;</span>)
+    <span class="nl">validateContents:</span> <span class="vc">Boolean</span>,
+}
+</pre></div>
+</div>
+</div>
+</div>
+</div>
 <div class="section" id="sensitive-trait">
-<span id="id7"></span><h2><a href="#sensitive-trait">4.6. <code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait</a></h2>
+<span id="id8"></span><h2><a href="#sensitive-trait">4.7. <code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Indicates that the data stored in the shape or member is sensitive
@@ -452,7 +508,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="since-trait">
-<span id="id8"></span><h2><a href="#since-trait">4.7. <code class="docutils literal notranslate"><span class="pre">since</span></code> trait</a></h2>
+<span id="id9"></span><h2><a href="#since-trait">4.8. <code class="docutils literal notranslate"><span class="pre">since</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Defines the version or date in which a shape or member was added to
@@ -464,7 +520,7 @@ the model.</dd>
 </dl>
 </div>
 <div class="section" id="tags-trait">
-<span id="id9"></span><h2><a href="#tags-trait">4.8. <code class="docutils literal notranslate"><span class="pre">tags</span></code> trait</a></h2>
+<span id="id10"></span><h2><a href="#tags-trait">4.9. <code class="docutils literal notranslate"><span class="pre">tags</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Tags a shape with arbitrary tag names that can be used to filter and group
@@ -493,7 +549,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="title-trait">
-<span id="id10"></span><h2><a href="#title-trait">4.9. <code class="docutils literal notranslate"><span class="pre">title</span></code> trait</a></h2>
+<span id="id11"></span><h2><a href="#title-trait">4.10. <code class="docutils literal notranslate"><span class="pre">title</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Defines a proper name for a service or resource shape. This title can be
@@ -526,7 +582,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="unstable-trait">
-<span id="id11"></span><h2><a href="#unstable-trait">4.10. <code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait</a></h2>
+<span id="id12"></span><h2><a href="#unstable-trait">4.11. <code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Indicates a shape is unstable and MAY change in the future. This trait can
@@ -582,11 +638,12 @@ Smithy</div>
 <li><a class="reference internal" href="#examples-trait">4.3. <code class="docutils literal notranslate"><span class="pre">examples</span></code> trait</a></li>
 <li><a class="reference internal" href="#externaldocumentation-trait">4.4. <code class="docutils literal notranslate"><span class="pre">externalDocumentation</span></code> trait</a></li>
 <li><a class="reference internal" href="#internal-trait">4.5. <code class="docutils literal notranslate"><span class="pre">internal</span></code> trait</a></li>
-<li><a class="reference internal" href="#sensitive-trait">4.6. <code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait</a></li>
-<li><a class="reference internal" href="#since-trait">4.7. <code class="docutils literal notranslate"><span class="pre">since</span></code> trait</a></li>
-<li><a class="reference internal" href="#tags-trait">4.8. <code class="docutils literal notranslate"><span class="pre">tags</span></code> trait</a></li>
-<li><a class="reference internal" href="#title-trait">4.9. <code class="docutils literal notranslate"><span class="pre">title</span></code> trait</a></li>
-<li><a class="reference internal" href="#unstable-trait">4.10. <code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait</a></li>
+<li><a class="reference internal" href="#recommended-trait">4.6. <code class="docutils literal notranslate"><span class="pre">recommended</span></code> trait</a></li>
+<li><a class="reference internal" href="#sensitive-trait">4.7. <code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait</a></li>
+<li><a class="reference internal" href="#since-trait">4.8. <code class="docutils literal notranslate"><span class="pre">since</span></code> trait</a></li>
+<li><a class="reference internal" href="#tags-trait">4.9. <code class="docutils literal notranslate"><span class="pre">tags</span></code> trait</a></li>
+<li><a class="reference internal" href="#title-trait">4.10. <code class="docutils literal notranslate"><span class="pre">title</span></code> trait</a></li>
+<li><a class="reference internal" href="#unstable-trait">4.11. <code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait</a></li>
 </ul>
 </li>
 </ul>

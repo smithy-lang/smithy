@@ -106,12 +106,19 @@ request endpoints.</p>
 <tbody valign="top">
 <tr class="row-even"><td>hostPrefix</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td><strong>Required</strong> The <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> property defines a template that expands
+<td><p class="first"><strong>Required</strong> The <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> property defines a template that expands
 to a valid <em>host</em> as defined in <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html#section-3.2.2"><strong>RFC 3986#section-3.2.2</strong></a>.
 <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> MAY contain <a class="reference internal" href="#endpoint-labels"><span class="std std-ref">label placeholders</span></a>
 that reference top-level input members of the operation marked with the
 <a class="reference internal" href="#hostlabel-trait"><span class="std std-ref">hostLabel trait</span></a>. The <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> MUST NOT contain a scheme,
-userinfo, or port.</td>
+userinfo, or port.</p>
+<div class="last admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">A host prefix that contains labels SHOULD end in a period (<code class="docutils literal notranslate"><span class="pre">.</span></code>) as
+otherwise there is a risk of clients inadvertently sending data to
+a domain that you do not control.</p>
+</div>
+</td>
 </tr>
 </tbody>
 </table>
@@ -505,7 +512,10 @@ hostPrefix of an endpoint trait.</dd>
 </dl>
 <p>Operations marked with the <a class="reference internal" href="#endpoint-trait"><span class="std std-ref">endpoint trait</span></a> MAY contain labels in the
 <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> property. These labels reference top-level operation input
-structure members that MUST be annotated with the <code class="docutils literal notranslate"><span class="pre">hostLabel</span></code> trait. Any
+structure members that MUST be annotated with the <code class="docutils literal notranslate"><span class="pre">hostLabel</span></code> trait. The
+contents of the label match the member's name. For example, a host prefix
+value of <code class="docutils literal notranslate"><span class="pre">{spam}.eggs.</span></code> MUST apply to an operation whose input contains a
+member named <code class="docutils literal notranslate"><span class="pre">spam</span></code> that is annotated with the <code class="docutils literal notranslate"><span class="pre">hostLabel</span></code> trait. Any
 <code class="docutils literal notranslate"><span class="pre">hostLabel</span></code> trait applied to a member that is not a top-level input member
 to an operation marked with the <a class="reference internal" href="#endpoint-trait"><span class="std std-ref">endpoint trait</span></a> will be ignored.</p>
 <div class="sphinx-tabs docutils container">
@@ -523,7 +533,7 @@ JSON</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
 <span class="nd">@readonly</span>
-<span class="nd">@endpoint</span>(<span class="nl">hostPrefix:</span> <span class="s2">&quot;{foo}.data&quot;</span>)
+<span class="nd">@endpoint</span>(<span class="nl">hostPrefix:</span> <span class="s2">&quot;{foo}.data.&quot;</span>)
 <span class="kd">operation</span><span class="nc"> GetStatus</span> {
     <span class="nl">input:</span> <span class="vc">GetStatusInput</span>,
     <span class="nl">output:</span> <span class="vc">GetStatusOutput</span>

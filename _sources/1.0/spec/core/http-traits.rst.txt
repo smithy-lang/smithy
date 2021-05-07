@@ -998,6 +998,52 @@ target map will be serialized in the request query string. Key-value pairs in th
 are treated like they were explicitly bound using the :ref:`httpQuery-trait`, including the
 requirement that reserved characters MUST be percent-encoded_.
 
+If a member with the ``httpQueryParams`` trait and a member with the :ref:`httpQuery-trait`
+conflict, clients MUST use the value set by the member with the :ref:`httpQuery-trait` and
+disregard the value set by ``httpQueryParams``. For example, given the following model:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @http(method: "POST", uri: "/things")
+        operation PutThing {
+            input: PutThingInput
+        }
+
+        structure PutThingInput {
+            @httpQuery
+            @required
+            thingId: String,
+
+            @httpQueryParams
+            tags: MapOfStrings
+        }
+
+        map MapOfStrings {
+            key: String,
+            value: String
+        }
+
+And given the following input to ``PutThing``:
+
+.. code-block:: json
+
+    {
+        "thingId": "realId",
+        "tags": {
+            "thingId": "fakeId",
+            "otherTag": "value"
+        }
+    }
+
+An example HTTP request would be serialized as:
+
+::
+
+    POST /things?thingId=realId&otherTag=value
+    Host: <server>
+
 .. _httpResponseCode-trait:
 
 ``httpResponseCode`` trait

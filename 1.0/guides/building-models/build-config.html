@@ -1146,9 +1146,13 @@ separate <a class="reference internal" href="../../spec/core/model.html#service-
 </tbody>
 </table>
 <p>The following example will flatten the namespaces of the shapes connected to
-the <code class="docutils literal notranslate"><span class="pre">ns.bar#MyService</span></code> service into the target namespace, <code class="docutils literal notranslate"><span class="pre">ns.foo</span></code>. Shapes
-tagged with <code class="docutils literal notranslate"><span class="pre">baz</span></code> or <code class="docutils literal notranslate"><span class="pre">qux</span></code> will also be flattened into the <code class="docutils literal notranslate"><span class="pre">ns.foo</span></code>
-namespace, so long as they don't conflict with a shape within the <a class="reference internal" href="../../spec/core/model.html#service-closure"><span class="std std-ref">service closure</span></a>.</p>
+the <code class="docutils literal notranslate"><span class="pre">ns.bar#MyService</span></code> service into the target namespace, <code class="docutils literal notranslate"><span class="pre">ns.foo</span></code>. All
+shapes within <a class="reference internal" href="../../spec/core/model.html#service-closure"><span class="std std-ref">service closure</span></a> with be flattened into
+the target namespace, including shapes that have been renamed to disambiguate
+them through the service shape's <code class="docutils literal notranslate"><span class="pre">rename</span></code> property. Shapes tagged with
+<code class="docutils literal notranslate"><span class="pre">baz</span></code> or <code class="docutils literal notranslate"><span class="pre">qux</span></code> will also be flattened into the <code class="docutils literal notranslate"><span class="pre">ns.foo</span></code> namespace, so
+long as they don't conflict with a shape within the
+<a class="reference internal" href="../../spec/core/model.html#service-closure"><span class="std std-ref">service closure</span></a>.</p>
 <div class="sphinx-tabs docutils container">
 <div class="ui top attached tabular menu sphinx-menu docutils container">
 <div class="active item sphinx-data-tab-SlNPTg== docutils container">

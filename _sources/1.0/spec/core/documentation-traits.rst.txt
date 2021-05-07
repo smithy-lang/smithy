@@ -296,6 +296,48 @@ filtered version of the model.
         }
 
 
+.. _recommended-trait:
+
+---------------------
+``recommended`` trait
+---------------------
+
+Summary
+    Indicates that a structure member SHOULD be set. This trait is useful when
+    the majority of use cases for a structure benefit from providing a value
+    for a member, but the member is not actually :ref:`required <required-trait>`
+    or cannot be made required backward compatibly.
+Trait selector
+    ``structure > member``
+Value type
+    Structure with the following members:
+
+    .. list-table::
+        :header-rows: 1
+        :widths: 10 10 80
+
+        * - Property
+          - Type
+          - Description
+        * - reason
+          - ``string``
+          - Provides a reason why the member is recommended.
+Conflicts with
+   :ref:`required-trait`
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        structure PutContentsInput {
+            @required
+            contents: String,
+
+            @recommended(reason: "Validation will reject contents if they are invalid.")
+            validateContents: Boolean,
+        }
+
+
 .. _sensitive-trait:
 
 -------------------

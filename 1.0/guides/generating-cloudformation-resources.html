@@ -116,12 +116,12 @@ Resource Schemas from a Smithy model <a class="reference internal" href="buildin
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#cfn-smithy-build-gradle" title="Permalink to this code">¶</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span> <span class="p">{</span>
     <span class="n">java</span>
-    <span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="n">version</span><span class="p">(</span><span class="s">&quot;0.5.2&quot;</span><span class="p">)</span>
+    <span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="n">version</span><span class="p">(</span><span class="s">&quot;0.5.3&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.7.0&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.7.1&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -179,7 +179,7 @@ generate one Resource Schema with the <code class="docutils literal notranslate"
 </div>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-aws-cloudformation:1.7.0&quot; is
+<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-aws-cloudformation:1.7.1&quot; is
 required in order for smithy-build to map the &quot;cloudformation&quot; plugin name
 to the correct Java library implementation.</p>
 </div>
@@ -467,33 +467,33 @@ Gradle:</p>
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#cfn-code-build-gradle" title="Permalink to this code">¶</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.7.0&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.7.1&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </div>
 <p>Next, you need to create and configure a <code class="docutils literal notranslate"><span class="pre">CloudFormationConverter</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">software.amazon.smithy.model.shapes.ShapeId</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">software.amazon.smithy.aws.cloudformation.schema.CfnConfig</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">software.amazon.smithy.aws.cloudformation.schema.fromsmithy.CfnConverter</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">software.amazon.smithy.aws.cloudformation.schema.model.ResourceSchema</span><span class="o">;</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">java.util.List</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.model.shapes.ShapeId</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.aws.cloudformation.schema.CfnConfig</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.aws.cloudformation.schema.fromsmithy.CfnConverter</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.aws.cloudformation.schema.model.ResourceSchema</span><span class="p">;</span>
 
-<span class="n">CfnConverter</span> <span class="n">converter</span> <span class="o">=</span> <span class="n">CfnConverter</span><span class="o">.</span><span class="na">create</span><span class="o">();</span>
+<span class="n">CfnConverter</span> <span class="n">converter</span> <span class="o">=</span> <span class="n">CfnConverter</span><span class="p">.</span><span class="na">create</span><span class="p">();</span>
 
 <span class="c1">// Add any necessary configuration settings.</span>
-<span class="n">CfnConfig</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CfnConfig</span><span class="o">();</span>
-<span class="n">config</span><span class="o">.</span><span class="na">setService</span><span class="o">(</span><span class="n">ShapeId</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="s">&quot;smithy.example#Queues&quot;</span><span class="o">));</span>
-<span class="n">config</span><span class="o">.</span><span class="na">setOrganizationName</span><span class="o">(</span><span class="s">&quot;Smithy&quot;</span><span class="o">);</span>
+<span class="n">CfnConfig</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CfnConfig</span><span class="p">();</span>
+<span class="n">config</span><span class="p">.</span><span class="na">setService</span><span class="p">(</span><span class="n">ShapeId</span><span class="p">.</span><span class="na">from</span><span class="p">(</span><span class="s">&quot;smithy.example#Queues&quot;</span><span class="p">));</span>
+<span class="n">config</span><span class="p">.</span><span class="na">setOrganizationName</span><span class="p">(</span><span class="s">&quot;Smithy&quot;</span><span class="p">);</span>
 
 <span class="c1">// Generate the schemas.</span>
-<span class="n">List</span><span class="o">&lt;</span><span class="n">ResourceSchema</span><span class="o">&gt;</span> <span class="n">schemas</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="na">convert</span><span class="o">(</span><span class="n">myModel</span><span class="o">);</span>
+<span class="n">List</span><span class="o">&lt;</span><span class="n">ResourceSchema</span><span class="o">&gt;</span> <span class="n">schemas</span> <span class="o">=</span> <span class="n">converter</span><span class="p">.</span><span class="na">convert</span><span class="p">(</span><span class="n">myModel</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>The conversion process is highly extensible through
 <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.aws.cloudformation.schema.fromsmithy.Smithy2CfnExtension</span></code>
-service providers. See the <a class="reference external" href="https://awslabs.github.io/smithy/javadoc/1.7.0/software/amazon/smithy/aws/cloudformation/schema/fromsmithy/Smithy2CfnExtension.html">Javadocs</a> for more information.</p>
+service providers. See the <a class="reference external" href="https://awslabs.github.io/smithy/javadoc/1.7.1/software/amazon/smithy/aws/cloudformation/schema/fromsmithy/Smithy2CfnExtension.html">Javadocs</a> for more information.</p>
 </div>
 </div>
 

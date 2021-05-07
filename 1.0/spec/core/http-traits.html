@@ -1156,6 +1156,54 @@ the body of the response.</p>
 target map will be serialized in the request query string. Key-value pairs in the target map
 are treated like they were explicitly bound using the <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>, including the
 requirement that reserved characters MUST be <a class="reference external" href="https://tools.ietf.org/html/rfc3986#section-2.1">percent-encoded</a>.</p>
+<p>If a member with the <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait and a member with the <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>
+conflict, clients MUST use the value set by the member with the <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a> and
+disregard the value set by <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code>. For example, given the following model:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;POST&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/things&quot;</span>)
+<span class="kd">operation</span><span class="nc"> PutThing</span> {
+    <span class="nl">input:</span> <span class="vc">PutThingInput</span>
+}
+
+<span class="kd">structure</span><span class="nc"> PutThingInput</span> {
+    <span class="nd">@httpQuery</span>
+    <span class="nd">@required</span>
+    <span class="nl">thingId:</span> <span class="vc">String</span>,
+
+    <span class="nd">@httpQueryParams</span>
+    <span class="nl">tags:</span> <span class="vc">MapOfStrings</span>
+}
+
+<span class="kd">map</span><span class="nc"> MapOfStrings</span> {
+    <span class="nl">key:</span> <span class="vc">String</span>,
+    <span class="nl">value:</span> <span class="vc">String</span>
+}
+</pre></div>
+</div>
+</div>
+</div>
+<p>And given the following input to <code class="docutils literal notranslate"><span class="pre">PutThing</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;thingId&quot;</span><span class="p">:</span> <span class="s2">&quot;realId&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;thingId&quot;</span><span class="p">:</span> <span class="s2">&quot;fakeId&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;otherTag&quot;</span><span class="p">:</span> <span class="s2">&quot;value&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>An example HTTP request would be serialized as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>POST /things?thingId=realId&amp;otherTag=value
+Host: &lt;server&gt;
+</pre></div>
+</div>
 </div>
 <div class="section" id="httpresponsecode-trait">
 <span id="id10"></span><h2><a href="#httpresponsecode-trait">11.9. <code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait</a></h2>
