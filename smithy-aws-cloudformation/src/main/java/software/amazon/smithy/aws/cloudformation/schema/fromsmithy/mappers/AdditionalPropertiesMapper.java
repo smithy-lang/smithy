@@ -15,12 +15,15 @@
 
 package software.amazon.smithy.aws.cloudformation.schema.fromsmithy.mappers;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.aws.cloudformation.schema.fromsmithy.CfnMapper;
 import software.amazon.smithy.aws.cloudformation.schema.fromsmithy.Context;
 import software.amazon.smithy.aws.cloudformation.schema.model.ResourceSchema;
+import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
@@ -54,15 +57,31 @@ final class AdditionalPropertiesMapper implements CfnMapper {
         if (definitionsOptional.isPresent()) {
             for (Map.Entry<StringNode, Node> entry : definitionsOptional.get().getMembers().entrySet()) {
                 ObjectNode valueNode = entry.getValue().expectObjectNode();
-
-                if (valueNode.expectStringMember("type").getValue().equals("object")) {
-                    valueNode = valueNode.withMember("additionalProperties", false);
-                }
-
-                updatedNodes.put(entry.getKey(), valueNode);
+                updatedNodes.put(entry.getKey(), addAdditionalProperties(valueNode));
             }
             node = node.withMember("definitions", Node.objectNode(updatedNodes));
         }
         return node;
+    }
+
+    private Node addAdditionalProperties(Node node) {
+        if (!node.isObjectNode()) {
+            return node;
+        }
+        ObjectNode valueNode = node.expectObjectNode();
+
+        // Unions may be expressed as a "oneOf" which won't have a type.
+        Optional<String> type = valueNode.getStringMember("type").map(StringNode::getValue);
+        if (!type.isPresent() && valueNode.getArrayMember("oneOf").isPresent()) {
+            List<Node> elements = valueNode.expectArrayMember("oneOf").getElements();
+            List<Node> updatedElements = new ArrayList<>(elements.size());
+            for (Node element: elements) {
+                updatedElements.add(addAdditionalProperties(element));
+            }
+            valueNode = valueNode.withMember("oneOf", ArrayNode.fromNodes(updatedElements));
+        } else if (type.isPresent() && type.get().equals("object")) {
+            valueNode = valueNode.withMember("additionalProperties", false);
+        }
+        return valueNode;
     }
 }
