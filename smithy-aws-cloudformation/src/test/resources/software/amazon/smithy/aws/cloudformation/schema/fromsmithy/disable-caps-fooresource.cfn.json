@@ -14,6 +14,36 @@
       },
       "additionalProperties": false
     },
+    "ConditionalProperty": {
+      "oneOf": [
+        {
+          "type": "object",
+          "title": "optionOne",
+          "properties": {
+            "optionOne": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "optionOne"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "title": "optionTwo",
+          "properties": {
+            "optionTwo": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "optionTwo"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
     "FooMap": {
       "type": "object",
       "patternProperties": {
@@ -25,6 +55,9 @@
     }
   },
   "properties": {
+    "conditionalProperty": {
+      "$ref": "#/definitions/ConditionalProperty"
+    },
     "fooId": {
       "type": "string"
     },

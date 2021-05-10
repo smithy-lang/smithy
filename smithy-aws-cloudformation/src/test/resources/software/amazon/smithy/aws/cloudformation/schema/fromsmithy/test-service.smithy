@@ -37,6 +37,8 @@ structure CreateFooRequest {
     fooValidCreateReadProperty: String,
 
     fooValidFullyMutableProperty: ComplexProperty,
+
+    conditionalProperty: ConditionalProperty,
 }
 
 structure CreateFooResponse {
@@ -62,6 +64,8 @@ structure GetFooResponse {
     fooValidCreateReadProperty: String,
 
     fooValidFullyMutableProperty: ComplexProperty,
+
+    conditionalProperty: ConditionalProperty,
 }
 
 operation UpdateFooOperation {
@@ -77,6 +81,8 @@ structure UpdateFooRequest {
     fooValidWriteProperty: String,
 
     fooValidFullyMutableProperty: ComplexProperty,
+
+    conditionalProperty: ConditionalProperty,
 }
 
 structure UpdateFooResponse {
@@ -85,6 +91,8 @@ structure UpdateFooResponse {
     fooValidReadProperty: String,
 
     fooValidFullyMutableProperty: ComplexProperty,
+
+    conditionalProperty: ConditionalProperty,
 }
 
 /// A Bar resource, not that kind of bar though.
@@ -237,6 +245,11 @@ string BazId
 structure ComplexProperty {
     property: String,
     another: String,
+}
+
+union ConditionalProperty {
+    optionOne: String,
+    optionTwo: String,
 }
 
 map FooMap {
