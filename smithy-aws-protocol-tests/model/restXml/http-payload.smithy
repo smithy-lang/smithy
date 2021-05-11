@@ -301,7 +301,7 @@ apply BodyWithXmlName @httpRequestTests([
         protocol: restXml,
         method: "PUT",
         uri: "/BodyWithXmlName",
-        body: "<Ahoy><name>Phreddy</name></Ahoy>",
+        body: "<Ahoy><nested><name>Phreddy</name></nested></Ahoy>",
         bodyMediaType: "application/xml",
         headers: {
             "Content-Type": "application/xml"
@@ -323,7 +323,7 @@ apply BodyWithXmlName @httpResponseTests([
         documentation: "Serializes a payload using a wrapper name based on the xmlName",
         protocol: restXml,
         code: 200,
-        body: "<Ahoy><name>Phreddy</name></Ahoy>",
+        body: "<Ahoy><nested><name>Phreddy</name></nested></Ahoy>",
         bodyMediaType: "application/xml",
         headers: {
             "Content-Type": "application/xml"
