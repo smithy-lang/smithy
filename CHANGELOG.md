@@ -1,5 +1,11 @@
 # Smithy Changelog
 
+## 1.7.2 (2021-05-11)
+
+### Bug Fixes
+* Fixed a bug where unions would cause CloudFormation schema conversion to fail. ([#794](https://github.com/awslabs/smithy/pull/794))
+* Fixed an incorrect restXml protocol test. ([#795](https://github.com/awslabs/smithy/pull/795))
+
 ## 1.7.1 (2021-05-07)
 
 ### Features
