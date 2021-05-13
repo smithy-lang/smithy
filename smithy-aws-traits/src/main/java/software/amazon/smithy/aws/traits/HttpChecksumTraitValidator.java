@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import software.amazon.smithy.aws.traits.auth.SigV4Trait;
 import software.amazon.smithy.aws.traits.protocols.AwsProtocolTrait;
 import software.amazon.smithy.model.Model;
@@ -47,14 +48,21 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
         ServiceIndex serviceIndex = ServiceIndex.of(model);
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
 
-        model.shapes(ServiceShape.class).filter(this::isTargetProtocol).forEach(service -> {
-            TopDownIndex.of(model).getContainedOperations(service).forEach(operation -> {
+        List<ServiceShape> services = model.shapes(ServiceShape.class).collect(Collectors.toList());
+        for (ServiceShape service : services) {
+            if (!isTargetProtocol(service)) {
+                continue;
+            }
+
+            for (OperationShape operation : topDownIndex.getContainedOperations(service)) {
                 if (operation.hasTrait(HttpChecksumTrait.class)) {
                     events.addAll(validateSupportedLocations(serviceIndex, service, operation));
                 }
-            });
-        });
+            }
+        }
+
         return events;
     }
 

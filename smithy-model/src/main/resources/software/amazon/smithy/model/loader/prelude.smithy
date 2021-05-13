@@ -771,7 +771,7 @@ structure httpChecksum {
 /// Defines properties used by httpChecksum trait members
 @private
 structure httpChecksumProperties {
-    /// prefix string used to construct a header or trailer name for a
+    /// The prefix string used to construct a header or trailer name for a
     /// checksum type.
     prefix: NonEmptyString,
 
@@ -779,7 +779,7 @@ structure httpChecksumProperties {
     /// If not provided, locations resolve to a list containing "header" value.
     locations: HttpChecksumLocationList,
 
-    /// algorithms list represents the supported checksum algorithms.
+    /// Contains the supported checksum algorithms.
     algorithms: NonEmptyStringList,
 }
 

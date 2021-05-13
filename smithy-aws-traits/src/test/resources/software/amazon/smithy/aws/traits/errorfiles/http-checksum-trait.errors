@@ -1,0 +1,6 @@
+[WARNING] ns.foo#ValidOperation: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
+[WARNING] ns.foo#InvalidOperation: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
+[WARNING] ns.foo#InvalidOperation2: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
+[ERROR] ns.foo#InvalidOperation: For aws protocols, the `response` property of the `httpChecksum` trait only supports `header` as `location`, found "[trailer, header]". | HttpChecksumTrait
+[ERROR] ns.foo#InvalidOperation: For operation using sigv4 auth scheme, the `request` property of the `httpChecksum` trait must support `header` checksum location. | HttpChecksumTrait
+[ERROR] ns.foo#InvalidOperation2: For aws protocols, the `response` property of the `httpChecksum` trait only supports `header` as `location`, found "[trailer]". | HttpChecksumTrait

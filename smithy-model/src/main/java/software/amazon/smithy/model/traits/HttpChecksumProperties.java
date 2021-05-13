@@ -19,8 +19,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -67,10 +69,18 @@ public final class HttpChecksumProperties implements ToNode, ToSmithyBuilder<Htt
         value.getStringMember(PREFIX).map(StringNode::getValue).ifPresent(builder::prefix);
         value.getArrayMember(ALGORITHMS).ifPresent(algorithms ->
                 Node.loadArrayOfString(ALGORITHMS, algorithms).forEach(builder::addAlgorithm));
-        value.getArrayMember(LOCATIONS).ifPresent(locationNodes -> {
+
+        Optional<ArrayNode> locationNodes = value.getArrayMember(LOCATIONS);
+        if (locationNodes.isPresent()) {
+            // since locations nodes are present.
+            builder.locationsSetFromNode = true;
+
             builder.clearLocations();
-            locationNodes.forEach(locationNode -> builder.addLocation(Location.fromNode(locationNode)));
-        });
+            for (Node locationNode: locationNodes.get()) {
+                builder.addLocation(Location.fromNode(locationNode));
+            }
+        }
+
         return builder.build();
     }
 
@@ -116,11 +126,14 @@ public final class HttpChecksumProperties implements ToNode, ToSmithyBuilder<Htt
      */
     @Override
     public Node toNode() {
-        List<Node> locationNodes = locations.stream().map(Location::toNode).collect(Collectors.toList());
         ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .withMember(PREFIX, getPrefix())
-                .withMember(ALGORITHMS, Node.fromStrings(algorithms))
-                .withMember(LOCATIONS, Node.fromNodes(locationNodes));
+                .withMember(ALGORITHMS, Node.fromStrings(algorithms));
+
+        List<Node> locationNodes = locations.stream().map(Location::toNode).collect(Collectors.toList());
+        if (!locationNodes.isEmpty()) {
+            builder.withMember(LOCATIONS, Node.fromNodes(locationNodes));
+        }
 
         return builder.build();
     }
@@ -130,13 +143,19 @@ public final class HttpChecksumProperties implements ToNode, ToSmithyBuilder<Htt
         private Set<String> algorithms = new LinkedHashSet<>();
         private Set<Location> locations = new LinkedHashSet<>();
 
-        private Builder() {
-            // Add "header" as default supported location.
-            locations.add(Location.HEADER);
-        }
+        // True if locations property was set on the Trait. This makes sure we
+        // do not silently add "header" as supported location if locations
+        // property was explicitly set as an empty list on the trait.
+        private boolean locationsSetFromNode;
 
         @Override
         public HttpChecksumProperties build() {
+            // check if location was not set.
+            if (!locationsSetFromNode && locations.isEmpty()) {
+                // Add "header" as default supported location
+                addLocation(Location.HEADER);
+            }
+
             return new HttpChecksumProperties(this);
         }
 
