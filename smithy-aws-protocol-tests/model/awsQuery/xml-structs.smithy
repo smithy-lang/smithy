@@ -400,7 +400,7 @@ apply XmlNamespaces @httpResponseTests([
         protocol: awsQuery,
         code: 200,
         body: """
-              <XmlNamespacesResponse xmlns="http://foo.com" xmlns="https://example.com/">
+              <XmlNamespacesResponse xmlns="https://example.com/">
                   <XmlNamespacesResult>
                       <nested>
                           <foo xmlns:baz="http://baz.com">Foo</foo>
@@ -436,7 +436,7 @@ structure XmlNamespacesOutput {
 }
 
 // Ingored since it's not at the top-level
-@xmlNamespace(uri: "http://foo.com")
+@xmlNamespace(uri: "http://boo.com")
 structure XmlNamespaceNested {
     @xmlNamespace(uri: "http://baz.com", prefix: "baz")
     foo: String,
@@ -465,7 +465,7 @@ apply IgnoresWrappingXmlName @httpResponseTests([
         protocol: awsQuery,
         code: 200,
         body: """
-              <IgnoresWrappingXmlNameResponse xmlns="http://foo.com" xmlns="https://example.com/">
+              <IgnoresWrappingXmlNameResponse xmlns="https://example.com/">
                   <IgnoresWrappingXmlNameResult>
                       <foo>bar</foo>
                   </IgnoresWrappingXmlNameResult>
