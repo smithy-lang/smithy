@@ -42,6 +42,9 @@ public final class ValidateCommand implements Command {
                 .option(SmithyCli.ALLOW_UNKNOWN_TRAITS, "Ignores unknown traits when validating models")
                 .option(SmithyCli.DISCOVER, "-d", "Enables model discovery, merging in models found inside of jars")
                 .parameter(SmithyCli.DISCOVER_CLASSPATH, "Enables model discovery using a custom classpath for models")
+                .parameter(SmithyCli.SEVERITY, "Sets a minimum validation event severity to display. "
+                                               + "Defaults to NOTE. Can be set to SUPPRESSED, NOTE, WARNING, "
+                                               + "DANGER, ERROR.")
                 .positional("<MODELS>", "Path to Smithy models or directories")
                 .build();
     }

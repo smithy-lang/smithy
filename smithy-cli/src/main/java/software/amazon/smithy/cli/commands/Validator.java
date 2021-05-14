@@ -21,9 +21,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import software.amazon.smithy.cli.Cli;
 import software.amazon.smithy.cli.CliError;
-import software.amazon.smithy.cli.Colors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.validation.ContextualValidationEventFormatter;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 
@@ -46,25 +44,9 @@ final class Validator {
     }
 
     static void validate(ValidatedResult<Model> result, Set<Feature> features) {
-        ContextualValidationEventFormatter formatter = new ContextualValidationEventFormatter();
-
-        boolean stdout = features.contains(Feature.STDOUT);
         boolean quiet = features.contains(Feature.QUIET);
+        boolean stdout = features.contains(Feature.STDOUT);
         Consumer<String> writer = stdout ? Cli.getStdout() : Cli.getStderr();
-
-        result.getValidationEvents().stream()
-                .filter(event -> event.getSeverity() != Severity.SUPPRESSED)
-                .sorted()
-                .forEach(event -> {
-                    if (event.getSeverity() == Severity.WARNING) {
-                        Colors.YELLOW.write(writer, formatter.format(event));
-                    } else if (event.getSeverity() == Severity.DANGER || event.getSeverity() == Severity.ERROR) {
-                        Colors.RED.write(writer, formatter.format(event));
-                    } else {
-                        writer.accept(event.toString());
-                    }
-                    writer.accept("");
-                });
 
         long errors = result.getValidationEvents(Severity.ERROR).size();
         long dangers = result.getValidationEvents(Severity.DANGER).size();

@@ -37,6 +37,7 @@ import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -53,7 +54,6 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.model.shapes.ModelSerializer;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
@@ -641,5 +641,22 @@ public class ModelAssemblerTest {
                 .unwrap();
 
         assertThat(model, equalTo(model2));
+    }
+
+    @Test
+    public void canListenToEvents() {
+        List<ValidationEvent> toEmit = new ArrayList<>();
+        toEmit.add(ValidationEvent.builder().id("a").severity(Severity.WARNING).message("").build());
+        toEmit.add(ValidationEvent.builder().id("b").severity(Severity.WARNING).message("").build());
+        toEmit.add(ValidationEvent.builder().id("c").severity(Severity.WARNING).message("").build());
+        List<ValidationEvent> collectedEvents = Collections.synchronizedList(new ArrayList<>());
+
+        Model.assembler()
+                .addValidator(model -> toEmit)
+                .validationEventListener(collectedEvents::add)
+                .assemble()
+                .unwrap();
+
+        assertThat(collectedEvents, equalTo(toEmit));
     }
 }

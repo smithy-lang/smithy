@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -85,6 +86,10 @@ public final class ModelAssembler {
 
     private static final Logger LOGGER = Logger.getLogger(ModelAssembler.class.getName());
 
+    private static final Consumer<ValidationEvent> DEFAULT_EVENT_LISTENER = ValidationEvent -> {
+        // Ignore events by default.
+    };
+
     private TraitFactory traitFactory;
     private ValidatorFactory validatorFactory;
     private boolean disableValidation;
@@ -97,6 +102,7 @@ public final class ModelAssembler {
     private final Map<String, Node> metadata = new HashMap<>();
     private final Map<String, Object> properties = new HashMap<>();
     private boolean disablePrelude;
+    private Consumer<ValidationEvent> validationEventListener = DEFAULT_EVENT_LISTENER;
 
     // Lazy initialization holder class idiom to hold a default validator factory.
     private static final class LazyValidatorFactoryHolder {
@@ -128,6 +134,7 @@ public final class ModelAssembler {
         assembler.disablePrelude = disablePrelude;
         assembler.properties.putAll(properties);
         assembler.disableValidation = disableValidation;
+        assembler.validationEventListener = validationEventListener;
         return assembler;
     }
 
@@ -146,6 +153,7 @@ public final class ModelAssembler {
      *     <li>Shape registered via {@link #addModel}</li>
      *     <li>Metadata registered via {@link #putMetadata}</li>
      *     <li>Validation is re-enabled if it was disabled.</li>
+     *     <li>Validation event listener via {@link #validationEventListener(Consumer)}</li>
      * </ul>
      *
      * <p>The state of {@link #disablePrelude} is reset such that the prelude
@@ -163,6 +171,7 @@ public final class ModelAssembler {
         documentNodes.clear();
         disablePrelude = false;
         disableValidation = false;
+        validationEventListener = null;
         return this;
     }
 
@@ -476,6 +485,24 @@ public final class ModelAssembler {
     }
 
     /**
+     * Sets a listener that is invoked each time a ValidationEvent is encountered
+     * while loading and validating the model.
+     *
+     * <p>The consumer could be invoked simultaneously by multiple threads. It's
+     * up to the consumer to perform any necessary synchronization. Providing
+     * an event listener is useful for things like CLIs so that events can
+     * be streamed to stdout as soon as they are encountered, rather than
+     * waiting until the entire model is parsed and validated.
+     *
+     * @param eventListener Listener invoked for each ValidationEvent.
+     * @return Returns the assembler.
+     */
+    public ModelAssembler validationEventListener(Consumer<ValidationEvent> eventListener) {
+        validationEventListener = eventListener == null ? DEFAULT_EVENT_LISTENER : eventListener;
+        return this;
+    }
+
+    /**
      * Assembles the model and returns the validated result.
      *
      * <h2>Implementation notes</h2>
@@ -599,6 +626,7 @@ public final class ModelAssembler {
 
     private ValidatedResult<Model> validate(Model model, TraitContainer traits, List<ValidationEvent> events) {
         validateTraits(model.getShapeIds(), traits, events);
+        events.forEach(validationEventListener);
 
         // If ERROR validation events occur while loading, then performing more
         // granular semantic validation will only obscure the root cause of errors.
@@ -611,7 +639,10 @@ public final class ModelAssembler {
         }
 
         // Validate the model based on the explicit validators and model metadata.
-        List<ValidationEvent> mergedEvents = ModelValidator.validate(model, validatorFactory, assembleValidators());
+        // Note the ModelValidator handles emitting events to the validationEventListener.
+        List<ValidationEvent> mergedEvents = ModelValidator
+                .validate(model, validatorFactory, assembleValidators(), validationEventListener);
+
         mergedEvents.addAll(events);
         return new ValidatedResult<>(model, mergedEvents);
     }

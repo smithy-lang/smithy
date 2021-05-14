@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
@@ -72,16 +73,19 @@ final class ModelValidator {
     private final ValidatorFactory validatorFactory;
     private final Model model;
     private final Map<String, Map<String, String>> namespaceSuppressions = new HashMap<>();
+    private final Consumer<ValidationEvent> eventListener;
 
     private ModelValidator(
             Model model,
             ValidatorFactory validatorFactory,
-            List<Validator> validators
+            List<Validator> validators,
+            Consumer<ValidationEvent> eventListener
     ) {
         this.model = model;
         this.validatorFactory = validatorFactory;
         this.validators = new ArrayList<>(validators);
         this.validators.removeIf(v -> CORE_VALIDATORS.contains(v.getClass()));
+        this.eventListener = eventListener;
     }
 
     /**
@@ -91,14 +95,16 @@ final class ModelValidator {
      * @param model Model to validate.
      * @param validatorFactory Factory used to find ValidatorService providers.
      * @param validators Additional validators to use.
+     * @param eventListener Consumer invoked each time a validation event is encountered.
      * @return Returns the encountered validation events.
      */
     static List<ValidationEvent> validate(
             Model model,
             ValidatorFactory validatorFactory,
-            List<Validator> validators
+            List<Validator> validators,
+            Consumer<ValidationEvent> eventListener
     ) {
-        return new ModelValidator(model, validatorFactory, validators).doValidate();
+        return new ModelValidator(model, validatorFactory, validators, eventListener).doValidate();
     }
 
     private List<ValidationEvent> doValidate() {
@@ -111,6 +117,9 @@ final class ModelValidator {
         // which will only obscure the root cause.
         events.addAll(new TargetValidator().validate(model));
         events.addAll(new ResourceCycleValidator().validate(model));
+        // Emit any events that have already occurred.
+        events.forEach(eventListener);
+
         if (LoaderUtils.containsErrorEvents(events)) {
             return events;
         }
@@ -120,6 +129,8 @@ final class ModelValidator {
                 .flatMap(validator -> validator.validate(model).stream())
                 .map(this::suppressEvent)
                 .filter(ModelValidator::filterPrelude)
+                // Emit events as they occur during validation.
+                .peek(eventListener)
                 .collect(Collectors.toList());
 
         // Add in events encountered while building up validators and suppressions.

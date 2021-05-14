@@ -21,14 +21,20 @@ import java.net.URLClassLoader;
 import java.nio.file.Paths;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 import software.amazon.smithy.cli.Arguments;
+import software.amazon.smithy.cli.Cli;
 import software.amazon.smithy.cli.CliError;
+import software.amazon.smithy.cli.Colors;
 import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
+import software.amazon.smithy.model.validation.ContextualValidationEventFormatter;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 
 final class CommandUtils {
@@ -40,12 +46,43 @@ final class CommandUtils {
     static Model buildModel(Arguments arguments, ClassLoader classLoader, Set<Validator.Feature> features) {
         List<String> models = arguments.positionalArguments();
         ModelAssembler assembler = CommandUtils.createModelAssembler(classLoader);
+
+        ContextualValidationEventFormatter formatter = new ContextualValidationEventFormatter();
+        boolean stdout = features.contains(Validator.Feature.STDOUT);
+        boolean quiet = features.contains(Validator.Feature.QUIET);
+        Consumer<String> writer = stdout ? Cli.getStdout() : Cli.getStderr();
+
+        // --severity defaults to NOTE.
+        Severity minSeverity = arguments.has(SmithyCli.SEVERITY)
+                ? parseSeverity(arguments.parameter(SmithyCli.SEVERITY))
+                : Severity.NOTE;
+
+        assembler.validationEventListener(event -> {
+            // Only log events that are >= --severity.
+            if (event.getSeverity().ordinal() >= minSeverity.ordinal()) {
+                if (event.getSeverity() == Severity.WARNING && !quiet) {
+                    // Only log warnings when not quiet
+                    Colors.YELLOW.write(writer, formatter.format(event) + System.lineSeparator());
+                } else if (event.getSeverity() == Severity.DANGER || event.getSeverity() == Severity.ERROR) {
+                    // Always output error and danger events, even when quiet.
+                    Colors.RED.write(writer, formatter.format(event) + System.lineSeparator());
+                } else if (!quiet) {
+                    writer.accept(formatter.format(event) + System.lineSeparator());
+                }
+            }
+        });
+
         CommandUtils.handleModelDiscovery(arguments, assembler, classLoader);
         CommandUtils.handleUnknownTraitsOption(arguments, assembler);
         models.forEach(assembler::addImport);
         ValidatedResult<Model> result = assembler.assemble();
         Validator.validate(result, features);
         return result.getResult().orElseThrow(() -> new RuntimeException("Expected Validator to throw"));
+    }
+
+    static Severity parseSeverity(String str) {
+        return Severity.fromString(str).orElseThrow(() -> new IllegalArgumentException(
+                "Invalid severity: " + str + ". Expected one of: " + Arrays.toString(Severity.values())));
     }
 
     static ModelAssembler createModelAssembler(ClassLoader classLoader) {

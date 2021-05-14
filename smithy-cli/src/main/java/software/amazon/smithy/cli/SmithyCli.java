@@ -29,6 +29,7 @@ public final class SmithyCli {
     public static final String DISCOVER = "--discover";
     public static final String DISCOVER_CLASSPATH = "--discover-classpath";
     public static final String ALLOW_UNKNOWN_TRAITS = "--allow-unknown-traits";
+    public static final String SEVERITY = "--severity";
 
     private ClassLoader classLoader = getClass().getClassLoader();
 
