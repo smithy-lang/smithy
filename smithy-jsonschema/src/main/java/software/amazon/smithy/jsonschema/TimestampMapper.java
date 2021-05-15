@@ -31,7 +31,7 @@ final class TimestampMapper implements JsonSchemaMapper {
 
     @Override
     public Schema.Builder updateSchema(Shape shape, Schema.Builder builder, JsonSchemaConfig config) {
-        String format = extractTimestampFormat(shape, config);
+        String format = config.detectJsonTimestampFormat(shape).orElse(null);
 
         if (format == null) {
             return builder;
@@ -48,15 +48,5 @@ final class TimestampMapper implements JsonSchemaMapper {
                 // Handle any future "epoch-*" formats like epoch-millis.
                 return format.startsWith("epoch-") ? builder.type("number") : builder.type("string");
         }
-    }
-
-    private static String extractTimestampFormat(Shape shape, JsonSchemaConfig config) {
-        if (shape.isTimestampShape() || shape.hasTrait(TimestampFormatTrait.class)) {
-            return shape.getTrait(TimestampFormatTrait.class)
-                    .map(TimestampFormatTrait::getValue)
-                    .orElseGet(() -> config.getDefaultTimestampFormat().toString());
-        }
-
-        return null;
     }
 }

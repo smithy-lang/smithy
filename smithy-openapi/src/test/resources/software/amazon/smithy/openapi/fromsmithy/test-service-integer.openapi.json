@@ -216,7 +216,8 @@
             "type": "string"
           },
           "time": {
-            "type": "number"
+            "type": "number",
+            "format": "double"
           },
           "list": {
             "type": "array",

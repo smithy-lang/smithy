@@ -32,6 +32,7 @@ import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
+import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.model.ExternalDocumentation;
 import software.amazon.smithy.utils.MapUtils;
@@ -88,6 +89,12 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
                     String blobFormat = ((OpenApiConfig) config).getDefaultBlobFormat();
                     return builder.format(blobFormat);
                 }
+            } else if (shape.isTimestampShape()) {
+                // Add the "double" format when epoch-seconds is used
+                // to account for optional millisecond precision.
+                config.detectJsonTimestampFormat(shape)
+                        .filter(format -> format.equals(TimestampFormatTrait.EPOCH_SECONDS))
+                        .ifPresent(format -> builder.format("double"));
             } else if (shape.hasTrait(SensitiveTrait.class)) {
                 builder.format("password");
             }

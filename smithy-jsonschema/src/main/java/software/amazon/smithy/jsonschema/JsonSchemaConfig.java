@@ -17,11 +17,13 @@ package software.amazon.smithy.jsonschema;
 
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 
@@ -328,5 +330,21 @@ public class JsonSchemaConfig {
      */
     public void setService(ShapeId service) {
         this.service = service;
+    }
+
+    /**
+     * Detects the TimestampFormat of the given shape, falling back to the
+     * configured default format specified in {@link #setDefaultTimestampFormat(TimestampFormatTrait.Format)}.
+     *
+     * @param shape Shape to extract the timestamp format from.
+     * @return Returns the optionally detected format.
+     */
+    public Optional<String> detectJsonTimestampFormat(Shape shape) {
+        if (shape.isTimestampShape() || shape.hasTrait(TimestampFormatTrait.class)) {
+            return Optional.of(shape.getTrait(TimestampFormatTrait.class)
+                    .map(TimestampFormatTrait::getValue)
+                    .orElseGet(() -> getDefaultTimestampFormat().toString()));
+        }
+        return Optional.empty();
     }
 }

@@ -382,7 +382,8 @@
         "type": "object",
         "properties": {
           "createdAt": {
-            "type": "number"
+            "type": "number",
+            "format": "double"
           },
           "id": {
             "type": "string"
