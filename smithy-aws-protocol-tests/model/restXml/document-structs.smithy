@@ -143,12 +143,17 @@ apply SimpleScalarProperties @httpResponseTests([
     },
     {
         id: "SimpleScalarPropertiesWithEscapedCharacter",
-        documentation: "Serializes string with escaping",
+        documentation: """
+        Serializes string with escaping.
+
+        This validates the three escape types: literal, decimal and hexidecimal. It also validates that unescaping properly
+        handles the case where unescaping an & produces a newly formed escape sequence (this should not be re-unescaped).
+        """,
         protocol: restXml,
         code: 200,
         body: """
               <SimpleScalarPropertiesInputOutput>
-                  <stringValue>&lt;string&gt;</stringValue>
+                  <stringValue>escaped data: &amp;lt;&#xD;&#10;</stringValue>
               </SimpleScalarPropertiesInputOutput>
               """,
         bodyMediaType: "application/xml",
@@ -158,7 +163,7 @@ apply SimpleScalarProperties @httpResponseTests([
         },
         params: {
             foo: "Foo",
-            stringValue: "<string>",
+            stringValue: "escaped data: &lt;\r\n",
         }
     },
     {
