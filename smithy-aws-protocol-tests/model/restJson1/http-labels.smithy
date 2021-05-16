@@ -159,10 +159,10 @@ apply HttpRequestWithGreedyLabelInPath @httpRequestTests([
         documentation: "Serializes greedy labels and normal labels",
         protocol: restJson1,
         method: "GET",
-        uri: "/HttpRequestWithGreedyLabelInPath/foo/hello/baz/there/guy",
+        uri: "/HttpRequestWithGreedyLabelInPath/foo/hello%2Fescape/baz/there/guy",
         body: "",
         params: {
-            foo: "hello",
+            foo: "hello/escape",
             baz: "there/guy",
         }
     },
