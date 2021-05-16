@@ -146,7 +146,7 @@ apply SimpleScalarProperties @httpResponseTests([
         documentation: """
         Serializes string with escaping.
 
-        This validates the three escape types: literal, decimal and hexidecimal. It also validates that unescaping properly
+        This validates the three escape types: literal, decimal and hexadecimal. It also validates that unescaping properly
         handles the case where unescaping an & produces a newly formed escape sequence (this should not be re-unescaped).
         """,
         protocol: restXml,
