@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -30,10 +28,8 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.PaginatedTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.validators.PaginatedTraitValidator;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Index of operation shapes to paginated trait information.
@@ -53,15 +49,19 @@ public final class PaginatedIndex implements KnowledgeIndex {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         OperationIndex opIndex = OperationIndex.of(model);
 
-        model.shapes(ServiceShape.class).forEach(service -> {
+        for (ServiceShape service : model.toSet(ServiceShape.class)) {
             PaginatedTrait serviceTrait = service.getTrait(PaginatedTrait.class).orElse(null);
-            Map<ShapeId, PaginationInfo> mappings = topDownIndex.getContainedOperations(service).stream()
-                    .flatMap(operation -> Trait.flatMapStream(operation, PaginatedTrait.class))
-                    .flatMap(p -> OptionalUtils.stream(create(
-                            model, service, opIndex, p.left, p.right.merge(serviceTrait))))
-                    .collect(Collectors.toMap(i -> i.getOperation().getId(), Function.identity()));
+            Map<ShapeId, PaginationInfo> mappings = new HashMap<>();
+            for (OperationShape operation : topDownIndex.getContainedOperations(service)) {
+                if (operation.hasTrait(PaginatedTrait.class)) {
+                    PaginatedTrait merged = operation.expectTrait(PaginatedTrait.class).merge(serviceTrait);
+                    create(model, service, opIndex, operation, merged).ifPresent(info -> {
+                        mappings.put(info.getOperation().getId(), info);
+                    });
+                }
+            }
             paginationInfo.put(service.getId(), Collections.unmodifiableMap(mappings));
-        });
+        }
     }
 
     public static PaginatedIndex of(Model model) {

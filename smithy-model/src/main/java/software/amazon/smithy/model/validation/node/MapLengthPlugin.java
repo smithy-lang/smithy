@@ -17,7 +17,6 @@ package software.amazon.smithy.model.validation.node;
 
 import java.util.function.BiConsumer;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -39,7 +38,7 @@ final class MapLengthPlugin extends MemberAndShapeTraitPlugin<MapShape, ObjectNo
             Shape shape,
             LengthTrait trait,
             ObjectNode node,
-            Model model,
+            Context context,
             BiConsumer<FromSourceLocation, String> emitter
     ) {
         trait.getMin().ifPresent(min -> {

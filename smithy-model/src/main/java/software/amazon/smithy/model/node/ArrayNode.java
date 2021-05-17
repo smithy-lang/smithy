@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
@@ -75,6 +76,11 @@ public final class ArrayNode extends Node implements Iterable<Node> {
 
     @Override
     public ArrayNode expectArrayNode(String errorMessage) {
+        return this;
+    }
+
+    @Override
+    public ArrayNode expectArrayNode(Supplier<String> errorMessage) {
         return this;
     }
 

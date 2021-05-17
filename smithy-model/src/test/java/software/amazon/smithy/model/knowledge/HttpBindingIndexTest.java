@@ -57,13 +57,6 @@ public class HttpBindingIndexTest {
             .unwrap();
 
     @Test
-    public void throwsWhenShapeIsInvalid() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            HttpBindingIndex.of(model).getRequestBindings(ShapeId.from("ns.foo#Missing"));
-        });
-    }
-
-    @Test
     public void providesResponseCode() {
         HttpBindingIndex index = HttpBindingIndex.of(model);
 

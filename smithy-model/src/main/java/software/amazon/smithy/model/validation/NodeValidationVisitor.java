@@ -71,38 +71,80 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     private static final List<NodeValidatorPlugin> BUILTIN = NodeValidatorPlugin.getBuiltins();
 
-    private final String eventId;
-    private final Node value;
     private final Model model;
-    private final String context;
-    private final ShapeId eventShapeId;
     private final TimestampValidationStrategy timestampValidationStrategy;
     private final boolean allowBoxedNull;
+    private String eventId;
+    private Node value;
+    private ShapeId eventShapeId;
+    private String startingContext;
+    private NodeValidatorPlugin.Context validationContext;
 
     private NodeValidationVisitor(Builder builder) {
-        this.value = SmithyBuilder.requiredState("value", builder.value);
         this.model = SmithyBuilder.requiredState("model", builder.model);
-        this.context = builder.context;
-        this.eventId = builder.eventId;
-        this.eventShapeId = builder.eventShapeId;
+        this.validationContext = new NodeValidatorPlugin.Context(model);
         this.timestampValidationStrategy = builder.timestampValidationStrategy;
         this.allowBoxedNull = builder.allowBoxedNull;
+        setValue(SmithyBuilder.requiredState("value", builder.value));
+        setStartingContext(builder.contextText);
+        setValue(builder.value);
+        setEventShapeId(builder.eventShapeId);
+        setEventId(builder.eventId);
     }
 
     public static Builder builder() {
         return new Builder();
     }
 
-    private NodeValidationVisitor withNode(String segment, Node node) {
+    /**
+     * Changes the Node value the the visitor will evaluate.
+     *
+     * @param value Value to set.
+     */
+    public void setValue(Node value) {
+        this.value = Objects.requireNonNull(value);
+    }
+
+    /**
+     * Changes the shape ID that emitted events are associated with.
+     *
+     * @param eventShapeId Shape ID to set.
+     */
+    public void setEventShapeId(ShapeId eventShapeId) {
+        this.eventShapeId = eventShapeId;
+    }
+
+    /**
+     * Changes the starting context of the messages emitted by events.
+     *
+     * @param startingContext Starting context message to set.
+     */
+    public void setStartingContext(String startingContext) {
+        this.startingContext = startingContext == null ? "" : startingContext;
+    }
+
+    /**
+     * Changes the event ID emitted for events created by this validator.
+     *
+     * @param eventId Event ID to set.
+     */
+    public void setEventId(String eventId) {
+        this.eventId = eventId == null ? Validator.MODEL_ERROR : eventId;
+    }
+
+    private NodeValidationVisitor traverse(String segment, Node node) {
         Builder builder = builder();
         builder.eventShapeId(eventShapeId);
         builder.eventId(eventId);
         builder.value(node);
         builder.model(model);
-        builder.startingContext(context.isEmpty() ? segment : (context + "." + segment));
+        builder.startingContext(startingContext.isEmpty() ? segment : (startingContext + "." + segment));
         builder.timestampValidationStrategy(timestampValidationStrategy);
         builder.allowBoxedNull(allowBoxedNull);
-        return new NodeValidationVisitor(builder);
+        NodeValidationVisitor visitor = new NodeValidationVisitor(builder);
+        // Use the same validation context.
+        visitor.validationContext = this.validationContext;
+        return visitor;
     }
 
     @Override
@@ -222,7 +264,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
                     List<ValidationEvent> events = applyPlugins(shape);
                     // Each element creates a context with a numeric index (e.g., "foo.0.baz", "foo.1.baz", etc.).
                     for (int i = 0; i < array.getElements().size(); i++) {
-                        events.addAll(member.accept(withNode(String.valueOf(i), array.getElements().get(i))));
+                        events.addAll(member.accept(traverse(String.valueOf(i), array.getElements().get(i))));
                     }
                     return events;
                 })
@@ -236,8 +278,8 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
                     List<ValidationEvent> events = applyPlugins(shape);
                     for (Map.Entry<StringNode, Node> entry : object.getMembers().entrySet()) {
                         String key = entry.getKey().getValue();
-                        events.addAll(withNode(key + " (map-key)", entry.getKey()).memberShape(shape.getKey()));
-                        events.addAll(withNode(key, entry.getValue()).memberShape(shape.getValue()));
+                        events.addAll(traverse(key + " (map-key)", entry.getKey()).memberShape(shape.getKey()));
+                        events.addAll(traverse(key, entry.getValue()).memberShape(shape.getValue()));
                     }
                     return events;
                 })
@@ -250,26 +292,29 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
                 .map(object -> {
                     List<ValidationEvent> events = applyPlugins(shape);
                     Map<String, MemberShape> members = shape.getAllMembers();
-                    object.getMembers().forEach((keyNode, value) -> {
-                        String key = keyNode.getValue();
-                        if (!members.containsKey(key)) {
+
+                    for (Map.Entry<String, Node> entry : object.getStringMap().entrySet()) {
+                        String entryKey = entry.getKey();
+                        Node entryValue = entry.getValue();
+                        if (!members.containsKey(entryKey)) {
                             String message = String.format(
-                                    "Invalid structure member `%s` found for `%s`", key, shape.getId());
+                                    "Invalid structure member `%s` found for `%s`", entryKey, shape.getId());
                             events.add(event(message, Severity.WARNING));
                         } else {
-                            events.addAll(withNode(key, value).memberShape(members.get(key)));
+                            events.addAll(traverse(entryKey, entryValue).memberShape(members.get(entryKey)));
                         }
-                    });
+                    }
 
-                    members.forEach((memberName, member) -> {
+                    for (MemberShape member : members.values()) {
                         if (member.isRequired()
-                                && !object.getMember(memberName).isPresent()
+                                && !object.getMember(member.getMemberName()).isPresent()
                                 // Ignore missing required primitive members because they have a default value.
                                 && !isMemberPrimitive(member)) {
                             events.add(event(String.format(
-                                    "Missing required structure member `%s` for `%s`", memberName, shape.getId())));
+                                    "Missing required structure member `%s` for `%s`",
+                                    member.getMemberName(), shape.getId())));
                         }
-                    });
+                    }
                     return events;
                 })
                 .orElseGet(() -> invalidShape(shape, NodeType.OBJECT));
@@ -288,15 +333,16 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
                         events.add(event("union values can contain a value for only a single member"));
                     } else {
                         Map<String, MemberShape> members = shape.getAllMembers();
-                        object.getMembers().forEach((keyNode, value) -> {
-                            String key = keyNode.getValue();
-                            if (!members.containsKey(key)) {
+                        for (Map.Entry<String, Node> entry : object.getStringMap().entrySet()) {
+                            String entryKey = entry.getKey();
+                            Node entryValue = entry.getValue();
+                            if (!members.containsKey(entryKey)) {
                                 events.add(event(String.format(
-                                        "Invalid union member `%s` found for `%s`", key, shape.getId())));
+                                        "Invalid union member `%s` found for `%s`", entryKey, shape.getId())));
                             } else {
-                                events.addAll(withNode(key, value).memberShape(members.get(key)));
+                                events.addAll(traverse(entryKey, entryValue).memberShape(members.get(entryKey)));
                             }
-                        });
+                        }
                     }
                     return events;
                 })
@@ -364,18 +410,18 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
                 .severity(severity)
                 .sourceLocation(sourceLocation)
                 .shapeId(eventShapeId)
-                .message(context.isEmpty() ? message : context + ": " + message)
+                .message(startingContext.isEmpty() ? message : startingContext + ": " + message)
                 .build();
     }
 
     private List<ValidationEvent> applyPlugins(Shape shape) {
         List<ValidationEvent> events = new ArrayList<>();
-        timestampValidationStrategy.apply(shape, value, model, (location, message) -> {
+        timestampValidationStrategy.apply(shape, value, validationContext, (location, message) -> {
             events.add(event(message, Severity.ERROR, location.getSourceLocation()));
         });
 
         for (NodeValidatorPlugin plugin : BUILTIN) {
-            plugin.apply(shape, value, model, (location, message) -> {
+            plugin.apply(shape, value, validationContext, (location, message) -> {
                 events.add(event(message, Severity.ERROR, location.getSourceLocation()));
             });
         }
@@ -387,8 +433,8 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
      * Builds a {@link NodeValidationVisitor}.
      */
     public static final class Builder implements SmithyBuilder<NodeValidationVisitor> {
-        private String eventId = Validator.MODEL_ERROR;
-        private String context = "";
+        private String eventId;
+        private String contextText;
         private ShapeId eventShapeId;
         private Node value;
         private Model model;
@@ -435,11 +481,11 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
          * Sets an optional starting context of the validator that is prepended
          * to each emitted validation event message.
          *
-         * @param context Starting event message content.
+         * @param contextText Starting event message content.
          * @return Returns the builder.
          */
-        public Builder startingContext(String context) {
-            this.context = Objects.requireNonNull(context);
+        public Builder startingContext(String contextText) {
+            this.contextText = Objects.requireNonNull(contextText);
             return this;
         }
 

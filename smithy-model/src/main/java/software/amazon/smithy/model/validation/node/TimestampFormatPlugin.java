@@ -20,7 +20,6 @@ import java.time.format.DateTimeParseException;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -39,7 +38,7 @@ final class TimestampFormatPlugin implements NodeValidatorPlugin {
     private static final Logger LOGGER = Logger.getLogger(TimestampFormatPlugin.class.getName());
 
     @Override
-    public void apply(Shape shape, Node value, Model model, BiConsumer<FromSourceLocation, String> emitter) {
+    public void apply(Shape shape, Node value, Context context, BiConsumer<FromSourceLocation, String> emitter) {
         if (shape instanceof TimestampShape) {
             validate(shape, shape.getTrait(TimestampFormatTrait.class).orElse(null), value, emitter);
         } else if (shape instanceof MemberShape && shape.getTrait(TimestampFormatTrait.class).isPresent()) {

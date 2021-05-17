@@ -17,9 +17,8 @@ package software.amazon.smithy.model.neighbor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.EntityShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -65,9 +64,13 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
     public List<Relationship> serviceShape(ServiceShape shape) {
         List<Relationship> result = new ArrayList<>();
         // Add OPERATION from service -> operation. Add BINDING from operation -> service.
-        shape.getOperations().forEach(id -> addBinding(result, shape, id, RelationshipType.OPERATION));
+        for (ShapeId operation : shape.getOperations()) {
+            addBinding(result, shape, operation, RelationshipType.OPERATION);
+        }
         // Add RESOURCE from service -> resource. Add BINDING from resource -> service.
-        shape.getResources().forEach(id -> addBinding(result, shape, id, RelationshipType.RESOURCE));
+        for (ShapeId resource : shape.getResources()) {
+            addBinding(result, shape, resource, RelationshipType.RESOURCE);
+        }
         return result;
     }
 
@@ -123,11 +126,24 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
         // Add in all the other instance operations
         shape.getOperations().forEach(id -> result.add(
                 relationship(shape, RelationshipType.INSTANCE_OPERATION, id)));
-        // Find shapes that bind this resource to it.
-        Stream.concat(model.shapes(ResourceShape.class), model.shapes(ServiceShape.class))
-                .filter(parent -> parent.getResources().contains(shape.getId()))
-                .forEach(parent -> addBinding(result, parent, shape.getId(), RelationshipType.RESOURCE));
+
+        // Find resource shapes that bind this resource to it.
+        for (ResourceShape resource : model.toSet(ResourceShape.class)) {
+            addServiceAndResourceBindings(result, shape, resource);
+        }
+
+        // Find service shapes that bind this resource to it.
+        for (ServiceShape service : model.toSet(ServiceShape.class)) {
+            addServiceAndResourceBindings(result, shape, service);
+        }
+
         return result;
+    }
+
+    private void addServiceAndResourceBindings(List<Relationship> result, ResourceShape resource, EntityShape entity) {
+        if (entity.getResources().contains(resource.getId())) {
+            addBinding(result, entity, resource.getId(), RelationshipType.RESOURCE);
+        }
     }
 
     @Override
@@ -135,15 +151,15 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
         List<Relationship> result = new ArrayList<>();
         shape.getInput().ifPresent(id -> result.add(relationship(shape, RelationshipType.INPUT, id)));
         shape.getOutput().ifPresent(id -> result.add(relationship(shape, RelationshipType.OUTPUT, id)));
-        result.addAll(shape.getErrors().stream()
-                .map(errorId -> relationship(shape, RelationshipType.ERROR, errorId))
-                .collect(Collectors.toList()));
+        for (ShapeId errorId : shape.getErrors()) {
+            result.add(relationship(shape, RelationshipType.ERROR, errorId));
+        }
         return result;
     }
 
     @Override
     public List<Relationship> memberShape(MemberShape shape) {
-        List<Relationship> result = new ArrayList<>();
+        List<Relationship> result = new ArrayList<>(2);
         result.add(relationship(shape, RelationshipType.MEMBER_CONTAINER, shape.getContainer()));
         result.add(relationship(shape, RelationshipType.MEMBER_TARGET, shape.getTarget()));
         return result;
@@ -161,7 +177,7 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
 
     @Override
     public List<Relationship> mapShape(MapShape shape) {
-        List<Relationship> result = new ArrayList<>();
+        List<Relationship> result = new ArrayList<>(2);
         result.add(relationship(shape, RelationshipType.MAP_KEY, shape.getKey()));
         result.add(relationship(shape, RelationshipType.MAP_VALUE, shape.getValue()));
         return result;
@@ -169,16 +185,20 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
 
     @Override
     public List<Relationship> structureShape(StructureShape shape) {
-        return shape.getAllMembers().values().stream()
-                .map(member -> Relationship.create(shape, RelationshipType.STRUCTURE_MEMBER, member))
-                .collect(Collectors.toList());
+        List<Relationship> result = new ArrayList<>();
+        for (MemberShape member : shape.getAllMembers().values()) {
+            result.add(Relationship.create(shape, RelationshipType.STRUCTURE_MEMBER, member));
+        }
+        return result;
     }
 
     @Override
     public List<Relationship> unionShape(UnionShape shape) {
-        return shape.getAllMembers().values().stream()
-                .map(member -> Relationship.create(shape, RelationshipType.UNION_MEMBER, member))
-                .collect(Collectors.toList());
+        List<Relationship> result = new ArrayList<>();
+        for (MemberShape member : shape.getAllMembers().values()) {
+            result.add(Relationship.create(shape, RelationshipType.UNION_MEMBER, member));
+        }
+        return result;
     }
 
     private Relationship relationship(Shape shape, RelationshipType type, MemberShape memberShape) {

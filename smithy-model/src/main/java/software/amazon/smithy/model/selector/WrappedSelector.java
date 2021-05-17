@@ -16,10 +16,12 @@
 package software.amazon.smithy.model.selector;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
@@ -31,24 +33,12 @@ import software.amazon.smithy.model.shapes.Shape;
 final class WrappedSelector implements Selector {
     private final String expression;
     private final InternalSelector delegate;
-    private final Class<? extends Shape> startingShapeType;
+    private final Function<Model, Collection<? extends Shape>> optimizer;
 
     WrappedSelector(String expression, List<InternalSelector> selectors) {
         this.expression = expression;
-
-        if (selectors.get(0) instanceof ShapeTypeSelector) {
-            // If the starting selector filters based on type, then that can be
-            // done before sending all shapes in a model through the selector
-            // since querying models based on type is cached.
-            //
-            // This optimization significantly reduces the number of shapes
-            // that need to be sent through a selector.
-            startingShapeType = ((ShapeTypeSelector) selectors.get(0)).shapeType.getShapeClass();
-            delegate = AndSelector.of(selectors.subList(1, selectors.size()));
-        } else {
-            startingShapeType = null;
-            delegate = AndSelector.of(selectors);
-        }
+        delegate = AndSelector.of(selectors);
+        optimizer = selectors.get(0).optimize();
     }
 
     @Override
@@ -122,20 +112,15 @@ final class WrappedSelector implements Selector {
 
     private void pushShapes(Model model, InternalSelector.Receiver acceptor) {
         Context context = createContext(model);
-
-        if (startingShapeType != null) {
-            model.shapes(startingShapeType).forEach(shape -> {
-                delegate.push(context.clearVars(), shape, acceptor);
-            });
-        } else {
-            for (Shape shape : model.toSet()) {
-                delegate.push(context.clearVars(), shape, acceptor);
-            }
+        Collection<? extends Shape> shapes = optimizer == null
+                ? model.toSet()
+                : optimizer.apply(model);
+        for (Shape shape : shapes) {
+            delegate.push(context.clearVars(), shape, acceptor);
         }
     }
 
     private Stream<? extends Shape> streamStartingShape(Model model) {
-        // Optimization for selectors that start with a type.
-        return startingShapeType != null ? model.shapes(startingShapeType) : model.shapes();
+        return optimizer != null ? optimizer.apply(model).stream() : model.shapes();
     }
 }

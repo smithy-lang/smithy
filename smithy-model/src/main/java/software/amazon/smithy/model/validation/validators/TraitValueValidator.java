@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.Prelude;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
@@ -37,11 +38,19 @@ public final class TraitValueValidator implements Validator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
+        // Create a reusable validation visitor so that the
+        // selector cache is shared for each trait.
+        NodeValidationVisitor validator = NodeValidationVisitor.builder()
+                .eventId(NAME)
+                .model(model)
+                .value(Node.nullNode())
+                .build();
+
         List<ValidationEvent> events = new ArrayList<>();
         boolean validatePrelude = model.getMetadataProperty(VALIDATE_PRELUDE).isPresent();
         for (Shape shape : model.toSet()) {
             for (Trait trait : shape.getAllTraits().values()) {
-                events.addAll(validateTrait(model, shape, trait, validatePrelude));
+                events.addAll(validateTrait(model, validator, shape, trait, validatePrelude));
             }
         }
 
@@ -50,6 +59,7 @@ public final class TraitValueValidator implements Validator {
 
     private List<ValidationEvent> validateTrait(
             Model model,
+            NodeValidationVisitor validator,
             Shape targetShape,
             Trait trait,
             boolean validatePrelude
@@ -68,15 +78,9 @@ public final class TraitValueValidator implements Validator {
             return ListUtils.of();
         }
 
-        Shape schema = model.getShape(shape).get();
-        NodeValidationVisitor cases = NodeValidationVisitor.builder()
-                .model(model)
-                .value(trait.toNode())
-                .eventShapeId(targetShape.getId())
-                .eventId(NAME)
-                .startingContext("Error validating trait `" + Trait.getIdiomaticTraitName(trait) + "`")
-                .build();
-
-        return schema.accept(cases);
+        validator.setValue(trait.toNode());
+        validator.setEventShapeId(targetShape.getId());
+        validator.setStartingContext("Error validating trait `" + Trait.getIdiomaticTraitName(trait) + "`");
+        return model.getShape(shape).get().accept(validator);
     }
 }

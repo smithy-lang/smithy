@@ -37,11 +37,11 @@ abstract class MemberAndShapeTraitPlugin<S extends Shape, N extends Node, T exte
 
     @Override
     @SuppressWarnings("unchecked")
-    public final void apply(Shape shape, Node value, Model model, BiConsumer<FromSourceLocation, String> emitter) {
+    public final void apply(Shape shape, Node value, Context context, BiConsumer<FromSourceLocation, String> emitter) {
         if (nodeClass.isInstance(value)
                 && shape.getTrait(traitClass).isPresent()
-                && isMatchingShape(shape, model)) {
-            check(shape, shape.getTrait(traitClass).get(), (N) value, model, emitter);
+                && isMatchingShape(shape, context.model())) {
+            check(shape, shape.getTrait(traitClass).get(), (N) value, context, emitter);
         }
     }
 
@@ -62,6 +62,6 @@ abstract class MemberAndShapeTraitPlugin<S extends Shape, N extends Node, T exte
             Shape shape,
             T trait,
             N value,
-            Model model,
+            Context context,
             BiConsumer<FromSourceLocation, String> emitter);
 }

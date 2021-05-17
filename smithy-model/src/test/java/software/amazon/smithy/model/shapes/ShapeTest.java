@@ -17,18 +17,15 @@ package software.amazon.smithy.model.shapes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.lang.reflect.Field;
 import java.util.Collection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -250,24 +247,5 @@ public class ShapeTest {
         Shape shapeB = StringShape.builder().id("ns.foo#baz").addTrait(traitA).build();
 
         assertEquals(shapeA, shapeB);
-    }
-
-    @Test
-    public void drainsFromPriorityQueueWhenGivenBadInput() throws Exception {
-        for (int i = 0; i < 1024; i++) {
-            ShapeId.from("smithy.api#Foo" + i);
-        }
-
-        Field factoryField = ShapeId.class.getDeclaredField("FACTORY");
-        factoryField.setAccessible(true);
-        Object factory = factoryField.get(ShapeId.class);
-        Field map = factory.getClass().getDeclaredField("map");
-        map.setAccessible(true);
-        Object cache = map.get(factory);
-
-        // The size of the map is an estimate, so check if the value is +-... 25? I dunno.
-        int size = (int) cache.getClass().getMethod("size").invoke(cache);
-        assertThat(size, greaterThan(1024 - 25));
-        assertThat(size, lessThan(1024 + 25));
     }
 }

@@ -21,7 +21,7 @@ ext {
     moduleName = "software.amazon.smithy.model"
 }
 
-apply plugin: "me.champeau.gradle.jmh"
+apply plugin: "me.champeau.jmh"
 
 dependencies {
     api project(":smithy-utils")

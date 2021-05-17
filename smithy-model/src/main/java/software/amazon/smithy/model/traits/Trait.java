@@ -87,7 +87,9 @@ public interface Trait extends FromSourceLocation, ToNode, ToShapeId {
      * @return Returns the idiomatic trait name.
      */
     static String getIdiomaticTraitName(String traitName) {
-        return traitName.replace("smithy.api#", "");
+        return traitName.startsWith("smithy.api#")
+               ? traitName.substring("smithy.api#".length())
+               : traitName;
     }
 
     /**

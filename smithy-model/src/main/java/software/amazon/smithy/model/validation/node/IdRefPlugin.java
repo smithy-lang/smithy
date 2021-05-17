@@ -17,7 +17,6 @@ package software.amazon.smithy.model.validation.node;
 
 import java.util.function.BiConsumer;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
@@ -43,32 +42,36 @@ final class IdRefPlugin extends MemberAndShapeTraitPlugin<StringShape, StringNod
             Shape shape,
             IdRefTrait trait,
             StringNode node,
-            Model model,
+            Context context,
             BiConsumer<FromSourceLocation, String> emitter
     ) {
         try {
             ShapeId target = node.expectShapeId();
-            Shape resolved = model.getShape(target).orElse(null);
+            Shape resolved = context.model().getShape(target).orElse(null);
 
             if (resolved == null) {
                 if (trait.failWhenMissing()) {
                     failWhenNoMatch(node, trait, emitter, String.format(
                             "Shape ID `%s` was not found in the model", target));
                 }
-            } else if (!matchesSelector(trait, resolved.getId(), model)) {
-                failWhenNoMatch(node, trait, emitter, String.format(
-                        "Shape ID `%s` does not match selector `%s`",
-                        resolved.getId(), trait.getSelector()));
+            } else {
+                if (!matchesSelector(trait, resolved, context)) {
+                    failWhenNoMatch(node, trait, emitter, String.format(
+                            "Shape ID `%s` does not match selector `%s`",
+                            resolved.getId(), trait.getSelector()));
+                }
             }
         } catch (SourceException e) {
             emitter.accept(node, e.getMessageWithoutLocation());
         }
     }
 
-    private boolean matchesSelector(IdRefTrait trait, ShapeId needle, Model haystack) {
-        return trait.getSelector().select(haystack).stream()
-                .map(Shape::getId)
-                .anyMatch(shapeId -> shapeId.equals(needle));
+    private boolean matchesSelector(IdRefTrait trait, Shape needle, Context context) {
+        if (trait.getSelector().toString().equals("*")) {
+            return true;
+        } else {
+            return context.select(trait.getSelector()).contains(needle);
+        }
     }
 
     private void failWhenNoMatch(

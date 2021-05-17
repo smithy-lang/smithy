@@ -15,12 +15,14 @@
 
 package software.amazon.smithy.model.knowledge;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -44,8 +46,6 @@ import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
-import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Computes and indexes the explicit and implicit HTTP bindings of a model.
@@ -59,29 +59,27 @@ import software.amazon.smithy.utils.ListUtils;
  * <p>This index does not perform validation of the underlying model.
  */
 public final class HttpBindingIndex implements KnowledgeIndex {
-    private final Model model;
+    private final WeakReference<Model> model;
     private final Map<ShapeId, List<HttpBinding>> requestBindings = new HashMap<>();
     private final Map<ShapeId, List<HttpBinding>> responseBindings = new HashMap<>();
 
     public HttpBindingIndex(Model model) {
-        this.model = model;
+        this.model = new WeakReference<>(model);
         OperationIndex opIndex = OperationIndex.of(model);
-        model.shapes(OperationShape.class).forEach(shape -> {
-            if (shape.getTrait(HttpTrait.class).isPresent()) {
-                requestBindings.put(shape.getId(), computeRequestBindings(opIndex, shape));
-                responseBindings.put(shape.getId(), computeResponseBindings(opIndex, shape));
-            } else {
-                requestBindings.put(shape.getId(), ListUtils.of());
-                responseBindings.put(shape.getId(), ListUtils.of());
-            }
-        });
+
+        for (Shape shape : model.getShapesWithTrait(HttpTrait.class)) {
+            shape.asOperationShape().ifPresent(operation -> {
+                requestBindings.put(operation.getId(), computeRequestBindings(opIndex, operation));
+                responseBindings.put(operation.getId(), computeResponseBindings(opIndex, operation));
+            });
+        }
 
         // Add error structure bindings.
-        model.shapes(StructureShape.class)
-                .flatMap(shape -> Trait.flatMapStream(shape, ErrorTrait.class))
-                .forEach(pair -> responseBindings.put(
-                        pair.getLeft().getId(),
-                        createStructureBindings(pair.getLeft(), false)));
+        for (Shape shape : model.getShapesWithTrait(ErrorTrait.class)) {
+            shape.asStructureShape().ifPresent(structure -> {
+                responseBindings.put(structure.getId(), createStructureBindings(structure, false));
+            });
+        }
     }
 
     public static HttpBindingIndex of(Model model) {
@@ -120,12 +118,16 @@ public final class HttpBindingIndex implements KnowledgeIndex {
 
     private HttpTrait getHttpTrait(ToShapeId operation) {
         ShapeId id = operation.toShapeId();
-        return model.getShape(id)
+        return getModel().getShape(id)
                 .orElseThrow(() -> new IllegalArgumentException(id + " is not a valid shape"))
                 .asOperationShape()
                 .orElseThrow(() -> new IllegalArgumentException(id + " is not an operation shape"))
                 .getTrait(HttpTrait.class)
                 .orElseThrow(() -> new IllegalArgumentException(id + " has no http binding trait"));
+    }
+
+    private Model getModel() {
+        return Objects.requireNonNull(model.get(), "The dereferenced WeakReference<Model> is null");
     }
 
     /**
@@ -138,7 +140,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      */
     public int getResponseCode(ToShapeId shapeOrId) {
         ShapeId id = shapeOrId.toShapeId();
-        Shape shape = model.getShape(id).orElseThrow(() -> new IllegalArgumentException("Shape not found " + id));
+        Shape shape = getModel().getShape(id).orElseThrow(() -> new IllegalArgumentException("Shape not found " + id));
 
         if (shape.isOperationShape()) {
             return getHttpTrait(id).getCode();
@@ -157,19 +159,12 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      *
      * @param operationShapeOrId Operation to get the request bindings for.
      * @return Map of unmodifiable bindings.
-     * @throws IllegalArgumentException if the given shape is not an operation.
      */
     public Map<String, HttpBinding> getRequestBindings(ToShapeId operationShapeOrId) {
         ShapeId id = operationShapeOrId.toShapeId();
-        validateRequestBindingShapeId(id);
-        return requestBindings.get(id).stream()
+        return requestBindings.getOrDefault(id, Collections.emptyList())
+                .stream()
                 .collect(Collectors.toMap(HttpBinding::getMemberName, Function.identity()));
-    }
-
-    private void validateRequestBindingShapeId(ShapeId id) {
-        if (!requestBindings.containsKey(id)) {
-            throw new IllegalArgumentException(id + " does not reference an operation with http bindings");
-        }
     }
 
     /**
@@ -179,12 +174,11 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      * @param operationShapeOrId Operation to get the request bindings for.
      * @param requestLocation Location of the binding.
      * @return Map of unmodifiable bindings.
-     * @throws IllegalArgumentException if the given shape is not an operation.
      */
     public List<HttpBinding> getRequestBindings(ToShapeId operationShapeOrId, HttpBinding.Location requestLocation) {
         ShapeId id = operationShapeOrId.toShapeId();
-        validateRequestBindingShapeId(id);
-        return requestBindings.get(id).stream()
+        return requestBindings.getOrDefault(id, Collections.emptyList())
+                .stream()
                 .filter(binding -> binding.getLocation() == requestLocation)
                 .collect(Collectors.toList());
     }
@@ -195,20 +189,12 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      *
      * @param shapeOrId Operation or error structure shape or ID.
      * @return Map of unmodifiable bindings.
-     * @throws IllegalArgumentException if the given shape is not an operation
-     *  or error structure.
      */
     public Map<String, HttpBinding> getResponseBindings(ToShapeId shapeOrId) {
         ShapeId id = shapeOrId.toShapeId();
-        validateResponseBindingShapeId(id);
-        return responseBindings.get(id).stream()
+        return responseBindings.getOrDefault(id, Collections.emptyList())
+                .stream()
                 .collect(Collectors.toMap(HttpBinding::getMemberName, Function.identity()));
-    }
-
-    private void validateResponseBindingShapeId(ShapeId id) {
-        if (!responseBindings.containsKey(id)) {
-            throw new IllegalArgumentException(id + " does not reference an operation or error structure");
-        }
     }
 
     /**
@@ -223,8 +209,8 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      */
     public List<HttpBinding> getResponseBindings(ToShapeId shapeOrId, HttpBinding.Location bindingLocation) {
         ShapeId id = shapeOrId.toShapeId();
-        validateResponseBindingShapeId(id);
-        return responseBindings.get(id).stream()
+        return responseBindings.getOrDefault(id, Collections.emptyList())
+                .stream()
                 .filter(binding -> binding.getLocation() == bindingLocation)
                 .collect(Collectors.toList());
     }
@@ -243,6 +229,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
             HttpBinding.Location location,
             TimestampFormatTrait.Format defaultFormat
     ) {
+        Model model = getModel();
         return model.getShape(member.toShapeId())
                 // Use the timestampFormat trait on the member or target if present.
                 .flatMap(shape -> shape.getMemberTrait(model, TimestampFormatTrait.class))
@@ -371,6 +358,8 @@ public final class HttpBindingIndex implements KnowledgeIndex {
             String documentContentType,
             String eventStreamContentType
     ) {
+        Model model = getModel();
+
         for (HttpBinding binding : bindings) {
             if (binding.getLocation() == HttpBinding.Location.DOCUMENT) {
                 return documentContentType;

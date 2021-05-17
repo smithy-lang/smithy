@@ -43,14 +43,14 @@ abstract class NamedMembersShape extends Shape {
         // member has a valid ID that is prefixed with the shape ID.
         members = MapUtils.orderedCopyOf(builder.members);
 
-        members.forEach((key, value) -> {
-            ShapeId expected = getId().withMember(key);
-            if (!value.getId().equals(expected)) {
+        for (MemberShape member : members.values()) {
+            if (!member.getId().toString().startsWith(getId().toString())) {
+                ShapeId expected = getId().withMember(member.getMemberName());
                 throw new IllegalArgumentException(String.format(
                         "Expected the `%s` member of `%s` to have an ID of `%s` but found `%s`",
-                        key, getId(), expected, value.getId()));
+                        member.getMemberName(), getId(), expected, member.getId()));
             }
-        });
+        }
     }
 
     /**

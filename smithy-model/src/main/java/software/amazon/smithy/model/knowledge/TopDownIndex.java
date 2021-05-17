@@ -62,10 +62,13 @@ public final class TopDownIndex implements KnowledgeIndex {
             }
         };
 
-        model.shapes(ResourceShape.class).forEach(resource -> findContained(
-                resource.getId(), walker.walkShapes(resource, filter)));
-        model.shapes(ServiceShape.class).forEach(resource -> findContained(
-                resource.getId(), walker.walkShapes(resource, filter)));
+        for (ResourceShape resource : model.toSet(ResourceShape.class)) {
+            findContained(resource.getId(), walker.walkShapes(resource, filter));
+        }
+
+        for (ServiceShape service : model.toSet(ServiceShape.class)) {
+            findContained(service.getId(), walker.walkShapes(service, filter));
+        }
     }
 
     public static TopDownIndex of(Model model) {
@@ -76,7 +79,7 @@ public final class TopDownIndex implements KnowledgeIndex {
         Set<ResourceShape> containedResources = new TreeSet<>();
         Set<OperationShape> containedOperations = new TreeSet<>();
 
-        shapes.forEach(shape -> {
+        for (Shape shape : shapes) {
             if (!shape.getId().equals(container)) {
                 if (shape instanceof ResourceShape) {
                     containedResources.add((ResourceShape) shape);
@@ -84,7 +87,7 @@ public final class TopDownIndex implements KnowledgeIndex {
                     containedOperations.add((OperationShape) shape);
                 }
             }
-        });
+        }
 
         operations.put(container, Collections.unmodifiableSet(containedOperations));
         resources.put(container, Collections.unmodifiableSet(containedResources));

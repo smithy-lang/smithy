@@ -15,10 +15,9 @@
 
 package software.amazon.smithy.model.validation.node;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.function.BiConsumer;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -40,11 +39,11 @@ final class BlobLengthPlugin extends MemberAndShapeTraitPlugin<BlobShape, String
             Shape shape,
             LengthTrait trait,
             StringNode node,
-            Model model,
+            Context context,
             BiConsumer<FromSourceLocation, String> emitter
     ) {
         String value = node.getValue();
-        int size = value.getBytes(Charset.forName("UTF-8")).length;
+        int size = value.getBytes(StandardCharsets.UTF_8).length;
 
         trait.getMin().ifPresent(min -> {
             if (size < min) {
@@ -54,7 +53,7 @@ final class BlobLengthPlugin extends MemberAndShapeTraitPlugin<BlobShape, String
         });
 
         trait.getMax().ifPresent(max -> {
-            if (value.getBytes(Charset.forName("UTF-8")).length > max) {
+            if (value.getBytes(StandardCharsets.UTF_8).length > max) {
                 emitter.accept(node, "Value provided for `" + shape.getId() + "` must have no more than "
                                      + max + " bytes, but the provided value has " + size + " bytes");
             }

@@ -201,8 +201,8 @@ final class IdlModelParser extends SimpleParser {
 
     private void onVersion(Node value) {
         if (!value.isStringNode()) {
-            value.expectStringNode("The $version control statement must have a string value, but found "
-                                   + Node.printJson(value));
+            value.expectStringNode(() -> "The $version control statement must have a string value, but found "
+                                         + Node.printJson(value));
         }
 
         String parsedVersion = value.expectStringNode().getValue();

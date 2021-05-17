@@ -17,13 +17,12 @@ package software.amazon.smithy.model.knowledge;
 
 import java.lang.ref.WeakReference;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -45,21 +44,19 @@ import software.amazon.smithy.model.traits.Trait;
 public final class ServiceIndex implements KnowledgeIndex {
 
     private final WeakReference<Model> model;
-    private final Set<ShapeId> protocolTraits;
-    private final Set<ShapeId> authTraits;
+    private final Set<ShapeId> protocolTraits = new HashSet<>();
+    private final Set<ShapeId> authTraits = new HashSet<>();
 
     public ServiceIndex(Model model) {
         this.model = new WeakReference<>(model);
 
-        protocolTraits = model.shapes()
-                .filter(shape -> shape.hasTrait(ProtocolDefinitionTrait.class))
-                .map(Shape::getId)
-                .collect(Collectors.toSet());
+        for (Shape shape : model.getShapesWithTrait(ProtocolDefinitionTrait.class)) {
+            protocolTraits.add(shape.getId());
+        }
 
-        authTraits = model.shapes()
-                .filter(shape -> shape.hasTrait(AuthDefinitionTrait.class))
-                .map(Shape::getId)
-                .collect(Collectors.toSet());
+        for (Shape shape : model.getShapesWithTrait(AuthDefinitionTrait.class)) {
+            authTraits.add(shape.getId());
+        }
     }
 
     public static ServiceIndex of(Model model) {
@@ -86,9 +83,15 @@ public final class ServiceIndex implements KnowledgeIndex {
         return getModel()
                 .getShape(service.toShapeId())
                 .flatMap(Shape::asServiceShape)
-                .<Map<ShapeId, Trait>>map(shape -> shape.getAllTraits().values().stream()
-                        .filter(trait -> haystack.contains(trait.toShapeId()))
-                        .collect(Collectors.toMap(Trait::toShapeId, Function.identity(), (a, b) -> b, TreeMap::new)))
+                .map(shape -> {
+                    Map<ShapeId, Trait> result = new TreeMap<>();
+                    for (Trait trait : shape.getAllTraits().values()) {
+                        if (haystack.contains(trait.toShapeId())) {
+                            result.put(trait.toShapeId(), trait);
+                        }
+                    }
+                    return result;
+                })
                 .orElse(Collections.emptyMap());
     }
 

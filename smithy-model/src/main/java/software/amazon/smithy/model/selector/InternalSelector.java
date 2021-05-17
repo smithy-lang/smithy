@@ -15,6 +15,9 @@
 
 package software.amazon.smithy.model.selector;
 
+import java.util.Collection;
+import java.util.function.Function;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 
 /**
@@ -51,6 +54,21 @@ interface InternalSelector {
      * @return Returns true to continue sending shapes to the selector.
      */
     boolean push(Context ctx, Shape shape, Receiver next);
+
+    /**
+     * Returns a function that is used to optimize which shapes in a model
+     * need to be evaluated.
+     *
+     * <p>For example, when selecting "structure", it is far less work
+     * to leverage {@link Model#toSet(Class)} than it is to send every shape
+     * through every selector.
+     *
+     * @return Returns a function that returns null if no optimization can
+     *   be made, or a Collection of Shapes if an optimization was made.
+     */
+    default Function<Model, Collection<? extends Shape>> optimize() {
+        return null;
+    }
 
     /**
      * Receives shapes from an InternalSelector.

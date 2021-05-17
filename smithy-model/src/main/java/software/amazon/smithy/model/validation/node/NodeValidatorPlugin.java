@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,11 +15,15 @@
 
 package software.amazon.smithy.model.validation.node;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -37,10 +41,10 @@ public interface NodeValidatorPlugin {
      *
      * @param shape Shape being checked.
      * @param value Value being evaluated.
-     * @param model Model to traverse.
+     * @param context Evaluation context.
      * @param emitter Consumer to notify of validation event locations and messages.
      */
-    void apply(Shape shape, Node value, Model model, BiConsumer<FromSourceLocation, String> emitter);
+    void apply(Shape shape, Node value, Context context, BiConsumer<FromSourceLocation, String> emitter);
 
     /**
      * @return Gets the built-in Node validation plugins.
@@ -55,5 +59,53 @@ public interface NodeValidatorPlugin {
                 new RangeTraitPlugin(),
                 new StringEnumPlugin(),
                 new StringLengthPlugin());
+    }
+
+    /**
+     * Validation context to pass to each NodeValidatorPlugin.
+     */
+    @SmithyInternalApi
+    final class Context {
+        private final Model model;
+
+        // Use an LRU cache to ensure the Selector cache doesn't grow too large
+        // when given bad inputs.
+        private final Map<Selector, Set<Shape>> selectorResults = new LinkedHashMap<Selector, Set<Shape>>(
+                50 + 1, .75F, true) {
+            @Override
+            public boolean removeEldestEntry(Map.Entry<Selector, Set<Shape>> eldest) {
+                return size() > 50;
+            }
+        };
+
+        /**
+         * @param model Model being evaluated.
+         */
+        public Context(Model model) {
+            this.model = model;
+        }
+
+        /**
+         * Get the model being evaluated.
+         *
+         * @return Returns the model.
+         */
+        public Model model() {
+            return model;
+        }
+
+        /**
+         * Select and memoize shapes from the model using a Selector.
+         *
+         * <p>The cache used by this method is not thread-safe, though that's
+         * fine because NodeValidatorPlugins using the same Context all run
+         * within the same thread.
+         *
+         * @param selector Selector to evaluate.
+         * @return Returns the matching shapes.
+         */
+        public Set<Shape> select(Selector selector) {
+            return selectorResults.computeIfAbsent(selector, s -> s.select(model));
+        }
     }
 }

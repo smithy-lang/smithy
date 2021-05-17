@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceException;
@@ -465,7 +466,7 @@ public abstract class Node implements FromSourceLocation, ToNode {
      * @throws ExpectationNotMetException when the node is not an {@code ObjectNode}.
      */
     public final ObjectNode expectObjectNode() {
-        return expectObjectNode(null);
+        return expectObjectNode((String) null);
     }
 
     /**
@@ -481,13 +482,25 @@ public abstract class Node implements FromSourceLocation, ToNode {
     }
 
     /**
+     * Casts the current node to an {@code ObjectNode}, throwing
+     * {@link ExpectationNotMetException} when the node is the wrong type.
+     *
+     * @param message Error message supplier.
+     * @return Returns an object node.
+     * @throws ExpectationNotMetException when the node is not an {@code ObjectNode}.
+     */
+    public ObjectNode expectObjectNode(Supplier<String> message) {
+        return expectObjectNode(message.get());
+    }
+
+    /**
      * Casts the current node to an {@code ArrayNode}.
      *
      * @return Returns an array node.
      * @throws ExpectationNotMetException when the node is not an {@code ArrayNode}.
      */
     public final ArrayNode expectArrayNode() {
-        return expectArrayNode(null);
+        return expectArrayNode((String) null);
     }
 
     /**
@@ -503,13 +516,25 @@ public abstract class Node implements FromSourceLocation, ToNode {
     }
 
     /**
+     * Casts the current node to an {@code ArrayNode}, throwing
+     * {@link ExpectationNotMetException} when the node is the wrong type.
+     *
+     * @param message Error message supplier.
+     * @return Returns an array node.
+     * @throws ExpectationNotMetException when the node is the wrong type.
+     */
+    public ArrayNode expectArrayNode(Supplier<String> message) {
+        return expectArrayNode(message.get());
+    }
+
+    /**
      * Casts the current node to a {@code StringNode}.
      *
      * @return Returns a string node.
      * @throws ExpectationNotMetException when the node is the wrong type.
      */
     public final StringNode expectStringNode() {
-        return expectStringNode(null);
+        return expectStringNode((String) null);
     }
 
     /**
@@ -525,13 +550,25 @@ public abstract class Node implements FromSourceLocation, ToNode {
     }
 
     /**
+     * Casts the current node to a {@code StringNode}, throwing
+     * {@link ExpectationNotMetException} when the node is the wrong type.
+     *
+     * @param message Error message supplier.
+     * @return Returns a string node.
+     * @throws ExpectationNotMetException when the node is the wrong type.
+     */
+    public StringNode expectStringNode(Supplier<String> message) {
+        return expectStringNode(message.get());
+    }
+
+    /**
      * Casts the current node to a {@code NumberNode}.
      *
      * @return Returns a number node.
      * @throws ExpectationNotMetException when the node is the wrong type.
      */
     public final NumberNode expectNumberNode() {
-        return expectNumberNode(null);
+        return expectNumberNode((String) null);
     }
 
     /**
@@ -547,13 +584,25 @@ public abstract class Node implements FromSourceLocation, ToNode {
     }
 
     /**
+     * Casts the current node to a {@code NumberNode}, throwing
+     * {@link ExpectationNotMetException} when the node is the wrong type.
+     *
+     * @param message Error message supplier.
+     * @return Returns a number node.
+     * @throws ExpectationNotMetException when the node is the wrong type.
+     */
+    public NumberNode expectNumberNode(Supplier<String> message) {
+        return expectNumberNode(message.get());
+    }
+
+    /**
      * Casts the current node to a {@code BooleanNode}.
      *
      * @return Returns a boolean node.
      * @throws ExpectationNotMetException when the node is the wrong type.
      */
     public final BooleanNode expectBooleanNode() {
-        return expectBooleanNode(null);
+        return expectBooleanNode((String) null);
     }
 
     /**
@@ -569,13 +618,25 @@ public abstract class Node implements FromSourceLocation, ToNode {
     }
 
     /**
+     * Casts the current node to a {@code BooleanNode}, throwing
+     * {@link ExpectationNotMetException} when the node is the wrong type.
+     *
+     * @param message Error message supplier.
+     * @return Returns a boolean node.
+     * @throws ExpectationNotMetException when the node is the wrong type.
+     */
+    public BooleanNode expectBooleanNode(Supplier<String> message) {
+        return expectBooleanNode(message.get());
+    }
+
+    /**
      * Casts the current node to a {@code NullNode}.
      *
      * @return Returns a null node.
      * @throws ExpectationNotMetException when the node is the wrong type.
      */
     public final NullNode expectNullNode() {
-        return expectNullNode(null);
+        return expectNullNode((String) null);
     }
 
     /**
@@ -588,6 +649,18 @@ public abstract class Node implements FromSourceLocation, ToNode {
      */
     public NullNode expectNullNode(String message) {
         throw new ExpectationNotMetException(expandMessage(message, NodeType.NULL.toString()), this);
+    }
+
+    /**
+     * Casts the current node to a {@code NullNode}, throwing
+     * {@link ExpectationNotMetException} when the node is the wrong type.
+     *
+     * @param message Error message supplier.
+     * @return Returns a null node.
+     * @throws ExpectationNotMetException when the node is the wrong type.
+     */
+    public NullNode expectNullNode(Supplier<String> message) {
+        return expectNullNode(message.get());
     }
 
     @Override

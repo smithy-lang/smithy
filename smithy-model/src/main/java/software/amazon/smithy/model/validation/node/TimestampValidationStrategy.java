@@ -35,8 +35,8 @@ public enum TimestampValidationStrategy implements NodeValidatorPlugin {
      */
     FORMAT {
         @Override
-        public void apply(Shape shape, Node value, Model model, BiConsumer<FromSourceLocation, String> emitter) {
-            new TimestampFormatPlugin().apply(shape, value, model, emitter);
+        public void apply(Shape shape, Node value, Context context, BiConsumer<FromSourceLocation, String> emitter) {
+            new TimestampFormatPlugin().apply(shape, value, context, emitter);
         }
     },
 
@@ -46,8 +46,8 @@ public enum TimestampValidationStrategy implements NodeValidatorPlugin {
      */
     EPOCH_SECONDS {
         @Override
-        public void apply(Shape shape, Node value, Model model, BiConsumer<FromSourceLocation, String> emitter) {
-            if (isTimestampMember(model, shape) && !value.isNumberNode()) {
+        public void apply(Shape shape, Node value, Context context, BiConsumer<FromSourceLocation, String> emitter) {
+            if (isTimestampMember(context.model(), shape) && !value.isNumberNode()) {
                 emitter.accept(shape, "Invalid " + value.getType() + " value provided for timestamp, `"
                                       + shape.getId() + "`. Expected a number that contains epoch "
                                       + "seconds with optional millisecond precision");

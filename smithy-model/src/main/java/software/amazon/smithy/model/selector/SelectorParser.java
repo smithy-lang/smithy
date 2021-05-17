@@ -19,15 +19,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.loader.ParserUtils;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.NumberShape;
-import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.SimpleShape;
 import software.amazon.smithy.utils.ListUtils;
@@ -264,19 +261,19 @@ final class SelectorParser extends SimpleParser {
 
     private InternalSelector parseAttribute() {
         ws();
-        BiFunction<Shape, Map<String, Set<Shape>>, AttributeValue> keyFactory = parseAttributePath();
+        List<String> path = parseAttributePath();
         ws();
         char next = expect(']', '=', '!', '^', '$', '*', '?', '>', '<');
 
         if (next == ']') {
-            return AttributeSelector.existence(keyFactory);
+            return AttributeSelector.existence(path);
         }
 
         AttributeComparator comparator = parseComparator(next);
         List<String> values = parseAttributeValues();
         boolean insensitive = parseCaseInsensitiveToken();
         expect(']');
-        return new AttributeSelector(keyFactory, values, comparator, insensitive);
+        return new AttributeSelector(path, values, comparator, insensitive);
     }
 
     private boolean parseCaseInsensitiveToken() {
@@ -360,11 +357,11 @@ final class SelectorParser extends SimpleParser {
     // "[@" selector_key ":" selector_scoped_comparisons "]"
     private InternalSelector parseScopedAttribute() {
         ws();
-        BiFunction<Shape, Map<String, Set<Shape>>, AttributeValue> keyScope = parseAttributePath();
+        List<String> path = parseAttributePath();
         ws();
         expect(':');
         ws();
-        return new ScopedAttributeSelector(keyScope, parseScopedAssertions());
+        return new ScopedAttributeSelector(path, parseScopedAssertions());
     }
 
     // selector_scoped_comparison *("&&" selector_scoped_comparison)
@@ -415,12 +412,12 @@ final class SelectorParser extends SimpleParser {
         }
     }
 
-    private BiFunction<Shape, Map<String, Set<Shape>>, AttributeValue> parseAttributePath() {
+    private List<String> parseAttributePath() {
         ws();
 
         // '[@:' binds the current shape as the context.
         if (peek() == ':') {
-            return AttributeValue::shape;
+            return Collections.emptyList();
         }
 
         List<String> path = new ArrayList<>();
@@ -430,7 +427,7 @@ final class SelectorParser extends SimpleParser {
         // It is optionally followed by "|" delimited path keys.
         path.addAll(parseSelectorPath(this));
 
-        return (shape, variables) -> AttributeValue.shape(shape, variables).getPath(path);
+        return path;
     }
 
     private List<String> parseAttributeValues() {
