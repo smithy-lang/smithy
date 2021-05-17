@@ -16,9 +16,9 @@
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.Model;
@@ -45,54 +45,51 @@ public final class TraitTargetValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
-        Collection<SelectorTest> tests = createTests(model);
+        Map<Selector, Set<Shape>> selectorCache = new HashMap<>();
 
-        for (SelectorTest test : tests) {
-            // Find the shapes that this trait can be applied to.
-            Set<Shape> matches = test.selector.select(model);
-
-            // Remove the allowed locations from the real locations, leaving only
-            // the shapes in the set that are invalid.
-            test.appliedTo.removeAll(matches);
-
-            for (Shape shape : test.appliedTo) {
-                // Strip out newlines with successive spaces.
-                String sanitized = SANITIZE.matcher(test.selector.toString()).replaceAll(" ");
-                events.add(error(shape, shape.findTrait(test.trait).get(), String.format(
-                        "Trait `%s` cannot be applied to `%s`. This trait may only be applied "
-                        + "to shapes that match the following selector: %s",
-                        Trait.getIdiomaticTraitName(test.trait.toShapeId()),
-                        shape.getId(),
-                        sanitized)));
-            }
-        }
-
-        return events;
-    }
-
-    private Collection<SelectorTest> createTests(Model model) {
-        List<SelectorTest> tests = new ArrayList<>(model.getAppliedTraits().size());
-
+        // Only validate trait targets for traits that are actually used.
         for (ShapeId traitId : model.getAppliedTraits()) {
-            // This set is mutated later, so make a copy.
-            Set<Shape> shapes = new HashSet<>(model.getShapesWithTrait(traitId));
             model.getTraitDefinition(traitId).ifPresent(definition -> {
-                tests.add(new SelectorTest(traitId, definition.getSelector(), shapes));
+                // Find all shapes that have the used trait applied to it.
+                Set<Shape> shapes = model.getShapesWithTrait(traitId);
+                validateTraitTargets(model, events, traitId, definition.getSelector(), shapes, selectorCache);
             });
         }
 
-        return tests;
+        selectorCache.clear();
+        return events;
     }
 
-    private static final class SelectorTest {
-        final ShapeId trait;
-        final Selector selector;
-        final Set<Shape> appliedTo;
+    private void validateTraitTargets(
+            Model model,
+            List<ValidationEvent> events,
+            ShapeId trait,
+            Selector selector,
+            Set<Shape> appliedTo,
+            Map<Selector, Set<Shape>> selectorCache
+    ) {
+        // Short circuit for shapes that match everything.
+        if (selector.toString().equals("*")) {
+            return;
+        }
 
-        SelectorTest(ShapeId trait, Selector selector, Set<Shape> appliedTo) {
-            this.trait = trait;
-            this.selector = selector;
-            this.appliedTo = appliedTo;
+        // Find the shapes that this trait can be applied to.
+        // Many selectors are identical to other selectors, so use a cache
+        // to reduce the number of times the entire model is traversed.
+        Set<Shape> matches = selectorCache.computeIfAbsent(selector, s -> s.select(model));
+
+        for (Shape shape : appliedTo) {
+            // Emit events when a shape is applied to something that didn't match the selector.
+            if (!matches.contains(shape)) {
+                // Strip out newlines with successive spaces.
+                String sanitized = SANITIZE.matcher(selector.toString()).replaceAll(" ");
+                events.add(error(shape, shape.findTrait(trait).get(), String.format(
+                        "Trait `%s` cannot be applied to `%s`. This trait may only be applied "
+                        + "to shapes that match the following selector: %s",
+                        Trait.getIdiomaticTraitName(trait.toShapeId()),
+                        shape.getId(),
+                        sanitized)));
+            }
         }
     }
 }

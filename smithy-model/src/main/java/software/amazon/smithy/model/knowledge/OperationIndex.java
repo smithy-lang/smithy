@@ -15,12 +15,12 @@
 
 package software.amazon.smithy.model.knowledge;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -43,21 +43,20 @@ public final class OperationIndex implements KnowledgeIndex {
     private final Map<ShapeId, List<StructureShape>> errors = new HashMap<>();
 
     public OperationIndex(Model model) {
-        model.shapes(OperationShape.class).forEach(operation -> {
+        for (OperationShape operation : model.toSet(OperationShape.class)) {
             operation.getInput()
                     .flatMap(id -> getStructure(model, id))
                     .ifPresent(shape -> inputs.put(operation.getId(), shape));
             operation.getOutput()
                     .flatMap(id -> getStructure(model, id))
                     .ifPresent(shape -> outputs.put(operation.getId(), shape));
-            errors.put(operation.getId(),
-                       operation.getErrors()
-                               .stream()
-                               .map(e -> getStructure(model, e))
-                               .filter(Optional::isPresent)
-                               .map(Optional::get)
-                               .collect(Collectors.toList()));
-        });
+
+            List<StructureShape> errorShapes = new ArrayList<>(operation.getErrors().size());
+            for (ShapeId target : operation.getErrors()) {
+                model.getShape(target).flatMap(Shape::asStructureShape).ifPresent(errorShapes::add);
+            }
+            errors.put(operation.getId(), errorShapes);
+        }
     }
 
     public static OperationIndex of(Model model) {

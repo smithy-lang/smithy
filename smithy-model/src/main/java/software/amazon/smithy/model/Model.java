@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -64,7 +65,8 @@ public final class Model implements ToSmithyBuilder<Model> {
     private final Map<Class<? extends Shape>, Set<? extends Shape>> cachedTypes = new ConcurrentHashMap<>();
 
     /** Cache of computed {@link KnowledgeIndex} instances. */
-    private final Map<Class<? extends KnowledgeIndex>, KnowledgeIndex> blackboard = new ConcurrentHashMap<>();
+    private final Map<Class<? extends KnowledgeIndex>, KnowledgeIndex> blackboard
+            = Collections.synchronizedMap(new IdentityHashMap<>());
 
     /** Lazily computed trait mappings. */
     private volatile TraitCache traitCache;
@@ -283,7 +285,7 @@ public final class Model implements ToSmithyBuilder<Model> {
      * @return Returns an unmodifiable set of shapes.
      */
     @SuppressWarnings("unchecked")
-    private <T extends Shape> Set<T> toSet(Class<T> shapeType) {
+    public <T extends Shape> Set<T> toSet(Class<T> shapeType) {
         return (Set<T>) cachedTypes.computeIfAbsent(shapeType, t -> {
             Set<T> result = new HashSet<>();
             for (Shape shape : shapeMap.values()) {
@@ -394,22 +396,7 @@ public final class Model implements ToSmithyBuilder<Model> {
      */
     @SuppressWarnings("unchecked")
     public <T extends KnowledgeIndex> T getKnowledge(Class<T> type, Function<Model, T> constructor) {
-        // This method intentionally does not use putIfAbsent to avoid
-        // deadlocks in the case where a knowledge index needs to access
-        // other knowledge indexes from a Model. While this *can* cause
-        // duplicate computations, it's preferable over *always* requiring
-        // duplicate computations, deadlocks of computeIfAbsent, or
-        // spreading out the cache state associated with previously
-        // computed indexes through WeakHashMaps on each KnowledgeIndex
-        // (a previous approach we used for caching).
-        T value = (T) blackboard.get(type);
-
-        if (value == null) {
-            value = constructor.apply(this);
-            blackboard.put(type, value);
-        }
-
-        return value;
+        return (T) blackboard.computeIfAbsent(type, t -> constructor.apply(this));
     }
 
     /**

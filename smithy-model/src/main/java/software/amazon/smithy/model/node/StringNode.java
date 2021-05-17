@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -81,6 +82,11 @@ public final class StringNode extends Node {
 
     @Override
     public StringNode expectStringNode(String errorMessage) {
+        return this;
+    }
+
+    @Override
+    public StringNode expectStringNode(Supplier<String> errorMessage) {
         return this;
     }
 

@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -74,6 +75,11 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
 
     @Override
     public ObjectNode expectObjectNode(String errorMessage) {
+        return this;
+    }
+
+    @Override
+    public ObjectNode expectObjectNode(Supplier<String> errorMessage) {
         return this;
     }
 
@@ -240,7 +246,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public Optional<StringNode> getStringMember(String memberName) {
         return getMember(memberName)
-                .map(n -> n.expectStringNode(format("Expected `%s` to be a string; found {type}", memberName)));
+                .map(n -> n.expectStringNode(() -> format("Expected `%s` to be a string; found {type}", memberName)));
     }
 
     /**
@@ -266,7 +272,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public Optional<NumberNode> getNumberMember(String memberName) {
         return getMember(memberName)
-                .map(n -> n.expectNumberNode(format("Expected `%s` to be a number; found {type}", memberName)));
+                .map(n -> n.expectNumberNode(() -> format("Expected `%s` to be a number; found {type}", memberName)));
     }
 
     /**
@@ -292,7 +298,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public Optional<ArrayNode> getArrayMember(String memberName) {
         return getMember(memberName)
-                .map(n -> n.expectArrayNode(format("Expected `%s` to be an array; found {type}", memberName)));
+                .map(n -> n.expectArrayNode(() -> format("Expected `%s` to be an array; found {type}", memberName)));
     }
 
     /**
@@ -305,7 +311,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public Optional<ObjectNode> getObjectMember(String memberName) {
         return getMember(memberName)
-                .map(n -> n.expectObjectNode(format("Expected `%s` to be an object; found {type}", memberName)));
+                .map(n -> n.expectObjectNode(() -> format("Expected `%s` to be an object; found {type}", memberName)));
     }
 
     /**
@@ -318,7 +324,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public Optional<BooleanNode> getBooleanMember(String memberName) {
         return getMember(memberName)
-                .map(n -> n.expectBooleanNode(format("Expected `%s` to be a boolean; found {type}", memberName)));
+                .map(n -> n.expectBooleanNode(() -> format("Expected `%s` to be a boolean; found {type}", memberName)));
     }
 
     /**
@@ -356,7 +362,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      *  present in the members map.
      */
     public Node expectMember(String name) {
-        return expectMember(name, format("Missing expected member `%s`.", name));
+        return expectMember(name, () -> format("Missing expected member `%s`.", name));
     }
 
     /**
@@ -374,6 +380,20 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
     }
 
     /**
+     * Gets the member with the given name, throwing
+     * {@link ExpectationNotMetException} when the member is not present.
+     *
+     * @param name Name of the member to get.
+     * @param errorMessage Error message supplier.
+     * @return Returns the node with the given member name.
+     * @throws ExpectationNotMetException when {@code memberName} is is not
+     *  present in the members map.
+     */
+    public Node expectMember(String name, Supplier<String> errorMessage) {
+        return getMember(name).orElseThrow(() -> new ExpectationNotMetException(errorMessage.get(), this));
+    }
+
+    /**
      * Gets a member and requires it to be an array.
      *
      * @param name Name of the member to get.
@@ -382,7 +402,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public ArrayNode expectArrayMember(String name) {
         return expectMember(name)
-                .expectArrayNode(format("Expected `%s` member to be an array, but found {type}.", name));
+                .expectArrayNode(() -> format("Expected `%s` member to be an array, but found {type}.", name));
     }
 
     /**
@@ -394,7 +414,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public BooleanNode expectBooleanMember(String name) {
         return expectMember(name)
-                .expectBooleanNode(format("Expected `%s` member to be a boolean, but found {type}.", name));
+                .expectBooleanNode(() -> format("Expected `%s` member to be a boolean, but found {type}.", name));
     }
 
     /**
@@ -406,7 +426,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public NullNode expectNullMember(String name) {
         return expectMember(name)
-                .expectNullNode(format("Expected `%s` member to be null, but found {type}.", name));
+                .expectNullNode(() -> format("Expected `%s` member to be null, but found {type}.", name));
     }
 
     /**
@@ -418,7 +438,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public NumberNode expectNumberMember(String name) {
         return expectMember(name)
-                .expectNumberNode(format("Expected `%s` member to be a number, but found {type}.", name));
+                .expectNumberNode(() -> format("Expected `%s` member to be a number, but found {type}.", name));
     }
 
     /**
@@ -430,7 +450,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public ObjectNode expectObjectMember(String name) {
         return expectMember(name)
-                .expectObjectNode(format("Expected `%s` member to be an object, but found {type}.", name));
+                .expectObjectNode(() -> format("Expected `%s` member to be an object, but found {type}.", name));
     }
 
     /**
@@ -442,7 +462,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      */
     public StringNode expectStringMember(String name) {
         return expectMember(name)
-                .expectStringNode(format("Expected `%s` member to be a string, but found {type}.", name));
+                .expectStringNode(() -> format("Expected `%s` member to be a string, but found {type}.", name));
     }
 
     /**

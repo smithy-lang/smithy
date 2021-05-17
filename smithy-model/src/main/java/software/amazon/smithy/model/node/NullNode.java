@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.node;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 import software.amazon.smithy.model.SourceLocation;
 
 /**
@@ -39,6 +40,11 @@ public final class NullNode extends Node {
 
     @Override
     public NullNode expectNullNode(String errorMessage) {
+        return this;
+    }
+
+    @Override
+    public NullNode expectNullNode(Supplier<String> errorMessage) {
         return this;
     }
 

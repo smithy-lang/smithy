@@ -15,12 +15,14 @@
 
 package software.amazon.smithy.model.shapes;
 
+import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import software.amazon.smithy.model.loader.ParserUtils;
 import software.amazon.smithy.model.loader.Prelude;
 
@@ -46,7 +48,7 @@ import software.amazon.smithy.model.loader.Prelude;
 public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
 
     /** LRA (least recently added) cache of parsed shape IDs. */
-    private static final ShapeIdFactory FACTORY = new ShapeIdFactory(1024);
+    private static final ShapeIdFactory FACTORY = new ShapeIdFactory(8192);
 
     private final String namespace;
     private final String name;
@@ -405,12 +407,6 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
      * draining the prioritized queue. Draining the prioritized queue should
      * only be necessary to account for misbehaving inputs.
      *
-     * <p>The number of entries in the cache is an estimate because the result
-     * of calling {@link ConcurrentHashMap#size()} is an estimate. This is
-     * acceptable for a cache though, and any time the number of entries
-     * exceeds {@code maxSize}, the cache will likely get truncated on
-     * subsequent cache-misses.
-     *
      * <p>While not an optimal cache, this cache is the way it is because it's
      * meant to be concurrent, non-blocking, lightweight, dependency-free, and
      * should improve the performance of normal workflows of using Smithy.
@@ -418,12 +414,12 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
      * <p>Other alternatives considered were:
      *
      * <ol>
-     *     <li>Pull in Caffeine. While appealing since you basically can't do
-     *     better in terms of performance, it is a dependency that we wouldn't
-     *     otherwise need to take, and we've drawn a pretty hard line in
-     *     Smithy to be dependency-free. We could potentially "vendor" parts
-     *     of Caffeine, but it's a large library that doesn't lend itself well
-     *     towards that use case.</li>
+     *     <li>Pull in Caffeine. While appealing, Caffeine's cache didn't
+     *     perform noticeably better than this cache _and_ it is a dependency
+     *     that we wouldn't otherwise need to take, and we've drawn a pretty
+     *     hard line in Smithy to be dependency-free. We could potentially
+     *     "vendor" parts of Caffeine, but it's a large library that doesn't
+     *     lend itself well towards that use case.</li>
      *     <li>Just use an unbounded ConcurrentHashMap. While simple, this
      *     approach is not good for long running processes where you can't
      *     control the input</li>
@@ -432,6 +428,8 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
      *     entries. This approach would work for most normal use cases but
      *     would not work well for long running processes that potentially
      *     load multiple models.</li>
+     *     <li>Use a synchronized {@link LinkedHashMap}. This approach is
+     *     just a bit slower than the chosen approach.</li>
      * </ol>
      */
     private static final class ShapeIdFactory {
@@ -439,6 +437,7 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
         private final Queue<String> priorityQueue = new ConcurrentLinkedQueue<>();
         private final Queue<String> deprioritizedQueue = new ConcurrentLinkedQueue<>();
         private final ConcurrentMap<String, ShapeId> map;
+        private final AtomicInteger size = new AtomicInteger();
 
         ShapeIdFactory(final int maxSize) {
             this.maxSize = maxSize;
@@ -446,22 +445,30 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
         }
 
         ShapeId create(final String key) {
-            ShapeId value = map.get(key);
+            return map.computeIfAbsent(key, id -> {
+                ShapeId value = buildShapeId(key);
 
-            // Return the value if it exists in the cache.
-            if (value != null) {
+                if (value.getNamespace().equals(Prelude.NAMESPACE)) {
+                    priorityQueue.offer(key);
+                } else {
+                    deprioritizedQueue.offer(key);
+                }
+
+                // Evict items when the cache gets too big.
+                if (size.incrementAndGet() > maxSize) {
+                    // Remove an element from the deprioritized queue if it isn't empty,
+                    // and if it is, then try to remove an element from the priority queue.
+                    String item = deprioritizedQueue.poll();
+                    if (item == null) {
+                        item = priorityQueue.poll();
+                    }
+
+                    size.decrementAndGet();
+                    map.remove(item);
+                }
+
                 return value;
-            }
-
-            value = buildShapeId(key);
-
-            // Only update the queue if the value is new to the map.
-            if (map.put(key, value) == null) {
-                offer(key, value);
-                evict();
-            }
-
-            return value;
+            });
         }
 
         private ShapeId buildShapeId(String absoluteShapeId) {
@@ -486,37 +493,6 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
 
             validateParts(absoluteShapeId, namespace, name, memberName);
             return new ShapeId(absoluteShapeId, namespace, name, memberName);
-        }
-
-        // Enqueue a key into the appropriate queue, putting more often used
-        // IDs in the smithy.api# namespace into a priority queue.
-        private void offer(String key, ShapeId value) {
-            if (value.getNamespace().equals(Prelude.NAMESPACE)) {
-                priorityQueue.offer(key);
-            } else {
-                deprioritizedQueue.offer(key);
-            }
-        }
-
-        // Purge least recently added items from the cache.
-        private void evict() {
-            // Note: the result of map.size is an estimate, but that's ok for a cache.
-            while (map.size() > maxSize) {
-                String item = poll();
-                // Stop trying to remove items from the queue if neither
-                // the priority queue or deprioritized queues have entries,
-                // or if attempting to remove an item from the map fails.
-                if (item == null || map.remove(item) == null) {
-                    break;
-                }
-            }
-        }
-
-        // Remove an element from the deprioritized queue if it isn't empty,
-        // and if it is, then try to remove an element from the priority queue.
-        private String poll() {
-            String item = deprioritizedQueue.poll();
-            return item != null ? item : priorityQueue.poll();
         }
     }
 }

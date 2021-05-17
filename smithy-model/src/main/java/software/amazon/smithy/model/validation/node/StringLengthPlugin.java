@@ -17,7 +17,6 @@ package software.amazon.smithy.model.validation.node;
 
 import java.util.function.BiConsumer;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -37,7 +36,7 @@ final class StringLengthPlugin extends MemberAndShapeTraitPlugin<StringShape, St
             Shape shape,
             LengthTrait trait,
             StringNode node,
-            Model model,
+            Context context,
             BiConsumer<FromSourceLocation, String> emitter
     ) {
         trait.getMin().ifPresent(min -> {

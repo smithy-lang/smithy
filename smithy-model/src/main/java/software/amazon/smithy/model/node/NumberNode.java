@@ -18,6 +18,7 @@ package software.amazon.smithy.model.node;
 import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 import software.amazon.smithy.model.SourceLocation;
 
 /**
@@ -80,6 +81,11 @@ public final class NumberNode extends Node {
 
     @Override
     public NumberNode expectNumberNode(String errorMessage) {
+        return this;
+    }
+
+    @Override
+    public NumberNode expectNumberNode(Supplier<String> errorMessage) {
         return this;
     }
 

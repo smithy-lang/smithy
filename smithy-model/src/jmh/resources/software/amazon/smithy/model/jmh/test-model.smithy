@@ -18,7 +18,6 @@ operation Resource1Operation {}
 resource Resource1_2 {}
 
 resource Resource1_1 {
-    type: resource,
     operations: [Resource1_1_Operation],
     resources: [Resource1_1_1, Resource1_1_2]
 }

@@ -23,7 +23,7 @@ plugins {
     id "jacoco"
     id "com.github.spotbugs" version "4.6.0"
     id "io.codearte.nexus-staging" version "0.21.0"
-    id "me.champeau.gradle.jmh" version "0.5.3"
+    id "me.champeau.jmh" version "0.6.4"
 }
 
 ext {

@@ -15,6 +15,9 @@
 
 package software.amazon.smithy.model.selector;
 
+import java.util.Collection;
+import java.util.function.Function;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 
@@ -33,5 +36,10 @@ final class ShapeTypeSelector implements InternalSelector {
         }
 
         return true;
+    }
+
+    @Override
+    public Function<Model, Collection<? extends Shape>> optimize() {
+        return model -> model.toSet(shapeType.getShapeClass());
     }
 }

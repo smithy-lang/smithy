@@ -18,7 +18,6 @@ package software.amazon.smithy.model.validation.node;
 import java.math.BigDecimal;
 import java.util.function.BiConsumer;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -38,7 +37,7 @@ final class RangeTraitPlugin extends MemberAndShapeTraitPlugin<NumberShape, Numb
             Shape shape,
             RangeTrait trait,
             NumberNode node,
-            Model model,
+            Context context,
             BiConsumer<FromSourceLocation, String> emitter
     ) {
         Number number = node.getValue();

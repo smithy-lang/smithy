@@ -18,7 +18,6 @@ package software.amazon.smithy.model.validation.node;
 import java.util.List;
 import java.util.function.BiConsumer;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.EnumTrait;
@@ -37,7 +36,7 @@ final class StringEnumPlugin extends FilteredPlugin<StringShape, StringNode> {
     protected void check(
             StringShape shape,
             StringNode node,
-            Model model,
+            Context context,
             BiConsumer<FromSourceLocation, String> emitter
     ) {
         shape.getTrait(EnumTrait.class).ifPresent(trait -> {

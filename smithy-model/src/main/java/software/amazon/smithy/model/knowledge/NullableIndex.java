@@ -48,13 +48,21 @@ public class NullableIndex implements KnowledgeIndex {
     private final Set<ShapeId> nullableShapes = new HashSet<>();
 
     public NullableIndex(Model model) {
-        for (Shape shape : model.toSet()) {
-            if (shape.asMemberShape().isPresent()) {
-                if (isMemberNullable(model, shape.asMemberShape().get())) {
-                    nullableShapes.add(shape.getId());
-                }
-            } else if (isShapeBoxed(shape)) {
+        for (ShapeType type : INHERENTLY_BOXED) {
+            model.shapes(type.getShapeClass()).forEach(shape -> nullableShapes.add(shape.getId()));
+        }
+
+        for (Shape shape : model.getShapesWithTrait(BoxTrait.class)) {
+            // Only structure members honor the box trait, so defer to the
+            // isMemberNullable method to determine member nullability.
+            if (!shape.isMemberShape()) {
                 nullableShapes.add(shape.getId());
+            }
+        }
+
+        for (MemberShape member : model.toSet(MemberShape.class)) {
+            if (isMemberNullable(model, member)) {
+                nullableShapes.add(member.getId());
             }
         }
     }

@@ -18,7 +18,6 @@ package software.amazon.smithy.model.selector;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
 import software.amazon.smithy.model.shapes.Shape;
 
 /**
@@ -56,15 +55,11 @@ final class ScopedAttributeSelector implements InternalSelector {
         AttributeValue create(AttributeValue value);
     }
 
-    private final BiFunction<Shape, Map<String, Set<Shape>>, AttributeValue> keyScope;
+    private final List<String> path;
     private final List<Assertion> assertions;
 
-    ScopedAttributeSelector(
-            BiFunction<Shape, Map<String, Set<Shape>>,
-                    AttributeValue> keyScope,
-            List<Assertion> assertions
-    ) {
-        this.keyScope = keyScope;
+    ScopedAttributeSelector(List<String> path, List<Assertion> assertions) {
+        this.path = path;
         this.assertions = assertions;
     }
 
@@ -79,7 +74,7 @@ final class ScopedAttributeSelector implements InternalSelector {
 
     private boolean matchesAssertions(Shape shape, Map<String, Set<Shape>> vars) {
         // First resolve the scope of the assertions.
-        AttributeValue scope = keyScope.apply(shape, vars);
+        AttributeValue scope = AttributeValue.shape(shape, vars).getPath(path);
 
         // If it's not present, then nothing could ever match.
         if (!scope.isPresent()) {

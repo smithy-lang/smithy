@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.node;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 import software.amazon.smithy.model.SourceLocation;
 
 /**
@@ -50,6 +51,11 @@ public final class BooleanNode extends Node {
 
     @Override
     public BooleanNode expectBooleanNode(String errorMessage) {
+        return this;
+    }
+
+    @Override
+    public BooleanNode expectBooleanNode(Supplier<String> errorMessage) {
         return this;
     }
 

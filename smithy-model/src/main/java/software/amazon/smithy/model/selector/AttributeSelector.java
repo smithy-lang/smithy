@@ -16,30 +16,32 @@
 package software.amazon.smithy.model.selector;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BiFunction;
+import java.util.function.Function;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.Trait;
 
 /**
  * Matches shapes with a specific attribute or that matches an attribute comparator.
  */
 final class AttributeSelector implements InternalSelector {
 
-    private final BiFunction<Shape, Map<String, Set<Shape>>, AttributeValue> key;
+    private final List<String> path;
     private final List<AttributeValue> expected;
     private final AttributeComparator comparator;
     private final boolean caseInsensitive;
 
     AttributeSelector(
-            BiFunction<Shape, Map<String, Set<Shape>>, AttributeValue> key,
+            List<String> path,
             List<String> expected,
             AttributeComparator comparator,
             boolean caseInsensitive
     ) {
-        this.key = key;
+        this.path = path;
         this.caseInsensitive = caseInsensitive;
         this.comparator = comparator;
 
@@ -54,8 +56,28 @@ final class AttributeSelector implements InternalSelector {
         }
     }
 
-    static AttributeSelector existence(BiFunction<Shape, Map<String, Set<Shape>>, AttributeValue> key) {
-        return new AttributeSelector(key, null, null, false);
+    static AttributeSelector existence(List<String> path) {
+        return new AttributeSelector(path, null, null, false);
+    }
+
+    @Override
+    public Function<Model, Collection<? extends Shape>> optimize() {
+        // Optimization for loading shapes with a specific trait.
+        // This optimization can only be applied when there's no comparator,
+        // and it doesn't matter how deep into the trait the selector descends.
+        if (comparator == null
+                && path.size() >= 2
+                && path.get(0).equals("trait")     // only match on traits
+                && !path.get(1).startsWith("(")) { // don't match projections
+            return model -> {
+                // The trait name might be relative to the prelude, so ensure it's absolute.
+                String absoluteShapeId = Trait.makeAbsoluteName(path.get(1));
+                ShapeId trait = ShapeId.from(absoluteShapeId);
+                return model.getShapesWithTrait(trait);
+            };
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -68,9 +90,9 @@ final class AttributeSelector implements InternalSelector {
     }
 
     private boolean matchesAttribute(Shape shape, Context stack) {
-        AttributeValue lhs = key.apply(shape, stack.getVars());
+        AttributeValue lhs = AttributeValue.shape(shape, stack.getVars()).getPath(path);
 
-        if (expected.isEmpty()) {
+        if (comparator == null) {
             return lhs.isPresent();
         }
 

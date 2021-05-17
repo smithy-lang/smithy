@@ -33,6 +33,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.knowledge.HttpBindingIndex;
+import software.amazon.smithy.model.knowledge.KnowledgeIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
@@ -241,5 +243,35 @@ public class ModelTest {
     public void canCreateKnowledgeIndexUsingReflection() {
         Model model = Model.builder().build();
         model.getKnowledge(TopDownIndex.class);
+    }
+
+    @Test
+    public void doesNotDeadlockWhenReenteringBlackboard() {
+        Model model = Model.builder().build();
+        model.getKnowledge(FooFooFoo.class, FooFooFoo::new);
+    }
+
+    private static final class FooFooFoo implements KnowledgeIndex {
+        public FooFooFoo(Model model) {
+            model.getKnowledge(Baz.class, Baz::new);
+        }
+    }
+
+    private static final class Baz implements KnowledgeIndex {
+        public Baz(Model model) {
+            model.getKnowledge(Bar.class, Bar::new);
+        }
+    }
+
+    private static final class Bar implements KnowledgeIndex {
+        public Bar(Model model) {
+            model.getKnowledge(Qux.class, Qux::new);
+        }
+    }
+
+    private static final class Qux implements KnowledgeIndex {
+        public Qux(Model model) {
+            HttpBindingIndex.of(model);
+        }
     }
 }

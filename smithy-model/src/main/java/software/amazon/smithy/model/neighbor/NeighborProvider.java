@@ -99,8 +99,11 @@ public interface NeighborProvider {
      * @return Returns the created neighbor provider.
      */
     static NeighborProvider precomputed(Model model, NeighborProvider provider) {
-        Map<Shape, List<Relationship>> relationships = new HashMap<>();
-        model.shapes().forEach(shape -> relationships.put(shape, provider.getNeighbors(shape)));
+        Set<Shape> shapes = model.toSet();
+        Map<Shape, List<Relationship>> relationships = new HashMap<>(shapes.size());
+        for (Shape shape : shapes) {
+            relationships.put(shape, provider.getNeighbors(shape));
+        }
         return shape -> relationships.getOrDefault(shape, ListUtils.of());
     }
 
