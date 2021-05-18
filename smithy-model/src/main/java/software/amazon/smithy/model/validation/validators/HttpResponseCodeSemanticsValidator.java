@@ -38,16 +38,12 @@ public final class HttpResponseCodeSemanticsValidator extends AbstractValidator 
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
 
-        for (Shape shape : model.getShapesWithTrait(HttpTrait.class)) {
-            shape.asOperationShape().ifPresent(operation -> {
-                validateOperationsWithHttpTrait(operation).ifPresent(events::add);
-            });
+        for (OperationShape operation : model.getOperationShapesWithTrait(HttpTrait.class)) {
+            validateOperationsWithHttpTrait(operation).ifPresent(events::add);
         }
 
-        for (Shape shape : model.getShapesWithTrait(ErrorTrait.class)) {
-            shape.asStructureShape().ifPresent(structure -> {
-                validateError(structure, structure.expectTrait(ErrorTrait.class)).ifPresent(events::add);
-            });
+        for (StructureShape structure : model.getStructureShapesWithTrait(ErrorTrait.class)) {
+            validateError(structure, structure.expectTrait(ErrorTrait.class)).ifPresent(events::add);
         }
 
         return events;

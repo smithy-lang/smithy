@@ -46,17 +46,16 @@ public final class HttpQueryParamsTraitValidator extends AbstractValidator {
     private List<ValidationEvent> validateQueryTraitUsage(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
 
-        for (Shape shape : model.getShapesWithTrait(HttpQueryParamsTrait.class)) {
-            shape.asMemberShape()
-                .flatMap(member -> model.getShape(member.getContainer())
-                .flatMap(Shape::asStructureShape))
-                .ifPresent(structure -> {
-                    // Gather the names of member shapes, as strings, that apply HttpQuery traits
-                    List<String> queryShapes = getMembersWithTrait(structure, HttpQueryTrait.class);
-                    if (queryShapes.size() > 0) {
-                        events.add(createNote(structure, shape.toShapeId().getMember().get(), queryShapes));
-                    }
-                });
+        for (MemberShape member : model.getMemberShapesWithTrait(HttpQueryParamsTrait.class)) {
+            model.getShape(member.getContainer())
+                    .flatMap(Shape::asStructureShape)
+                    .ifPresent(structure -> {
+                        // Gather the names of member shapes, as strings, that apply HttpQuery traits
+                        List<String> queryShapes = getMembersWithTrait(structure, HttpQueryTrait.class);
+                        if (queryShapes.size() > 0) {
+                            events.add(createNote(structure, member.getMemberName(), queryShapes));
+                        }
+                    });
         }
 
         return events;

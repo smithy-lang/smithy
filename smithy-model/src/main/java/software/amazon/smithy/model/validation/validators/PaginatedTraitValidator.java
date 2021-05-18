@@ -68,11 +68,9 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         TopDownIndex topDown = TopDownIndex.of(model);
         List<ValidationEvent> events = new ArrayList<>();
 
-        for (Shape shape : model.getShapesWithTrait(PaginatedTrait.class)) {
-            shape.asOperationShape().ifPresent(operation -> {
-                PaginatedTrait paginatedTrait = shape.expectTrait(PaginatedTrait.class);
-                events.addAll(validateOperation(model, topDown, opIndex, operation, paginatedTrait));
-            });
+        for (OperationShape operation : model.getOperationShapesWithTrait(PaginatedTrait.class)) {
+            PaginatedTrait paginatedTrait = operation.expectTrait(PaginatedTrait.class);
+            events.addAll(validateOperation(model, topDown, opIndex, operation, paginatedTrait));
         }
 
         return events;

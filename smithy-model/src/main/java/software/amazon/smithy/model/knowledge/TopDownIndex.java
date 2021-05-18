@@ -62,11 +62,11 @@ public final class TopDownIndex implements KnowledgeIndex {
             }
         };
 
-        for (ResourceShape resource : model.toSet(ResourceShape.class)) {
+        for (ResourceShape resource : model.getResourceShapes()) {
             findContained(resource.getId(), walker.walkShapes(resource, filter));
         }
 
-        for (ServiceShape service : model.toSet(ServiceShape.class)) {
+        for (ServiceShape service : model.getServiceShapes()) {
             findContained(service.getId(), walker.walkShapes(service, filter));
         }
     }

@@ -43,7 +43,7 @@ public final class OperationIndex implements KnowledgeIndex {
     private final Map<ShapeId, List<StructureShape>> errors = new HashMap<>();
 
     public OperationIndex(Model model) {
-        for (OperationShape operation : model.toSet(OperationShape.class)) {
+        for (OperationShape operation : model.getOperationShapes()) {
             operation.getInput()
                     .flatMap(id -> getStructure(model, id))
                     .ifPresent(shape -> inputs.put(operation.getId(), shape));

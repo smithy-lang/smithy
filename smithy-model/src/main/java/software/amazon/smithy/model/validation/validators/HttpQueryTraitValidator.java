@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
@@ -48,17 +49,15 @@ public final class HttpQueryTraitValidator extends AbstractValidator {
         Map<StructureShape, Map<String, Set<String>>> queryBindings = new HashMap<>();
 
         // Find all members in the model that have the HttpQuery trait.
-        for (Shape shape : model.getShapesWithTrait(HttpQueryTrait.class)) {
-            shape.asMemberShape().ifPresent(member -> {
-                // Get the structure of the member. Validation events are going to be
-                // applied to the structure and not to members.
-                model.getShape(member.getContainer()).flatMap(Shape::asStructureShape).ifPresent(structure -> {
-                    HttpQueryTrait trait = shape.expectTrait(HttpQueryTrait.class);
-                    queryBindings
-                            .computeIfAbsent(structure, s -> new HashMap<>())
-                            .computeIfAbsent(trait.getValue(), v -> new HashSet<>())
-                            .add(member.getMemberName());
-                });
+        for (MemberShape member : model.getMemberShapesWithTrait(HttpQueryTrait.class)) {
+            // Get the structure of the member. Validation events are going to be
+            // applied to the structure and not to members.
+            model.getShape(member.getContainer()).flatMap(Shape::asStructureShape).ifPresent(structure -> {
+                HttpQueryTrait trait = member.expectTrait(HttpQueryTrait.class);
+                queryBindings
+                        .computeIfAbsent(structure, s -> new HashMap<>())
+                        .computeIfAbsent(trait.getValue(), v -> new HashSet<>())
+                        .add(member.getMemberName());
             });
         }
 

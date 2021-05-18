@@ -27,7 +27,6 @@ import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -79,15 +78,13 @@ public final class HttpHeaderTraitValidator extends AbstractValidator {
 
         List<ValidationEvent> events = new ArrayList<>();
 
-        for (StructureShape structure : model.toSet(StructureShape.class)) {
+        for (StructureShape structure : model.getStructureShapes()) {
             events.addAll(validateStructure(structure));
         }
 
-        for (Shape shape : model.getShapesWithTrait(HttpHeaderTrait.class)) {
-            shape.asMemberShape().ifPresent(member -> {
-                HttpHeaderTrait httpHeaderTrait = member.expectTrait(HttpHeaderTrait.class);
-                validateHeader(member, httpHeaderTrait).ifPresent(events::add);
-            });
+        for (MemberShape member : model.getMemberShapesWithTrait(HttpHeaderTrait.class)) {
+            HttpHeaderTrait httpHeaderTrait = member.expectTrait(HttpHeaderTrait.class);
+            validateHeader(member, httpHeaderTrait).ifPresent(events::add);
         }
 
         return events;

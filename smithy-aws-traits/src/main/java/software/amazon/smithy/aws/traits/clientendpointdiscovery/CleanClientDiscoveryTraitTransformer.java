@@ -62,15 +62,13 @@ public final class CleanClientDiscoveryTraitTransformer implements ModelTransfor
 
     private Set<Shape> getServicesToUpdate(Model model, Set<ShapeId> removedOperations, Set<ShapeId> removedErrors) {
         Set<Shape> result = new HashSet<>();
-        for (Shape shape : model.getShapesWithTrait(ClientEndpointDiscoveryTrait.class)) {
-            shape.asServiceShape().ifPresent(service -> {
-                ClientEndpointDiscoveryTrait trait = service.expectTrait(ClientEndpointDiscoveryTrait.class);
-                if (removedOperations.contains(trait.getOperation()) || removedErrors.contains(trait.getError())) {
-                    ServiceShape.Builder builder = service.toBuilder();
-                    builder.removeTrait(ClientEndpointDiscoveryTrait.ID);
-                    result.add(builder.build());
-                }
-            });
+        for (ServiceShape service : model.getServiceShapesWithTrait(ClientEndpointDiscoveryTrait.class)) {
+            ClientEndpointDiscoveryTrait trait = service.expectTrait(ClientEndpointDiscoveryTrait.class);
+            if (removedOperations.contains(trait.getOperation()) || removedErrors.contains(trait.getError())) {
+                ServiceShape.Builder builder = service.toBuilder();
+                builder.removeTrait(ClientEndpointDiscoveryTrait.ID);
+                result.add(builder.build());
+            }
         }
         return result;
     }
@@ -92,15 +90,13 @@ public final class CleanClientDiscoveryTraitTransformer implements ModelTransfor
 
         // Get all endpoint discovery operations
         Set<Shape> result = new HashSet<>();
-        for (Shape shape : model.getShapesWithTrait(ClientDiscoveredEndpointTrait.class)) {
-            shape.asOperationShape().ifPresent(operation -> {
-                ClientDiscoveredEndpointTrait trait = operation.expectTrait(ClientDiscoveredEndpointTrait.class);
-                // Only get the ones where discovery is optional, as it is safe to remove in that case.
-                // Only get the ones that aren't still bound to a service that requires endpoint discovery.
-                if (!trait.isRequired() && !stillBoundOperations.contains(operation.getId())) {
-                    result.add(operation.toBuilder().removeTrait(ClientDiscoveredEndpointTrait.ID).build());
-                }
-            });
+        for (OperationShape operation : model.getOperationShapesWithTrait(ClientDiscoveredEndpointTrait.class)) {
+            ClientDiscoveredEndpointTrait trait = operation.expectTrait(ClientDiscoveredEndpointTrait.class);
+            // Only get the ones where discovery is optional, as it is safe to remove in that case.
+            // Only get the ones that aren't still bound to a service that requires endpoint discovery.
+            if (!trait.isRequired() && !stillBoundOperations.contains(operation.getId())) {
+                result.add(operation.toBuilder().removeTrait(ClientDiscoveredEndpointTrait.ID).build());
+            }
         }
         return result;
     }

@@ -49,10 +49,8 @@ public final class MqttSubscribeOutputValidator extends AbstractValidator {
     public List<ValidationEvent> validate(Model model) {
         EventStreamIndex eventStreamIndex = EventStreamIndex.of(model);
         List<ValidationEvent> events = new ArrayList<>();
-        for (Shape shape : model.getShapesWithTrait(SubscribeTrait.class)) {
-            shape.asOperationShape().ifPresent(operation -> {
-                events.addAll(validateOperation(model, operation, eventStreamIndex));
-            });
+        for (OperationShape operation : model.getOperationShapesWithTrait(SubscribeTrait.class)) {
+            events.addAll(validateOperation(model, operation, eventStreamIndex));
         }
         return events;
     }
