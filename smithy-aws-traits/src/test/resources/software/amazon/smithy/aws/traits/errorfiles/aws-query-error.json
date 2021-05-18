@@ -1,0 +1,20 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "smithy.example#InvalidThingException": {
+            "type": "structure",
+            "members": {
+                "message": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "aws.protocols#awsQueryError": {
+                    "code": "InvalidThing",
+                    "httpResponseCode": 400
+                },
+                "smithy.api#error": "client"
+            }
+        }
+    }
+}

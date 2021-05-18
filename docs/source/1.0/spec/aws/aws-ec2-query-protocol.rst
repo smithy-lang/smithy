@@ -84,7 +84,7 @@ Value type
     ``string``
 
 .. important::
-    The ``aws.protocols#ec2QueryName`` MUST only apply when serializing
+    The ``aws.protocols#ec2QueryName`` trait is only used when serializing
     operation inputs using the ``aws.protocols#ec2`` protocol.
 
 Given the following structure definition:
@@ -92,6 +92,8 @@ Given the following structure definition:
 .. tabs::
 
     .. code-tab:: smithy
+
+        use aws.protocols#ec2QueryName
 
         structure MyStruct {
             @ec2QueryName("foo")

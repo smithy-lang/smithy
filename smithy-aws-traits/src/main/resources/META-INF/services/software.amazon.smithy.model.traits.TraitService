@@ -9,8 +9,9 @@ software.amazon.smithy.aws.traits.auth.UnsignedPayloadTrait$Provider
 software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientEndpointDiscoveryTrait$Provider
 software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientEndpointDiscoveryIdTrait$Provider
 software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientDiscoveredEndpointTrait$Provider
-software.amazon.smithy.aws.traits.protocols.Ec2QueryNameTrait$Provider
+software.amazon.smithy.aws.traits.protocols.AwsQueryErrorTrait$Provider
 software.amazon.smithy.aws.traits.protocols.AwsQueryTrait$Provider
+software.amazon.smithy.aws.traits.protocols.Ec2QueryNameTrait$Provider
 software.amazon.smithy.aws.traits.protocols.Ec2QueryTrait$Provider
 software.amazon.smithy.aws.traits.protocols.RestJson1Trait$Provider
 software.amazon.smithy.aws.traits.protocols.RestXmlTrait$Provider

@@ -58,6 +58,85 @@ See
             }
         }
 
+.. _aws.protocols#awsQueryError-trait:
+
+-------------------------------------
+``aws.protocols#awsQueryError`` trait
+-------------------------------------
+
+Summary
+    Provides a :ref:`custom "Code" value <awsQuery-error-code>` for
+    ``awsQuery`` errors and an :ref:`HTTP response code <awsQuery-error-response-code>`.
+    The "Code" of an ``awsQuery`` error is used by clients to determine which
+    type of error was encountered.
+Trait selector
+    ``structure [trait|error]``
+
+    The ``httpError`` trait can only be applied to :ref:`structure <structure>`
+    shapes that also have the :ref:`error-trait`.
+Value type
+    ``structure``
+
+The ``awsQueryError`` trait is a structure that supports the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 25 65
+
+    * - Property
+      - Type
+      - Description
+    * - code
+      - ``string``
+      - **Required** The value used to distinguish this error shape during
+        client deserialization.
+    * - httpResponseCode
+      - ``integer``
+      - **Required** The HTTP response code used on a response that contains
+        this error shape.
+
+.. important::
+    The ``aws.protocols#awsQueryError`` trait is only used when serializing
+    operation errors using the ``aws.protocols#query`` protocol.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        use aws.protocols#awsQueryError
+
+        @awsQueryError(
+            code: "InvalidThing",
+            httpResponseCode: 400,
+        )
+        @error("client")
+        structure InvalidThingException {
+            message: String
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#InvalidThingException": {
+                    "type": "structure",
+                    "members": {
+                        "message": {
+                            "target": "smithy.api#String"
+                        }
+                    },
+                    "traits": {
+                        "aws.protocols#awsQueryError": {
+                            "code": "InvalidThing",
+                            "httpResponseCode": 400
+                        },
+                        "smithy.api#error": "client"
+                    }
+                }
+            }
+        }
+
 ----------------
 Supported traits
 ----------------
@@ -95,6 +174,11 @@ that affect serialization:
         for the targeted shape.
     * - :ref:`timestampFormat <timestampFormat-trait>`
       - Defines a custom timestamp serialization format.
+    * - :ref:`awsQueryError <aws.protocols#awsQueryError-trait>`
+      - Provides a :ref:`custom "Code" value <awsQuery-error-code>` for
+        ``awsQuery`` errors and an :ref:`HTTP response code <awsQuery-error-response-code>`.
+        The "Code" of an ``awsQuery`` error is used by clients to determine
+        which type of error was encountered.
 
 .. important::
 
@@ -335,14 +419,14 @@ XML shape serialization
 Operation error serialization
 -----------------------------
 
-Error responses in the ``awsQuery`` protocol are wrapped within an XML root
-node named ``ErrorResponse``. A nested element, named ``Error``, contains the
-serialized error structure members.
+Error response bodies in the ``awsQuery`` protocol are wrapped within an XML
+root node named ``ErrorResponse``. A nested element, named ``Error``, contains
+the serialized error structure members. :ref:`The HTTP response code is a
+resolved value. <awsQuery-error-response-code>`
 
 Serialized error shapes MUST also contain an additional child element ``Code``
-that contains only the :token:`shape name <identifier>` of the error's
-:ref:`shape-id`. This can be used to distinguish which specific error has been
-serialized in the response.
+that contains the :ref:`resolved error code value <awsQuery-error-code>`. This
+is used to distinguish which specific error is serialized in the response.
 
 .. code-block:: xml
 
@@ -356,6 +440,31 @@ serialized in the response.
         <RequestId>foo-id</RequestId>
     </ErrorResponse>
 
+
+.. _awsQuery-error-response-code:
+
+Error HTTP response code resolution
+-----------------------------------
+
+The value of the HTTP response code for the error is resolved using the
+following process:
+
+1. Use the value of the ``httpResponseCode`` member of the :ref:`aws.protocols#awsQueryError-trait`
+   applied to the error structure, if present.
+2. Use the value ``400`` if the value of the :ref:`error-trait` is ``"client"``.
+3. Use the value ``500``.
+
+.. _awsQuery-error-code:
+
+Error "Code" resolution
+-----------------------
+
+The value of the "Code" element serialized in the error is resolved using the
+following process:
+
+1. Use the value of the ``code`` member of the :ref:`aws.protocols#awsQueryError-trait`
+   applied to the error structure, if present.
+2. The :token:`shape name <identifier>` of the error's :ref:`shape-id`.
 
 .. _awsQuery-compliance-tests:
 
