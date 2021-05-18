@@ -159,8 +159,12 @@ public final class Model implements ToSmithyBuilder<Model> {
     private TraitCache getTraitCache() {
         TraitCache cache = traitCache;
         if (cache == null) {
-            cache = new TraitCache(this.shapeMap.values());
-            traitCache = cache;
+            synchronized (this) {
+                cache = traitCache;
+                if (cache == null) {
+                    traitCache = cache = new TraitCache(this.shapeMap.values());
+                }
+            }
         }
         return cache;
     }
