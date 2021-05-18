@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
@@ -31,6 +32,10 @@ import software.amazon.smithy.model.shapes.Shape;
  * Provides a toString method that prints the expression.
  */
 final class WrappedSelector implements Selector {
+
+    /** Uses parallel streams when the model size exceeds this number. */
+    private static final int PARALLEL_THRESHOLD = 10000;
+
     private final String expression;
     private final InternalSelector delegate;
     private final Function<Model, Collection<? extends Shape>> optimizer;
@@ -58,15 +63,18 @@ final class WrappedSelector implements Selector {
 
     @Override
     public Set<Shape> select(Model model) {
-        Set<Shape> result = new HashSet<>();
-        // This is more optimized than using shapes() and collecting to a Set
-        // because it avoids creating streams and buffering the result of
-        // pushing each shape into internal selectors.
-        pushShapes(model, (ctx, s) -> {
-            result.add(s);
-            return true;
-        });
-        return result;
+        if (isParallel(model)) {
+            return shapes(model).collect(Collectors.toSet());
+        } else {
+            Set<Shape> result = new HashSet<>();
+            // This is more optimized than using shapes() for smaller models
+            // that aren't parallelized.
+            pushShapes(model, (ctx, s) -> {
+                result.add(s);
+                return true;
+            });
+            return result;
+        }
     }
 
     @Override
@@ -82,10 +90,9 @@ final class WrappedSelector implements Selector {
 
     @Override
     public Stream<Shape> shapes(Model model) {
-        Context context = createContext(model);
         return streamStartingShape(model).flatMap(shape -> {
             List<Shape> result = new ArrayList<>();
-            delegate.push(context.clearVars(), shape, (ctx, s) -> {
+            delegate.push(createContext(model), shape, (ctx, s) -> {
                 result.add(s);
                 return true;
             });
@@ -95,10 +102,9 @@ final class WrappedSelector implements Selector {
 
     @Override
     public Stream<ShapeMatch> matches(Model model) {
-        Context context = createContext(model);
         return streamStartingShape(model).flatMap(shape -> {
             List<ShapeMatch> result = new ArrayList<>();
-            delegate.push(context.clearVars(), shape, (ctx, s) -> {
+            delegate.push(createContext(model), shape, (ctx, s) -> {
                 result.add(new ShapeMatch(s, ctx.getVars()));
                 return true;
             });
@@ -121,6 +127,19 @@ final class WrappedSelector implements Selector {
     }
 
     private Stream<? extends Shape> streamStartingShape(Model model) {
-        return optimizer != null ? optimizer.apply(model).stream() : model.shapes();
+        Stream<? extends Shape> stream = optimizer != null
+                ? optimizer.apply(model).stream()
+                : model.shapes();
+
+        // Use a parallel stream for larger models.
+        if (isParallel(model)) {
+            stream = stream.parallel();
+        }
+
+        return stream;
+    }
+
+    private boolean isParallel(Model model) {
+        return model.getShapeIds().size() >= PARALLEL_THRESHOLD;
     }
 }
