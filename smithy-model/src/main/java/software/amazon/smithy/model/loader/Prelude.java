@@ -75,6 +75,14 @@ public final class Prelude {
         private static Model loadPrelude() {
             return Model.assembler()
                     .disablePrelude()
+                    // Model validation is disabled when loading the prelude
+                    // because the prelude is validated during unit tests and
+                    // the prelude is immutable. However, if the prelude is
+                    // broken for whatever reason, ERROR events encountered
+                    // when performing model validation that uses the prelude
+                    // will still cause an error, meaning the prelude is still
+                    // validated when actually loading and using other models.
+                    .disableValidation()
                     .traitFactory(ModelAssembler.LazyTraitFactoryHolder.INSTANCE)
                     .addImport(Prelude.class.getResource("prelude.smithy"))
                     .assemble()
