@@ -27,6 +27,7 @@ $version: "1.0"
 
 namespace aws.protocoltests.query
 
+use aws.protocols#awsQueryError
 use aws.protocols#awsQuery
 use smithy.test#httpResponseTests
 
@@ -37,7 +38,7 @@ use smithy.test#httpResponseTests
 /// 3. A BadRequest error.
 operation GreetingWithErrors {
     output: GreetingWithErrorsOutput,
-    errors: [InvalidGreeting, ComplexError]
+    errors: [InvalidGreeting, ComplexError, CustomCodeError]
 }
 
 apply GreetingWithErrors @httpResponseTests([
@@ -142,3 +143,38 @@ apply ComplexError @httpResponseTests([
 structure ComplexNestedErrorData {
     Foo: String,
 }
+
+@awsQueryError(
+    code: "Customized",
+    httpResponseCode: 402,
+)
+@error("client")
+structure CustomCodeError {
+    Message: String,
+}
+
+apply CustomCodeError @httpResponseTests([
+    {
+        id: "QueryCustomizedError",
+        documentation: "Parses customized XML errors",
+        protocol: awsQuery,
+        params: {
+            Message: "Hi"
+        },
+        code: 402,
+        headers: {
+            "Content-Type": "text/xml"
+        },
+        body: """
+              <ErrorResponse>
+                 <Error>
+                    <Type>Sender</Type>
+                    <Code>Customized</Code>
+                    <Message>Hi</Message>
+                 </Error>
+                 <RequestId>foo-id</RequestId>
+              </ErrorResponse>
+              """,
+        bodyMediaType: "application/xml",
+    }
+])
