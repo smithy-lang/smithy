@@ -128,12 +128,12 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
                 relationship(shape, RelationshipType.INSTANCE_OPERATION, id)));
 
         // Find resource shapes that bind this resource to it.
-        for (ResourceShape resource : model.toSet(ResourceShape.class)) {
+        for (ResourceShape resource : model.getResourceShapes()) {
             addServiceAndResourceBindings(result, shape, resource);
         }
 
         // Find service shapes that bind this resource to it.
-        for (ServiceShape service : model.toSet(ServiceShape.class)) {
+        for (ServiceShape service : model.getServiceShapes()) {
             addServiceAndResourceBindings(result, shape, service);
         }
 

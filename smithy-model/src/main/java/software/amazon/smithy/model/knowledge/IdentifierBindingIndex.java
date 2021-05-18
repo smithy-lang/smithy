@@ -53,7 +53,7 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
 
     public IdentifierBindingIndex(Model model) {
         OperationIndex operationIndex = OperationIndex.of(model);
-        for (ResourceShape resource : model.toSet(ResourceShape.class)) {
+        for (ResourceShape resource : model.getResourceShapes()) {
             processResource(resource, operationIndex, model);
         }
     }

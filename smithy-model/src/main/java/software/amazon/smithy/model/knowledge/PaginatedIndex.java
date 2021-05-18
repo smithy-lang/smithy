@@ -49,7 +49,7 @@ public final class PaginatedIndex implements KnowledgeIndex {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         OperationIndex opIndex = OperationIndex.of(model);
 
-        for (ServiceShape service : model.toSet(ServiceShape.class)) {
+        for (ServiceShape service : model.getServiceShapes()) {
             PaginatedTrait serviceTrait = service.getTrait(PaginatedTrait.class).orElse(null);
             Map<ShapeId, PaginationInfo> mappings = new HashMap<>();
             for (OperationShape operation : topDownIndex.getContainedOperations(service)) {

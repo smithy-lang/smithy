@@ -47,10 +47,8 @@ public final class ArnIndex implements KnowledgeIndex {
 
     public ArnIndex(Model model) {
         // Pre-compute the ARN services.
-        for (Shape shape : model.getShapesWithTrait(ServiceTrait.class)) {
-            shape.asServiceShape().ifPresent(service -> {
-                arnServices.put(service.getId(), service.expectTrait(ServiceTrait.class).getArnNamespace());
-            });
+        for (Shape service : model.getServiceShapesWithTrait(ServiceTrait.class)) {
+            arnServices.put(service.getId(), service.expectTrait(ServiceTrait.class).getArnNamespace());
         }
 
         // Pre-compute all of the ArnTemplates in a service shape.

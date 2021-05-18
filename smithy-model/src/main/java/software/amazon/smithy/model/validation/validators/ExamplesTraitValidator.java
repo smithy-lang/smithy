@@ -34,10 +34,8 @@ public final class ExamplesTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
-        for (Shape shape : model.getShapesWithTrait(ExamplesTrait.class)) {
-            shape.asOperationShape().ifPresent(operation -> {
-                events.addAll(validateExamples(model, operation, operation.expectTrait(ExamplesTrait.class)));
-            });
+        for (OperationShape operation : model.getOperationShapesWithTrait(ExamplesTrait.class)) {
+            events.addAll(validateExamples(model, operation, operation.expectTrait(ExamplesTrait.class)));
         }
 
         return events;

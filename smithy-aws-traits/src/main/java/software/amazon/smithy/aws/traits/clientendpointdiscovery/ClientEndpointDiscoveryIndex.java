@@ -41,25 +41,23 @@ public final class ClientEndpointDiscoveryIndex implements KnowledgeIndex {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         OperationIndex opIndex = OperationIndex.of(model);
 
-        for (Shape shape : model.getShapesWithTrait(ClientEndpointDiscoveryTrait.class)) {
-            shape.asServiceShape().ifPresent(service -> {
-                ClientEndpointDiscoveryTrait trait = service.expectTrait(ClientEndpointDiscoveryTrait.class);
-                ShapeId endpointOperationId = trait.getOperation();
-                ShapeId endpointErrorId = trait.getError();
+        for (ServiceShape service : model.getServiceShapesWithTrait(ClientEndpointDiscoveryTrait.class)) {
+            ClientEndpointDiscoveryTrait trait = service.expectTrait(ClientEndpointDiscoveryTrait.class);
+            ShapeId endpointOperationId = trait.getOperation();
+            ShapeId endpointErrorId = trait.getError();
 
-                Optional<OperationShape> endpointOperation = model.getShape(endpointOperationId)
-                        .flatMap(Shape::asOperationShape);
-                Optional<StructureShape> endpointError = model.getShape(endpointErrorId)
-                        .flatMap(Shape::asStructureShape);
+            Optional<OperationShape> endpointOperation = model.getShape(endpointOperationId)
+                    .flatMap(Shape::asOperationShape);
+            Optional<StructureShape> endpointError = model.getShape(endpointErrorId)
+                    .flatMap(Shape::asStructureShape);
 
-                if (endpointOperation.isPresent() && endpointError.isPresent()) {
-                    Map<ShapeId, ClientEndpointDiscoveryInfo> serviceInfo = getOperations(
-                            service, endpointOperation.get(), endpointError.get(), topDownIndex, opIndex);
-                    if (!serviceInfo.isEmpty()) {
-                        endpointDiscoveryInfo.put(service.getId(), serviceInfo);
-                    }
+            if (endpointOperation.isPresent() && endpointError.isPresent()) {
+                Map<ShapeId, ClientEndpointDiscoveryInfo> serviceInfo = getOperations(
+                        service, endpointOperation.get(), endpointError.get(), topDownIndex, opIndex);
+                if (!serviceInfo.isEmpty()) {
+                    endpointDiscoveryInfo.put(service.getId(), serviceInfo);
                 }
-            });
+            }
         }
     }
 

@@ -22,7 +22,6 @@ import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.MapUtils;
@@ -44,10 +43,8 @@ public final class EventSourceValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
-        for (Shape shape : model.getShapesWithTrait(ServiceTrait.class)) {
-            shape.asServiceShape()
-                    .flatMap(service -> validateService(service, service.expectTrait(ServiceTrait.class)))
-                    .ifPresent(events::add);
+        for (ServiceShape service : model.getServiceShapesWithTrait(ServiceTrait.class)) {
+            validateService(service, service.expectTrait(ServiceTrait.class)).ifPresent(events::add);
         }
         return events;
     }

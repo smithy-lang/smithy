@@ -24,7 +24,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.HttpBinding;
 import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.IdempotentTrait;
 import software.amazon.smithy.model.traits.ReadonlyTrait;
@@ -69,10 +68,8 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
 
         HttpBindingIndex bindingIndex = HttpBindingIndex.of(model);
         List<ValidationEvent> events = new ArrayList<>();
-        for (Shape shape : model.getShapesWithTrait(HttpTrait.class)) {
-            shape.asOperationShape().ifPresent(operation -> {
-                events.addAll(validateOperation(bindingIndex, operation, operation.expectTrait(HttpTrait.class)));
-            });
+        for (OperationShape operation : model.getOperationShapesWithTrait(HttpTrait.class)) {
+            events.addAll(validateOperation(bindingIndex, operation, operation.expectTrait(HttpTrait.class)));
         }
 
         return events;

@@ -60,7 +60,7 @@ public class NullableIndex implements KnowledgeIndex {
             }
         }
 
-        for (MemberShape member : model.toSet(MemberShape.class)) {
+        for (MemberShape member : model.getMemberShapes()) {
             if (isMemberNullable(model, member)) {
                 nullableShapes.add(member.getId());
             }

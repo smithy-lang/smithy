@@ -68,10 +68,8 @@ public final class HostLabelTraitValidator extends AbstractValidator {
 
         // Validate all operation shapes with the `endpoint` trait.
         List<ValidationEvent> events = new ArrayList<>();
-        for (Shape shape : model.getShapesWithTrait(EndpointTrait.class)) {
-            shape.asOperationShape().ifPresent(operation -> {
-                events.addAll(validateStructure(model, operation, operation.expectTrait(EndpointTrait.class)));
-            });
+        for (OperationShape operation : model.getOperationShapesWithTrait(EndpointTrait.class)) {
+            events.addAll(validateStructure(model, operation, operation.expectTrait(EndpointTrait.class)));
         }
 
         return events;

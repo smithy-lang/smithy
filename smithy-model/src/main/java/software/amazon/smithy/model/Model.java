@@ -33,11 +33,32 @@ import software.amazon.smithy.model.knowledge.KnowledgeIndex;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.BigDecimalShape;
+import software.amazon.smithy.model.shapes.BigIntegerShape;
+import software.amazon.smithy.model.shapes.BlobShape;
+import software.amazon.smithy.model.shapes.BooleanShape;
+import software.amazon.smithy.model.shapes.ByteShape;
+import software.amazon.smithy.model.shapes.DocumentShape;
+import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.FloatShape;
+import software.amazon.smithy.model.shapes.IntegerShape;
+import software.amazon.smithy.model.shapes.ListShape;
+import software.amazon.smithy.model.shapes.LongShape;
+import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.NumberShape;
+import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.ResourceShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShortShape;
+import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.TraitFactory;
@@ -190,6 +211,424 @@ public final class Model implements ToSmithyBuilder<Model> {
     public Set<Shape> getShapesWithTrait(Class<? extends Trait> trait) {
         Map<Class<? extends Trait>, Set<Shape>> mappings = getTraitCache().traitsToShapes;
         return Collections.unmodifiableSet(mappings.getOrDefault(trait, Collections.emptySet()));
+    }
+
+    /**
+     * Gets an immutable set of all bigDecimals in the Model.
+     *
+     * @return Returns the Set of {@code bigDecimals}s.
+     */
+    public Set<BigDecimalShape> getBigDecimalShapes() {
+        return toSet(BigDecimalShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all bigDecimals in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code bigdecimal}s that have a specific trait.
+     */
+    public Set<BigDecimalShape> getBigDecimalShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), BigDecimalShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all bigIntegers in the Model.
+     *
+     * @return Returns the Set of {@code bigIntegers}s.
+     */
+    public Set<BigIntegerShape> getBigIntegerShapes() {
+        return toSet(BigIntegerShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all bigIntegers in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code bigIntegers}s that have a specific trait.
+     */
+    public Set<BigIntegerShape> getBigIntegerShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), BigIntegerShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all blobs in the Model.
+     *
+     * @return Returns the Set of {@code blob}s.
+     */
+    public Set<BlobShape> getBlobShapes() {
+        return toSet(BlobShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all blobs in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code blob}s that have a specific trait.
+     */
+    public Set<BlobShape> getBlobShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), BlobShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all booleans in the Model.
+     *
+     * @return Returns the Set of {@code boolean}s.
+     */
+    public Set<BooleanShape> getBooleanShapes() {
+        return toSet(BooleanShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all booleans in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code boolean}s that have a specific trait.
+     */
+    public Set<BooleanShape> getBooleanShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), BooleanShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all bytes in the Model.
+     *
+     * @return Returns the Set of {@code byte}s.
+     */
+    public Set<ByteShape> getByteShapes() {
+        return toSet(ByteShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all bytes in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code byte}s that have a specific trait.
+     */
+    public Set<ByteShape> getByteShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), ByteShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all documents in the Model.
+     *
+     * @return Returns the Set of {@code document}s.
+     */
+    public Set<DocumentShape> getDocumentShapes() {
+        return toSet(DocumentShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all documents in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code document}s that have a specific trait.
+     */
+    public Set<DocumentShape> getDocumentShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), DocumentShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all doubles in the Model.
+     *
+     * @return Returns the Set of {@code double}s.
+     */
+    public Set<DoubleShape> getDoubleShapes() {
+        return toSet(DoubleShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all doubles in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code double}s that have a specific trait.
+     */
+    public Set<DoubleShape> getDoubleShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), DoubleShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all floats in the Model.
+     *
+     * @return Returns the Set of {@code float}s.
+     */
+    public Set<FloatShape> getFloatShapes() {
+        return toSet(FloatShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all floats in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code float}s that have a specific trait.
+     */
+    public Set<FloatShape> getFloatShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), FloatShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all integers in the Model.
+     *
+     * @return Returns the Set of {@code integer}s.
+     */
+    public Set<IntegerShape> getIntegerShapes() {
+        return toSet(IntegerShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all integers in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code integer}s that have a specific trait.
+     */
+    public Set<IntegerShape> getIntegerShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), IntegerShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all lists in the Model.
+     *
+     * @return Returns the Set of {@code list}s.
+     */
+    public Set<ListShape> getListShapes() {
+        return toSet(ListShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all lists in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code list}s that have a specific trait.
+     */
+    public Set<ListShape> getListShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), ListShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all longs in the Model.
+     *
+     * @return Returns the Set of {@code long}s.
+     */
+    public Set<LongShape> getLongShapes() {
+        return toSet(LongShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all longs in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code long}s that have a specific trait.
+     */
+    public Set<LongShape> getLongShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), LongShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all maps in the Model.
+     *
+     * @return Returns the Set of {@code map}s.
+     */
+    public Set<MapShape> getMapShapes() {
+        return toSet(MapShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all maps in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code map}s that have a specific trait.
+     */
+    public Set<MapShape> getMapShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), MapShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all members in the Model.
+     *
+     * @return Returns the Set of {@code member}s.
+     */
+    public Set<MemberShape> getMemberShapes() {
+        return toSet(MemberShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all members in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code member}s that have a specific trait.
+     */
+    public Set<MemberShape> getMemberShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), MemberShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all operations in the Model.
+     *
+     * @return Returns the Set of {@code operation}s.
+     */
+    public Set<OperationShape> getOperationShapes() {
+        return toSet(OperationShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all operations in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code operation}s that have a specific trait.
+     */
+    public Set<OperationShape> getOperationShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), OperationShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all resources in the Model.
+     *
+     * @return Returns the Set of {@code resource}s.
+     */
+    public Set<ResourceShape> getResourceShapes() {
+        return toSet(ResourceShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all resources in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code resource}s that have a specific trait.
+     */
+    public Set<ResourceShape> getResourceShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), ResourceShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all services in the Model.
+     *
+     * @return Returns the Set of {@code service}s.
+     */
+    public Set<ServiceShape> getServiceShapes() {
+        return toSet(ServiceShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all services in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code service}s that have a specific trait.
+     */
+    public Set<ServiceShape> getServiceShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), ServiceShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all sets in the Model.
+     *
+     * @return Returns the Set of {@code set}s.
+     */
+    public Set<SetShape> getSetShapes() {
+        return toSet(SetShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all sets in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code set}s that have a specific trait.
+     */
+    public Set<SetShape> getSetShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), SetShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all shorts in the Model.
+     *
+     * @return Returns the Set of {@code short}s.
+     */
+    public Set<ShortShape> getShortShapes() {
+        return toSet(ShortShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all shorts in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code short}s that have a specific trait.
+     */
+    public Set<ShortShape> getShortShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), ShortShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all strings in the Model.
+     *
+     * @return Returns the Set of {@code string}s.
+     */
+    public Set<StringShape> getStringShapes() {
+        return toSet(StringShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all strings in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code string}s that have a specific trait.
+     */
+    public Set<StringShape> getStringShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), StringShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all structures in the Model.
+     *
+     * @return Returns the Set of {@code structure}s.
+     */
+    public Set<StructureShape> getStructureShapes() {
+        return toSet(StructureShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all structures in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code structure}s that have a specific trait.
+     */
+    public Set<StructureShape> getStructureShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), StructureShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all timestamps in the Model.
+     *
+     * @return Returns the Set of {@code timestamp}s.
+     */
+    public Set<TimestampShape> getTimestampShapes() {
+        return toSet(TimestampShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all timestamps in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code timestamp}s that have a specific trait.
+     */
+    public Set<TimestampShape> getTimestampShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), TimestampShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all unions in the Model.
+     *
+     * @return Returns the Set of {@code union}s.
+     */
+    public Set<UnionShape> getUnionShapes() {
+        return toSet(UnionShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all unions in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code union}s that have a specific trait.
+     */
+    public Set<UnionShape> getUnionShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), UnionShape.class);
     }
 
     /**

@@ -48,8 +48,8 @@ public final class ArnTemplateValidator extends AbstractValidator {
     public List<ValidationEvent> validate(Model model) {
         ArnIndex arnIndex = ArnIndex.of(model);
         List<ValidationEvent> events = new ArrayList<>();
-        for (Shape shape : model.getShapesWithTrait(ServiceTrait.class)) {
-            shape.asServiceShape().ifPresent(service -> events.addAll(validateService(model, arnIndex, service)));
+        for (ServiceShape service : model.getServiceShapesWithTrait(ServiceTrait.class)) {
+            events.addAll(validateService(model, arnIndex, service));
         }
         return events;
     }

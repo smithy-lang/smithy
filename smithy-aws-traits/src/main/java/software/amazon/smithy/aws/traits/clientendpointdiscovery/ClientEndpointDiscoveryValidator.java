@@ -48,10 +48,8 @@ public final class ClientEndpointDiscoveryValidator extends AbstractValidator {
         OperationIndex opIndex = OperationIndex.of(model);
 
         Map<ServiceShape, ClientEndpointDiscoveryTrait> endpointDiscoveryServices = new HashMap<>();
-        for (Shape shape : model.getShapesWithTrait(ClientEndpointDiscoveryTrait.class)) {
-            shape.asServiceShape().ifPresent(service -> {
-                endpointDiscoveryServices.put(service, service.expectTrait(ClientEndpointDiscoveryTrait.class));
-            });
+        for (ServiceShape service : model.getServiceShapesWithTrait(ClientEndpointDiscoveryTrait.class)) {
+            endpointDiscoveryServices.put(service, service.expectTrait(ClientEndpointDiscoveryTrait.class));
         }
 
         List<ValidationEvent> validationEvents = endpointDiscoveryServices.values().stream()
