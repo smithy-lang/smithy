@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -26,19 +26,15 @@ import software.amazon.smithy.model.neighbor.NeighborProvider;
 public final class NeighborProviderIndex implements KnowledgeIndex {
 
     private final NeighborProvider provider;
-    private final NeighborProvider providerWithTraits;
-    private final NeighborProvider reversed;
     private final WeakReference<Model> model;
 
-    // Lazily computed on first access.
+    // These providers are lazily computed on first access.
+    private volatile NeighborProvider reversed;
+    private volatile NeighborProvider providerWithTraits;
     private volatile NeighborProvider reversedWithTraits;
 
     public NeighborProviderIndex(Model model) {
         provider = NeighborProvider.precomputed(model);
-        reversed = NeighborProvider.reverse(model, provider);
-
-        // Lazily caches the result of finding neighbors + traits.
-        providerWithTraits = NeighborProvider.cached(NeighborProvider.withTraitRelationships(model, provider));
 
         // Store a WeakReference to the model since the reversed provider that includes
         // traits is lazily computed.
@@ -64,7 +60,20 @@ public final class NeighborProviderIndex implements KnowledgeIndex {
      * @return Returns the provider.
      */
     public NeighborProvider getProviderWithTraitRelationships() {
-        return providerWithTraits;
+        NeighborProvider result = providerWithTraits;
+
+        if (result == null) {
+            Model model = getOrThrowModel();
+            synchronized (this) {
+                result = providerWithTraits;
+                if (result == null) {
+                    providerWithTraits = result = NeighborProvider.cached(
+                            NeighborProvider.withTraitRelationships(model, provider));
+                }
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -73,7 +82,19 @@ public final class NeighborProviderIndex implements KnowledgeIndex {
      * @return Returns the reversed neighbor provider.
      */
     public NeighborProvider getReverseProvider() {
-        return reversed;
+        NeighborProvider result = reversed;
+
+        if (result == null) {
+            Model model = getOrThrowModel();
+            synchronized (this) {
+                result = reversed;
+                if (result == null) {
+                    reversed = result = NeighborProvider.reverse(model, provider);
+                }
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -82,14 +103,16 @@ public final class NeighborProviderIndex implements KnowledgeIndex {
      * @return Returns the reversed neighbor provider with reverse traits.
      */
     public NeighborProvider getReverseProviderWithTraitRelationships() {
-        // Single-checked idiom: there might be multiple initializations, but
-        // that's ok since the computation isn't *that* expensive and the
-        // computation of the result is "pure".
         NeighborProvider result = reversedWithTraits;
 
         if (result == null) {
-            result = NeighborProvider.reverse(getOrThrowModel(), providerWithTraits);
-            reversedWithTraits = result;
+            synchronized (this) {
+                result = reversedWithTraits;
+                if (result == null) {
+                    NeighborProvider withTraits = getProviderWithTraitRelationships();
+                    reversedWithTraits = result = NeighborProvider.reverse(getOrThrowModel(), withTraits);
+                }
+            }
         }
 
         return result;
