@@ -36,11 +36,9 @@ public final class HttpPrefixHeadersTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
-        for (Shape shape : model.getShapesWithTrait(HttpPrefixHeadersTrait.class)) {
-            shape.asMemberShape().ifPresent(member -> {
-                model.getShape(member.getContainer()).flatMap(Shape::asStructureShape).ifPresent(structure -> {
-                    events.addAll(validateMember(structure, member, member.expectTrait(HttpPrefixHeadersTrait.class)));
-                });
+        for (MemberShape member : model.getMemberShapesWithTrait(HttpPrefixHeadersTrait.class)) {
+            model.getShape(member.getContainer()).flatMap(Shape::asStructureShape).ifPresent(structure -> {
+                events.addAll(validateMember(structure, member, member.expectTrait(HttpPrefixHeadersTrait.class)));
             });
         }
 

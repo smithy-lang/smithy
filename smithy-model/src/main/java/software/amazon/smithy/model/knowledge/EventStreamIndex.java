@@ -45,7 +45,7 @@ public final class EventStreamIndex implements KnowledgeIndex {
     public EventStreamIndex(Model model) {
         OperationIndex operationIndex = OperationIndex.of(model);
 
-        for (OperationShape operation : model.toSet(OperationShape.class)) {
+        for (OperationShape operation : model.getOperationShapes()) {
             operationIndex.getInput(operation).ifPresent(input -> {
                 computeEvents(model, operation, input, inputInfo);
             });

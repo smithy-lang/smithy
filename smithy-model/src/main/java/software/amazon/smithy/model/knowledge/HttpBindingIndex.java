@@ -67,18 +67,14 @@ public final class HttpBindingIndex implements KnowledgeIndex {
         this.model = new WeakReference<>(model);
         OperationIndex opIndex = OperationIndex.of(model);
 
-        for (Shape shape : model.getShapesWithTrait(HttpTrait.class)) {
-            shape.asOperationShape().ifPresent(operation -> {
-                requestBindings.put(operation.getId(), computeRequestBindings(opIndex, operation));
-                responseBindings.put(operation.getId(), computeResponseBindings(opIndex, operation));
-            });
+        for (OperationShape operation : model.getOperationShapesWithTrait(HttpTrait.class)) {
+            requestBindings.put(operation.getId(), computeRequestBindings(opIndex, operation));
+            responseBindings.put(operation.getId(), computeResponseBindings(opIndex, operation));
         }
 
         // Add error structure bindings.
-        for (Shape shape : model.getShapesWithTrait(ErrorTrait.class)) {
-            shape.asStructureShape().ifPresent(structure -> {
-                responseBindings.put(structure.getId(), createStructureBindings(structure, false));
-            });
+        for (StructureShape structure : model.getStructureShapesWithTrait(ErrorTrait.class)) {
+            responseBindings.put(structure.getId(), createStructureBindings(structure, false));
         }
     }
 

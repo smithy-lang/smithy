@@ -41,12 +41,11 @@ public final class EventPayloadTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
-        for (Shape shape : model.getShapesWithTrait(EventPayloadTrait.class)) {
-            shape.asMemberShape().ifPresent(member -> {
-                model.getShape(member.getContainer()).flatMap(Shape::asStructureShape).ifPresent(structure -> {
-                    validateEvent(structure, member).ifPresent(events::add);
-                });
-            });
+        for (MemberShape member : model.getMemberShapesWithTrait(EventPayloadTrait.class)) {
+            model.getShape(member.getContainer())
+                    .flatMap(Shape::asStructureShape)
+                    .flatMap(structure -> validateEvent(structure, member))
+                    .ifPresent(events::add);
         }
 
         return events;

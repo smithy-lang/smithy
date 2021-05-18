@@ -56,10 +56,8 @@ public final class HttpLabelTraitValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
 
         // Validate all operation shapes with the `http` trait.
-        for (Shape shape : model.getShapesWithTrait(HttpTrait.class)) {
-            shape.asOperationShape().ifPresent(operation -> {
-                events.addAll(validateStructure(model, operation, operation.expectTrait(HttpTrait.class)));
-            });
+        for (OperationShape operation : model.getOperationShapesWithTrait(HttpTrait.class)) {
+            events.addAll(validateStructure(model, operation, operation.expectTrait(HttpTrait.class)));
         }
 
         return events;
