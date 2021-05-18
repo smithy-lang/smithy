@@ -16,17 +16,15 @@
 package software.amazon.smithy.model.transform.plugins;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.AuthDefinitionTrait;
 import software.amazon.smithy.model.traits.ProtocolDefinitionTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.transform.ModelTransformerPlugin;
 
@@ -44,46 +42,45 @@ public final class CleanTraitDefinitions implements ModelTransformerPlugin {
     }
 
     private Set<Shape> getAuthDefShapesToReplace(Model model, Set<ShapeId> removedShapeIds) {
-        return model.shapes(StructureShape.class)
-                .flatMap(s -> Trait.flatMapStream(s, AuthDefinitionTrait.class))
-                .flatMap(pair -> {
-                    AuthDefinitionTrait authDefTrait = pair.getRight();
-                    List<ShapeId> traits = authDefTrait.getTraits();
-                    List<ShapeId> newTraits = excludeTraitsInSet(traits, removedShapeIds);
-
-                    // Return early if re-built list of traits is the same as existing list.
-                    if (traits.equals(newTraits)) {
-                        return Stream.empty();
-                    }
-
+        Set<Shape> shapes = new HashSet<>();
+        for (Shape shape : model.getShapesWithTrait(AuthDefinitionTrait.class)) {
+            shape.asStructureShape().ifPresent(structure -> {
+                AuthDefinitionTrait authDefTrait = structure.expectTrait(AuthDefinitionTrait.class);
+                List<ShapeId> traits = authDefTrait.getTraits();
+                List<ShapeId> newTraits = excludeTraitsInSet(traits, removedShapeIds);
+                // Return early if re-built list of traits is the same as existing list.
+                if (!traits.equals(newTraits)) {
                     // If the list of traits on the AuthDefinitionTrait has changed due to a trait shape being
                     // removed from the model, return a new version of the shape with a new version of the trait.
-                    return Stream.of(pair.getLeft().toBuilder().addTrait(authDefTrait.toBuilder()
-                            .traits(newTraits).build()).build());
-                })
-                .collect(Collectors.toSet());
+                    shapes.add(structure.toBuilder()
+                                       .addTrait(authDefTrait.toBuilder().traits(newTraits).build())
+                                       .build());
+                }
+            });
+        }
+        return shapes;
     }
 
     private Set<Shape> getProtocolDefShapesToReplace(Model model, Set<ShapeId> removedShapeIds) {
-        return model.shapes(StructureShape.class)
-                .flatMap(s -> Trait.flatMapStream(s, ProtocolDefinitionTrait.class))
-                .flatMap(pair -> {
-                    ProtocolDefinitionTrait protocolDefinitionTrait = pair.getRight();
-                    List<ShapeId> traits = protocolDefinitionTrait.getTraits();
-                    List<ShapeId> newTraits = excludeTraitsInSet(traits, removedShapeIds);
+        Set<Shape> shapes = new HashSet<>();
+        for (Shape shape : model.getShapesWithTrait(ProtocolDefinitionTrait.class)) {
+            shape.asStructureShape().ifPresent(structure -> {
+                ProtocolDefinitionTrait protocolDefinitionTrait = structure.expectTrait(ProtocolDefinitionTrait.class);
+                List<ShapeId> traits = protocolDefinitionTrait.getTraits();
+                List<ShapeId> newTraits = excludeTraitsInSet(traits, removedShapeIds);
 
-                    // Return early if re-built list of traits is the same as existing list.
-                    if (traits.equals(newTraits)) {
-                        return Stream.empty();
-                    }
-
+                // Return early if re-built list of traits is the same as existing list.
+                if (!traits.equals(newTraits)) {
                     // If the list of traits on the ProtocolDefinitionTrait has changed due to a trait shape
                     // being removed from the model, return a new version of the shape with a new version of
                     // the trait.
-                    return Stream.of(pair.getLeft().toBuilder().addTrait(protocolDefinitionTrait.toBuilder()
-                            .traits(newTraits).build()).build());
-                })
-                .collect(Collectors.toSet());
+                    shapes.add(structure.toBuilder()
+                                       .addTrait(protocolDefinitionTrait.toBuilder().traits(newTraits).build())
+                                       .build());
+                }
+            });
+        }
+        return shapes;
     }
 
     private List<ShapeId> excludeTraitsInSet(List<ShapeId> traits, Set<ShapeId> shapeIds) {

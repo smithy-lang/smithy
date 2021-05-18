@@ -29,7 +29,6 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
@@ -97,33 +96,30 @@ public final class HttpLabelTraitValidator extends AbstractValidator {
                 .map(UriPattern.Segment::getContent)
                 .collect(Collectors.toSet());
 
-        input.getAllMembers().values().stream()
-                // Only look at members with the `httpLabel` trait.
-                .flatMap(member -> Trait.flatMapStream(member, HttpLabelTrait.class))
-                .forEach(pair -> {
-                    MemberShape member = pair.getLeft();
-                    HttpLabelTrait trait = pair.getRight();
-                    labels.remove(member.getMemberName());
+        for (MemberShape member : input.getAllMembers().values()) {
+            member.getTrait(HttpLabelTrait.class).ifPresent(trait -> {
+                labels.remove(member.getMemberName());
 
-                    // Emit an error if the member is not a valid label.
-                    if (!http.getUri().getLabel(member.getMemberName()).isPresent()) {
-                        events.add(error(member, trait, format(
-                                "This `%s` structure member is marked with the `httpLabel` trait, but no "
-                                + "corresponding `http` URI label could be found when used as the input of "
-                                + "the `%s` operation.", member.getMemberName(), operation.getId())));
-                    } else if (http.getUri().getLabel(member.getMemberName()).get().isGreedyLabel()) {
-                        model.getShape(member.getTarget()).ifPresent(target -> {
-                            // Greedy labels must be strings.
-                            if (!target.isStringShape()) {
-                                events.add(error(member, trait, format(
-                                        "The `%s` structure member corresponds to a greedy label when used as the "
-                                        + "input of the `%s` operation. This member targets %s, but greedy labels "
-                                        + "must target string shapes.",
-                                        member.getMemberName(), operation.getId(), target)));
-                            }
-                        });
-                    }
-                });
+                // Emit an error if the member is not a valid label.
+                if (!http.getUri().getLabel(member.getMemberName()).isPresent()) {
+                    events.add(error(member, trait, format(
+                            "This `%s` structure member is marked with the `httpLabel` trait, but no "
+                            + "corresponding `http` URI label could be found when used as the input of "
+                            + "the `%s` operation.", member.getMemberName(), operation.getId())));
+                } else if (http.getUri().getLabel(member.getMemberName()).get().isGreedyLabel()) {
+                    model.getShape(member.getTarget()).ifPresent(target -> {
+                        // Greedy labels must be strings.
+                        if (!target.isStringShape()) {
+                            events.add(error(member, trait, format(
+                                    "The `%s` structure member corresponds to a greedy label when used as the "
+                                    + "input of the `%s` operation. This member targets %s, but greedy labels "
+                                    + "must target string shapes.",
+                                    member.getMemberName(), operation.getId(), target)));
+                        }
+                    });
+                }
+            });
+        }
 
         if (!labels.isEmpty()) {
             events.add(error(input, String.format(

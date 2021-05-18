@@ -51,8 +51,10 @@ abstract class ProtocolTestCaseValidator<T extends Trait> extends AbstractValida
         OperationIndex operationIndex = OperationIndex.of(model);
 
         return Stream.concat(model.shapes(OperationShape.class), model.shapes(StructureShape.class))
-                .flatMap(operation -> Trait.flatMapStream(operation, traitClass))
-                .flatMap(pair -> validateOperation(model, operationIndex, pair.left, pair.right).stream())
+                .filter(shape -> shape.hasTrait(traitClass))
+                .flatMap(shape -> {
+                    return validateOperation(model, operationIndex, shape, shape.expectTrait(traitClass)).stream();
+                })
                 .collect(Collectors.toList());
     }
 

@@ -31,6 +31,7 @@ import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.pattern.SmithyPattern;
 import software.amazon.smithy.model.pattern.SmithyPattern.Segment;
 import software.amazon.smithy.model.pattern.UriPattern;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -39,7 +40,6 @@ import software.amazon.smithy.model.traits.EndpointTrait;
 import software.amazon.smithy.model.traits.HostLabelTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.PatternTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.OptionalUtils;
@@ -62,43 +62,49 @@ public final class HttpUriConflictValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validateService(Model model, ServiceShape service) {
-        List<OperationShape> operations = TopDownIndex.of(model).getContainedOperations(service)
-                .stream()
-                .filter(shape -> shape.getTrait(HttpTrait.class).isPresent())
-                .collect(Collectors.toList());
-        return operations.stream()
-                .flatMap(shape -> Trait.flatMapStream(shape, HttpTrait.class))
-                .flatMap(pair -> checkConflicts(model, pair, operations).stream())
-                .collect(Collectors.toList());
+        List<OperationShape> operations = new ArrayList<>();
+        for (OperationShape operation : TopDownIndex.of(model).getContainedOperations(service)) {
+            if (operation.hasTrait(HttpTrait.class)) {
+                operations.add(operation);
+            }
+        }
+
+        List<ValidationEvent> events = new ArrayList<>();
+        for (OperationShape operation : operations) {
+            events.addAll(checkConflicts(model, operation, operation.expectTrait(HttpTrait.class), operations));
+        }
+
+        return events;
     }
 
     private List<ValidationEvent> checkConflicts(
             Model model,
-            Pair<OperationShape, HttpTrait> pair,
+            OperationShape operation,
+            HttpTrait httpTrait,
             List<OperationShape> operations
     ) {
-        OperationShape operation = pair.getLeft();
-        String method = pair.getRight().getMethod();
-        UriPattern pattern = pair.getRight().getUri();
+        String method = httpTrait.getMethod();
+        UriPattern pattern = httpTrait.getUri();
 
         // Some conflicts are potentially allowable, so we split them up into to lists.
         List<Pair<ShapeId, UriPattern>> conflicts = new ArrayList<>();
         List<Pair<ShapeId, UriPattern>> allowableConflicts = new ArrayList<>();
 
-        operations.stream()
-                .filter(shape -> shape != operation)
-                .flatMap(shape -> Trait.flatMapStream(shape, HttpTrait.class))
-                .filter(other -> other.getRight().getMethod().equals(method))
-                .filter(other -> other.getRight().getUri().conflictsWith(pattern))
-                .filter(other -> endpointConflicts(model, operation, other.getLeft()))
-                .forEach(other -> {
+        for (OperationShape other : operations) {
+            if (other != operation && other.hasTrait(HttpTrait.class)) {
+                HttpTrait otherHttpTrait = other.expectTrait(HttpTrait.class);
+                if (otherHttpTrait.getMethod().equals(method)
+                        && otherHttpTrait.getUri().conflictsWith(pattern)
+                        && endpointConflicts(model, operation, other)) {
                     // Now that we know we have a conflict, determine whether it is allowable or not.
-                    if (isAllowableConflict(model, operation, other.getLeft())) {
-                        allowableConflicts.add(Pair.of(other.getLeft().getId(), other.getRight().getUri()));
+                    if (isAllowableConflict(model, operation, other)) {
+                        allowableConflicts.add(Pair.of(other.getId(), otherHttpTrait.getUri()));
                     } else {
-                        conflicts.add(Pair.of(other.getLeft().getId(), other.getRight().getUri()));
+                        conflicts.add(Pair.of(other.getId(), otherHttpTrait.getUri()));
                     }
-                });
+                }
+            }
+        }
 
         // Non-allowable conflicts get turned into ERRORs, they must be resolved to pass validation.
         List<ValidationEvent> events = new ArrayList<>();
@@ -201,14 +207,13 @@ public final class HttpUriConflictValidator extends AbstractValidator {
 
     private Map<String, Pattern> getHostLabelPatterns(Model model, OperationShape operation) {
         Optional<StructureShape> input = OperationIndex.of(model).getInput(operation);
-        if (!input.isPresent()) {
-            return Collections.emptyMap();
-        }
-        return input.get().members().stream()
-                .filter(member -> member.hasTrait(HostLabelTrait.ID))
-                .flatMap(member -> Trait.flatMapStream(member, PatternTrait.class))
+        return input.map(structureShape -> structureShape.members().stream()
+                .filter(member -> member.hasTrait(HostLabelTrait.class))
+                .filter(member -> member.hasTrait(PatternTrait.class))
                 .collect(Collectors.toMap(
-                        pair -> pair.getLeft().getMemberName(), pair -> pair.getRight().getPattern()));
+                        MemberShape::getMemberName,
+                        shape -> shape.expectTrait(PatternTrait.class).getPattern())))
+                .orElse(Collections.emptyMap());
     }
 
     private String formatConflicts(UriPattern pattern, List<Pair<ShapeId, UriPattern>> conflicts) {

@@ -27,7 +27,6 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.ErrorTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.transform.ModelTransformerPlugin;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -62,16 +61,18 @@ public final class CleanClientDiscoveryTraitTransformer implements ModelTransfor
     }
 
     private Set<Shape> getServicesToUpdate(Model model, Set<ShapeId> removedOperations, Set<ShapeId> removedErrors) {
-        return model.shapes(ServiceShape.class)
-                .flatMap(service -> Trait.flatMapStream(service, ClientEndpointDiscoveryTrait.class))
-                .filter(pair -> removedOperations.contains(pair.getRight().getOperation())
-                        || removedErrors.contains(pair.getRight().getError()))
-                .map(pair -> {
-                    ServiceShape.Builder builder = pair.getLeft().toBuilder();
+        Set<Shape> result = new HashSet<>();
+        for (Shape shape : model.getShapesWithTrait(ClientEndpointDiscoveryTrait.class)) {
+            shape.asServiceShape().ifPresent(service -> {
+                ClientEndpointDiscoveryTrait trait = service.expectTrait(ClientEndpointDiscoveryTrait.class);
+                if (removedOperations.contains(trait.getOperation()) || removedErrors.contains(trait.getError())) {
+                    ServiceShape.Builder builder = service.toBuilder();
                     builder.removeTrait(ClientEndpointDiscoveryTrait.ID);
-                    return builder.build();
-                })
-                .collect(Collectors.toSet());
+                    result.add(builder.build());
+                }
+            });
+        }
+        return result;
     }
 
     private Set<Shape> getOperationsToUpdate(
@@ -89,16 +90,19 @@ public final class CleanClientDiscoveryTraitTransformer implements ModelTransfor
                 .flatMap(service -> discoveryIndex.getEndpointDiscoveryOperations(service).stream())
                 .collect(Collectors.toSet());
 
-        return model.shapes(OperationShape.class)
-                // Get all endpoint discovery operations
-                .flatMap(operation -> Trait.flatMapStream(operation, ClientDiscoveredEndpointTrait.class))
-                // Only get the ones where discovery is optional, as it is safe to remove in that case
-                .filter(pair -> !pair.getRight().isRequired())
-                // Only get the ones that aren't still bound to a service that requires endpoint discovery
-                .filter(pair -> !stillBoundOperations.contains(pair.getLeft().getId()))
-                // Remove the trait
-                .map(pair -> pair.getLeft().toBuilder().removeTrait(ClientDiscoveredEndpointTrait.ID).build())
-                .collect(Collectors.toSet());
+        // Get all endpoint discovery operations
+        Set<Shape> result = new HashSet<>();
+        for (Shape shape : model.getShapesWithTrait(ClientDiscoveredEndpointTrait.class)) {
+            shape.asOperationShape().ifPresent(operation -> {
+                ClientDiscoveredEndpointTrait trait = operation.expectTrait(ClientDiscoveredEndpointTrait.class);
+                // Only get the ones where discovery is optional, as it is safe to remove in that case.
+                // Only get the ones that aren't still bound to a service that requires endpoint discovery.
+                if (!trait.isRequired() && !stillBoundOperations.contains(operation.getId())) {
+                    result.add(operation.toBuilder().removeTrait(ClientDiscoveredEndpointTrait.ID).build());
+                }
+            });
+        }
+        return result;
     }
 
     private Set<Shape> getMembersToUpdate(Model model, Set<ShapeId> updatedOperations) {

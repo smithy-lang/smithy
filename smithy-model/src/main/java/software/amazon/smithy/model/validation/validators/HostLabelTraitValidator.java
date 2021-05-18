@@ -31,7 +31,6 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.EndpointTrait;
 import software.amazon.smithy.model.traits.HostLabelTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
@@ -68,10 +67,14 @@ public final class HostLabelTraitValidator extends AbstractValidator {
         }
 
         // Validate all operation shapes with the `endpoint` trait.
-        return model.shapes(OperationShape.class)
-                .flatMap(shape -> Trait.flatMapStream(shape, EndpointTrait.class))
-                .flatMap(pair -> validateStructure(model, pair.getLeft(), pair.getRight()).stream())
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        for (Shape shape : model.getShapesWithTrait(EndpointTrait.class)) {
+            shape.asOperationShape().ifPresent(operation -> {
+                events.addAll(validateStructure(model, operation, operation.expectTrait(EndpointTrait.class)));
+            });
+        }
+
+        return events;
     }
 
     private List<ValidationEvent> validateStructure(
@@ -120,19 +123,18 @@ public final class HostLabelTraitValidator extends AbstractValidator {
                 .map(SmithyPattern.Segment::getContent)
                 .collect(Collectors.toSet());
 
-        input.getAllMembers().values().stream()
-                .flatMap(member -> Trait.flatMapStream(member, HostLabelTrait.class))
-                .forEach(pair -> {
-                    MemberShape member = pair.getLeft();
-                    HostLabelTrait trait = pair.getRight();
-                    labels.remove(member.getMemberName());
-                    if (!hostPrefix.getLabel(member.getMemberName()).isPresent()) {
-                        events.add(error(member, trait, format(
-                                "This `%s` structure member is marked with the `hostLabel` trait, but no "
-                                + "corresponding `endpoint` label could be found when used as the input of "
-                                + "the `%s` operation.", member.getMemberName(), operation.getId())));
-                    }
-                });
+        for (MemberShape member : input.getAllMembers().values()) {
+            if (member.hasTrait(HostLabelTrait.class)) {
+                HostLabelTrait trait = member.expectTrait(HostLabelTrait.class);
+                labels.remove(member.getMemberName());
+                if (!hostPrefix.getLabel(member.getMemberName()).isPresent()) {
+                    events.add(error(member, trait, format(
+                            "This `%s` structure member is marked with the `hostLabel` trait, but no "
+                            + "corresponding `endpoint` label could be found when used as the input of "
+                            + "the `%s` operation.", member.getMemberName(), operation.getId())));
+                }
+            }
+        }
 
         if (!labels.isEmpty()) {
             events.add(error(input, format(

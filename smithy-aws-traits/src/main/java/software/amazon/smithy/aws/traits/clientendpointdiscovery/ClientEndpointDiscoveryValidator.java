@@ -17,6 +17,7 @@ package software.amazon.smithy.aws.traits.clientendpointdiscovery;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,7 +32,6 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.Pair;
@@ -47,10 +47,12 @@ public final class ClientEndpointDiscoveryValidator extends AbstractValidator {
         ClientEndpointDiscoveryIndex discoveryIndex = ClientEndpointDiscoveryIndex.of(model);
         OperationIndex opIndex = OperationIndex.of(model);
 
-        Map<ServiceShape, ClientEndpointDiscoveryTrait> endpointDiscoveryServices = model
-                .shapes(ServiceShape.class)
-                .flatMap(service -> Trait.flatMapStream(service, ClientEndpointDiscoveryTrait.class))
-                .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+        Map<ServiceShape, ClientEndpointDiscoveryTrait> endpointDiscoveryServices = new HashMap<>();
+        for (Shape shape : model.getShapesWithTrait(ClientEndpointDiscoveryTrait.class)) {
+            shape.asServiceShape().ifPresent(service -> {
+                endpointDiscoveryServices.put(service, service.expectTrait(ClientEndpointDiscoveryTrait.class));
+            });
+        }
 
         List<ValidationEvent> validationEvents = endpointDiscoveryServices.values().stream()
                 .map(ClientEndpointDiscoveryTrait::getOperation)

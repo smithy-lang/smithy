@@ -66,12 +66,17 @@ public interface Trait extends FromSourceLocation, ToNode, ToShapeId {
      * {@link Pair} of Shape and Trait if the trait is present on the
      * given shape.
      *
+     * <p>This method is deprecated because it generally results in harder
+     * to read code using unnamed tuples. Use {@link Shape#hasTrait(Class)}
+     * and {@link Shape#expectTrait(Class)} instead.
+     *
      * @param shape Shape to query for the trait.
      * @param traitClass Trait to retrieve.
      * @param <S> Shape
      * @param <T> Trait
      * @return Returns the Stream of the found trait or an empty stream.
      */
+    @Deprecated
     static <S extends Shape, T extends Trait> Stream<Pair<S, T>> flatMapStream(
             S shape,
             Class<T> traitClass
