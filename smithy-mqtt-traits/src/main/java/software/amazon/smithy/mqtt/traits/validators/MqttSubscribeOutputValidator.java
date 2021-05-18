@@ -18,7 +18,6 @@ package software.amazon.smithy.mqtt.traits.validators;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.EventStreamIndex;
@@ -29,7 +28,6 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.EventHeaderTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.mqtt.traits.SubscribeTrait;
@@ -50,10 +48,13 @@ public final class MqttSubscribeOutputValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         EventStreamIndex eventStreamIndex = EventStreamIndex.of(model);
-        return model.shapes(OperationShape.class)
-                .flatMap(shape -> Trait.flatMapStream(shape, SubscribeTrait.class))
-                .flatMap(pair -> validateOperation(model, pair.getLeft(), eventStreamIndex).stream())
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        for (Shape shape : model.getShapesWithTrait(SubscribeTrait.class)) {
+            shape.asOperationShape().ifPresent(operation -> {
+                events.addAll(validateOperation(model, operation, eventStreamIndex));
+            });
+        }
+        return events;
     }
 
     private List<ValidationEvent> validateOperation(

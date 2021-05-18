@@ -15,8 +15,6 @@
 
 package software.amazon.smithy.model.validation.validators;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,12 +27,12 @@ import software.amazon.smithy.model.knowledge.HttpBinding;
 import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
@@ -55,14 +53,19 @@ public final class HttpPayloadValidator extends AbstractValidator {
         OperationIndex opIndex = OperationIndex.of(model);
         HttpBindingIndex bindings = HttpBindingIndex.of(model);
         List<ValidationEvent> events = new ArrayList<>();
-        events.addAll(model.shapes(OperationShape.class)
-                .filter(shape -> shape.getTrait(HttpTrait.class).isPresent())
-                .flatMap(shape -> validateOperation(bindings, opIndex, shape).stream())
-                .collect(toList()));
-        events.addAll(model.shapes(StructureShape.class)
-                .flatMap(shape -> Trait.flatMapStream(shape, ErrorTrait.class))
-                .flatMap(pair -> validateError(pair.getLeft(), bindings).stream())
-                .collect(toList()));
+
+        for (Shape shape : model.getShapesWithTrait(HttpTrait.class)) {
+            shape.asOperationShape().ifPresent(operation -> {
+                events.addAll(validateOperation(bindings, opIndex, operation));
+            });
+        }
+
+        for (Shape shape : model.getShapesWithTrait(ErrorTrait.class)) {
+            shape.asStructureShape().ifPresent(structure -> {
+                events.addAll(validateError(structure, bindings));
+            });
+        }
+
         return events;
     }
 

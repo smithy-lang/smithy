@@ -15,19 +15,17 @@
 
 package software.amazon.smithy.aws.traits;
 
-import static java.util.stream.Collectors.toList;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.MapUtils;
-import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -45,10 +43,13 @@ public final class EventSourceValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.shapes(ServiceShape.class)
-                .flatMap(service -> Trait.flatMapStream(service, ServiceTrait.class))
-                .flatMap(pair -> OptionalUtils.stream(validateService(pair.getLeft(), pair.getRight())))
-                .collect(toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        for (Shape shape : model.getShapesWithTrait(ServiceTrait.class)) {
+            shape.asServiceShape()
+                    .flatMap(service -> validateService(service, service.expectTrait(ServiceTrait.class)))
+                    .ifPresent(events::add);
+        }
+        return events;
     }
 
     private Optional<ValidationEvent> validateService(ServiceShape service, ServiceTrait trait) {

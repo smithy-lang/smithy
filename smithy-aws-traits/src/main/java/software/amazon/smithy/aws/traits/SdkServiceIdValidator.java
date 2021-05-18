@@ -15,8 +15,6 @@
 
 package software.amazon.smithy.aws.traits;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -25,11 +23,10 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
-import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -73,10 +70,13 @@ public final class SdkServiceIdValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.shapes(ServiceShape.class)
-                .flatMap(service -> Trait.flatMapStream(service, ServiceTrait.class))
-                .flatMap(pair -> OptionalUtils.stream(validateService(pair.getLeft(), pair.getRight())))
-                .collect(toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        for (Shape shape : model.getShapesWithTrait(ServiceTrait.class)) {
+            shape.asServiceShape()
+                    .flatMap(service -> validateService(service, service.expectTrait(ServiceTrait.class)))
+                    .ifPresent(events::add);
+        }
+        return events;
     }
 
     /**

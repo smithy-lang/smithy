@@ -19,21 +19,20 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
-import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SetUtils;
 
 /**
@@ -78,14 +77,18 @@ public final class HttpHeaderTraitValidator extends AbstractValidator {
             return Collections.emptyList();
         }
 
-        List<ValidationEvent> events = model.shapes(StructureShape.class)
-                .flatMap(shape -> validateStructure(shape).stream())
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
 
-        events.addAll(model.shapes(MemberShape.class)
-                .flatMap(member -> Trait.flatMapStream(member, HttpHeaderTrait.class))
-                .flatMap(pair -> OptionalUtils.stream(validateHeader(pair.left, pair.right)))
-                .collect(Collectors.toList()));
+        for (StructureShape structure : model.toSet(StructureShape.class)) {
+            events.addAll(validateStructure(structure));
+        }
+
+        for (Shape shape : model.getShapesWithTrait(HttpHeaderTrait.class)) {
+            shape.asMemberShape().ifPresent(member -> {
+                HttpHeaderTrait httpHeaderTrait = member.expectTrait(HttpHeaderTrait.class);
+                validateHeader(member, httpHeaderTrait).ifPresent(events::add);
+            });
+        }
 
         return events;
     }
@@ -110,9 +113,9 @@ public final class HttpHeaderTraitValidator extends AbstractValidator {
 
     private List<ValidationEvent> validateStructure(StructureShape structure) {
         return structure.getAllMembers().values().stream()
-                .flatMap(member -> Trait.flatMapStream(member, HttpHeaderTrait.class))
-                .collect(groupingBy(pair -> pair.getRight().getValue().toLowerCase(Locale.US),
-                                    mapping(pair -> pair.getLeft().getMemberName(), toList())))
+                .filter(member -> member.hasTrait(HttpHeaderTrait.class))
+                .collect(groupingBy(shape -> shape.expectTrait(HttpHeaderTrait.class).getValue().toLowerCase(Locale.US),
+                                    mapping(MemberShape::getMemberName, toList())))
                 .entrySet()
                 .stream()
                 .filter(entry -> entry.getValue().size() > 1)

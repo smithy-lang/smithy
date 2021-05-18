@@ -19,16 +19,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ReferencesTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.transform.ModelTransformerPlugin;
-import software.amazon.smithy.utils.FunctionalUtils;
 
 /**
  * Removes references to resources that are removed from
@@ -43,27 +38,32 @@ public final class CleanResourceReferences implements ModelTransformerPlugin {
     }
 
     private Set<Shape> getAffectedStructures(Model model, Shape resource) {
-        return model.shapes(StructureShape.class)
-                .flatMap(s -> Trait.flatMapStream(s, ReferencesTrait.class))
-                .flatMap(pair -> {
-                    // Subject is the structure shape that might be modified.
-                    StructureShape subject = pair.getLeft();
-                    ReferencesTrait trait = pair.getRight();
-                    // Get the reference to a particular shape.
-                    List<ReferencesTrait.Reference> references = trait.getResourceReferences(resource.getId());
+        Set<Shape> result =  new HashSet<>();
 
-                    if (references.isEmpty()) {
-                        return Stream.empty();
-                    }
+        for (Shape shape : model.getShapesWithTrait(ReferencesTrait.class)) {
+            // References can also be on strings, but we only care about structs.
+            shape.asStructureShape().ifPresent(struct -> {
+                ReferencesTrait trait = struct.expectTrait(ReferencesTrait.class);
+                // Get the reference to a particular shape.
+                List<ReferencesTrait.Reference> references = trait.getResourceReferences(resource.getId());
 
+                if (!references.isEmpty()) {
                     // If the trait contains a reference to the resource, then create a new version of the
                     // trait and shape that no longer reference the resource.
-                    ReferencesTrait.Builder traitBuilder = trait.toBuilder().clearReferences();
-                    trait.getReferences().stream()
-                            .filter(FunctionalUtils.not(references::contains))
-                            .forEach(traitBuilder::addReference);
-                    return Stream.of(subject.toBuilder().addTrait(traitBuilder.build()).build());
-                })
-                .collect(Collectors.toSet());
+                    ReferencesTrait.Builder traitBuilder = trait.toBuilder();
+                    traitBuilder.clearReferences();
+
+                    for (ReferencesTrait.Reference ref : trait.getReferences()) {
+                        if (!references.contains(ref)) {
+                            traitBuilder.addReference(ref);
+                        }
+                    }
+
+                    result.add(struct.toBuilder().addTrait(traitBuilder.build()).build());
+                }
+            });
+        }
+
+        return result;
     }
 }

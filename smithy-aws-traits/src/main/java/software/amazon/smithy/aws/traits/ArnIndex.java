@@ -32,25 +32,26 @@ import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ToShapeId;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.Pair;
 
 /**
  * Resolves and indexes the ARN templates for each resource in a service.
  */
 public final class ArnIndex implements KnowledgeIndex {
-    private final Map<ShapeId, String> arnServices;
+    private final Map<ShapeId, String> arnServices = new HashMap<>();
     private final Map<ShapeId, Map<ShapeId, ArnTrait>> templates;
     private final Map<ShapeId, Map<ShapeId, ArnTrait>> effectiveArns = new HashMap<>();
 
     public ArnIndex(Model model) {
         // Pre-compute the ARN services.
-        arnServices = unmodifiableMap(model.shapes(ServiceShape.class)
-                .flatMap(shape -> Trait.flatMapStream(shape, ServiceTrait.class))
-                .map(pair -> Pair.of(pair.getLeft().getId(), resolveServiceArn(pair)))
-                .collect(Collectors.toMap(Pair::getLeft, Pair::getRight)));
+        for (Shape shape : model.getShapesWithTrait(ServiceTrait.class)) {
+            shape.asServiceShape().ifPresent(service -> {
+                arnServices.put(service.getId(), service.expectTrait(ServiceTrait.class).getArnNamespace());
+            });
+        }
 
         // Pre-compute all of the ArnTemplates in a service shape.
         TopDownIndex topDownIndex = TopDownIndex.of(model);
@@ -73,15 +74,15 @@ public final class ArnIndex implements KnowledgeIndex {
         return model.getKnowledge(ArnIndex.class, ArnIndex::new);
     }
 
-    private static String resolveServiceArn(Pair<ServiceShape, ServiceTrait> pair) {
-        return pair.getRight().getArnNamespace();
-    }
-
     private Pair<ShapeId, Map<ShapeId, ArnTrait>> compileServiceArns(TopDownIndex index, ServiceShape service) {
-        return Pair.of(service.getId(), unmodifiableMap(index.getContainedResources(service.getId()).stream()
-                .flatMap(resource -> Trait.flatMapStream(resource, ArnTrait.class))
-                .map(pair -> Pair.of(pair.getLeft().getId(), pair.getRight()))
-                .collect(Collectors.toMap(Pair::getLeft, Pair::getRight))));
+        Map<ShapeId, ArnTrait> mapping = new HashMap<>();
+        for (ResourceShape resource : index.getContainedResources(service.getId())) {
+            resource.getTrait(ArnTrait.class).ifPresent(arnTrait -> {
+                mapping.put(resource.getId(), arnTrait);
+            });
+        }
+
+        return Pair.of(service.getId(), Collections.unmodifiableMap(mapping));
     }
 
     private void compileEffectiveArns(

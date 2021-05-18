@@ -18,17 +18,14 @@ package software.amazon.smithy.model.validation.validators;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.utils.Pair;
 
 /**
  * Validates that httpHeader traits do not case-insensitively start with an
@@ -53,19 +50,24 @@ public final class HttpPrefixHeadersTraitValidator extends AbstractValidator {
     private List<ValidationEvent> validateMember(
             StructureShape structure,
             MemberShape member,
-            HttpPrefixHeadersTrait trait
+            HttpPrefixHeadersTrait prefixTrait
     ) {
-        String prefix = trait.getValue().toLowerCase(Locale.US);
+        List<ValidationEvent> events = new ArrayList<>();
+        String prefix = prefixTrait.getValue().toLowerCase(Locale.ENGLISH);
 
         // Find all structure members that case-insensitively start with the same prefix.
-        return structure.getAllMembers().values().stream()
-                .flatMap(m -> Trait.flatMapStream(m, HttpHeaderTrait.class))
-                .map(pair -> Pair.of(pair.getLeft(), pair.getRight().getValue().toLowerCase(Locale.US)))
-                .filter(pair -> pair.getRight().startsWith(prefix))
-                .map(pair -> error(pair.getLeft(), String.format(
-                        "`httpHeader` binding of `%s` conflicts with the `httpPrefixHeaders` binding of `%s` "
-                        + "to `%s`. `httpHeader` bindings must not case-insensitively start with any "
-                        + "`httpPrefixHeaders` bindings.", pair.getRight(), member.getId(), prefix)))
-                .collect(Collectors.toList());
+        for (MemberShape otherMember : structure.getAllMembers().values()) {
+            otherMember.getTrait(HttpHeaderTrait.class).ifPresent(httpHeaderTrait -> {
+                String lowerCaseHeader = httpHeaderTrait.getValue().toLowerCase(Locale.ENGLISH);
+                if (lowerCaseHeader.startsWith(prefix)) {
+                    events.add(error(otherMember, httpHeaderTrait, String.format(
+                            "`httpHeader` binding of `%s` conflicts with the `httpPrefixHeaders` binding of `%s` "
+                            + "to `%s`. `httpHeader` bindings must not case-insensitively start with any "
+                            + "`httpPrefixHeaders` bindings.", lowerCaseHeader, member.getId(), prefix)));
+                }
+            });
+        }
+
+        return events;
     }
 }

@@ -18,22 +18,22 @@ package software.amazon.smithy.aws.traits;
 import static java.util.stream.Collectors.toList;
 import static software.amazon.smithy.model.validation.ValidationUtils.tickedList;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.utils.OptionalUtils;
-import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
@@ -47,28 +47,33 @@ public final class ArnTemplateValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         ArnIndex arnIndex = ArnIndex.of(model);
-        return model.shapes(ServiceShape.class)
-                .flatMap(service -> Trait.flatMapStream(service, ServiceTrait.class))
-                .flatMap(pair -> validateService(model, arnIndex, pair.getLeft()))
-                .collect(toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        for (Shape shape : model.getShapesWithTrait(ServiceTrait.class)) {
+            shape.asServiceShape().ifPresent(service -> events.addAll(validateService(model, arnIndex, service)));
+        }
+        return events;
     }
 
-    private Stream<ValidationEvent> validateService(Model model, ArnIndex arnIndex, ServiceShape service) {
+    private List<ValidationEvent> validateService(Model model, ArnIndex arnIndex, ServiceShape service) {
         // Make sure each ARN template contains relevant identifiers.
-        return arnIndex.getServiceResourceArns(service.getId()).entrySet().stream()
-                .flatMap(entry -> OptionalUtils.stream(model.getShape(entry.getKey())
-                        .flatMap(Shape::asResourceShape)
-                        .map(resource -> Pair.of(resource, entry.getValue()))))
-                .flatMap(pair -> validateResourceArn(pair.getLeft(), pair.getRight()));
+        List<ValidationEvent> events = new ArrayList<>();
+        for (Map.Entry<ShapeId, ArnTrait> entry : arnIndex.getServiceResourceArns(service.getId()).entrySet()) {
+            model.getShape(entry.getKey()).flatMap(Shape::asResourceShape).ifPresent(resource -> {
+                events.addAll(validateResourceArn(resource, entry.getValue()));
+            });
+        }
+        return events;
     }
 
-    private Stream<ValidationEvent> validateResourceArn(ResourceShape resource, ArnTrait template) {
+    private List<ValidationEvent> validateResourceArn(ResourceShape resource, ArnTrait template) {
         // Fail early on syntax error, otherwise, validate that the
         // template correspond to identifiers.
-        return syntax(resource, template).map(Stream::of).orElseGet(() -> Stream.concat(
-                OptionalUtils.stream(enough(resource.getIdentifiers().keySet(), resource, template)),
-                OptionalUtils.stream(tooMuch(resource.getIdentifiers().keySet(), resource, template)))
-        );
+        return syntax(resource, template).map(Collections::singletonList).orElseGet(() -> {
+            List<ValidationEvent> events = new ArrayList<>();
+            enough(resource.getIdentifiers().keySet(), resource, template).ifPresent(events::add);
+            tooMuch(resource.getIdentifiers().keySet(), resource, template).ifPresent(events::add);
+            return events;
+        });
     }
 
     // Validates the syntax of each template.
