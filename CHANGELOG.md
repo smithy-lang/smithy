@@ -1,5 +1,18 @@
 # Smithy Changelog
 
+## 1.7.3 (2021-05-20)
+
+### Features
+* Added `awsQueryError` trait, which defines the value in the `Code` distinguishing field. ([#807](https://github.com/awslabs/smithy/pull/807))
+* Added methods to get shapes by type and trait. ([#806](https://github.com/awslabs/smithy/pull/806))
+* Improved performance. ([#805](https://github.com/awslabs/smithy/pull/805))
+* Improved percent-encoding tests and doumentation. ([#803](https://github.com/awslabs/smithy/pull/803))
+* Added `double` format to epoch-seconds timestamps when converting to OpenAPI. ([#802](https://github.com/awslabs/smithy/pull/802))
+* Improved CLI output. ([#800](https://github.com/awslabs/smithy/pull/800), [#801](https://github.com/awslabs/smithy/pull/801))
+
+### Bug Fixes
+* Fixed awsQuery protocol test to show distinction from ignored `@xmlNamespace` trait. ([#799](https://github.com/awslabs/smithy/pull/799))
+
 ## 1.7.2 (2021-05-11)
 
 ### Bug Fixes
