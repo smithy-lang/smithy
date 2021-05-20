@@ -174,7 +174,7 @@ used in the model.</dd>
 </dl>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">The <code class="docutils literal notranslate"><span class="pre">aws.protocols#ec2QueryName</span></code> MUST only apply when serializing
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">aws.protocols#ec2QueryName</span></code> trait is only used when serializing
 operation inputs using the <code class="docutils literal notranslate"><span class="pre">aws.protocols#ec2</span></code> protocol.</p>
 </div>
 <p>Given the following structure definition:</p>
@@ -190,7 +190,9 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> MyStruct</span> {
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.protocols#ec2QueryName</span>
+
+<span class="kd">structure</span><span class="nc"> MyStruct</span> {
     <span class="nd">@ec2QueryName</span>(<span class="s2">&quot;foo&quot;</span>)
     <span class="nl">bar:</span> <span class="vc">String</span>
 }
