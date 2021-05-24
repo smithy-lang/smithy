@@ -219,6 +219,108 @@
         }
       }
     },
+    "ns.foo#InvalidOperation6": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#ConflictingInputA"
+      },
+      "output": {
+        "target": "ns.foo#ConflictingOutputA"
+      },
+      "traits": {
+        "smithy.api#httpChecksum": {
+          "request": {
+            "prefix" : "conflicting-prefix-",
+            "locations" : ["header"],
+            "algorithms" : ["sha256", "sha1"]
+          },
+          "response": {
+            "prefix" : "conflicting-prefix-",
+            "locations" : ["header"],
+            "algorithms" : ["sha256", "sha1"]
+          }
+        }
+      }
+    },
+    "ns.foo#InvalidOperation7": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#ConflictingInputB"
+      },
+      "output": {
+        "target": "ns.foo#ConflictingOutputB"
+      },
+      "traits": {
+        "smithy.api#httpChecksum": {
+          "request": {
+            "prefix" : "conflicting-prefix-",
+            "locations" : ["header"],
+            "algorithms" : ["sha256", "sha1"]
+          },
+          "response": {
+            "prefix" : "conflicting-prefix-",
+            "locations" : ["header"],
+            "algorithms" : ["sha256", "sha1"]
+          }
+        }
+      }
+    },
+    "ns.foo#ConflictingInputA": {
+      "type": "structure",
+      "members": {
+        "Body": {
+          "target": "smithy.api#Blob"
+        },
+        "a": {
+          "target": "ns.foo#String",
+          "traits": {
+            "smithy.api#httpHeader": "conflicting-prefix-header"
+          }
+        }
+      }
+    },
+    "ns.foo#ConflictingOutputA": {
+      "type": "structure",
+      "members": {
+        "Body": {
+          "target": "smithy.api#Blob"
+        },
+        "a": {
+          "target": "ns.foo#String",
+          "traits": {
+            "smithy.api#httpHeader": "conflicting-prefix-header"
+          }
+        }
+      }
+    },
+    "ns.foo#ConflictingInputB": {
+      "type": "structure",
+      "members": {
+        "Body": {
+          "target": "smithy.api#Blob"
+        },
+        "b": {
+          "target": "ns.foo#MapOfString",
+          "traits": {
+            "smithy.api#httpPrefixHeaders": "conflicting-prefix-"
+          }
+        }
+      }
+    },
+    "ns.foo#ConflictingOutputB": {
+      "type": "structure",
+      "members": {
+        "Body": {
+          "target": "smithy.api#Blob"
+        },
+        "b": {
+          "target": "ns.foo#MapOfString",
+          "traits": {
+            "smithy.api#httpPrefixHeaders": "conflicting-prefix-"
+          }
+        }
+      }
+    },
     "ns.foo#InvalidInput": {
       "type": "structure",
       "members": {
@@ -263,6 +365,18 @@
           }
         }
       }
+    },
+    "ns.foo#MapOfString": {
+      "type": "map",
+      "key": {
+        "target": "ns.foo#String"
+      },
+      "value": {
+        "target": "ns.foo#String"
+      }
+    },
+    "ns.foo#String": {
+      "type": "string"
     }
   }
 }
