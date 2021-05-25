@@ -1,4 +1,4 @@
-// This file defines test cases that serialize inline documents.
+// This file defines test cases that serialize document types.
 
 $version: "1.0"
 
@@ -11,26 +11,26 @@ use smithy.test#httpResponseTests
 // Define some shapes shared throughout these test cases.
 document Document
 
-/// This example serializes an inline document as part of the payload.
+/// This example serializes a document as part of the payload.
 @idempotent
-@http(uri: "/InlineDocument", method: "PUT")
-operation InlineDocument {
-    input: InlineDocumentInputOutput,
-    output: InlineDocumentInputOutput
+@http(uri: "/DocumentType", method: "PUT")
+operation DocumentType {
+    input: DocumentTypeInputOutput,
+    output: DocumentTypeInputOutput
 }
 
-structure InlineDocumentInputOutput {
+structure DocumentTypeInputOutput {
     stringValue: String,
     documentValue: Document,
 }
 
-apply InlineDocument @httpRequestTests([
+apply DocumentType @httpRequestTests([
     {
-        id: "InlineDocumentInput",
-        documentation: "Serializes inline documents as part of the JSON request payload with no escaping.",
+        id: "DocumentTypeInputWithObject",
+        documentation: "Serializes document types as part of the JSON request payload with no escaping.",
         protocol: restJson1,
         method: "PUT",
-        uri: "/InlineDocument",
+        uri: "/DocumentType",
         body: """
               {
                   "stringValue": "string",
@@ -46,13 +46,115 @@ apply InlineDocument @httpRequestTests([
                 foo: "bar"
             }
         }
-    }
+    },
+    {
+        id: "DocumentInputWithString",
+        documentation: "Serializes document types using a string.",
+        protocol: restJson1,
+        method: "PUT",
+        uri: "/DocumentType",
+        body: """
+              {
+                  "stringValue": "string",
+                  "documentValue": "hello"
+              }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            stringValue: "string",
+            documentValue: "hello"
+        }
+    },
+    {
+        id: "DocumentInputWithNumber",
+        documentation: "Serializes document types using a number.",
+        protocol: restJson1,
+        method: "PUT",
+        uri: "/DocumentType",
+        body: """
+              {
+                  "stringValue": "string",
+                  "documentValue": 10
+              }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            stringValue: "string",
+            documentValue: 10
+        }
+    },
+    {
+        id: "DocumentInputWithBoolean",
+        documentation: "Serializes document types using a boolean.",
+        protocol: restJson1,
+        method: "PUT",
+        uri: "/DocumentType",
+        body: """
+              {
+                  "stringValue": "string",
+                  "documentValue": true
+              }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            stringValue: "string",
+            documentValue: true
+        }
+    },
+    {
+        id: "DocumentInputWithList",
+        documentation: "Serializes document types using a list.",
+        protocol: restJson1,
+        method: "PUT",
+        uri: "/DocumentType",
+        body: """
+              {
+                  "stringValue": "string",
+                  "documentValue": [
+                      true,
+                      "hi",
+                      [
+                          1,
+                          2
+                      ],
+                      {
+                          "foo": {
+                              "baz": [
+                                  3,
+                                  4
+                              ]
+                          }
+                      }
+                  ]
+              }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            stringValue: "string",
+            documentValue: [
+                true,
+                "hi",
+                [
+                    1,
+                    2
+                ],
+                {
+                    "foo": {
+                        "baz": [
+                            3,
+                            4
+                        ]
+                    }
+                }
+            ]
+        }
+    },
 ])
 
-apply InlineDocument @httpResponseTests([
+apply DocumentType @httpResponseTests([
     {
-        id: "InlineDocumentOutput",
-        documentation: "Serializes inline documents as part of the JSON response payload with no escaping.",
+        id: "DocumentOutput",
+        documentation: "Serializes documents as part of the JSON response payload with no escaping.",
         protocol: restJson1,
         code: 200,
         body: """
@@ -70,29 +172,100 @@ apply InlineDocument @httpResponseTests([
                 foo: "bar"
             }
         }
+    },
+    {
+        id: "DocumentOutputString",
+        documentation: "Document types can be JSON scalars too.",
+        protocol: restJson1,
+        code: 200,
+        body: """
+            {
+                "stringValue": "string",
+                "documentValue": "hello"
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            stringValue: "string",
+            documentValue: "hello"
+        }
+    },
+    {
+        id: "DocumentOutputNumber",
+        documentation: "Document types can be JSON scalars too.",
+        protocol: restJson1,
+        code: 200,
+        body: """
+            {
+                "stringValue": "string",
+                "documentValue": 10
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            stringValue: "string",
+            documentValue: 10
+        }
+    },
+    {
+        id: "DocumentOutputBoolean",
+        documentation: "Document types can be JSON scalars too.",
+        protocol: restJson1,
+        code: 200,
+        body: """
+            {
+                "stringValue": "string",
+                "documentValue": false
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            stringValue: "string",
+            documentValue: false
+        }
+    },
+    {
+        id: "DocumentOutputArray",
+        documentation: "Document types can be JSON arrays.",
+        protocol: restJson1,
+        code: 200,
+        body: """
+            {
+                "stringValue": "string",
+                "documentValue": [
+                    true,
+                    false
+                ]
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            stringValue: "string",
+            documentValue: [true, false]
+        }
     }
 ])
 
-/// This example serializes an inline document as the entire HTTP payload.
+/// This example serializes a document as the entire HTTP payload.
 @idempotent
-@http(uri: "/InlineDocumentAsPayload", method: "PUT")
-operation InlineDocumentAsPayload {
-    input: InlineDocumentAsPayloadInputOutput,
-    output: InlineDocumentAsPayloadInputOutput
+@http(uri: "/DocumentTypeAsPayload", method: "PUT")
+operation DocumentTypeAsPayload {
+    input: DocumentTypeAsPayloadInputOutput,
+    output: DocumentTypeAsPayloadInputOutput
 }
 
-structure InlineDocumentAsPayloadInputOutput {
+structure DocumentTypeAsPayloadInputOutput {
     @httpPayload
     documentValue: Document,
 }
 
-apply InlineDocumentAsPayload @httpRequestTests([
+apply DocumentTypeAsPayload @httpRequestTests([
     {
-        id: "InlineDocumentAsPayloadInput",
-        documentation: "Serializes an inline document as the target of the httpPayload trait.",
+        id: "DocumentTypeAsPayloadInput",
+        documentation: "Serializes a document as the target of the httpPayload trait.",
         protocol: restJson1,
         method: "PUT",
-        uri: "/InlineDocumentAsPayload",
+        uri: "/DocumentTypeAsPayload",
         body: """
               {
                   "foo": "bar"
@@ -104,13 +277,26 @@ apply InlineDocumentAsPayload @httpRequestTests([
                 foo: "bar"
             }
         }
+    },
+    {
+        id: "DocumentTypeAsPayloadInputString",
+        documentation: "Serializes a document as the target of the httpPayload trait using a string.",
+        protocol: restJson1,
+        method: "PUT",
+        uri: "/DocumentTypeAsPayload",
+        body: "\"hello\"",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            documentValue: "hello"
+        }
     }
 ])
 
-apply InlineDocumentAsPayload @httpResponseTests([
+apply DocumentTypeAsPayload @httpResponseTests([
     {
-        id: "InlineDocumentAsPayloadInputOutput",
-        documentation: "Serializes an inline document as the target of the httpPayload trait.",
+        id: "DocumentTypeAsPayloadOutput",
+        documentation: "Serializes a document as the target of the httpPayload trait.",
         protocol: restJson1,
         code: 200,
         body: """
@@ -123,6 +309,18 @@ apply InlineDocumentAsPayload @httpResponseTests([
             documentValue: {
                 foo: "bar"
             }
+        }
+    },
+    {
+        id: "DocumentTypeAsPayloadOutputString",
+        documentation: "Serializes a document as a payload string.",
+        protocol: restJson1,
+        code: 200,
+        body: "\"hello\"",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            documentValue: "hello"
         }
     }
 ])
