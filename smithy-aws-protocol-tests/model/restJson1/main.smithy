@@ -76,8 +76,8 @@ service RestJson {
         JsonBlobs,
 
         // Documents
-        InlineDocument,
-        InlineDocumentAsPayload,
+        DocumentType,
+        DocumentTypeAsPayload,
 
         // Unions
         JsonUnions,
