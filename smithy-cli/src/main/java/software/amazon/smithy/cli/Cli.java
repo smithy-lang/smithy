@@ -277,6 +277,12 @@ public final class Cli {
             setUseAnsiColors(false);
         }
 
+        if (throwable instanceof NullPointerException) {
+            Colors.BOLD_RED.out("A null pointer exception occurred while running the Smithy CLI. The --stacktrace "
+                    + "argument can be used to get more information. Please open an issue with the Smithy team "
+                    + "on GitHub so this can be investigated: https://github.com/awslabs/smithy/issues");
+        }
+
         Colors.BOLD_RED.out(throwable.getMessage());
         if (hasArgument(args, STACKTRACE)) {
             StringWriter sw = new StringWriter();
