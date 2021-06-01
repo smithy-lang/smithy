@@ -16,6 +16,7 @@
 package software.amazon.smithy.build.model;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,7 +45,11 @@ final class ConfigLoader {
     static SmithyBuildConfig load(Path path) {
         try {
             String content = IoUtils.readUtf8File(path);
-            return load(path.getParent(), loadWithJson(path, content).expectObjectNode());
+            Path baseImportPath = path.getParent();
+            if (baseImportPath == null) {
+                baseImportPath = Paths.get(".");
+            }
+            return load(baseImportPath, loadWithJson(path, content).expectObjectNode());
         } catch (ModelSyntaxException e) {
             throw new SmithyBuildException(e);
         }
