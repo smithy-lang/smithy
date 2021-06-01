@@ -28,11 +28,7 @@ apply SimpleInputParams @httpRequestTests([
         requireHeaders: [
             "Content-Length"
         ],
-        body: """
-              Action=SimpleInputParams
-              &Version=2020-01-08
-              &Foo=val1
-              &Bar=val2""",
+        body: "Action=SimpleInputParams&Version=2020-01-08&Foo=val1&Bar=val2",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             Foo: "val1",
@@ -51,11 +47,7 @@ apply SimpleInputParams @httpRequestTests([
         requireHeaders: [
             "Content-Length"
         ],
-        body: """
-              Action=SimpleInputParams
-              &Version=2020-01-08
-              &Foo=val1
-              &Baz=true""",
+        body: "Action=SimpleInputParams&Version=2020-01-08&Foo=val1&Baz=true",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             Foo: "val1",
@@ -74,10 +66,7 @@ apply SimpleInputParams @httpRequestTests([
         requireHeaders: [
             "Content-Length"
         ],
-        body: """
-              Action=SimpleInputParams
-              &Version=2020-01-08
-              &Baz=false""",
+        body: "Action=SimpleInputParams&Version=2020-01-08&Baz=false",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             Baz: false,
@@ -95,10 +84,7 @@ apply SimpleInputParams @httpRequestTests([
         requireHeaders: [
             "Content-Length"
         ],
-        body: """
-              Action=SimpleInputParams
-              &Version=2020-01-08
-              &Bam=10""",
+        body: "Action=SimpleInputParams&Version=2020-01-08&Bam=10",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             Bam: 10,
@@ -116,10 +102,7 @@ apply SimpleInputParams @httpRequestTests([
         requireHeaders: [
             "Content-Length"
         ],
-        body: """
-              Action=SimpleInputParams
-              &Version=2020-01-08
-              &Boo=10.8""",
+        body: "Action=SimpleInputParams&Version=2020-01-08&Boo=10.8",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             Boo: 10.8,
@@ -137,10 +120,7 @@ apply SimpleInputParams @httpRequestTests([
         requireHeaders: [
             "Content-Length"
         ],
-        body: """
-              Action=SimpleInputParams
-              &Version=2020-01-08
-              &Qux=dmFsdWU%3D""",
+        body: "Action=SimpleInputParams&Version=2020-01-08&Qux=dmFsdWU%3D",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             Qux: "value",
@@ -158,10 +138,7 @@ apply SimpleInputParams @httpRequestTests([
         requireHeaders: [
             "Content-Length"
         ],
-        body: """
-              Action=SimpleInputParams
-              &Version=2020-01-08
-              &FooEnum=Foo""",
+        body: "Action=SimpleInputParams&Version=2020-01-08&FooEnum=Foo",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             FooEnum: "Foo",
@@ -179,10 +156,7 @@ apply SimpleInputParams @httpRequestTests([
         requireHeaders: [
             "Content-Length"
         ],
-        body: """
-              Action=SimpleInputParams
-              &Version=2020-01-08
-              &A=Hi""",
+        body: "Action=SimpleInputParams&Version=2020-01-08&A=Hi",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             HasQueryName: "Hi",
@@ -200,10 +174,7 @@ apply SimpleInputParams @httpRequestTests([
         requireHeaders: [
             "Content-Length"
         ],
-        body: """
-              Action=SimpleInputParams
-              &Version=2020-01-08
-              &B=Hi""",
+        body: "Action=SimpleInputParams&Version=2020-01-08&B=Hi",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             HasQueryAndXmlName: "Hi",
@@ -221,10 +192,7 @@ apply SimpleInputParams @httpRequestTests([
         requireHeaders: [
             "Content-Length"
         ],
-        body: """
-              Action=SimpleInputParams
-              &Version=2020-01-08
-              &C=Hi""",
+        body: "Action=SimpleInputParams&Version=2020-01-08&C=Hi",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             UsesXmlName: "Hi",
@@ -274,12 +242,7 @@ apply QueryTimestamps @httpRequestTests([
         requireHeaders: [
             "Content-Length"
         ],
-        body: """
-              Action=QueryTimestamps
-              &Version=2020-01-08
-              &NormalFormat=2015-01-25T08%3A00%3A00Z
-              &EpochMember=1422172800
-              &EpochTarget=1422172800""",
+        body: "Action=QueryTimestamps&Version=2020-01-08&NormalFormat=2015-01-25T08%3A00%3A00Z&EpochMember=1422172800&EpochTarget=1422172800",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             normalFormat: 1422172800,
@@ -321,12 +284,7 @@ apply NestedStructures @httpRequestTests([
         requireHeaders: [
             "Content-Length"
         ],
-        body: """
-              Action=NestedStructures
-              &Version=2020-01-08
-              &Nested.StringArg=foo
-              &Nested.OtherArg=true
-              &Nested.RecursiveArg.StringArg=baz""",
+        body: "Action=NestedStructures&Version=2020-01-08&Nested.StringArg=foo&Nested.OtherArg=true&Nested.RecursiveArg.StringArg=baz",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             Nested: {
@@ -369,10 +327,7 @@ apply QueryIdempotencyTokenAutoFill @httpRequestTests([
         requireHeaders: [
             "Content-Length"
         ],
-        body: """
-              Action=QueryIdempotencyTokenAutoFill
-              &Version=2020-01-08
-              &Token=00000000-0000-4000-8000-000000000000""",
+        body: "Action=QueryIdempotencyTokenAutoFill&Version=2020-01-08&Token=00000000-0000-4000-8000-000000000000",
         bodyMediaType: "application/x-www-form-urlencoded",
         appliesTo: "client",
     },
@@ -388,10 +343,7 @@ apply QueryIdempotencyTokenAutoFill @httpRequestTests([
         requireHeaders: [
             "Content-Length"
         ],
-        body: """
-              Action=QueryIdempotencyTokenAutoFill
-              &Version=2020-01-08
-              &Token=00000000-0000-4000-8000-000000000123""",
+        body: "Action=QueryIdempotencyTokenAutoFill&Version=2020-01-08&Token=00000000-0000-4000-8000-000000000123",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             token: "00000000-0000-4000-8000-000000000123"
