@@ -12,8 +12,8 @@
 [WARNING] ns.foo#InvalidOperation4: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
 [WARNING] ns.foo#InvalidOperation5: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
 [WARNING] ns.foo#InvalidOperation6: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
-[WARNING] ns.foo#InvalidOperation6: The `request` property of the `httpChecksum` trait uses a prefix that matches http headers modeled with `httpHeader` trait  on member ns.foo#ConflictingInputA$a. | HttpChecksumTrait
-[WARNING] ns.foo#InvalidOperation6: The `response` property of the `httpChecksum` trait uses a prefix that matches http headers modeled with `httpHeader` trait  on member ns.foo#ConflictingOutputA$a. | HttpChecksumTrait
+[WARNING] ns.foo#InvalidOperation6: The `httpHeader` binding of `conflicting-prefix-header` on `ns.foo#ConflictingInputA$a` starts with the prefix `conflicting-prefix-` modeled on the `request` property of `httpChecksum` trait. | HttpChecksumTrait
+[WARNING] ns.foo#InvalidOperation6: The `httpHeader` binding of `conflicting-prefix-header` on `ns.foo#ConflictingOutputA$a` starts with the prefix `conflicting-prefix-` modeled on the `response` property of `httpChecksum` trait. | HttpChecksumTrait
 [WARNING] ns.foo#InvalidOperation7: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
 [DANGER] ns.foo#InvalidOperation7: The `request` property of the `httpChecksum` trait uses the same prefix modeled with `httpPrefixHeaders` trait on member ns.foo#ConflictingInputB$b. | HttpChecksumTrait
 [DANGER] ns.foo#InvalidOperation7: The `response` property of the `httpChecksum` trait uses the same prefix modeled with `httpPrefixHeaders` trait on member ns.foo#ConflictingOutputB$b. | HttpChecksumTrait
