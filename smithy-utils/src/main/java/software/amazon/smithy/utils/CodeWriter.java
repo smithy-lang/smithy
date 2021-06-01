@@ -702,12 +702,12 @@ public class CodeWriter {
      * ability to completely ignore the original contents of the section, to
      * prepend text to it, and append text to it. Intercepting functions are
      * expected to have a reference to the {@code CodeWriter} and to mutate it
-     * when they are invoked. Each interceptor is invoked it their own
+     * when they are invoked. Each interceptor is invoked in their own
      * isolated pushed/popped states.
      *
      * <p>Interceptors are registered on the current state of the
      * {@code CodeWriter}. When the state to which an interceptor is registered
-     * is popped, the interceptor is no longer in effect.
+     * is popped, the interceptor is no longer in scope.
      *
      * <p>The text provided to the intercepting function does not contain
      * a trailing new line. A trailing new line will be injected automatically
