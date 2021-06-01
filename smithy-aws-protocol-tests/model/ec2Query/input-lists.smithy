@@ -26,14 +26,7 @@ apply QueryLists @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryLists
-              &Version=2020-01-08
-              &ListArg.1=foo
-              &ListArg.2=bar
-              &ListArg.3=baz
-              &ComplexListArg.1.Hi=hello
-              &ComplexListArg.2.Hi=hola""",
+        body: "Action=QueryLists&Version=2020-01-08&ListArg.1=foo&ListArg.2=bar&ListArg.3=baz&ComplexListArg.1.Hi=hello&ComplexListArg.2.Hi=hola",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             ListArg: ["foo", "bar", "baz"],
@@ -56,9 +49,7 @@ apply QueryLists @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryLists
-              &Version=2020-01-08""",
+        body: "Action=QueryLists&Version=2020-01-08",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             ListArg: []
@@ -73,11 +64,7 @@ apply QueryLists @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryLists
-              &Version=2020-01-08
-              &ListArgWithXmlNameMember.1=A
-              &ListArgWithXmlNameMember.2=B""",
+        body: "Action=QueryLists&Version=2020-01-08&ListArgWithXmlNameMember.1=A&ListArgWithXmlNameMember.2=B",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             ListArgWithXmlNameMember: ["A", "B"]
@@ -92,11 +79,7 @@ apply QueryLists @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryLists
-              &Version=2020-01-08
-              &Hi.1=A
-              &Hi.2=B""",
+        body: "Action=QueryLists&Version=2020-01-08&Hi.1=A&Hi.2=B",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             ListArgWithXmlName: ["A", "B"]

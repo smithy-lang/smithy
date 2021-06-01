@@ -25,9 +25,7 @@ apply NoInputAndNoOutput @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-            Action=NoInputAndNoOutput
-            &Version=2020-01-08""",
+        body: "Action=NoInputAndNoOutput&Version=2020-01-08",
         bodyMediaType: "application/x-www-form-urlencoded"
     }
 ])
@@ -59,9 +57,7 @@ apply NoInputAndOutput @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=NoInputAndOutput
-              &Version=2020-01-08""",
+        body: "Action=NoInputAndOutput&Version=2020-01-08",
         bodyMediaType: "application/x-www-form-urlencoded"
     }
 ])
@@ -96,9 +92,7 @@ apply EmptyInputAndEmptyOutput @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=EmptyInputAndEmptyOutput
-              &Version=2020-01-08""",
+        body: "Action=EmptyInputAndEmptyOutput&Version=2020-01-08",
         bodyMediaType: "application/x-www-form-urlencoded"
     },
 ])
