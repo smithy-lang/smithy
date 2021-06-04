@@ -785,12 +785,10 @@ following members:
         number of lowercase letters, digits, or non-sequential hyphens,
         and it should end in a hyphen.
 
-        The prefix string MUST NOT match the prefix value used with the
-        ``httpPrefixHeaders`` trait when modeled within the same HTTP request
-        or HTTP response enclosure. Additionally, any HTTP header binding
-        within the same HTTP request or HTTP response enclosure SHOULD NOT
-        start with the prefix string. This is to avoid any unintentional data
-        overrides.
+        A member with the :ref:`httpHeader-trait` or :ref:`httpPrefixHeaders-trait`
+        MAY conflict with a resolved ``httpChecksum`` header name, allowing a
+        checksum to be supplied directly. See :ref:`here for more behavior
+        details <httpChecksum_trait_header_conflict_behavior>`.
 
     * - locations
       - ``[string]``
@@ -842,12 +840,14 @@ response, the client MUST look for a checksum at supported locations as per
 defined properties. If a checksum is found, the client MUST validate the received
 checksum value by computing the corresponding checksum of the received payload.
 
-Service MAY model input or output shape member bound to an HTTP header
-matching the constructed header or trailer name for ``httpChecksum`` trait.
-For an HTTP request, if customer provides value for an input shape member bound
-to an HTTP header matching the constructed header or trailer name, the client
-MUST use the customer provided value as is, and skip computing request payload
-checksum.
+.. _httpChecksum_trait_header_conflict_behavior:
+
+An operation's ``input``, ``output``, and ``error`` structures MAY contain a
+member bound to an HTTP header matching the constructed header or trailer name
+for ``httpChecksum`` trait. For an HTTP request, if customer provides value
+for an input shape member bound to an HTTP header matching the constructed
+header or trailer name, the client MUST use the customer provided value as is,
+and skip computing request payload checksum.
 
 .. _chunked trailer part: https://tools.ietf.org/html/rfc7230#section-4.1.2
 
