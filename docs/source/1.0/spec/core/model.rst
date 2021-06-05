@@ -15,9 +15,9 @@ create it. Smithy models are used to describe services and data structures.
 
 .. _smithy-overview:
 
-----------------
-Smithy framework
-----------------
+---------------
+Smithy overview
+---------------
 
 Smithy is a framework that consists of a semantic model, file formats used to
 define a model, and a build process used to validate models and facilitate
@@ -46,11 +46,19 @@ model transformations.
 Semantic model
     The in-memory model used by tools. The :ref:`semantic model <semantic-model>`
     may be serialized into one or more model file representations.
+
+.. _model-files:
+
 Model File
     A file on the file system, in a particular representation. The model files
     that make up a semantic model MAY be split across multiple files to
     improve readability or modularity, and those files are not required to
-    use the same representation.
+    use the same representation. Model files do not explicitly include other
+    model files; this responsibility is left to tooling to ensure that all
+    necessary model files are merged together to form a valid semantic model.
+
+    One or more model files can be :ref:`assembled (or merged) <merging-models>`
+    together to form a semantic model.
 Representation
     A particular model file format such as the Smithy IDL or JSON AST.
     Representations are loaded into the semantic model by mapping the
@@ -126,229 +134,6 @@ Prelude
     The :ref:`prelude <prelude>` defines various simple shapes and every
     trait defined in the core specification. All Smithy models automatically
     include the prelude.
-
-
-.. _model-files:
-
------------
-Model files
------------
-
-Smithy models MAY be divided into multiple files so that they are easier to
-maintain and evolve. One or more model files can be assembled (or merged)
-together to form a semantic model. The model files that form a semantic model
-are not required to all be defined in the same representation; some models can
-be defined using the IDL and others can be defined using the JSON AST.
-
-Model files do not explicitly include other model files; this responsibility
-is left to tooling to ensure that all necessary model files are merged
-together to form a valid semantic model.
-
-.. _merging-models:
-
-Merging model files
-===================
-
-Implementations MUST take the following steps when merging two or more
-model files to form a semantic model:
-
-#. Merge the metadata objects of all model files using the steps defined in
-   :ref:`merging-metadata`.
-#. Shapes defined in a single model file are added to the semantic model as-is.
-#. Shapes with the same shape ID defined in multiple model files are
-   reconciled using the following rules:
-
-   #. All conflicting shapes MUST have the same shape type.
-   #. Conflicting :ref:`aggregate shapes <aggregate-types>` MUST contain the
-      same members that target the same shapes.
-   #. Conflicting :ref:`service shapes <service-types>` MUST contain the same
-      properties and target the same shapes.
-#. Conflicting traits defined in shape definitions or through
-   :ref:`apply statements <apply-statements>` are reconciled using
-   :ref:`trait conflict resolution <trait-conflict-resolution>`.
-
-.. note::
-
-    *The following guidance is non-normative.* Because the Smithy IDL allows
-    forward references to shapes that have not yet been defined or shapes
-    that are defined in another model file, implementations likely need to
-    defer :ref:`resolving relative shape IDs <relative-shape-id>` to
-    absolute shape IDs until *all* model files are loaded.
-
-
-.. _metadata:
-
---------
-Metadata
---------
-
-Metadata is a schema-less extensibility mechanism used to associate
-metadata to an entire model. For example, metadata is used to define
-:ref:`validators <validator-definition>` and model-wide
-:ref:`suppressions <suppression-definition>`. Metadata is defined
-using an ``object`` :ref:`node value <node-value>`.
-
-
-.. _merging-metadata:
-
-Merging metadata
-================
-
-When a conflict occurs between top-level metadata key-value pairs,
-metadata is merged using the following logic:
-
-1. If a metadata key is only present in one model, then the entry is valid
-   and added to the merged model.
-2. If both models contain the same key and both values are arrays, then
-   the entry is valid; the values of both arrays are concatenated into a
-   single array and added to the merged model.
-3. If both models contain the same key and both values are exactly equal,
-   then the conflict is ignored and the value is added to the merged model.
-4. If both models contain the same key, the values do not both map to
-   arrays, and the values are not equal, then the key is invalid and there
-   is a metadata conflict error.
-
-Given the following two Smithy models:
-
-.. code-block:: smithy
-    :caption: model-a.smithy
-
-    metadata "foo" = ["baz", "bar"]
-    metadata "qux" = "test"
-    metadata "validConflict" = "hi!"
-
-.. code-block:: smithy
-    :caption: model-b.smithy
-
-    metadata "foo" = ["lorem", "ipsum"]
-    metadata "lorem" = "ipsum"
-    metadata "validConflict" = "hi!"
-
-Merging ``model-a.smithy`` and ``model-b.smithy`` produces the following
-model:
-
-.. code-block:: smithy
-
-    metadata "foo" = ["baz", "bar", "lorem", "ipsum"]
-    metadata "qux" = "test"
-    metadata "lorem" = "ipsum"
-    metadata "validConflict" = "hi!"
-
-
-.. _node-value:
-
------------
-Node values
------------
-
-Node values are JSON-like values used in the following places in the
-semantic model:
-
-* **metadata**: Metadata is defined as a node value object.
-* **applied trait**: The value of a trait applied to a shape is defined
-  using a node value.
-
-.. text-figure::
-    :caption: **Figure 1.3**: Node value types
-    :name: figure-1.3
-
-    ┌─────────────────┐                     ┌─────────────┐
-    │ Semantic Model  │                     │Applied Trait│
-    └─────────────────┘                     └─────────────┘
-      │                                            │
-      │                                            │
-      │                                            ┼ nodeValue
-      │                                     ┌─────────────┐
-      │                                     │ «abstract»  │
-      │                                     │    Value    │
-      │metadata                             └─────────────┘
-      │                                            △
-      ○      ┌───────────────────┬─────────────────┼───────────────┬───────────────┐
-      ┼      │                   │                 │               │               │
-    ┌─────────────────┐ ┌─────────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
-    │     Object      │ │      Array      │ │   Number    │ │   Boolean   │ │   String    │
-    ├─────────────────┤ ├─────────────────┤ └─────────────┘ └─────────────┘ └─────────────┘
-    │members:         │ │members: [Value] │
-    │  [String, Value]│ └─────────────────┘
-    └─────────────────┘
-
-The following example defines metadata using a node value:
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        metadata foo = "hello"
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "metadata": {
-                "foo": "hello"
-            }
-        }
-
-The following example defines a trait using a node value:
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        namespace smithy.example
-
-        @length(min: 1, max: 10)
-        string MyString
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyString": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.api#length": {
-                            "min": 1,
-                            "max": 10
-                        }
-                    }
-                }
-            }
-        }
-
-
-Node value types
-================
-
-Node values have the same data model as JSON; they consist of the following
-kinds of values:
-
-.. list-table::
-    :header-rows: 1
-    :widths: 30 70
-
-    * - Type
-      - Description
-    * - null
-      - The lack of a value
-    * - string
-      - A UTF-8 string
-    * - number
-      - A double precision floating point number
-    * - boolean
-      - A Boolean, true or false value
-    * - array
-      - A list of heterogeneous node values
-    * - object
-      - A map of string keys to heterogeneous node values
-
-.. rubric:: Shape IDs, text blocks, et al.
-
-There is no specific node value type for shape IDs, text blocks, or
-other higher-level features of the IDL; these values are stored and
-treated in the semantic model as simply opaque strings, and their
-validation happens before the creation of the model.
 
 
 .. _shapes:
@@ -558,13 +343,16 @@ Simple shapes
         MUST NOT have any effect on the types exposed by tooling to
         represent a timestamp value.
     * - document
-      - Represents protocol-agnostic open content that is accessed like JSON
-        data. Open content is useful for modeling unstructured data that
-        has no schema, data that can't be modeled using rigid types, or data
-        that has a schema that evolves outside of the purview of a model.
-        The serialization format of a document is an implementation detail of
-        a protocol and MUST NOT have any effect on the types exposed by
-        tooling to represent a document value.
+      - Represents protocol-agnostic open content that functions as a kind of
+        "any" type. Document types are represented by a JSON-like data model
+        and can contain UTF-8 strings, arbitrary precision numbers, booleans,
+        nulls, a list of these values, and a map of UTF-8 strings to these
+        values. Open content is useful for modeling unstructured data that has
+        no schema, data that can't be modeled using rigid types, or data that
+        has a schema that evolves outside of the purview of a model. The
+        serialization format of a document is an implementation detail of a
+        protocol and MUST NOT have any effect on the types exposed by tooling
+        to represent a document value.
 
 Simple shapes are defined in the IDL using a :ref:`simple_shape_statement <idl-simple>`.
 
@@ -2872,6 +2660,215 @@ after adding a member to the ``foo`` trait:
                 }
             }
         }
+
+
+.. _metadata:
+
+--------------
+Model metadata
+--------------
+
+Metadata is a schema-less extensibility mechanism used to associate
+metadata to an entire model. For example, metadata is used to define
+:ref:`validators <validator-definition>` and model-wide
+:ref:`suppressions <suppression-definition>`. Metadata is defined
+using an ``object`` :ref:`node value <node-value>`.
+
+
+.. _merging-metadata:
+
+Merging metadata
+================
+
+When a conflict occurs between top-level metadata key-value pairs,
+metadata is merged using the following logic:
+
+1. If a metadata key is only present in one model, then the entry is valid
+   and added to the merged model.
+2. If both models contain the same key and both values are arrays, then
+   the entry is valid; the values of both arrays are concatenated into a
+   single array and added to the merged model.
+3. If both models contain the same key and both values are exactly equal,
+   then the conflict is ignored and the value is added to the merged model.
+4. If both models contain the same key, the values do not both map to
+   arrays, and the values are not equal, then the key is invalid and there
+   is a metadata conflict error.
+
+Given the following two Smithy models:
+
+.. code-block:: smithy
+    :caption: model-a.smithy
+
+    metadata "foo" = ["baz", "bar"]
+    metadata "qux" = "test"
+    metadata "validConflict" = "hi!"
+
+.. code-block:: smithy
+    :caption: model-b.smithy
+
+    metadata "foo" = ["lorem", "ipsum"]
+    metadata "lorem" = "ipsum"
+    metadata "validConflict" = "hi!"
+
+Merging ``model-a.smithy`` and ``model-b.smithy`` produces the following
+model:
+
+.. code-block:: smithy
+
+    metadata "foo" = ["baz", "bar", "lorem", "ipsum"]
+    metadata "qux" = "test"
+    metadata "lorem" = "ipsum"
+    metadata "validConflict" = "hi!"
+
+
+.. _node-value:
+
+-----------
+Node values
+-----------
+
+Node values are JSON-like values used in the following places in the
+semantic model:
+
+* **metadata**: Metadata is defined as a node value object.
+* **applied trait**: The value of a trait applied to a shape is defined
+  using a node value.
+
+.. text-figure::
+    :caption: **Figure 1.3**: Node value types
+    :name: figure-1.3
+
+    ┌─────────────────┐                     ┌─────────────┐
+    │ Semantic Model  │                     │Applied Trait│
+    └─────────────────┘                     └─────────────┘
+      │                                            │
+      │                                            │
+      │                                            ┼ nodeValue
+      │                                     ┌─────────────┐
+      │                                     │ «abstract»  │
+      │                                     │    Value    │
+      │metadata                             └─────────────┘
+      │                                            △
+      ○      ┌───────────────────┬─────────────────┼───────────────┬───────────────┐
+      ┼      │                   │                 │               │               │
+    ┌─────────────────┐ ┌─────────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+    │     Object      │ │      Array      │ │   Number    │ │   Boolean   │ │   String    │
+    ├─────────────────┤ ├─────────────────┤ └─────────────┘ └─────────────┘ └─────────────┘
+    │members:         │ │members: [Value] │
+    │  [String, Value]│ └─────────────────┘
+    └─────────────────┘
+
+The following example defines metadata using a node value:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        metadata foo = "hello"
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "metadata": {
+                "foo": "hello"
+            }
+        }
+
+The following example defines a trait using a node value:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        namespace smithy.example
+
+        @length(min: 1, max: 10)
+        string MyString
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#MyString": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#length": {
+                            "min": 1,
+                            "max": 10
+                        }
+                    }
+                }
+            }
+        }
+
+
+Node value types
+================
+
+Node values have the same data model as JSON; they consist of the following
+kinds of values:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 30 70
+
+    * - Type
+      - Description
+    * - null
+      - The lack of a value
+    * - string
+      - A UTF-8 string
+    * - number
+      - A double precision floating point number
+    * - boolean
+      - A Boolean, true or false value
+    * - array
+      - A list of heterogeneous node values
+    * - object
+      - A map of string keys to heterogeneous node values
+
+.. rubric:: Shape IDs, text blocks, et al.
+
+There is no specific node value type for shape IDs, text blocks, or
+other higher-level features of the IDL; these values are stored and
+treated in the semantic model as simply opaque strings, and their
+validation happens before the creation of the model.
+
+
+.. _merging-models:
+
+-------------------
+Merging model files
+-------------------
+
+Implementations MUST take the following steps when merging two or more
+:ref:`model files <model-files>` to form a
+:ref:`semantic model <semantic-model>`:
+
+#. Merge the metadata objects of all model files using the steps defined in
+   :ref:`merging-metadata`.
+#. Shapes defined in a single model file are added to the semantic model as-is.
+#. Shapes with the same shape ID defined in multiple model files are
+   reconciled using the following rules:
+
+   #. All conflicting shapes MUST have the same shape type.
+   #. Conflicting :ref:`aggregate shapes <aggregate-types>` MUST contain the
+      same members that target the same shapes.
+   #. Conflicting :ref:`service shapes <service-types>` MUST contain the same
+      properties and target the same shapes.
+#. Conflicting traits defined in shape definitions or through
+   :ref:`apply statements <apply-statements>` are reconciled using
+   :ref:`trait conflict resolution <trait-conflict-resolution>`.
+
+.. note::
+
+    *The following guidance is non-normative.* Because the Smithy IDL allows
+    forward references to shapes that have not yet been defined or shapes
+    that are defined in another model file, implementations likely need to
+    defer :ref:`resolving relative shape IDs <relative-shape-id>` to
+    absolute shape IDs until *all* model files are loaded.
 
 
 .. _tagged union data structure: https://en.wikipedia.org/wiki/Tagged_union
