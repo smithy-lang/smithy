@@ -246,9 +246,11 @@ JSON shape serialization
     * - ``long``
       - JSON number
     * - ``float``
-      - JSON number
+      - JSON number for numeric values. JSON strings for ``NaN``, ``Infinity``,
+        and ``-Infinity``
     * - ``double``
-      - JSON number
+      - JSON number for numeric values. JSON strings for ``NaN``, ``Infinity``,
+        and ``-Infinity``
     * - ``bigDecimal``
       - JSON number. Unfortunately, this protocol serializes bigDecimal
         shapes as a normal JSON number. Many JSON parsers will either
@@ -295,6 +297,29 @@ The ``aws.protocols#restJson1`` protocol supports all of the HTTP binding traits
 defined in the :ref:`HTTP protocol bindings <http-traits>` specification. The
 serialization formats and and behaviors described for each trait are supported
 as defined in the ``aws.protocols#restJson1`` protocol.
+
+
+------------------------------------------
+Non-numeric float and double serialization
+------------------------------------------
+
+Smithy floats and doubles are defined by IEE754, which includes special values
+for "not a number" and both positive and negative infinity. Unless otherwise
+specified, the ``aws.protocols#restJson1`` treats those special values as
+strings with the following values:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 50 50
+
+    * - Special Value
+      - String Value
+    * - Not a number
+      - ``NaN``
+    * - positive infinity
+      - ``Infinity``
+    * - negative infinity
+      - ``-Infinity``
 
 
 .. restJson1-errors:

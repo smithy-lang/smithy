@@ -249,6 +249,29 @@ serialization formats and and behaviors described for each trait are supported
 as defined in the ``aws.protocols#restXml`` protocol.
 
 
+------------------------------------------
+Non-numeric float and double serialization
+------------------------------------------
+
+Smithy floats and doubles are defined by IEE754, which includes special values
+for "not a number" and both positive and negative infinity. Unless otherwise
+specified, the ``aws.protocols#restXml`` treats those special values as
+strings with the following values:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 50 50
+
+    * - Special Value
+      - String Value
+    * - Not a number
+      - ``NaN``
+    * - positive infinity
+      - ``Infinity``
+    * - negative infinity
+      - ``-Infinity``
+
+
 .. _restXml-errors:
 
 -----------------------------
