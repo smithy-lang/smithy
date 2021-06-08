@@ -394,7 +394,7 @@ apply XmlNamespaces @httpResponseTests([
         protocol: ec2Query,
         code: 200,
         body: """
-              <XmlNamespacesResponse xmlns="http://foo.com" xmlns="https://example.com/">
+              <XmlNamespacesResponse xmlns="https://example.com/">
                   <nested>
                       <foo xmlns:baz="http://baz.com">Foo</foo>
                       <values xmlns="http://qux.com">
@@ -457,7 +457,7 @@ apply IgnoresWrappingXmlName @httpResponseTests([
         protocol: ec2Query,
         code: 200,
         body: """
-              <IgnoresWrappingXmlNameResponse xmlns="http://foo.com" xmlns="https://example.com/">
+              <IgnoresWrappingXmlNameResponse xmlns="https://example.com/">
                   <foo>bar</foo>
                   <RequestId>requestid</RequestId>
               </IgnoresWrappingXmlNameResponse>
