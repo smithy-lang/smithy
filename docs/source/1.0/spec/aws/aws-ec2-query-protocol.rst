@@ -19,9 +19,10 @@ This specification defines the ``aws.protocols#ec2`` protocol.
 --------------------------------
 
 Summary
-    Adds support for an HTTP protocol that sends requests in the query string
-    OR in a ``x-form-url-encoded`` body and responses in XML documents. This
-    protocol is an Amazon EC2-specific extension of the ``awsQuery`` protocol.
+    Adds support for an HTTP protocol that sends requests in a
+    ``application/x-www-form-url-encoded`` body and responses in XML
+    documents. This protocol is an Amazon EC2-specific extension
+    of the ``awsQuery`` protocol.
 Trait selector
     ``service [trait|xmlNamespace]``
 
@@ -145,8 +146,7 @@ resolved using the following process:
    member, if present.
 2. Use the value of the :ref:`xmlName trait <xmlName-trait>` applied to the
    member with the first letter capitalized, if present.
-3. Use the default value for the member with the first letter capitalized, if
-   present:
+3. Use the default value for the member, if present:
 
    .. list-table::
        :header-rows: 1
@@ -154,18 +154,10 @@ resolved using the following process:
 
        * - Member location
          - Default value
-       * - ``list`` member
-         - The string literal "member"
-       * - ``set`` member
-         - The string literal "member"
-       * - ``map`` key
-         - The string literal "key"
-       * - ``map`` value
-         - The string literal "value"
        * - ``structure`` member
-         - The :token:`member name <shape_id_member>`
+         - The :token:`member name <shape_id_member>` capitalized
        * - ``union`` member
-         - The :token:`member name <shape_id_member>`
+         - The :token:`member name <shape_id_member>` capitalized
 
 
 ----------------
@@ -266,11 +258,11 @@ The ``x-www-form-urlencoded`` serialization is:
 
     Action=Ec2QueryStructures
     &Version=2020-07-02
-    &foo=bar
+    &Foo=bar
     &A=example0
     &B=example1
     &C=example2
-    &baz.temp=example3
+    &Baz.Temp=example3
 
 
 Collections
@@ -286,21 +278,9 @@ For example, given the following:
         ListArg: StringList,
         ComplexListArg: GreetingList,
 
-        @xmlFlattened
-        FlattenedListArg: StringList,
-
-        ListArgWithXmlNameMember: ListWithXmlName,
-
-        // Notice that the xmlName on the targeted list member is ignored.
-        @xmlFlattened
-        @ec2QueryName("Hi")
+        @ec2QueryName("Renamed")
         @xmlName("IgnoreMe")
-        FlattenedListArgWithXmlName: ListWithXmlName,
-    }
-
-    list ListWithXmlName {
-        @xmlName("item")
-        member: String
+        RenamedListArg: StringList,
     }
 
     list StringList {
@@ -315,23 +295,19 @@ For example, given the following:
         hi: String,
     }
 
-The ``x-www-form-urlencoded`` serialization is:
+The ``application/x-www-form-urlencoded`` serialization is:
 
 .. code-block:: text
 
     Action=Ec2QueryLists
     &Version=2020-07-02
-    &ListArg.member.1=foo
-    &ListArg.member.2=bar
-    &ListArg.member.3=baz
-    &ComplexListArg.member.1.hi=hello
-    &ComplexListArg.member.2.hi=hola
-    &FlattenedListArg.1=A
-    &FlattenedListArg.2=B
-    &ListArgWithXmlNameMember.item.1=A
-    &ListArgWithXmlNameMember.item.2=B
-    &Hi.1=A
-    &Hi.2=B
+    &ListArg.1=foo
+    &ListArg.2=bar
+    &ListArg.3=baz
+    &ComplexListArg.1.Hi=hello
+    &ComplexListArg.2.Hi=hola
+    &Renamed.1=A
+    &Renamed.2=B
 
 
 ----------------------
@@ -339,8 +315,7 @@ Response serialization
 ----------------------
 
 The ``ec2Query`` protocol serializes XML responses within an XML root node with
-the name of the operation's output suffixed with "Response". A nested element,
-with the name of the operation's output suffixed with "Result", contains the
+the name of the operation's output suffixed with "Response", which contains the
 contents of the successful response.
 
 The value of the ``uri`` member of the :ref:`xmlNamespace trait <xmlNamespace-trait>`
@@ -350,9 +325,7 @@ following is a sample response to an operation named ``XmlTest``.
 .. code-block:: xml
 
     <XmlTestResponse xmlns="https://example.com/">
-        <XmlTestResult>
-            <testValue>Hello!</testValue>
-        </XmlTestResult>
+        <testValue>Hello!</testValue>
     </XmlTestResponse>
 
 XML shape serialization
@@ -378,15 +351,16 @@ serialized in the response.
 
 .. code-block:: xml
 
-    <Errors>
-        <Error>
-            <Type>Sender</Type>
-            <Code>InvalidGreeting</Code>
-            <Message>Hi</Message>
-            <AnotherSetting>setting</AnotherSetting>
-        </Error>
+    <Response>
+        <Errors>
+            <Error>
+                <Code>InvalidGreeting</Code>
+                <Message>Hi</Message>
+                <AnotherSetting>setting</AnotherSetting>
+            </Error>
+        </Errors>
         <RequestId>foo-id</RequestId>
-    </Errors>
+    </Response>
 
 
 .. _ec2Query-compliance-tests:
