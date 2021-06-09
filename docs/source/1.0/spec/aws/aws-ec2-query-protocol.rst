@@ -341,8 +341,10 @@ Operation error serialization
 -----------------------------
 
 Error responses in the ``ec2Query`` protocol are wrapped within an XML root
-node named ``Errors``. A nested element, named ``Error``, contains the
-serialized error structure members.
+node named ``Response``. Inside this, there is an ``Errors`` tag containing
+the actual error, and a ``RequestId`` tag holding the request ID. Nested inside
+of the ``Errors`` tag is an ``Error`` tag which contains the serialized error
+structure members.
 
 Serialized error shapes MUST also contain an additional child element ``Code``
 that contains only the :token:`shape name <identifier>` of the error's
