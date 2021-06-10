@@ -102,6 +102,69 @@ apply SimpleScalarProperties @httpRequestTests([
             stringValue: "string with white    space",
         }
     },
+    {
+        id: "RestXmlSupportsNaNFloatInputs",
+        documentation: "Supports handling NaN float values.",
+        protocol: restXml,
+        method: "PUT",
+        uri: "/SimpleScalarProperties",
+        body: """
+              <SimpleScalarPropertiesInputOutput>
+                  <floatValue>NaN</floatValue>
+                  <doubleValue>NaN</doubleValue>
+              </SimpleScalarPropertiesInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            floatValue: "NaN",
+            doubleValue: "NaN",
+        }
+    },
+    {
+        id: "RestXmlSupportsInfinityFloatInputs",
+        documentation: "Supports handling Infinity float values.",
+        protocol: restXml,
+        method: "PUT",
+        uri: "/SimpleScalarProperties",
+        body: """
+              <SimpleScalarPropertiesInputOutput>
+                  <floatValue>Infinity</floatValue>
+                  <doubleValue>Infinity</doubleValue>
+              </SimpleScalarPropertiesInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            floatValue: "Infinity",
+            doubleValue: "Infinity",
+        }
+    },
+    {
+        id: "RestXmlSupportsNegativeInfinityFloatInputs",
+        documentation: "Supports handling -Infinity float values.",
+        protocol: restXml,
+        method: "PUT",
+        uri: "/SimpleScalarProperties",
+        body: """
+              <SimpleScalarPropertiesInputOutput>
+                  <floatValue>-Infinity</floatValue>
+                  <doubleValue>-Infinity</doubleValue>
+              </SimpleScalarPropertiesInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            floatValue: "-Infinity",
+            doubleValue: "-Infinity",
+        }
+    },
 ])
 
 apply SimpleScalarProperties @httpResponseTests([
@@ -232,7 +295,67 @@ apply SimpleScalarProperties @httpResponseTests([
             foo: "Foo",
             stringValue: "string with white    space",
         }
-    }
+    },
+    {
+        id: "RestXmlSupportsNaNFloatOutputs",
+        documentation: "Supports handling NaN float values.",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <SimpleScalarPropertiesInputOutput>
+                  <floatValue>NaN</floatValue>
+                  <doubleValue>NaN</doubleValue>
+              </SimpleScalarPropertiesInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            floatValue: "NaN",
+            doubleValue: "NaN",
+        }
+    },
+    {
+        id: "RestXmlSupportsInfinityFloatOutputs",
+        documentation: "Supports handling Infinity float values.",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <SimpleScalarPropertiesInputOutput>
+                  <floatValue>Infinity</floatValue>
+                  <doubleValue>Infinity</doubleValue>
+              </SimpleScalarPropertiesInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            floatValue: "Infinity",
+            doubleValue: "Infinity",
+        }
+    },
+    {
+        id: "RestXmlSupportsNegativeInfinityFloatOutputs",
+        documentation: "Supports handling -Infinity float values.",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <SimpleScalarPropertiesInputOutput>
+                  <floatValue>-Infinity</floatValue>
+                  <doubleValue>-Infinity</doubleValue>
+              </SimpleScalarPropertiesInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            floatValue: "-Infinity",
+            doubleValue: "-Infinity",
+        }
+    },
 ])
 
 structure SimpleScalarPropertiesInputOutput {

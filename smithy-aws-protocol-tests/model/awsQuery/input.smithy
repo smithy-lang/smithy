@@ -142,7 +142,64 @@ apply SimpleInputParams @httpRequestTests([
         params: {
             FooEnum: "Foo",
         }
-    }
+    },
+    {
+        id: "AwsQuerySupportsNaNFloatInputs",
+        documentation: "Supports handling NaN float values.",
+        protocol: awsQuery,
+        method: "POST",
+        uri: "/",
+        body: "Action=SimpleInputParams&Version=2020-01-08&FloatValue=NaN&Boo=NaN",
+        bodyMediaType: "application/x-www-form-urlencoded",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        requireHeaders: [
+            "Content-Length"
+        ],
+        params: {
+            FloatValue: "NaN",
+            Boo: "NaN",
+        }
+    },
+    {
+        id: "AwsQuerySupportsInfinityFloatInputs",
+        documentation: "Supports handling Infinity float values.",
+        protocol: awsQuery,
+        method: "POST",
+        uri: "/",
+        body: "Action=SimpleInputParams&Version=2020-01-08&FloatValue=Infinity&Boo=Infinity",
+        bodyMediaType: "application/x-www-form-urlencoded",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        requireHeaders: [
+            "Content-Length"
+        ],
+        params: {
+            FloatValue: "Infinity",
+            Boo: "Infinity",
+        }
+    },
+    {
+        id: "AwsQuerySupportsNegativeInfinityFloatInputs",
+        documentation: "Supports handling -Infinity float values.",
+        protocol: awsQuery,
+        method: "POST",
+        uri: "/",
+        body: "Action=SimpleInputParams&Version=2020-01-08&FloatValue=-Infinity&Boo=-Infinity",
+        bodyMediaType: "application/x-www-form-urlencoded",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        requireHeaders: [
+            "Content-Length"
+        ],
+        params: {
+            FloatValue: "-Infinity",
+            Boo: "-Infinity",
+        }
+    },
 ])
 
 structure SimpleInputParamsInput {
@@ -150,6 +207,7 @@ structure SimpleInputParamsInput {
     Bar: String,
     Baz: Boolean,
     Bam: Integer,
+    FloatValue: Float,
     Boo: Double,
     Qux: Blob,
     FooEnum: FooEnum,

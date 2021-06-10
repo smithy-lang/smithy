@@ -198,6 +198,63 @@ apply SimpleInputParams @httpRequestTests([
             UsesXmlName: "Hi",
         }
     },
+    {
+        id: "Ec2QuerySupportsNaNFloatInputs",
+        documentation: "Supports handling NaN float values.",
+        protocol: ec2Query,
+        method: "POST",
+        uri: "/",
+        body: "Action=SimpleInputParams&Version=2020-01-08&FloatValue=NaN&Boo=NaN",
+        bodyMediaType: "application/x-www-form-urlencoded",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        requireHeaders: [
+            "Content-Length"
+        ],
+        params: {
+            FloatValue: "NaN",
+            Boo: "NaN",
+        }
+    },
+    {
+        id: "Ec2QuerySupportsInfinityFloatInputs",
+        documentation: "Supports handling Infinity float values.",
+        protocol: ec2Query,
+        method: "POST",
+        uri: "/",
+        body: "Action=SimpleInputParams&Version=2020-01-08&FloatValue=Infinity&Boo=Infinity",
+        bodyMediaType: "application/x-www-form-urlencoded",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        requireHeaders: [
+            "Content-Length"
+        ],
+        params: {
+            FloatValue: "Infinity",
+            Boo: "Infinity",
+        }
+    },
+    {
+        id: "Ec2QuerySupportsNegativeInfinityFloatInputs",
+        documentation: "Supports handling -Infinity float values.",
+        protocol: ec2Query,
+        method: "POST",
+        uri: "/",
+        body: "Action=SimpleInputParams&Version=2020-01-08&FloatValue=-Infinity&Boo=-Infinity",
+        bodyMediaType: "application/x-www-form-urlencoded",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        requireHeaders: [
+            "Content-Length"
+        ],
+        params: {
+            FloatValue: "-Infinity",
+            Boo: "-Infinity",
+        }
+    },
 ])
 
 structure SimpleInputParamsInput {
@@ -205,6 +262,7 @@ structure SimpleInputParamsInput {
     Bar: String,
     Baz: Boolean,
     Bam: Integer,
+    FloatValue: Float,
     Boo: Double,
     Qux: Blob,
     FooEnum: FooEnum,
