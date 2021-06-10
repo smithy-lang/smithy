@@ -22,6 +22,7 @@ service JsonProtocol {
     operations: [
         EmptyOperation,
         KitchenSinkOperation,
+        SimpleScalarProperties,
         OperationWithOptionalInputOutput,
         PutAndGetInlineDocuments,
         JsonEnums,

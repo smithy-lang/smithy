@@ -55,7 +55,73 @@ apply SimpleScalarXmlProperties @httpResponseTests([
             floatValue: 5.5,
             doubleValue: 6.5,
         }
-    }
+    },
+    {
+        id: "Ec2QuerySupportsNaNFloatOutputs",
+        documentation: "Supports handling NaN float values.",
+        protocol: ec2Query,
+        code: 200,
+        body: """
+              <SimpleScalarXmlPropertiesResponse xmlns="https://example.com/">
+                  <SimpleScalarXmlPropertiesResult>
+                      <floatValue>NaN</floatValue>
+                      <doubleValue>NaN</doubleValue>
+                  </SimpleScalarXmlPropertiesResult>
+              </SimpleScalarXmlPropertiesResponse>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "text/xml;charset=UTF-8"
+        },
+        params: {
+            floatValue: "NaN",
+            doubleValue: "NaN",
+        }
+    },
+    {
+        id: "Ec2QuerySupportsInfinityFloatOutputs",
+        documentation: "Supports handling Infinity float values.",
+        protocol: ec2Query,
+        code: 200,
+        body: """
+              <SimpleScalarXmlPropertiesResponse xmlns="https://example.com/">
+                  <SimpleScalarXmlPropertiesResult>
+                      <floatValue>Infinity</floatValue>
+                      <doubleValue>Infinity</doubleValue>
+                  </SimpleScalarXmlPropertiesResult>
+              </SimpleScalarXmlPropertiesResponse>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "text/xml;charset=UTF-8"
+        },
+        params: {
+            floatValue: "Infinity",
+            doubleValue: "Infinity",
+        }
+    },
+    {
+        id: "Ec2QuerySupportsNegativeInfinityFloatOutputs",
+        documentation: "Supports handling -Infinity float values.",
+        protocol: ec2Query,
+        code: 200,
+        body: """
+              <SimpleScalarXmlPropertiesResponse xmlns="https://example.com/">
+                  <SimpleScalarXmlPropertiesResult>
+                      <floatValue>-Infinity</floatValue>
+                      <doubleValue>-Infinity</doubleValue>
+                  </SimpleScalarXmlPropertiesResult>
+              </SimpleScalarXmlPropertiesResponse>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "text/xml;charset=UTF-8"
+        },
+        params: {
+            floatValue: "-Infinity",
+            doubleValue: "-Infinity",
+        }
+    },
 ])
 
 structure SimpleScalarXmlPropertiesOutput {

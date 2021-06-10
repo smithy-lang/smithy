@@ -91,6 +91,63 @@ apply SimpleScalarProperties @httpRequestTests([
         params: {},
         appliesTo: "server",
     },
+    {
+        id: "RestJsonSupportsNaNFloatInputs",
+        documentation: "Supports handling NaN float values.",
+        protocol: restJson1,
+        method: "PUT",
+        uri: "/SimpleScalarProperties",
+        body: """
+            {
+                "floatValue": "NaN",
+                "doubleValue": "NaN"
+            }""",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        params: {
+            floatValue: "NaN",
+            doubleValue: "NaN",
+        }
+    },
+    {
+        id: "RestJsonSupportsInfinityFloatInputs",
+        documentation: "Supports handling Infinity float values.",
+        protocol: restJson1,
+        method: "PUT",
+        uri: "/SimpleScalarProperties",
+        body: """
+            {
+                "floatValue": "Infinity",
+                "doubleValue": "Infinity"
+            }""",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        params: {
+            floatValue: "Infinity",
+            doubleValue: "Infinity",
+        }
+    },
+    {
+        id: "RestJsonSupportsNegativeInfinityFloatInputs",
+        documentation: "Supports handling -Infinity float values.",
+        protocol: restJson1,
+        method: "PUT",
+        uri: "/SimpleScalarProperties",
+        body: """
+            {
+                "floatValue": "-Infinity",
+                "doubleValue": "-Infinity"
+            }""",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        params: {
+            floatValue: "-Infinity",
+            doubleValue: "-Infinity",
+        }
+    },
 ])
 
 apply SimpleScalarProperties @httpResponseTests([
@@ -159,6 +216,60 @@ apply SimpleScalarProperties @httpResponseTests([
             stringValue: null
         },
         appliesTo: "server",
+    },
+    {
+        id: "RestJsonSupportsNaNFloatInputs",
+        documentation: "Supports handling NaN float values.",
+        protocol: restJson1,
+        code: 200,
+        body: """
+            {
+                "floatValue": "NaN",
+                "doubleValue": "NaN"
+            }""",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        params: {
+            floatValue: "NaN",
+            doubleValue: "NaN",
+        }
+    },
+    {
+        id: "RestJsonSupportsInfinityFloatInputs",
+        documentation: "Supports handling Infinity float values.",
+        protocol: restJson1,
+        code: 200,
+        body: """
+            {
+                "floatValue": "Infinity",
+                "doubleValue": "Infinity"
+            }""",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        params: {
+            floatValue: "Infinity",
+            doubleValue: "Infinity",
+        }
+    },
+    {
+        id: "RestJsonSupportsNegativeInfinityFloatInputs",
+        documentation: "Supports handling -Infinity float values.",
+        protocol: restJson1,
+        code: 200,
+        body: """
+            {
+                "floatValue": "-Infinity",
+                "doubleValue": "-Infinity"
+            }""",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        params: {
+            floatValue: "-Infinity",
+            doubleValue: "-Infinity",
+        }
     },
 ])
 

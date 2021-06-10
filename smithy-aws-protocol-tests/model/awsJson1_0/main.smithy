@@ -16,6 +16,7 @@ service JsonRpc10 {
         NoInputAndNoOutput,
         NoInputAndOutput,
         EmptyInputAndEmptyOutput,
+        SimpleScalarProperties,
 
         // Errors
         GreetingWithErrors,
