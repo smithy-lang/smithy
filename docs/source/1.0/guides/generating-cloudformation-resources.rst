@@ -1,3 +1,5 @@
+.. _smithy-to-cloudformation:
+
 ======================================================
 Generating CloudFormation Resource Schemas from Smithy
 ======================================================
