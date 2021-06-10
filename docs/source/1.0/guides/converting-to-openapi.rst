@@ -1,3 +1,5 @@
+.. _smithy-to-openapi:
+
 ============================
 Converting Smithy to OpenAPI
 ============================
