@@ -364,6 +364,13 @@ serialized in the response.
         <RequestId>foo-id</RequestId>
     </Response>
 
+* ``Code``: The :token:`shape name <identifier>` of the error's
+  :ref:`shape-id`.
+* ``RequestId``: Contains a unique identifier for the associated request.
+
+In the above example, ``Message``, and ``AnotherSetting`` are additional,
+hypothetical members of the serialized error structure.
+
 
 .. _ec2Query-compliance-tests:
 
