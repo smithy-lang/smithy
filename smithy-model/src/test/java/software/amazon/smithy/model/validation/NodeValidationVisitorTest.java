@@ -140,12 +140,20 @@ public class NodeValidationVisitorTest {
 
                 // float
                 {"ns.foo#Float", "10", null},
+                {"ns.foo#Float", "\"NaN\"", null},
+                {"ns.foo#Float", "\"Infinity\"", null},
+                {"ns.foo#Float", "\"-Infinity\"", null},
+                {"ns.foo#Float", "\"+Infinity\"", new String[] {"Value for `ns.foo#Float` must either be numeric or one of the following strings: [\"NaN\", \"Infinity\", \"-Infinity\"], but was \"+Infinity\""}},
                 {"ns.foo#Float", "true", new String[] {"Expected number value for float shape, `ns.foo#Float`; found boolean value, `true`"}},
                 {"ns.foo#Float", "21", new String[] {"Value provided for `ns.foo#Float` must be less than or equal to 20, but found 21"}},
                 {"ns.foo#Float", "9", new String[] {"Value provided for `ns.foo#Float` must be greater than or equal to 10, but found 9"}},
 
                 // double
                 {"ns.foo#Double", "10", null},
+                {"ns.foo#Double", "\"NaN\"", null},
+                {"ns.foo#Double", "\"Infinity\"", null},
+                {"ns.foo#Double", "\"-Infinity\"", null},
+                {"ns.foo#Double", "\"+Infinity\"", new String[] {"Value for `ns.foo#Double` must either be numeric or one of the following strings: [\"NaN\", \"Infinity\", \"-Infinity\"], but was \"+Infinity\""}},
                 {"ns.foo#Double", "true", new String[] {"Expected number value for double shape, `ns.foo#Double`; found boolean value, `true`"}},
                 {"ns.foo#Double", "21", new String[] {"Value provided for `ns.foo#Double` must be less than or equal to 20, but found 21"}},
                 {"ns.foo#Double", "9", new String[] {"Value provided for `ns.foo#Double` must be greater than or equal to 10, but found 9"}},

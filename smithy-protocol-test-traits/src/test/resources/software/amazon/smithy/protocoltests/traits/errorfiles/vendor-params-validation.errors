@@ -1,5 +1,5 @@
 [WARNING] smithy.example#SayGoodbye: Protocol test case defined a `vendorParamsShape` but no `vendorParams` | HttpResponseTestsOutput
 [WARNING] smithy.example#SayGoodbye: smithy.test#httpResponseTests.1.vendorParams: Invalid structure member `additional` found for `smithy.example#emptyVendorParamsStructure` | HttpResponseTestsOutput
-[ERROR] smithy.example#MyError: smithy.test#httpResponseTests.0.vendorParams.float: Expected number value for float shape, `smithy.api#Float`; found string value, `Hi` | HttpResponseTestsError
+[ERROR] smithy.example#MyError: smithy.test#httpResponseTests.0.vendorParams.float: Value for `smithy.api#Float` must either be numeric or one of the following strings: ["NaN", "Infinity", "-Infinity"], but was "Hi" | HttpResponseTestsError
 [ERROR] smithy.example#SayHello: smithy.test#httpRequestTests.0.vendorParams: Missing required structure member `integer` for `smithy.example#simpleVendorParamsStructure` | HttpRequestTestsInput
 [ERROR] smithy.example#SayHello: smithy.test#httpRequestTests.1.vendorParams.boolean: Expected boolean value for boolean shape, `smithy.api#Boolean`; found string value, `Hi` | HttpRequestTestsInput
