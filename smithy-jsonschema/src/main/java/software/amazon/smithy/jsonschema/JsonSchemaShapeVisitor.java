@@ -53,6 +53,9 @@ import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.utils.ListUtils;
 
 final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
+    private static final List<String> NON_NUMERIC_FLOAT_VALUES = ListUtils.of(
+            "NaN", "Infinity", "-Infinity"
+    );
 
     private final Model model;
     private final JsonSchemaConverter converter;
@@ -150,12 +153,30 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
 
     @Override
     public Schema floatShape(FloatShape shape) {
-        return buildSchema(shape, createBuilder(shape, "number"));
+        return buildFloatSchema(shape);
     }
 
     @Override
     public Schema doubleShape(DoubleShape shape) {
-        return buildSchema(shape, createBuilder(shape, "number"));
+        return buildFloatSchema(shape);
+    }
+
+    private Schema buildFloatSchema(Shape shape) {
+        Schema.Builder numberBuilder = createBuilder(shape, "number");
+        if (!converter.getConfig().getSupportNonNumericFloats()) {
+            return buildSchema(shape, numberBuilder);
+        }
+
+        Schema nonNumericValues = Schema.builder()
+                .type("string")
+                .enumValues(NON_NUMERIC_FLOAT_VALUES)
+                .build();
+
+        Schema.Builder nonNumericNumberBuilder = createBuilder(shape, "number")
+                .type(null)
+                .oneOf(ListUtils.of(numberBuilder.build(), nonNumericValues));
+
+        return buildSchema(shape, nonNumericNumberBuilder);
     }
 
     @Override

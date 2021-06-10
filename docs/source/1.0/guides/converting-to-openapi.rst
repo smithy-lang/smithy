@@ -514,6 +514,28 @@ useIntegerType (``boolean``)
             }
         }
 
+.. _generate-openapi-setting-supportNonNumericFloats:
+
+supportNonNumericFloats (``boolean``)
+    Set to true to add support for NaN, Infinity, and -Infinity in float
+    and double shapes. These values will be serialized as strings. The
+    OpenAPI document will be updated to refer to them as a "oneOf" of number
+    and string.
+
+    By default, these non-numeric values are not supported.
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "supportNonNumericFloats": true
+                }
+            }
+        }
+
 ----------------------------------
 JSON schema configuration settings
 ----------------------------------

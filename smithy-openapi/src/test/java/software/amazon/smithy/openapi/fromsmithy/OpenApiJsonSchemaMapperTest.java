@@ -16,12 +16,15 @@
 package software.amazon.smithy.openapi.fromsmithy;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.jsonschema.JsonSchemaConfig;
 import software.amazon.smithy.jsonschema.JsonSchemaConverter;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.jsonschema.SchemaDocument;
@@ -196,6 +199,32 @@ public class OpenApiJsonSchemaMapperTest {
     }
 
     @Test
+    public void supportsNonNumericFloatFormat() {
+        FloatShape shape = FloatShape.builder().id("a.b#C").build();
+        Model model = Model.builder().addShape(shape).build();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setSupportNonNumericFloats(true);
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .addMapper(new OpenApiJsonSchemaMapper())
+                .config(config)
+                .model(model)
+                .build()
+                .convertShape(shape);
+
+        Schema rootSchema = document.getRootSchema();
+        assertFalse(rootSchema.getFormat().isPresent());
+        Schema numericSchema = null;
+        for (Schema schema : rootSchema.getOneOf()) {
+            if (schema.getType().isPresent() && schema.getType().get().equals("number")) {
+                numericSchema = schema;
+                break;
+            }
+        }
+        assertNotNull(numericSchema);
+        assertThat(numericSchema.getFormat().get(), equalTo("float"));
+    }
+
+    @Test
     public void supportsDoubleFormat() {
         DoubleShape shape = DoubleShape.builder().id("a.b#C").build();
         Model model = Model.builder().addShape(shape).build();
@@ -206,6 +235,32 @@ public class OpenApiJsonSchemaMapperTest {
                 .convertShape(shape);
 
         assertThat(document.getRootSchema().getFormat().get(), equalTo("double"));
+    }
+
+    @Test
+    public void supportsNonNumericDoubleFormat() {
+        DoubleShape shape = DoubleShape.builder().id("a.b#C").build();
+        Model model = Model.builder().addShape(shape).build();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setSupportNonNumericFloats(true);
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .addMapper(new OpenApiJsonSchemaMapper())
+                .config(config)
+                .model(model)
+                .build()
+                .convertShape(shape);
+
+        Schema rootSchema = document.getRootSchema();
+        assertFalse(rootSchema.getFormat().isPresent());
+        Schema numericSchema = null;
+        for (Schema schema : rootSchema.getOneOf()) {
+            if (schema.getType().isPresent() && schema.getType().get().equals("number")) {
+                numericSchema = schema;
+                break;
+            }
+        }
+        assertNotNull(numericSchema);
+        assertThat(numericSchema.getFormat().get(), equalTo("double"));
     }
 
     @Test
