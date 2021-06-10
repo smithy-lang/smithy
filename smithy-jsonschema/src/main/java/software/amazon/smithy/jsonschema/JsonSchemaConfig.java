@@ -108,6 +108,7 @@ public class JsonSchemaConfig {
     private final ConcurrentHashMap<Class, Object> extensionCache = new ConcurrentHashMap<>();
     private final NodeMapper nodeMapper = new NodeMapper();
     private ShapeId service;
+    private boolean supportNonNumericFloats = false;
 
     public JsonSchemaConfig() {
         nodeMapper.setWhenMissingSetter(NodeMapper.WhenMissing.INGORE);
@@ -346,5 +347,23 @@ public class JsonSchemaConfig {
                     .orElseGet(() -> getDefaultTimestampFormat().toString()));
         }
         return Optional.empty();
+    }
+
+    public boolean getSupportNonNumericFloats() {
+        return supportNonNumericFloats;
+    }
+
+    /**
+     * Set to true to add support for NaN, Infinity, and -Infinity in float
+     * and double shapes. These values will be serialized as strings. The
+     * OpenAPI document will be updated to refer to them as a "oneOf" of number
+     * and string.
+     *
+     * <p>By default, non-numeric values are not supported.
+     *
+     * @param supportNonNumericFloats True if non-numeric float values should be supported.
+     */
+    public void setSupportNonNumericFloats(boolean supportNonNumericFloats) {
+        this.supportNonNumericFloats = supportNonNumericFloats;
     }
 }

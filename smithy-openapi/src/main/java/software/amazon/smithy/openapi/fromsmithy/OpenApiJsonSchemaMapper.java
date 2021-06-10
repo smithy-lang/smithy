@@ -81,9 +81,9 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
             } else if (shape.isLongShape()) {
                 builder.format("int64");
             } else if (shape.isFloatShape()) {
-                builder.format("float");
+                updateFloatFormat(builder, config, "float");
             } else if (shape.isDoubleShape()) {
-                builder.format("double");
+                updateFloatFormat(builder, config, "double");
             } else if (shape.isBlobShape()) {
                 if (config instanceof OpenApiConfig) {
                     String blobFormat = ((OpenApiConfig) config).getDefaultBlobFormat();
@@ -104,6 +104,22 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
         UNSUPPORTED_KEYWORD_DIRECTIVES.forEach(builder::disableProperty);
 
         return builder;
+    }
+
+    private void updateFloatFormat(Schema.Builder builder, JsonSchemaConfig config, String format) {
+        if (config.getSupportNonNumericFloats()) {
+            List<Schema> newOneOf = new ArrayList<>();
+            for (Schema schema : builder.build().getOneOf()) {
+                if (schema.getType().isPresent() && schema.getType().get().equals("number")) {
+                    newOneOf.add(schema.toBuilder().format(format).build());
+                } else {
+                    newOneOf.add(schema);
+                }
+            }
+            builder.oneOf(newOneOf);
+        } else {
+            builder.format(format);
+        }
     }
 
     static Optional<ExternalDocumentation> getResolvedExternalDocs(Shape shape, JsonSchemaConfig config) {
