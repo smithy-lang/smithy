@@ -211,7 +211,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     @Override
     public List<ValidationEvent> floatShape(FloatShape shape) {
-        return value.isNumberNode()
+        return value.isNumberNode() || value.isStringNode()
                ? applyPlugins(shape)
                : invalidShape(shape, NodeType.NUMBER);
     }
@@ -224,7 +224,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     @Override
     public List<ValidationEvent> doubleShape(DoubleShape shape) {
-        return value.isNumberNode()
+        return value.isNumberNode() || value.isStringNode()
                ? applyPlugins(shape)
                : invalidShape(shape, NodeType.NUMBER);
     }
