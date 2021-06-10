@@ -1,40 +1,15 @@
------------------
-Protocol Behavior
------------------
-
-Every request for the |quoted shape name| protocol MUST be sent to the
-root URL (``/``) using the HTTP "POST" method.
-
-The |quoted shape name| protocol does not support custom HTTP bindings.
-:ref:`HTTP binding traits <http-traits>` MUST be ignored if they are present.
-
-The |quoted shape name| protocol uses the following headers:
-
-.. list-table::
-    :header-rows: 1
-    :widths: 20 20 80
-
-    * - Header
-      - Required
-      - Description
-    * - ``Content-Type``
-      - true
-      - This header uses the static values of ``application/x-www-form-urlencoded``
-        for requests and ``text/xml`` for responses.
-    * - ``Content-Length``
-      - true
-      - The standard ``Content-Length`` header defined by
-        `RFC 7230 Section 3.3.2`_.
-
-
 ---------------------
 Request serialization
 ---------------------
 
-The |quoted shape name| protocol serializes inputs in ``x-www-form-urlencoded``
-request bodies. All keys and values MUST be encoded according to :rfc:`3986`.
-Requests MUST have the following key value pairs added to the inputs in the
-serialized body:
+Requests SHALL be sent to the root URL (``/``). Requests SHALL use a POST
+request and a body that contains input parameters serialized with a
+Content-Type of ``application/x-www-form-urlencoded``. All keys and
+values MUST be encoded according to :rfc:`3986`. Requests SHALL contain
+a Content-Length header; this protocol does not support chunked
+Transfer-Encoding.
+
+Requests MUST include the following key value pairs in the serialized body:
 
 .. list-table::
     :header-rows: 1
@@ -53,6 +28,7 @@ concatenated with the following rules:
 * "&" is used to separate member key-value pairs.
 * "=" is used to separate member keys from values.
 * "." is used to separate member name segments within keys.
+
 
 x-www-form-urlencoded shape serialization
 -----------------------------------------

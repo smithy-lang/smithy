@@ -4,7 +4,7 @@
 AWS query protocol
 ==================
 
-This specification defines the ``aws.protocols#awsQuery`` protocol.
+This document defines the ``aws.protocols#awsQuery`` protocol.
 
 .. contents:: Table of contents
     :depth: 2
@@ -12,130 +12,43 @@ This specification defines the ``aws.protocols#awsQuery`` protocol.
     :backlinks: none
 
 
-.. _aws.protocols#awsQuery-trait:
+--------
+Overview
+--------
 
---------------------------------
-``aws.protocols#awsQuery`` trait
---------------------------------
+The AWS Query protocol uses HTTP and serializes HTTP requests using query
+string parameters and responses using XML. Requests can be sent using GET
+requests and placing parameters in the query string; however, sending
+requests using POST with an ``application/x-www-form-urlencoded``
+Content-Type is preferred because some proxies, clients, and servers have
+limitations around the maximum amount of data that can be sent in a query
+string.
 
-Summary
-    Adds support for an HTTP protocol that sends "POST" requests in the body
-    as ``x-www-form-urlencoded`` strings and responses in XML documents.
-Trait selector
-    ``service [trait|xmlNamespace]``
+A service is configured to use this protocol by applying the :ref:`aws.protocols#awsQuery-trait`.
+The service MUST also define the :ref:`xmlnamespace-trait` which is used
+to determine the XML namespace used in XML responses.
 
-    *Service shapes with the xmlNamespace trait*
-Value type
-    Annotation trait.
-See
-    `Protocol tests <https://github.com/awslabs/smithy/tree/__smithy_version__/smithy-aws-protocol-tests/model/awsQuery>`_
+.. code-block:: smithy
 
-.. tabs::
+    namespace smithy.example
 
-    .. code-tab:: smithy
+    use aws.protocols#awsQuery
 
-        namespace smithy.example
-
-        use aws.protocols#awsQuery
-
-        @awsQuery
-        service MyService {
-            version: "2020-02-05"
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyService": {
-                    "type": "service",
-                    "version": "2020-02-05",
-                    "traits": {
-                        "aws.protocols#awsQuery": {}
-                    }
-                }
-            }
-        }
-
-.. _aws.protocols#awsQueryError-trait:
-
--------------------------------------
-``aws.protocols#awsQueryError`` trait
--------------------------------------
-
-Summary
-    Provides a :ref:`custom "Code" value <awsQuery-error-code>` for
-    ``awsQuery`` errors and an :ref:`HTTP response code <awsQuery-error-response-code>`.
-    The "Code" of an ``awsQuery`` error is used by clients to determine which
-    type of error was encountered.
-Trait selector
-    ``structure [trait|error]``
-
-    The ``httpError`` trait can only be applied to :ref:`structure <structure>`
-    shapes that also have the :ref:`error-trait`.
-Value type
-    ``structure``
-
-The ``awsQueryError`` trait is a structure that supports the following members:
-
-.. list-table::
-    :header-rows: 1
-    :widths: 10 25 65
-
-    * - Property
-      - Type
-      - Description
-    * - code
-      - ``string``
-      - **Required** The value used to distinguish this error shape during
-        client deserialization.
-    * - httpResponseCode
-      - ``integer``
-      - **Required** The HTTP response code used on a response that contains
-        this error shape.
+    @awsQuery
+    @xmlNamespace(uri: "http://foo.com")
+    service MyService {
+        version: "2020-02-05"
+    }
 
 .. important::
-    The ``aws.protocols#awsQueryError`` trait is only used when serializing
-    operation errors using the ``aws.protocols#query`` protocol.
 
-.. tabs::
+    * This protocol is deprecated and SHOULD NOT be used for any new service.
+    * This protocol does not support document types.
+    * This protocol does not support :ref:`HTTP binding traits <http-traits>`.
+      HTTP binding traits MUST be ignored if they are present.
+    * This protocol does not support any kind of streaming requests or
+      responses, including event streams.
 
-    .. code-tab:: smithy
-
-        use aws.protocols#awsQueryError
-
-        @awsQueryError(
-            code: "InvalidThing",
-            httpResponseCode: 400,
-        )
-        @error("client")
-        structure InvalidThingException {
-            message: String
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#InvalidThingException": {
-                    "type": "structure",
-                    "members": {
-                        "message": {
-                            "target": "smithy.api#String"
-                        }
-                    },
-                    "traits": {
-                        "aws.protocols#awsQueryError": {
-                            "code": "InvalidThing",
-                            "httpResponseCode": 400
-                        },
-                        "smithy.api#error": "client"
-                    }
-                }
-            }
-        }
 
 ----------------
 Supported traits
@@ -180,14 +93,10 @@ that affect serialization:
         The "Code" of an ``awsQuery`` error is used by clients to determine
         which type of error was encountered.
 
-.. important::
-
-    This protocol does not support document types.
-
-
 .. |quoted shape name| replace:: ``awsQuery``
 .. |name resolution text| replace:: The :ref:`xmlName-trait` can be used to serialize a property using a custom name
 .. include:: aws-query-serialization.rst.template
+
 
 .. _aws.protocols#awsQueryName-query-key-naming:
 
@@ -221,16 +130,15 @@ resolved using the following process:
          - The :token:`member name <shape_id_member>`
 
 
-Examples
---------
+Example requests
+----------------
 
-.. important::
+The following list of examples are non-exhaustive. See the
+:ref:`awsQuery-compliance-tests` for a suite of compliance tests for the
+``awsQuery`` protocol. Newlines have been to examples only for readability.
 
-    These examples are non-exhaustive. See the :ref:`awsQuery-compliance-tests`
-    for a suite of compliance tests for the ``awsQuery`` protocol.
 
-
-Structures and Unions
+Structures and unions
 =====================
 
 |query aggregate text|
@@ -252,9 +160,14 @@ For example, given the following:
         temp: String,
     }
 
-The ``x-www-form-urlencoded`` serialization is:
+The ``application/x-www-form-urlencoded`` serialization is:
 
 .. code-block:: text
+
+    POST / HTTP/1.1
+    Content-Type: application/x-www-form-urlencoded
+    Content-Length: ...
+    Host: example.com
 
     Action=QueryStructures
     &Version=2020-07-02
@@ -304,9 +217,14 @@ For example, given the following:
         hi: String,
     }
 
-The ``x-www-form-urlencoded`` serialization is:
+The ``application/x-www-form-urlencoded`` serialization is:
 
 .. code-block:: text
+
+    POST / HTTP/1.1
+    Content-Type: application/x-www-form-urlencoded
+    Content-Length: ...
+    Host: example.com
 
     Action=QueryLists
     &Version=2020-07-02
@@ -321,7 +239,6 @@ The ``x-www-form-urlencoded`` serialization is:
     &ListArgWithXmlNameMember.item.2=B
     &Hi.1=A
     &Hi.2=B
-
 
 Maps
 ====
@@ -365,9 +282,14 @@ For example, given the following:
         hi: String,
     }
 
-The ``x-www-form-urlencoded`` serialization is:
+The ``application/x-www-form-urlencoded`` serialization is:
 
 .. code-block:: text
+
+    POST / HTTP/1.1
+    Content-Type: application/x-www-form-urlencoded
+    Content-Length: ...
+    Host: example.com
 
     Action=QueryMaps
     &Version=2020-07-02
@@ -393,7 +315,9 @@ Response serialization
 The ``awsQuery`` protocol serializes XML responses within an XML root node with
 the name of the operation's output suffixed with "Response". A nested element,
 with the name of the operation's output suffixed with "Result", contains the
-contents of the successful response.
+contents of the successful response. A nested element named "ResponseMetadata"
+contains a nested element named "RequestId" that contains a unique identifier
+for the associated request.
 
 The value of the ``uri`` member of the :ref:`xmlNamespace trait <xmlNamespace-trait>`
 is serialized in an ``xmlns`` attribute on the response's XML root node. The
@@ -401,10 +325,18 @@ following is a sample response to an operation named ``XmlTest``.
 
 .. code-block:: xml
 
+    HTTP/1.1 200 OK
+    Date: Mon, 27 Jul 2009 12:28:53 GMT
+    Content-Type: text/xml
+    Content-Length: ...
+
     <XmlTestResponse xmlns="https://example.com/">
         <XmlTestResult>
             <testValue>Hello!</testValue>
         </XmlTestResult>
+        <ResponseMetadata>
+            <RequestId>c6104cbe-af31-11e0-8154-cbc7ccf896c7</RequestId>
+        </ResponseMetadata>
     </XmlTestResponse>
 
 XML shape serialization
@@ -424,11 +356,13 @@ root node named ``ErrorResponse``. A nested element, named ``Error``, contains
 the serialized error structure members. :ref:`The HTTP response code is a
 resolved value. <awsQuery-error-response-code>`
 
-Serialized error shapes MUST also contain an additional child element ``Code``
-that contains the :ref:`resolved error code value <awsQuery-error-code>`. This
-is used to distinguish which specific error is serialized in the response.
-
 .. code-block:: xml
+    :caption: AWS Query error example
+
+    HTTP/1.1 400 Bad Request
+    Date: Mon, 27 Jul 2009 12:28:53 GMT
+    Content-Type: text/xml
+    Content-Length: ...
 
     <ErrorResponse>
         <Error>
@@ -437,22 +371,37 @@ is used to distinguish which specific error is serialized in the response.
             <Message>Hi</Message>
             <AnotherSetting>setting</AnotherSetting>
         </Error>
-        <RequestId>foo-id</RequestId>
+        <RequestId>c6104cbe-af31-11e0-8154-cbc7ccf896c7</RequestId>
     </ErrorResponse>
+
+Error responses contain the following nested elements:
+
+* ``Error``: A container for the encountered error.
+* ``Type``: One of "Sender" or "Receiver"; whomever is at fault from
+  the service perspective.
+* ``Code``: The :ref:`resolved error code value <awsQuery-error-code>`
+  that is used to distinguish which specific error is serialized in
+  the response.
+* ``RequestId``: Contains a unique identifier for the associated request.
+
+In the above example, ``Message``, and ``AnotherSetting`` are additional,
+hypothetical members of the serialized error structure.
 
 
 .. _awsQuery-error-response-code:
 
-Error HTTP response code resolution
------------------------------------
+Error HTTP response status code resolution
+------------------------------------------
 
-The value of the HTTP response code for the error is resolved using the
-following process:
+The status code of an error is ``400``, ``500``, or a custom status code
+defined by the :ref:`aws.protocols#awsQueryError-trait`. The status code
+is determined through the following process:
 
 1. Use the value of the ``httpResponseCode`` member of the :ref:`aws.protocols#awsQueryError-trait`
    applied to the error structure, if present.
 2. Use the value ``400`` if the value of the :ref:`error-trait` is ``"client"``.
 3. Use the value ``500``.
+
 
 .. _awsQuery-error-code:
 
@@ -466,6 +415,141 @@ following process:
    applied to the error structure, if present.
 2. The :token:`shape name <identifier>` of the error's :ref:`shape-id`.
 
+
+.. _aws.protocols#awsQuery-trait:
+
+--------------------------------
+``aws.protocols#awsQuery`` trait
+--------------------------------
+
+Summary
+    Adds support for the awsQuery protocol to a service. The service MUST have
+    an :ref:`xmlnamespace-trait`.
+Trait selector
+    ``service [trait|xmlNamespace]``
+
+    *Service shapes with the xmlNamespace trait*
+Value type
+    Annotation trait.
+See
+    `Protocol tests <https://github.com/awslabs/smithy/tree/__smithy_version__/smithy-aws-protocol-tests/model/awsQuery>`_
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        namespace smithy.example
+
+        use aws.protocols#awsQuery
+
+        @awsQuery
+        @xmlNamespace(uri: "http://foo.com")
+        service MyService {
+            version: "2020-02-05"
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#MyService": {
+                    "type": "service",
+                    "version": "2020-02-05",
+                    "traits": {
+                        "aws.protocols#awsQuery": {},
+                        "smithy.api#xmlNamespace": {
+                            "uri": "example.com"
+                        }
+                    }
+                }
+            }
+        }
+
+.. _aws.protocols#awsQueryError-trait:
+
+-------------------------------------
+``aws.protocols#awsQueryError`` trait
+-------------------------------------
+
+Summary
+    Provides a :ref:`custom "Code" value <awsQuery-error-code>` for
+    ``awsQuery`` errors and an :ref:`HTTP response code <awsQuery-error-response-code>`.
+    The "Code" of an ``awsQuery`` error is used by clients to determine which
+    type of error was encountered.
+Trait selector
+    ``structure [trait|error]``
+
+    The ``httpError`` trait can only be applied to :ref:`structure <structure>`
+    shapes that also have the :ref:`error-trait`.
+Value type
+    ``structure`` that supports the following members:
+
+    .. list-table::
+        :header-rows: 1
+        :widths: 10 25 65
+
+        * - Property
+          - Type
+          - Description
+        * - code
+          - ``string``
+          - **Required** The value used to distinguish this error shape during
+            client deserialization.
+        * - httpResponseCode
+          - ``integer``
+          - **Required** The HTTP response code used on a response that contains
+            this error shape.
+
+.. important::
+
+    The ``aws.protocols#awsQueryError`` trait is only used when serializing
+    operation errors using the ``aws.protocols#query`` protocol. Unless
+    explicitly stated in other Smithy protocol specification, this trait has
+    no impact on other Smithy protocols.
+
+The following example defines an error that uses a custom "Code" of
+"InvalidThing" and an HTTP status code of 400.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        use aws.protocols#awsQueryError
+
+        @awsQueryError(
+            code: "InvalidThing",
+            httpResponseCode: 400,
+        )
+        @error("client")
+        structure InvalidThingException {
+            message: String
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#InvalidThingException": {
+                    "type": "structure",
+                    "members": {
+                        "message": {
+                            "target": "smithy.api#String"
+                        }
+                    },
+                    "traits": {
+                        "aws.protocols#awsQueryError": {
+                            "code": "InvalidThing",
+                            "httpResponseCode": 400
+                        },
+                        "smithy.api#error": "client"
+                    }
+                }
+            }
+        }
+
+
 .. _awsQuery-compliance-tests:
 
 -------------------------
@@ -477,6 +561,3 @@ reference: https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests
 
 These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.
-
-*TODO: Add event stream handling specifications.*
-
