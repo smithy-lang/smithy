@@ -143,7 +143,7 @@ of polish or that they work for all use cases.
       - 0.x
       - Go client code generation for Smithy.
     * - `Rust client codegen <https://github.com/awslabs/smithy-rs>`_
-      - Java
+      - Kotlin
       - 0.x
       - Rust client code generation for Smithy.
 
