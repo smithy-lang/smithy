@@ -75,11 +75,11 @@ customer code and onto service teams who know their service best.</p>
 <p>For example, waiters can be used in code to turn the workflow of waiting
 for an Amazon EC2 instance to be terminated into something like the
 following client pseudocode:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">InstanceTerminatedWaiter</span> <span class="n">waiter</span> <span class="o">=</span> <span class="n">InstanceTerminatedWaiter</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
-        <span class="p">.</span><span class="na">client</span><span class="p">(</span><span class="n">myClient</span><span class="p">)</span>
-        <span class="p">.</span><span class="na">instanceIds</span><span class="p">(</span><span class="n">Collections</span><span class="p">.</span><span class="na">singletonList</span><span class="p">(</span><span class="s">&quot;i-foo&quot;</span><span class="p">))</span>
-        <span class="p">.</span><span class="na">totalAllowedWaitTime</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">Duration</span><span class="p">.</span><span class="na">MINUTES</span><span class="p">)</span>
-        <span class="p">.</span><span class="na">wait</span><span class="p">();</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">InstanceTerminatedWaiter</span> <span class="n">waiter</span> <span class="o">=</span> <span class="n">InstanceTerminatedWaiter</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>
+        <span class="o">.</span><span class="na">client</span><span class="o">(</span><span class="n">myClient</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">instanceIds</span><span class="o">(</span><span class="n">Collections</span><span class="o">.</span><span class="na">singletonList</span><span class="o">(</span><span class="s">&quot;i-foo&quot;</span><span class="o">))</span>
+        <span class="o">.</span><span class="na">totalAllowedWaitTime</span><span class="o">(</span><span class="mi">10</span><span class="o">,</span> <span class="n">Duration</span><span class="o">.</span><span class="na">MINUTES</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">wait</span><span class="o">();</span>
 </pre></div>
 </div>
 <div class="section" id="smithy-waiters-waitable-trait">

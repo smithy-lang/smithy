@@ -81,27 +81,27 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#supported-traits" id="id7">Supported traits</a></li>
-<li><a class="reference internal" href="#protocol-behavior" id="id8">Protocol Behavior</a></li>
-<li><a class="reference internal" href="#request-serialization" id="id9">Request serialization</a><ul>
-<li><a class="reference internal" href="#x-www-form-urlencoded-shape-serialization" id="id10">x-www-form-urlencoded shape serialization</a></li>
-<li><a class="reference internal" href="#examples" id="id11">Examples</a></li>
+<li><a class="reference internal" href="#request-serialization" id="id8">Request serialization</a><ul>
+<li><a class="reference internal" href="#x-www-form-urlencoded-shape-serialization" id="id9">x-www-form-urlencoded shape serialization</a></li>
+<li><a class="reference internal" href="#examples" id="id10">Examples</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#response-serialization" id="id12">Response serialization</a><ul>
-<li><a class="reference internal" href="#xml-shape-serialization" id="id13">XML shape serialization</a></li>
+<li><a class="reference internal" href="#response-serialization" id="id11">Response serialization</a><ul>
+<li><a class="reference internal" href="#xml-shape-serialization" id="id12">XML shape serialization</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#operation-error-serialization" id="id14">Operation error serialization</a></li>
-<li><a class="reference internal" href="#protocol-compliance-tests" id="id15">Protocol compliance tests</a></li>
+<li><a class="reference internal" href="#operation-error-serialization" id="id13">Operation error serialization</a></li>
+<li><a class="reference internal" href="#protocol-compliance-tests" id="id14">Protocol compliance tests</a></li>
 </ul>
 </div>
 <div class="section" id="aws-protocols-ec2query-trait">
 <span id="id2"></span><h2><a href="#aws-protocols-ec2query-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#ec2Query</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
-<dd>Adds support for an HTTP protocol that sends requests in the query string
-OR in a <code class="docutils literal notranslate"><span class="pre">x-form-url-encoded</span></code> body and responses in XML documents. This
-protocol is an Amazon EC2-specific extension of the <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol.</dd>
+<dd>Adds support for an HTTP protocol that sends requests in a
+<code class="docutils literal notranslate"><span class="pre">application/x-www-form-url-encoded</span></code> body and responses in XML
+documents. This protocol is an Amazon EC2-specific extension
+of the <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol.</dd>
 <dt>Trait selector</dt>
 <dd><p class="first"><code class="docutils literal notranslate"><span class="pre">service</span> <span class="pre">[trait|xmlNamespace]</span></code></p>
 <p class="last"><em>Service shapes with the xmlNamespace trait</em></p>
@@ -240,8 +240,7 @@ member, if present.</p>
 <li><p class="first">Use the value of the <a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><span class="std std-ref">xmlName trait</span></a> applied to the
 member with the first letter capitalized, if present.</p>
 </li>
-<li><p class="first">Use the default value for the member with the first letter capitalized, if
-present:</p>
+<li><p class="first">Use the default value for the member, if present:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="50%" />
@@ -253,23 +252,11 @@ present:</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">list</span></code> member</td>
-<td>The string literal &quot;member&quot;</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">set</span></code> member</td>
-<td>The string literal &quot;member&quot;</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">map</span></code> key</td>
-<td>The string literal &quot;key&quot;</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">map</span></code> value</td>
-<td>The string literal &quot;value&quot;</td>
-</tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">structure</span></code> member</td>
-<td>The <a class="reference internal" href="../core/model.html#grammar-token-shape_id_member"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a></td>
+<td>The <a class="reference internal" href="../core/model.html#grammar-token-shape_id_member"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a> capitalized</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">union</span></code> member</td>
-<td>The <a class="reference internal" href="../core/model.html#grammar-token-shape_id_member"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a></td>
+<td>The <a class="reference internal" href="../core/model.html#grammar-token-shape_id_member"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a> capitalized</td>
 </tr>
 </tbody>
 </table>
@@ -337,45 +324,15 @@ for the targeted shape.</td>
 <p class="last">This protocol does not support document types.</p>
 </div>
 </div>
-<div class="section" id="protocol-behavior">
-<h2><a href="#protocol-behavior">Protocol Behavior</a></h2>
-<p>Every request for the <code class="docutils literal notranslate"><span class="pre">ec2Query</span></code> protocol MUST be sent to the
-root URL (<code class="docutils literal notranslate"><span class="pre">/</span></code>) using the HTTP &quot;POST&quot; method.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">ec2Query</span></code> protocol does not support custom HTTP bindings.
-<a class="reference internal" href="../core/http-traits.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a> MUST be ignored if they are present.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">ec2Query</span></code> protocol uses the following headers:</p>
-<table border="1" class="colwidths-given docutils">
-<colgroup>
-<col width="17%" />
-<col width="17%" />
-<col width="67%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Header</th>
-<th class="head">Required</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">Content-Type</span></code></td>
-<td>true</td>
-<td>This header uses the static values of <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code>
-for requests and <code class="docutils literal notranslate"><span class="pre">text/xml</span></code> for responses.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">Content-Length</span></code></td>
-<td>true</td>
-<td>The standard <code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> header defined by
-<a class="reference external" href="https://tools.ietf.org/html/rfc7230#section-3.3.2">RFC 7230 Section 3.3.2</a>.</td>
-</tr>
-</tbody>
-</table>
-</div>
 <div class="section" id="request-serialization">
 <h2><a href="#request-serialization">Request serialization</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">ec2Query</span></code> protocol serializes inputs in <code class="docutils literal notranslate"><span class="pre">x-www-form-urlencoded</span></code>
-request bodies. All keys and values MUST be encoded according to <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html"><strong>RFC 3986</strong></a>.
-Requests MUST have the following key value pairs added to the inputs in the
-serialized body:</p>
+<p>Requests SHALL be sent to the root URL (<code class="docutils literal notranslate"><span class="pre">/</span></code>). Requests SHALL use a POST
+request and a body that contains input parameters serialized with a
+Content-Type of <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code>. All keys and
+values MUST be encoded according to <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html"><strong>RFC 3986</strong></a>. Requests SHALL contain
+a Content-Length header; this protocol does not support chunked
+Transfer-Encoding.</p>
+<p>Requests MUST include the following key value pairs in the serialized body:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="30%" />
@@ -554,11 +511,11 @@ for how to serialize a property using a custom name. Members with null values ar
 <p>The <code class="docutils literal notranslate"><span class="pre">x-www-form-urlencoded</span></code> serialization is:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Action=Ec2QueryStructures
 &amp;Version=2020-07-02
-&amp;foo=bar
+&amp;Foo=bar
 &amp;A=example0
 &amp;B=example1
 &amp;C=example2
-&amp;baz.temp=example3
+&amp;Baz.Temp=example3
 </pre></div>
 </div>
 </div>
@@ -577,21 +534,9 @@ segment.</p>
     <span class="nl">ListArg:</span> <span class="vc">StringList</span>,
     <span class="nl">ComplexListArg:</span> <span class="vc">GreetingList</span>,
 
-    <span class="nd">@xmlFlattened</span>
-    <span class="nl">FlattenedListArg:</span> <span class="vc">StringList</span>,
-
-    <span class="nl">ListArgWithXmlNameMember:</span> <span class="vc">ListWithXmlName</span>,
-
-    <span class="c">// Notice that the xmlName on the targeted list member is ignored.</span>
-    <span class="nd">@xmlFlattened</span>
-    <span class="nd">@ec2QueryName</span>(<span class="s2">&quot;Hi&quot;</span>)
+    <span class="nd">@ec2QueryName</span>(<span class="s2">&quot;Renamed&quot;</span>)
     <span class="nd">@xmlName</span>(<span class="s2">&quot;IgnoreMe&quot;</span>)
-    <span class="nl">FlattenedListArgWithXmlName:</span> <span class="vc">ListWithXmlName</span>,
-}
-
-<span class="kd">list</span><span class="nc"> ListWithXmlName</span> {
-    <span class="nd">@xmlName</span>(<span class="s2">&quot;item&quot;</span>)
-    <span class="nl">member:</span> <span class="vc">String</span>
+    <span class="nl">RenamedListArg:</span> <span class="vc">StringList</span>,
 }
 
 <span class="kd">list</span><span class="nc"> StringList</span> {
@@ -607,20 +552,16 @@ segment.</p>
 }
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">x-www-form-urlencoded</span></code> serialization is:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code> serialization is:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Action=Ec2QueryLists
 &amp;Version=2020-07-02
-&amp;ListArg.member.1=foo
-&amp;ListArg.member.2=bar
-&amp;ListArg.member.3=baz
-&amp;ComplexListArg.member.1.hi=hello
-&amp;ComplexListArg.member.2.hi=hola
-&amp;FlattenedListArg.1=A
-&amp;FlattenedListArg.2=B
-&amp;ListArgWithXmlNameMember.item.1=A
-&amp;ListArgWithXmlNameMember.item.2=B
-&amp;Hi.1=A
-&amp;Hi.2=B
+&amp;ListArg.1=foo
+&amp;ListArg.2=bar
+&amp;ListArg.3=baz
+&amp;ComplexListArg.1.Hi=hello
+&amp;ComplexListArg.2.Hi=hola
+&amp;Renamed.1=A
+&amp;Renamed.2=B
 </pre></div>
 </div>
 </div>
@@ -629,16 +570,13 @@ segment.</p>
 <div class="section" id="response-serialization">
 <h2><a href="#response-serialization">Response serialization</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">ec2Query</span></code> protocol serializes XML responses within an XML root node with
-the name of the operation's output suffixed with &quot;Response&quot;. A nested element,
-with the name of the operation's output suffixed with &quot;Result&quot;, contains the
+the name of the operation's output suffixed with &quot;Response&quot;, which contains the
 contents of the successful response.</p>
 <p>The value of the <code class="docutils literal notranslate"><span class="pre">uri</span></code> member of the <a class="reference internal" href="../core/xml-traits.html#xmlnamespace-trait"><span class="std std-ref">xmlNamespace trait</span></a>
 is serialized in an <code class="docutils literal notranslate"><span class="pre">xmlns</span></code> attribute on the response's XML root node. The
 following is a sample response to an operation named <code class="docutils literal notranslate"><span class="pre">XmlTest</span></code>.</p>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;XmlTestResponse</span> <span class="na">xmlns=</span><span class="s">&quot;https://example.com/&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;XmlTestResult&gt;</span>
-        <span class="nt">&lt;testValue&gt;</span>Hello!<span class="nt">&lt;/testValue&gt;</span>
-    <span class="nt">&lt;/XmlTestResult&gt;</span>
+    <span class="nt">&lt;testValue&gt;</span>Hello!<span class="nt">&lt;/testValue&gt;</span>
 <span class="nt">&lt;/XmlTestResponse&gt;</span>
 </pre></div>
 </div>
@@ -751,23 +689,33 @@ including examples and behaviors when using multiple XML traits.</p>
 <div class="section" id="operation-error-serialization">
 <span id="ec2query-errors"></span><h2><a href="#operation-error-serialization">Operation error serialization</a></h2>
 <p>Error responses in the <code class="docutils literal notranslate"><span class="pre">ec2Query</span></code> protocol are wrapped within an XML root
-node named <code class="docutils literal notranslate"><span class="pre">Errors</span></code>. A nested element, named <code class="docutils literal notranslate"><span class="pre">Error</span></code>, contains the
-serialized error structure members.</p>
+node named <code class="docutils literal notranslate"><span class="pre">Response</span></code>. Inside this, there is an <code class="docutils literal notranslate"><span class="pre">Errors</span></code> tag containing
+the actual error, and a <code class="docutils literal notranslate"><span class="pre">RequestId</span></code> tag holding the request ID. Nested inside
+of the <code class="docutils literal notranslate"><span class="pre">Errors</span></code> tag is an <code class="docutils literal notranslate"><span class="pre">Error</span></code> tag which contains the serialized error
+structure members.</p>
 <p>Serialized error shapes MUST also contain an additional child element <code class="docutils literal notranslate"><span class="pre">Code</span></code>
 that contains only the <a class="reference internal" href="../core/model.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
 <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>. This can be used to distinguish which specific error has been
 serialized in the response.</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;Errors&gt;</span>
-    <span class="nt">&lt;Error&gt;</span>
-        <span class="nt">&lt;Type&gt;</span>Sender<span class="nt">&lt;/Type&gt;</span>
-        <span class="nt">&lt;Code&gt;</span>InvalidGreeting<span class="nt">&lt;/Code&gt;</span>
-        <span class="nt">&lt;Message&gt;</span>Hi<span class="nt">&lt;/Message&gt;</span>
-        <span class="nt">&lt;AnotherSetting&gt;</span>setting<span class="nt">&lt;/AnotherSetting&gt;</span>
-    <span class="nt">&lt;/Error&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;Response&gt;</span>
+    <span class="nt">&lt;Errors&gt;</span>
+        <span class="nt">&lt;Error&gt;</span>
+            <span class="nt">&lt;Code&gt;</span>InvalidGreeting<span class="nt">&lt;/Code&gt;</span>
+            <span class="nt">&lt;Message&gt;</span>Hi<span class="nt">&lt;/Message&gt;</span>
+            <span class="nt">&lt;AnotherSetting&gt;</span>setting<span class="nt">&lt;/AnotherSetting&gt;</span>
+        <span class="nt">&lt;/Error&gt;</span>
+    <span class="nt">&lt;/Errors&gt;</span>
     <span class="nt">&lt;RequestId&gt;</span>foo-id<span class="nt">&lt;/RequestId&gt;</span>
-<span class="nt">&lt;/Errors&gt;</span>
+<span class="nt">&lt;/Response&gt;</span>
 </pre></div>
 </div>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Code</span></code>: The <a class="reference internal" href="../core/model.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
+<a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">RequestId</span></code>: Contains a unique identifier for the associated request.</li>
+</ul>
+<p>In the above example, <code class="docutils literal notranslate"><span class="pre">Message</span></code>, and <code class="docutils literal notranslate"><span class="pre">AnotherSetting</span></code> are additional,
+hypothetical members of the serialized error structure.</p>
 </div>
 <div class="section" id="protocol-compliance-tests">
 <span id="ec2query-compliance-tests"></span><h2><a href="#protocol-compliance-tests">Protocol compliance tests</a></h2>
@@ -807,7 +755,6 @@ the expected serialized HTTP requests and responses for each case.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#supported-traits">Supported traits</a></li>
-<li><a class="reference internal" href="#protocol-behavior">Protocol Behavior</a></li>
 <li><a class="reference internal" href="#request-serialization">Request serialization</a><ul>
 <li><a class="reference internal" href="#x-www-form-urlencoded-shape-serialization">x-www-form-urlencoded shape serialization</a></li>
 <li><a class="reference internal" href="#examples">Examples</a><ul>

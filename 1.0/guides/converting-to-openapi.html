@@ -63,7 +63,7 @@
                     
                     
   <div class="section" id="converting-smithy-to-openapi">
-<h1><a href="#converting-smithy-to-openapi">Converting Smithy to OpenAPI</a></h1>
+<span id="smithy-to-openapi"></span><h1><a href="#converting-smithy-to-openapi">Converting Smithy to OpenAPI</a></h1>
 <p>This guide describes how Smithy models can be converted to <a class="reference external" href="https://github.com/OAI/OpenAPI-Specification">OpenAPI</a>
 specifications.</p>
 <div class="contents local topic" id="table-of-contents">
@@ -1248,20 +1248,20 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
 </div>
 </div>
 <p>Next, you need to create and configure an <code class="docutils literal notranslate"><span class="pre">OpenApiConverter</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">software.amazon.smithy.model.shapes.ShapeId</span><span class="p">;</span>
-<span class="kn">import</span> <span class="nn">software.amazon.smithy.openapi.OpenApiConfig</span><span class="p">;</span>
-<span class="kn">import</span> <span class="nn">software.amazon.smithy.openapi.fromsmithy.OpenApiConverter</span><span class="p">;</span>
-<span class="kn">import</span> <span class="nn">software.amazon.smithy.openapi.model.OpenApi</span><span class="p">;</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">software.amazon.smithy.model.shapes.ShapeId</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.openapi.OpenApiConfig</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.openapi.fromsmithy.OpenApiConverter</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.openapi.model.OpenApi</span><span class="o">;</span>
 
-<span class="n">OpenApiConverter</span> <span class="n">converter</span> <span class="o">=</span> <span class="n">OpenApiConverter</span><span class="p">.</span><span class="na">create</span><span class="p">();</span>
+<span class="n">OpenApiConverter</span> <span class="n">converter</span> <span class="o">=</span> <span class="n">OpenApiConverter</span><span class="o">.</span><span class="na">create</span><span class="o">();</span>
 
 <span class="c1">// Add any necessary configuration settings.</span>
-<span class="n">OpenApiConfig</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OpenApiConfig</span><span class="p">();</span>
-<span class="n">config</span><span class="p">.</span><span class="na">setService</span><span class="p">(</span><span class="n">ShapeId</span><span class="p">.</span><span class="na">from</span><span class="p">(</span><span class="s">&quot;smithy.example#Weather&quot;</span><span class="p">));</span>
-<span class="n">converter</span><span class="p">.</span><span class="na">config</span><span class="p">(</span><span class="n">config</span><span class="p">);</span>
+<span class="n">OpenApiConfig</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OpenApiConfig</span><span class="o">();</span>
+<span class="n">config</span><span class="o">.</span><span class="na">setService</span><span class="o">(</span><span class="n">ShapeId</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="s">&quot;smithy.example#Weather&quot;</span><span class="o">));</span>
+<span class="n">converter</span><span class="o">.</span><span class="na">config</span><span class="o">(</span><span class="n">config</span><span class="o">);</span>
 
 <span class="c1">// Generate the OpenAPI schema.</span>
-<span class="n">OpenApi</span> <span class="n">result</span> <span class="o">=</span> <span class="n">converter</span><span class="p">.</span><span class="na">convert</span><span class="p">(</span><span class="n">myModel</span><span class="p">);</span>
+<span class="n">OpenApi</span> <span class="n">result</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="na">convert</span><span class="o">(</span><span class="n">myModel</span><span class="o">);</span>
 </pre></div>
 </div>
 <p>The conversion process is highly extensible through

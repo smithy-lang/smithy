@@ -76,20 +76,20 @@ create it. Smithy models are used to describe services and data structures.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#smithy-framework" id="id33">Smithy framework</a></li>
-<li><a class="reference internal" href="#the-semantic-model" id="id34">The semantic model</a></li>
-<li><a class="reference internal" href="#model-files" id="id35">Model files</a></li>
-<li><a class="reference internal" href="#metadata" id="id36">Metadata</a></li>
-<li><a class="reference internal" href="#node-values" id="id37">Node values</a></li>
-<li><a class="reference internal" href="#shapes" id="id38">Shapes</a></li>
-<li><a class="reference internal" href="#simple-shapes" id="id39">Simple shapes</a></li>
-<li><a class="reference internal" href="#aggregate-shapes" id="id40">Aggregate shapes</a></li>
-<li><a class="reference internal" href="#service-shapes" id="id41">Service shapes</a></li>
-<li><a class="reference internal" href="#traits" id="id42">Traits</a></li>
+<li><a class="reference internal" href="#smithy-overview" id="id32">Smithy overview</a></li>
+<li><a class="reference internal" href="#the-semantic-model" id="id33">The semantic model</a></li>
+<li><a class="reference internal" href="#shapes" id="id34">Shapes</a></li>
+<li><a class="reference internal" href="#simple-shapes" id="id35">Simple shapes</a></li>
+<li><a class="reference internal" href="#aggregate-shapes" id="id36">Aggregate shapes</a></li>
+<li><a class="reference internal" href="#service-shapes" id="id37">Service shapes</a></li>
+<li><a class="reference internal" href="#traits" id="id38">Traits</a></li>
+<li><a class="reference internal" href="#model-metadata" id="id39">Model metadata</a></li>
+<li><a class="reference internal" href="#node-values" id="id40">Node values</a></li>
+<li><a class="reference internal" href="#merging-model-files" id="id41">Merging model files</a></li>
 </ul>
 </div>
-<div class="section" id="smithy-framework">
-<span id="smithy-overview"></span><h2><a href="#smithy-framework">1.1. Smithy framework</a></h2>
+<div class="section" id="smithy-overview">
+<span id="id1"></span><h2><a href="#smithy-overview">1.1. Smithy overview</a></h2>
 <p>Smithy is a framework that consists of a semantic model, file formats used to
 define a model, and a build process used to validate models and facilitate
 model transformations.</p>
@@ -117,11 +117,18 @@ model transformations.</p>
 <dt>Semantic model</dt>
 <dd>The in-memory model used by tools. The <a class="reference internal" href="#semantic-model"><span class="std std-ref">semantic model</span></a>
 may be serialized into one or more model file representations.</dd>
+</dl>
+<dl class="docutils" id="model-files">
 <dt>Model File</dt>
-<dd>A file on the file system, in a particular representation. The model files
+<dd><p class="first">A file on the file system, in a particular representation. The model files
 that make up a semantic model MAY be split across multiple files to
 improve readability or modularity, and those files are not required to
-use the same representation.</dd>
+use the same representation. Model files do not explicitly include other
+model files; this responsibility is left to tooling to ensure that all
+necessary model files are merged together to form a valid semantic model.</p>
+<p class="last">One or more model files can be <a class="reference internal" href="#merging-models"><span class="std std-ref">assembled (or merged)</span></a>
+together to form a semantic model.</p>
+</dd>
 <dt>Representation</dt>
 <dd><p class="first">A particular model file format such as the Smithy IDL or JSON AST.
 Representations are loaded into the semantic model by mapping the
@@ -197,241 +204,8 @@ trait defined in the core specification. All Smithy models automatically
 include the prelude.</dd>
 </dl>
 </div>
-<div class="section" id="model-files">
-<span id="id1"></span><h2><a href="#model-files">1.3. Model files</a></h2>
-<p>Smithy models MAY be divided into multiple files so that they are easier to
-maintain and evolve. One or more model files can be assembled (or merged)
-together to form a semantic model. The model files that form a semantic model
-are not required to all be defined in the same representation; some models can
-be defined using the IDL and others can be defined using the JSON AST.</p>
-<p>Model files do not explicitly include other model files; this responsibility
-is left to tooling to ensure that all necessary model files are merged
-together to form a valid semantic model.</p>
-<div class="section" id="merging-model-files">
-<span id="merging-models"></span><h3><a href="#merging-model-files">1.3.1. Merging model files</a></h3>
-<p>Implementations MUST take the following steps when merging two or more
-model files to form a semantic model:</p>
-<ol class="arabic simple">
-<li>Merge the metadata objects of all model files using the steps defined in
-<a class="reference internal" href="#merging-metadata"><span class="std std-ref">Merging metadata</span></a>.</li>
-<li>Shapes defined in a single model file are added to the semantic model as-is.</li>
-<li>Shapes with the same shape ID defined in multiple model files are
-reconciled using the following rules:<ol class="arabic">
-<li>All conflicting shapes MUST have the same shape type.</li>
-<li>Conflicting <a class="reference internal" href="#aggregate-types"><span class="std std-ref">aggregate shapes</span></a> MUST contain the
-same members that target the same shapes.</li>
-<li>Conflicting <a class="reference internal" href="#service-types"><span class="std std-ref">service shapes</span></a> MUST contain the same
-properties and target the same shapes.</li>
-</ol>
-</li>
-<li>Conflicting traits defined in shape definitions or through
-<a class="reference internal" href="#apply-statements"><span class="std std-ref">apply statements</span></a> are reconciled using
-<a class="reference internal" href="#trait-conflict-resolution"><span class="std std-ref">trait conflict resolution</span></a>.</li>
-</ol>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last"><em>The following guidance is non-normative.</em> Because the Smithy IDL allows
-forward references to shapes that have not yet been defined or shapes
-that are defined in another model file, implementations likely need to
-defer <a class="reference internal" href="idl.html#relative-shape-id"><span class="std std-ref">resolving relative shape IDs</span></a> to
-absolute shape IDs until <em>all</em> model files are loaded.</p>
-</div>
-</div>
-</div>
-<div class="section" id="metadata">
-<span id="id2"></span><h2><a href="#metadata">1.4. Metadata</a></h2>
-<p>Metadata is a schema-less extensibility mechanism used to associate
-metadata to an entire model. For example, metadata is used to define
-<a class="reference internal" href="model-validation.html#validator-definition"><span class="std std-ref">validators</span></a> and model-wide
-<a class="reference internal" href="model-validation.html#suppression-definition"><span class="std std-ref">suppressions</span></a>. Metadata is defined
-using an <code class="docutils literal notranslate"><span class="pre">object</span></code> <a class="reference internal" href="#node-value"><span class="std std-ref">node value</span></a>.</p>
-<div class="section" id="merging-metadata">
-<span id="id3"></span><h3><a href="#merging-metadata">1.4.1. Merging metadata</a></h3>
-<p>When a conflict occurs between top-level metadata key-value pairs,
-metadata is merged using the following logic:</p>
-<ol class="arabic simple">
-<li>If a metadata key is only present in one model, then the entry is valid
-and added to the merged model.</li>
-<li>If both models contain the same key and both values are arrays, then
-the entry is valid; the values of both arrays are concatenated into a
-single array and added to the merged model.</li>
-<li>If both models contain the same key and both values are exactly equal,
-then the conflict is ignored and the value is added to the merged model.</li>
-<li>If both models contain the same key, the values do not both map to
-arrays, and the values are not equal, then the key is invalid and there
-is a metadata conflict error.</li>
-</ol>
-<p>Given the following two Smithy models:</p>
-<div class="literal-block-wrapper docutils container" id="id31">
-<div class="code-block-caption"><span class="caption-text">model-a.smithy</span><a class="headerlink" href="#id31" title="Permalink to this code">¶</a></div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> &quot;foo&quot; </span><span class="nd">=</span> [<span class="s2">&quot;baz&quot;</span>, <span class="s2">&quot;bar&quot;</span>]
-<span class="kd">metadata</span><span class="nc"> &quot;qux&quot; </span><span class="nd">=</span> <span class="s2">&quot;test&quot;</span>
-<span class="kd">metadata</span><span class="nc"> &quot;validConflict&quot; </span><span class="nd">=</span> <span class="s2">&quot;hi!&quot;</span>
-</pre></div>
-</div>
-</div>
-<div class="literal-block-wrapper docutils container" id="id32">
-<div class="code-block-caption"><span class="caption-text">model-b.smithy</span><a class="headerlink" href="#id32" title="Permalink to this code">¶</a></div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> &quot;foo&quot; </span><span class="nd">=</span> [<span class="s2">&quot;lorem&quot;</span>, <span class="s2">&quot;ipsum&quot;</span>]
-<span class="kd">metadata</span><span class="nc"> &quot;lorem&quot; </span><span class="nd">=</span> <span class="s2">&quot;ipsum&quot;</span>
-<span class="kd">metadata</span><span class="nc"> &quot;validConflict&quot; </span><span class="nd">=</span> <span class="s2">&quot;hi!&quot;</span>
-</pre></div>
-</div>
-</div>
-<p>Merging <code class="docutils literal notranslate"><span class="pre">model-a.smithy</span></code> and <code class="docutils literal notranslate"><span class="pre">model-b.smithy</span></code> produces the following
-model:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> &quot;foo&quot; </span><span class="nd">=</span> [<span class="s2">&quot;baz&quot;</span>, <span class="s2">&quot;bar&quot;</span>, <span class="s2">&quot;lorem&quot;</span>, <span class="s2">&quot;ipsum&quot;</span>]
-<span class="kd">metadata</span><span class="nc"> &quot;qux&quot; </span><span class="nd">=</span> <span class="s2">&quot;test&quot;</span>
-<span class="kd">metadata</span><span class="nc"> &quot;lorem&quot; </span><span class="nd">=</span> <span class="s2">&quot;ipsum&quot;</span>
-<span class="kd">metadata</span><span class="nc"> &quot;validConflict&quot; </span><span class="nd">=</span> <span class="s2">&quot;hi!&quot;</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="node-values">
-<span id="node-value"></span><h2><a href="#node-values">1.5. Node values</a></h2>
-<p>Node values are JSON-like values used in the following places in the
-semantic model:</p>
-<ul class="simple">
-<li><strong>metadata</strong>: Metadata is defined as a node value object.</li>
-<li><strong>applied trait</strong>: The value of a trait applied to a shape is defined
-using a node value.</li>
-</ul>
-<div class="literal-block-wrapper text-figure docutils container" id="figure-1-3">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────┐                     ┌─────────────┐
-│ Semantic Model  │                     │Applied Trait│
-└─────────────────┘                     └─────────────┘
-  │                                            │
-  │                                            │
-  │                                            ┼ nodeValue
-  │                                     ┌─────────────┐
-  │                                     │ «abstract»  │
-  │                                     │    Value    │
-  │metadata                             └─────────────┘
-  │                                            △
-  ○      ┌───────────────────┬─────────────────┼───────────────┬───────────────┐
-  ┼      │                   │                 │               │               │
-┌─────────────────┐ ┌─────────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
-│     Object      │ │      Array      │ │   Number    │ │   Boolean   │ │   String    │
-├─────────────────┤ ├─────────────────┤ └─────────────┘ └─────────────┘ └─────────────┘
-│members:         │ │members: [Value] │
-│  [String, Value]│ └─────────────────┘
-└─────────────────┘
-</pre></div>
-</div>
-<div class="code-block-caption"><span class="caption-text"><strong>Figure 1.3</strong>: Node value types</span><a class="headerlink" href="#figure-1-3" title="Permalink to this code">¶</a></div>
-</div>
-<p>The following example defines metadata using a node value:</p>
-<div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> foo </span><span class="nd">=</span> <span class="s2">&quot;hello&quot;</span>
-</pre></div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;foo&quot;</span><span class="p">:</span> <span class="s2">&quot;hello&quot;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>The following example defines a trait using a node value:</p>
-<div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
-
-<span class="nd">@length</span>(<span class="nl">min:</span> <span class="m">1</span>, <span class="nl">max:</span> <span class="m">10</span>)
-<span class="kd">string</span><span class="nc"> MyString</span>
-</pre></div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;smithy.example#MyString&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;smithy.api#length&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                    <span class="nt">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="node-value-types">
-<h3><a href="#node-value-types">1.5.1. Node value types</a></h3>
-<p>Node values have the same data model as JSON; they consist of the following
-kinds of values:</p>
-<table border="1" class="colwidths-given docutils">
-<colgroup>
-<col width="30%" />
-<col width="70%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Type</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>null</td>
-<td>The lack of a value</td>
-</tr>
-<tr class="row-odd"><td>string</td>
-<td>A UTF-8 string</td>
-</tr>
-<tr class="row-even"><td>number</td>
-<td>A double precision floating point number</td>
-</tr>
-<tr class="row-odd"><td>boolean</td>
-<td>A Boolean, true or false value</td>
-</tr>
-<tr class="row-even"><td>array</td>
-<td>A list of heterogeneous node values</td>
-</tr>
-<tr class="row-odd"><td>object</td>
-<td>A map of string keys to heterogeneous node values</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Shape IDs, text blocks, et al.</p>
-<p>There is no specific node value type for shape IDs, text blocks, or
-other higher-level features of the IDL; these values are stored and
-treated in the semantic model as simply opaque strings, and their
-validation happens before the creation of the model.</p>
-</div>
-</div>
 <div class="section" id="shapes">
-<span id="id4"></span><h2><a href="#shapes">1.6. Shapes</a></h2>
+<span id="id2"></span><h2><a href="#shapes">1.3. Shapes</a></h2>
 <p>Smithy models are made up of shapes. Shapes come in three kinds: simple,
 aggregate, and service. A simple shape defines atomic or primitive values
 such as <code class="docutils literal notranslate"><span class="pre">integer</span></code> and <code class="docutils literal notranslate"><span class="pre">string</span></code>. Aggregate shapes have members such as
@@ -488,7 +262,7 @@ on services and resources.</p>
 <div class="code-block-caption"><span class="caption-text"><strong>Figure 1.4</strong>: Smithy shapes</span><a class="headerlink" href="#figure-1-4" title="Permalink to this code">¶</a></div>
 </div>
 <div class="section" id="shape-id">
-<span id="id5"></span><h3><a href="#shape-id">1.6.1. Shape ID</a></h3>
+<span id="id3"></span><h3><a href="#shape-id">1.3.1. Shape ID</a></h3>
 <p>All shapes have an assigned shape ID. A <em class="dfn">shape ID</em> is used to refer to
 shapes in the model. Shape IDs adhere to the following syntax:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>com.foo.baz#ShapeName$memberName
@@ -594,7 +368,7 @@ same service or need to be referenced within the same model.</p>
 </ol>
 </div>
 <div class="section" id="shape-id-conflicts">
-<span id="id6"></span><h3><a href="#shape-id-conflicts">1.6.2. Shape ID conflicts</a></h3>
+<span id="id4"></span><h3><a href="#shape-id-conflicts">1.3.2. Shape ID conflicts</a></h3>
 <p>While shape ID references within the semantic model are case-sensitive, no
 two shapes in the semantic model can have the same case-insensitive shape ID.
 This restriction makes it easier to use Smithy models for code generation in
@@ -613,7 +387,7 @@ semantic model from multiple model files.</p>
 </div>
 </div>
 <div class="section" id="simple-shapes">
-<span id="simple-types"></span><h2><a href="#simple-shapes">1.7. Simple shapes</a></h2>
+<span id="simple-types"></span><h2><a href="#simple-shapes">1.4. Simple shapes</a></h2>
 <p><em>Simple types</em> are types that do not contain nested types or shape references.</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
@@ -667,13 +441,16 @@ MUST NOT have any effect on the types exposed by tooling to
 represent a timestamp value.</td>
 </tr>
 <tr class="row-even"><td>document</td>
-<td>Represents protocol-agnostic open content that is accessed like JSON
-data. Open content is useful for modeling unstructured data that
-has no schema, data that can't be modeled using rigid types, or data
-that has a schema that evolves outside of the purview of a model.
-The serialization format of a document is an implementation detail of
-a protocol and MUST NOT have any effect on the types exposed by
-tooling to represent a document value.</td>
+<td>Represents protocol-agnostic open content that functions as a kind of
+&quot;any&quot; type. Document types are represented by a JSON-like data model
+and can contain UTF-8 strings, arbitrary precision numbers, booleans,
+nulls, a list of these values, and a map of UTF-8 strings to these
+values. Open content is useful for modeling unstructured data that has
+no schema, data that can't be modeled using rigid types, or data that
+has a schema that evolves outside of the purview of a model. The
+serialization format of a document is an implementation detail of a
+protocol and MUST NOT have any effect on the types exposed by tooling
+to represent a document value.</td>
 </tr>
 </tbody>
 </table>
@@ -771,7 +548,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="aggregate-shapes">
-<span id="aggregate-types"></span><h2><a href="#aggregate-shapes">1.8. Aggregate shapes</a></h2>
+<span id="aggregate-types"></span><h2><a href="#aggregate-shapes">1.5. Aggregate shapes</a></h2>
 <p>Aggregate types define shapes that are composed of other shapes. Aggregate shapes
 reference other shapes using <a class="reference internal" href="#member"><span class="std std-ref">members</span></a>.</p>
 <table border="1" class="colwidths-given docutils">
@@ -807,14 +584,14 @@ different, but fixed, types</td>
 </tbody>
 </table>
 <div class="section" id="member">
-<span id="id7"></span><h3><a href="#member">1.8.1. Member</a></h3>
+<span id="id5"></span><h3><a href="#member">1.5.1. Member</a></h3>
 <p><em class="dfn">Members</em> are defined in aggregate shapes to reference other shapes using
 a <a class="reference internal" href="#shape-id"><span class="std std-ref">shape ID</span></a>. The shape referenced by a member is called its
 &quot;target&quot;. A member MUST NOT target a <a class="reference internal" href="#trait-shapes"><span class="std std-ref">trait</span></a>, <code class="docutils literal notranslate"><span class="pre">operation</span></code>,
 <code class="docutils literal notranslate"><span class="pre">resource</span></code>, <code class="docutils literal notranslate"><span class="pre">service</span></code>, or <code class="docutils literal notranslate"><span class="pre">member</span></code>.</p>
 </div>
 <div class="section" id="list">
-<span id="id8"></span><h3><a href="#list">1.8.2. List</a></h3>
+<span id="id6"></span><h3><a href="#list">1.5.2. List</a></h3>
 <p>The <em class="dfn">list</em> type represents an ordered homogeneous collection of values.
 A list shape requires a single member named <code class="docutils literal notranslate"><span class="pre">member</span></code>. Lists are defined
 in the IDL using a <a class="reference internal" href="idl.html#idl-list"><span class="std std-ref">list_statement</span></a>.
@@ -910,7 +687,7 @@ reject the request.</p>
 example is <code class="docutils literal notranslate"><span class="pre">smithy.example#MyList$member</span></code>.</p>
 </div>
 <div class="section" id="set">
-<span id="id9"></span><h3><a href="#set">1.8.3. Set</a></h3>
+<span id="id7"></span><h3><a href="#set">1.5.3. Set</a></h3>
 <p>The <em class="dfn">set</em> type represents an unordered collection of unique homogeneous
 values. A set shape requires a single member named <code class="docutils literal notranslate"><span class="pre">member</span></code>.
 Sets are defined in the IDL using a <a class="reference internal" href="idl.html#idl-set"><span class="std std-ref">set_statement</span></a>.
@@ -970,7 +747,7 @@ hash codes and equality, or alternatively, store the values of a set data
 structure in a list and rely on validation to ensure uniqueness.</p>
 </div>
 <div class="section" id="map">
-<span id="id10"></span><h3><a href="#map">1.8.4. Map</a></h3>
+<span id="id8"></span><h3><a href="#map">1.5.4. Map</a></h3>
 <p>The <em class="dfn">map</em> type represents a map data structure that maps <code class="docutils literal notranslate"><span class="pre">string</span></code>
 keys to homogeneous values. A map requires a member named <code class="docutils literal notranslate"><span class="pre">key</span></code>
 that MUST target a <code class="docutils literal notranslate"><span class="pre">string</span></code> shape and a member named <code class="docutils literal notranslate"><span class="pre">value</span></code>.
@@ -1080,7 +857,7 @@ the above map is <code class="docutils literal notranslate"><span class="pre">sm
 member is <code class="docutils literal notranslate"><span class="pre">smithy.example#IntegerMap$value</span></code>.</p>
 </div>
 <div class="section" id="structure">
-<span id="id11"></span><h3><a href="#structure">1.8.5. Structure</a></h3>
+<span id="id9"></span><h3><a href="#structure">1.5.5. Structure</a></h3>
 <p>The <em class="dfn">structure</em> type represents a fixed set of named, unordered,
 heterogeneous values. A structure shape contains a set of named members, and
 each member name maps to exactly one <a class="reference internal" href="#member"><span class="std std-ref">member</span></a> definition.
@@ -1149,7 +926,7 @@ able to maintain backward compatibility.</p>
 by &quot;#&quot;, followed by the member name, For example, the shape ID of the &quot;foo&quot;
 member in the above example is <code class="docutils literal notranslate"><span class="pre">smithy.example#MyStructure$foo</span></code>.</p>
 <div class="section" id="default-structure-member-values">
-<span id="default-values"></span><h4><a href="#default-structure-member-values">1.8.5.1. Default structure member values</a></h4>
+<span id="default-values"></span><h4><a href="#default-structure-member-values">1.5.5.1. Default structure member values</a></h4>
 <p>The values provided for structure members are either always present and set to
 a default value when necessary or <em>boxed</em>, meaning a value is optionally present
 with no default value. Members are considered boxed if the member is marked with
@@ -1165,7 +942,7 @@ considered boxed and have no default values.</p>
 </div>
 </div>
 <div class="section" id="union">
-<span id="id12"></span><h3><a href="#union">1.8.6. Union</a></h3>
+<span id="id10"></span><h3><a href="#union">1.5.6. Union</a></h3>
 <p>The union type represents a <a class="reference external" href="https://en.wikipedia.org/wiki/Tagged_union">tagged union data structure</a> that can take
 on several different, but fixed, types. Unions function similarly to
 structures except that only one member can be used at any one time. A union
@@ -1240,7 +1017,7 @@ by &quot;#&quot;, followed by the member name. For example, the shape ID of the 
 member in the above example is <code class="docutils literal notranslate"><span class="pre">smithy.example#MyUnion$i32</span></code>.</p>
 </div>
 <div class="section" id="recursive-shape-definitions">
-<h3><a href="#recursive-shape-definitions">1.8.7. Recursive shape definitions</a></h3>
+<h3><a href="#recursive-shape-definitions">1.5.7. Recursive shape definitions</a></h3>
 <p>Smithy allows for recursive shape definitions with the following constraint:
 the member of a list, set, or map cannot directly or transitively target its
 containing shape unless one or more members in the path from the container
@@ -1337,7 +1114,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="service-shapes">
-<span id="service-types"></span><h2><a href="#service-shapes">1.9. Service shapes</a></h2>
+<span id="service-types"></span><h2><a href="#service-shapes">1.6. Service shapes</a></h2>
 <p><em>Service types</em> have specific semantics and define services, resources,
 and operations.</p>
 <table border="1" class="colwidths-given docutils">
@@ -1363,7 +1140,7 @@ and operations.</p>
 </tbody>
 </table>
 <div class="section" id="service">
-<span id="id13"></span><h3><a href="#service">1.9.1. Service</a></h3>
+<span id="id11"></span><h3><a href="#service">1.6.1. Service</a></h3>
 <p>A <em class="dfn">service</em> is the entry point of an API that aggregates resources and
 operations together. The <a class="reference internal" href="#resource"><span class="std std-ref">resources</span></a> and
 <a class="reference internal" href="#operation"><span class="std std-ref">operations</span></a> of an API are bound within the closure of a
@@ -1462,7 +1239,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="service-operations">
-<span id="id14"></span><h4><a href="#service-operations">1.9.1.1. Service operations</a></h4>
+<span id="id12"></span><h4><a href="#service-operations">1.6.1.1. Service operations</a></h4>
 <p><a class="reference internal" href="#operation"><span class="std std-ref">Operation</span></a> shapes can be bound to a service by adding the
 shape ID of an operation to the <code class="docutils literal notranslate"><span class="pre">operations</span></code> property of a service.
 Operations bound directly to a service are typically RPC-style operations
@@ -1520,7 +1297,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="service-resources">
-<span id="id15"></span><h4><a href="#service-resources">1.9.1.2. Service resources</a></h4>
+<span id="id13"></span><h4><a href="#service-resources">1.6.1.2. Service resources</a></h4>
 <p><a class="reference internal" href="#resource"><span class="std std-ref">Resource</span></a> shapes can be bound to a service by adding the
 shape ID of a resource to the <code class="docutils literal notranslate"><span class="pre">resources</span></code> property of a service.</p>
 <div class="sphinx-tabs docutils container">
@@ -1570,7 +1347,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="service-closure">
-<span id="id16"></span><h4><a href="#service-closure">1.9.1.3. Service closure</a></h4>
+<span id="id14"></span><h4><a href="#service-closure">1.6.1.3. Service closure</a></h4>
 <p>The <em>closure</em> of a service is the set of shapes connected to a service
 through resources, operations, and members.</p>
 <div class="admonition important">
@@ -1697,7 +1474,7 @@ fully-qualified path from the service to the shape.</p>
 </div>
 </div>
 <div class="section" id="operation">
-<span id="id17"></span><h3><a href="#operation">1.9.2. Operation</a></h3>
+<span id="id15"></span><h3><a href="#operation">1.6.2. Operation</a></h3>
 <p>The <em class="dfn">operation</em> type represents the input, output, and possible errors of
 an API operation. Operation shapes are bound to <a class="reference internal" href="#resource"><span class="std std-ref">resource</span></a>
 shapes and <a class="reference internal" href="#service"><span class="std std-ref">service</span></a> shapes. An operation is defined in the IDL
@@ -1793,7 +1570,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="resource">
-<span id="id18"></span><h3><a href="#resource">1.9.3. Resource</a></h3>
+<span id="id16"></span><h3><a href="#resource">1.6.3. Resource</a></h3>
 <p>Smithy defines a <em class="dfn">resource</em> as an entity with an identity that has a
 set of operations. A resource shape is defined in the IDL using a
 <a class="reference internal" href="idl.html#idl-resource"><span class="std std-ref">resource_statement</span></a>.</p>
@@ -1877,7 +1654,7 @@ resource or service.</td>
 </table>
 </div>
 <div class="section" id="resource-identifiers">
-<span id="id19"></span><h3><a href="#resource-identifiers">1.9.4. Resource Identifiers</a></h3>
+<span id="id17"></span><h3><a href="#resource-identifiers">1.6.4. Resource Identifiers</a></h3>
 <p><em class="dfn">Identifiers</em> are used to refer to a specific resource within a service.
 The identifiers property of a resource is a map of identifier names to
 <a class="reference internal" href="#shape-id"><span class="std std-ref">shape IDs</span></a> that MUST target string shapes.</p>
@@ -2119,7 +1896,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="binding-identifiers-to-operations">
-<span id="binding-identifiers"></span><h4><a href="#binding-identifiers-to-operations">1.9.4.1. Binding identifiers to operations</a></h4>
+<span id="binding-identifiers"></span><h4><a href="#binding-identifiers-to-operations">1.6.4.1. Binding identifiers to operations</a></h4>
 <p><em>Identifier bindings</em> indicate which top-level members of the input structure
 of an operation provide values for the identifiers of a resource.</p>
 <p class="rubric">Identifier binding validation</p>
@@ -2146,7 +1923,7 @@ of the resource it is bound to, but MUST bind all identifiers of any parent
 resource.</p>
 </div>
 <div class="section" id="implicit-identifier-bindings">
-<span id="id20"></span><h4><a href="#implicit-identifier-bindings">1.9.4.2. Implicit identifier bindings</a></h4>
+<span id="id18"></span><h4><a href="#implicit-identifier-bindings">1.6.4.2. Implicit identifier bindings</a></h4>
 <p><em>Implicit identifier bindings</em> are formed when the input of an operation
 contains member names that target the same shapes that are defined in the
 &quot;identifiers&quot; property of the resource to which an operation is bound.</p>
@@ -2330,7 +2107,7 @@ identifier bindings because <code class="docutils literal notranslate"><span cla
 input member named &quot;forecastId&quot; that targets <code class="docutils literal notranslate"><span class="pre">ForecastId</span></code>.</p>
 </div>
 <div class="section" id="explicit-identifier-bindings">
-<h4><a href="#explicit-identifier-bindings">1.9.4.3. Explicit identifier bindings</a></h4>
+<h4><a href="#explicit-identifier-bindings">1.6.4.3. Explicit identifier bindings</a></h4>
 <p><em>Explicit identifier bindings</em> are defined by applying the
 <a class="reference internal" href="resource-traits.html#resourceidentifier-trait"><span class="std std-ref">resourceIdentifier trait</span></a> to a member of the input of for an
 operation bound to a resource. Explicit bindings are necessary when the name of
@@ -2376,7 +2153,7 @@ to the &quot;historicalId&quot; identifier.</p>
 </div>
 </div>
 <div class="section" id="resource-lifecycle-operations">
-<span id="lifecycle-operations"></span><h3><a href="#resource-lifecycle-operations">1.9.5. Resource lifecycle operations</a></h3>
+<span id="lifecycle-operations"></span><h3><a href="#resource-lifecycle-operations">1.6.5. Resource lifecycle operations</a></h3>
 <p><em class="dfn">Lifecycle operations</em> are used to transition the state of a resource
 using well-defined semantics. Lifecycle operations are defined by providing a
 shape ID to the <code class="docutils literal notranslate"><span class="pre">put</span></code>, <code class="docutils literal notranslate"><span class="pre">create</span></code>, <code class="docutils literal notranslate"><span class="pre">read</span></code>, <code class="docutils literal notranslate"><span class="pre">update</span></code>, <code class="docutils literal notranslate"><span class="pre">delete</span></code>, and
@@ -2400,7 +2177,7 @@ lifecycle.</p>
 </pre></div>
 </div>
 <div class="section" id="put-lifecycle">
-<span id="id21"></span><h4><a href="#put-lifecycle">1.9.5.1. Put lifecycle</a></h4>
+<span id="id19"></span><h4><a href="#put-lifecycle">1.6.5.1. Put lifecycle</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">put</span></code> lifecycle operation is used to create a resource using identifiers
 provided by the client.</p>
 <ul class="simple">
@@ -2435,7 +2212,7 @@ created or replaced ...</div></blockquote>
 replaced using the <code class="docutils literal notranslate"><span class="pre">put</span></code> operation.</p>
 </div>
 <div class="section" id="create-lifecycle">
-<span id="id22"></span><h4><a href="#create-lifecycle">1.9.5.2. Create lifecycle</a></h4>
+<span id="id20"></span><h4><a href="#create-lifecycle">1.6.5.2. Create lifecycle</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">create</span></code> operation is used to create a resource using one or more
 identifiers created by the service.</p>
 <ul class="simple">
@@ -2463,7 +2240,7 @@ identifiers created by the service.</p>
 </div>
 </div>
 <div class="section" id="read-lifecycle">
-<span id="id23"></span><h4><a href="#read-lifecycle">1.9.5.3. Read lifecycle</a></h4>
+<span id="id21"></span><h4><a href="#read-lifecycle">1.6.5.3. Read lifecycle</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">read</span></code> operation is the canonical operation used to retrieve the current
 representation of a resource.</p>
 <ul class="simple">
@@ -2486,7 +2263,7 @@ representation of a resource.</p>
 </div>
 </div>
 <div class="section" id="update-lifecycle">
-<span id="id24"></span><h4><a href="#update-lifecycle">1.9.5.4. Update lifecycle</a></h4>
+<span id="id22"></span><h4><a href="#update-lifecycle">1.6.5.4. Update lifecycle</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">update</span></code> operation is the canonical operation used to update a
 resource.</p>
 <ul class="simple">
@@ -2510,7 +2287,7 @@ resource.</p>
 </div>
 </div>
 <div class="section" id="delete-lifecycle">
-<span id="id25"></span><h4><a href="#delete-lifecycle">1.9.5.5. Delete lifecycle</a></h4>
+<span id="id23"></span><h4><a href="#delete-lifecycle">1.6.5.5. Delete lifecycle</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">delete</span></code> operation is canonical operation used to delete a resource.</p>
 <ul class="simple">
 <li>Delete operations MUST be valid <a class="reference internal" href="#instance-operations"><span class="std std-ref">instance operations</span></a>.</li>
@@ -2533,7 +2310,7 @@ resource.</p>
 </div>
 </div>
 <div class="section" id="list-lifecycle">
-<span id="id26"></span><h4><a href="#list-lifecycle">1.9.5.6. List lifecycle</a></h4>
+<span id="id24"></span><h4><a href="#list-lifecycle">1.6.5.6. List lifecycle</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">list</span></code> operation is the canonical operation used to list a
 collection of resources.</p>
 <ul class="simple">
@@ -2570,12 +2347,12 @@ being listed.</li>
 </div>
 </div>
 <div class="section" id="traits">
-<span id="id27"></span><h2><a href="#traits">1.10. Traits</a></h2>
+<span id="id25"></span><h2><a href="#traits">1.7. Traits</a></h2>
 <p><em>Traits</em> are model components that can be attached to <a class="reference internal" href="#shapes"><span class="std std-ref">shapes</span></a>
 to describe additional information about the shape; shapes provide the
 structure and layout of an API, while traits provide refinement and style.</p>
 <div class="section" id="applying-traits-to-shapes">
-<span id="applying-traits"></span><h3><a href="#applying-traits-to-shapes">1.10.1. Applying traits to shapes</a></h3>
+<span id="applying-traits"></span><h3><a href="#applying-traits-to-shapes">1.7.1. Applying traits to shapes</a></h3>
 <p>An instance of a trait applied to a shape is called an <em>applied trait</em>. Only
 a single instance of a trait can be applied to a shape. The way in which a
 trait is applied to a shape depends on the model file representation.</p>
@@ -2631,7 +2408,7 @@ the member shape and do not affect the shape targeted by the member. Traits
 applied to a member supersede traits applied to the shape targeted by the
 member and do not inherently conflict.</p>
 <div class="section" id="applying-traits-externally">
-<span id="apply-statements"></span><h4><a href="#applying-traits-externally">1.10.1.1. Applying traits externally</a></h4>
+<span id="apply-statements"></span><h4><a href="#applying-traits-externally">1.7.1.1. Applying traits externally</a></h4>
 <p>Both the IDL and JSON AST model representations allow traits to be applied
 to shapes outside of a shape's definition. This is done using an
 <a class="reference internal" href="idl.html#grammar-token-apply_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">apply</span></code></a> statement in the IDL, or the
@@ -2690,7 +2467,7 @@ definition.</p>
 </div>
 </div>
 <div class="section" id="trait-conflict-resolution">
-<span id="id28"></span><h3><a href="#trait-conflict-resolution">1.10.2. Trait conflict resolution</a></h3>
+<span id="id26"></span><h3><a href="#trait-conflict-resolution">1.7.2. Trait conflict resolution</a></h3>
 <p>Trait conflict resolution is used when the same trait is applied multiple
 times to a shape. Duplicate traits applied to shapes are allowed in the
 following cases:</p>
@@ -2737,7 +2514,7 @@ duplicated on the <code class="docutils literal notranslate"><span class="pre">M
 </div>
 </div>
 <div class="section" id="trait-node-values">
-<span id="id29"></span><h3><a href="#trait-node-values">1.10.3. Trait node values</a></h3>
+<span id="id27"></span><h3><a href="#trait-node-values">1.7.3. Trait node values</a></h3>
 <p>The value provided for a trait MUST be compatible with the <code class="docutils literal notranslate"><span class="pre">shape</span></code> of the
 trait. The following table defines each shape type that is available to
 target from traits and how their values are defined in
@@ -2838,7 +2615,7 @@ compatible with the corresponding shape.</td>
 shape being validated.</p>
 </div>
 <div class="section" id="defining-traits">
-<span id="trait-shapes"></span><span id="id30"></span><h3><a href="#defining-traits">1.10.4. Defining traits</a></h3>
+<span id="trait-shapes"></span><span id="id28"></span><h3><a href="#defining-traits">1.7.4. Defining traits</a></h3>
 <p>Traits are defined inside of a namespace by applying <code class="docutils literal notranslate"><span class="pre">smithy.api#trait</span></code> to
 a shape. This trait can only be applied to simple types, <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">map</span></code>,
 <code class="docutils literal notranslate"><span class="pre">set</span></code>, <code class="docutils literal notranslate"><span class="pre">structure</span></code>, and <code class="docutils literal notranslate"><span class="pre">union</span></code> shapes.</p>
@@ -3052,7 +2829,7 @@ shape. Members and references within a model MUST NOT target shapes.</p>
 <p>By convention, trait shape names SHOULD use a lowercase name so that they
 visually stand out from normal shapes.</p>
 <div class="section" id="annotation-traits">
-<span id="annotation-trait"></span><h4><a href="#annotation-traits">1.10.4.1. Annotation traits</a></h4>
+<span id="annotation-trait"></span><h4><a href="#annotation-traits">1.7.4.1. Annotation traits</a></h4>
 <p>A structure trait with no members is called an <em>annotation trait</em>. It's hard
 to predict what information a trait needs to capture when modeling a domain;
 a trait might start out as a simple annotation, but later might benefit
@@ -3154,6 +2931,229 @@ JSON</div>
 </div>
 </div>
 </div>
+<div class="section" id="model-metadata">
+<span id="metadata"></span><h2><a href="#model-metadata">1.8. Model metadata</a></h2>
+<p>Metadata is a schema-less extensibility mechanism used to associate
+metadata to an entire model. For example, metadata is used to define
+<a class="reference internal" href="model-validation.html#validator-definition"><span class="std std-ref">validators</span></a> and model-wide
+<a class="reference internal" href="model-validation.html#suppression-definition"><span class="std std-ref">suppressions</span></a>. Metadata is defined
+using an <code class="docutils literal notranslate"><span class="pre">object</span></code> <a class="reference internal" href="#node-value"><span class="std std-ref">node value</span></a>.</p>
+<div class="section" id="merging-metadata">
+<span id="id29"></span><h3><a href="#merging-metadata">1.8.1. Merging metadata</a></h3>
+<p>When a conflict occurs between top-level metadata key-value pairs,
+metadata is merged using the following logic:</p>
+<ol class="arabic simple">
+<li>If a metadata key is only present in one model, then the entry is valid
+and added to the merged model.</li>
+<li>If both models contain the same key and both values are arrays, then
+the entry is valid; the values of both arrays are concatenated into a
+single array and added to the merged model.</li>
+<li>If both models contain the same key and both values are exactly equal,
+then the conflict is ignored and the value is added to the merged model.</li>
+<li>If both models contain the same key, the values do not both map to
+arrays, and the values are not equal, then the key is invalid and there
+is a metadata conflict error.</li>
+</ol>
+<p>Given the following two Smithy models:</p>
+<div class="literal-block-wrapper docutils container" id="id30">
+<div class="code-block-caption"><span class="caption-text">model-a.smithy</span><a class="headerlink" href="#id30" title="Permalink to this code">¶</a></div>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> &quot;foo&quot; </span><span class="nd">=</span> [<span class="s2">&quot;baz&quot;</span>, <span class="s2">&quot;bar&quot;</span>]
+<span class="kd">metadata</span><span class="nc"> &quot;qux&quot; </span><span class="nd">=</span> <span class="s2">&quot;test&quot;</span>
+<span class="kd">metadata</span><span class="nc"> &quot;validConflict&quot; </span><span class="nd">=</span> <span class="s2">&quot;hi!&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id31">
+<div class="code-block-caption"><span class="caption-text">model-b.smithy</span><a class="headerlink" href="#id31" title="Permalink to this code">¶</a></div>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> &quot;foo&quot; </span><span class="nd">=</span> [<span class="s2">&quot;lorem&quot;</span>, <span class="s2">&quot;ipsum&quot;</span>]
+<span class="kd">metadata</span><span class="nc"> &quot;lorem&quot; </span><span class="nd">=</span> <span class="s2">&quot;ipsum&quot;</span>
+<span class="kd">metadata</span><span class="nc"> &quot;validConflict&quot; </span><span class="nd">=</span> <span class="s2">&quot;hi!&quot;</span>
+</pre></div>
+</div>
+</div>
+<p>Merging <code class="docutils literal notranslate"><span class="pre">model-a.smithy</span></code> and <code class="docutils literal notranslate"><span class="pre">model-b.smithy</span></code> produces the following
+model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> &quot;foo&quot; </span><span class="nd">=</span> [<span class="s2">&quot;baz&quot;</span>, <span class="s2">&quot;bar&quot;</span>, <span class="s2">&quot;lorem&quot;</span>, <span class="s2">&quot;ipsum&quot;</span>]
+<span class="kd">metadata</span><span class="nc"> &quot;qux&quot; </span><span class="nd">=</span> <span class="s2">&quot;test&quot;</span>
+<span class="kd">metadata</span><span class="nc"> &quot;lorem&quot; </span><span class="nd">=</span> <span class="s2">&quot;ipsum&quot;</span>
+<span class="kd">metadata</span><span class="nc"> &quot;validConflict&quot; </span><span class="nd">=</span> <span class="s2">&quot;hi!&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="node-values">
+<span id="node-value"></span><h2><a href="#node-values">1.9. Node values</a></h2>
+<p>Node values are JSON-like values used in the following places in the
+semantic model:</p>
+<ul class="simple">
+<li><strong>metadata</strong>: Metadata is defined as a node value object.</li>
+<li><strong>applied trait</strong>: The value of a trait applied to a shape is defined
+using a node value.</li>
+</ul>
+<div class="literal-block-wrapper text-figure docutils container" id="figure-1-3">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────┐                     ┌─────────────┐
+│ Semantic Model  │                     │Applied Trait│
+└─────────────────┘                     └─────────────┘
+  │                                            │
+  │                                            │
+  │                                            ┼ nodeValue
+  │                                     ┌─────────────┐
+  │                                     │ «abstract»  │
+  │                                     │    Value    │
+  │metadata                             └─────────────┘
+  │                                            △
+  ○      ┌───────────────────┬─────────────────┼───────────────┬───────────────┐
+  ┼      │                   │                 │               │               │
+┌─────────────────┐ ┌─────────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+│     Object      │ │      Array      │ │   Number    │ │   Boolean   │ │   String    │
+├─────────────────┤ ├─────────────────┤ └─────────────┘ └─────────────┘ └─────────────┘
+│members:         │ │members: [Value] │
+│  [String, Value]│ └─────────────────┘
+└─────────────────┘
+</pre></div>
+</div>
+<div class="code-block-caption"><span class="caption-text"><strong>Figure 1.3</strong>: Node value types</span><a class="headerlink" href="#figure-1-3" title="Permalink to this code">¶</a></div>
+</div>
+<p>The following example defines metadata using a node value:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> foo </span><span class="nd">=</span> <span class="s2">&quot;hello&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;foo&quot;</span><span class="p">:</span> <span class="s2">&quot;hello&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The following example defines a trait using a node value:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="nd">@length</span>(<span class="nl">min:</span> <span class="m">1</span>, <span class="nl">max:</span> <span class="m">10</span>)
+<span class="kd">string</span><span class="nc"> MyString</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyString&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#length&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="nt">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="node-value-types">
+<h3><a href="#node-value-types">1.9.1. Node value types</a></h3>
+<p>Node values have the same data model as JSON; they consist of the following
+kinds of values:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="30%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>null</td>
+<td>The lack of a value</td>
+</tr>
+<tr class="row-odd"><td>string</td>
+<td>A UTF-8 string</td>
+</tr>
+<tr class="row-even"><td>number</td>
+<td>A double precision floating point number</td>
+</tr>
+<tr class="row-odd"><td>boolean</td>
+<td>A Boolean, true or false value</td>
+</tr>
+<tr class="row-even"><td>array</td>
+<td>A list of heterogeneous node values</td>
+</tr>
+<tr class="row-odd"><td>object</td>
+<td>A map of string keys to heterogeneous node values</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Shape IDs, text blocks, et al.</p>
+<p>There is no specific node value type for shape IDs, text blocks, or
+other higher-level features of the IDL; these values are stored and
+treated in the semantic model as simply opaque strings, and their
+validation happens before the creation of the model.</p>
+</div>
+</div>
+<div class="section" id="merging-model-files">
+<span id="merging-models"></span><h2><a href="#merging-model-files">1.10. Merging model files</a></h2>
+<p>Implementations MUST take the following steps when merging two or more
+<a class="reference internal" href="#model-files"><span class="std std-ref">model files</span></a> to form a
+<a class="reference internal" href="#semantic-model"><span class="std std-ref">semantic model</span></a>:</p>
+<ol class="arabic simple">
+<li>Merge the metadata objects of all model files using the steps defined in
+<a class="reference internal" href="#merging-metadata"><span class="std std-ref">Merging metadata</span></a>.</li>
+<li>Shapes defined in a single model file are added to the semantic model as-is.</li>
+<li>Shapes with the same shape ID defined in multiple model files are
+reconciled using the following rules:<ol class="arabic">
+<li>All conflicting shapes MUST have the same shape type.</li>
+<li>Conflicting <a class="reference internal" href="#aggregate-types"><span class="std std-ref">aggregate shapes</span></a> MUST contain the
+same members that target the same shapes.</li>
+<li>Conflicting <a class="reference internal" href="#service-types"><span class="std std-ref">service shapes</span></a> MUST contain the same
+properties and target the same shapes.</li>
+</ol>
+</li>
+<li>Conflicting traits defined in shape definitions or through
+<a class="reference internal" href="#apply-statements"><span class="std std-ref">apply statements</span></a> are reconciled using
+<a class="reference internal" href="#trait-conflict-resolution"><span class="std std-ref">trait conflict resolution</span></a>.</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><em>The following guidance is non-normative.</em> Because the Smithy IDL allows
+forward references to shapes that have not yet been defined or shapes
+that are defined in another model file, implementations likely need to
+defer <a class="reference internal" href="idl.html#relative-shape-id"><span class="std std-ref">resolving relative shape IDs</span></a> to
+absolute shape IDs until <em>all</em> model files are loaded.</p>
+</div>
+</div>
 </div>
 
 
@@ -3178,78 +3178,75 @@ JSON</div>
                             
                             <ul>
 <li><a class="reference internal" href="#">1. The Smithy model</a><ul>
-<li><a class="reference internal" href="#smithy-framework">1.1. Smithy framework</a></li>
+<li><a class="reference internal" href="#smithy-overview">1.1. Smithy overview</a></li>
 <li><a class="reference internal" href="#the-semantic-model">1.2. The semantic model</a></li>
-<li><a class="reference internal" href="#model-files">1.3. Model files</a><ul>
-<li><a class="reference internal" href="#merging-model-files">1.3.1. Merging model files</a></li>
+<li><a class="reference internal" href="#shapes">1.3. Shapes</a><ul>
+<li><a class="reference internal" href="#shape-id">1.3.1. Shape ID</a></li>
+<li><a class="reference internal" href="#shape-id-conflicts">1.3.2. Shape ID conflicts</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#metadata">1.4. Metadata</a><ul>
-<li><a class="reference internal" href="#merging-metadata">1.4.1. Merging metadata</a></li>
+<li><a class="reference internal" href="#simple-shapes">1.4. Simple shapes</a></li>
+<li><a class="reference internal" href="#aggregate-shapes">1.5. Aggregate shapes</a><ul>
+<li><a class="reference internal" href="#member">1.5.1. Member</a></li>
+<li><a class="reference internal" href="#list">1.5.2. List</a></li>
+<li><a class="reference internal" href="#set">1.5.3. Set</a></li>
+<li><a class="reference internal" href="#map">1.5.4. Map</a></li>
+<li><a class="reference internal" href="#structure">1.5.5. Structure</a><ul>
+<li><a class="reference internal" href="#default-structure-member-values">1.5.5.1. Default structure member values</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#node-values">1.5. Node values</a><ul>
-<li><a class="reference internal" href="#node-value-types">1.5.1. Node value types</a></li>
+<li><a class="reference internal" href="#union">1.5.6. Union</a></li>
+<li><a class="reference internal" href="#recursive-shape-definitions">1.5.7. Recursive shape definitions</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#shapes">1.6. Shapes</a><ul>
-<li><a class="reference internal" href="#shape-id">1.6.1. Shape ID</a></li>
-<li><a class="reference internal" href="#shape-id-conflicts">1.6.2. Shape ID conflicts</a></li>
+<li><a class="reference internal" href="#service-shapes">1.6. Service shapes</a><ul>
+<li><a class="reference internal" href="#service">1.6.1. Service</a><ul>
+<li><a class="reference internal" href="#service-operations">1.6.1.1. Service operations</a></li>
+<li><a class="reference internal" href="#service-resources">1.6.1.2. Service resources</a></li>
+<li><a class="reference internal" href="#service-closure">1.6.1.3. Service closure</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#simple-shapes">1.7. Simple shapes</a></li>
-<li><a class="reference internal" href="#aggregate-shapes">1.8. Aggregate shapes</a><ul>
-<li><a class="reference internal" href="#member">1.8.1. Member</a></li>
-<li><a class="reference internal" href="#list">1.8.2. List</a></li>
-<li><a class="reference internal" href="#set">1.8.3. Set</a></li>
-<li><a class="reference internal" href="#map">1.8.4. Map</a></li>
-<li><a class="reference internal" href="#structure">1.8.5. Structure</a><ul>
-<li><a class="reference internal" href="#default-structure-member-values">1.8.5.1. Default structure member values</a></li>
+<li><a class="reference internal" href="#operation">1.6.2. Operation</a></li>
+<li><a class="reference internal" href="#resource">1.6.3. Resource</a></li>
+<li><a class="reference internal" href="#resource-identifiers">1.6.4. Resource Identifiers</a><ul>
+<li><a class="reference internal" href="#binding-identifiers-to-operations">1.6.4.1. Binding identifiers to operations</a></li>
+<li><a class="reference internal" href="#implicit-identifier-bindings">1.6.4.2. Implicit identifier bindings</a></li>
+<li><a class="reference internal" href="#explicit-identifier-bindings">1.6.4.3. Explicit identifier bindings</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#union">1.8.6. Union</a></li>
-<li><a class="reference internal" href="#recursive-shape-definitions">1.8.7. Recursive shape definitions</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#service-shapes">1.9. Service shapes</a><ul>
-<li><a class="reference internal" href="#service">1.9.1. Service</a><ul>
-<li><a class="reference internal" href="#service-operations">1.9.1.1. Service operations</a></li>
-<li><a class="reference internal" href="#service-resources">1.9.1.2. Service resources</a></li>
-<li><a class="reference internal" href="#service-closure">1.9.1.3. Service closure</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#operation">1.9.2. Operation</a></li>
-<li><a class="reference internal" href="#resource">1.9.3. Resource</a></li>
-<li><a class="reference internal" href="#resource-identifiers">1.9.4. Resource Identifiers</a><ul>
-<li><a class="reference internal" href="#binding-identifiers-to-operations">1.9.4.1. Binding identifiers to operations</a></li>
-<li><a class="reference internal" href="#implicit-identifier-bindings">1.9.4.2. Implicit identifier bindings</a></li>
-<li><a class="reference internal" href="#explicit-identifier-bindings">1.9.4.3. Explicit identifier bindings</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#resource-lifecycle-operations">1.9.5. Resource lifecycle operations</a><ul>
-<li><a class="reference internal" href="#put-lifecycle">1.9.5.1. Put lifecycle</a></li>
-<li><a class="reference internal" href="#create-lifecycle">1.9.5.2. Create lifecycle</a></li>
-<li><a class="reference internal" href="#read-lifecycle">1.9.5.3. Read lifecycle</a></li>
-<li><a class="reference internal" href="#update-lifecycle">1.9.5.4. Update lifecycle</a></li>
-<li><a class="reference internal" href="#delete-lifecycle">1.9.5.5. Delete lifecycle</a></li>
-<li><a class="reference internal" href="#list-lifecycle">1.9.5.6. List lifecycle</a></li>
+<li><a class="reference internal" href="#resource-lifecycle-operations">1.6.5. Resource lifecycle operations</a><ul>
+<li><a class="reference internal" href="#put-lifecycle">1.6.5.1. Put lifecycle</a></li>
+<li><a class="reference internal" href="#create-lifecycle">1.6.5.2. Create lifecycle</a></li>
+<li><a class="reference internal" href="#read-lifecycle">1.6.5.3. Read lifecycle</a></li>
+<li><a class="reference internal" href="#update-lifecycle">1.6.5.4. Update lifecycle</a></li>
+<li><a class="reference internal" href="#delete-lifecycle">1.6.5.5. Delete lifecycle</a></li>
+<li><a class="reference internal" href="#list-lifecycle">1.6.5.6. List lifecycle</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#traits">1.10. Traits</a><ul>
-<li><a class="reference internal" href="#applying-traits-to-shapes">1.10.1. Applying traits to shapes</a><ul>
-<li><a class="reference internal" href="#applying-traits-externally">1.10.1.1. Applying traits externally</a></li>
+<li><a class="reference internal" href="#traits">1.7. Traits</a><ul>
+<li><a class="reference internal" href="#applying-traits-to-shapes">1.7.1. Applying traits to shapes</a><ul>
+<li><a class="reference internal" href="#applying-traits-externally">1.7.1.1. Applying traits externally</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#trait-conflict-resolution">1.10.2. Trait conflict resolution</a></li>
-<li><a class="reference internal" href="#trait-node-values">1.10.3. Trait node values</a></li>
-<li><a class="reference internal" href="#defining-traits">1.10.4. Defining traits</a><ul>
-<li><a class="reference internal" href="#annotation-traits">1.10.4.1. Annotation traits</a></li>
+<li><a class="reference internal" href="#trait-conflict-resolution">1.7.2. Trait conflict resolution</a></li>
+<li><a class="reference internal" href="#trait-node-values">1.7.3. Trait node values</a></li>
+<li><a class="reference internal" href="#defining-traits">1.7.4. Defining traits</a><ul>
+<li><a class="reference internal" href="#annotation-traits">1.7.4.1. Annotation traits</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li><a class="reference internal" href="#model-metadata">1.8. Model metadata</a><ul>
+<li><a class="reference internal" href="#merging-metadata">1.8.1. Merging metadata</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#node-values">1.9. Node values</a><ul>
+<li><a class="reference internal" href="#node-value-types">1.9.1. Node value types</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#merging-model-files">1.10. Merging model files</a></li>
 </ul>
 </li>
 </ul>

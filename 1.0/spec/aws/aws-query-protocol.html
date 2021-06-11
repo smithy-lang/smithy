@@ -71,184 +71,65 @@
                     
   <div class="section" id="aws-query-protocol">
 <span id="id1"></span><h1><a href="#aws-query-protocol">AWS query protocol</a></h1>
-<p>This specification defines the <code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> protocol.</p>
+<p>This document defines the <code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> protocol.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#aws-protocols-awsquery-trait" id="id4"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-protocols-awsqueryerror-trait" id="id5"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryError</span></code> trait</a></li>
+<li><a class="reference internal" href="#overview" id="id5">Overview</a></li>
 <li><a class="reference internal" href="#supported-traits" id="id6">Supported traits</a></li>
-<li><a class="reference internal" href="#protocol-behavior" id="id7">Protocol Behavior</a></li>
-<li><a class="reference internal" href="#request-serialization" id="id8">Request serialization</a><ul>
-<li><a class="reference internal" href="#x-www-form-urlencoded-shape-serialization" id="id9">x-www-form-urlencoded shape serialization</a></li>
-<li><a class="reference internal" href="#query-key-resolution" id="id10">Query key resolution</a></li>
-<li><a class="reference internal" href="#examples" id="id11">Examples</a></li>
+<li><a class="reference internal" href="#request-serialization" id="id7">Request serialization</a><ul>
+<li><a class="reference internal" href="#x-www-form-urlencoded-shape-serialization" id="id8">x-www-form-urlencoded shape serialization</a></li>
+<li><a class="reference internal" href="#query-key-resolution" id="id9">Query key resolution</a></li>
+<li><a class="reference internal" href="#example-requests" id="id10">Example requests</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#response-serialization" id="id12">Response serialization</a><ul>
-<li><a class="reference internal" href="#xml-shape-serialization" id="id13">XML shape serialization</a></li>
+<li><a class="reference internal" href="#response-serialization" id="id11">Response serialization</a><ul>
+<li><a class="reference internal" href="#xml-shape-serialization" id="id12">XML shape serialization</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#operation-error-serialization" id="id14">Operation error serialization</a><ul>
-<li><a class="reference internal" href="#error-http-response-code-resolution" id="id15">Error HTTP response code resolution</a></li>
-<li><a class="reference internal" href="#error-code-resolution" id="id16">Error &quot;Code&quot; resolution</a></li>
+<li><a class="reference internal" href="#operation-error-serialization" id="id13">Operation error serialization</a><ul>
+<li><a class="reference internal" href="#error-http-response-status-code-resolution" id="id14">Error HTTP response status code resolution</a></li>
+<li><a class="reference internal" href="#error-code-resolution" id="id15">Error &quot;Code&quot; resolution</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#protocol-compliance-tests" id="id17">Protocol compliance tests</a></li>
+<li><a class="reference internal" href="#aws-protocols-awsquery-trait" id="id16"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-protocols-awsqueryerror-trait" id="id17"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryError</span></code> trait</a></li>
+<li><a class="reference internal" href="#protocol-compliance-tests" id="id18">Protocol compliance tests</a></li>
 </ul>
 </div>
-<div class="section" id="aws-protocols-awsquery-trait">
-<span id="id2"></span><h2><a href="#aws-protocols-awsquery-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> trait</a></h2>
-<dl class="docutils">
-<dt>Summary</dt>
-<dd>Adds support for an HTTP protocol that sends &quot;POST&quot; requests in the body
-as <code class="docutils literal notranslate"><span class="pre">x-www-form-urlencoded</span></code> strings and responses in XML documents.</dd>
-<dt>Trait selector</dt>
-<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">service</span> <span class="pre">[trait|xmlNamespace]</span></code></p>
-<p class="last"><em>Service shapes with the xmlNamespace trait</em></p>
-</dd>
-<dt>Value type</dt>
-<dd>Annotation trait.</dd>
-<dt>See</dt>
-<dd><a class="reference external" href="https://github.com/awslabs/smithy/tree/1.8.0/smithy-aws-protocol-tests/model/awsQuery">Protocol tests</a></dd>
-</dl>
-<div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="section" id="overview">
+<h2><a href="#overview">Overview</a></h2>
+<p>The AWS Query protocol uses HTTP and serializes HTTP requests using query
+string parameters and responses using XML. Requests can be sent using GET
+requests and placing parameters in the query string; however, sending
+requests using POST with an <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code>
+Content-Type is preferred because some proxies, clients, and servers have
+limitations around the maximum amount of data that can be sent in a query
+string.</p>
+<p>A service is configured to use this protocol by applying the <a class="reference internal" href="#aws-protocols-awsquery-trait"><span class="std std-ref">aws.protocols#awsQuery trait</span></a>.
+The service MUST also define the <a class="reference internal" href="../core/xml-traits.html#xmlnamespace-trait"><span class="std std-ref">xmlNamespace trait</span></a> which is used
+to determine the XML namespace used in XML responses.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
 <span class="kd">use</span><span class="nc"> aws.protocols#awsQuery</span>
 
 <span class="nd">@awsQuery</span>
+<span class="nd">@xmlNamespace</span>(<span class="nl">uri:</span> <span class="s2">&quot;http://foo.com&quot;</span>)
 <span class="kd">service</span><span class="nc"> MyService</span> {
     <span class="nl">version:</span> <span class="s2">&quot;2020-02-05&quot;</span>
 }
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-02-05&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;aws.protocols#awsQuery&quot;</span><span class="p">:</span> <span class="p">{}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="section" id="aws-protocols-awsqueryerror-trait">
-<span id="id3"></span><h2><a href="#aws-protocols-awsqueryerror-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryError</span></code> trait</a></h2>
-<dl class="docutils">
-<dt>Summary</dt>
-<dd>Provides a <a class="reference internal" href="#awsquery-error-code"><span class="std std-ref">custom &quot;Code&quot; value</span></a> for
-<code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> errors and an <a class="reference internal" href="#awsquery-error-response-code"><span class="std std-ref">HTTP response code</span></a>.
-The &quot;Code&quot; of an <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> error is used by clients to determine which
-type of error was encountered.</dd>
-<dt>Trait selector</dt>
-<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">[trait|error]</span></code></p>
-<p class="last">The <code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait can only be applied to <a class="reference internal" href="../core/model.html#structure"><span class="std std-ref">structure</span></a>
-shapes that also have the <a class="reference internal" href="../core/type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>.</p>
-</dd>
-<dt>Value type</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
-</dl>
-<p>The <code class="docutils literal notranslate"><span class="pre">awsQueryError</span></code> trait is a structure that supports the following members:</p>
-<table border="1" class="colwidths-given docutils">
-<colgroup>
-<col width="10%" />
-<col width="25%" />
-<col width="65%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>code</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td><strong>Required</strong> The value used to distinguish this error shape during
-client deserialization.</td>
-</tr>
-<tr class="row-odd"><td>httpResponseCode</td>
-<td><code class="docutils literal notranslate"><span class="pre">integer</span></code></td>
-<td><strong>Required</strong> The HTTP response code used on a response that contains
-this error shape.</td>
-</tr>
-</tbody>
-</table>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">The <code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryError</span></code> trait is only used when serializing
-operation errors using the <code class="docutils literal notranslate"><span class="pre">aws.protocols#query</span></code> protocol.</p>
-</div>
-<div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.protocols#awsQueryError</span>
-
-<span class="nd">@awsQueryError</span>(
-    <span class="nl">code:</span> <span class="s2">&quot;InvalidThing&quot;</span>,
-    <span class="nl">httpResponseCode:</span> <span class="m">400</span>,
-)
-<span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)
-<span class="kd">structure</span><span class="nc"> InvalidThingException</span> {
-    <span class="nl">message:</span> <span class="vc">String</span>
-}
-</pre></div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;smithy.example#InvalidThingException&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
-                <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;aws.protocols#awsQueryError&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;InvalidThing&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;httpResponseCode&quot;</span><span class="p">:</span> <span class="mi">400</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;smithy.api#error&quot;</span><span class="p">:</span> <span class="s2">&quot;client&quot;</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div>
+<ul class="last simple">
+<li>This protocol is deprecated and SHOULD NOT be used for any new service.</li>
+<li>This protocol does not support document types.</li>
+<li>This protocol does not support <a class="reference internal" href="../core/http-traits.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a>.
+HTTP binding traits MUST be ignored if they are present.</li>
+<li>This protocol does not support any kind of streaming requests or
+responses, including event streams.</li>
+</ul>
 </div>
 </div>
 <div class="section" id="supported-traits">
@@ -306,50 +187,16 @@ which type of error was encountered.</td>
 </tr>
 </tbody>
 </table>
-<div class="admonition important">
-<p class="first admonition-title">Important</p>
-<p class="last">This protocol does not support document types.</p>
-</div>
-</div>
-<div class="section" id="protocol-behavior">
-<h2><a href="#protocol-behavior">Protocol Behavior</a></h2>
-<p>Every request for the <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol MUST be sent to the
-root URL (<code class="docutils literal notranslate"><span class="pre">/</span></code>) using the HTTP &quot;POST&quot; method.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol does not support custom HTTP bindings.
-<a class="reference internal" href="../core/http-traits.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a> MUST be ignored if they are present.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol uses the following headers:</p>
-<table border="1" class="colwidths-given docutils">
-<colgroup>
-<col width="17%" />
-<col width="17%" />
-<col width="67%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Header</th>
-<th class="head">Required</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">Content-Type</span></code></td>
-<td>true</td>
-<td>This header uses the static values of <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code>
-for requests and <code class="docutils literal notranslate"><span class="pre">text/xml</span></code> for responses.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">Content-Length</span></code></td>
-<td>true</td>
-<td>The standard <code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> header defined by
-<a class="reference external" href="https://tools.ietf.org/html/rfc7230#section-3.3.2">RFC 7230 Section 3.3.2</a>.</td>
-</tr>
-</tbody>
-</table>
 </div>
 <div class="section" id="request-serialization">
 <h2><a href="#request-serialization">Request serialization</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol serializes inputs in <code class="docutils literal notranslate"><span class="pre">x-www-form-urlencoded</span></code>
-request bodies. All keys and values MUST be encoded according to <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html"><strong>RFC 3986</strong></a>.
-Requests MUST have the following key value pairs added to the inputs in the
-serialized body:</p>
+<p>Requests SHALL be sent to the root URL (<code class="docutils literal notranslate"><span class="pre">/</span></code>). Requests SHALL use a POST
+request and a body that contains input parameters serialized with a
+Content-Type of <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code>. All keys and
+values MUST be encoded according to <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html"><strong>RFC 3986</strong></a>. Requests SHALL contain
+a Content-Length header; this protocol does not support chunked
+Transfer-Encoding.</p>
+<p>Requests MUST include the following key value pairs in the serialized body:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="30%" />
@@ -530,15 +377,13 @@ member, if present.</p>
 </li>
 </ol>
 </div>
-<div class="section" id="examples">
-<h3><a href="#examples">Examples</a></h3>
-<div class="admonition important">
-<p class="first admonition-title">Important</p>
-<p class="last">These examples are non-exhaustive. See the <a class="reference internal" href="#awsquery-compliance-tests"><span class="std std-ref">Protocol compliance tests</span></a>
-for a suite of compliance tests for the <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol.</p>
-</div>
+<div class="section" id="example-requests">
+<h3><a href="#example-requests">Example requests</a></h3>
+<p>The following list of examples are non-exhaustive. See the
+<a class="reference internal" href="#awsquery-compliance-tests"><span class="std std-ref">Protocol compliance tests</span></a> for a suite of compliance tests for the
+<code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol. Newlines have been to examples only for readability.</p>
 <div class="section" id="structures-and-unions">
-<h4><a href="#structures-and-unions">Structures and Unions</a></h4>
+<h4><a href="#structures-and-unions">Structures and unions</a></h4>
 <p>Each member value provided for the shape is serialized as a separate key
 with a &quot;.&quot; separator and the member name appended to the container's key.
 The <a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><span class="std std-ref">xmlName trait</span></a> can be used to serialize a property using a custom name. Members with null values are not serialized.</p>
@@ -557,8 +402,13 @@ The <a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><
 }
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">x-www-form-urlencoded</span></code> serialization is:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Action=QueryStructures
+<p>The <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code> serialization is:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>POST / HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Content-Length: ...
+Host: example.com
+
+Action=QueryStructures
 &amp;Version=2020-07-02
 &amp;foo=example1
 &amp;Custom=example2
@@ -609,8 +459,13 @@ segment.</p>
 }
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">x-www-form-urlencoded</span></code> serialization is:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Action=QueryLists
+<p>The <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code> serialization is:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>POST / HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Content-Length: ...
+Host: example.com
+
+Action=QueryLists
 &amp;Version=2020-07-02
 &amp;ListArg.member.1=foo
 &amp;ListArg.member.2=bar
@@ -671,8 +526,13 @@ containing the initial &quot;.&quot; separator and &quot;entry&quot; segment.</p
 }
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">x-www-form-urlencoded</span></code> serialization is:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Action=QueryMaps
+<p>The <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code> serialization is:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>POST / HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Content-Length: ...
+Host: example.com
+
+Action=QueryMaps
 &amp;Version=2020-07-02
 &amp;MapArg.entry.1.key=bar
 &amp;MapArg.entry.1.value=Bar
@@ -698,14 +558,24 @@ containing the initial &quot;.&quot; separator and &quot;entry&quot; segment.</p
 <p>The <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol serializes XML responses within an XML root node with
 the name of the operation's output suffixed with &quot;Response&quot;. A nested element,
 with the name of the operation's output suffixed with &quot;Result&quot;, contains the
-contents of the successful response.</p>
+contents of the successful response. A nested element named &quot;ResponseMetadata&quot;
+contains a nested element named &quot;RequestId&quot; that contains a unique identifier
+for the associated request.</p>
 <p>The value of the <code class="docutils literal notranslate"><span class="pre">uri</span></code> member of the <a class="reference internal" href="../core/xml-traits.html#xmlnamespace-trait"><span class="std std-ref">xmlNamespace trait</span></a>
 is serialized in an <code class="docutils literal notranslate"><span class="pre">xmlns</span></code> attribute on the response's XML root node. The
 following is a sample response to an operation named <code class="docutils literal notranslate"><span class="pre">XmlTest</span></code>.</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;XmlTestResponse</span> <span class="na">xmlns=</span><span class="s">&quot;https://example.com/&quot;</span><span class="nt">&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>HTTP/1.1 200 OK
+Date: Mon, 27 Jul 2009 12:28:53 GMT
+Content-Type: text/xml
+Content-Length: ...
+
+<span class="nt">&lt;XmlTestResponse</span> <span class="na">xmlns=</span><span class="s">&quot;https://example.com/&quot;</span><span class="nt">&gt;</span>
     <span class="nt">&lt;XmlTestResult&gt;</span>
         <span class="nt">&lt;testValue&gt;</span>Hello!<span class="nt">&lt;/testValue&gt;</span>
     <span class="nt">&lt;/XmlTestResult&gt;</span>
+    <span class="nt">&lt;ResponseMetadata&gt;</span>
+        <span class="nt">&lt;RequestId&gt;</span>c6104cbe-af31-11e0-8154-cbc7ccf896c7<span class="nt">&lt;/RequestId&gt;</span>
+    <span class="nt">&lt;/ResponseMetadata&gt;</span>
 <span class="nt">&lt;/XmlTestResponse&gt;</span>
 </pre></div>
 </div>
@@ -821,24 +691,42 @@ including examples and behaviors when using multiple XML traits.</p>
 root node named <code class="docutils literal notranslate"><span class="pre">ErrorResponse</span></code>. A nested element, named <code class="docutils literal notranslate"><span class="pre">Error</span></code>, contains
 the serialized error structure members. <a class="reference internal" href="#awsquery-error-response-code"><span class="std std-ref">The HTTP response code is a
 resolved value.</span></a></p>
-<p>Serialized error shapes MUST also contain an additional child element <code class="docutils literal notranslate"><span class="pre">Code</span></code>
-that contains the <a class="reference internal" href="#awsquery-error-code"><span class="std std-ref">resolved error code value</span></a>. This
-is used to distinguish which specific error is serialized in the response.</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;ErrorResponse&gt;</span>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">AWS Query error example</span><a class="headerlink" href="#id4" title="Permalink to this code">¶</a></div>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>HTTP/1.1 400 Bad Request
+Date: Mon, 27 Jul 2009 12:28:53 GMT
+Content-Type: text/xml
+Content-Length: ...
+
+<span class="nt">&lt;ErrorResponse&gt;</span>
     <span class="nt">&lt;Error&gt;</span>
         <span class="nt">&lt;Type&gt;</span>Sender<span class="nt">&lt;/Type&gt;</span>
         <span class="nt">&lt;Code&gt;</span>InvalidGreeting<span class="nt">&lt;/Code&gt;</span>
         <span class="nt">&lt;Message&gt;</span>Hi<span class="nt">&lt;/Message&gt;</span>
         <span class="nt">&lt;AnotherSetting&gt;</span>setting<span class="nt">&lt;/AnotherSetting&gt;</span>
     <span class="nt">&lt;/Error&gt;</span>
-    <span class="nt">&lt;RequestId&gt;</span>foo-id<span class="nt">&lt;/RequestId&gt;</span>
+    <span class="nt">&lt;RequestId&gt;</span>c6104cbe-af31-11e0-8154-cbc7ccf896c7<span class="nt">&lt;/RequestId&gt;</span>
 <span class="nt">&lt;/ErrorResponse&gt;</span>
 </pre></div>
 </div>
-<div class="section" id="error-http-response-code-resolution">
-<span id="awsquery-error-response-code"></span><h3><a href="#error-http-response-code-resolution">Error HTTP response code resolution</a></h3>
-<p>The value of the HTTP response code for the error is resolved using the
-following process:</p>
+</div>
+<p>Error responses contain the following nested elements:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Error</span></code>: A container for the encountered error.</li>
+<li><code class="docutils literal notranslate"><span class="pre">Type</span></code>: One of &quot;Sender&quot; or &quot;Receiver&quot;; whomever is at fault from
+the service perspective.</li>
+<li><code class="docutils literal notranslate"><span class="pre">Code</span></code>: The <a class="reference internal" href="#awsquery-error-code"><span class="std std-ref">resolved error code value</span></a>
+that is used to distinguish which specific error is serialized in
+the response.</li>
+<li><code class="docutils literal notranslate"><span class="pre">RequestId</span></code>: Contains a unique identifier for the associated request.</li>
+</ul>
+<p>In the above example, <code class="docutils literal notranslate"><span class="pre">Message</span></code>, and <code class="docutils literal notranslate"><span class="pre">AnotherSetting</span></code> are additional,
+hypothetical members of the serialized error structure.</p>
+<div class="section" id="error-http-response-status-code-resolution">
+<span id="awsquery-error-response-code"></span><h3><a href="#error-http-response-status-code-resolution">Error HTTP response status code resolution</a></h3>
+<p>The status code of an error is <code class="docutils literal notranslate"><span class="pre">400</span></code>, <code class="docutils literal notranslate"><span class="pre">500</span></code>, or a custom status code
+defined by the <a class="reference internal" href="#aws-protocols-awsqueryerror-trait"><span class="std std-ref">aws.protocols#awsQueryError trait</span></a>. The status code
+is determined through the following process:</p>
 <ol class="arabic simple">
 <li>Use the value of the <code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> member of the <a class="reference internal" href="#aws-protocols-awsqueryerror-trait"><span class="std std-ref">aws.protocols#awsQueryError trait</span></a>
 applied to the error structure, if present.</li>
@@ -857,13 +745,174 @@ applied to the error structure, if present.</li>
 </ol>
 </div>
 </div>
+<div class="section" id="aws-protocols-awsquery-trait">
+<span id="id2"></span><h2><a href="#aws-protocols-awsquery-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> trait</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Adds support for the awsQuery protocol to a service. The service MUST have
+an <a class="reference internal" href="../core/xml-traits.html#xmlnamespace-trait"><span class="std std-ref">xmlNamespace trait</span></a>.</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">service</span> <span class="pre">[trait|xmlNamespace]</span></code></p>
+<p class="last"><em>Service shapes with the xmlNamespace trait</em></p>
+</dd>
+<dt>Value type</dt>
+<dd>Annotation trait.</dd>
+<dt>See</dt>
+<dd><a class="reference external" href="https://github.com/awslabs/smithy/tree/1.8.0/smithy-aws-protocol-tests/model/awsQuery">Protocol tests</a></dd>
+</dl>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">use</span><span class="nc"> aws.protocols#awsQuery</span>
+
+<span class="nd">@awsQuery</span>
+<span class="nd">@xmlNamespace</span>(<span class="nl">uri:</span> <span class="s2">&quot;http://foo.com&quot;</span>)
+<span class="kd">service</span><span class="nc"> MyService</span> {
+    <span class="nl">version:</span> <span class="s2">&quot;2020-02-05&quot;</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-02-05&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.protocols#awsQuery&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="nt">&quot;smithy.api#xmlNamespace&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;example.com&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="aws-protocols-awsqueryerror-trait">
+<span id="id3"></span><h2><a href="#aws-protocols-awsqueryerror-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryError</span></code> trait</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Provides a <a class="reference internal" href="#awsquery-error-code"><span class="std std-ref">custom &quot;Code&quot; value</span></a> for
+<code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> errors and an <a class="reference internal" href="#awsquery-error-response-code"><span class="std std-ref">HTTP response code</span></a>.
+The &quot;Code&quot; of an <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> error is used by clients to determine which
+type of error was encountered.</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">[trait|error]</span></code></p>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait can only be applied to <a class="reference internal" href="../core/model.html#structure"><span class="std std-ref">structure</span></a>
+shapes that also have the <a class="reference internal" href="../core/type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>.</p>
+</dd>
+<dt>Value type</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">structure</span></code> that supports the following members:</p>
+<table border="1" class="colwidths-given last docutils">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>code</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong> The value used to distinguish this error shape during
+client deserialization.</td>
+</tr>
+<tr class="row-odd"><td>httpResponseCode</td>
+<td><code class="docutils literal notranslate"><span class="pre">integer</span></code></td>
+<td><strong>Required</strong> The HTTP response code used on a response that contains
+this error shape.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryError</span></code> trait is only used when serializing
+operation errors using the <code class="docutils literal notranslate"><span class="pre">aws.protocols#query</span></code> protocol. Unless
+explicitly stated in other Smithy protocol specification, this trait has
+no impact on other Smithy protocols.</p>
+</div>
+<p>The following example defines an error that uses a custom &quot;Code&quot; of
+&quot;InvalidThing&quot; and an HTTP status code of 400.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.protocols#awsQueryError</span>
+
+<span class="nd">@awsQueryError</span>(
+    <span class="nl">code:</span> <span class="s2">&quot;InvalidThing&quot;</span>,
+    <span class="nl">httpResponseCode:</span> <span class="m">400</span>,
+)
+<span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="kd">structure</span><span class="nc"> InvalidThingException</span> {
+    <span class="nl">message:</span> <span class="vc">String</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#InvalidThingException&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.protocols#awsQueryError&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;InvalidThing&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;httpResponseCode&quot;</span><span class="p">:</span> <span class="mi">400</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;smithy.api#error&quot;</span><span class="p">:</span> <span class="s2">&quot;client&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
 <div class="section" id="protocol-compliance-tests">
 <span id="awsquery-compliance-tests"></span><h2><a href="#protocol-compliance-tests">Protocol compliance tests</a></h2>
 <p>A full compliance test suite is provided and SHALL be considered a normative
 reference: <a class="reference external" href="https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/awsQuery">https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/awsQuery</a></p>
 <p>These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.</p>
-<p><em>TODO: Add event stream handling specifications.</em></p>
 </div>
 </div>
 
@@ -889,15 +938,13 @@ the expected serialized HTTP requests and responses for each case.</p>
                             
                             <ul>
 <li><a class="reference internal" href="#">AWS query protocol</a><ul>
-<li><a class="reference internal" href="#aws-protocols-awsquery-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-protocols-awsqueryerror-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryError</span></code> trait</a></li>
+<li><a class="reference internal" href="#overview">Overview</a></li>
 <li><a class="reference internal" href="#supported-traits">Supported traits</a></li>
-<li><a class="reference internal" href="#protocol-behavior">Protocol Behavior</a></li>
 <li><a class="reference internal" href="#request-serialization">Request serialization</a><ul>
 <li><a class="reference internal" href="#x-www-form-urlencoded-shape-serialization">x-www-form-urlencoded shape serialization</a></li>
 <li><a class="reference internal" href="#query-key-resolution">Query key resolution</a></li>
-<li><a class="reference internal" href="#examples">Examples</a><ul>
-<li><a class="reference internal" href="#structures-and-unions">Structures and Unions</a></li>
+<li><a class="reference internal" href="#example-requests">Example requests</a><ul>
+<li><a class="reference internal" href="#structures-and-unions">Structures and unions</a></li>
 <li><a class="reference internal" href="#collections">Collections</a></li>
 <li><a class="reference internal" href="#maps">Maps</a></li>
 </ul>
@@ -909,10 +956,12 @@ the expected serialized HTTP requests and responses for each case.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#operation-error-serialization">Operation error serialization</a><ul>
-<li><a class="reference internal" href="#error-http-response-code-resolution">Error HTTP response code resolution</a></li>
+<li><a class="reference internal" href="#error-http-response-status-code-resolution">Error HTTP response status code resolution</a></li>
 <li><a class="reference internal" href="#error-code-resolution">Error &quot;Code&quot; resolution</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#aws-protocols-awsquery-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-protocols-awsqueryerror-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryError</span></code> trait</a></li>
 <li><a class="reference internal" href="#protocol-compliance-tests">Protocol compliance tests</a></li>
 </ul>
 </li>

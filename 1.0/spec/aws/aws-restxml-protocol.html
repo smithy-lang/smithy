@@ -80,7 +80,7 @@
 <li><a class="reference internal" href="#content-type" id="id5">Content-Type</a></li>
 <li><a class="reference internal" href="#xml-shape-serialization" id="id6">XML shape serialization</a></li>
 <li><a class="reference internal" href="#http-binding-serialization" id="id7">HTTP binding serialization</a></li>
-<li><a class="reference internal" href="#operation-error-serialization" id="id8">Operation error serialization</a></li>
+<li><a class="reference internal" href="#error-response-serialization" id="id8">Error response serialization</a></li>
 <li><a class="reference internal" href="#protocol-compliance-tests" id="id9">Protocol compliance tests</a></li>
 </ul>
 </div>
@@ -453,8 +453,8 @@ defined in the <a class="reference internal" href="../core/http-traits.html#http
 serialization formats and and behaviors described for each trait are supported
 as defined in the <code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> protocol.</p>
 </div>
-<div class="section" id="operation-error-serialization">
-<span id="restxml-errors"></span><h2><a href="#operation-error-serialization">Operation error serialization</a></h2>
+<div class="section" id="error-response-serialization">
+<span id="restxml-errors"></span><h2><a href="#error-response-serialization">Error response serialization</a></h2>
 <p>Error responses in the <code class="docutils literal notranslate"><span class="pre">restXml</span></code> protocol are wrapped within an XML root
 node named <code class="docutils literal notranslate"><span class="pre">ErrorResponse</span></code> by default. A nested element, named <code class="docutils literal notranslate"><span class="pre">Error</span></code>,
 contains the serialized error structure members, unless bound to another
@@ -485,6 +485,17 @@ using this additional nested XML element as the root node.</p>
 <span class="nt">&lt;/Error&gt;</span>
 </pre></div>
 </div>
+<p>Error responses contain the following nested elements:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Error</span></code>: A container for the encountered error.</li>
+<li><code class="docutils literal notranslate"><span class="pre">Type</span></code>: One of &quot;Sender&quot; or &quot;Receiver&quot;; whomever is at fault from the
+service perspective.</li>
+<li><code class="docutils literal notranslate"><span class="pre">Code</span></code>: The <a class="reference internal" href="../core/model.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
+<a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">RequestId</span></code>: Contains a unique identifier for the associated request.</li>
+</ul>
+<p>In the above example, <code class="docutils literal notranslate"><span class="pre">Message</span></code>, and <code class="docutils literal notranslate"><span class="pre">AnotherSetting</span></code> are additional,
+hypothetical members of the serialized error structure.</p>
 </div>
 <div class="section" id="protocol-compliance-tests">
 <h2><a href="#protocol-compliance-tests">Protocol compliance tests</a></h2>
@@ -523,7 +534,7 @@ the expected serialized HTTP requests and responses for each case.</p>
 <li><a class="reference internal" href="#content-type">Content-Type</a></li>
 <li><a class="reference internal" href="#xml-shape-serialization">XML shape serialization</a></li>
 <li><a class="reference internal" href="#http-binding-serialization">HTTP binding serialization</a></li>
-<li><a class="reference internal" href="#operation-error-serialization">Operation error serialization</a></li>
+<li><a class="reference internal" href="#error-response-serialization">Error response serialization</a></li>
 <li><a class="reference internal" href="#protocol-compliance-tests">Protocol compliance tests</a></li>
 </ul>
 </li>

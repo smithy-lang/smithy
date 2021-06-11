@@ -251,9 +251,9 @@ as defined in the ``aws.protocols#restXml`` protocol.
 
 .. _restXml-errors:
 
------------------------------
-Operation error serialization
------------------------------
+----------------------------
+Error response serialization
+----------------------------
 
 Error responses in the ``restXml`` protocol are wrapped within an XML root
 node named ``ErrorResponse`` by default. A nested element, named ``Error``,
@@ -289,6 +289,18 @@ using this additional nested XML element as the root node.
         <AnotherSetting>setting</AnotherSetting>
         <RequestId>foo-id</RequestId>
     </Error>
+
+Error responses contain the following nested elements:
+
+* ``Error``: A container for the encountered error.
+* ``Type``: One of "Sender" or "Receiver"; whomever is at fault from the
+  service perspective.
+* ``Code``: The :token:`shape name <identifier>` of the error's
+  :ref:`shape-id`.
+* ``RequestId``: Contains a unique identifier for the associated request.
+
+In the above example, ``Message``, and ``AnotherSetting`` are additional,
+hypothetical members of the serialized error structure.
 
 
 -------------------------

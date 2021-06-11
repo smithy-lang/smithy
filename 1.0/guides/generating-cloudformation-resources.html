@@ -62,7 +62,7 @@
                     
                     
   <div class="section" id="generating-cloudformation-resource-schemas-from-smithy">
-<h1><a href="#generating-cloudformation-resource-schemas-from-smithy">Generating CloudFormation Resource Schemas from Smithy</a></h1>
+<span id="smithy-to-cloudformation"></span><h1><a href="#generating-cloudformation-resource-schemas-from-smithy">Generating CloudFormation Resource Schemas from Smithy</a></h1>
 <p>This guide describes how Smithy models can generate <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html">CloudFormation Resource
 Schemas</a>.</p>
 <div class="contents local topic" id="table-of-contents">
@@ -474,21 +474,21 @@ Gradle:</p>
 </div>
 </div>
 <p>Next, you need to create and configure a <code class="docutils literal notranslate"><span class="pre">CloudFormationConverter</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">java.util.List</span><span class="p">;</span>
-<span class="kn">import</span> <span class="nn">software.amazon.smithy.model.shapes.ShapeId</span><span class="p">;</span>
-<span class="kn">import</span> <span class="nn">software.amazon.smithy.aws.cloudformation.schema.CfnConfig</span><span class="p">;</span>
-<span class="kn">import</span> <span class="nn">software.amazon.smithy.aws.cloudformation.schema.fromsmithy.CfnConverter</span><span class="p">;</span>
-<span class="kn">import</span> <span class="nn">software.amazon.smithy.aws.cloudformation.schema.model.ResourceSchema</span><span class="p">;</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.model.shapes.ShapeId</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.aws.cloudformation.schema.CfnConfig</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.aws.cloudformation.schema.fromsmithy.CfnConverter</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.aws.cloudformation.schema.model.ResourceSchema</span><span class="o">;</span>
 
-<span class="n">CfnConverter</span> <span class="n">converter</span> <span class="o">=</span> <span class="n">CfnConverter</span><span class="p">.</span><span class="na">create</span><span class="p">();</span>
+<span class="n">CfnConverter</span> <span class="n">converter</span> <span class="o">=</span> <span class="n">CfnConverter</span><span class="o">.</span><span class="na">create</span><span class="o">();</span>
 
 <span class="c1">// Add any necessary configuration settings.</span>
-<span class="n">CfnConfig</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CfnConfig</span><span class="p">();</span>
-<span class="n">config</span><span class="p">.</span><span class="na">setService</span><span class="p">(</span><span class="n">ShapeId</span><span class="p">.</span><span class="na">from</span><span class="p">(</span><span class="s">&quot;smithy.example#Queues&quot;</span><span class="p">));</span>
-<span class="n">config</span><span class="p">.</span><span class="na">setOrganizationName</span><span class="p">(</span><span class="s">&quot;Smithy&quot;</span><span class="p">);</span>
+<span class="n">CfnConfig</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CfnConfig</span><span class="o">();</span>
+<span class="n">config</span><span class="o">.</span><span class="na">setService</span><span class="o">(</span><span class="n">ShapeId</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="s">&quot;smithy.example#Queues&quot;</span><span class="o">));</span>
+<span class="n">config</span><span class="o">.</span><span class="na">setOrganizationName</span><span class="o">(</span><span class="s">&quot;Smithy&quot;</span><span class="o">);</span>
 
 <span class="c1">// Generate the schemas.</span>
-<span class="n">List</span><span class="o">&lt;</span><span class="n">ResourceSchema</span><span class="o">&gt;</span> <span class="n">schemas</span> <span class="o">=</span> <span class="n">converter</span><span class="p">.</span><span class="na">convert</span><span class="p">(</span><span class="n">myModel</span><span class="p">);</span>
+<span class="n">List</span><span class="o">&lt;</span><span class="n">ResourceSchema</span><span class="o">&gt;</span> <span class="n">schemas</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="na">convert</span><span class="o">(</span><span class="n">myModel</span><span class="o">);</span>
 </pre></div>
 </div>
 <p>The conversion process is highly extensible through
