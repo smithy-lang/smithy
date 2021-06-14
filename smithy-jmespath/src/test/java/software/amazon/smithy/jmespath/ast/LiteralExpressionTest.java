@@ -112,7 +112,7 @@ public class LiteralExpressionTest {
 
     @Test
     public void getsAsBoxedBoolean() {
-        LiteralExpression node = new LiteralExpression(new Boolean(true));
+        LiteralExpression node = new LiteralExpression(true);
 
         node.expectBooleanValue();
         assertThat(node.isBooleanValue(), is(true));
