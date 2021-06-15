@@ -514,27 +514,6 @@ useIntegerType (``boolean``)
             }
         }
 
-.. _generate-openapi-setting-supportNonNumericFloats:
-
-supportNonNumericFloats (``boolean``)
-    Set to true to add support for NaN, Infinity, and -Infinity in float
-    and double shapes. These values will be serialized as strings. The
-    OpenAPI document will be updated to refer to them as a "oneOf" of number
-    and string.
-
-    By default, these non-numeric values are not supported.
-
-    .. code-block:: json
-
-        {
-            "version": "1.0",
-            "plugins": {
-                "openapi": {
-                    "service": "smithy.example#Weather",
-                    "supportNonNumericFloats": true
-                }
-            }
-        }
 
 ----------------------------------
 JSON schema configuration settings
@@ -683,6 +662,62 @@ disableFeatures (``[string]``)
                     "service": "smithy.example#Weather",
                     "disableFeatures": ["propertyNames"]
                 }
+            }
+        }
+
+
+.. _generate-openapi-setting-supportNonNumericFloats:
+
+supportNonNumericFloats (``boolean``)
+    Set to true to add support for NaN, Infinity, and -Infinity in float
+    and double shapes. These values will be serialized as strings. The
+    JSON Schema document will be updated to refer to them as a "oneOf" of
+    number and string.
+
+    By default, these non-numeric values are not supported.
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "supportNonNumericFloats": true
+                }
+            }
+        }
+
+    When this is disabled (the default), references to floats/doubles will
+    look like this:
+
+    .. code-block: json
+
+        {
+            "floatMember": {
+                "type": "number"
+            }
+        }
+
+    With this enabled, references to floats/doubles will look like this:
+
+    .. code-block:: json
+
+        {
+            "floatMember": {
+                "oneOf": [
+                    {
+                        "type": "number"
+                    },
+                    {
+                        "type": "string",
+                        "enum": [
+                            "NaN",
+                            "Infinity",
+                            "-Infinity"
+                        ]
+                    }
+                ]
             }
         }
 
