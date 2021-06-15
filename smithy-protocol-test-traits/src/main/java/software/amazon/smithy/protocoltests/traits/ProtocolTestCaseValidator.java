@@ -66,6 +66,17 @@ abstract class ProtocolTestCaseValidator<T extends Trait> extends AbstractValida
         this.traitClass = traitClass;
         this.descriptor = descriptor;
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
+
+        // Disallow loading DTDs and more for protocol test contents.
+        try {
+            documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            documentBuilderFactory.setXIncludeAware(false);
+            documentBuilderFactory.setExpandEntityReferences(false);
+            documentBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            documentBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
