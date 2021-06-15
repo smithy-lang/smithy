@@ -20,6 +20,7 @@ apply SimpleScalarProperties @httpRequestTests([
                 "floatValue": "NaN",
                 "doubleValue": "NaN"
             }""",
+        bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/x-amz-json-1.0",
             "X-Amz-Target": "JsonRpc10.SimpleScalarProperties",
@@ -40,6 +41,7 @@ apply SimpleScalarProperties @httpRequestTests([
                 "floatValue": "Infinity",
                 "doubleValue": "Infinity"
             }""",
+        bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/x-amz-json-1.0",
             "X-Amz-Target": "JsonRpc10.SimpleScalarProperties",
@@ -60,6 +62,7 @@ apply SimpleScalarProperties @httpRequestTests([
                 "floatValue": "-Infinity",
                 "doubleValue": "-Infinity"
             }""",
+        bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/x-amz-json-1.0",
             "X-Amz-Target": "JsonRpc10.SimpleScalarProperties",
@@ -82,6 +85,7 @@ apply SimpleScalarProperties @httpResponseTests([
                 "floatValue": "NaN",
                 "doubleValue": "NaN"
             }""",
+        bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/x-amz-json-1.0",
         },
@@ -100,6 +104,7 @@ apply SimpleScalarProperties @httpResponseTests([
                 "floatValue": "Infinity",
                 "doubleValue": "Infinity"
             }""",
+        bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/x-amz-json-1.0",
         },
@@ -118,6 +123,7 @@ apply SimpleScalarProperties @httpResponseTests([
                 "floatValue": "-Infinity",
                 "doubleValue": "-Infinity"
             }""",
+        bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/x-amz-json-1.0",
         },

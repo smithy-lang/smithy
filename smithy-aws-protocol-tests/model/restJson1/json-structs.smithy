@@ -85,6 +85,7 @@ apply SimpleScalarProperties @httpRequestTests([
             {
                 "stringValue": null
             }""",
+        bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/json",
         },
@@ -102,6 +103,7 @@ apply SimpleScalarProperties @httpRequestTests([
                 "floatValue": "NaN",
                 "doubleValue": "NaN"
             }""",
+        bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/json",
         },
@@ -121,6 +123,7 @@ apply SimpleScalarProperties @httpRequestTests([
                 "floatValue": "Infinity",
                 "doubleValue": "Infinity"
             }""",
+        bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/json",
         },
@@ -140,6 +143,7 @@ apply SimpleScalarProperties @httpRequestTests([
                 "floatValue": "-Infinity",
                 "doubleValue": "-Infinity"
             }""",
+        bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/json",
         },
@@ -227,6 +231,7 @@ apply SimpleScalarProperties @httpResponseTests([
                 "floatValue": "NaN",
                 "doubleValue": "NaN"
             }""",
+        bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/json",
         },
@@ -245,6 +250,7 @@ apply SimpleScalarProperties @httpResponseTests([
                 "floatValue": "Infinity",
                 "doubleValue": "Infinity"
             }""",
+        bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/json",
         },
@@ -263,6 +269,7 @@ apply SimpleScalarProperties @httpResponseTests([
                 "floatValue": "-Infinity",
                 "doubleValue": "-Infinity"
             }""",
+        bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/json",
         },
