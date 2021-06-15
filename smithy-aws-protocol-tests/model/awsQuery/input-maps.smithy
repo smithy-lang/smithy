@@ -167,6 +167,26 @@ apply QueryMaps @httpRequestTests([
             }
         }
     },
+    {
+        id: "QueryNestedStructWithMap",
+        documentation: "Serializes nested struct with map member",
+        protocol: awsQuery,
+        method: "POST",
+        uri: "/",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "Action=QueryMaps&Version=2020-01-08&NestedStructWithMap.MapArg.entry.1.key=bar&NestedStructWithMap.MapArg.entry.1.value=Bar&NestedStructWithMap.MapArg.entry.2.key=foo&NestedStructWithMap.MapArg.entry.2.value=Foo",
+        bodyMediaType: "application/x-www-form-urlencoded",
+        params: {
+            NestedStructWithMap: {
+                MapArg: {
+                    bar: "Bar",
+                    foo: "Foo",
+                }
+            }
+        }
+    },
 ])
 
 structure QueryMapsInput {
@@ -187,6 +207,8 @@ structure QueryMapsInput {
     FlattenedMapWithXmlName: MapWithXmlName,
 
     MapOfLists: MapOfLists,
+
+    NestedStructWithMap: NestedStructWithMap,
 }
 
 map ComplexMap {
@@ -205,4 +227,8 @@ map MapWithXmlName {
 map MapOfLists {
     key: String,
     value: StringList,
+}
+
+structure NestedStructWithMap {
+    MapArg: StringMap
 }

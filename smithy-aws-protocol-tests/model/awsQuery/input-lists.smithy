@@ -100,6 +100,23 @@ apply QueryLists @httpRequestTests([
             FlattenedListArgWithXmlName: ["A", "B"]
         }
     },
+    {
+        id: "QueryNestedStructWithList",
+        documentation: "Nested structure with a list member",
+        protocol: awsQuery,
+        method: "POST",
+        uri: "/",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "Action=QueryLists&Version=2020-01-08&NestedWithList.ListArg.member.1=A&NestedWithList.ListArg.member.2=B",
+        bodyMediaType: "application/x-www-form-urlencoded",
+        params: {
+            NestedWithList: {
+                ListArg: ["A", "B"]
+            }
+        }
+    },
 ])
 
 structure QueryListsInput {
@@ -115,9 +132,15 @@ structure QueryListsInput {
     @xmlFlattened
     @xmlName("Hi")
     FlattenedListArgWithXmlName: ListWithXmlName,
+
+    NestedWithList: NestedStructWithList
 }
 
 list ListWithXmlName {
     @xmlName("item")
     member: String
+}
+
+structure NestedStructWithList {
+    ListArg: StringList
 }
