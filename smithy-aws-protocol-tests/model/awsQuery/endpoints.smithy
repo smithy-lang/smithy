@@ -20,7 +20,7 @@ use smithy.test#httpRequestTests
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: "Action=EndpointOperation&Version=2020-01-0",
+        body: "Action=EndpointOperation&Version=2020-01-08",
         bodyMediaType: "application/x-www-form-urlencoded",
         host: "example.com",
         resolvedHost: "foo.example.com",
