@@ -133,29 +133,6 @@ to convert each shape type:
         shape, but only a single member can be set to a non-null value.
 
 
-------------------------------------------
-Non-numeric float and double serialization
-------------------------------------------
-
-Smithy floats and doubles are defined by IEE754, which includes special values
-for "not a number" and both positive and negative infinity. Unless otherwise
-specified, the |quoted shape name| treats those special values as
-strings with the following values:
-
-.. list-table::
-    :header-rows: 1
-    :widths: 50 50
-
-    * - Special Value
-      - String Value
-    * - Not a number
-      - ``NaN``
-    * - positive infinity
-      - ``Infinity``
-    * - negative infinity
-      - ``-Infinity``
-
-
 ~~~~~~~~~~~~~~~~~~~~~~~~
 Empty body serialization
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -168,6 +145,9 @@ When an operation has no modeled output or no output parameters are provided,
 server implementations SHOULD send an empty response body. The server MUST
 still send the protocol's ``Content-Type`` header in this case. Clients MUST
 also accept an empty JSON object as the response body.
+
+
+.. include:: non-numeric-floats.rst.template
 
 
 -----------------------------
