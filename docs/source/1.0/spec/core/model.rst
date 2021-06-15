@@ -2334,11 +2334,13 @@ target from traits and how their values are defined in
       - number
       - The value MUST fall within the range of -2^63 to (2^63)-1.
     * - float
-      - number
-      - A normal JSON number.
+      - string | number
+      - The value MUST be either a normal JSON number or one of the following
+        string values: ``"NaN"``, ``"Infinity"``, ``"-Infinity"``.
     * - double
-      - number
-      - A normal JSON number.
+      - string | number
+      - The value MUST be either a normal JSON number or one of the following
+        string values: ``"NaN"``, ``"Infinity"``, ``"-Infinity"``.
     * - bigDecimal
       - string | number
       - bigDecimal values can be serialized as strings to avoid rounding
