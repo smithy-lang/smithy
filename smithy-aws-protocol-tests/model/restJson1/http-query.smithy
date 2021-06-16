@@ -125,7 +125,55 @@ apply AllQueryStringTypes @httpRequestTests([
         params: {
 		queryString: "%:/?#[]@!$&'()*+,;=😹"
         }
-    }
+    },
+    {
+        id: "RestJsonSupportsNaNFloatQueryValues",
+        documentation: "Supports handling NaN float query values.",
+        protocol: restJson1,
+        method: "GET",
+        uri: "/AllQueryStringTypesInput",
+        body: "",
+        queryParams: [
+            "Float=NaN",
+            "Double=NaN",
+        ],
+        params: {
+            queryFloat: "NaN",
+            queryDouble: "NaN",
+        }
+    },
+    {
+        id: "RestJsonSupportsInfinityFloatQueryValues",
+        documentation: "Supports handling Infinity float query values.",
+        protocol: restJson1,
+        method: "GET",
+        uri: "/AllQueryStringTypesInput",
+        body: "",
+        queryParams: [
+            "Float=Infinity",
+            "Double=Infinity",
+        ],
+        params: {
+            queryFloat: "Infinity",
+            queryDouble: "Infinity",
+        }
+    },
+    {
+        id: "RestJsonSupportsNegativeInfinityFloatQueryValues",
+        documentation: "Supports handling -Infinity float query values.",
+        protocol: restJson1,
+        method: "GET",
+        uri: "/AllQueryStringTypesInput",
+        body: "",
+        queryParams: [
+            "Float=-Infinity",
+            "Double=-Infinity",
+        ],
+        params: {
+            queryFloat: "-Infinity",
+            queryDouble: "-Infinity",
+        }
+    },
 ])
 
 structure AllQueryStringTypesInput {

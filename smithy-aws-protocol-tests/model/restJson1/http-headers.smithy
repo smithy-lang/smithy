@@ -120,6 +120,54 @@ apply InputAndOutputWithHeaders @httpRequestTests([
             headerEnumList: ["Foo", "Bar", "Baz"],
         }
     },
+    {
+        id: "RestJsonSupportsNaNFloatHeaderInputs",
+        documentation: "Supports handling NaN float header values.",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        body: "",
+        headers: {
+            "X-Float": "NaN",
+            "X-Double": "NaN",
+        },
+        params: {
+            headerFloat: "NaN",
+            headerDouble: "NaN",
+        }
+    },
+    {
+        id: "RestJsonSupportsInfinityFloatHeaderInputs",
+        documentation: "Supports handling Infinity float header values.",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        body: "",
+        headers: {
+            "X-Float": "Infinity",
+            "X-Double": "Infinity",
+        },
+        params: {
+            headerFloat: "Infinity",
+            headerDouble: "Infinity",
+        }
+    },
+    {
+        id: "RestJsonSupportsNegativeInfinityFloatHeaderInputs",
+        documentation: "Supports handling -Infinity float header values.",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        body: "",
+        headers: {
+            "X-Float": "-Infinity",
+            "X-Double": "-Infinity",
+        },
+        params: {
+            headerFloat: "-Infinity",
+            headerDouble: "-Infinity",
+        }
+    },
 ])
 
 apply InputAndOutputWithHeaders @httpResponseTests([
@@ -203,6 +251,48 @@ apply InputAndOutputWithHeaders @httpResponseTests([
         params: {
             headerEnum: "Foo",
             headerEnumList: ["Foo", "Bar", "Baz"],
+        }
+    },
+    {
+        id: "RestJsonSupportsNaNFloatHeaderOutputs",
+        documentation: "Supports handling NaN float header values.",
+        protocol: restJson1,
+        code: 200,
+        headers: {
+            "X-Float": "NaN",
+            "X-Double": "NaN",
+        },
+        params: {
+            headerFloat: "NaN",
+            headerDouble: "NaN",
+        }
+    },
+    {
+        id: "RestJsonSupportsInfinityFloatHeaderOutputs",
+        documentation: "Supports handling Infinity float header values.",
+        protocol: restJson1,
+        code: 200,
+        headers: {
+            "X-Float": "Infinity",
+            "X-Double": "Infinity",
+        },
+        params: {
+            headerFloat: "Infinity",
+            headerDouble: "Infinity",
+        }
+    },
+    {
+        id: "RestJsonSupportsNegativeInfinityFloatHeaderOutputs",
+        documentation: "Supports handling -Infinity float header values.",
+        protocol: restJson1,
+        code: 200,
+        headers: {
+            "X-Float": "-Infinity",
+            "X-Double": "-Infinity",
+        },
+        params: {
+            headerFloat: "-Infinity",
+            headerDouble: "-Infinity",
         }
     },
 ])

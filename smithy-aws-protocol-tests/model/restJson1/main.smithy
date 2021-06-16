@@ -33,6 +33,7 @@ service RestJson {
         HttpRequestWithLabels,
         HttpRequestWithLabelsAndTimestampFormat,
         HttpRequestWithGreedyLabelInPath,
+        HttpRequestWithFloatLabels,
 
         // @httpQuery and @httpQueryParams tests
         AllQueryStringTypes,
