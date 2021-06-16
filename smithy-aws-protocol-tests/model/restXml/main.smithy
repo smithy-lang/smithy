@@ -31,6 +31,7 @@ service RestXml {
         HttpRequestWithLabels,
         HttpRequestWithLabelsAndTimestampFormat,
         HttpRequestWithGreedyLabelInPath,
+        HttpRequestWithFloatLabels,
 
         // @httpQuery and @httpQueryParams tests
         AllQueryStringTypes,

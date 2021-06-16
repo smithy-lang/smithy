@@ -177,3 +177,58 @@ structure HttpRequestWithGreedyLabelInPathInput {
     @required
     baz: String,
 }
+
+apply HttpRequestWithFloatLabels @httpRequestTests([
+    {
+        id: "RestXmlSupportsNaNFloatLabels",
+        documentation: "Supports handling NaN float label values.",
+        protocol: restXml,
+        method: "GET",
+        uri: "/FloatHttpLabels/NaN/NaN",
+        body: "",
+        params: {
+            float: "NaN",
+            double: "NaN",
+        }
+    },
+    {
+        id: "RestXmlSupportsInfinityFloatLabels",
+        documentation: "Supports handling Infinity float label values.",
+        protocol: restXml,
+        method: "GET",
+        uri: "/FloatHttpLabels/Infinity/Infinity",
+        body: "",
+        params: {
+            float: "Infinity",
+            double: "Infinity",
+        }
+    },
+    {
+        id: "RestXmlSupportsNegativeInfinityFloatLabels",
+        documentation: "Supports handling -Infinity float label values.",
+        protocol: restXml,
+        method: "GET",
+        uri: "/FloatHttpLabels/-Infinity/-Infinity",
+        body: "",
+        params: {
+            float: "-Infinity",
+            double: "-Infinity",
+        }
+    },
+])
+
+@readonly
+@http(method: "GET", uri: "/FloatHttpLabels/{float}/{double}")
+operation HttpRequestWithFloatLabels {
+    input: HttpRequestWithFloatLabelsInput
+}
+
+structure HttpRequestWithFloatLabelsInput {
+    @httpLabel
+    @required
+    float: Float,
+    
+    @httpLabel
+    @required
+    double: Double,
+}
