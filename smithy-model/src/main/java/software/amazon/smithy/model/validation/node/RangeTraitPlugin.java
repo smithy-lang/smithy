@@ -18,26 +18,55 @@ package software.amazon.smithy.model.validation.node;
 import java.math.BigDecimal;
 import java.util.function.BiConsumer;
 import software.amazon.smithy.model.FromSourceLocation;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.Node.NonNumericFloat;
 import software.amazon.smithy.model.node.NumberNode;
-import software.amazon.smithy.model.shapes.NumberShape;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.RangeTrait;
 
 /**
  * Validates the range trait on number shapes or members that target them.
  */
-final class RangeTraitPlugin extends MemberAndShapeTraitPlugin<NumberShape, NumberNode, RangeTrait> {
-
-    RangeTraitPlugin() {
-        super(NumberShape.class, NumberNode.class, RangeTrait.class);
-    }
+class RangeTraitPlugin implements NodeValidatorPlugin {
 
     @Override
+    public final void apply(Shape shape, Node value, Context context, BiConsumer<FromSourceLocation, String> emitter) {
+        if (shape.hasTrait(RangeTrait.class)) {
+            if (value.isNumberNode()) {
+                check(shape, shape.expectTrait(RangeTrait.class), value.expectNumberNode(), emitter);
+            } else if (value.isStringNode()) {
+                checkNonNumeric(shape, shape.expectTrait(RangeTrait.class), value.expectStringNode(), emitter);
+            }
+        }
+    }
+
+    private void checkNonNumeric(
+            Shape shape,
+            RangeTrait trait,
+            StringNode node,
+            BiConsumer<FromSourceLocation, String> emitter
+    ) {
+        // Should we fail on NaN?
+        NonNumericFloat.fromStringRepresentation(node.getValue()).ifPresent(value -> {
+            if (trait.getMin().isPresent() && value.equals(NonNumericFloat.NEGATIVE_INFINITY)) {
+                emitter.accept(node, String.format(
+                        "Value provided for `%s` must be greater than or equal to %s, but found \"%s\"",
+                        shape.getId(), trait.getMin().get(), node.getValue()));
+            }
+
+            if (trait.getMax().isPresent() && value.equals(NonNumericFloat.POSITIVE_INFINITY)) {
+                emitter.accept(node, String.format(
+                        "Value provided for `%s` must be less than or equal to %s, but found \"%s\"",
+                        shape.getId(), trait.getMax().get(), node.getValue()));
+            }
+        });
+    }
+
     protected void check(
             Shape shape,
             RangeTrait trait,
             NumberNode node,
-            Context context,
             BiConsumer<FromSourceLocation, String> emitter
     ) {
         Number number = node.getValue();
