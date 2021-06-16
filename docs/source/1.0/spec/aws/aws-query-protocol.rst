@@ -95,6 +95,27 @@ that affect serialization:
 
 .. |quoted shape name| replace:: ``awsQuery``
 .. |name resolution text| replace:: The :ref:`xmlName-trait` can be used to serialize a property using a custom name
+.. |query collection text| replace::
+    Each value provided in the collection is serialized as a separate key with
+    a "." separator, the string "member", a "." separator, and a "1" indexed
+    incrementing counter appended to the container's key.
+    |name resolution text| instead of "member". The :ref:`xmlFlattened-trait`
+    can be used to unwrap the values into a containing structure or union,
+    with the key not containing the initial "." separator and ``member``
+    segment.
+.. |query map text| replace::
+    Each key and value in each pair provided in the map is serialized as a
+    separate key with a "." separator, the string "entry", a "." separator,
+    a "1" indexed incrementing counter, a "." separator, and the string
+    "key" or "value" (for member keys or values, respectively) appended to
+    the container's key. |name resolution text| instead of "member", "key",
+    or "value". The :ref:`xmlFlattened-trait` can be used to unwrap the
+    values into a containing structure or union, with the key not
+    containing the initial "." separator and "entry" segment.
+.. |query aggregate text| replace::
+    Each member value provided for the shape is serialized as a separate key
+    with a "." separator and the member name appended to the container's key.
+    |name resolution text|. Members with null values are not serialized.
 .. include:: aws-query-serialization.rst.template
 
 
