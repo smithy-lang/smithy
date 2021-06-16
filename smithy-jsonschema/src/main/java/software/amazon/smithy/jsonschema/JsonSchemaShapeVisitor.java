@@ -18,8 +18,10 @@ package software.amazon.smithy.jsonschema;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.Node.NonNumericFloat;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BlobShape;
@@ -53,9 +55,7 @@ import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.utils.ListUtils;
 
 final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
-    private static final List<String> NON_NUMERIC_FLOAT_VALUES = ListUtils.of(
-            "NaN", "Infinity", "-Infinity"
-    );
+    private static final Set<String> NON_NUMERIC_FLOAT_VALUES = NonNumericFloat.stringRepresentations();
 
     private final Model model;
     private final JsonSchemaConverter converter;

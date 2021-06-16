@@ -15,21 +15,18 @@
 
 package software.amazon.smithy.model.validation.node;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.Node.NonNumericFloat;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Validates the specific set of non-numeric values allowed for floats and doubles.
  */
 final class NonNumericFloatValuesPlugin implements NodeValidatorPlugin  {
-    private static final Set<String> NON_NUMERIC_FLOAT_VALUES = new LinkedHashSet<>(ListUtils.of(
-            "NaN", "Infinity", "-Infinity"
-    ));
+    private static final Set<String> NON_NUMERIC_FLOAT_VALUES = NonNumericFloat.stringRepresentations();
 
     @Override
     public void apply(Shape shape, Node value, Context context, BiConsumer<FromSourceLocation, String> emitter) {

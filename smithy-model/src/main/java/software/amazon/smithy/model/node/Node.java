@@ -21,10 +21,12 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -721,5 +723,57 @@ public abstract class Node implements FromSourceLocation, ToNode {
                         .collect(ArrayNode.collect(node.getSourceLocation()));
             }
         });
+    }
+
+    /**
+     * Non-numeric values for floats and doubles.
+     */
+    public enum NonNumericFloat {
+        NAN("NaN"),
+        POSITIVE_INFINITY("Infinity"),
+        NEGATIVE_INFINITY("-Infinity");
+
+        private final String stringRepresentation;
+
+        NonNumericFloat(String stringRepresentation) {
+            this.stringRepresentation = stringRepresentation;
+        }
+
+        /**
+         * @return The string representation of this non-numeric float.
+         */
+        public String getStringRepresentation() {
+            return stringRepresentation;
+        }
+
+        /**
+         * @return All the possible string representations of non-numeric floats.
+         */
+        public static Set<String> stringRepresentations() {
+            Set<String> values = new LinkedHashSet<>();
+            for (NonNumericFloat value : NonNumericFloat.values()) {
+                values.add(value.getStringRepresentation());
+            }
+            return values;
+        }
+
+        /**
+         * Convert a string value into a NonNumericFloat.
+         *
+         * @param value A string representation of a non-numeric float value.
+         * @return A NonNumericFloat that represents the given string value or empty if there is no associated value.
+         */
+        public static Optional<NonNumericFloat> fromStringRepresentation(String value) {
+            switch (value) {
+                case "NaN":
+                    return Optional.of(NAN);
+                case "Infinity":
+                    return Optional.of(POSITIVE_INFINITY);
+                case "-Infinity":
+                    return Optional.of(NEGATIVE_INFINITY);
+                default:
+                    return Optional.empty();
+            }
+        }
     }
 }
