@@ -94,7 +94,7 @@ apply QueryLists @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: "Action=QueryLists&Version=2020-01-08&NestedWithList.ListArg.member.1=A&NestedWithList.ListArg.member.2=B",
+        body: "Action=QueryLists&Version=2020-01-08&NestedWithList.ListArg.1=A&NestedWithList.ListArg.2=B",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             NestedWithList: {
