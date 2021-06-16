@@ -141,6 +141,7 @@ public class NodeValidationVisitorTest {
                 // float
                 {"ns.foo#Float", "10", null},
                 {"smithy.api#Float", "\"NaN\"", null},
+                {"ns.foo#Float", "\"NaN\"", new String[] {"Value provided for `ns.foo#Float` must be a number because the `smithy.api#range` trait is applied, but found \"NaN\""}},
                 {"smithy.api#Float", "\"Infinity\"", null},
                 {"smithy.api#Float", "\"-Infinity\"", null},
                 {"smithy.api#Float", "\"+Infinity\"", new String[] {"Value for `smithy.api#Float` must either be numeric or one of the following strings: [\"NaN\", \"Infinity\", \"-Infinity\"], but was \"+Infinity\""}},
@@ -153,6 +154,7 @@ public class NodeValidationVisitorTest {
                 // double
                 {"ns.foo#Double", "10", null},
                 {"smithy.api#Double", "\"NaN\"", null},
+                {"ns.foo#Double", "\"NaN\"", new String[] {"Value provided for `ns.foo#Double` must be a number because the `smithy.api#range` trait is applied, but found \"NaN\""}},
                 {"smithy.api#Double", "\"Infinity\"", null},
                 {"smithy.api#Double", "\"-Infinity\"", null},
                 {"smithy.api#Double", "\"+Infinity\"", new String[] {"Value for `smithy.api#Double` must either be numeric or one of the following strings: [\"NaN\", \"Infinity\", \"-Infinity\"], but was \"+Infinity\""}},
