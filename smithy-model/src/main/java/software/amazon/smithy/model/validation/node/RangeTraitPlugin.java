@@ -47,8 +47,14 @@ class RangeTraitPlugin implements NodeValidatorPlugin {
             StringNode node,
             BiConsumer<FromSourceLocation, String> emitter
     ) {
-        // Should we fail on NaN?
         NonNumericFloat.fromStringRepresentation(node.getValue()).ifPresent(value -> {
+            if (value.equals(NonNumericFloat.NAN)) {
+                emitter.accept(node, String.format(
+                        "Value provided for `%s` must be a number because the `smithy.api#range` trait is applied, "
+                                + "but found \"%s\"",
+                        shape.getId(), node.getValue()));
+            }
+
             if (trait.getMin().isPresent() && value.equals(NonNumericFloat.NEGATIVE_INFINITY)) {
                 emitter.accept(node, String.format(
                         "Value provided for `%s` must be greater than or equal to %s, but found \"%s\"",
