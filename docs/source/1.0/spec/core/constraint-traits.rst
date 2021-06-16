@@ -406,6 +406,14 @@ conditionals, directives, recursion, lookahead, look-behind, back-references,
 and look-around in order to ensure maximum compatibility across programming
 languages.
 
+.. warning::
+
+    Pattern values should be chosen with care, as regex evaluation can be
+    expensive. Regular expressions SHOULD be tested against a range of
+    potentially malformed inputs to ensure that the execution of the regular
+    expression match does not lead to a potential denial of service. See
+    `OWASP Regular expression Denial of Service`_ for more information.
+
 .. important::
 
     The ``pattern`` trait does not implicitly add a leading ``^`` or trailing
@@ -674,3 +682,4 @@ minimum will be ``7``, and the maximum ``12``.
 
 .. _ECMA 262 regular expression dialect: https://www.ecma-international.org/ecma-262/8.0/index.html#sec-patterns
 .. _CommonMark: https://spec.commonmark.org/
+.. _OWASP Regular expression Denial of Service: https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS
