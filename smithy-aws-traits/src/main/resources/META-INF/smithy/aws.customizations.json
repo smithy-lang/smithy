@@ -1,0 +1,15 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "aws.customizations#s3UnwrappedXmlOutput": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "operation"
+                },
+                "smithy.api#documentation": "Unwraps the output for a XML response. Intended to only be used by AWS S3."
+            }
+        }
+    }
+}
