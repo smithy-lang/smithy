@@ -130,3 +130,22 @@ resolved to "virtual" to enable this setting.
 .. _path-style requests: https://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html#path-style-access
 .. _dual-stack endpoints: https://docs.aws.amazon.com/AmazonS3/latest/dev/dual-stack-endpoints.html
 .. _transfer acceleration: https://docs.aws.amazon.com/AmazonS3/latest/dev/transfer-acceleration.html
+
+S3 Unwrapped XML Responses
+--------------------------
+
+Clients code generated from Smithy for Amazon S3 MUST understand the `@s3UnwrappedXmlOutput` trait.
+For calls, such as `GetBucketLocation`, S3 responds with a shape that doesn't fit the restXml protocol.
+For example, in restXml, responses are always wrapped in an operation-level tag:
+
+```
+<SomeOperationResult>
+    <ActualData>something</ActualData>
+</SomeOperationResult>
+```
+
+But S3's `GetBucketLocation` has no such wrapping. The one and only data member is the first and only tag:
+
+```
+<LocationConstraint xmlns="http://s3.amazonaws.com/doc/2006-03-01/">us-west-2</LocationConstraint>
+```

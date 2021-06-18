@@ -15,8 +15,10 @@ namespace com.amazonaws.s3
 
 use aws.api#service
 use aws.auth#sigv4
+use aws.customizations#s3UnwrappedXmlOutput
 use aws.protocols#restXml
 use smithy.test#httpRequestTests
+use smithy.test#httpResponseTests
 
 @service(
     sdkId: "S3",
@@ -452,3 +454,28 @@ integer Size
 string StartAfter
 
 string Token
+
+@enum([
+    { value: "us-west-2", name: "us_west_2" }
+])
+string BucketLocationConstraint
+
+@xmlName("LocationConstraint")
+structure GetBucketLocationOutput {
+    LocationConstraint: BucketLocationConstraint,
+}
+
+@httpResponseTests([{
+        id: "GetBucketLocation",
+        code: 200,
+        body: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<LocationConstraint xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">us-west-2</LocationConstraint>",
+        params: {
+            "LocationConstraint": "us-west-2"
+        },
+        protocol: "aws.protocols#restXml"
+}])
+@http(uri: "/GetBucketLocation", method: "GET")
+@s3UnwrappedXmlOutput
+operation GetBucketLocation {
+    output: GetBucketLocationOutput,
+}
