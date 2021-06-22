@@ -82,5 +82,5 @@ This library is licensed under the Apache 2.0 License.
 [javadocs]: https://awslabs.github.io/smithy/javadoc/latest/
 [quickstart]: https://awslabs.github.io/smithy/quickstart.html
 [Smithy Gradle Plugin]: https://github.com/awslabs/smithy-gradle-plugin/
-[`smithy-build.json`]: https://awslabs.github.io/smithy/guides/building-models/build-config.html#using-smithy-build-json
-[building]: https://awslabs.github.io/smithy/guides/building-models/index.html
+[`smithy-build.json`]: https://awslabs.github.io/smithy/1.0/guides/building-models/build-config.html#using-smithy-build-json
+[building]: https://awslabs.github.io/smithy/1.0/guides/building-models/index.html
