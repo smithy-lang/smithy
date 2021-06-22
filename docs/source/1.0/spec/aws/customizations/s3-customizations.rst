@@ -131,21 +131,112 @@ resolved to "virtual" to enable this setting.
 .. _dual-stack endpoints: https://docs.aws.amazon.com/AmazonS3/latest/dev/dual-stack-endpoints.html
 .. _transfer acceleration: https://docs.aws.amazon.com/AmazonS3/latest/dev/transfer-acceleration.html
 
-S3 Unwrapped XML Responses
---------------------------
+S3 Traits
+=========
 
-Clients code generated from Smithy for Amazon S3 MUST understand the `@s3UnwrappedXmlOutput` trait.
-For calls, such as `GetBucketLocation`, S3 responds with a shape that doesn't fit the restXml protocol.
-For example, in restXml, responses are always wrapped in an operation-level tag:
+``s3UnwrappedXmlOutput`` trait
+------------------------------
 
-```
-<SomeOperationResult>
+Summary
+    Indicates the response output is not wrapped in an operation-level XML tag.
+
+Trait selector
+    .. code-block:: none
+
+        operation
+
+    *An operation*
+Value type
+    Annotation trait
+
+This trait indicates the response output is not wrapped in an operation-level tag.
+For example, rather than having some data wrapped in `SomeOperationResult` as shown below,
+
+.. code-block:: xml
+
+    <SomeOperationResult>
+        <ActualData>something</ActualData>
+    </SomeOperationResult>
+
+We have the data directly in the top-level:
+
+.. code-block:: xml
+
     <ActualData>something</ActualData>
-</SomeOperationResult>
-```
 
-But S3's `GetBucketLocation` has no such wrapping. The one and only data member is the first and only tag:
+Given the following:
 
-```
-<LocationConstraint xmlns="http://s3.amazonaws.com/doc/2006-03-01/">us-west-2</LocationConstraint>
-```
+.. tabs::
+
+    .. code-tab:: smithy
+
+        use aws.customizations#s3UnwrappedXmlOutput
+
+        @enum([
+            { value: "us-west-2", name: "us_west_2" }
+        ])
+        string BucketLocationConstraint
+
+        @xmlName("LocationConstraint")
+        structure GetBucketLocationOutput {
+            LocationConstraint: BucketLocationConstraint,
+        }
+
+        @http(uri: "/GetBucketLocation", method: "GET")
+        @s3UnwrappedXmlOutput
+        operation GetBucketLocation {
+            output: GetBucketLocationOutput,
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#BucketLocationConstraint": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#enum": [
+                            {
+                                "value": "us-west-2",
+                                "name": "us_west_2"
+                            }
+                        ]
+                    }
+                },
+                "smithy.example#GetBucketLocationOutput": {
+                    "type": "structure",
+                    "members": {
+                        "LocationConstraint": {
+                            "target": "smithy.example#BucketLocationConstraint"
+                        }
+                    },
+                    "traits": {
+                        "smithy.api#xmlName": "LocationConstraint"
+                    }
+                },
+                "smithy.example#GetBucketLocation": {
+                    "type": "operation",
+                    "output": {
+                        "target": "smithy.example#GetBucketLocationOutput"
+                    },
+                    "traits": {
+                        "smithy.api#http": {
+                            "uri": "/GetBucketLocation",
+                            "method": "GET"
+                        },
+                        "aws.customizations#s3UnwrappedXmlOutput": {}
+                    }
+                }
+            }
+        }
+
+We expect the following response shape:
+
+.. code-block:: xml
+
+    <LocationConstraint>us-west-2</LocationConstraint>
+
+Client code generated from Smithy for Amazon S3 MUST understand the `@s3UnwrappedXmlOutput` trait
+in order to properly handle the output for the `GetBucketLocation` operation, which has an unwrapped
+response that looks like the example above.

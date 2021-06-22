@@ -21,7 +21,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AnnotationTrait;
 
 public final class S3UnwrappedXmlOutputTrait extends AnnotationTrait {
-    public static final ShapeId ID = ShapeId.from("smithy.api#s3UnwrappedXmlOutput");
+    public static final ShapeId ID = ShapeId.from("aws.customizations#s3UnwrappedXmlOutput");
 
     public S3UnwrappedXmlOutputTrait(ObjectNode node) {
         super(ID, node);
