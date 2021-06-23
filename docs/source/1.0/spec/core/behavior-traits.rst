@@ -655,3 +655,223 @@ See
             input: PutSomethingInput,
             output: PutSomethingOutput
         }
+
+
+.. _httpChecksum-trait:
+
+----------------------
+``httpChecksum`` trait
+----------------------
+
+Summary
+    Indicates that an operation's HTTP request or response supports checksum
+    validation. At least one of request or response checksum properties must
+    be specified within the trait.
+
+Trait selector
+    ``operation``
+Value type
+    ``structure``
+
+The ``httpChecksum`` trait is a structure that contains the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Property
+      - Type
+      - Description
+    * - request
+      - ``[`` :ref:`HttpChecksumProperty structure <checksum-property>` ``]``
+      - The ``request`` property defines a list of checksum validation
+        behavior for HTTP requests.
+
+    * - response
+      - ``[`` :ref:`HttpChecksumProperty structure <checksum-property>` ``]``
+      - The ``response`` property defines a list of checksum validation
+        behavior for HTTP responses.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @httpChecksum(
+            request: [
+                { algorithm: "sha256", in: "header", name: "x-checksum-sha256"},
+                { algorithm: "crc32", in: "header", name: "x-checksum-crc32"}
+            ],
+            response: {
+                { algorithm: "sha256", in: "header", name: "x-checksum-sha256"},
+                { algorithm: "crc32", in: "header", name: "x-checksum-crc32"}
+            }
+        )
+        operation PutSomething {
+            input: PutSomethingInput,
+            output: PutSomethingOutput
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#Example": {
+                    "type": "service",
+                    "version": "2019-06-27",
+                },
+                "smithy.example#PutSomething": {
+                    "type": "operation",
+                    "input": {
+                        "target": "smithy.example#PutSomethingInput"
+                    },
+                    "output": {
+                        "target": "smithy.example#PutSomethingOutput"
+                    },
+                    "traits": {
+                        "smithy.api#httpChecksum": {
+                            "request": [
+                                { "algorithm": "sha256", "in": "header", "name": "x-checksum-sha256"},
+                                { "algorithm": "crc32", "in": "header", "name": "x-checksum-crc32"}
+                            ],
+                            "response": [
+                                { "algorithm": "sha256", "in": "header", "name": "x-checksum-sha256"},
+                                { "algorithm": "crc32", "in": "header", "name": "x-checksum-crc32"}
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+
+
+.. _checksum-property:
+
+HttpChecksumProperty structure
+================================
+
+``HttpChecksumProperty`` defines checksum validation behavior using the
+following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Property
+      - Type
+      - Description
+
+    * - algorithm
+      - ``string``
+      - **Required**. The algorithm string represents a checksum algorithm
+        supported for the HTTP request or response. A valid algorithm
+        should follow ABNF:
+
+        .. code-block:: abnf
+
+            algorithms = 1*(lower-alpha / DIGIT)
+            lower-alpha = %x61-7A
+
+        That is, it should be comprised only of digits and lowercase letters.
+
+    * - in
+      - ``string``
+      - **Required**. The location where checksum can be supplied. Valid values
+        are:
+
+        * ``header`` - Indicates the checksum should be placed in an HTTP header.
+        * ``trailer`` - Indicates the checksum should be placed in the `chunked trailer part`_
+          of the body.
+
+        An algorithm may be supported at multiple locations. The first
+        supported ``in`` member value within the list of HttpChecksum property
+        takes precedence and SHOULD be used. See :ref:`here for more behavior
+        details <httpChecksum_trait_behavior>`.
+
+    * - name
+      - ``string``
+      - **Required**. The name used as a header or trailer name for a checksum
+        type. Recommended ABNF for name is as follows:
+
+        .. code-block:: abnf
+
+            name = lower-alpha *(["-"](lower-alpha / DIGIT))
+            lower-alpha = %x61-7A
+
+        That is, it should start with a lowercase letter followed by any
+        number of lowercase letters, digits, or non-sequential hyphens.
+
+        A member with the :ref:`httpHeader-trait` or :ref:`httpPrefixHeaders-trait`
+        MAY conflict with a ``httpChecksum`` header name, allowing a
+        checksum to be supplied directly. See :ref:`here for more behavior
+        details <httpChecksum_trait_header_conflict_behavior>`.
+
+.. _chunked trailer part: https://tools.ietf.org/html/rfc7230#section-4.1.2
+
+
+.. _httpChecksum_trait_behavior:
+
+HttpChecksum Behavior
+=====================
+
+.. rubric:: Client Behavior
+
+If the ``httpChecksum`` trait has a modeled ``request`` section, for HTTP
+request, the client MUST compute the request payload checksum, using an
+algorithm defined within the request section. The computed checksum SHOULD
+be supplied at the first supported checksum location as per the order of
+:ref:`checksum properties<checksum-property>` defined within the request
+section.
+
+If the resolved location is ``header``, client MUST put the checksum into the
+HTTP request headers. If the resolved location is ``trailer``, the client MUST
+put the checksum into the `chunked trailer part`_ of the body. The header or
+trailer name to use with an algorithm, location is defined by the ``name``
+member of the :ref:`checksum property<checksum-property>`.
+
+If the ``httpChecksum`` trait has a modeled ``response`` section, for HTTP
+response, the client MUST look for a supported checksum at all supported
+locations as per the defined checksum properties. If a checksum is found, the
+client MUST validate the received checksum value by computing the corresponding
+checksum of the received payload.
+
+.. _httpChecksum_trait_header_conflict_behavior:
+
+An operation's ``input``, ``output``, and ``error`` structures MAY contain a
+member bound to an HTTP header matching the header or trailer name defined
+within the ``httpChecksum`` trait. For an HTTP request, if customer provides value
+for an input shape member bound to an HTTP header matching the constructed
+header or trailer name, the client MUST use the customer provided value as is,
+and skip computing request payload checksum.
+
+.. _chunked trailer part: https://tools.ietf.org/html/rfc7230#section-4.1.2
+
+
+.. rubric:: Service Behavior
+
+If the ``httpChecksum`` trait has a modeled ``request`` section, for HTTP request,
+the service SHOULD validate the received checksum by computing corresponding
+checksum of the request payload to ensure data integrity.
+
+If the ``httpChecksum`` trait models a ``response`` section, for HTTP response,
+the service SHOULD send at least one supported payload checksum at the first
+supported location for the checksum algorithm. The ``name`` defined for the
+checksum algorithm and location within ``the httpChecksum`` trait MUST be used
+to place the checksum.
+
+
+.. _checksum_trait_with_checksum_required:
+
+Behavior with HttpChecksumRequired
+----------------------------------
+
+When both the ``httpChecksum`` trait with a modeled ``request`` section, and
+the :ref:`httpChecksumRequired <httpChecksumRequired-trait>` trait are applied
+on an operation, the client MUST prefer using a checksum algorithm modeled for
+request in the ``httpChecksum`` trait over an MD5 digest, and place checksum
+as per the client behavior defined in the
+:ref:`httpChecksum trait behavior<httpChecksum_trait_behavior>` section.
+
+The service MUST accept a checksum value received as per the ``httpChecksum``
+trait's request property, to satisfy checksum validation requirements for the
+operation's HTTP Request.

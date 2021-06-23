@@ -1,0 +1,7 @@
+[WARNING] ns.foo#ValidOperation: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
+[WARNING] ns.foo#InvalidOperation: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
+[WARNING] ns.foo#InvalidOperation2: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
+[ERROR] ns.foo#InvalidOperation: The checksum behavior for response with algorithm "crc32", location "trailer" and name "x-amz-checksum-crc32" is not supported. | HttpChecksumTrait
+[ERROR] ns.foo#InvalidOperation: For operation using sigv4 auth scheme, the `request` property of the `httpChecksum` trait must support `header` checksum location. The "crc32" algorithm does not support `header` location for request. | HttpChecksumTrait
+[ERROR] ns.foo#InvalidOperation2: The checksum behavior for request with algorithm "crc32", location "header" and name "unknown" is not supported. | HttpChecksumTrait
+[ERROR] ns.foo#InvalidOperation2: The checksum behavior for response with algorithm "crc32", location "trailer" and name "x-amz-checksum-crc32" is not supported. | HttpChecksumTrait
