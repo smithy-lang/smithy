@@ -134,37 +134,19 @@ resolved to "virtual" to enable this setting.
 S3 Traits
 =========
 
-``s3UnwrappedXmlOutput`` trait
-------------------------------
+``aws.customizations#s3UnwrappedXmlOutput`` trait
+-------------------------------------------------
 
 Summary
-    Indicates the response output is not wrapped in an operation-level XML tag.
+    Indicates the response body from S3 is not wrapped in the :ref:`aws-restxml-protocol` operation-level XML node.
 
 Trait selector
-    .. code-block:: none
+    ``operation``
 
-        operation
-
-    *An operation*
 Value type
     Annotation trait
 
-This trait indicates the response output is not wrapped in an operation-level tag.
-For example, rather than having some data wrapped in `SomeOperationResult` as shown below,
-
-.. code-block:: xml
-
-    <SomeOperationResult>
-        <ActualData>something</ActualData>
-    </SomeOperationResult>
-
-We have the data directly in the top-level:
-
-.. code-block:: xml
-
-    <ActualData>something</ActualData>
-
-Given the following:
+Consider the following *abridged* model of S3's ``GetBucketLocation`` operation:
 
 .. tabs::
 
@@ -231,12 +213,21 @@ Given the following:
             }
         }
 
-We expect the following response shape:
+Since this operation is modeled with ``@s3UnwrappedXmlOutput``,
+an Amazon S3 client should expect the response from S3 to be unwrapped as shown below:
 
 .. code-block:: xml
 
-    <LocationConstraint>us-west-2</LocationConstraint>
+    <LocationConstraint xmlns="http://s3.amazonaws.com/doc/2006-03-01/">us-west-2</LocationConstraint>
 
-Client code generated from Smithy for Amazon S3 MUST understand the `@s3UnwrappedXmlOutput` trait
-in order to properly handle the output for the `GetBucketLocation` operation, which has an unwrapped
-response that looks like the example above.
+Without ``@s3UnwrappedXmlOutput`` on the operation, the response would be expected to be
+wrapped with the :ref:`aws-restxml-protocol` operation-level XML node:
+
+.. code-block:: xml
+
+    <LocationConstraint xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+        <LocationConstraint>us-west-2</LocationConstraint>
+    </LocationConstraint>
+
+A client for Amazon S3 MUST understand the ``@s3UnwrappedXmlOutput`` trait
+in order to properly handle the output for the ``GetBucketLocation`` operation.
