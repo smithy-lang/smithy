@@ -1,5 +1,40 @@
 # Smithy Changelog
 
+## 1.9.0 (2021-06-23)
+
+### Features
+
+* Added a common validation model for use in server SDKs. ([#813](https://github.com/awslabs/smithy/pull/813))
+* Added support for cross platform builds of the CLI. ([#832](https://github.com/awslabs/smithy/pull/832))
+* Validate the contents of protocol test bodies for known media types. ([#822](https://github.com/awslabs/smithy/pull/822),
+  [#835](https://github.com/awslabs/smithy/pull/835))
+* Updated support for non-numeric floating-point values in several places. ([#828](https://github.com/awslabs/smithy/pull/828))
+* Added several `restJson` protocol tests. ([#684](https://github.com/awslabs/smithy/pull/684))
+* Added several `restXml` protocol tests. ([#804](https://github.com/awslabs/smithy/pull/804))
+* Added and updated several `awsQuery` and `ec2Query` protocol tests. ([#815](https://github.com/awslabs/smithy/pull/815),
+  [#833](https://github.com/awslabs/smithy/pull/833))
+* Added several `document` type protocol tests. ([#810](https://github.com/awslabs/smithy/pull/810))
+
+### Bug Fixes
+
+* Fixed a `NullPointerException` when loading a config and no parent path is present. ([#814](https://github.com/awslabs/smithy/pull/814))
+
+### AWS Customizations
+
+* Added `s3UnwrappedXmlOutput` trait, which defines when an S3 operation does not use the protocol standard XML wrapper.
+  ([#839](https://github.com/awslabs/smithy/pull/839))
+
+### Documentation
+
+* Added an overview of known Smithy implementations and projects. ([#830](https://github.com/awslabs/smithy/pull/830), [#831](https://github.com/awslabs/smithy/pull/831))
+* Improved the documentation for the `restXml`. ([#827](https://github.com/awslabs/smithy/pull/827))
+* Improved the documentation for the `awsQuery`. ([#827](https://github.com/awslabs/smithy/pull/827))
+* Improved the documentation for the `ec2Query` protocol. ([#823](https://github.com/awslabs/smithy/pull/823), [#827](https://github.com/awslabs/smithy/pull/827),
+  [#836](https://github.com/awslabs/smithy/pull/836))
+* Added more context for documentation types. ([#818](https://github.com/awslabs/smithy/pull/818))
+* Fixed several minor documentation issues. ([#816](https://github.com/awslabs/smithy/pull/816), [#818](https://github.com/awslabs/smithy/pull/818),
+  [#837](https://github.com/awslabs/smithy/pull/837), [#840](https://github.com/awslabs/smithy/pull/840))
+
 ## 1.8.0 (2021-05-20)
 
 ### Features
