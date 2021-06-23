@@ -45,7 +45,7 @@ final class CloudFormationSubstitution implements ApiGatewayMapper {
 
     private static final Logger LOGGER = Logger.getLogger(CloudFormationSubstitution.class.getName());
     private static final String SUBSTITUTION_KEY = "Fn::Sub";
-    private static final Pattern SUBSTITUTION_PATTERN = Pattern.compile("\\$\\{.+}");
+    private static final Pattern SUBSTITUTION_PATTERN = Pattern.compile("\\$\\{[A-Za-z0-9.:]+}");
 
     /**
      * This is a hardcoded list of paths that are known to contain ARNs or identifiers
