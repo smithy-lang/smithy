@@ -270,6 +270,27 @@ operation ListObjectsV2 {
     ],
 }
 
+
+@httpResponseTests([{
+        id: "GetBucketLocationUnwrappedOutput",
+        documentation: """
+            S3 clients should use the @s3UnwrappedXmlOutput trait to determine
+            that the response shape is not wrapped in a restxml operation-level XML node.
+        """,
+        code: 200,
+        body: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<LocationConstraint xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">us-west-2</LocationConstraint>",
+        params: {
+            "LocationConstraint": "us-west-2"
+        },
+        protocol: restXml
+}])
+@http(uri: "/GetBucketLocation", method: "GET")
+@s3UnwrappedXmlOutput
+operation GetBucketLocation {
+    output: GetBucketLocationOutput,
+}
+
+
 structure CommonPrefix {
     Prefix: Prefix,
 }
@@ -465,17 +486,3 @@ structure GetBucketLocationOutput {
     LocationConstraint: BucketLocationConstraint,
 }
 
-@httpResponseTests([{
-        id: "GetBucketLocation",
-        code: 200,
-        body: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<LocationConstraint xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">us-west-2</LocationConstraint>",
-        params: {
-            "LocationConstraint": "us-west-2"
-        },
-        protocol: "aws.protocols#restXml"
-}])
-@http(uri: "/GetBucketLocation", method: "GET")
-@s3UnwrappedXmlOutput
-operation GetBucketLocation {
-    output: GetBucketLocationOutput,
-}
