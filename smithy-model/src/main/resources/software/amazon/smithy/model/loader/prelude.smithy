@@ -756,3 +756,50 @@ list suppress {
 @unstable
 @trait(selector: "operation")
 structure httpChecksumRequired {}
+
+/// Defines supported checksum behavior for an operation's request or response.
+@unstable
+@trait(selector: "operation")
+structure httpChecksum {
+    /// Defines list of checksum properties for request.
+    request: httpChecksumPropertyList,
+
+    /// Defines list of checksum properties for response.
+    response: httpChecksumPropertyList,
+}
+
+/// Defines properties used by httpChecksum trait members
+@private
+structure httpChecksumProperty {
+    /// The name string used as a header or trailer name for a
+    /// checksum type.
+    name: NonEmptyString,
+
+    /// Defines a location where the checksum can be serialized.
+    in: HttpChecksumLocation,
+
+    /// Denotes the supported checksum algorithm.
+    algorithm: NonEmptyString,
+}
+
+@private
+@enum([
+    {
+        name: "HEADER",
+        value: "header",
+        documentation: "Indicates checksum value is supported in header.",
+    },
+    {
+        name: "TRAILER",
+        value: "trailer",
+        documentation: "Indicates checksum value is supported in trailer.",
+    },
+])
+string HttpChecksumLocation
+
+/// List of checksum properties supported within HttpChecksum trait
+/// for request or response.
+@private
+list httpChecksumPropertyList {
+    member: httpChecksumProperty,
+}
