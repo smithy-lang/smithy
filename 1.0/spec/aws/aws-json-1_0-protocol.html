@@ -82,9 +82,10 @@
 <li><a class="reference internal" href="#empty-body-serialization" id="id6">Empty body serialization</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#operation-error-serialization" id="id7">Operation error serialization</a></li>
-<li><a class="reference internal" href="#differences-between-awsjson1-0-and-awsjson1-1" id="id8">Differences between <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> and <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code></a></li>
-<li><a class="reference internal" href="#protocol-compliance-tests" id="id9">Protocol compliance tests</a></li>
+<li><a class="reference internal" href="#non-numeric-float-and-double-serialization" id="id7">Non-numeric float and double serialization</a></li>
+<li><a class="reference internal" href="#operation-error-serialization" id="id8">Operation error serialization</a></li>
+<li><a class="reference internal" href="#differences-between-awsjson1-0-and-awsjson1-1" id="id9">Differences between <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> and <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code></a></li>
+<li><a class="reference internal" href="#protocol-compliance-tests" id="id10">Protocol compliance tests</a></li>
 </ul>
 </div>
 <div class="section" id="aws-protocols-awsjson1-0-trait">
@@ -98,7 +99,7 @@ responses with JSON documents.</dd>
 <dt>Value type</dt>
 <dd>Annotation trait.</dd>
 <dt>See</dt>
-<dd><a class="reference external" href="https://github.com/awslabs/smithy/tree/1.8.0/smithy-aws-protocol-tests/model/awsJson1_0">Protocol tests</a></dd>
+<dd><a class="reference external" href="https://github.com/awslabs/smithy/tree/1.9.0/smithy-aws-protocol-tests/model/awsJson1_0">Protocol tests</a></dd>
 </dl>
 <div class="sphinx-tabs docutils container">
 <div class="ui top attached tabular menu sphinx-menu docutils container">
@@ -254,10 +255,12 @@ to convert each shape type:</p>
 <td>JSON number</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">float</span></code></td>
-<td>JSON number</td>
+<td>JSON number for numeric values. JSON strings for <code class="docutils literal notranslate"><span class="pre">NaN</span></code>, <code class="docutils literal notranslate"><span class="pre">Infinity</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">-Infinity</span></code>.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">double</span></code></td>
-<td>JSON number</td>
+<td>JSON number for numeric values. JSON strings for <code class="docutils literal notranslate"><span class="pre">NaN</span></code>, <code class="docutils literal notranslate"><span class="pre">Infinity</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">-Infinity</span></code></td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">bigDecimal</span></code></td>
 <td>JSON number. Unfortunately, this protocol serializes bigDecimal
@@ -317,6 +320,35 @@ server implementations SHOULD send an empty response body. The server MUST
 still send the protocol's <code class="docutils literal notranslate"><span class="pre">Content-Type</span></code> header in this case. Clients MUST
 also accept an empty JSON object as the response body.</p>
 </div>
+</div>
+<div class="section" id="non-numeric-float-and-double-serialization">
+<h2><a href="#non-numeric-float-and-double-serialization">Non-numeric float and double serialization</a></h2>
+<p>Smithy floats and doubles are defined by IEEE-754, which includes special values
+for &quot;not a number&quot; and both positive and negative infinity. Unless otherwise
+specified, the <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> protocol treats those special values as
+strings with the following values:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Special Value</th>
+<th class="head">String Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Not a number</td>
+<td><code class="docutils literal notranslate"><span class="pre">NaN</span></code></td>
+</tr>
+<tr class="row-odd"><td>Positive infinity</td>
+<td><code class="docutils literal notranslate"><span class="pre">Infinity</span></code></td>
+</tr>
+<tr class="row-even"><td>Negative infinity</td>
+<td><code class="docutils literal notranslate"><span class="pre">-Infinity</span></code></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="operation-error-serialization">
 <h2><a href="#operation-error-serialization">Operation error serialization</a></h2>
@@ -398,6 +430,7 @@ the expected serialized HTTP requests and responses for each case.</p>
 <li><a class="reference internal" href="#empty-body-serialization">Empty body serialization</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#non-numeric-float-and-double-serialization">Non-numeric float and double serialization</a></li>
 <li><a class="reference internal" href="#operation-error-serialization">Operation error serialization</a></li>
 <li><a class="reference internal" href="#differences-between-awsjson1-0-and-awsjson1-1">Differences between <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> and <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code></a></li>
 <li><a class="reference internal" href="#protocol-compliance-tests">Protocol compliance tests</a></li>

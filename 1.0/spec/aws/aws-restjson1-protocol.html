@@ -83,8 +83,9 @@ status codes.</p>
 <li><a class="reference internal" href="#content-type" id="id5">Content-Type</a></li>
 <li><a class="reference internal" href="#json-shape-serialization" id="id6">JSON shape serialization</a></li>
 <li><a class="reference internal" href="#http-binding-serialization" id="id7">HTTP binding serialization</a></li>
-<li><a class="reference internal" href="#operation-error-serialization" id="id8">Operation error serialization</a></li>
-<li><a class="reference internal" href="#protocol-compliance-tests" id="id9">Protocol compliance tests</a></li>
+<li><a class="reference internal" href="#non-numeric-float-and-double-serialization" id="id8">Non-numeric float and double serialization</a></li>
+<li><a class="reference internal" href="#operation-error-serialization" id="id9">Operation error serialization</a></li>
+<li><a class="reference internal" href="#protocol-compliance-tests" id="id10">Protocol compliance tests</a></li>
 </ul>
 </div>
 <div class="section" id="aws-protocols-restjson1-trait">
@@ -360,10 +361,12 @@ with the <code class="docutils literal notranslate"><span class="pre">httpPayloa
 <td>JSON number</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">float</span></code></td>
-<td>JSON number</td>
+<td>JSON number for numeric values. JSON strings for <code class="docutils literal notranslate"><span class="pre">NaN</span></code>, <code class="docutils literal notranslate"><span class="pre">Infinity</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">-Infinity</span></code></td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">double</span></code></td>
-<td>JSON number</td>
+<td>JSON number for numeric values. JSON strings for <code class="docutils literal notranslate"><span class="pre">NaN</span></code>, <code class="docutils literal notranslate"><span class="pre">Infinity</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">-Infinity</span></code></td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">bigDecimal</span></code></td>
 <td>JSON number. Unfortunately, this protocol serializes bigDecimal
@@ -420,6 +423,35 @@ shape, but only a single member can be set to a non-null value.</td>
 defined in the <a class="reference internal" href="../core/http-traits.html#http-traits"><span class="std std-ref">HTTP protocol bindings</span></a> specification. The
 serialization formats and and behaviors described for each trait are supported
 as defined in the <code class="docutils literal notranslate"><span class="pre">aws.protocols#restJson1</span></code> protocol.</p>
+</div>
+<div class="section" id="non-numeric-float-and-double-serialization">
+<h2><a href="#non-numeric-float-and-double-serialization">Non-numeric float and double serialization</a></h2>
+<p>Smithy floats and doubles are defined by IEEE-754, which includes special values
+for &quot;not a number&quot; and both positive and negative infinity. Unless otherwise
+specified, the <code class="docutils literal notranslate"><span class="pre">aws.protocols#restJson1</span></code> protocol treats those special values as
+strings with the following values:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Special Value</th>
+<th class="head">String Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Not a number</td>
+<td><code class="docutils literal notranslate"><span class="pre">NaN</span></code></td>
+</tr>
+<tr class="row-odd"><td>Positive infinity</td>
+<td><code class="docutils literal notranslate"><span class="pre">Infinity</span></code></td>
+</tr>
+<tr class="row-even"><td>Negative infinity</td>
+<td><code class="docutils literal notranslate"><span class="pre">-Infinity</span></code></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="operation-error-serialization">
 <h2><a href="#operation-error-serialization">Operation error serialization</a></h2>
@@ -485,6 +517,7 @@ the expected serialized HTTP requests and responses for each case.</p>
 <li><a class="reference internal" href="#content-type">Content-Type</a></li>
 <li><a class="reference internal" href="#json-shape-serialization">JSON shape serialization</a></li>
 <li><a class="reference internal" href="#http-binding-serialization">HTTP binding serialization</a></li>
+<li><a class="reference internal" href="#non-numeric-float-and-double-serialization">Non-numeric float and double serialization</a></li>
 <li><a class="reference internal" href="#operation-error-serialization">Operation error serialization</a></li>
 <li><a class="reference internal" href="#protocol-compliance-tests">Protocol compliance tests</a></li>
 </ul>

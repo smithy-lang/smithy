@@ -249,6 +249,10 @@ serialization formats and and behaviors described for each trait are supported
 as defined in the ``aws.protocols#restXml`` protocol.
 
 
+.. |quoted shape name| replace:: ``aws.protocols#restXml``
+.. include:: non-numeric-floats.rst.template
+
+
 .. _restXml-errors:
 
 ----------------------------

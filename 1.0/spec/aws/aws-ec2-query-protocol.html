@@ -91,7 +91,8 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#operation-error-serialization" id="id13">Operation error serialization</a></li>
-<li><a class="reference internal" href="#protocol-compliance-tests" id="id14">Protocol compliance tests</a></li>
+<li><a class="reference internal" href="#non-numeric-float-and-double-serialization" id="id14">Non-numeric float and double serialization</a></li>
+<li><a class="reference internal" href="#protocol-compliance-tests" id="id15">Protocol compliance tests</a></li>
 </ul>
 </div>
 <div class="section" id="aws-protocols-ec2query-trait">
@@ -437,28 +438,15 @@ to the input's key.</p>
 <tbody valign="top">
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">list</span></code></td>
 <td>Each value provided in the collection is serialized as a separate key with
-a &quot;.&quot; separator, the string &quot;member&quot;, a &quot;.&quot; separator, and a &quot;1&quot; indexed
-incrementing counter appended to the container's key.
-See <a class="reference internal" href="#aws-protocols-ec2queryname-query-key-naming"><span class="std std-ref">Query key resolution</span></a>
-for how to serialize a property using a custom name instead of &quot;member&quot;. The <a class="reference internal" href="../core/xml-traits.html#xmlflattened-trait"><span class="std std-ref">xmlFlattened trait</span></a>
-can be used to unwrap the values into a containing structure or union,
-with the key not containing the initial &quot;.&quot; separator and <code class="docutils literal notranslate"><span class="pre">member</span></code>
-segment.</td>
+a &quot;.&quot; separator and a &quot;1&quot; indexed incrementing counter appended to the
+container's key.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">set</span></code></td>
 <td>A set is serialized identically to a <code class="docutils literal notranslate"><span class="pre">list</span></code> shape, but only contains
 unique values.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">map</span></code></td>
-<td>Each key and value in each pair provided in the map is serialized as a
-separate key with a &quot;.&quot; separator, the string &quot;entry&quot;, a &quot;.&quot; separator,
-a &quot;1&quot; indexed incrementing counter, a &quot;.&quot; separator, and the string
-&quot;key&quot; or &quot;value&quot; (for member keys or values, respectively) appended to
-the container's key. See <a class="reference internal" href="#aws-protocols-ec2queryname-query-key-naming"><span class="std std-ref">Query key resolution</span></a>
-for how to serialize a property using a custom name instead of &quot;member&quot;, &quot;key&quot;,
-or &quot;value&quot;. The <a class="reference internal" href="../core/xml-traits.html#xmlflattened-trait"><span class="std std-ref">xmlFlattened trait</span></a> can be used to unwrap the
-values into a containing structure or union, with the key not
-containing the initial &quot;.&quot; separator and &quot;entry&quot; segment.</td>
+<td>Map serialization is currently undefined for this protocol.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">structure</span></code></td>
 <td>Each member value provided for the shape is serialized as a separate key
@@ -522,13 +510,8 @@ for how to serialize a property using a custom name. Members with null values ar
 <div class="section" id="collections">
 <h4><a href="#collections">Collections</a></h4>
 <p>Each value provided in the collection is serialized as a separate key with
-a &quot;.&quot; separator, the string &quot;member&quot;, a &quot;.&quot; separator, and a &quot;1&quot; indexed
-incrementing counter appended to the container's key.
-See <a class="reference internal" href="#aws-protocols-ec2queryname-query-key-naming"><span class="std std-ref">Query key resolution</span></a>
-for how to serialize a property using a custom name instead of &quot;member&quot;. The <a class="reference internal" href="../core/xml-traits.html#xmlflattened-trait"><span class="std std-ref">xmlFlattened trait</span></a>
-can be used to unwrap the values into a containing structure or union,
-with the key not containing the initial &quot;.&quot; separator and <code class="docutils literal notranslate"><span class="pre">member</span></code>
-segment.</p>
+a &quot;.&quot; separator and a &quot;1&quot; indexed incrementing counter appended to the
+container's key.</p>
 <p>For example, given the following:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> Ec2QueryListsInput</span> {
     <span class="nl">ListArg:</span> <span class="vc">StringList</span>,
@@ -717,6 +700,35 @@ serialized in the response.</p>
 <p>In the above example, <code class="docutils literal notranslate"><span class="pre">Message</span></code>, and <code class="docutils literal notranslate"><span class="pre">AnotherSetting</span></code> are additional,
 hypothetical members of the serialized error structure.</p>
 </div>
+<div class="section" id="non-numeric-float-and-double-serialization">
+<span id="ec2query-non-numeric-float-serialization"></span><h2><a href="#non-numeric-float-and-double-serialization">Non-numeric float and double serialization</a></h2>
+<p>Smithy floats and doubles are defined by IEEE-754, which includes special values
+for &quot;not a number&quot; and both positive and negative infinity. Unless otherwise
+specified, the <code class="docutils literal notranslate"><span class="pre">ec2Query</span></code> protocol treats those special values as
+strings with the following values:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Special Value</th>
+<th class="head">String Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Not a number</td>
+<td><code class="docutils literal notranslate"><span class="pre">NaN</span></code></td>
+</tr>
+<tr class="row-odd"><td>Positive infinity</td>
+<td><code class="docutils literal notranslate"><span class="pre">Infinity</span></code></td>
+</tr>
+<tr class="row-even"><td>Negative infinity</td>
+<td><code class="docutils literal notranslate"><span class="pre">-Infinity</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
 <div class="section" id="protocol-compliance-tests">
 <span id="ec2query-compliance-tests"></span><h2><a href="#protocol-compliance-tests">Protocol compliance tests</a></h2>
 <p>A full compliance test suite is provided and SHALL be considered a normative
@@ -769,6 +781,7 @@ the expected serialized HTTP requests and responses for each case.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#operation-error-serialization">Operation error serialization</a></li>
+<li><a class="reference internal" href="#non-numeric-float-and-double-serialization">Non-numeric float and double serialization</a></li>
 <li><a class="reference internal" href="#protocol-compliance-tests">Protocol compliance tests</a></li>
 </ul>
 </li>

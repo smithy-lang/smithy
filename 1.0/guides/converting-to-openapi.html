@@ -196,17 +196,17 @@ specification from a Smithy model using a buildscript dependency:</p>
 
 <span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.8.0&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.9.0&quot;</span><span class="p">)</span>
         <span class="c1">// The openapi plugin configured in the smithy-build.json example below</span>
         <span class="c1">// uses the restJson1 protocol defined in the aws-traits package. This</span>
         <span class="c1">// additional dependency must added to use that protocol.</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.8.0&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.9.0&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="n">dependencies</span> <span class="p">{</span>
     <span class="c1">// The dependency for restJson1 is required here too.</span>
-    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.8.0&quot;</span><span class="p">)</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.9.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -232,7 +232,7 @@ that builds an OpenAPI specification from a service for the
 </div>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-openapi:1.8.0&quot; is
+<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-openapi:1.9.0&quot; is
 required in order for smithy-build to map the &quot;openapi&quot; plugin name to the
 correct Java library implementation.</p>
 </div>
@@ -711,6 +711,48 @@ generated OpenAPI model.</p>
 </div>
 </dd>
 </dl>
+<dl class="docutils" id="generate-openapi-setting-supportnonnumericfloats">
+<dt>supportNonNumericFloats (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
+<dd><p class="first">Set to true to add support for NaN, Infinity, and -Infinity in float
+and double shapes. These values will be serialized as strings. The
+JSON Schema document will be updated to refer to them as a &quot;oneOf&quot; of
+number and string.</p>
+<p>By default, these non-numeric values are not supported.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Weather&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;supportNonNumericFloats&quot;</span><span class="p">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>When this is disabled (the default), references to floats/doubles will
+look like this:</p>
+<p>With this enabled, references to floats/doubles will look like this:</p>
+<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;floatMember&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;oneOf&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;enum&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;NaN&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Infinity&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;-Infinity&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
 </div>
 <div class="section" id="security-schemes">
 <h2><a href="#security-schemes">Security schemes</a></h2>
@@ -794,7 +836,7 @@ dependency on <code class="docutils literal notranslate"><span class="pre">softw
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#apigateway-build-gradle" title="Permalink to this code">¶</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-apigateway-openapi:1.8.0&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-apigateway-openapi:1.9.0&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -1241,27 +1283,27 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#openapi-code-build-gradle" title="Permalink to this code">¶</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.8.0&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.9.0&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </div>
 <p>Next, you need to create and configure an <code class="docutils literal notranslate"><span class="pre">OpenApiConverter</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">software.amazon.smithy.model.shapes.ShapeId</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">software.amazon.smithy.openapi.OpenApiConfig</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">software.amazon.smithy.openapi.fromsmithy.OpenApiConverter</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">software.amazon.smithy.openapi.model.OpenApi</span><span class="o">;</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">software.amazon.smithy.model.shapes.ShapeId</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.openapi.OpenApiConfig</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.openapi.fromsmithy.OpenApiConverter</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.openapi.model.OpenApi</span><span class="p">;</span>
 
-<span class="n">OpenApiConverter</span> <span class="n">converter</span> <span class="o">=</span> <span class="n">OpenApiConverter</span><span class="o">.</span><span class="na">create</span><span class="o">();</span>
+<span class="n">OpenApiConverter</span> <span class="n">converter</span> <span class="o">=</span> <span class="n">OpenApiConverter</span><span class="p">.</span><span class="na">create</span><span class="p">();</span>
 
 <span class="c1">// Add any necessary configuration settings.</span>
-<span class="n">OpenApiConfig</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OpenApiConfig</span><span class="o">();</span>
-<span class="n">config</span><span class="o">.</span><span class="na">setService</span><span class="o">(</span><span class="n">ShapeId</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="s">&quot;smithy.example#Weather&quot;</span><span class="o">));</span>
-<span class="n">converter</span><span class="o">.</span><span class="na">config</span><span class="o">(</span><span class="n">config</span><span class="o">);</span>
+<span class="n">OpenApiConfig</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OpenApiConfig</span><span class="p">();</span>
+<span class="n">config</span><span class="p">.</span><span class="na">setService</span><span class="p">(</span><span class="n">ShapeId</span><span class="p">.</span><span class="na">from</span><span class="p">(</span><span class="s">&quot;smithy.example#Weather&quot;</span><span class="p">));</span>
+<span class="n">converter</span><span class="p">.</span><span class="na">config</span><span class="p">(</span><span class="n">config</span><span class="p">);</span>
 
 <span class="c1">// Generate the OpenAPI schema.</span>
-<span class="n">OpenApi</span> <span class="n">result</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="na">convert</span><span class="o">(</span><span class="n">myModel</span><span class="o">);</span>
+<span class="n">OpenApi</span> <span class="n">result</span> <span class="o">=</span> <span class="n">converter</span><span class="p">.</span><span class="na">convert</span><span class="p">(</span><span class="n">myModel</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>The conversion process is highly extensible through

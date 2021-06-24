@@ -2557,12 +2557,14 @@ target from traits and how their values are defined in
 <td>The value MUST fall within the range of -2^63 to (2^63)-1.</td>
 </tr>
 <tr class="row-even"><td>float</td>
-<td>number</td>
-<td>A normal JSON number.</td>
+<td>string | number</td>
+<td>The value MUST be either a normal JSON number or one of the following
+string values: <code class="docutils literal notranslate"><span class="pre">&quot;NaN&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Infinity&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;-Infinity&quot;</span></code>.</td>
 </tr>
 <tr class="row-odd"><td>double</td>
-<td>number</td>
-<td>A normal JSON number.</td>
+<td>string | number</td>
+<td>The value MUST be either a normal JSON number or one of the following
+string values: <code class="docutils literal notranslate"><span class="pre">&quot;NaN&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Infinity&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;-Infinity&quot;</span></code>.</td>
 </tr>
 <tr class="row-even"><td>bigDecimal</td>
 <td>string | number</td>

@@ -115,8 +115,10 @@ Build tooling
 
         .. code-block:: none
 
-            cd smithy-cli/build/runtime/bin
-            ./smithy-cli --help
+            smithy-cli/build/image/smithy-cli-osx-x86_64/bin/smithy --help
+            smithy-cli/build/image/smithy-cli-win64/bin/smithy --help
+            smithy-cli/build/image/smithy-cli-linux-x86_64/bin/smithy --help
+            smithy-cli/build/image/smithy-cli-linux-aarch_64/bin/smithy --help
 
 
 ---------------

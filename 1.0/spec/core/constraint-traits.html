@@ -558,6 +558,14 @@ JSON</div>
 conditionals, directives, recursion, lookahead, look-behind, back-references,
 and look-around in order to ensure maximum compatibility across programming
 languages.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Pattern values should be chosen with care, as regex evaluation can be
+expensive. Regular expressions SHOULD be tested against a range of
+potentially malformed inputs to ensure that the execution of the regular
+expression match does not lead to a potential denial of service. See
+<a class="reference external" href="https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS">OWASP Regular expression Denial of Service</a> for more information.</p>
+</div>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
 <p class="last">The <code class="docutils literal notranslate"><span class="pre">pattern</span></code> trait does not implicitly add a leading <code class="docutils literal notranslate"><span class="pre">^</span></code> or trailing
