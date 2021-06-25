@@ -105,8 +105,12 @@ that support the following members:
         the query string (for example, "/foo/bar").
     * - host
       - ``string``
-      - The host / endpoint provided to the client, not including the path or
-        scheme (for example, "example.com").
+      - The host / endpoint provided to the client (for example, "example.com").
+        ``host`` MAY contain a path to indicate a base path from which each
+        operation in the service is appended to. For example, given a ``host``
+        of ``example.com/foo/bar`` and an operation path of ``/MyOperation``,
+        the resolved host of the operation is ``example.com`` and the resolved
+        path is ``/foo/bar/MyOperation``.
     * - resolvedHost
       - ``string``
       - The host / endpoint that the client should send to, not including the
