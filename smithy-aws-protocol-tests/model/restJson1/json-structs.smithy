@@ -101,7 +101,7 @@ apply SimpleScalarProperties @httpRequestTests([
         body: """
             {
                 "floatValue": "NaN",
-                "doubleValue": "NaN"
+                "DoubleDribble": "NaN"
             }""",
         bodyMediaType: "application/json",
         headers: {
@@ -121,7 +121,7 @@ apply SimpleScalarProperties @httpRequestTests([
         body: """
             {
                 "floatValue": "Infinity",
-                "doubleValue": "Infinity"
+                "DoubleDribble": "Infinity"
             }""",
         bodyMediaType: "application/json",
         headers: {
@@ -141,7 +141,7 @@ apply SimpleScalarProperties @httpRequestTests([
         body: """
             {
                 "floatValue": "-Infinity",
-                "doubleValue": "-Infinity"
+                "DoubleDribble": "-Infinity"
             }""",
         bodyMediaType: "application/json",
         headers: {
@@ -229,7 +229,7 @@ apply SimpleScalarProperties @httpResponseTests([
         body: """
             {
                 "floatValue": "NaN",
-                "doubleValue": "NaN"
+                "DoubleDribble": "NaN"
             }""",
         bodyMediaType: "application/json",
         headers: {
@@ -248,7 +248,7 @@ apply SimpleScalarProperties @httpResponseTests([
         body: """
             {
                 "floatValue": "Infinity",
-                "doubleValue": "Infinity"
+                "DoubleDribble": "Infinity"
             }""",
         bodyMediaType: "application/json",
         headers: {
@@ -267,7 +267,7 @@ apply SimpleScalarProperties @httpResponseTests([
         body: """
             {
                 "floatValue": "-Infinity",
-                "doubleValue": "-Infinity"
+                "DoubleDribble": "-Infinity"
             }""",
         bodyMediaType: "application/json",
         headers: {
