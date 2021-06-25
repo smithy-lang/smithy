@@ -86,5 +86,8 @@ service RestJson {
         // @endpoint and @hostLabel trait tests
         EndpointOperation,
         EndpointWithHostLabelOperation,
+
+        // custom endpoints with paths
+        HostWithPathOperation,
     ]
 }
