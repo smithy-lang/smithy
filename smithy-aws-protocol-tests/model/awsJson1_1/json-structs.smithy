@@ -25,7 +25,7 @@ apply SimpleScalarProperties @httpRequestTests([
         bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/x-amz-json-1.1",
-            "X-Amz-Target": "JsonRpc10.SimpleScalarProperties",
+            "X-Amz-Target": "JsonProtocol.SimpleScalarProperties",
         },
         params: {
             floatValue: "NaN",
@@ -46,7 +46,7 @@ apply SimpleScalarProperties @httpRequestTests([
         bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/x-amz-json-1.1",
-            "X-Amz-Target": "JsonRpc10.SimpleScalarProperties",
+            "X-Amz-Target": "JsonProtocol.SimpleScalarProperties",
         },
         params: {
             floatValue: "Infinity",
@@ -67,7 +67,7 @@ apply SimpleScalarProperties @httpRequestTests([
         bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/x-amz-json-1.1",
-            "X-Amz-Target": "JsonRpc10.SimpleScalarProperties",
+            "X-Amz-Target": "JsonProtocol.SimpleScalarProperties",
         },
         params: {
             floatValue: "-Infinity",
