@@ -63,10 +63,8 @@ apply SimpleScalarXmlProperties @httpResponseTests([
         code: 200,
         body: """
               <SimpleScalarXmlPropertiesResponse xmlns="https://example.com/">
-                  <SimpleScalarXmlPropertiesResult>
-                      <floatValue>NaN</floatValue>
-                      <doubleValue>NaN</doubleValue>
-                  </SimpleScalarXmlPropertiesResult>
+                  <floatValue>NaN</floatValue>
+                  <DoubleDribble>NaN</DoubleDribble>
               </SimpleScalarXmlPropertiesResponse>
               """,
         bodyMediaType: "application/xml",
@@ -85,10 +83,8 @@ apply SimpleScalarXmlProperties @httpResponseTests([
         code: 200,
         body: """
               <SimpleScalarXmlPropertiesResponse xmlns="https://example.com/">
-                  <SimpleScalarXmlPropertiesResult>
-                      <floatValue>Infinity</floatValue>
-                      <doubleValue>Infinity</doubleValue>
-                  </SimpleScalarXmlPropertiesResult>
+                  <floatValue>Infinity</floatValue>
+                  <DoubleDribble>Infinity</DoubleDribble>
               </SimpleScalarXmlPropertiesResponse>
               """,
         bodyMediaType: "application/xml",
@@ -107,10 +103,8 @@ apply SimpleScalarXmlProperties @httpResponseTests([
         code: 200,
         body: """
               <SimpleScalarXmlPropertiesResponse xmlns="https://example.com/">
-                  <SimpleScalarXmlPropertiesResult>
-                      <floatValue>-Infinity</floatValue>
-                      <doubleValue>-Infinity</doubleValue>
-                  </SimpleScalarXmlPropertiesResult>
+                  <floatValue>-Infinity</floatValue>
+                  <DoubleDribble>-Infinity</DoubleDribble>
               </SimpleScalarXmlPropertiesResponse>
               """,
         bodyMediaType: "application/xml",
