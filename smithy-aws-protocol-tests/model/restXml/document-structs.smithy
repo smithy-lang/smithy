@@ -111,7 +111,7 @@ apply SimpleScalarProperties @httpRequestTests([
         body: """
               <SimpleScalarPropertiesInputOutput>
                   <floatValue>NaN</floatValue>
-                  <doubleValue>NaN</doubleValue>
+                  <DoubleDribble>NaN</DoubleDribble>
               </SimpleScalarPropertiesInputOutput>
               """,
         bodyMediaType: "application/xml",
@@ -132,7 +132,7 @@ apply SimpleScalarProperties @httpRequestTests([
         body: """
               <SimpleScalarPropertiesInputOutput>
                   <floatValue>Infinity</floatValue>
-                  <doubleValue>Infinity</doubleValue>
+                  <DoubleDribble>Infinity</DoubleDribble>
               </SimpleScalarPropertiesInputOutput>
               """,
         bodyMediaType: "application/xml",
@@ -153,7 +153,7 @@ apply SimpleScalarProperties @httpRequestTests([
         body: """
               <SimpleScalarPropertiesInputOutput>
                   <floatValue>-Infinity</floatValue>
-                  <doubleValue>-Infinity</doubleValue>
+                  <DoubleDribble>-Infinity</DoubleDribble>
               </SimpleScalarPropertiesInputOutput>
               """,
         bodyMediaType: "application/xml",
@@ -304,7 +304,7 @@ apply SimpleScalarProperties @httpResponseTests([
         body: """
               <SimpleScalarPropertiesInputOutput>
                   <floatValue>NaN</floatValue>
-                  <doubleValue>NaN</doubleValue>
+                  <DoubleDribble>NaN</DoubleDribble>
               </SimpleScalarPropertiesInputOutput>
               """,
         bodyMediaType: "application/xml",
@@ -324,7 +324,7 @@ apply SimpleScalarProperties @httpResponseTests([
         body: """
               <SimpleScalarPropertiesInputOutput>
                   <floatValue>Infinity</floatValue>
-                  <doubleValue>Infinity</doubleValue>
+                  <DoubleDribble>Infinity</DoubleDribble>
               </SimpleScalarPropertiesInputOutput>
               """,
         bodyMediaType: "application/xml",
@@ -344,7 +344,7 @@ apply SimpleScalarProperties @httpResponseTests([
         body: """
               <SimpleScalarPropertiesInputOutput>
                   <floatValue>-Infinity</floatValue>
-                  <doubleValue>-Infinity</doubleValue>
+                  <DoubleDribble>-Infinity</DoubleDribble>
               </SimpleScalarPropertiesInputOutput>
               """,
         bodyMediaType: "application/xml",

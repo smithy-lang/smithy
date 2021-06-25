@@ -65,7 +65,7 @@ apply SimpleScalarXmlProperties @httpResponseTests([
               <SimpleScalarXmlPropertiesResponse xmlns="https://example.com/">
                   <SimpleScalarXmlPropertiesResult>
                       <floatValue>NaN</floatValue>
-                      <doubleValue>NaN</doubleValue>
+                      <DoubleDribble>NaN</DoubleDribble>
                   </SimpleScalarXmlPropertiesResult>
               </SimpleScalarXmlPropertiesResponse>
               """,
@@ -87,7 +87,7 @@ apply SimpleScalarXmlProperties @httpResponseTests([
               <SimpleScalarXmlPropertiesResponse xmlns="https://example.com/">
                   <SimpleScalarXmlPropertiesResult>
                       <floatValue>Infinity</floatValue>
-                      <doubleValue>Infinity</doubleValue>
+                      <DoubleDribble>Infinity</DoubleDribble>
                   </SimpleScalarXmlPropertiesResult>
               </SimpleScalarXmlPropertiesResponse>
               """,
@@ -109,7 +109,7 @@ apply SimpleScalarXmlProperties @httpResponseTests([
               <SimpleScalarXmlPropertiesResponse xmlns="https://example.com/">
                   <SimpleScalarXmlPropertiesResult>
                       <floatValue>-Infinity</floatValue>
-                      <doubleValue>-Infinity</doubleValue>
+                      <DoubleDribble>-Infinity</DoubleDribble>
                   </SimpleScalarXmlPropertiesResult>
               </SimpleScalarXmlPropertiesResponse>
               """,
