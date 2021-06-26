@@ -66,9 +66,8 @@ The following example defines an operation that uses a custom endpoint:
         }
 
         structure GetStatusInput {
-            @required
             @hostLabel
-            foo: String
+            foo: String!
         }
 
     .. code-tab:: json
@@ -132,9 +131,8 @@ Given the following operation,
         }
 
         structure GetStatusInput {
-            @required
             @hostLabel
-            foo: String
+            foo: String!
         }
 
     .. code-tab:: json
@@ -197,13 +195,11 @@ Given the following operation,
         }
 
         structure GetStatusInput {
-            @required
             @hostLabel
-            foo: String
+            foo: String!
 
-            @required
             @hostLabel
-            bar: String
+            bar: String!
         }
 
     .. code-tab:: json
@@ -333,10 +329,9 @@ Given the following operation,
         }
 
         structure GetStatusInput {
-            @required
             @hostLabel
             @httpHeader("X-Foo")
-            foo: String
+            foo: String!
         }
 
     .. code-tab:: json
@@ -428,9 +423,8 @@ to an operation marked with the :ref:`endpoint-trait` will be ignored.
         }
 
         structure GetStatusInput {
-            @required
             @hostLabel
-            foo: String
+            foo: String!
         }
 
     .. code-tab:: json

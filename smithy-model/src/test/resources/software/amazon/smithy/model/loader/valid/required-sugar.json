@@ -1,0 +1,81 @@
+{
+    "smithy": "1.1",
+    "shapes": {
+        "example.weather#Foo": {
+            "type": "structure",
+            "members": {
+                "optional": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Docs 1"
+                    }
+                },
+                "requiredRelative": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Docs 2",
+                        "smithy.api#required": {}
+                    }
+                },
+                "requiredAbsolute": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Docs",
+                        "smithy.api#required": {}
+                    }
+                }
+            }
+        },
+        "example.weather#FooNoDocs": {
+            "type": "structure",
+            "members": {
+                "optional": {
+                    "target": "smithy.api#String"
+                },
+                "requiredRelative": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
+                },
+                "requiredAbsolute": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
+                }
+            }
+        },
+        "example.weather#FooNoDocsWithCommas": {
+            "type": "structure",
+            "members": {
+                "optional": {
+                    "target": "smithy.api#String"
+                },
+                "requiredRelative": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
+                },
+                "requiredAbsolute": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
+                }
+            }
+        },
+        "example.weather#RequiredConflictsAreIgnored": {
+            "type": "structure",
+            "members": {
+                "required": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
+                }
+            }
+        }
+    }
+}

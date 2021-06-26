@@ -46,8 +46,7 @@ The following example defines a model file with each section:
             use smithy.other.namespace#MyString
 
             structure MyStructure {
-                @required
-                foo: MyString
+                foo: MyString!
             }
 
     .. code-tab:: json
@@ -187,10 +186,13 @@ The Smithy IDL is defined by the following ABNF:
                            :/ "bigDecimal" / "timestamp"
     shape_members          :"{" `ws` *(`shape_member_kvp` `ws`) "}"
     shape_member_kvp       :`trait_statements` `identifier` `ws` ":" `ws` `shape_id`
+    structure_members      :"{" `ws` *(`structure_members_kvp` `ws`) "}"
+    structure_members_kvp  :`trait_statements` `identifier` `ws` ":" `ws` `shape_id` [`required_member_sugar`]
+    required_member_sugar: "!"
     list_statement :"list" `ws` `identifier` `ws` `shape_members`
     set_statement :"set" `ws` `identifier` `ws` `shape_members`
     map_statement :"map" `ws` `identifier` `ws` `shape_members`
-    structure_statement     :"structure" `ws` `identifier` `ws` `shape_members`
+    structure_statement     :"structure" `ws` `identifier` `ws` `structure_members`
     union_statement :"union" `ws` `identifier` `ws` `shape_members`
     service_statement :"service" `ws` `identifier` `ws` `node_object`
     operation_statement :"operation" `ws` `identifier` `ws` `node_object`
@@ -957,12 +959,11 @@ Traits can be applied to structure members:
         /// This is MyStructure.
         structure MyStructure {
             /// This is documentation for `foo`.
-            @required
-            foo: String,
+            foo: String
 
             /// This is documentation for `baz`.
             @deprecated
-            baz: Integer,
+            baz: Integer
         }
 
     .. code-tab:: json
@@ -976,8 +977,7 @@ Traits can be applied to structure members:
                         "foo": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#documentation": "This is documentation for `foo`.",
-                                "smithy.api#required": {}
+                                "smithy.api#documentation": "This is documentation for `foo`."
                             }
                         },
                         "baz": {
@@ -994,6 +994,54 @@ Traits can be applied to structure members:
                 }
             }
         }
+
+A structure member can be marked with the :ref:`required-trait` by suffixing the shape ID
+target of a member with ``!``. The following Smithy IDL:
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    structure MyStructure {
+        foo: String!
+    }
+
+Is equivalent to the following Smithy IDL:
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    structure MyStructure {
+        @required
+        foo: String
+    }
+
+And is equivalent to the following Smithy JSON AST:
+
+.. code-block:: json
+
+    {
+        "smithy": "1.0",
+        "shapes": {
+            "smithy.example#MyStructure": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "smithy.api#String",
+                        "traits": {
+                            "smithy.api#required": {}
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+.. note::
+
+    The ``!`` syntactic sugar for structure members is not supported in the
+    JSON AST model representation.
 
 
 .. _idl-union:
@@ -1334,12 +1382,11 @@ members.
 
     @documentation("An animal in the animal kingdom")
     structure Animal {
-        @required
-        name: smithy.api#String,
+        name: smithy.api#String!
 
         @length(min: 0)
         @tags(["private-beta"])
-        age: smithy.api#Integer,
+        age: smithy.api#Integer
     }
 
 
@@ -1361,8 +1408,8 @@ Nested structure, map, and union values are defined using
 
     @structuredTrait(
         foo: {
-            bar: "baz",
-            qux: "true",
+            bar: "baz"
+            qux: "true"
         }
     )
 

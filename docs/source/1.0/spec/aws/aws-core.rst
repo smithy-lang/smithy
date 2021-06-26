@@ -1015,8 +1015,7 @@ using an ``clientEndpointDiscoveryId``.
 
         structure GetObjectInput {
           @clientEndpointDiscoveryId
-          @required
-          Id: String
+          Id: String!
         }
 
         structure GetObjectOutput {
