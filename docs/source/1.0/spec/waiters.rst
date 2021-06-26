@@ -635,8 +635,7 @@ triggered if the ``status`` property equals ``failed``.
     }
 
     structure GetThingInput {
-        @required
-        name: String
+        name: String!
     }
 
     structure GetThingOutput {

@@ -100,13 +100,11 @@ and ``{second}``, in the MQTT topic template:
         }
 
         structure ExampleOperationInput {
-            @required
             @topicLabel
-            first: String
+            first: String!
 
-            @required
             @topicLabel
-            second: String
+            second: String!
 
             message: String
         }
@@ -214,9 +212,8 @@ The following example defines an operation that publishes messages to the
         }
 
         structure PostFooInput {
-            @required
             @topicLabel
-            bar: String
+            bar: String!
 
             someValue: String,
             anotherValue: Boolean
@@ -331,9 +328,8 @@ topic using an :ref:`event stream <event-streams>`:
         }
 
         structure SubscribeForEventsInput {
-            @required
             @topicLabel
-            id: String
+            id: String!
         }
 
         structure SubscribeForEventsOutput {

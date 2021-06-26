@@ -42,6 +42,7 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.AnnotationTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.IdRefTrait;
+import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.utils.CodeWriter;
@@ -310,6 +311,7 @@ public final class SmithyIdlModelSerializer {
      * Serializes shapes in the IDL format.
      */
     private static final class ShapeSerializer extends ShapeVisitor.Default<Void> {
+        private static final Predicate<Trait> OMIT_REQUIRED = trait -> !trait.toShapeId().equals(RequiredTrait.ID);
         private final SmithyCodeWriter codeWriter;
         private final NodeSerializer nodeSerializer;
         private final Predicate<Trait> traitFilter;
@@ -335,6 +337,10 @@ public final class SmithyIdlModelSerializer {
         }
 
         private void shapeWithMembers(Shape shape, List<MemberShape> members) {
+            shapeWithMembers(shape, members, false);
+        }
+
+        private void shapeWithMembers(Shape shape, List<MemberShape> members, boolean structureMember) {
             serializeTraits(shape);
             if (members.isEmpty()) {
                 // If there are no members then we don't want to introduce an unnecessary newline by opening a block.
@@ -342,20 +348,36 @@ public final class SmithyIdlModelSerializer {
                 return;
             }
 
+            // Omit the "@required" trait if it is to be suffixed on the target.
+            Predicate<Trait> memberTraitFilter = structureMember ? OMIT_REQUIRED : null;
+
             codeWriter.openBlock("$L $L {", shape.getType(), shape.getId().getName());
             for (MemberShape member : members) {
-                serializeTraits(member);
-                codeWriter.write("$L: $I", member.getMemberName(), member.getTarget());
+                serializeTraits(member, memberTraitFilter);
+                // Suffix with "!" if it's a required structure member.
+                String requiredSuffix = structureMember && member.isRequired() ? "!" : "";
+                codeWriter.write("$L: $I$L", member.getMemberName(), member.getTarget(), requiredSuffix);
             }
+
             codeWriter.closeBlock("}").write("");
         }
 
         private void serializeTraits(Shape shape) {
+            serializeTraits(shape, null);
+        }
+
+        private void serializeTraits(Shape shape, Predicate<Trait> memberTraitFilter) {
+            if (memberTraitFilter == null) {
+                memberTraitFilter = FunctionalUtils.alwaysTrue();
+            }
+
             // The documentation trait always needs to be serialized first since it uses special syntax.
             shape.getTrait(DocumentationTrait.class).filter(traitFilter).ifPresent(this::serializeDocumentationTrait);
+
             shape.getAllTraits().values().stream()
                     .filter(trait -> !(trait instanceof DocumentationTrait))
                     .filter(traitFilter)
+                    .filter(memberTraitFilter)
                     .sorted(Comparator.comparing(Trait::toShapeId))
                     .forEach(this::serializeTrait);
         }
@@ -411,7 +433,7 @@ public final class SmithyIdlModelSerializer {
 
         @Override
         public Void structureShape(StructureShape shape) {
-            shapeWithMembers(shape, new ArrayList<>(shape.getAllMembers().values()));
+            shapeWithMembers(shape, new ArrayList<>(shape.getAllMembers().values()), true);
             return null;
         }
 
