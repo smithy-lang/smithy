@@ -1028,8 +1028,7 @@ using an ``clientEndpointDiscoveryId``.
     @input
     structure GetObjectInput {
       @clientEndpointDiscoveryId
-      @required
-      Id: String
+      Id: String!
     }
 
     @output
