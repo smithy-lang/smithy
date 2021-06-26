@@ -557,6 +557,40 @@ operation. When a member that is part of the output of an operation or an
 error is marked as required, a service MUST provide a value for the member
 in a response.
 
+A structure member can be marked as required in the Smithy IDL by suffixing
+the shape ID target of a member with ``!``. This is purely syntactic sugar
+supported in the IDL for applying the ``@required`` trait.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        structure MyStructure {
+            foo: FooString!
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#MyStructure": {
+                    "type": "structure",
+                    "members": {
+                        "foo": {
+                            "target": "smithy.example#FooString",
+                            "traits": {
+                                "smithy.api#required": {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+Using the long-form of ``@required`` works too, and it is semantically
+equivalent to using ``!``:
+
 .. tabs::
 
     .. code-tab:: smithy

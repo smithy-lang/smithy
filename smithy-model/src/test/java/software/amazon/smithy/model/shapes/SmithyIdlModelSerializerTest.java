@@ -150,4 +150,22 @@ public class SmithyIdlModelSerializerTest {
 
         assertThat(serialized.get(Paths.get("com.foo.smithy")), not(containsString("version: \"\"")));
     }
+
+    @Test
+    public void serializesRequiredTraitsUsingSugar() {
+        ShapeId stringId = ShapeId.from("smithy.api#String");
+        StructureShape struct = StructureShape.builder()
+                .id("smithy.example#Struct")
+                .addMember("req", stringId, builder -> builder.addTrait(new RequiredTrait()))
+                .addMember("opt", stringId)
+                .build();
+        Model model = Model.builder().addShape(struct).build();
+        SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder().build();
+
+        Map<Path, String> serialized = serializer.serialize(model);
+        String output = serialized.values().iterator().next();
+
+        assertThat(output, not(containsString("@required")));
+        assertThat(output, containsString("String!"));
+    }
 }

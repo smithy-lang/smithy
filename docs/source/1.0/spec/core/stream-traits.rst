@@ -51,9 +51,8 @@ Validation
         }
 
         structure StreamingOperationOutput {
-            @required
             streamId: String
-            output: StreamingBlob
+            output: StreamingBlob!
         }
 
         @streaming
@@ -344,8 +343,7 @@ service, followed by the events sent in the payload of the HTTP message.
 
         structure PublishMessagesInput {
             @httpLabel
-            @required
-            room: String
+            room: String!
 
             @httpPayload
             messages: MessageStream
@@ -451,8 +449,7 @@ message.
 
         structure SubscribeToMessagesInput {
             @httpLabel
-            @required
-            room: String
+            room: String!
         }
 
         structure SubscribeToMessagesOutput {

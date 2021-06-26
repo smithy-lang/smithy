@@ -195,8 +195,7 @@ The following example defines a CloudFormation resource that excludes the
 
         structure GetFooRequest {
             @httpLabel
-            @required
-            fooId: String
+            fooId: String!
         }
 
         structure GetFooResponse {
@@ -272,8 +271,7 @@ Given the following model without mutability traits applied,
         }
 
         structure GetFooRequest {
-            @required
-            fooId: String
+            fooId: String!
         }
 
         structure GetFooResponse {
@@ -289,8 +287,7 @@ Given the following model without mutability traits applied,
         }
 
         structure UpdateFooRequest {
-            @required
-            fooId: String
+            fooId: String!
 
             mutableProperty: ComplexProperty
             writeProperty: ComplexProperty
@@ -479,8 +476,7 @@ The following example defines a CloudFormation resource that marks the
         }
 
         structure GetFooRequest {
-            @required
-            fooId: String
+            fooId: String!
         }
 
         structure GetFooResponse {
@@ -635,8 +631,7 @@ The following example defines a CloudFormation resource that has the
         }
 
         structure GetFooRequest {
-            @required
-            fooId: String
+            fooId: String!
 
             @cfnAdditionalIdentifier
             fooAlias: String
@@ -709,8 +704,7 @@ Given the following model,
 
         structure GetFooRequest {
             @httpLabel
-            @required
-            fooId: String
+            fooId: String!
 
             @httpQuery("fooAlias")
             @cfnAdditionalIdentifier
@@ -741,8 +735,7 @@ Given the following model,
 
         structure UpdateFooRequest {
             @httpLabel
-            @required
-            fooId: String
+            fooId: String!
 
             fooAlias: String
             mutableProperty: ComplexProperty

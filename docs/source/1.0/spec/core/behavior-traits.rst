@@ -260,9 +260,7 @@ explicitly on the operation.
 
         structure GetFoosOutput {
             nextToken: String
-
-            @required
-            foos: StringList
+            foos: StringList!
         }
 
         list StringList {
@@ -420,15 +418,12 @@ wrapper where the output token and items are referenced by paths.
         }
 
         structure GetFoosOutput {
-            @required
-            result: ResultWrapper
+            result: ResultWrapper!
         }
 
         structure ResultWrapper {
             nextToken: String
-
-            @required
-            foos: StringList
+            foos: StringList!
         }
 
         list StringList {
