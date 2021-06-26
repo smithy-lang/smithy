@@ -379,8 +379,7 @@ Conflicts with
 
     @input
     structure PutContentsInput {
-        @required
-        contents: String
+        contents: String!
 
         @recommended(reason: "Validation will reject contents if they are invalid.")
         validateContents: Boolean
