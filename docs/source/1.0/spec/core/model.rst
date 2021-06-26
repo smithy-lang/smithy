@@ -742,7 +742,8 @@ Structures are defined in the IDL using a
 :ref:`structure_statement <idl-structure>`.
 
 The following example defines a structure with two members, one of which
-is marked with the :ref:`required-trait`.
+is marked with the :ref:`required-trait` by suffixing the shape ID with
+``!``.
 
 .. tabs::
 
@@ -752,9 +753,7 @@ is marked with the :ref:`required-trait`.
 
         structure MyStructure {
             foo: String
-
-            @required
-            baz: Integer
+            baz: Integer!
         }
 
     .. code-tab:: json
@@ -1854,14 +1853,12 @@ For example, given the following model,
 
     @input
     structure GetForecastInput {
-        @required
-        forecastId: ForecastId
+        forecastId: ForecastId!
     }
 
     @output
     structure GetForecastOutput {
-        @required
-        weather: WeatherData
+        weather: WeatherData!
     }
 
 ``GetForecast`` forms a valid instance operation because the operation is
@@ -1891,8 +1888,7 @@ Given the following model,
 
     @input
     structure BatchPutForecastsInput {
-        @required
-        forecasts: BatchPutForecastList
+        forecasts: BatchPutForecastList!
     }
 
 ``BatchPutForecasts`` forms a valid collection operation with implicit
@@ -1935,13 +1931,11 @@ For example, given the following,
 
     @input
     structure GetHistoricalForecastInput {
-        @required
         @resourceIdentifier("forecastId")
-        customForecastIdName: ForecastId
+        customForecastIdName: ForecastId!
 
-        @required
         @resourceIdentifier("historicalId")
-        customHistoricalIdName: String
+        customHistoricalIdName: String!
     }
 
 the :ref:`resourceIdentifier-trait` on ``GetHistoricalForecastInput$customForecastIdName``
@@ -2005,8 +1999,7 @@ The following example defines the ``PutForecast`` operation.
     @input
     structure PutForecastInput {
         // The client provides the resource identifier.
-        @required
-        forecastId: ForecastId
+        forecastId: ForecastId!
 
         chanceOfRain: Float
     }
@@ -2082,8 +2075,7 @@ For example:
 
     @input
     structure GetForecastInput {
-        @required
-        forecastId: ForecastId
+        forecastId: ForecastId!
     }
 
 
@@ -2110,8 +2102,7 @@ For example:
 
     @input
     structure UpdateForecastInput {
-        @required
-        forecastId: ForecastId
+        forecastId: ForecastId!
 
         chanceOfRain: Float
     }
@@ -2141,8 +2132,7 @@ For example:
 
     @input
     structure DeleteForecastInput {
-        @required
-        forecastId: ForecastId
+        forecastId: ForecastId!
     }
 
 
@@ -2179,8 +2169,7 @@ For example:
     @output
     structure ListForecastsOutput {
         nextToken: String
-        @required
-        forecasts: ForecastList
+        forecasts: ForecastList!
     }
 
     list ForecastList {
@@ -2545,20 +2534,15 @@ The following example defines two custom traits: ``beta`` and
         /// A trait that has members.
         @trait(selector: "string", conflicts: [beta])
         structure structuredTrait {
-            @required
-            lorem: StringShape
-
-            @required
-            ipsum: StringShape
-
+            lorem: StringShape!
+            ipsum: StringShape!
             dolor: StringShape
         }
 
         // Apply the "beta" trait to the "foo" member.
         structure MyShape {
-            @required
             @beta
-            foo: StringShape
+            foo: StringShape!
         }
 
         // Apply the structuredTrait to the string.
