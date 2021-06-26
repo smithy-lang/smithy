@@ -240,8 +240,7 @@ service, followed by the events sent in the payload of the HTTP message.
     @input
     structure PublishMessagesInput {
         @httpLabel
-        @required
-        room: String
+        room: String!
 
         @httpPayload
         messages: MessageStream
@@ -290,8 +289,7 @@ message.
     @input
     structure SubscribeToMessagesInput {
         @httpLabel
-        @required
-        room: String
+        room: String!
     }
 
     @output
