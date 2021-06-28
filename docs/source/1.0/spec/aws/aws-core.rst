@@ -123,7 +123,7 @@ generating client names in SDKs and for linking between services.
   the first character cannot be a number, and when using spaces, each space must be
   between two alphanumeric characters.
 * The value MUST NOT contain "AWS", "Aws", or "Amazon".
-* The value SHOULD not case-insensitively end with "API", "Client", or "Service". **Note**: serveral services exist which end with ``Service`` or ``API`` for backwards compatibility reasons.
+* The value SHOULD NOT case-insensitively end with "API", "Client", or "Service".
 * The value MUST NOT change change once a service is publicly released. If the value
   does change, the service will be considered a brand new service in the AWS SDKs
   and Tools.
