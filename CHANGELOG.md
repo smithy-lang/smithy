@@ -1,5 +1,12 @@
 # Smithy Changelog
 
+## 1.9.1 (2021-06-28)
+
+### Bug Fixes
+
+* Fixed a number of protocol tests related to non-numeric floats. ([#844](https://github.com/awslabs/smithy/pull/844))
+* Tightened substitution pattern for Fn::Sub to match CloudFormation. ([#842](https://github.com/awslabs/smithy/pull/842))
+
 ## 1.9.0 (2021-06-23)
 
 ### Features
