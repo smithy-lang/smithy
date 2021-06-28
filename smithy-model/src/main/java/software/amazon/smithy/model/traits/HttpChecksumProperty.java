@@ -176,8 +176,13 @@ public final class HttpChecksumProperty implements ToNode, ToSmithyBuilder<HttpC
          * @param value string to map Location enum to.
          * @return Location if location string is valid.
          * @throws IllegalArgumentException when given an invalid location string.
+         * @throws NullPointerException when given a null location string.
          */
         public static Location fromString(String value) {
+            if (value == null) {
+                throw new NullPointerException("Found null string argument when converting to Location type");
+            }
+
             value = value.toLowerCase(Locale.ENGLISH);
             for (Location location : values()) {
                 if (location.serialized.equals(value)) {
