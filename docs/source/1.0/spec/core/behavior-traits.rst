@@ -665,7 +665,7 @@ See
 
 Summary
     Indicates that an operation's HTTP request or response supports checksum
-    validation. At least one of request or response checksum properties must
+    validation. At least one of request or response checksum properties MUST
     be specified within the trait.
 
 Trait selector
@@ -779,14 +779,15 @@ following members:
       - **Required**. The location where checksum can be supplied. Valid values
         are:
 
-        * ``header`` - Indicates the checksum should be placed in an HTTP header.
-        * ``trailer`` - Indicates the checksum should be placed in the `chunked trailer part`_
+        * ``header`` - Indicates the checksum is placed in an HTTP header.
+        * ``trailer`` - Indicates the checksum is placed in the `chunked trailer part`_
           of the body.
 
-        An algorithm may be supported at multiple locations. The first
+        An algorithm MAY be supported at multiple locations. The first
         supported ``in`` member value within the list of HttpChecksum property
-        takes precedence and SHOULD be used. See :ref:`here for more behavior
-        details <httpChecksum_trait_behavior>`.
+        takes precedence and SHOULD be used.
+
+        .. seealso:: See :ref:`httpChecksum_trait_behavior` for more details.
 
     * - name
       - ``string``
@@ -802,9 +803,11 @@ following members:
         number of lowercase letters, digits, or non-sequential hyphens.
 
         A member with the :ref:`httpHeader-trait` or :ref:`httpPrefixHeaders-trait`
-        MAY conflict with a ``httpChecksum`` header name, allowing a
-        checksum to be supplied directly. See :ref:`here for more behavior
-        details <httpChecksum_trait_header_conflict_behavior>`.
+        MAY conflict with a ``httpChecksum`` header name, allowing a checksum
+        to be supplied directly.
+
+        .. seealso:: See :ref:`client behavior<httpChecksum_trait_header_conflict_behavior>`
+            for more details.
 
 .. _chunked trailer part: https://tools.ietf.org/html/rfc7230#section-4.1.2
 
@@ -816,20 +819,20 @@ HttpChecksum Behavior
 
 .. rubric:: Client Behavior
 
-If the ``httpChecksum`` trait has a modeled ``request`` section, for HTTP
-request, the client MUST compute the request payload checksum, using an
+If the ``httpChecksum`` trait has a modeled ``request`` section for the HTTP
+request, the client SHOULD compute the request payload checksum, using an
 algorithm defined within the request section. The computed checksum SHOULD
 be supplied at the first supported checksum location as per the order of
 :ref:`checksum properties<checksum-property>` defined within the request
 section.
 
-If the resolved location is ``header``, client MUST put the checksum into the
+If the location is ``header``, the client MUST put the checksum into the
 HTTP request headers. If the resolved location is ``trailer``, the client MUST
 put the checksum into the `chunked trailer part`_ of the body. The header or
-trailer name to use with an algorithm, location is defined by the ``name``
+trailer name to use with an algorithm location is defined by the ``name``
 member of the :ref:`checksum property<checksum-property>`.
 
-If the ``httpChecksum`` trait has a modeled ``response`` section, for HTTP
+If the ``httpChecksum`` trait has a modeled ``response`` section for the HTTP
 response, the client MUST look for a supported checksum at all supported
 locations as per the defined checksum properties. If a checksum is found, the
 client MUST validate the received checksum value by computing the corresponding
@@ -837,27 +840,22 @@ checksum of the received payload.
 
 .. _httpChecksum_trait_header_conflict_behavior:
 
-An operation's ``input``, ``output``, and ``error`` structures MAY contain a
-member bound to an HTTP header matching the header or trailer name defined
-within the ``httpChecksum`` trait. For an HTTP request, if customer provides value
-for an input shape member bound to an HTTP header matching the constructed
-header or trailer name, the client MUST use the customer provided value as is,
-and skip computing request payload checksum.
+If the HTTP header corresponding to a checksum is set explicitly, the
+implementation MUST use the explicitly set header and skip computing the
+payload checksum.
 
 .. _chunked trailer part: https://tools.ietf.org/html/rfc7230#section-4.1.2
 
 
 .. rubric:: Service Behavior
 
-If the ``httpChecksum`` trait has a modeled ``request`` section, for HTTP request,
-the service SHOULD validate the received checksum by computing corresponding
-checksum of the request payload to ensure data integrity.
+If the ``httpChecksum`` trait has a modeled ``request`` section for the HTTP
+request, the service MUST validate the received checksum by computing
+corresponding checksum of the request payload to ensure data integrity.
 
-If the ``httpChecksum`` trait models a ``response`` section, for HTTP response,
-the service SHOULD send at least one supported payload checksum at the first
-supported location for the checksum algorithm. The ``name`` defined for the
-checksum algorithm and location within ``the httpChecksum`` trait MUST be used
-to place the checksum.
+If the ``httpChecksum`` trait models a ``response`` section for the HTTP
+response, the service MUST send at least one supported payload checksum at the
+first supported location for the checksum algorithm.
 
 
 .. _checksum_trait_with_checksum_required:
@@ -872,6 +870,6 @@ request in the ``httpChecksum`` trait over an MD5 digest, and place checksum
 as per the client behavior defined in the
 :ref:`httpChecksum trait behavior<httpChecksum_trait_behavior>` section.
 
-The service MUST accept a checksum value received as per the ``httpChecksum``
-trait's request property, to satisfy checksum validation requirements for the
-operation's HTTP Request.
+The service MUST accept a checksum value defined in the ``httpChecksum``
+trait's request property to satisfy checksum validation requirements for
+the operation's HTTP Request.
