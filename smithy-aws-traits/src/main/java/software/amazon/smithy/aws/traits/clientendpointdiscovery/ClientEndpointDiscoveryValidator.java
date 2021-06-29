@@ -34,6 +34,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -47,23 +48,34 @@ public final class ClientEndpointDiscoveryValidator extends AbstractValidator {
         ClientEndpointDiscoveryIndex discoveryIndex = ClientEndpointDiscoveryIndex.of(model);
         OperationIndex opIndex = OperationIndex.of(model);
 
+        List<ValidationEvent> validationEvents = new ArrayList<>();
         Map<ServiceShape, ClientEndpointDiscoveryTrait> endpointDiscoveryServices = new HashMap<>();
         for (ServiceShape service : model.getServiceShapesWithTrait(ClientEndpointDiscoveryTrait.class)) {
-            endpointDiscoveryServices.put(service, service.expectTrait(ClientEndpointDiscoveryTrait.class));
+            ClientEndpointDiscoveryTrait trait = service.expectTrait(ClientEndpointDiscoveryTrait.class);
+            endpointDiscoveryServices.put(service, trait);
+            validationEvents.addAll(validateTrait(service, trait));
         }
 
-        List<ValidationEvent> validationEvents = endpointDiscoveryServices.values().stream()
+        validationEvents.addAll(endpointDiscoveryServices.values().stream()
                 .map(ClientEndpointDiscoveryTrait::getOperation)
                 .map(operation -> model.getShape(operation).flatMap(Shape::asOperationShape))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .flatMap(endpointOperation -> validateEndpointOperation(
                         model, opIndex, endpointOperation).stream())
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
 
         validationEvents.addAll(validateServices(discoveryIndex, endpointDiscoveryServices));
         validationEvents.addAll(validateOperations(model, discoveryIndex, endpointDiscoveryServices));
         return validationEvents;
+    }
+
+    private List<ValidationEvent> validateTrait(ServiceShape service, ClientEndpointDiscoveryTrait trait) {
+        if (!trait.getOptionalError().isPresent()) {
+            return ListUtils.of(danger(service, trait,
+                    "Services SHOULD define an error which indicates an endpoint is invalid."));
+        }
+        return Collections.emptyList();
     }
 
     private List<ValidationEvent> validateServices(
@@ -121,14 +133,16 @@ public final class ClientEndpointDiscoveryValidator extends AbstractValidator {
         }
 
         return infos.stream()
-                .filter(discoveryInfo -> !operation.getErrors().contains(discoveryInfo.getError().getId()))
+                .filter(discoveryInfo -> discoveryInfo.getOptionalError().isPresent())
+                .filter(discoveryInfo -> !operation.getErrors().contains(
+                        discoveryInfo.getOptionalError().get().getId()))
                 .map(discoveryInfo -> error(operation, String.format(
                         "The operation `%s` is marked with `%s` and is bound to the service "
                                 + "`%s` but does not have the required error `%s`.",
                         operation.getId(),
                         ClientDiscoveredEndpointTrait.ID.toString(),
                         discoveryInfo.getService().getId(),
-                        discoveryInfo.getError().getId()
+                        discoveryInfo.getOptionalError().get().getId()
                 )))
                 .collect(Collectors.toList());
     }

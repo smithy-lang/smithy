@@ -886,8 +886,8 @@ following members:
         operation MUST be bound to the service.
     * - error
       - ``shapeId``
-      - **REQUIRED** An error shape which indicates to a client that an endpoint they are
-        using is no longer valid. This error MUST be bound to any operation marked with
+      - **RECOMMENDED** An error shape which indicates to a client that an endpoint they are
+        using is no longer valid. If present, this error MUST be bound to any operation marked with
         the ``clientDiscoveredEndpoint`` trait that is bound to the service.
 
 The input of the operation targeted by ``operation`` MAY contain none, either,

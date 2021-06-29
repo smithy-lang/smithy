@@ -69,7 +69,7 @@ public class CleanClientDiscoveryTraitTransformerTest {
     }
 
     @Test
-    public void removesTraitsWhenErrorRemoved() {
+    public void doesntRemoveTraitsWhenErrorRemoved() {
         Model model = Model.assembler()
                 .discoverModels(getClass().getClassLoader())
                 .addImport(getClass().getResource("test-model.json"))
@@ -100,11 +100,10 @@ public class CleanClientDiscoveryTraitTransformerTest {
                 .flatMap(Shape::asMemberShape)
                 .get();
 
-        assertFalse(service.hasTrait(ClientEndpointDiscoveryTrait.class));
-        // discovery is required for this operation, so it keeps the trait
+        assertTrue(service.hasTrait(ClientEndpointDiscoveryTrait.class));
         assertTrue(getOperation.hasTrait(ClientDiscoveredEndpointTrait.class));
-        assertFalse(putOperation.hasTrait(ClientDiscoveredEndpointTrait.class));
-        assertFalse(putId.hasTrait(ClientEndpointDiscoveryIdTrait.class));
+        assertTrue(putOperation.hasTrait(ClientDiscoveredEndpointTrait.class));
+        assertTrue(putId.hasTrait(ClientEndpointDiscoveryIdTrait.class));
     }
 
     @Test

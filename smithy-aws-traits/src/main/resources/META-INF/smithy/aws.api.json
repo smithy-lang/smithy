@@ -199,7 +199,6 @@
                             "failWhenMissing": true,
                             "selector": "structure[trait|error]"
                         },
-                        "smithy.api#required": {},
                         "smithy.api#documentation": "Indicates the error that tells clients that the endpoint they are using is no longer valid. This error MUST be bound to any operation bound to the service which is marked with the aws.api#clientDiscoveredEndpoint trait."
                     }
                 }
