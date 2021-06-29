@@ -44,16 +44,17 @@ public final class ClientEndpointDiscoveryIndex implements KnowledgeIndex {
         for (ServiceShape service : model.getServiceShapesWithTrait(ClientEndpointDiscoveryTrait.class)) {
             ClientEndpointDiscoveryTrait trait = service.expectTrait(ClientEndpointDiscoveryTrait.class);
             ShapeId endpointOperationId = trait.getOperation();
-            ShapeId endpointErrorId = trait.getError();
+            Optional<ShapeId> endpointErrorId = trait.getOptionalError();
 
             Optional<OperationShape> endpointOperation = model.getShape(endpointOperationId)
                     .flatMap(Shape::asOperationShape);
-            Optional<StructureShape> endpointError = model.getShape(endpointErrorId)
+            Optional<StructureShape> endpointError = endpointErrorId
+                    .flatMap(model::getShape)
                     .flatMap(Shape::asStructureShape);
 
-            if (endpointOperation.isPresent() && endpointError.isPresent()) {
+            if (endpointOperation.isPresent()) {
                 Map<ShapeId, ClientEndpointDiscoveryInfo> serviceInfo = getOperations(
-                        service, endpointOperation.get(), endpointError.get(), topDownIndex, opIndex);
+                        service, endpointOperation.get(), endpointError.orElse(null), topDownIndex, opIndex);
                 if (!serviceInfo.isEmpty()) {
                     endpointDiscoveryInfo.put(service.getId(), serviceInfo);
                 }

@@ -64,7 +64,7 @@ public final class CleanClientDiscoveryTraitTransformer implements ModelTransfor
         Set<Shape> result = new HashSet<>();
         for (ServiceShape service : model.getServiceShapesWithTrait(ClientEndpointDiscoveryTrait.class)) {
             ClientEndpointDiscoveryTrait trait = service.expectTrait(ClientEndpointDiscoveryTrait.class);
-            if (removedOperations.contains(trait.getOperation()) || removedErrors.contains(trait.getError())) {
+            if (removedOperations.contains(trait.getOperation())) {
                 ServiceShape.Builder builder = service.toBuilder();
                 builder.removeTrait(ClientEndpointDiscoveryTrait.ID);
                 result.add(builder.build());

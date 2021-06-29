@@ -16,6 +16,7 @@
 package software.amazon.smithy.aws.traits.clientendpointdiscovery;
 
 import java.util.List;
+import java.util.Optional;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -58,8 +59,16 @@ public final class ClientEndpointDiscoveryInfo {
         return discoveryOperation;
     }
 
+    /**
+     * Deprecated in favor of {@link ClientEndpointDiscoveryInfo#getOptionalError()}.
+     */
+    @Deprecated
     public StructureShape getError() {
         return error;
+    }
+
+    public Optional<StructureShape> getOptionalError() {
+        return Optional.ofNullable(error);
     }
 
     public List<MemberShape> getDiscoveryIds() {

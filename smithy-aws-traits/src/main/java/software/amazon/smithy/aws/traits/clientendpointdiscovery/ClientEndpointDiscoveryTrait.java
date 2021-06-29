@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.aws.traits.clientendpointdiscovery;
 
+import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -68,6 +69,14 @@ public final class ClientEndpointDiscoveryTrait extends AbstractTrait
      *
      * @return The ShapeId of the invalid endpoint error.
      */
+    public Optional<ShapeId> getOptionalError() {
+        return Optional.ofNullable(error);
+    }
+
+    /**
+     * Deprecated in favor of {@link ClientEndpointDiscoveryTrait#getOptionalError}.
+     */
+    @Deprecated
     public ShapeId getError() {
         return error;
     }
@@ -76,14 +85,14 @@ public final class ClientEndpointDiscoveryTrait extends AbstractTrait
     protected Node createNode() {
         return Node.objectNode()
                 .withMember(OPERATION, Node.from(getOperation().toString()))
-                .withMember(ERROR, Node.from(getError().toString()));
+                .withOptionalMember(ERROR, getOptionalError().map(error -> Node.from(error.toString())));
     }
 
     @Override
     public Builder toBuilder() {
         return new Builder()
                 .operation(getOperation())
-                .error(getError());
+                .error(error);
     }
 
     /** Builder for {@link ClientEndpointDiscoveryTrait}. */
@@ -135,10 +144,9 @@ public final class ClientEndpointDiscoveryTrait extends AbstractTrait
         @Override
         public ClientEndpointDiscoveryTrait createTrait(ShapeId target, Node value) {
             ObjectNode objectNode = value.expectObjectNode();
-            return builder()
-                    .operation(objectNode.expectStringMember(OPERATION).expectShapeId())
-                    .error(objectNode.expectStringMember(ERROR).expectShapeId())
-                    .build();
+            Builder builder = builder().operation(objectNode.expectStringMember(OPERATION).expectShapeId());
+            objectNode.getStringMember(ERROR).ifPresent(error -> builder.error(error.expectShapeId()));
+            return builder.build();
         }
     }
 }
