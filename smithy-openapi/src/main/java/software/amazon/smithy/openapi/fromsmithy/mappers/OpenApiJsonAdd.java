@@ -58,6 +58,14 @@ public final class OpenApiJsonAdd implements OpenApiMapper {
         for (Map.Entry<String, Node> entry : add.entrySet()) {
             try {
                 LOGGER.info(() -> "OpenAPI `jsonAdd`: adding `" + entry.getKey() + "`");
+
+                if (entry.getKey().startsWith("/components/schemas")) {
+                    LOGGER.severe("Adding schemas to the generated OpenAPI model directly means that "
+                                  + "clients, servers, and other artifacts generated from your Smithy "
+                                  + "model don't know about all of the shapes used in the service. You "
+                                  + "almost certainly should not do this.");
+                }
+
                 result = NodePointer.parse(entry.getKey())
                         .addWithIntermediateValues(result, entry.getValue().toNode())
                         .expectObjectNode();
