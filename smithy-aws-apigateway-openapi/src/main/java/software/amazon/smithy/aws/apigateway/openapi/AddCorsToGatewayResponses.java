@@ -109,12 +109,17 @@ final class AddCorsToGatewayResponses implements ApiGatewayMapper {
         }
 
         return gatewayResponses.getMembers().entrySet().stream()
-                .collect(ObjectNode.collect(
-                        Map.Entry::getKey,
-                        entry -> updateGatewayResponse(corsHeaders, entry.getValue().expectObjectNode())));
+                .collect(ObjectNode.collect(Map.Entry::getKey, entry -> {
+                    return updateGatewayResponse(context, trait, corsHeaders, entry.getValue().expectObjectNode());
+                }));
     }
 
-    private ObjectNode updateGatewayResponse(Map<CorsHeader, String> sharedHeaders, ObjectNode gatewayResponse) {
+    private ObjectNode updateGatewayResponse(
+            Context<? extends Trait> context,
+            CorsTrait trait,
+            Map<CorsHeader, String> sharedHeaders,
+            ObjectNode gatewayResponse
+    ) {
         ObjectNode responseParameters = gatewayResponse
                 .getObjectMember(RESPONSE_PARAMETERS_KEY)
                 .orElse(Node.objectNode());
@@ -122,9 +127,12 @@ final class AddCorsToGatewayResponses implements ApiGatewayMapper {
         // Track all CORS headers of the gateway response.
         Map<CorsHeader, String> headers = new TreeMap<>(sharedHeaders);
 
+        // Add the modeled additional headers. These could potentially be added by an
+        // apigateway feature, so they need to be present.
+        Set<String> exposedHeaders = new TreeSet<>(trait.getAdditionalExposedHeaders());
+
         // Find all headers exposed already in the response. These need to be added to the
         // Access-Control-Expose-Headers header if any are found.
-        Set<String> exposedHeaders = new TreeSet<>();
         for (String key : responseParameters.getStringMap().keySet()) {
             if (key.startsWith(HEADER_PREFIX)) {
                 exposedHeaders.add(key.substring(HEADER_PREFIX.length()));
