@@ -420,7 +420,8 @@
         "application/json": "{\"message\":$context.error.messageString}"
       },
       "responseParameters": {
-        "gatewayresponse.header.Access-Control-Allow-Origin": "'https://www.example.com'"
+        "gatewayresponse.header.Access-Control-Allow-Origin": "'https://www.example.com'",
+        "gatewayresponse.header.Access-Control-Expose-Headers": "'X-Service-Output-Metadata'"
       }
     },
     "DEFAULT_5XX": {
@@ -428,7 +429,8 @@
         "application/json": "{\"message\":$context.error.messageString}"
       },
       "responseParameters": {
-        "gatewayresponse.header.Access-Control-Allow-Origin": "'https://www.example.com'"
+        "gatewayresponse.header.Access-Control-Allow-Origin": "'https://www.example.com'",
+        "gatewayresponse.header.Access-Control-Expose-Headers": "'X-Service-Output-Metadata'"
       }
     }
   }
