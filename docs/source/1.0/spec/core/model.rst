@@ -779,7 +779,7 @@ able to maintain backward compatibility.
 .. rubric:: Structure member shape IDs
 
 The shape ID of a member of a structure is the structure shape ID, followed
-by "#", followed by the member name, For example, the shape ID of the "foo"
+by ``$``, followed by the member name. For example, the shape ID of the ``foo``
 member in the above example is ``smithy.example#MyStructure$foo``.
 
 
@@ -871,7 +871,7 @@ able to maintain backward compatibility.
 .. rubric:: Union member shape IDs
 
 The shape ID of a member of a union is the union shape ID, followed
-by "#", followed by the member name. For example, the shape ID of the "i32"
+by ``$``, followed by the member name. For example, the shape ID of the ``i32``
 member in the above example is ``smithy.example#MyUnion$i32``.
 
 
