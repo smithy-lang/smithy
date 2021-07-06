@@ -20,5 +20,6 @@ use smithy.test#httpRequestTests
         appliesTo: "client"
     }
 ])
+@readonly
 @http(uri: "/HostWithPathOperation", method: "GET")
 operation HostWithPathOperation {}

@@ -41,6 +41,7 @@ service AmazonS3 {
     version: "2006-03-01",
     operations: [
         ListObjectsV2,
+        GetBucketLocation,
     ],
 }
 
@@ -284,15 +285,27 @@ operation ListObjectsV2 {
         },
         protocol: restXml
 }])
-@http(uri: "/GetBucketLocation", method: "GET")
+@http(uri: "/{Bucket}?location", method: "GET")
 @s3UnwrappedXmlOutput
 operation GetBucketLocation {
+    input: GetBucketLocationRequest,
     output: GetBucketLocationOutput,
 }
 
 
 structure CommonPrefix {
     Prefix: Prefix,
+}
+
+structure GetBucketLocationRequest {
+    @httpLabel
+    @required
+    Bucket: BucketName,
+}
+
+@xmlName("LocationConstraint")
+structure GetBucketLocationOutput {
+    LocationConstraint: BucketLocationConstraint,
 }
 
 structure ListObjectsV2Request {
@@ -480,9 +493,3 @@ string Token
     { value: "us-west-2", name: "us_west_2" }
 ])
 string BucketLocationConstraint
-
-@xmlName("LocationConstraint")
-structure GetBucketLocationOutput {
-    LocationConstraint: BucketLocationConstraint,
-}
-
