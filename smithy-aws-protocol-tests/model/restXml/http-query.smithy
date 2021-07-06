@@ -161,6 +161,7 @@ apply AllQueryStringTypes @httpRequestTests([
     },
 ])
 
+@suppress(["HttpQueryParamsTrait"])
 structure AllQueryStringTypesInput {
     @httpQuery("String")
     queryString: String,
@@ -474,6 +475,7 @@ apply QueryPrecedence @httpRequestTests([
     }
 ])
 
+@suppress(["HttpQueryParamsTrait"])
 structure QueryPrecedenceInput {
     @httpQuery("bar")
     foo: String,
@@ -532,6 +534,7 @@ apply QueryParamsAsStringListMap @httpRequestTests([
     }
 ])
 
+@suppress(["HttpQueryParamsTrait"])
 structure QueryParamsAsStringListMapInput {
     @httpQuery("corge")
     qux: String,
