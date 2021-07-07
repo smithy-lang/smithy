@@ -105,9 +105,9 @@ apply AllQueryStringTypes @httpRequestTests([
             "QueryParamsStringKeyB=Bar",
         ],
         params: {
-            queryParamsMapOfStrings: {
-                "QueryParamsStringKeyA": "Foo",
-                "QueryParamsStringKeyB": "Bar",
+            queryParamsMapOfStringList: {
+                "QueryParamsStringKeyA": ["Foo"],
+                "QueryParamsStringKeyB": ["Bar"],
             },
         }
     },
@@ -232,7 +232,7 @@ structure AllQueryStringTypesInput {
     queryEnumList: FooEnumList,
 
     @httpQueryParams
-    queryParamsMapOfStrings: StringMap,
+    queryParamsMapOfStringList: StringListMap,
 }
 
 /// This example uses a constant query string parameters and a label.
