@@ -1,8 +1,41 @@
 {
   "smithy": "1.0",
   "shapes": {
-    "ns.foo#Blob": {
-      "type": "blob"
+    "ns.foo#SomeService": {
+      "type": "service",
+      "version": "2018-03-17",
+      "operations" : [
+        {
+          "target": "ns.foo#ValidOperation"
+        },
+        {
+          "target": "ns.foo#ValidOperation2"
+        },
+        {
+          "target": "ns.foo#ValidOperation3"
+        },
+        {
+          "target": "ns.foo#ValidOperation4"
+        },
+        {
+          "target": "ns.foo#ValidOperation5"
+        },
+        {
+          "target": "ns.foo#ValidOperation6"
+        },
+        {
+          "target": "ns.foo#InvalidOperation"
+        },
+        {
+          "target": "ns.foo#InvalidOperation2"
+        },
+        {
+          "target": "ns.foo#InvalidOperation3"
+        },
+        {
+          "target": "ns.foo#InvalidOperation4"
+        }
+      ]
     },
     "ns.foo#ValidOperation": {
       "type": "operation",
@@ -181,6 +214,20 @@
         }
       }
     },
+    "ns.foo#InvalidOperation4": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#InvalidInput"
+      },
+      "output": {
+        "target": "ns.foo#InvalidOutput"
+      },
+      "errors": [
+        {
+          "target": "ns.foo#InvalidError"
+        }
+      ]
+    },
     "ns.foo#ConflictingInputA": {
       "type": "structure",
       "members": {
@@ -269,17 +316,6 @@
       "traits": {
         "smithy.api#error": "client",
         "smithy.api#httpChecksum": {}
-      }
-    },
-    "ns.foo#InvalidStructure": {
-      "type": "structure",
-      "members": {
-        "Body": {
-          "target": "smithy.api#Blob",
-          "traits": {
-            "smithy.api#httpChecksum": {}
-          }
-        }
       }
     },
     "ns.foo#MapOfString": {

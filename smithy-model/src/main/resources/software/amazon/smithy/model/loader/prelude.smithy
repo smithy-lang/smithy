@@ -768,6 +768,13 @@ structure httpChecksum {
     response: httpChecksumPropertyList,
 }
 
+/// List of checksum properties supported within HttpChecksum trait
+/// for request or response.
+@private
+list httpChecksumPropertyList {
+    member: httpChecksumProperty,
+}
+
 /// Defines properties used by httpChecksum trait members
 @private
 structure httpChecksumProperty {
@@ -796,10 +803,3 @@ structure httpChecksumProperty {
     },
 ])
 string HttpChecksumLocation
-
-/// List of checksum properties supported within HttpChecksum trait
-/// for request or response.
-@private
-list httpChecksumPropertyList {
-    member: httpChecksumProperty,
-}

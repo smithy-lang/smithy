@@ -17,9 +17,12 @@ package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.HttpChecksumProperty;
@@ -39,21 +42,31 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public class HttpChecksumTraitValidator extends AbstractValidator {
 
-    private Model model;
-
     @Override
     public List<ValidationEvent> validate(Model model) {
-        this.model = model;
-
         List<ValidationEvent> events = new ArrayList<>();
-        model.shapes(OperationShape.class)
-                .filter(operation -> operation.hasTrait(HttpChecksumTrait.class))
-                .forEach(operation -> events.addAll(validateOperation(operation)));
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
 
+        List<ServiceShape> services = model.shapes(ServiceShape.class).collect(Collectors.toList());
+        for (ServiceShape service : services) {
+            for (OperationShape operation : topDownIndex.getContainedOperations(service)) {
+                if (operation.hasTrait(HttpChecksumTrait.class)) {
+                    events.addAll(validateOperation(model, service, operation));
+                }
+            }
+        }
         return events;
     }
 
-    private List<ValidationEvent> validateOperation(OperationShape operation) {
+    /**
+     * Validates an operation modeled with the `httpChecksum` trait.
+     *
+     * @param model Model to validate.
+     * @param service Service the operation is bound within.
+     * @param operation Operation modeled with `httpChecksum` trait.
+     * @return Returns list of triggered validation events.
+     */
+    private List<ValidationEvent> validateOperation(Model model, ServiceShape service, OperationShape operation) {
         List<ValidationEvent> events = new ArrayList<>();
 
         HttpChecksumTrait trait = operation.expectTrait(HttpChecksumTrait.class);
@@ -66,24 +79,34 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
         }
 
         for (HttpChecksumProperty property : requestProperties) {
-            if (operation.getInput().isPresent()) {
-                StructureShape shape = model.expectShape(operation.getInput().get(), StructureShape.class);
-                events.addAll(validateName(operation, shape, property.getName(), "request"));
+            if (!operation.getInput().isPresent()) {
+                events.add(error(operation, trait,
+                        String.format("Operations modeled with the request properties for `httpChecksum` trait MUST"
+                                + " have a modeled input, \"%s\" does not.", operation.getId().getName(service))));
+                continue;
             }
+
+            StructureShape inputShape = model.expectShape(operation.getInput().get(), StructureShape.class);
+            events.addAll(validateName(operation, inputShape, property.getName(), "request"));
         }
 
         for (HttpChecksumProperty property : responseProperties) {
-            if (operation.getOutput().isPresent()) {
-                StructureShape shape = model.expectShape(operation.getInput().get(), StructureShape.class);
-                events.addAll(validateName(operation, shape, property.getName(), "response"));
-            }
-
             if (!operation.getErrors().isEmpty()) {
                 for (ShapeId id : operation.getErrors()) {
                     StructureShape shape = model.expectShape(id, StructureShape.class);
                     events.addAll(validateName(operation, shape, property.getName(), "response"));
                 }
             }
+
+            if (!operation.getOutput().isPresent()) {
+                events.add(error(operation, trait,
+                        String.format("Operations modeled with the response properties for `httpChecksum` trait MUST"
+                                + " have a modeled output, \"%s\" does not.", operation.getId().getName(service))));
+                continue;
+            }
+
+            StructureShape outputShape = model.expectShape(operation.getOutput().get(), StructureShape.class);
+            events.addAll(validateName(operation, outputShape, property.getName(), "response"));
         }
 
         return events;
@@ -102,8 +125,10 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
      * @return Returns list of triggered validation events.
      */
     private List<ValidationEvent> validateName(
-            OperationShape operation, StructureShape containerShape,
-            String name, String propertyType
+            OperationShape operation,
+            StructureShape containerShape,
+            String name,
+            String propertyType
     ) {
         List<ValidationEvent> events = new ArrayList<>();
 

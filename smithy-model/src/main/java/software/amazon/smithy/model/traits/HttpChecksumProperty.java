@@ -132,7 +132,19 @@ public final class HttpChecksumProperty implements ToNode, ToSmithyBuilder<HttpC
 
         HttpChecksumProperty that = (HttpChecksumProperty) o;
         return algorithm.equals(that.algorithm)
-                && location.equals(that.location);
+                && location.equals(that.location)
+                && name.equals(that.name);
+    }
+
+    /**
+     * Determines if the HttpChecksumProperty conflicts with another HttpChecksumProperty.
+     *
+     * @param otherProperty HttpChecksumProperty to check against.
+     * @return Returns true if there is a conflict.
+     */
+    public boolean conflictsWith(HttpChecksumProperty otherProperty) {
+        return algorithm.equals(otherProperty.algorithm)
+                && location.equals(otherProperty.location);
     }
 
     /**
@@ -214,12 +226,12 @@ public final class HttpChecksumProperty implements ToNode, ToSmithyBuilder<HttpC
         }
 
         public Builder algorithm(String algorithm) {
-            this.algorithm = algorithm.toLowerCase(Locale.ROOT);
+            this.algorithm = algorithm.toLowerCase(Locale.ENGLISH);
             return this;
         }
 
         public Builder name(String name) {
-            this.name = name.toLowerCase(Locale.ROOT);
+            this.name = name.toLowerCase(Locale.ENGLISH);
             return this;
         }
 
