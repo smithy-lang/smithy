@@ -19,22 +19,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import software.amazon.smithy.aws.traits.auth.SigV4Trait;
 import software.amazon.smithy.aws.traits.protocols.AwsProtocolTrait;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.HttpChecksumProperty;
 import software.amazon.smithy.model.traits.HttpChecksumProperty.Location;
 import software.amazon.smithy.model.traits.HttpChecksumTrait;
-import software.amazon.smithy.model.traits.OptionalAuthTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -46,26 +49,42 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public class HttpChecksumTraitValidator extends AbstractValidator {
 
-    // Set of supported checksum behavior on request.
-    private static final Set<String> SUPPORTED_BEHAVIOR_FOR_REQUEST = SetUtils.of(
-            "sha1:header:x-amz-checksum-sha1",
-            "sha1:trailer:x-amz-checksum-sha1",
-            "sha256:header:x-amz-checksum-sha256",
-            "sha256:trailer:x-amz-checksum-sha256",
-            "crc32:header:x-amz-checksum-crc32",
-            "crc32:trailer:x-amz-checksum-crc32",
-            "crc32c:header:x-amz-checksum-crc32c",
-            "crc32c:trailer:x-amz-checksum-crc32c"
-    );
+    /**
+     * @return Returns a supplier for valid target protocols for which validation should be performed.
+     */
+    protected Supplier<List<Class<? extends Trait>>> targetProtocolSupplier() {
+        return () -> ListUtils.of(AwsProtocolTrait.class);
+    }
 
-    // Set of supported checksum behavior on response.
-    private static final Set<String> SUPPORTED_BEHAVIOR_FOR_RESPONSE = SetUtils.of(
-            "sha1:header:x-amz-checksum-sha1",
-            "sha256:header:x-amz-checksum-sha256",
-            "crc32:header:x-amz-checksum-crc32",
-            "crc32c:header:x-amz-checksum-crc32c"
-    );
+    /**
+     * @return Returns a supplier that supplies set of supported checksum behavior for request.
+     */
+    protected Supplier<Set<HttpChecksumProperty>> supportedRequestChecksumSupplier() {
+        HttpChecksumProperty.Builder builder = HttpChecksumProperty.builder();
+        return () -> SetUtils.of(
+                builder.algorithm("sha1").location("header").name("x-amz-checksum-sha1").build(),
+                builder.algorithm("sha1").location("trailer").name("x-amz-checksum-sha1").build(),
+                builder.algorithm("sha256").location("header").name("x-amz-checksum-sha256").build(),
+                builder.algorithm("sha256").location("trailer").name("x-amz-checksum-sha256").build(),
+                builder.algorithm("crc32").location("header").name("x-amz-checksum-crc32").build(),
+                builder.algorithm("crc32").location("trailer").name("x-amz-checksum-crc32").build(),
+                builder.algorithm("crc32c").location("header").name("x-amz-checksum-crc32c").build(),
+                builder.algorithm("crc32c").location("trailer").name("x-amz-checksum-crc32c").build()
+        );
+    }
 
+    /**
+     * @return Returns a supplier that supplies set of supported checksum behavior for response.
+     */
+    protected Supplier<Set<HttpChecksumProperty>> supportedResponseChecksumSupplier() {
+        HttpChecksumProperty.Builder builder = HttpChecksumProperty.builder();
+        return () -> SetUtils.of(
+                builder.algorithm("sha1").location("header").name("x-amz-checksum-sha1").build(),
+                builder.algorithm("sha256").location("header").name("x-amz-checksum-sha256").build(),
+                builder.algorithm("crc32").location("header").name("x-amz-checksum-crc32").build(),
+                builder.algorithm("crc32c").location("header").name("x-amz-checksum-crc32c").build()
+        );
+    }
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -74,14 +93,34 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
 
         List<ServiceShape> services = model.shapes(ServiceShape.class).collect(Collectors.toList());
+
+        Supplier<List<Class<? extends Trait>>> protocolSupplier = targetProtocolSupplier();
+        if (protocolSupplier == null) {
+            throw new ExpectationNotMetException("Expected non null supplier for the list of target protocols"
+                    + " for validation, found null.", SourceLocation.NONE);
+        }
+
+        Supplier<Set<HttpChecksumProperty>> requestChecksumSupplier = supportedRequestChecksumSupplier();
+        if (requestChecksumSupplier == null) {
+            throw new ExpectationNotMetException("Expected non null supplier for supported request checksum behavior"
+                    + " , found null.", SourceLocation.NONE);
+        }
+
+        Supplier<Set<HttpChecksumProperty>> responseChecksumSupplier = supportedResponseChecksumSupplier();
+        if (responseChecksumSupplier == null) {
+            throw new ExpectationNotMetException("Expected non null supplier for supported response checksum behavior"
+                    + " , found null.", SourceLocation.NONE);
+        }
+
         for (ServiceShape service : services) {
-            if (!isTargetProtocol(service)) {
+            if (!isTargetProtocol(protocolSupplier, service)) {
                 continue;
             }
 
             for (OperationShape operation : topDownIndex.getContainedOperations(service)) {
                 if (operation.hasTrait(HttpChecksumTrait.class)) {
-                    events.addAll(validateBehaviorIsSupported(operation));
+                    events.addAll(validateBehaviorIsSupported(operation, requestChecksumSupplier,
+                            responseChecksumSupplier));
                     events.addAll(validateRequestSupportsHeaderLocation(serviceIndex, service, operation));
                 }
             }
@@ -93,11 +132,15 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
     /**
      * Validates checksum behavior modeled for request or response is supported for AWS usage.
      *
-     * @param operation operation shape
+     * @param operation Operation shape to validate.
+     * @param requestChecksumSupplier Supplier for set of supported request checksum behavior.
+     * @param responseChecksumSupplier Supplier for set of supported response checksum behavior.
      * @return List of validation events that occurred when validating the model.
      */
-    protected List<ValidationEvent> validateBehaviorIsSupported(
-            OperationShape operation
+    private List<ValidationEvent> validateBehaviorIsSupported(
+            OperationShape operation,
+            Supplier<Set<HttpChecksumProperty>> requestChecksumSupplier,
+            Supplier<Set<HttpChecksumProperty>> responseChecksumSupplier
     ) {
         List<ValidationEvent> events = new ArrayList<>();
         HttpChecksumTrait trait = operation.expectTrait(HttpChecksumTrait.class);
@@ -105,23 +148,22 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
                 + " \"%s\" is not supported.";
 
         // validate if request properties are supported.
-        for (HttpChecksumProperty value : trait.getRequestProperties()) {
-            String str = value.getAlgorithm() + ":" + value.getLocation().toString() + ":" + value.getName();
-
-            if (!SUPPORTED_BEHAVIOR_FOR_REQUEST.contains(str)) {
+        Set<HttpChecksumProperty> validRequestChecksumBehavior = requestChecksumSupplier.get();
+        for (HttpChecksumProperty property : trait.getRequestProperties()) {
+            if (validRequestChecksumBehavior == null || !validRequestChecksumBehavior.contains(property)) {
                 events.add(error(operation, trait,
-                        String.format(formattedError, "request", value.getAlgorithm(), value.getLocation(),
-                                value.getName())));
+                        String.format(formattedError, "request", property.getAlgorithm(), property.getLocation(),
+                                property.getName())));
             }
         }
 
         // validate if response properties are supported.
-        for (HttpChecksumProperty value : trait.getResponseProperties()) {
-            String str = value.getAlgorithm() + ":" + value.getLocation().toString() + ":" + value.getName();
-            if (!SUPPORTED_BEHAVIOR_FOR_RESPONSE.contains(str)) {
+        Set<HttpChecksumProperty> validResponseChecksumBehavior = responseChecksumSupplier.get();
+        for (HttpChecksumProperty property : trait.getResponseProperties()) {
+            if (validResponseChecksumBehavior == null || !validResponseChecksumBehavior.contains(property)) {
                 events.add(error(operation, trait,
-                        String.format(formattedError, "response", value.getAlgorithm(), value.getLocation(),
-                                value.getName())));
+                        String.format(formattedError, "response", property.getAlgorithm(), property.getLocation(),
+                                property.getName())));
             }
         }
 
@@ -137,7 +179,7 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
      * @param operation    operation shape
      * @return List of validation events that occurred when validating the model.
      */
-    protected List<ValidationEvent> validateRequestSupportsHeaderLocation(
+    private List<ValidationEvent> validateRequestSupportsHeaderLocation(
             ServiceIndex serviceIndex,
             ServiceShape service,
             OperationShape operation
@@ -154,10 +196,9 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
 
                 if (!supportsHeaderAsLocation) {
                     events.add(error(operation, trait,
-                            String.format("For operation using sigv4 auth scheme, the `request` property of the"
-                                            + " `httpChecksum` trait must support `header` checksum location."
-                                            + " The \"%s\" algorithm does not support `header` location for request.",
-                                    algorithm)));
+                            String.format("Operations that support the `sigv4` trait MUST support the `header`"
+                                    + " checksum location on `request`, \"%s\" does not for \"%s\" algorithm.",
+                                    operation.getId().getName(service), algorithm)));
                 }
             }
         }
@@ -165,15 +206,24 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
     }
 
     /**
-     * isTargetProtocol returns true if service uses a target protocol. By default,
-     * target protocol resolves to aws protocol.
+     * isTargetProtocol returns true if service uses any target protocol supplied via the target protocol supplier.
      *
      * @param service is the service shape for which target protocol usage is checked.
      * @return boolean indicating target protocol is used by the service.
      */
-    protected boolean isTargetProtocol(ServiceShape service) {
-        // By default, target protocol is AWS protocol.
-        return service.hasTrait(AwsProtocolTrait.class);
+    private boolean isTargetProtocol(Supplier<List<Class<? extends Trait>>> supplier, ServiceShape service) {
+        List<Class<?extends  Trait>> list = supplier.get();
+        if (list == null) {
+            return false;
+        }
+
+        for (Class<? extends Trait> t : list) {
+            if (service.hasTrait(t)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -186,6 +236,6 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
      */
     private boolean hasSigV4AuthScheme(ServiceIndex serviceIndex, ServiceShape service, OperationShape operation) {
         Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(service.getId(), operation.getId());
-        return auth.containsKey(SigV4Trait.ID) && !operation.hasTrait(OptionalAuthTrait.class);
+        return auth.containsKey(SigV4Trait.ID);
     }
 }

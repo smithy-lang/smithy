@@ -177,11 +177,13 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
         }
 
         public Builder addRequestProperty(HttpChecksumProperty property) {
-            if (requestProperties.contains(property)) {
-                throw new ExpectationNotMetException(
-                        String.format("Found duplicate request property entry for algorithm %s at location %s within"
-                                + " the HttpChecksum trait.", property.getAlgorithm(), property.getLocation()),
-                        this.sourceLocation);
+            for (HttpChecksumProperty p : requestProperties) {
+                if (p.conflictsWith(property)) {
+                    throw new ExpectationNotMetException(
+                            String.format("Found duplicate request property entry for algorithm %s at location %s"
+                                    + " within the HttpChecksum trait.", p.getAlgorithm(), p.getLocation()),
+                            this.sourceLocation);
+                }
             }
 
             this.requestProperties.add(property);
@@ -200,11 +202,13 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
         }
 
         public Builder addResponseProperty(HttpChecksumProperty property) {
-            if (responseProperties.contains(property)) {
-                throw new ExpectationNotMetException(
-                        String.format("Found duplicate response property entry for algorithm %s at location %s within"
-                                + " the HttpChecksum trait.", property.getAlgorithm(), property.getLocation()),
-                        this.sourceLocation);
+            for (HttpChecksumProperty p : responseProperties) {
+                if (p.conflictsWith(property)) {
+                    throw new ExpectationNotMetException(
+                            String.format("Found duplicate response property entry for algorithm %s at location %s"
+                                    + " within the HttpChecksum trait.", p.getAlgorithm(), p.getLocation()),
+                            this.sourceLocation);
+                }
             }
 
             this.responseProperties.add(property);
