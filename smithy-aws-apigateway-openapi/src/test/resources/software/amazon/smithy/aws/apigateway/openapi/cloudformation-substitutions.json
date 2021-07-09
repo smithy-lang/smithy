@@ -25,12 +25,6 @@
                 "smithy.api#http": {
                     "uri": "/foo",
                     "method": "GET"
-                },
-                "aws.apigateway#integration": {
-                    "httpMethod": "POST",
-                    "payloadFormatVersion": "2.0",
-                    "type": "aws_proxy",
-                    "uri": "arn:${Token[AWS.Partition.9]}:apigateway:us-east-1:lambda:path/2015-03-31/functions/${Token[TOKEN.108]}/invocations"
                 }
             }
         }

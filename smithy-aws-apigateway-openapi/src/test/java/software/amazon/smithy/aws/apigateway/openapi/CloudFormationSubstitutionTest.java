@@ -69,6 +69,6 @@ public class CloudFormationSubstitutionTest {
                 .config(config)
                 .convertToNode(model);
 
-        Node.assertEquals(actual, expected);
+        Node.assertEquals(expected, actual);
     }
 }
