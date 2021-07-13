@@ -1,0 +1,34 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Service",
+    "version": "2006-03-01"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "Operation1",
+        "responses": {
+          "200": {
+            "description": "Operation1 response"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "smithy.api.httpBearerAuth": {
+        "type": "http",
+        "description": "HTTP Bearer authentication",
+        "scheme": "Bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "smithy.api.httpBearerAuth": [ ]
+    }
+  ]
+}

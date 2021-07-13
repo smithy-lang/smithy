@@ -38,6 +38,7 @@ public final class HttpBearerConverter implements SecuritySchemeConverter<HttpBe
                 .type("http")
                 .scheme("Bearer")
                 .description("HTTP Bearer authentication")
+                .bearerFormat(trait.getBearerFormat().orElse(null))
                 .build();
     }
 }
