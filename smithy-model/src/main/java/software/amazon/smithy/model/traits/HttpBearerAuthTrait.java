@@ -102,12 +102,9 @@ public final class HttpBearerAuthTrait extends AbstractTrait implements ToSmithy
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            Builder builder = builder().sourceLocation(value.getSourceLocation());
             ObjectNode objectNode = value.expectObjectNode();
-            objectNode.getStringMember(BEARER_FORMAT)
-                    .map(StringNode::getValue)
-                    .ifPresent(builder::bearerFormat);
-            return builder.build();
+            Builder builder = new HttpBearerAuthTrait(objectNode).toBuilder();
+            return builder.sourceLocation(value.getSourceLocation()).build();
         }
     }
 }
