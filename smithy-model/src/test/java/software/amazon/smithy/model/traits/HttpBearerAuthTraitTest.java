@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -53,6 +53,25 @@ public class HttpBearerAuthTraitTest {
         HttpBearerAuthTrait auth = (HttpBearerAuthTrait) trait.get();
 
         assertThat(auth.getBearerFormat(), equalTo(Optional.empty()));
+        assertThat(auth.toNode(), equalTo(node));
+        assertThat(auth.toBuilder().build(), equalTo(auth));
+    }
+
+    @Test
+    public void defaultConstructor() {
+        ObjectNode node = Node.objectNode();
+        HttpBearerAuthTrait auth = new HttpBearerAuthTrait();
+        assertThat(auth.getBearerFormat(), equalTo(Optional.empty()));
+        assertThat(auth.toNode(), equalTo(node));
+        assertThat(auth.toBuilder().build(), equalTo(auth));
+    }
+
+    @Test
+    public void constructorWithObjectNode() {
+        ObjectNode node = Node.objectNode()
+                .withMember("bearerFormat", "JWT");
+        HttpBearerAuthTrait auth = new HttpBearerAuthTrait(node);
+        assertThat(auth.getBearerFormat(), equalTo(Optional.of("JWT")));
         assertThat(auth.toNode(), equalTo(node));
         assertThat(auth.toBuilder().build(), equalTo(auth));
     }

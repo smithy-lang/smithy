@@ -37,6 +37,15 @@ public final class HttpBearerAuthTrait extends AbstractTrait implements ToSmithy
         bearerFormat = builder.bearerFormat;
     }
 
+    public HttpBearerAuthTrait() {
+        this(Node.objectNode());
+    }
+
+    public HttpBearerAuthTrait(ObjectNode node) {
+        super(ID, node);
+        bearerFormat = node.getStringMember(BEARER_FORMAT).map(StringNode::getValue).orElse(null);
+    }
+
     /**
      * Gets the bearer format.
      *
