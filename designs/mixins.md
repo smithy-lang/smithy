@@ -684,8 +684,8 @@ A `member` relationship exists from `ListSomethingInput` to the following
 shapes, in any order:
 
 - `smithy.example#ListSomethingInput$nameFilter`
-- `smithy.example#PaginatedInput$nextToken`
-- `smithy.example#PaginatedInput$pageSize`
+- `smithy.example#ListSomethingInput$nextToken`
+- `smithy.example#ListSomethingInput$pageSize`
 
 The following two selectors:
 
@@ -700,8 +700,8 @@ structure[id|name = ListSomethingInput] -[member]-> *
 Both yield the following shapes, in any order:
 
 - `smithy.example#ListSomethingInput$nameFilter`
-- `smithy.example#PaginatedInput$nextToken`
-- `smithy.example#PaginatedInput$pageSize`
+- `smithy.example#ListSomethingInput$nextToken`
+- `smithy.example#ListSomethingInput$pageSize`
 
 
 ### Mixins and member ordering
