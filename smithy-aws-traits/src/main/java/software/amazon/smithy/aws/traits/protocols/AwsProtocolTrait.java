@@ -68,6 +68,7 @@ public abstract class AwsProtocolTrait extends AbstractTrait {
     @Override
     protected Node createNode() {
         ObjectNode.Builder builder = Node.objectNodeBuilder();
+        builder.sourceLocation(getSourceLocation());
 
         if (!getHttp().isEmpty()) {
             builder.withMember(HTTP, Node.fromStrings(getHttp()));

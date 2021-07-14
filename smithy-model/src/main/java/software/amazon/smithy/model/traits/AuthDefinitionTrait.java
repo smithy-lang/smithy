@@ -53,16 +53,16 @@ public final class AuthDefinitionTrait extends AbstractTrait implements ToSmithy
 
     @Override
     protected Node createNode() {
-        if (traits.isEmpty()) {
-            return Node.objectNode();
-        }
-
-        ArrayNode ids = traits.stream()
+        ObjectNode.Builder builder = Node.objectNodeBuilder();
+        builder.sourceLocation(getSourceLocation());
+        if (!traits.isEmpty()) {
+            ArrayNode ids = traits.stream()
                 .map(ShapeId::toString)
                 .map(Node::from)
                 .collect(ArrayNode.collect());
-
-        return Node.objectNode().withMember("traits", ids);
+            builder.withMember("traits", ids);
+        }
+        return builder.build();
     }
 
     @Override

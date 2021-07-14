@@ -83,9 +83,11 @@ public final class ClientEndpointDiscoveryTrait extends AbstractTrait
 
     @Override
     protected Node createNode() {
-        return Node.objectNode()
+        return Node.objectNodeBuilder()
+                .sourceLocation(getSourceLocation())
                 .withMember(OPERATION, Node.from(getOperation().toString()))
-                .withOptionalMember(ERROR, getOptionalError().map(error -> Node.from(error.toString())));
+                .withOptionalMember(ERROR, getOptionalError().map(error -> Node.from(error.toString())))
+                .build();
     }
 
     @Override
@@ -144,6 +146,7 @@ public final class ClientEndpointDiscoveryTrait extends AbstractTrait
 
         @Override
         public ClientEndpointDiscoveryTrait createTrait(ShapeId target, Node value) {
+            // BUG: sourceLocation
             ObjectNode objectNode = value.expectObjectNode();
             Builder builder = builder().operation(objectNode.expectStringMember(OPERATION).expectShapeId());
             objectNode.getStringMember(ERROR).ifPresent(error -> builder.error(error.expectShapeId()));

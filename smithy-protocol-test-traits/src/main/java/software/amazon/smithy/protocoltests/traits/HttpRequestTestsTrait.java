@@ -78,6 +78,6 @@ public final class HttpRequestTestsTrait extends AbstractTrait {
 
     @Override
     protected Node createNode() {
-        return getTestCases().stream().collect(ArrayNode.collect());
+        return getTestCases().stream().collect(ArrayNode.collect(getSourceLocation()));
     }
 }

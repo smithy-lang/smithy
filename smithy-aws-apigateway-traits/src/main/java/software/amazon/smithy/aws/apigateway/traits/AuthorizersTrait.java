@@ -108,7 +108,8 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
     protected Node createNode() {
         return authorizers.entrySet().stream()
                 .sorted(Comparator.comparing(Map.Entry::getKey))
-                .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue))
+                .toBuilder().sourceLocation(getSourceLocation()).build();
     }
 
     /**

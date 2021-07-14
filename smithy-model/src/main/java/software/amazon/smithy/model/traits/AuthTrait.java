@@ -60,6 +60,7 @@ public final class AuthTrait extends AbstractTrait {
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
+            // BUG: sourceLocation
             List<ShapeId> values = new ArrayList<>();
             for (StringNode node : value.expectArrayNode().getElementsAs(StringNode.class)) {
                 values.add(node.expectShapeId());
@@ -70,6 +71,7 @@ public final class AuthTrait extends AbstractTrait {
 
     @Override
     protected Node createNode() {
-        return getValues().stream().map(ShapeId::toString).map(Node::from).collect(ArrayNode.collect());
+        return getValues().stream().map(ShapeId::toString).map(Node::from)
+                .collect(ArrayNode.collect(getSourceLocation()));
     }
 }

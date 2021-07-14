@@ -78,15 +78,16 @@ public final class IdRefTrait extends AbstractTrait implements ToSmithyBuilder<I
 
     @Override
     protected Node createNode() {
-        ObjectNode result = Node.objectNode()
+        ObjectNode.Builder builder = Node.objectNodeBuilder()
+                .sourceLocation(getSourceLocation())
                 .withOptionalMember(
                         SELECTOR_MEMBER_ID,
                         Optional.ofNullable(selector).map(Selector::toString).map(Node::from))
                 .withOptionalMember(ERROR_MESSAGE, getErrorMessage().map(Node::from));
         if (failWhenMissing) {
-            result = result.withMember(FAIL_WHEN_MISSING_MEMBER, Node.from(true));
+            builder = builder.withMember(FAIL_WHEN_MISSING_MEMBER, Node.from(true));
         }
-        return result;
+        return builder.build();
     }
 
     public static Builder builder() {

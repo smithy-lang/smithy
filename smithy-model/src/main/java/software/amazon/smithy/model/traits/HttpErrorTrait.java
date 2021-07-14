@@ -45,6 +45,7 @@ public final class HttpErrorTrait extends AbstractTrait {
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
+            // BUG: sourcelocation
             return new HttpErrorTrait(value.expectNumberNode().getValue().intValue(), value.getSourceLocation());
         }
     }

@@ -66,7 +66,7 @@ public final class ExternalDocumentationTrait extends AbstractTrait
 
     @Override
     protected Node createNode() {
-        return ObjectNode.fromStringMap(urls);
+        return ObjectNode.fromStringMap(urls).toBuilder().sourceLocation(getSourceLocation()).build();
     }
 
     @Override

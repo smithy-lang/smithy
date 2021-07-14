@@ -74,7 +74,7 @@ public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<En
 
     @Override
     protected Node createNode() {
-        return definitions.stream().map(EnumDefinition::toNode).collect(ArrayNode.collect());
+        return definitions.stream().map(EnumDefinition::toNode).collect(ArrayNode.collect(getSourceLocation()));
     }
 
     @Override
