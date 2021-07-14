@@ -52,12 +52,16 @@ public final class RetryableTrait extends AbstractTrait implements ToSmithyBuild
 
     @Override
     public Builder toBuilder() {
-        return builder().throttling(throttling);
+        return builder().sourceLocation(getSourceLocation()).throttling(throttling);
     }
 
     @Override
     protected Node createNode() {
-        return throttling ? Node.objectNode().withMember(THROTTLING, true) : Node.objectNode();
+        ObjectNode.Builder nodeBuilder = Node.objectNodeBuilder().sourceLocation(getSourceLocation());
+        if (throttling) {
+            nodeBuilder.withMember(THROTTLING, true);
+        }
+        return nodeBuilder.build();
     }
 
     public static final class Provider implements TraitService {
@@ -69,7 +73,8 @@ public final class RetryableTrait extends AbstractTrait implements ToSmithyBuild
         @Override
         public RetryableTrait createTrait(ShapeId target, Node value) {
             ObjectNode node = value.expectObjectNode();
-            return builder().throttling(node.getBooleanMemberOrDefault(THROTTLING)).build();
+            Builder builder = builder().sourceLocation(value.getSourceLocation());
+            return builder.throttling(node.getBooleanMemberOrDefault(THROTTLING)).build();
         }
     }
 
