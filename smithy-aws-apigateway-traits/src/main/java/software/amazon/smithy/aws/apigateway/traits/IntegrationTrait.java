@@ -342,6 +342,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
     @Override
     public Builder toBuilder() {
         return builder()
+                .sourceLocation(getSourceLocation())
                 .type(type)
                 .uri(uri)
                 .credentials(credentials)

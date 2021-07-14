@@ -101,7 +101,7 @@ public final class EndpointTrait extends AbstractTrait implements ToSmithyBuilde
 
     @Override
     public Builder toBuilder() {
-        return new Builder().hostPrefix(hostPrefix.toString());
+        return new Builder().sourceLocation(getSourceLocation()).hostPrefix(hostPrefix.toString());
     }
 
     @Override

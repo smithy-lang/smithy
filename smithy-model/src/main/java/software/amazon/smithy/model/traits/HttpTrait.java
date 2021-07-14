@@ -89,7 +89,7 @@ public final class HttpTrait extends AbstractTrait implements ToSmithyBuilder<Ht
 
     @Override
     public HttpTrait.Builder toBuilder() {
-        return new Builder().method(method).uri(uri).code(code);
+        return new Builder().sourceLocation(getSourceLocation()).method(method).uri(uri).code(code);
     }
 
     /**

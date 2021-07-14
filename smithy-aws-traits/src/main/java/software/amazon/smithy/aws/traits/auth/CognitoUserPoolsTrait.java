@@ -76,7 +76,7 @@ public final class CognitoUserPoolsTrait extends AbstractTrait implements ToSmit
 
     @Override
     public Builder toBuilder() {
-        return builder().providerArns(providerArns);
+        return builder().sourceLocation(getSourceLocation()).providerArns(providerArns);
     }
 
     @Override
