@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
@@ -78,6 +79,9 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
                     "The `httpChecksum` trait must have at least one of the `request` or `response` properties set."));
         }
 
+        events.addAll(validateConflicts(operation, trait, requestProperties, true));
+        events.addAll(validateConflicts(operation, trait, responseProperties, false));
+
         for (HttpChecksumProperty property : requestProperties) {
             if (!operation.getInput().isPresent()) {
                 events.add(error(operation, trait,
@@ -109,6 +113,28 @@ public class HttpChecksumTraitValidator extends AbstractValidator {
             events.addAll(validateName(operation, outputShape, property.getName(), "response"));
         }
 
+        return events;
+    }
+
+    private List<ValidationEvent> validateConflicts(
+            OperationShape operation,
+            HttpChecksumTrait trait,
+            List<HttpChecksumProperty> properties,
+            boolean isRequestProperties
+    ) {
+        if (properties.size() <= 1) {
+            return Collections.emptyList();
+        }
+        List<ValidationEvent> events = new ArrayList<>();
+        for (int i = 0; i < properties.size(); i++) {
+            for (int j = i + 1; j < properties.size(); j++) {
+                if (properties.get(i).conflictsWith(properties.get(j))) {
+                    events.add(error(operation, trait, String.format(
+                            "Found conflicting checksum %s properties at indicies %d and %d",
+                            isRequestProperties ? "request" : "response", i, j)));
+                }
+            }
+        }
         return events;
     }
 

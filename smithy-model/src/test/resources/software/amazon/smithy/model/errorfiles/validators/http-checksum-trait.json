@@ -34,6 +34,9 @@
         },
         {
           "target": "ns.foo#InvalidOperation4"
+        },
+        {
+          "target": "ns.foo#InvalidConflictingProperties"
         }
       ]
     },
@@ -227,6 +230,27 @@
           "target": "ns.foo#InvalidError"
         }
       ]
+    },
+    "ns.foo#InvalidConflictingProperties": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#Input"
+      },
+      "output": {
+        "target": "ns.foo#Output"
+      },
+      "traits": {
+        "smithy.api#httpChecksum": {
+          "request": [
+            { "algorithm": "sha1", "in": "trailer", "name": "mock-checksum-sha1"},
+            { "algorithm": "sha1", "in": "trailer", "name": "mock-checksum-sha1"}
+          ],
+          "response": [
+            { "algorithm": "sha1", "in": "trailer", "name": "mock-checksum-sha1"},
+            { "algorithm": "sha1", "in": "trailer", "name": "mock-checksum-sha1"}
+          ]
+        }
+      }
     },
     "ns.foo#ConflictingInputA": {
       "type": "structure",
