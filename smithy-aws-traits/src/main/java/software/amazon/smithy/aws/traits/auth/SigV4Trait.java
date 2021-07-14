@@ -59,7 +59,7 @@ public final class SigV4Trait extends AbstractTrait implements ToSmithyBuilder<S
 
     @Override
     protected Node createNode() {
-        return Node.objectNode().withMember(NAME, getName());
+        return Node.objectNodeBuilder().sourceLocation(getSourceLocation()).withMember(NAME, getName()).build();
     }
 
     public static final class Builder extends AbstractTraitBuilder<SigV4Trait, Builder> {

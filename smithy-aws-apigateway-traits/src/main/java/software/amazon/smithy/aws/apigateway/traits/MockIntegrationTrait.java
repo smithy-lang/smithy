@@ -56,6 +56,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
+            // TODO: sourceLocation?
             return new NodeMapper().deserialize(value, MockIntegrationTrait.class);
         }
     }
@@ -157,7 +158,8 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
         NodeMapper mapper = new NodeMapper();
         mapper.disableToNodeForClass(MockIntegrationTrait.class);
         mapper.setOmitEmptyValues(true);
-        return mapper.serialize(this).expectObjectNode();
+        ObjectNode.Builder builder = mapper.serialize(this).expectObjectNode().toBuilder();
+        return builder.sourceLocation(getSourceLocation()).build();
     }
 
     @Override

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
@@ -71,7 +72,8 @@ public final class CfnResourceTrait extends AbstractTrait
         NodeMapper mapper = new NodeMapper();
         mapper.disableToNodeForClass(CfnResourceTrait.class);
         mapper.setOmitEmptyValues(true);
-        return mapper.serialize(this).expectObjectNode();
+        ObjectNode.Builder builder = mapper.serialize(this).expectObjectNode().toBuilder();
+        return builder.sourceLocation(getSourceLocation()).build();
     }
 
     @Override
@@ -86,6 +88,7 @@ public final class CfnResourceTrait extends AbstractTrait
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
+            // TODO: sourceLocation?
             return new NodeMapper().deserialize(value, CfnResourceTrait.class);
         }
     }

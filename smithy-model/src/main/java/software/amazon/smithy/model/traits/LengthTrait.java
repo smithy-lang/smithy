@@ -109,6 +109,7 @@ public final class LengthTrait extends AbstractTrait implements ToSmithyBuilder<
 
         @Override
         public LengthTrait createTrait(ShapeId target, Node value) {
+            // BUG: sourceLocation
             ObjectNode objectNode = value.expectObjectNode();
             Long minValue = objectNode.getMember("min")
                     .map(v -> v.expectNumberNode().getValue().longValue()).orElse(null);

@@ -70,6 +70,7 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
+            // BUG: sourceLocation
             Builder builder = builder();
             ObjectNode objectNode = value.expectObjectNode();
             builder.template(objectNode.expectStringMember(TEMPLATE).getValue());
@@ -133,11 +134,13 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
 
     @Override
     protected Node createNode() {
-        return Node.objectNode()
+        return Node.objectNodeBuilder()
+                .sourceLocation(getSourceLocation())
                 .withMember(TEMPLATE, Node.from(getTemplate()))
                 .withMember(ABSOLUTE, Node.from(isAbsolute()))
                 .withMember(NO_ACCOUNT, Node.from(isNoAccount()))
-                .withMember(NO_REGION, Node.from(isNoRegion()));
+                .withMember(NO_REGION, Node.from(isNoRegion()))
+                .build();
     }
 
     @Override

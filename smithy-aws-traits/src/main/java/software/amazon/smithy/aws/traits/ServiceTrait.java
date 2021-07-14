@@ -60,6 +60,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
+            // BUG sourceLocation
             ObjectNode objectNode = value.expectObjectNode();
             Builder builder = builder();
             String sdkId = objectNode.getStringMember("sdkId")
@@ -169,12 +170,14 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
 
     @Override
     protected Node createNode() {
-        return Node.objectNode()
+        return Node.objectNodeBuilder()
+                .sourceLocation(getSourceLocation())
                 .withMember("sdkId", Node.from(sdkId))
                 .withMember("arnNamespace", Node.from(getArnNamespace()))
                 .withMember("cloudFormationName", Node.from(getCloudFormationName()))
                 .withMember("cloudTrailEventSource", Node.from(getCloudTrailEventSource()))
-                .withMember("endpointPrefix", Node.from(getEndpointPrefix()));
+                .withMember("endpointPrefix", Node.from(getEndpointPrefix()))
+                .build();
     }
 
     /** Builder for {@link ServiceTrait}. */

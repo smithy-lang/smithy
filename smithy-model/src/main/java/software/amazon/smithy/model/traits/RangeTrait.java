@@ -110,6 +110,7 @@ public final class RangeTrait extends AbstractTrait implements ToSmithyBuilder<R
 
         @Override
         public RangeTrait createTrait(ShapeId target, Node value) {
+            // BUG: sourceLocation
             ObjectNode objectNode = value.expectObjectNode();
             BigDecimal minValue = objectNode.getMember("min")
                     .map(node -> new BigDecimal(node.expectNumberNode().getValue().toString())).orElse(null);

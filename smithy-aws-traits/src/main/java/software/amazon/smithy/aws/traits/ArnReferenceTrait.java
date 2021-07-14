@@ -53,6 +53,7 @@ public final class ArnReferenceTrait extends AbstractTrait implements ToSmithyBu
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
+            //BUG: sourcelocation
             ObjectNode objectNode = value.expectObjectNode();
             Builder builder = builder();
             objectNode.getStringMember(TYPE)
@@ -110,10 +111,12 @@ public final class ArnReferenceTrait extends AbstractTrait implements ToSmithyBu
 
     @Override
     protected Node createNode() {
-        return Node.objectNode()
+        return Node.objectNodeBuilder()
+                .sourceLocation(getSourceLocation())
                 .withOptionalMember(TYPE, getType().map(Node::from))
                 .withOptionalMember(SERVICE, getService().map(ShapeId::toString).map(Node::from))
-                .withOptionalMember(RESOURCE, getResource().map(ShapeId::toString).map(Node::from));
+                .withOptionalMember(RESOURCE, getResource().map(ShapeId::toString).map(Node::from))
+                .build();
     }
 
     /** Builder for {@link ArnReferenceTrait}. */

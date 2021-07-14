@@ -75,7 +75,7 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
 
     @Override
     protected Node createNode() {
-        return references.stream().map(Reference::toNode).collect(ArrayNode.collect());
+        return references.stream().map(Reference::toNode).collect(ArrayNode.collect(getSourceLocation()));
     }
 
     @Override

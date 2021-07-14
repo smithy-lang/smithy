@@ -67,22 +67,19 @@ public final class ProtocolDefinitionTrait extends AbstractTrait implements ToSm
 
     @Override
     protected Node createNode() {
-        if (traits.isEmpty()) {
-            return Node.objectNode();
-        }
-
         ObjectNode.Builder builder = Node.objectNodeBuilder();
+        builder.sourceLocation(getSourceLocation());
+        if (!traits.isEmpty()) {
+            ArrayNode ids = traits.stream()
+                    .map(ShapeId::toString)
+                    .map(Node::from)
+                    .collect(ArrayNode.collect());
+            builder.withMember(TRAITS, ids);
 
-        ArrayNode ids = traits.stream()
-                .map(ShapeId::toString)
-                .map(Node::from)
-                .collect(ArrayNode.collect());
-        builder.withMember(TRAITS, ids);
-
-        if (noInlineDocumentSupport) {
-            builder.withMember(NO_INLINE_DOCUMENT_SUPPORT, true);
+            if (noInlineDocumentSupport) {
+                builder.withMember(NO_INLINE_DOCUMENT_SUPPORT, true);
+            }
         }
-
         return builder.build();
     }
 
