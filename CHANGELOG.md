@@ -1,5 +1,25 @@
 # Smithy Changelog
 
+## 1.10.0 (2021-07-14)
+
+### Features
+
+* Loosened the requirement of setting an `error` property when configuring `aws.api#clientEndpointDiscovery` trait. ([#850](https://github.com/awslabs/smithy/pull/850))
+* Added a `restJson1` protocol test. ([#845](https://github.com/awslabs/smithy/pull/845))
+* Added a warning when using the OpenAPI conversion `jsonAdd` setting to alter schemas. ([#851](https://github.com/awslabs/smithy/pull/851))
+* Added the `httpChecksum` trait. ([#843](https://github.com/awslabs/smithy/pull/843))
+
+### Bug Fixes
+
+* Revert "Tightened substitution pattern for Fn::Sub to match CloudFormation." ([#858](https://github.com/awslabs/smithy/pull/858))
+* Fixed an issue where `cors` trait `additionalExposedHeaders` were not added to gateway responses. ([#852](https://github.com/awslabs/smithy/pull/852))
+* Fixed various issues in protocol tests. ([#849](https://github.com/awslabs/smithy/pull/849), [#855](https://github.com/awslabs/smithy/pull/855), [#857](https://github.com/awslabs/smithy/pull/857))
+
+### Documentation
+
+* Clarified behavior for the `aws.api#service` trait's `sdkId` member. ([#848](https://github.com/awslabs/smithy/pull/848))
+* Fixed various typos. ([#853](https://github.com/awslabs/smithy/pull/853), [#859](https://github.com/awslabs/smithy/pull/859))
+
 ## 1.9.1 (2021-06-28)
 
 ### Bug Fixes
