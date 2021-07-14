@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.node.ArrayNode;
-import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -157,13 +156,10 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
     }
 
     public static final class Builder extends AbstractTraitBuilder<HttpChecksumTrait, Builder> {
-        private Set<HttpChecksumProperty> requestProperties;
-        private Set<HttpChecksumProperty> responseProperties;
+        private List<HttpChecksumProperty> requestProperties = new ArrayList<>();
+        private List<HttpChecksumProperty> responseProperties = new ArrayList<>();
 
-        private Builder() {
-            requestProperties = new LinkedHashSet<>();
-            responseProperties = new LinkedHashSet<>();
-        }
+        private Builder() {}
 
         @Override
         public HttpChecksumTrait build() {
@@ -177,15 +173,6 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
         }
 
         public Builder addRequestProperty(HttpChecksumProperty property) {
-            for (HttpChecksumProperty p : requestProperties) {
-                if (p.conflictsWith(property)) {
-                    throw new ExpectationNotMetException(
-                            String.format("Found duplicate request property entry for algorithm %s at location %s"
-                                    + " within the HttpChecksum trait.", p.getAlgorithm(), p.getLocation()),
-                            this.sourceLocation);
-                }
-            }
-
             this.requestProperties.add(property);
             return this;
         }
@@ -202,15 +189,6 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
         }
 
         public Builder addResponseProperty(HttpChecksumProperty property) {
-            for (HttpChecksumProperty p : responseProperties) {
-                if (p.conflictsWith(property)) {
-                    throw new ExpectationNotMetException(
-                            String.format("Found duplicate response property entry for algorithm %s at location %s"
-                                    + " within the HttpChecksum trait.", p.getAlgorithm(), p.getLocation()),
-                            this.sourceLocation);
-                }
-            }
-
             this.responseProperties.add(property);
             return this;
         }
