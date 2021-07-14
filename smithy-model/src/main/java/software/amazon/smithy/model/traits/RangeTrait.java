@@ -80,7 +80,7 @@ public final class RangeTrait extends AbstractTrait implements ToSmithyBuilder<R
     }
 
     /**
-     * Builder used to create a LongTrait.
+     * Builder used to create a RangeTrait.
      */
     public static final class Builder extends AbstractTraitBuilder<RangeTrait, Builder> {
         private BigDecimal min;
