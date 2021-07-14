@@ -75,12 +75,13 @@
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#idempotencytoken-trait" id="id7"><code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait</a></li>
-<li><a class="reference internal" href="#idempotent-trait" id="id8"><code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait</a></li>
-<li><a class="reference internal" href="#readonly-trait" id="id9"><code class="docutils literal notranslate"><span class="pre">readonly</span></code> trait</a></li>
-<li><a class="reference internal" href="#retryable-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait</a></li>
-<li><a class="reference internal" href="#paginated-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait</a></li>
-<li><a class="reference internal" href="#httpchecksumrequired-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait</a></li>
+<li><a class="reference internal" href="#idempotencytoken-trait" id="id9"><code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait</a></li>
+<li><a class="reference internal" href="#idempotent-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait</a></li>
+<li><a class="reference internal" href="#readonly-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">readonly</span></code> trait</a></li>
+<li><a class="reference internal" href="#retryable-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait</a></li>
+<li><a class="reference internal" href="#paginated-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpchecksumrequired-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpchecksum-trait" id="id15"><code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait</a></li>
 </ul>
 </div>
 <div class="section" id="idempotencytoken-trait">
@@ -773,6 +774,221 @@ Smithy</div>
 </div>
 </div>
 </div>
+<div class="section" id="httpchecksum-trait">
+<span id="id7"></span><h2><a href="#httpchecksum-trait">8.7. <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Indicates that an operation's HTTP request or response supports checksum
+validation. At least one of request or response checksum properties MUST
+be specified within the trait.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait is a structure that contains the following members:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>request</td>
+<td><code class="docutils literal notranslate"><span class="pre">[</span></code> <a class="reference internal" href="#checksum-property"><span class="std std-ref">HttpChecksumProperty structure</span></a> <code class="docutils literal notranslate"><span class="pre">]</span></code></td>
+<td>The <code class="docutils literal notranslate"><span class="pre">request</span></code> property defines a list of checksum validation
+behavior for HTTP requests.</td>
+</tr>
+<tr class="row-odd"><td>response</td>
+<td><code class="docutils literal notranslate"><span class="pre">[</span></code> <a class="reference internal" href="#checksum-property"><span class="std std-ref">HttpChecksumProperty structure</span></a> <code class="docutils literal notranslate"><span class="pre">]</span></code></td>
+<td>The <code class="docutils literal notranslate"><span class="pre">response</span></code> property defines a list of checksum validation
+behavior for HTTP responses.</td>
+</tr>
+</tbody>
+</table>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@httpChecksum</span>(
+    <span class="nl">request:</span> [
+        { <span class="nl">algorithm:</span> <span class="s2">&quot;sha256&quot;</span>, <span class="nl">in:</span> <span class="s2">&quot;header&quot;</span>, <span class="nl">name:</span> <span class="s2">&quot;x-checksum-sha256&quot;</span>},
+        { <span class="nl">algorithm:</span> <span class="s2">&quot;crc32&quot;</span>, <span class="nl">in:</span> <span class="s2">&quot;header&quot;</span>, <span class="nl">name:</span> <span class="s2">&quot;x-checksum-crc32&quot;</span>}
+    ],
+    <span class="nl">response:</span> {
+        { <span class="nl">algorithm:</span> <span class="s2">&quot;sha256&quot;</span>, <span class="nl">in:</span> <span class="s2">&quot;header&quot;</span>, <span class="nl">name:</span> <span class="s2">&quot;x-checksum-sha256&quot;</span>},
+        { <span class="nl">algorithm:</span> <span class="s2">&quot;crc32&quot;</span>, <span class="nl">in:</span> <span class="s2">&quot;header&quot;</span>, <span class="nl">name:</span> <span class="s2">&quot;x-checksum-crc32&quot;</span>}
+    }
+)
+<span class="kd">operation</span><span class="nc"> PutSomething</span> {
+    <span class="nl">input:</span> <span class="vc">PutSomethingInput</span>,
+    <span class="nl">output:</span> <span class="vc">PutSomethingOutput</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#Example&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2019-06-27&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#PutSomething&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PutSomethingInput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PutSomethingOutput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#httpChecksum&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;request&quot;</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="p">{</span> <span class="nt">&quot;algorithm&quot;</span><span class="p">:</span> <span class="s2">&quot;sha256&quot;</span><span class="p">,</span> <span class="nt">&quot;in&quot;</span><span class="p">:</span> <span class="s2">&quot;header&quot;</span><span class="p">,</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;x-checksum-sha256&quot;</span><span class="p">},</span>
+                        <span class="p">{</span> <span class="nt">&quot;algorithm&quot;</span><span class="p">:</span> <span class="s2">&quot;crc32&quot;</span><span class="p">,</span> <span class="nt">&quot;in&quot;</span><span class="p">:</span> <span class="s2">&quot;header&quot;</span><span class="p">,</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;x-checksum-crc32&quot;</span><span class="p">}</span>
+                    <span class="p">],</span>
+                    <span class="nt">&quot;response&quot;</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="p">{</span> <span class="nt">&quot;algorithm&quot;</span><span class="p">:</span> <span class="s2">&quot;sha256&quot;</span><span class="p">,</span> <span class="nt">&quot;in&quot;</span><span class="p">:</span> <span class="s2">&quot;header&quot;</span><span class="p">,</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;x-checksum-sha256&quot;</span><span class="p">},</span>
+                        <span class="p">{</span> <span class="nt">&quot;algorithm&quot;</span><span class="p">:</span> <span class="s2">&quot;crc32&quot;</span><span class="p">,</span> <span class="nt">&quot;in&quot;</span><span class="p">:</span> <span class="s2">&quot;header&quot;</span><span class="p">,</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;x-checksum-crc32&quot;</span><span class="p">}</span>
+                    <span class="p">]</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="httpchecksumproperty-structure">
+<span id="checksum-property"></span><h3><a href="#httpchecksumproperty-structure">8.7.1. HttpChecksumProperty structure</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">HttpChecksumProperty</span></code> defines checksum validation behavior using the
+following members:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>algorithm</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first"><strong>Required</strong>. The algorithm string represents a checksum algorithm
+supported for the HTTP request or response. A valid algorithm
+should follow ABNF:</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">algorithms</span> <span class="o">=</span> <span class="o">1*</span><span class="p">(</span><span class="nc">lower-alpha</span> <span class="o">/</span> <span class="k">DIGIT</span><span class="p">)</span>
+<span class="nc">lower-alpha</span> <span class="o">=</span> <span class="l">%x61-7A</span>
+</pre></div>
+</div>
+<p class="last">That is, it should be comprised only of digits and lowercase letters.</p>
+</td>
+</tr>
+<tr class="row-odd"><td>in</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first"><strong>Required</strong>. The location where checksum can be supplied. Valid values
+are:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">header</span></code> - Indicates the checksum is placed in an HTTP header.</li>
+<li><code class="docutils literal notranslate"><span class="pre">trailer</span></code> - Indicates the checksum is placed in the <a class="reference external" href="https://tools.ietf.org/html/rfc7230#section-4.1.2">chunked trailer part</a>
+of the body.</li>
+</ul>
+<p>An algorithm MAY be supported at multiple locations. The first
+supported <code class="docutils literal notranslate"><span class="pre">in</span></code> member value within the list of HttpChecksum property
+takes precedence and SHOULD be used.</p>
+<div class="last admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">See <a class="reference internal" href="#httpchecksum-trait-behavior"><span class="std std-ref">HttpChecksum Behavior</span></a> for more details.</p>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td>name</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first"><strong>Required</strong>. The name used as a header or trailer name for a checksum
+type. Recommended ABNF for name is as follows:</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">name</span> <span class="o">=</span> <span class="nc">lower-alpha</span> <span class="o">*</span><span class="p">([</span><span class="l">&quot;-&quot;</span><span class="p">](</span><span class="nc">lower-alpha</span> <span class="o">/</span> <span class="k">DIGIT</span><span class="p">))</span>
+<span class="nc">lower-alpha</span> <span class="o">=</span> <span class="l">%x61-7A</span>
+</pre></div>
+</div>
+<p>That is, it should start with a lowercase letter followed by any
+number of lowercase letters, digits, or non-sequential hyphens.</p>
+<p>A member with the <a class="reference internal" href="http-traits.html#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a> or <a class="reference internal" href="http-traits.html#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>
+MAY conflict with a <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> header name, allowing a checksum
+to be supplied directly.</p>
+<div class="last admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">See <a class="reference internal" href="#httpchecksum-trait-header-conflict-behavior"><span class="std std-ref">client behavior</span></a>
+for more details.</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="httpchecksum-behavior">
+<span id="httpchecksum-trait-behavior"></span><h3><a href="#httpchecksum-behavior">8.7.2. HttpChecksum Behavior</a></h3>
+<p class="rubric">Client Behavior</p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait has a modeled <code class="docutils literal notranslate"><span class="pre">request</span></code> section for the HTTP
+request, the client SHOULD compute the request payload checksum, using an
+algorithm defined within the request section. The computed checksum SHOULD
+be supplied at the first supported checksum location as per the order of
+<a class="reference internal" href="#checksum-property"><span class="std std-ref">checksum properties</span></a> defined within the request
+section.</p>
+<p>If the location is <code class="docutils literal notranslate"><span class="pre">header</span></code>, the client MUST put the checksum into the
+HTTP request headers. If the resolved location is <code class="docutils literal notranslate"><span class="pre">trailer</span></code>, the client MUST
+put the checksum into the <a class="reference external" href="https://tools.ietf.org/html/rfc7230#section-4.1.2">chunked trailer part</a> of the body. The header or
+trailer name to use with an algorithm location is defined by the <code class="docutils literal notranslate"><span class="pre">name</span></code>
+member of the <a class="reference internal" href="#checksum-property"><span class="std std-ref">checksum property</span></a>.</p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait has a modeled <code class="docutils literal notranslate"><span class="pre">response</span></code> section for the HTTP
+response, the client MUST look for a supported checksum at all supported
+locations as per the defined checksum properties. If a checksum is found, the
+client MUST validate the received checksum value by computing the corresponding
+checksum of the received payload.</p>
+<p id="httpchecksum-trait-header-conflict-behavior">If the HTTP header corresponding to a checksum is set explicitly, the
+implementation MUST use the explicitly set header and skip computing the
+payload checksum.</p>
+<p class="rubric">Service Behavior</p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait has a modeled <code class="docutils literal notranslate"><span class="pre">request</span></code> section for the HTTP
+request, the service MUST validate the received checksum by computing
+corresponding checksum of the request payload to ensure data integrity.</p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait models a <code class="docutils literal notranslate"><span class="pre">response</span></code> section for the HTTP
+response, the service MUST send at least one supported payload checksum at the
+first supported location for the checksum algorithm.</p>
+<div class="section" id="behavior-with-httpchecksumrequired">
+<span id="checksum-trait-with-checksum-required"></span><h4><a href="#behavior-with-httpchecksumrequired">8.7.2.1. Behavior with HttpChecksumRequired</a></h4>
+<p>When both the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait with a modeled <code class="docutils literal notranslate"><span class="pre">request</span></code> section, and
+the <a class="reference internal" href="#httpchecksumrequired-trait"><span class="std std-ref">httpChecksumRequired</span></a> trait are applied
+on an operation, the client MUST prefer using a checksum algorithm modeled for
+request in the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait over an MD5 digest, and place checksum
+as per the client behavior defined in the
+<a class="reference internal" href="#httpchecksum-trait-behavior"><span class="std std-ref">httpChecksum trait behavior</span></a> section.</p>
+<p>The service MUST accept a checksum value defined in the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code>
+trait's request property to satisfy checksum validation requirements for
+the operation's HTTP Request.</p>
+</div>
+</div>
+</div>
 </div>
 
 
@@ -809,6 +1025,14 @@ Smithy</div>
 </ul>
 </li>
 <li><a class="reference internal" href="#httpchecksumrequired-trait">8.6. <code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpchecksum-trait">8.7. <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait</a><ul>
+<li><a class="reference internal" href="#httpchecksumproperty-structure">8.7.1. HttpChecksumProperty structure</a></li>
+<li><a class="reference internal" href="#httpchecksum-behavior">8.7.2. HttpChecksum Behavior</a><ul>
+<li><a class="reference internal" href="#behavior-with-httpchecksumrequired">8.7.2.1. Behavior with HttpChecksumRequired</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

@@ -185,8 +185,12 @@ the query string (for example, &quot;/foo/bar&quot;).</td>
 </tr>
 <tr class="row-even"><td>host</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>The host / endpoint provided to the client, not including the path or
-scheme (for example, &quot;example.com&quot;).</td>
+<td>The host / endpoint provided to the client (for example, &quot;example.com&quot;).
+<code class="docutils literal notranslate"><span class="pre">host</span></code> MAY contain a path to indicate a base path from which each
+operation in the service is appended to. For example, given a <code class="docutils literal notranslate"><span class="pre">host</span></code>
+of <code class="docutils literal notranslate"><span class="pre">example.com/foo/bar</span></code> and an operation path of <code class="docutils literal notranslate"><span class="pre">/MyOperation</span></code>,
+the resolved host of the operation is <code class="docutils literal notranslate"><span class="pre">example.com</span></code> and the resolved
+path is <code class="docutils literal notranslate"><span class="pre">/foo/bar/MyOperation</span></code>.</td>
 </tr>
 <tr class="row-odd"><td>resolvedHost</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>

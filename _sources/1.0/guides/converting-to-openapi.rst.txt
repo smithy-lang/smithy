@@ -691,7 +691,7 @@ supportNonNumericFloats (``boolean``)
     When this is disabled (the default), references to floats/doubles will
     look like this:
 
-    .. code-block: json
+    .. code-block:: json
 
         {
             "floatMember": {

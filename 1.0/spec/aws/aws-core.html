@@ -241,7 +241,7 @@ To summarize, the value can only contain alphanumeric characters and spaces. How
 the first character cannot be a number, and when using spaces, each space must be
 between two alphanumeric characters.</li>
 <li>The value MUST NOT contain &quot;AWS&quot;, &quot;Aws&quot;, or &quot;Amazon&quot;.</li>
-<li>The value must not case-insensitively end with &quot;API&quot;, &quot;Client&quot;, or &quot;Service&quot;.</li>
+<li>The value SHOULD NOT case-insensitively end with &quot;API&quot;, &quot;Client&quot;, or &quot;Service&quot;.</li>
 <li>The value MUST NOT change change once a service is publicly released. If the value
 does change, the service will be considered a brand new service in the AWS SDKs
 and Tools.</li>
@@ -286,6 +286,10 @@ all letters that are not the first letter of a word, removing all spaces, and
 appending the word &quot;Client&quot; to the final transformed &quot;serviceId&quot;. So for the
 &quot;serviceId&quot; of &quot;API Gateway&quot;, the PHP client would be: <code class="docutils literal notranslate"><span class="pre">ApiGatewayClient</span></code>.</p>
 <p>Other AWS SDKs SHOULD follow a similar pattern when choosing client names.</p>
+<p><strong>Note</strong>:
+For backwards compatibility reasons, some services will include &quot;service&quot; or &quot;API&quot; as a suffix.
+New SDK major versions SHOULD strip <code class="docutils literal notranslate"><span class="pre">service</span></code> and <code class="docutils literal notranslate"><span class="pre">api</span></code> suffixes from <code class="docutils literal notranslate"><span class="pre">sdkId</span></code> when generating
+a client name.</p>
 </div>
 </div>
 <div class="section" id="cloudformationname">
@@ -1068,8 +1072,8 @@ operation MUST be bound to the service.</td>
 </tr>
 <tr class="row-odd"><td>error</td>
 <td><code class="docutils literal notranslate"><span class="pre">shapeId</span></code></td>
-<td><strong>REQUIRED</strong> An error shape which indicates to a client that an endpoint they are
-using is no longer valid. This error MUST be bound to any operation marked with
+<td><strong>RECOMMENDED</strong> An error shape which indicates to a client that an endpoint they are
+using is no longer valid. If present, this error MUST be bound to any operation marked with
 the <code class="docutils literal notranslate"><span class="pre">clientDiscoveredEndpoint</span></code> trait that is bound to the service.</td>
 </tr>
 </tbody>
