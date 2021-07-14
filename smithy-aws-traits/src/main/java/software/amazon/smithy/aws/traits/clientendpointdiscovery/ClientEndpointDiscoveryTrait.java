@@ -91,7 +91,8 @@ public final class ClientEndpointDiscoveryTrait extends AbstractTrait
     @Override
     public Builder toBuilder() {
         return new Builder()
-                .operation(getOperation())
+                .sourceLocation(getSourceLocation())
+                .operation(operation)
                 .error(error);
     }
 

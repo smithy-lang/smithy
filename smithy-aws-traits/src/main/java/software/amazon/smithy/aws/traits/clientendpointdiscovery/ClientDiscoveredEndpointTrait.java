@@ -61,7 +61,7 @@ public final class ClientDiscoveredEndpointTrait extends AbstractTrait
 
     @Override
     public SmithyBuilder<ClientDiscoveredEndpointTrait> toBuilder() {
-        return builder().required(required);
+        return builder().sourceLocation(getSourceLocation()).required(required);
     }
 
     /** Builder for {@link ClientDiscoveredEndpointTrait}. */

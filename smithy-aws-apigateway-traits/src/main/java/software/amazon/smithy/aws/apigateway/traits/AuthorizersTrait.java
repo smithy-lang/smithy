@@ -101,7 +101,7 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
 
     @Override
     public Builder toBuilder() {
-        return builder().authorizers(authorizers);
+        return builder().sourceLocation(getSourceLocation()).authorizers(authorizers);
     }
 
     @Override

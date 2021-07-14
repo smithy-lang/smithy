@@ -72,7 +72,10 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
 
     @Override
     public Builder toBuilder() {
-        Builder builder = builder().selector(selector).structurallyExclusive(structurallyExclusive);
+        Builder builder = builder()
+                .sourceLocation(getSourceLocation())
+                .selector(selector)
+                .structurallyExclusive(structurallyExclusive);
         conflicts.forEach(builder::addConflict);
         return builder;
     }

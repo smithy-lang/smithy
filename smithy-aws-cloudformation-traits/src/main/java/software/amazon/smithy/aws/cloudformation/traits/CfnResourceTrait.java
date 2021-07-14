@@ -76,7 +76,7 @@ public final class CfnResourceTrait extends AbstractTrait
 
     @Override
     public SmithyBuilder<CfnResourceTrait> toBuilder() {
-        return builder().name(name).additionalSchemas(additionalSchemas);
+        return builder().sourceLocation(getSourceLocation()).name(name).additionalSchemas(additionalSchemas);
     }
 
     public static final class Provider extends AbstractTrait.Provider {

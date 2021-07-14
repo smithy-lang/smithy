@@ -163,6 +163,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
     @Override
     public Builder toBuilder() {
         return builder()
+                .sourceLocation(getSourceLocation())
                 .passThroughBehavior(passThroughBehavior)
                 .contentHandling(contentHandling)
                 .requestParameters(requestParameters)
