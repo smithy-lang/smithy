@@ -70,9 +70,8 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            // BUG: sourceLocation
-            Builder builder = builder();
             ObjectNode objectNode = value.expectObjectNode();
+            Builder builder = builder().sourceLocation(value);
             builder.template(objectNode.expectStringMember(TEMPLATE).getValue());
             builder.absolute(objectNode.getBooleanMemberOrDefault(ABSOLUTE));
             builder.noRegion(objectNode.getBooleanMemberOrDefault(NO_REGION));

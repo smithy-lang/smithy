@@ -91,9 +91,9 @@ public final class ClientDiscoveredEndpointTrait extends AbstractTrait
 
         @Override
         public ClientDiscoveredEndpointTrait createTrait(ShapeId target, Node value) {
-            // BUG: sourceLocation
             ObjectNode objectNode = value.expectObjectNode();
             return builder()
+                    .sourceLocation(value)
                     .required(objectNode.getBooleanMemberOrDefault(REQUIRED, true))
                     .build();
         }
