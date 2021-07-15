@@ -47,6 +47,7 @@ import java.util.regex.Pattern;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.Pair;
@@ -373,8 +374,8 @@ final class DefaultNodeDeserializers {
                 return false;
             }
 
-            // Must either return the target class itself (like a builder) or void.
-            if (method.getReturnType() != void.class && method.getReturnType() != type) {
+
+            if (!hasSetterReturnType(method, type, propertyName)) {
                 return false;
             }
 
@@ -389,6 +390,16 @@ final class DefaultNodeDeserializers {
             }
 
             return false;
+        }
+
+        private static boolean hasSetterReturnType(Method method, Class<?> type, String propertyName) {
+            // This is a hack to make source location work. Work needs to be done in resolveClassFromType to
+            // make sourceLocation work without a hack like this.
+            if (propertyName.equals("sourceLocation") && method.getReturnType() == AbstractTraitBuilder.class) {
+                return true;
+            }
+            // Must either return the target class itself (like a builder) or void.
+            return method.getReturnType() == void.class || method.getReturnType() == type;
         }
 
         private static Class<?> determineParameterizedType(Method setter) {
@@ -431,6 +442,7 @@ final class DefaultNodeDeserializers {
             } else if (type instanceof WildcardType) {
                 return resolveClassFromType(((WildcardType) type).getUpperBounds()[0]);
             } else if (type instanceof TypeVariable<?>) {
+                // TODO: implement this to enable sourceLocation setting without hacks
                 throw new IllegalArgumentException("TypeVariable targets are not implemented: " + type);
             } else if (type instanceof GenericArrayType) {
                 throw new IllegalArgumentException("GenericArrayType targets are not implemented: " + type);
