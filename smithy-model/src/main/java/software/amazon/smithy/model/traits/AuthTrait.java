@@ -60,7 +60,6 @@ public final class AuthTrait extends AbstractTrait {
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            // BUG: sourceLocation
             List<ShapeId> values = new ArrayList<>();
             for (StringNode node : value.expectArrayNode().getElementsAs(StringNode.class)) {
                 values.add(node.expectShapeId());

@@ -60,9 +60,8 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            // BUG sourceLocation
             ObjectNode objectNode = value.expectObjectNode();
-            Builder builder = builder();
+            Builder builder = builder().sourceLocation(value);
             String sdkId = objectNode.getStringMember("sdkId")
                     .map(StringNode::getValue)
                     .orElseThrow(() -> new SourceException(String.format(

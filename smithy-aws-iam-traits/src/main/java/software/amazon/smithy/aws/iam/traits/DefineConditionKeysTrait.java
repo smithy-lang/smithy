@@ -53,8 +53,7 @@ public final class DefineConditionKeysTrait extends AbstractTrait implements ToS
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            // BUG: sourceLocation
-            Builder builder = builder();
+            Builder builder = builder().sourceLocation(value);
             for (Map.Entry<StringNode, Node> entry : value.expectObjectNode().getMembers().entrySet()) {
                 ConditionKeyDefinition definition = ConditionKeyDefinition.fromNode(
                         entry.getValue().expectObjectNode());

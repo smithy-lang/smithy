@@ -51,9 +51,9 @@ public final class CognitoUserPoolsTrait extends AbstractTrait implements ToSmit
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            // BUG: sourceLocation
             ObjectNode objectNode = value.expectObjectNode();
             return builder()
+                    .sourceLocation(value)
                     .providerArns(objectNode.expectArrayMember(PROVIDER_ARNS).getElementsAs(StringNode::getValue))
                     .build();
         }

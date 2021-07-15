@@ -53,9 +53,8 @@ public final class ArnReferenceTrait extends AbstractTrait implements ToSmithyBu
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            //BUG: sourcelocation
             ObjectNode objectNode = value.expectObjectNode();
-            Builder builder = builder();
+            Builder builder = builder().sourceLocation(value);
             objectNode.getStringMember(TYPE)
                     .map(StringNode::getValue)
                     .ifPresent(builder::type);
