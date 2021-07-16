@@ -58,7 +58,7 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
             "POST", new HttpMethodSemantics(false, null, true),
             "DELETE", new HttpMethodSemantics(false, true, false),
             "PUT", new HttpMethodSemantics(false, true, true),
-            "PATCH", new HttpMethodSemantics(false, false, true));
+            "PATCH", new HttpMethodSemantics(false, null, true));
 
     @Override
     public List<ValidationEvent> validate(Model model) {
