@@ -1215,15 +1215,31 @@ public class NodeMapperTest {
     }
 
     @Test
-    public void doesNotSerializeSourceLocation() {
+    public void doesNotSerializeSourceLocationAsKey() {
         NodeMapper mapper = new NodeMapper();
         HasSourceLocation hs = new HasSourceLocation();
-        hs.setSourceLocation(new SourceLocation("/foo/baz"));
+        SourceLocation sourceLocation = new SourceLocation("/foo/baz");
+        hs.setSourceLocation(sourceLocation);
         hs.setFoo("hi");
         Node result = mapper.serialize(hs);
 
         assertThat(result.expectObjectNode().getStringMap(), hasKey("foo"));
         assertThat(result.expectObjectNode().getStringMap(), not(hasKey("sourceLocation")));
+        assertThat(result.getSourceLocation(), equalTo(sourceLocation));
+    }
+
+    @Test
+    public void passesSourceLocationFromTrait() {
+        SourceLocation sourceLocation = new SourceLocation("/foo/baz");
+        SourceLocationBearerTrait trait = SourceLocationBearerTrait.builder()
+                .sourceLocation(sourceLocation)
+                .foo("foo")
+                .build();
+        Node result = trait.createNode();
+
+        assertThat(result.expectObjectNode().getStringMap(), hasKey("foo"));
+        assertThat(result.expectObjectNode().getStringMap(), not(hasKey("sourceLocation")));
+        assertThat(result.getSourceLocation(), equalTo(sourceLocation));
     }
 
     private static class HasSourceLocation implements FromSourceLocation {
@@ -1263,7 +1279,9 @@ public class NodeMapperTest {
 
         @Override
         protected Node createNode() {
-            return new NodeMapper().serialize(this);
+            NodeMapper mapper = new NodeMapper();
+            mapper.disableToNodeForClass(SourceLocationBearerTrait.class);
+            return mapper.serialize(this);
         }
 
         @Override
