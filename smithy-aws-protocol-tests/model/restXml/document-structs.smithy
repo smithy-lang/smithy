@@ -89,7 +89,7 @@ apply SimpleScalarProperties @httpRequestTests([
         uri: "/SimpleScalarProperties",
         body: """
               <SimpleScalarPropertiesInputOutput>
-                  <stringValue>string with white    space</stringValue>
+                  <stringValue>  string with white    space  </stringValue>
               </SimpleScalarPropertiesInputOutput>
               """,
         bodyMediaType: "application/xml",
@@ -99,7 +99,28 @@ apply SimpleScalarProperties @httpRequestTests([
         },
         params: {
             foo: "Foo",
-            stringValue: "string with white    space",
+            stringValue: "  string with white    space  ",
+        }
+    },
+    {
+        id: "SimpleScalarPropertiesPureWhiteSpace",
+        documentation: "Serializes string containing exclusively whitespace",
+        protocol: restXml,
+        method: "PUT",
+        uri: "/SimpleScalarProperties",
+        body: """
+              <SimpleScalarPropertiesInputOutput>
+                  <stringValue>   </stringValue>
+              </SimpleScalarPropertiesInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml",
+            "X-Foo": "Foo",
+        },
+        params: {
+            foo: "Foo",
+            stringValue: "   ",
         }
     },
     {
@@ -283,7 +304,7 @@ apply SimpleScalarProperties @httpResponseTests([
         body: """
               <?xml version = "1.0" encoding = "UTF-8"?>
               <SimpleScalarPropertiesInputOutput>
-                  <stringValue>string with white    space</stringValue>
+                  <stringValue> string with white    space </stringValue>
               </SimpleScalarPropertiesInputOutput>
               """,
         bodyMediaType: "application/xml",
@@ -293,7 +314,28 @@ apply SimpleScalarProperties @httpResponseTests([
         },
         params: {
             foo: "Foo",
-            stringValue: "string with white    space",
+            stringValue: " string with white    space ",
+        }
+    },
+    {
+        id: "SimpleScalarPropertiesPureWhiteSpace",
+        documentation: "Serializes string containing white space",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <?xml version = "1.0" encoding = "UTF-8"?>
+              <SimpleScalarPropertiesInputOutput>
+                  <stringValue>  </stringValue>
+              </SimpleScalarPropertiesInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml",
+            "X-Foo": "Foo",
+        },
+        params: {
+            foo: "Foo",
+            stringValue: "  ",
         }
     },
     {
