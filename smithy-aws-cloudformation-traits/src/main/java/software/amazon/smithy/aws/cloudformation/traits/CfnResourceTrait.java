@@ -88,7 +88,6 @@ public final class CfnResourceTrait extends AbstractTrait
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            // TODO: sourceLocation?
             return new NodeMapper().deserialize(value, CfnResourceTrait.class);
         }
     }

@@ -88,7 +88,6 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            // TODO: sourceLocation?
             return new NodeMapper().deserialize(value, IntegrationTrait.class);
         }
     }

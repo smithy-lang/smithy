@@ -56,7 +56,6 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            // TODO: sourceLocation?
             return new NodeMapper().deserialize(value, MockIntegrationTrait.class);
         }
     }
