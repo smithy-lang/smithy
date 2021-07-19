@@ -14,7 +14,6 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,9 +33,14 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.AbstractTrait;
+import software.amazon.smithy.model.traits.AbstractTrait.Provider;
+import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.RangeTrait;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public class NodeMapperTest {
     @Test
@@ -1198,15 +1202,46 @@ public class NodeMapperTest {
     }
 
     @Test
-    public void doesNotSerializeSourceLocation() {
+    public void deserializesIntoTraitWithSourceLocation() {
+        NodeMapper mapper = new NodeMapper();
+        Map<StringNode, Node> mappings = new HashMap<>();
+        mappings.put(StringNode.from("foo"), StringNode.from("foo"));
+        SourceLocation sourceLocation = new SourceLocation("/abc/def");
+        Node node = new ObjectNode(mappings, sourceLocation);
+        SourceLocationBearerTrait trait = mapper.deserialize(node, SourceLocationBearerTrait.class);
+
+        assertThat(trait.getSourceLocation(), equalTo(sourceLocation));
+        assertThat(trait.getFoo(), equalTo("foo"));
+    }
+
+    @Test
+    public void serializesSourceLocationFromValue() {
         NodeMapper mapper = new NodeMapper();
         HasSourceLocation hs = new HasSourceLocation();
-        hs.setSourceLocation(new SourceLocation("/foo/baz"));
+        SourceLocation sourceLocation = new SourceLocation("/foo/baz");
+        hs.setSourceLocation(sourceLocation);
         hs.setFoo("hi");
         Node result = mapper.serialize(hs);
 
         assertThat(result.expectObjectNode().getStringMap(), hasKey("foo"));
+        // The sourceLocation needs to be set on the node, not as a key.
         assertThat(result.expectObjectNode().getStringMap(), not(hasKey("sourceLocation")));
+        assertThat(result.getSourceLocation(), equalTo(sourceLocation));
+    }
+
+    @Test
+    public void serializesSourceLocationFromTrait() {
+        SourceLocation sourceLocation = new SourceLocation("/foo/baz");
+        SourceLocationBearerTrait trait = SourceLocationBearerTrait.builder()
+                .sourceLocation(sourceLocation)
+                .foo("foo")
+                .build();
+        Node result = trait.createNode();
+
+        assertThat(result.expectObjectNode().getStringMap(), hasKey("foo"));
+        // The sourceLocation needs to be set on the node, not as a key.
+        assertThat(result.expectObjectNode().getStringMap(), not(hasKey("sourceLocation")));
+        assertThat(result.getSourceLocation(), equalTo(sourceLocation));
     }
 
     private static class HasSourceLocation implements FromSourceLocation {
@@ -1228,6 +1263,50 @@ public class NodeMapperTest {
 
         public String getFoo() {
             return foo;
+        }
+    }
+
+    private static class SourceLocationBearerTrait extends AbstractTrait implements ToSmithyBuilder<SourceLocationBearerTrait> {
+        public static final ShapeId ID = ShapeId.from("smithy.test#sourceLocationBearer");
+        private final String foo;
+
+        public SourceLocationBearerTrait(Builder builder) {
+            super(ID, builder.getSourceLocation());
+            this.foo = builder.foo;
+        }
+
+        public String getFoo() {
+            return foo;
+        }
+
+        @Override
+        protected Node createNode() {
+            NodeMapper mapper = new NodeMapper();
+            mapper.disableToNodeForClass(SourceLocationBearerTrait.class);
+            return mapper.serialize(this);
+        }
+
+        @Override
+        public SmithyBuilder<SourceLocationBearerTrait> toBuilder() {
+            return new Builder().sourceLocation(getSourceLocation());
+        }
+
+        public static Builder builder() {
+            return new Builder();
+        }
+
+        public static final class Builder extends AbstractTraitBuilder<SourceLocationBearerTrait, Builder> {
+            private String foo;
+
+            @Override
+            public SourceLocationBearerTrait build() {
+                return new SourceLocationBearerTrait(this);
+            }
+
+            public Builder foo(String foo) {
+                this.foo = foo;
+                return this;
+            }
         }
     }
 

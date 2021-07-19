@@ -65,6 +65,7 @@ final class DefaultNodeSerializers {
                 return null;
             }
 
+            // TODO: make sure every instance of `toNode` is setting this
             return value.toNode();
         }
     };
@@ -362,7 +363,13 @@ final class DefaultNodeSerializers {
             // multiple times (like in a List<T>).
             serializedObjects.remove(value);
 
-            return new ObjectNode(mappings, SourceLocation.NONE);
+            // Pass on the source location if it is present.
+            SourceLocation sourceLocation = SourceLocation.NONE;
+            if (value instanceof FromSourceLocation) {
+                sourceLocation = ((FromSourceLocation) value).getSourceLocation();
+            }
+
+            return new ObjectNode(mappings, sourceLocation);
         }
 
         private boolean canSerialize(NodeMapper mapper, Node value) {

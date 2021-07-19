@@ -374,7 +374,8 @@ final class DefaultNodeDeserializers {
             }
 
             // Must either return the target class itself (like a builder) or void.
-            if (method.getReturnType() != void.class && method.getReturnType() != type) {
+            // Ideally we should attempt to resolve any generics and make an assertion of the concrete type.
+            if (!(method.getReturnType() == void.class || method.getReturnType().isAssignableFrom(type))) {
                 return false;
             }
 
@@ -431,6 +432,7 @@ final class DefaultNodeDeserializers {
             } else if (type instanceof WildcardType) {
                 return resolveClassFromType(((WildcardType) type).getUpperBounds()[0]);
             } else if (type instanceof TypeVariable<?>) {
+                // TODO: implement this to enable improved builder detection
                 throw new IllegalArgumentException("TypeVariable targets are not implemented: " + type);
             } else if (type instanceof GenericArrayType) {
                 throw new IllegalArgumentException("GenericArrayType targets are not implemented: " + type);
