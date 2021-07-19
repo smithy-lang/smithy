@@ -1215,7 +1215,7 @@ public class NodeMapperTest {
     }
 
     @Test
-    public void doesNotSerializeSourceLocationAsKey() {
+    public void serializesSourceLocationFromValue() {
         NodeMapper mapper = new NodeMapper();
         HasSourceLocation hs = new HasSourceLocation();
         SourceLocation sourceLocation = new SourceLocation("/foo/baz");
@@ -1224,12 +1224,13 @@ public class NodeMapperTest {
         Node result = mapper.serialize(hs);
 
         assertThat(result.expectObjectNode().getStringMap(), hasKey("foo"));
+        // The sourceLocation needs to be set on the node, not as a key.
         assertThat(result.expectObjectNode().getStringMap(), not(hasKey("sourceLocation")));
         assertThat(result.getSourceLocation(), equalTo(sourceLocation));
     }
 
     @Test
-    public void passesSourceLocationFromTrait() {
+    public void serializesSourceLocationFromTrait() {
         SourceLocation sourceLocation = new SourceLocation("/foo/baz");
         SourceLocationBearerTrait trait = SourceLocationBearerTrait.builder()
                 .sourceLocation(sourceLocation)
@@ -1238,6 +1239,7 @@ public class NodeMapperTest {
         Node result = trait.createNode();
 
         assertThat(result.expectObjectNode().getStringMap(), hasKey("foo"));
+        // The sourceLocation needs to be set on the node, not as a key.
         assertThat(result.expectObjectNode().getStringMap(), not(hasKey("sourceLocation")));
         assertThat(result.getSourceLocation(), equalTo(sourceLocation));
     }
