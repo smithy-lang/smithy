@@ -157,8 +157,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
         NodeMapper mapper = new NodeMapper();
         mapper.disableToNodeForClass(MockIntegrationTrait.class);
         mapper.setOmitEmptyValues(true);
-        ObjectNode.Builder builder = mapper.serialize(this).expectObjectNode().toBuilder();
-        return builder.sourceLocation(getSourceLocation()).build();
+        return mapper.serialize(this).expectObjectNode();
     }
 
     @Override

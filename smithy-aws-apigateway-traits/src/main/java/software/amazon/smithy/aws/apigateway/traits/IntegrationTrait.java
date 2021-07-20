@@ -336,8 +336,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
         NodeMapper mapper = new NodeMapper();
         mapper.disableToNodeForClass(IntegrationTrait.class);
         mapper.setOmitEmptyValues(true);
-        ObjectNode.Builder builder = mapper.serialize(this).expectObjectNode().toBuilder();
-        return builder.sourceLocation(getSourceLocation()).build();
+        return mapper.serialize(this).expectObjectNode();
     }
 
     @Override
