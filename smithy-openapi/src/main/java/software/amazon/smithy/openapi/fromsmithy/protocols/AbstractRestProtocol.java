@@ -21,7 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -37,6 +39,7 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
@@ -51,6 +54,7 @@ import software.amazon.smithy.openapi.model.ParameterObject;
 import software.amazon.smithy.openapi.model.Ref;
 import software.amazon.smithy.openapi.model.RequestBodyObject;
 import software.amazon.smithy.openapi.model.ResponseObject;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Provides the shared functionality used across protocols that use Smithy's
@@ -71,6 +75,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
 
     private static final String AWS_EVENT_STREAM_CONTENT_TYPE = "application/vnd.amazon.eventstream";
     private static final Pattern NON_ALPHA_NUMERIC = Pattern.compile("[^A-Za-z0-9]");
+    // If a request returns / accepts a body then it should allow these un-modeled headers.
+    private static final Set<String> CONTENT_HEADERS = SetUtils.of("Content-Length", "Content-Type");
 
     private static final Logger LOGGER = Logger.getLogger(AbstractRestProtocol.class.getName());
 
@@ -107,6 +113,45 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             List<HttpBinding> bindings,
             MessageType messageType
     );
+
+    @Override
+    public Set<String> getProtocolRequestHeaders(Context<T> context, OperationShape operationShape) {
+        Set<String> headers = new TreeSet<>(OpenApiProtocol.super.getProtocolRequestHeaders(context, operationShape));
+        HttpBindingIndex bindingIndex = HttpBindingIndex.of(context.getModel());
+        String documentMediaType = getDocumentMediaType(context, operationShape, MessageType.REQUEST);
+        // If the request has a body with a content type, allow the content-type and content-length headers.
+        bindingIndex.determineRequestContentType(operationShape, documentMediaType)
+                .ifPresent(c -> headers.addAll(CONTENT_HEADERS));
+        return headers;
+    }
+
+    @Override
+    public Set<String> getProtocolResponseHeaders(Context<T> context, OperationShape operationShape) {
+        Set<String> headers = new TreeSet<>(OpenApiProtocol.super.getProtocolResponseHeaders(context, operationShape));
+        // If the operation or any attached errors have a content type, then both the content-type and content-length
+        // headers need to be exposed.
+        if (willReturnContentType(context, operationShape)) {
+            headers.addAll(CONTENT_HEADERS);
+        }
+        return headers;
+    }
+
+    private boolean willReturnContentType(Context<T> context, OperationShape operationShape) {
+        HttpBindingIndex bindingIndex = HttpBindingIndex.of(context.getModel());
+        String documentMediaType = getDocumentMediaType(context, operationShape, MessageType.RESPONSE);
+        Optional<String> contentType = bindingIndex.determineResponseContentType(operationShape, documentMediaType);
+        if (contentType.isPresent()) {
+            return true;
+        }
+        for (ShapeId error : operationShape.getErrors()) {
+            Shape errorShape = context.getModel().expectShape(error);
+            contentType = bindingIndex.determineResponseContentType(errorShape, documentMediaType);
+            if (contentType.isPresent()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public Optional<Operation> createOperation(Context<T> context, OperationShape operation) {
