@@ -222,15 +222,27 @@
             "*"
         ],
         "exposeHeaders": [
+            "Content-Length",
+            "Content-Type",
+            "X-Amzn-Errortype",
+            "X-Amzn-Requestid",
             "X-Foo-Header",
             "X-Service-Output-Metadata"
         ],
         "allowHeaders": [
+            "Amz-Sdk-Invocation-Id",
+            "Amz-Sdk-Request",
             "Authorization",
+            "Content-Length",
+            "Content-Type",
             "Date",
+            "Host",
+            "X-Amz-Content-Sha256",
             "X-Amz-Date",
             "X-Amz-Security-Token",
             "X-Amz-Target",
+            "X-Amz-User-Agent",
+            "X-Amzn-Trace-Id",
             "X-EnumString",
             "X-Foo-Header",
             "X-Service-Input-Metadata"

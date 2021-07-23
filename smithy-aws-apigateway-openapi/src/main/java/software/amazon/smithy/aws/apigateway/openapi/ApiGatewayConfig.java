@@ -15,9 +15,9 @@
 
 package software.amazon.smithy.aws.apigateway.openapi;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import software.amazon.smithy.utils.ListUtils;
 
 /**
  * API Gateway OpenAPI configuration.
@@ -55,7 +55,7 @@ public final class ApiGatewayConfig {
 
     private ApiType apiGatewayType = ApiType.REST;
     private boolean disableCloudFormationSubstitution;
-    private List<String> additionalAllowedCorsHeaders = ListUtils.of("amz-sdk-invocation-id", "amz-sdk-request");
+    private List<String> additionalAllowedCorsHeaders = new ArrayList<>();
 
     /**
      * @return Returns true if CloudFormation substitutions are disabled.
