@@ -89,5 +89,8 @@ service RestJson {
 
         // custom endpoints with paths
         HostWithPathOperation,
+
+        // checksum(s)
+        HttpChecksumRequired,
     ]
 }
