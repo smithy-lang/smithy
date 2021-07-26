@@ -284,7 +284,7 @@ Value type
     shape.
 
 Operations that are not annotated with the ``auth`` trait inherit the ``auth``
-trait of the service they are bound to, and if the service is not annotated
+trait of the service they are bound to, and if the operation is not annotated
 with the ``auth`` trait, then the operation is expected to support each of
 the :ref:`authentication scheme traits <authDefinition-trait>` applied to the
 service. Each entry in the ``auth`` trait is a shape ID that MUST refer to an
