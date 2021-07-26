@@ -1,0 +1,2 @@
+[WARNING] smithy.example#SayHello: This shape applies a trait that is unstable: smithy.test#httpMalformedRequestTests | UnstableTrait
+[ERROR] smithy.example#SayHello: Each list associated to a key in `testParameters` must be of the same length. | HttpMalformedRequestTests
