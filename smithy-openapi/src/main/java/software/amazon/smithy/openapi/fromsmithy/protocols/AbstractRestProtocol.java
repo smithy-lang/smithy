@@ -42,6 +42,10 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
+import software.amazon.smithy.model.traits.HttpChecksumProperty;
+import software.amazon.smithy.model.traits.HttpChecksumProperty.Location;
+import software.amazon.smithy.model.traits.HttpChecksumRequiredTrait;
+import software.amazon.smithy.model.traits.HttpChecksumTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.Trait;
@@ -117,21 +121,46 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     @Override
     public Set<String> getProtocolRequestHeaders(Context<T> context, OperationShape operationShape) {
         Set<String> headers = new TreeSet<>(OpenApiProtocol.super.getProtocolRequestHeaders(context, operationShape));
+
         HttpBindingIndex bindingIndex = HttpBindingIndex.of(context.getModel());
         String documentMediaType = getDocumentMediaType(context, operationShape, MessageType.REQUEST);
         // If the request has a body with a content type, allow the content-type and content-length headers.
         bindingIndex.determineRequestContentType(operationShape, documentMediaType)
                 .ifPresent(c -> headers.addAll(CONTENT_HEADERS));
+
+        if (operationShape.hasTrait(HttpChecksumRequiredTrait.class)) {
+            headers.add("Content-Md5");
+        }
+        if (operationShape.hasTrait(HttpChecksumTrait.class)) {
+            HttpChecksumTrait trait = operationShape.expectTrait(HttpChecksumTrait.class);
+            headers.addAll(getChecksumHeaders(trait.getRequestProperties()));
+        }
         return headers;
     }
 
     @Override
     public Set<String> getProtocolResponseHeaders(Context<T> context, OperationShape operationShape) {
         Set<String> headers = new TreeSet<>(OpenApiProtocol.super.getProtocolResponseHeaders(context, operationShape));
+
         // If the operation or any attached errors have a content type, then both the content-type and content-length
         // headers need to be exposed.
         if (willReturnContentType(context, operationShape)) {
             headers.addAll(CONTENT_HEADERS);
+        }
+
+        if (operationShape.hasTrait(HttpChecksumTrait.class)) {
+            HttpChecksumTrait trait = operationShape.expectTrait(HttpChecksumTrait.class);
+            headers.addAll(getChecksumHeaders(trait.getRequestProperties()));
+        }
+        return headers;
+    }
+
+    private Set<String> getChecksumHeaders(List<HttpChecksumProperty> httpChecksumProperties) {
+        Set<String> headers = new TreeSet<>();
+        for (HttpChecksumProperty property : httpChecksumProperties) {
+            if (property.getLocation().equals(Location.HEADER)) {
+                headers.add(property.getName());
+            }
         }
         return headers;
     }
