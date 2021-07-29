@@ -29,8 +29,9 @@ import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.Pair;
 
 /**
- * Emits a NOTE when a new enum value is added, emits an ERROR when an
- * enum value is removed, and emits an ERROR when an enum name changes.
+ * Emits a NOTE when a new enum value is appended, emits an ERROR when an
+ * enum value is removed, emits an ERROR when an enum name changes, and
+ * emits an ERROR when a new enum value is inserted.
  */
 public final class ChangedEnumTrait extends AbstractDiffEvaluator {
     @Override
@@ -46,6 +47,7 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
         EnumTrait oldTrait = trait.getLeft();
         EnumTrait newTrait = trait.getRight();
         List<ValidationEvent> events = new ArrayList<>();
+        int oldEndPosition = oldTrait.getValues().size() - 1;
 
         for (EnumDefinition definition : oldTrait.getValues()) {
             Optional<EnumDefinition> maybeNewValue = newTrait.getValues().stream()
@@ -55,6 +57,7 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
             if (!maybeNewValue.isPresent()) {
                 events.add(error(change.getNewShape(), String.format(
                         "Enum value `%s` was removed", definition.getValue())));
+                oldEndPosition--;
             } else {
                 EnumDefinition newValue = maybeNewValue.get();
                 if (!newValue.getName().equals(definition.getName())) {
@@ -67,11 +70,20 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
             }
         }
 
+        int newPosition = 0;
         for (EnumDefinition definition : newTrait.getValues()) {
             if (!oldTrait.getEnumDefinitionValues().contains(definition.getValue())) {
-                events.add(note(change.getNewShape(), String.format(
-                        "Enum value `%s` was added", definition.getValue())));
+                if (newPosition <= oldEndPosition) {
+                    events.add(error(change.getNewShape(), String.format(
+                            "Enum value `%s` was inserted. This can cause compatibility issues when ordinal values are "
+                                    + "used for iteration, serialization, etc.", definition.getValue())));
+                } else {
+                    events.add(note(change.getNewShape(), String.format(
+                            "Enum value `%s` was appended", definition.getValue())));
+                }
             }
+
+            newPosition++;
         }
 
         return events;
