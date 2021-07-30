@@ -132,8 +132,7 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         Map<String, OperationShape> operations = topDownIndex.getContainedOperations(context.getService()).stream()
                 .collect(Collectors.toMap(o -> o.getId().getName(), o -> o));
-        for (Map.Entry<String, OperationObject> method : pathItem.getOperations().entrySet()) {
-            OperationObject operationObject = method.getValue();
+        for (OperationObject operationObject : pathItem.getOperations().values()) {
             if (operationObject.getOperationId().isPresent()) {
                 OperationShape operationShape = operations.get(operationObject.getOperationId().get());
                 headerNames.addAll(context.getOpenApiProtocol().getProtocolRequestHeaders(context, operationShape));

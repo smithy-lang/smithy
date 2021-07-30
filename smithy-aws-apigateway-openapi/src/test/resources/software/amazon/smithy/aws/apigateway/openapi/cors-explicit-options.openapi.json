@@ -70,7 +70,7 @@
               "statusCode": "200",
               "responseParameters": {
                 "method.response.header.Access-Control-Allow-Origin": "'https://foo.com'",
-                "method.response.header.Access-Control-Expose-Headers": "'X-Amzn-Errortype,X-Amzn-Requestid,X-Hd'"
+                "method.response.header.Access-Control-Expose-Headers": "'Content-Length,Content-Type,X-Amzn-Errortype,X-Amzn-Requestid,X-Hd'"
               }
             }
           }
