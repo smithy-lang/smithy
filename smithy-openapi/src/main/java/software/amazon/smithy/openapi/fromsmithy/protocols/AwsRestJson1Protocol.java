@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientEndpointDiscoveryTrait;
+import software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientDiscoveredEndpointTrait;
 import software.amazon.smithy.aws.traits.protocols.RestJson1Trait;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.Model;
@@ -64,7 +64,7 @@ public final class AwsRestJson1Protocol extends AbstractRestProtocol<RestJson1Tr
         // x-amz-api-version if it is an endpoint operation
         Set<String> headers = new TreeSet<>(super.getProtocolRequestHeaders(context, operationShape));
         headers.addAll(AWS_REQUEST_HEADERS);
-        if (operationShape.hasTrait(ClientEndpointDiscoveryTrait.class)) {
+        if (operationShape.hasTrait(ClientDiscoveredEndpointTrait.class)) {
             headers.add("X-Amz-Api-Version");
         }
         return headers;
