@@ -45,10 +45,12 @@ public abstract class EntityShape extends Shape {
      * Gets operations bound only through the "operations" property.
      *
      * <p>This will not include operations bound to resources using
-     * a lifecycle operation binding.
+     * a lifecycle operation binding. This will also not include
+     * operations bound to this entity through sub-resources.
      *
      * @return Get the "operations" directly bound to this shape.
      * @see #getAllOperations()
+     * @see software.amazon.smithy.model.knowledge.TopDownIndex#getContainedOperations
      */
     public final Set<ShapeId> getOperations() {
         return operations;
@@ -57,7 +59,12 @@ public abstract class EntityShape extends Shape {
     /**
      * Get all operations directly bound to this shape.
      *
+     * <p>This will include operations bound directly to resources
+     * using a lifecycle operation binding. This will not include
+     * operations bound to this entity through sub-resources.
+     *
      * @return Returns all operations bound to the shape.
+     * @see software.amazon.smithy.model.knowledge.TopDownIndex#getContainedOperations
      */
     public Set<ShapeId> getAllOperations() {
         return getOperations();
