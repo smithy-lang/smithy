@@ -31,7 +31,8 @@ import software.amazon.smithy.utils.Pair;
 /**
  * Emits a NOTE when a new enum value is appended, emits an ERROR when an
  * enum value is removed, emits an ERROR when an enum name changes, and
- * emits an ERROR when a new enum value is inserted.
+ * emits an ERROR when a new enum value is inserted before the end of the
+ * list of existing values.
  */
 public final class ChangedEnumTrait extends AbstractDiffEvaluator {
     @Override
@@ -75,8 +76,9 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
             if (!oldTrait.getEnumDefinitionValues().contains(definition.getValue())) {
                 if (newPosition <= oldEndPosition) {
                     events.add(error(change.getNewShape(), String.format(
-                            "Enum value `%s` was inserted. This can cause compatibility issues when ordinal values are "
-                                    + "used for iteration, serialization, etc.", definition.getValue())));
+                            "Enum value `%s` was inserted before the end of the list of existing values. This can "
+                                    + "cause compatibility issues when ordinal values are used for iteration, "
+                                    + "serialization, etc.", definition.getValue())));
                 } else {
                     events.add(note(change.getNewShape(), String.format(
                             "Enum value `%s` was appended", definition.getValue())));
