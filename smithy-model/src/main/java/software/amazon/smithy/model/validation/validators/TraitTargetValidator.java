@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -25,7 +25,9 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -49,15 +51,29 @@ public final class TraitTargetValidator extends AbstractValidator {
 
         // Only validate trait targets for traits that are actually used.
         for (ShapeId traitId : model.getAppliedTraits()) {
-            model.getTraitDefinition(traitId).ifPresent(definition -> {
+            model.getShape(traitId).ifPresent(traitShape -> {
                 // Find all shapes that have the used trait applied to it.
                 Set<Shape> shapes = model.getShapesWithTrait(traitId);
-                validateTraitTargets(model, events, traitId, definition.getSelector(), shapes, selectorCache);
+                validateMixinsUsedAsTraits(traitShape, shapes, events);
+                traitShape.getTrait(TraitDefinition.class).ifPresent(definition -> {
+                    validateTraitTargets(model, events, traitId, definition.getSelector(), shapes, selectorCache);
+                });
             });
         }
 
         selectorCache.clear();
         return events;
+    }
+
+    private void validateMixinsUsedAsTraits(Shape traitShape, Set<Shape> appliedTo, List<ValidationEvent> events) {
+        if (traitShape.hasTrait(MixinTrait.class)) {
+            for (Shape shape : appliedTo) {
+                events.add(error(shape, String.format(
+                        "Trait `%s` is a mixin and cannot be applied to `%s`.",
+                        Trait.getIdiomaticTraitName(traitShape.getId()),
+                        shape.getId())));
+            }
+        }
     }
 
     private void validateTraitTargets(

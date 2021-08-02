@@ -85,7 +85,7 @@ public abstract class EntityShape extends Shape {
      * @param <B> Concrete builder type.
      * @param <S> Shape type being created.
      */
-    public abstract static class Builder<B extends Builder<?, ?>, S extends EntityShape>
+    public abstract static class Builder<B extends Builder<B, S>, S extends EntityShape>
             extends AbstractShapeBuilder<B, S> {
 
         private final Set<ShapeId> resources = new LinkedHashSet<>();

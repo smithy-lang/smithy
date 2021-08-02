@@ -47,7 +47,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this)
+        return updateBuilder(builder())
                 .input(input)
                 .output(output)
                 .errors(errors);

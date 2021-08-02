@@ -62,6 +62,32 @@ public final class SmithyIdlModelSerializer {
     private final Function<Shape, Path> shapePlacer;
     private final Path basePath;
 
+    /**
+     * Trait serialization features.
+     */
+    private enum TraitFeature {
+        /** Omit required traits (e.g., when using "!" on members instead). */
+        OMIT_REQUIRED,
+
+        /** Inline documentation traits with other traits as opposed to using /// syntax. */
+        NO_SPECIAL_DOCS_SYNTAX;
+
+        /**
+         * Checks if the current enum value is present in an array of enum values.
+         *
+         * @param haystack Array of enums to check.
+         * @return Returns true if this enum is found in the array.
+         */
+        boolean hasFeature(TraitFeature[] haystack) {
+            for (TraitFeature test : haystack) {
+                if (test == this) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
     private SmithyIdlModelSerializer(Builder builder) {
         metadataFilter = builder.metadataFilter;
         shapeFilter = builder.shapeFilter.and(FunctionalUtils.not(Prelude::isPreludeShape));
@@ -341,51 +367,92 @@ public final class SmithyIdlModelSerializer {
         }
 
         private void shapeWithMembers(Shape shape, List<MemberShape> members, boolean structureMember) {
-            serializeTraits(shape);
-            if (members.isEmpty()) {
-                // If there are no members then we don't want to introduce an unnecessary newline by opening a block.
-                codeWriter.write("$L $L {}", shape.getType(), shape.getId().getName()).write("");
-                return;
-            }
-
-            // Omit the "@required" trait if it is to be suffixed on the target.
-            Predicate<Trait> memberTraitFilter = structureMember ? OMIT_REQUIRED : null;
-
-            codeWriter.openBlock("$L $L {", shape.getType(), shape.getId().getName());
+            List<MemberShape> nonMixinMembers = new ArrayList<>();
+            List<MemberShape> mixinMembers = new ArrayList<>();
             for (MemberShape member : members) {
-                serializeTraits(member, memberTraitFilter);
-                // Suffix with "!" if it's a required structure member.
-                String requiredSuffix = structureMember && member.isRequired() ? "!" : "";
-                codeWriter.write("$L: $I$L", member.getMemberName(), member.getTarget(), requiredSuffix);
+                if (member.getMixins().isEmpty()) {
+                    nonMixinMembers.add(member);
+                } else if (!member.getIntroducedTraits().isEmpty()) {
+                    mixinMembers.add(member);
+                }
             }
 
-            codeWriter.closeBlock("}").write("");
+            serializeTraits(shape.getIntroducedTraits());
+            codeWriter.writeInline("$L $L ", shape.getType(), shape.getId().getName());
+
+            if (shape.getMixins().size() == 1) {
+                codeWriter.writeInline("with $I ", shape.getMixins().iterator().next());
+            } else if (shape.getMixins().size() > 1) {
+                codeWriter.writeInline("with");
+                for (ShapeId id : shape.getMixins()) {
+                    // Trailing spaces are trimmed.
+                    codeWriter.writeInline("\n    $I ", id);
+                }
+                if (!nonMixinMembers.isEmpty()) {
+                    codeWriter.write("");
+                }
+            }
+
+            if (nonMixinMembers.isEmpty()) {
+                // When the are no members to write, put "{}" on the same line.
+                codeWriter.writeInline("{}").write("").write("");
+            } else {
+                codeWriter.openBlock("{", "}", () -> {
+                    for (MemberShape member : nonMixinMembers) {
+                        // Omit required traits and instead use "!" syntax.
+                        serializeTraits(member.getAllTraits(), TraitFeature.OMIT_REQUIRED);
+                        // Suffix with "!" if it's a required structure member.
+                        String requiredSuffix = structureMember && member.isRequired() ? "!" : "";
+                        codeWriter.write("$L: $I$L", member.getMemberName(), member.getTarget(), requiredSuffix);
+                    }
+                }).write("");
+
+                if (!mixinMembers.isEmpty()) {
+                    for (MemberShape member : mixinMembers) {
+                        // Use short form for a single trait, and block form for multiple traits.
+                        if (member.getIntroducedTraits().size() == 1) {
+                            codeWriter.writeInline("apply $I ", member.getId());
+                            serializeTraits(member.getIntroducedTraits(), TraitFeature.NO_SPECIAL_DOCS_SYNTAX);
+                            codeWriter.write("");
+                        } else {
+                            codeWriter.openBlock("apply $I {", "}", member.getId(), () -> {
+                                // Only serialize local traits, and don't use special documentation syntax here.
+                                serializeTraits(member.getIntroducedTraits(), TraitFeature.NO_SPECIAL_DOCS_SYNTAX);
+                            }).write("");
+                        }
+                    }
+                }
+            }
         }
 
         private void serializeTraits(Shape shape) {
-            serializeTraits(shape, null);
+            serializeTraits(shape.getAllTraits());
         }
 
-        private void serializeTraits(Shape shape, Predicate<Trait> memberTraitFilter) {
-            if (memberTraitFilter == null) {
-                memberTraitFilter = FunctionalUtils.alwaysTrue();
-            }
+        private void serializeTraits(Map<ShapeId, Trait> traits, TraitFeature... traitFeatures) {
+            boolean noSpecialDocsSyntax = TraitFeature.NO_SPECIAL_DOCS_SYNTAX.hasFeature(traitFeatures);
+            boolean omitRequired = TraitFeature.OMIT_REQUIRED.hasFeature(traitFeatures);
 
             // The documentation trait always needs to be serialized first since it uses special syntax.
-            shape.getTrait(DocumentationTrait.class).filter(traitFilter).ifPresent(this::serializeDocumentationTrait);
+            if (!noSpecialDocsSyntax && traits.containsKey(DocumentationTrait.ID)) {
+                Trait documentation = traits.get(DocumentationTrait.ID);
+                if (traitFilter.test(documentation)) {
+                    serializeDocumentation(documentation.toNode().expectStringNode().getValue());
+                }
+            }
 
-            shape.getAllTraits().values().stream()
-                    .filter(trait -> !(trait instanceof DocumentationTrait))
+            traits.values().stream()
+                    .filter(trait -> noSpecialDocsSyntax || !(trait instanceof DocumentationTrait))
+                    .filter(trait -> !(omitRequired && trait.toShapeId().equals(RequiredTrait.ID)))
                     .filter(traitFilter)
-                    .filter(memberTraitFilter)
                     .sorted(Comparator.comparing(Trait::toShapeId))
                     .forEach(this::serializeTrait);
         }
 
-        private void serializeDocumentationTrait(DocumentationTrait trait) {
+        private void serializeDocumentation(String documentation) {
             // The documentation trait has a special syntax, which we always want to use.
             codeWriter.setNewlinePrefix("/// ")
-                    .write(trait.getValue().replace("$", "$$"))
+                    .write(documentation.replace("$", "$$"))
                     .setNewlinePrefix("");
         }
 
@@ -449,7 +516,7 @@ public final class SmithyIdlModelSerializer {
             codeWriter.openBlock("service $L {", shape.getId().getName());
 
             if (!StringUtils.isBlank(shape.getVersion())) {
-                codeWriter.write("version: $S,", shape.getVersion());
+                codeWriter.write("version: $S", shape.getVersion());
             }
 
             codeWriter.writeOptionalIdList("operations", shape.getOperations());

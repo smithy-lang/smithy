@@ -33,7 +33,7 @@ public final class UnionShape extends NamedMembersShape implements ToSmithyBuild
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this).members(getAllMembers().values());
+        return updateBuilder(builder());
     }
 
     @Override

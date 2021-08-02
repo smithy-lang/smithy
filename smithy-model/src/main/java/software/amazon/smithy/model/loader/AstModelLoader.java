@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.SourceException;
+import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
@@ -69,11 +70,12 @@ enum AstModelLoader {
     private static final String TYPE = "type";
     private static final String TARGET = "target";
     private static final String ERRORS = "errors";
+    private static final String MIXINS = "mixins";
 
     private static final List<String> TOP_LEVEL_PROPERTIES = ListUtils.of("smithy", SHAPES, METADATA);
     private static final List<String> APPLY_PROPERTIES = ListUtils.of(TYPE, TRAITS);
     private static final List<String> SIMPLE_PROPERTY_NAMES = ListUtils.of(TYPE, TRAITS);
-    private static final List<String> STRUCTURE_AND_UNION_PROPERTY_NAMES = ListUtils.of(TYPE, MEMBERS, TRAITS);
+    private static final List<String> STRUCTURE_AND_UNION_PROPERTY_NAMES = ListUtils.of(TYPE, MEMBERS, TRAITS, MIXINS);
     private static final List<String> COLLECTION_PROPERTY_NAMES = ListUtils.of(TYPE, "member", TRAITS);
     private static final List<String> MAP_PROPERTY_NAMES = ListUtils.of(TYPE, "key", "value", TRAITS);
     private static final Set<String> MEMBER_PROPERTIES = SetUtils.of(TARGET, TRAITS);
@@ -324,6 +326,11 @@ enum AstModelLoader {
         ObjectNode memberObject = node.getObjectMember(MEMBERS).orElse(Node.objectNode());
         for (Map.Entry<String, Node> entry : memberObject.getStringMap().entrySet()) {
             loadMember(modelFile, id.withMember(entry.getKey()), entry.getValue().expectObjectNode());
+        }
+
+        ArrayNode mixins = node.getArrayMember(MIXINS).orElse(Node.arrayNode());
+        for (ObjectNode mixin : mixins.getElementsAs(ObjectNode.class)) {
+            modelFile.addPendingMixin(id, loadReferenceBody(modelFile, id, mixin));
         }
     }
 

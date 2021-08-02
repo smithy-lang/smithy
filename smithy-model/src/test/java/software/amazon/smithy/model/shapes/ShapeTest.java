@@ -30,6 +30,7 @@ import java.util.Collection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
@@ -161,13 +162,6 @@ public class ShapeTest {
     }
 
     @Test
-    public void traitsMustNotBeNull() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            StringShape.builder().id("ns.foo#baz").addTrait(null);
-        });
-    }
-
-    @Test
     public void removesTraits() {
         MyTrait trait = new MyTrait(ShapeId.from("foo.baz#foo"), null);
         MyTrait otherTrait = new OtherTrait(ShapeId.from("foo.baz#other"), null);
@@ -247,5 +241,23 @@ public class ShapeTest {
         Shape shapeB = StringShape.builder().id("ns.foo#baz").addTrait(traitA).build();
 
         assertEquals(shapeA, shapeB);
+    }
+
+    @Test
+    public void validatesMemberShapeIds() {
+        Assertions.assertThrows(SourceException.class, () -> {
+            StructureShape.builder()
+                    .id("ns.foo#bar")
+                    .addMember(MemberShape.builder().id("ns.baz#Bar$boo").target(ShapeId.from("ns.foo#String")).build())
+                    .build();
+        });
+    }
+
+    @Test
+    public void membersCannotBeAddedToSomeShapes() {
+        Assertions.assertThrows(SourceException.class, () -> {
+            StringShape mixin = StringShape.builder().id("ns.foo#string").build();
+            StringShape.builder().id("ns.foo#bar").addMixin(mixin).build();
+        });
     }
 }

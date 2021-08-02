@@ -33,7 +33,7 @@ public final class DoubleShape extends NumberShape implements ToSmithyBuilder<Do
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this);
+        return updateBuilder(builder());
     }
 
     @Override

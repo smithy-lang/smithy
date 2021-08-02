@@ -491,4 +491,14 @@ public final class ModelTransformer {
     public Model copyServiceErrorsToOperations(Model model, ServiceShape forService) {
         return new CopyServiceErrorsToOperationsTransform(forService).transform(this, model);
     }
+
+    /**
+     * Flattens mixins out of the model and removes them from the model.
+     *
+     * @param model Model to flatten.
+     * @return Returns the flattened model.
+     */
+    public Model flattenAndRemoveMixins(Model model) {
+        return new FlattenAndRemoveMixins().transform(this, model);
+    }
 }
