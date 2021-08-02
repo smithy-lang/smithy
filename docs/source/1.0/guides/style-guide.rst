@@ -47,6 +47,24 @@ Smithy models SHOULD resemble the following example:
     @trait(selector: "string")
     structure myTrait {}
 
+    // Structures with no members place the braces on the same line.
+    @mixin
+    structure MyMixin {}
+
+    // When using a single mixin, place "with" and the shape on the same line
+    structure UsesMixin with MyMixin {
+        foo: String
+    }
+
+    // When using multiple mixins, place each shape ID on its own line,
+    // followed by a line that contains the opening brace.
+    structure UsesMixin with
+        MyMixin
+        SomeOtherMixin
+    {
+        foo: String
+    }
+
 * Each statement should appear on its own line.
 
 
