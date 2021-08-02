@@ -544,7 +544,7 @@ final class IdlModelParser extends SimpleParser {
     private void parseStructuredShape(
             ShapeId id,
             SourceLocation location,
-            AbstractShapeBuilder builder,
+            AbstractShapeBuilder<?, ?> builder,
             boolean structureMember
     ) {
         // Register the structure/union with the loader before parsing members.
@@ -553,6 +553,22 @@ final class IdlModelParser extends SimpleParser {
         // would otherwise result in cryptic error messages like:
         // "Member `foo.baz#Foo$Baz` cannot be added to software.amazon.smithy.model.shapes.OperationShape$Builder"
         modelFile.onShape(builder.id(id).source(location));
+
+        // Parse optional "with" statements to add mixins.
+        ws();
+        if (peek() == 'w') {
+            expect('w');
+            expect('i');
+            expect('t');
+            expect('h');
+            ws();
+            do {
+                String target = ParserUtils.parseShapeId(this);
+                modelFile.addForwardReference(target, resolved -> modelFile.addPendingMixin(id, resolved));
+                ws();
+            } while (peek() != '{');
+        }
+
         parseMembers(id, Collections.emptySet(), structureMember);
     }
 
