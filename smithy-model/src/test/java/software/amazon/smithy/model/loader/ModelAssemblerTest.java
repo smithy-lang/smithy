@@ -68,6 +68,7 @@ import software.amazon.smithy.model.traits.SuppressTrait;
 import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
+import software.amazon.smithy.model.validation.ValidatedResultException;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
@@ -706,5 +707,44 @@ public class ModelAssemblerTest {
         assembler.reset();
         result = assembler.assemble();
         assertThat(result.unwrap().getShape(ShapeId.from("ns.foo#Bar")), is(Optional.empty()));
+    }
+
+    public void loadsMixinMembersInCorrectOrderAndWithTraits() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("mixins/mixins-can-override-traits.smithy"))
+                .assemble()
+                .unwrap();
+
+        StructureShape f = model.expectShape(ShapeId.from("smithy.example#F"), StructureShape.class);
+
+        assertThat(f.getMemberNames(), contains("a", "b", "c", "d", "e", "f"));
+        assertThat(f.getMember("a").get().expectTrait(DocumentationTrait.class).getValue(), equalTo("I've changed"));
+        assertThat(f.getMember("c").get().expectTrait(DocumentationTrait.class).getValue(), equalTo("I've changed"));
+    }
+
+    @Test
+    public void ignoresAcceptableMixinConflicts() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("mixins/mixin-conflict-acceptable-1.smithy"))
+                .addImport(getClass().getResource("mixins/mixin-conflict-acceptable-2.smithy"))
+                .assemble()
+                .unwrap();
+
+        StructureShape a = model.expectShape(ShapeId.from("smithy.example#A"), StructureShape.class);
+
+        assertThat(a.getMemberNames(), contains("b", "a"));
+    }
+
+    @Test
+    public void failsWhenMixinsConflictAndAreNotEquivalent() {
+        ValidatedResultException e = Assertions.assertThrows(ValidatedResultException.class, () -> {
+            Model.assembler()
+                    .addImport(getClass().getResource("mixins/mixin-conflict-acceptable-1.smithy"))
+                    .addImport(getClass().getResource("mixins/mixin-conflict-error.smithy"))
+                    .assemble()
+                    .unwrap();
+        });
+
+        assertThat(e.getMessage(), containsString("Conflicting shape definition for `smithy.example#A`"));
     }
 }

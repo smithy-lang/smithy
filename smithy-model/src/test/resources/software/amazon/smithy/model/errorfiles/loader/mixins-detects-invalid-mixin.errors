@@ -1,0 +1,1 @@
+[ERROR] smithy.example#B: Unable to resolve mixins; attempted to mixin shapes with no mixin trait: [smithy.example#A] | Model
