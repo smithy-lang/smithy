@@ -105,7 +105,7 @@ public final class ParserUtils {
     }
 
     /**
-     * Expects and returns a parsed absolute Smithy Shape ID.
+     * Expects and returns a parsed relative or absolute Smithy Shape ID.
      *
      * @param parser Parser to consume tokens from.
      * @return Returns the parsed Shape ID as a string.

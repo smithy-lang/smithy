@@ -33,7 +33,7 @@ public final class BigDecimalShape extends NumberShape implements ToSmithyBuilde
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this);
+        return updateBuilder(builder());
     }
 
     @Override

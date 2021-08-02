@@ -33,7 +33,7 @@ public final class BooleanShape extends SimpleShape implements ToSmithyBuilder<B
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this);
+        return updateBuilder(builder());
     }
 
     @Override
