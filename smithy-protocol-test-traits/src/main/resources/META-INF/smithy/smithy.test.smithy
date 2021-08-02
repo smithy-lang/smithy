@@ -18,7 +18,7 @@ structure HttpRequestTestCase {
     /// MUST match Smithy's `identifier` ABNF. No two `httpRequestTests`
     /// test cases can share the same ID.
     @required
-    @pattern("[A-Za-z_][A-Za-z0-9_]+")
+    @pattern("^[A-Za-z_][A-Za-z0-9_]+$")
     id: String,
 
     /// The name of the protocol to test.
@@ -178,7 +178,7 @@ structure HttpResponseTestCase {
     /// MUST match Smithy's `identifier` ABNF. No two `httpResponseTests`
     /// test cases can share the same ID.
     @required
-    @pattern("[A-Za-z_][A-Za-z0-9_]+")
+    @pattern("^[A-Za-z_][A-Za-z0-9_]+$")
     id: String,
 
     /// The shape ID of the protocol to test.
