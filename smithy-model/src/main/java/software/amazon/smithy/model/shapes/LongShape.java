@@ -33,7 +33,7 @@ public final class LongShape extends NumberShape implements ToSmithyBuilder<Long
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this);
+        return updateBuilder(builder());
     }
 
     @Override

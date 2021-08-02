@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.loader.TopologicalShapeSort;
+import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -36,6 +40,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SetUtils;
@@ -53,6 +58,8 @@ import software.amazon.smithy.utils.SetUtils;
  *     updated in the model.</li>
  *     <li>When a member is removed from a structure or union,
  *     ensures that the member is removed from the model.</li>
+ *     <li>When a mixin is updated, ensures that all shapes that use the
+ *     mixin are updated.</li>
  * </ul>
  *
  * <p>Only shapes that are not currently in a model or shapes that are
@@ -72,7 +79,7 @@ import software.amazon.smithy.utils.SetUtils;
  * attempt to change the type of a shape will throw an exception.
  */
 final class ReplaceShapes {
-    private Collection<Shape> replacements;
+    private final Collection<Shape> replacements;
 
     ReplaceShapes(Collection<Shape> replacements) {
         this.replacements = Objects.requireNonNull(replacements);
@@ -86,6 +93,9 @@ final class ReplaceShapes {
 
         assertNoShapeChangedType(model, shouldReplace);
         Model.Builder builder = createReplacedModelBuilder(model, shouldReplace);
+
+        // Update shapes that relied on mixins that were updated.
+        updateMixins(model, builder, shouldReplace);
 
         // If a member shape changes, then ensure that the containing shape
         // is also updated to reference the updated member. Note that the updated container
@@ -143,6 +153,53 @@ final class ReplaceShapes {
             builder.addShapes(shape.members());
         });
         return builder;
+    }
+
+    private void updateMixins(Model model, Model.Builder builder, List<Shape> replacements) {
+        // Create a map to function as a mutable kind of intermediate model index so that as
+        // shapes are updated and built, they're used as mixins in shapes that depend on it.
+        Map<ShapeId, Shape> updatedShapes = new HashMap<>();
+        for (Shape replaced : replacements) {
+            updatedShapes.put(replaced.getId(), replaced);
+        }
+
+        // Topologically sort the updated shapes to ensure shapes are updated in order.
+        TopologicalShapeSort sorter = new TopologicalShapeSort();
+
+        // Add structure and union shapes that are mixins or use mixins.
+        Stream.concat(model.shapes(StructureShape.class), model.shapes(UnionShape.class)).forEach(shape -> {
+            if (shape.hasTrait(MixinTrait.class) || !shape.getMixins().isEmpty()) {
+                sorter.enqueue(shape);
+            }
+        });
+
+        // Add _all_ of the replacements in case mixins or the Mixin trait were removed from updated shapes.
+        for (Shape shape : replacements) {
+            sorter.enqueue(shape);
+        }
+
+        List<ShapeId> sorted = sorter.dequeueSortedShapes();
+        for (ShapeId toRebuild : sorted) {
+            Shape shape = updatedShapes.containsKey(toRebuild)
+                    ? updatedShapes.get(toRebuild)
+                    : model.expectShape(toRebuild);
+            if (!shape.getMixins().isEmpty()) {
+                // We don't clear mixins here because a shape might have an inherited
+                // mixin member that was updated with an applied trait. Clearing mixins
+                // would remove this member but not re-add it properly. Re-adding already
+                // present mixins, however, will update members in-place.
+                AbstractShapeBuilder<?, ?> shapeBuilder = Shape.shapeToBuilder(shape);
+                for (ShapeId mixin : shape.getMixins()) {
+                    Shape mixinShape = updatedShapes.containsKey(mixin)
+                            ? updatedShapes.get(mixin)
+                            : model.expectShape(mixin);
+                    shapeBuilder.addMixin(mixinShape);
+                }
+                Shape rebuilt = shapeBuilder.build();
+                builder.addShape(rebuilt);
+                updatedShapes.put(rebuilt.getId(), rebuilt);
+            }
+        }
     }
 
     private Set<Shape> getShapesToRemove(Model model, List<Shape> shouldReplace) {

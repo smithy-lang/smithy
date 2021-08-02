@@ -52,6 +52,11 @@ public interface TraitContainer {
         }
 
         @Override
+        public void clearTraitsForShape(ShapeId shape) {
+            // Do nothing.
+        }
+
+        @Override
         public Map<ShapeId, Map<ShapeId, Trait>> getTraitsAppliedToPrelude() {
             return Collections.emptyMap();
         }
@@ -79,6 +84,17 @@ public interface TraitContainer {
      * @return Returns the traits of the shape.
      */
     Map<ShapeId, Trait> getTraitsForShape(ShapeId shape);
+
+    /**
+     * Clears the traits applied to a shape.
+     *
+     * <p>This is useful in the event of errors that occur while attempting to
+     * create a shape so that validation events about traits applied to shapes
+     * that couldn't be created are not emitted.
+     *
+     * @param shape Shape to clear the traits for.
+     */
+    void clearTraitsForShape(ShapeId shape);
 
     /**
      * Gets all traits applied to the prelude.
@@ -132,6 +148,11 @@ public interface TraitContainer {
         @Override
         public Map<ShapeId, Trait> getTraitsForShape(ShapeId shape) {
             return targetToTraits.getOrDefault(shape, Collections.emptyMap());
+        }
+
+        @Override
+        public void clearTraitsForShape(ShapeId shape) {
+            targetToTraits.remove(shape);
         }
 
         @Override

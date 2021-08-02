@@ -558,7 +558,7 @@ public final class ModelAssembler {
             TraitContainer traits = files.resolveShapes(files.shapeIds(), files::getShapeType);
             Model model = Model.builder()
                     .metadata(files.metadata())
-                    .addShapes(files.createShapes(traits))
+                    .addShapes(files.createShapes(traits).getCreatedShapes())
                     .build();
             return validate(model, traits, files.events());
         } catch (SourceException e) {

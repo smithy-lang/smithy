@@ -186,6 +186,9 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
     @Override
     public List<Relationship> structureShape(StructureShape shape) {
         List<Relationship> result = new ArrayList<>();
+        for (ShapeId mixin : shape.getMixins()) {
+            result.add(relationship(shape, RelationshipType.MIXIN, mixin));
+        }
         for (MemberShape member : shape.getAllMembers().values()) {
             result.add(Relationship.create(shape, RelationshipType.STRUCTURE_MEMBER, member));
         }
@@ -195,6 +198,9 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
     @Override
     public List<Relationship> unionShape(UnionShape shape) {
         List<Relationship> result = new ArrayList<>();
+        for (ShapeId mixin : shape.getMixins()) {
+            result.add(relationship(shape, RelationshipType.MIXIN, mixin));
+        }
         for (MemberShape member : shape.getAllMembers().values()) {
             result.add(Relationship.create(shape, RelationshipType.UNION_MEMBER, member));
         }

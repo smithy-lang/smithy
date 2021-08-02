@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -17,16 +17,20 @@ package software.amazon.smithy.model.shapes;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
+import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.Tagged;
 
@@ -45,6 +49,8 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
 
     private final ShapeId id;
     private final Map<ShapeId, Trait> traits;
+    private final Map<ShapeId, Trait> introducedTraits;
+    private final Map<ShapeId, Shape> mixins;
     private final transient SourceLocation source;
     private final transient ShapeType type;
 
@@ -56,13 +62,36 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
      * @param builder Builder to extract values from.
      * @param expectMemberSegments True/false if the ID must have a member.
      */
-    @SuppressWarnings("unchecked")
-    Shape(AbstractShapeBuilder builder, boolean expectMemberSegments) {
+    Shape(AbstractShapeBuilder<?, ?> builder, boolean expectMemberSegments) {
         type = builder.getShapeType();
         source = builder.getSourceLocation();
         id = SmithyBuilder.requiredState("id", builder.getId());
-        traits = builder.copyTraits();
         validateShapeId(expectMemberSegments);
+
+        introducedTraits = MapUtils.copyOf(builder.getTraits());
+        mixins = MapUtils.orderedCopyOf(builder.getMixins());
+
+        if (mixins.isEmpty()) {
+            // Simple case when there are no mixins.
+            traits = introducedTraits;
+        } else {
+            validateMixins(mixins.keySet());
+            // Compute mixin traits.
+            Map<ShapeId, Trait> computedTraits = new HashMap<>();
+            for (Shape shape : mixins.values()) {
+                // Mixin traits override other mixin traits, in order.
+                computedTraits.putAll(MixinTrait.getNonLocalTraitsFromMap(shape.getAllTraits()));
+            }
+            // Traits applied to the shape directly override inherited traits.
+            computedTraits.putAll(introducedTraits);
+            traits = Collections.unmodifiableMap(computedTraits);
+        }
+    }
+
+    protected void validateMixins(Collection<ShapeId> mixins) {
+        // This method is overridden in subclasses that allow mixins (structure, union, member).
+        // This situation can only happen by manipulating the semantic model in code.
+        throw new SourceException("Mixins are not allowed on " + getId() + ", a " + getType(), this);
     }
 
     /**
@@ -81,6 +110,17 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
             throw new SourceException(String.format(
                     "Shapes of type `%s` cannot contain a member in their shape ID. Found `%s`",
                     getType(), getId()), getSourceLocation());
+        }
+    }
+
+    protected final void validateMemberShapeIds() {
+        for (MemberShape member : members()) {
+            if (!member.getId().toString().startsWith(getId().toString())) {
+                ShapeId expected = getId().withMember(member.getMemberName());
+                throw new SourceException(String.format(
+                        "Expected the `%s` member of `%s` to have an ID of `%s` but found `%s`",
+                        member.getMemberName(), getId(), expected, member.getId()), getSourceLocation());
+            }
         }
     }
 
@@ -573,6 +613,25 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
         return Collections.emptyList();
     }
 
+    /**
+     * Get an ordered set of mixins attached to the shape.
+     *
+     * @return Returns the ordered mixin shape IDs.
+     */
+    public Set<ShapeId> getMixins() {
+        return mixins.keySet();
+    }
+
+    /**
+     * Gets the traits introduced by the shape and not inherited
+     * from mixins.
+     *
+     * @return Returns the introduced traits.
+     */
+    public Map<ShapeId, Trait> getIntroducedTraits() {
+        return introducedTraits;
+    }
+
     @Override
     public ShapeId toShapeId() {
         return id;
@@ -614,6 +673,32 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
         Shape other = (Shape) o;
         return getId().equals(other.getId())
                && getType() == other.getType()
-               && traits.equals(other.traits);
+               && traits.equals(other.traits)
+               && mixins.equals(other.mixins);
+    }
+
+    /**
+     * Copies the ID, source location, all traits, and mixins of the shape to the builder.
+     *
+     * @param builder Builder to update.
+     * @param <S> Type of shape being built.
+     * @param <B> Type of builder being built.
+     * @return Returns the builder.
+     */
+    <S extends Shape, B extends AbstractShapeBuilder<B, S>> B updateBuilder(B builder) {
+        builder.id(getId());
+        builder.source(getSourceLocation());
+        // Only add introduced traits to the builder to allow model load -> rebuild -> serialize roundtripping.
+        builder.addTraits(getIntroducedTraits().values());
+        builder.mixins(mixins.values());
+
+        // Add members to the builder that are not just strictly inherited from mixins.
+        for (MemberShape member : members()) {
+            if (member.getMixins().isEmpty() || !member.getIntroducedTraits().isEmpty()) {
+                builder.addMember(member);
+            }
+        }
+
+        return builder;
     }
 }

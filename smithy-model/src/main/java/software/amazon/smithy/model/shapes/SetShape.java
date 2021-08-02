@@ -25,6 +25,7 @@ public final class SetShape extends CollectionShape implements ToSmithyBuilder<S
 
     private SetShape(Builder builder) {
         super(builder);
+        validateMemberShapeIds();
     }
 
     public static Builder builder() {
@@ -33,7 +34,7 @@ public final class SetShape extends CollectionShape implements ToSmithyBuilder<S
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this).member(getMember());
+        return updateBuilder(builder()).member(getMember());
     }
 
     @Override

@@ -43,7 +43,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
 
     @Override
     public Builder toBuilder() {
-        Builder builder = builder().from(this).version(version);
+        Builder builder = updateBuilder(builder()).version(version);
         getOperations().forEach(builder::addOperation);
         getResources().forEach(builder::addResource);
         builder.rename(rename);
