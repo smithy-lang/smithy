@@ -35,20 +35,7 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
         super(builder, false);
         key = SmithyBuilder.requiredState("key", builder.key);
         value = SmithyBuilder.requiredState("value", builder.value);
-
-        ShapeId expectedKey = getId().withMember("key");
-        if (!key.getId().equals(expectedKey)) {
-            throw new IllegalArgumentException(String.format(
-                    "Expected the key member of `%s` to have an ID of `%s` but found `%s`",
-                    getId(), expectedKey, key.getId()));
-        }
-
-        ShapeId expectedValue = getId().withMember("value");
-        if (!value.getId().equals(expectedValue)) {
-            throw new IllegalArgumentException(String.format(
-                    "Expected the value member of `%s` to have an ID of `%s` but found `%s`",
-                    getId(), expectedValue, value.getId()));
-        }
+        validateMemberShapeIds();
     }
 
     public static Builder builder() {
@@ -57,7 +44,7 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this).key(key).value(value);
+        return updateBuilder(builder()).key(key).value(value);
     }
 
     @Override

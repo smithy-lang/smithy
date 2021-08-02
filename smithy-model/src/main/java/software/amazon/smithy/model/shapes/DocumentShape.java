@@ -33,7 +33,7 @@ public final class DocumentShape extends SimpleShape implements ToSmithyBuilder<
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this);
+        return updateBuilder(builder());
     }
 
     @Override

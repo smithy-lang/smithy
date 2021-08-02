@@ -36,7 +36,7 @@ public final class StructureShape extends NamedMembersShape implements ToSmithyB
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this).members(getAllMembers().values());
+        return updateBuilder(builder());
     }
 
     @Override

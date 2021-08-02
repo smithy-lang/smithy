@@ -37,9 +37,12 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.IdempotentTrait;
+import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.ReadonlyTrait;
+import software.amazon.smithy.model.traits.SensitiveTrait;
 
 public class NeighborVisitorTest {
 
@@ -154,6 +157,34 @@ public class NeighborVisitorTest {
         assertThat(relationships, containsInAnyOrder(
                 Relationship.create(struct, RelationshipType.STRUCTURE_MEMBER, member1Target),
                 Relationship.create(struct, RelationshipType.STRUCTURE_MEMBER, member2Target)));
+    }
+
+    @Test
+    public void structureShapeWithMixins() {
+        StringShape string = StringShape.builder().id("smithy.example#String").build();
+        StructureShape mixin1 = StructureShape.builder()
+                .id("smithy.example#TestMixin1")
+                .addTrait(MixinTrait.builder().build())
+                .addTrait(DeprecatedTrait.builder().build())
+                .addMember("a", string.getId(), builder -> builder.addTrait(new SensitiveTrait()))
+                .addMember("b", string.getId())
+                .build();
+        StructureShape concrete = StructureShape.builder()
+                .id("smithy.example#Concrete")
+                .addTrait(new SensitiveTrait())
+                .addMixin(mixin1)
+                .addMember("b", string.getId(), builder -> builder.addTrait(DeprecatedTrait.builder().build()))
+                .addMember("c", string.getId())
+                .build();
+        Model model = Model.builder().addShapes(mixin1, concrete, string).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
+        List<Relationship> relationships = concrete.accept(neighborVisitor);
+
+        assertThat(relationships, containsInAnyOrder(
+                Relationship.create(concrete, RelationshipType.STRUCTURE_MEMBER, concrete.getMember("a").get()),
+                Relationship.create(concrete, RelationshipType.STRUCTURE_MEMBER, concrete.getMember("b").get()),
+                Relationship.create(concrete, RelationshipType.STRUCTURE_MEMBER, concrete.getMember("c").get()),
+                Relationship.create(concrete, RelationshipType.MIXIN, mixin1)));
     }
 
     @Test
