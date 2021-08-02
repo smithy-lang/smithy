@@ -32,7 +32,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 /**
  * Represents a string node.
  */
-public final class StringNode extends Node {
+public final class StringNode extends Node implements Comparable<StringNode> {
     private String value;
 
     /**
@@ -181,5 +181,10 @@ public final class StringNode extends Node {
     @Override
     public String toString() {
         return value;
+    }
+
+    @Override
+    public int compareTo(StringNode o) {
+        return getValue().compareTo(o.getValue());
     }
 }

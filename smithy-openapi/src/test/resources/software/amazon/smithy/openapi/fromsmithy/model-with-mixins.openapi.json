@@ -1,0 +1,41 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "HasMixin",
+        "version": "2021-08-12"
+    },
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "Greeting",
+                "responses": {
+                    "200": {
+                        "description": "Greeting 200 response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GreetingResponseContent"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "GreetingResponseContent": {
+                "type": "object",
+                "properties": {
+                    "greeting": {
+                        "type": "string"
+                    },
+                    "language": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
