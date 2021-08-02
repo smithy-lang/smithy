@@ -32,7 +32,7 @@ public final class TimestampShape extends SimpleShape implements ToSmithyBuilder
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this);
+        return updateBuilder(builder());
     }
 
     @Override

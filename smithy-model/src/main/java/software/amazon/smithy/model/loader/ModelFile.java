@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.loader;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -80,7 +81,7 @@ interface ModelFile {
      * @param resolvedTraits Traits to apply to the shapes in the ModelFile.
      * @return Returns the created shapes.
      */
-    Collection<Shape> createShapes(TraitContainer resolvedTraits);
+    CreatedShapes createShapes(TraitContainer resolvedTraits);
 
     /**
      * Gets a mutable list of {@link ValidationEvent} objects encountered when
@@ -89,4 +90,40 @@ interface ModelFile {
      * @return Returns the list of events.
      */
     List<ValidationEvent> events();
+
+    /**
+     * Return value of creating shapes from a {@link ModelFile}.
+     */
+    final class CreatedShapes {
+
+        private final Collection<Shape> shapes;
+        private final List<PendingShape> pending;
+
+        CreatedShapes(Collection<Shape> shapes, List<PendingShape> pending) {
+            this.shapes = shapes;
+            this.pending = pending;
+        }
+
+        CreatedShapes(Collection<Shape> shapes) {
+            this(shapes, Collections.emptyList());
+        }
+
+        /**
+         * Gets the shapes that were created.
+         *
+         * @return Returns created shapes.
+         */
+        Collection<Shape> getCreatedShapes() {
+            return shapes;
+        }
+
+        /**
+         * Gets the shapes that are pending other shapes to resolve as mixins.
+         *
+         * @return Returns the pending shapes.
+         */
+        List<PendingShape> getPendingShapes() {
+            return pending;
+        }
+    }
 }

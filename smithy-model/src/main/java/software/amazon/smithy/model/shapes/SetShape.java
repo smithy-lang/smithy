@@ -32,6 +32,7 @@ public final class SetShape extends ListShape {
 
     private SetShape(Builder builder) {
         super(builder);
+        validateMemberShapeIds();
     }
 
     public static Builder builder() {
