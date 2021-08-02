@@ -33,7 +33,7 @@ public final class ByteShape extends NumberShape implements ToSmithyBuilder<Byte
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this);
+        return updateBuilder(builder());
     }
 
     @Override

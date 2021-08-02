@@ -1,0 +1,1 @@
+[ERROR] smithy.example#InvalidUseOfMixinTrait: Trait `smithy.example#mixinTrait` is a mixin and cannot be applied to `smithy.example#InvalidUseOfMixinTrait`. | TraitTarget

@@ -114,35 +114,43 @@ structure CityResourceInput {
 }
 ```
 
-The `with` clause of a structure or union statement is used to merge the members
-of one or more mixins into a structure or union. Each shape ID in the `with`
-clause MUST target a shape marked with the `@mixin` trait. Structure shapes can
-only use structure mixins, and union shapes can only use union mixins.
+Adding a mixin to a structure or union shape causes the members and traits of
+a shape to be copied into the shape. Mixins can be added to a shape using
+`with` followed by any number of shape IDs. Each shape ID MUST target a
+shape marked with the `@mixin` trait. Structure shapes can only use structure
+mixins, and union shapes can only use union mixins.
 
 ```
-structure GetCityInput with CityResourceInput {}
+structure GetCityInput with CityResourceInput {
+    foo: String
+}
 ```
 
 Multiple mixins can be applied:
 
 ```
-structure GetCityInput with CityResourceInput, SomeOtherMixin {}
+structure GetAnotherCityInput with
+    CityResourceInput
+    SomeOtherMixin
+{
+    foo: String
+}
 ```
 
 Mixins can be composed of other mixins:
 
 ```
 @mixin
-structure A {
+structure MixinA {
     a: String
 }
 
 @mixin
-structure B with A {
+structure MixinB with MixinA {
     b: String
 }
 
-structure C with B {
+structure C with MixinB {
     c: String
 }
 ```
@@ -261,7 +269,9 @@ structure StructB {}
 /// C
 @threeTrait
 @mixin
-structure StructC with StructA, StructB {}
+structure StructC with
+    StructA
+    StructB {}
 
 /// D
 @fourTrait
@@ -339,14 +349,9 @@ can be referred to outside of `smithy.example`.
 
 The members and traits applied to members of a mixin are copied onto the target
 shape. It is sometimes necessary to provide a more specific trait value for a
-copied member or to add traits only to a specific copy of a member. This can be
-achieved in the following ways:
-
-* In the JSON AST using the `apply` type
-* In the Smithy IDL using `apply` statements
-* In the Smithy IDL by redefining a member and targeting the special
-  `(inherit)` keyword. This is simply syntactic sugar for using `apply`
-  statements.
+copied member or to add traits only to a specific copy of a member. Traits can
+be applied to these members in the JSON AST using the `apply` type and in the
+Smithy IDL using `apply` statements.
 
 > Note: using the `apply` type and `apply` statements on members that are
 copied from mixin members _do not_ merge the applied trait value with the
@@ -425,65 +430,6 @@ apply MyStruct$mixinMember @documentation("Specific docs")
 ```
 
 
-#### Redefining members in the IDL
-
-As part of this proposal, we will add syntactic sugar in the Smithy IDL for
-applying traits to copied mixin members. A mixin member can be redefined in
-the Smithy IDL by targeting a special new structure and union member target
-keyword named `(inherit)` that indicates the member redefines a mixin member
-and inherits its type from a mixin. Redefining a member in this way is simply
-syntactic sugar for using `apply` statements and carries no additional
-semantic meaning.
-
-For example, the previous example can be defined in the Smithy IDL by
-redefining the member instead of using `apply`:
-
-```
-$version: "1.1"
-namespace smithy.example
-
-@mixin
-structure MyMixin {
-    /// Generic docs
-    mixinMember: String
-}
-
-structure MyStruct with MyMixin {
-    /// Specific docs
-    mixinMember: (inherit)
-}
-```
-
-`MyStruct` is equivalent to the following flattened structure:
-
-```smithy
-structure MyStruct {
-    /// Specific docs
-    mixinMember: String
-}
-```
-
-To redefine a mixin member:
-
-1. The redefined member MUST have the exact same name as the mixin member.
-2. The redefined member MUST target a special keyword type named `(inherit)`
-   to indicate the member redefines and inherits its type from a mixin member.
-3. Just like replacing traits on the containing shape, any trait applied
-   to a redefined member completely replaces any resolved traits applied to
-   the mixin member.
-4. Redefining mixin members has no bearing on the ordering of members in
-   structures that use mixins.
-
-**`(inherit)` keyword**
-
-`(inherit)` is a special keyword for union and structure member targets
-available in the Smithy IDL. It can only be used when a structure or union
-member is defined by one of the mixins applied to the shape. It is an error
-to target this type in any other case. Note that `(inherit)` _is not_ a
-shape ID. It is a keyword supported only in the Smithy IDL and _is not_
-supported in the JSON AST.
-
-
 ### Mixins are not code generated
 
 Mixins are an implementation detail of models and are only intended to reduce
@@ -555,7 +501,9 @@ structure A2 {
     a: String
 }
 
-structure Invalid with A1, A2 {}
+structure Invalid with
+    A1
+    A2 {}
 ```
 
 The following model is also invalid, but not specifically because of mixins.
@@ -573,34 +521,26 @@ structure A2 {
     A: String
 }
 
-structure Invalid with A1, A2 {}
+structure Invalid with
+    A1
+    A2 {}
 ```
 
 
 ### Mixins in the IDL
 
 To support mixins, `structure_statement` and `union_statement` ABNF rules
-will be updated to contain an optional `with` clause that comes after the
-shape name and before `{`. If present, the `with` clause MUST contain one or
-more shape IDs, and each shape MUST target a valid shape marked with the
-`@mixin` trait. The `(inherit)` keyword also requires updating the Smithy
-IDL grammar for structure and union shapes.
+will be updated to contain an optional `mixins` production
+that comes after the shape name and before `{`. Each shape ID referenced in
+the `mixins` production MUST target a shape of the same type as the
+shape being defined and MUST be marked with the `@mixin` trait.
 
 ```
-structure_statement = "structure" ws `identifier` ws [with_clause] structure_members
-structure_members: "{" `ws` *(`structure_members_kvp` `ws`) "}"
-structure_members_kvp: `trait_statements` `identifier` `ws`
-    ":" `ws` `structure_and_union_member_target` [`required_member_sugar`]
-
-with_clause = "with" ws 1*shape_id ws
-structure_and_union_member_target: `shape_id` / `inherit_keyword`
-inherit_keyword: "(inherit)"
-
-union_statement = "union" ws `identifier` ws [with_clause] union_members
-union_members: "{" `ws` *(`union_members_kvp` `ws`) "}"
-union_members_kvp: `trait_statements` `identifier` `ws`
-    ":" `ws` `structure_and_union_member_target`
+structure_statement = "structure" ws identifier ws [mixins ws] structure_members
+union_statement = "union" ws identifier ws [mixins ws] union_members
+mixins = "with" 1*(ws shape_id)
 ```
+
 
 ### Mixins in the JSON AST
 
@@ -708,13 +648,8 @@ Both yield the following shapes, in any order:
 
 The order of structure and union members is important for languages like C
 that require a stable ABI. Mixins provide a deterministic member ordering.
-Members are ordered by:
-
-- Members inherited from mixins come before members defined directly in the
-  shape.
-- Members are inherited from mixins in the order in which they are first
-  applied to a shape. Redefining a member in the Smithy IDL using
-  `(inherit)` has no bearing on member order.
+Members inherited from mixins come before members defined directly in the
+shape.
 
 Members are ordered in a kind of depth-first, preorder traversal of mixins
 that are applied to a structure or union. To resolve the member order of a
@@ -741,7 +676,10 @@ structure PaginatedInput {
     pageSize: Integer
 }
 
-structure ListSomethingInput with PaginatedInput, FilteredByName {
+structure ListSomethingInput with
+    PaginatedInput
+    FilteredByName
+{
     sizeFilter: Integer
 }
 ```
@@ -800,13 +738,6 @@ in whatever way works best). For example, when calling `Shape#getAllMembers`,
 both mixin members and members local to the shape are returned. This reduces
 the complexity of code generators and will prevent issues with code generators
 forgetting to traverse mixins to resolve members.
-
-When loading Smithy IDL models that use `(inherit)`, the model loader should
-treat the member exactly like an `apply` statement.
-
-When serializing a Smithy model using the IDL, the serialized IDL should
-use the redefined member syntax rather than `apply` statements to make the
-serialized model more readable.
 
 The reference implementation will contain a model transformation that can
 "flatten" mixins out of a model so that they do not need to be accounted for
@@ -933,15 +864,15 @@ structure FooMixin {
 structure ApplicationOfFooMixin with FooMixin {
     // Remove the required trait from this member.
     @override([omitTraits: [required]])
-    someMember: (inherit)
+    someMember: String
 }
 ```
 
 While this could work, it is not strictly required and presents two
 tradeoffs: the application of the mixin has significantly more verbose, it
-requires introducing an `@override` trait that communicates exactly what
-`(inherit)` already communicates, and filtering traits adds more complex
-requirements to Smithy implementations that resolve the traits of a structure.
+requires introducing an `@override` trait, and filtering traits adds more
+complex requirements to Smithy implementations that resolve the traits of a
+structure.
 
 Alternatively, multiple levels of mixins can be used in many cases to allow
 for reuse with more flexibility. For example:
@@ -954,10 +885,8 @@ structure FooMixinOptional {
 }
 
 @mixin
-structure FooMixinRequired with FooMixinOptional {
-    @required
-    someMember: (inherit)
-}
+structure FooMixinRequired with FooMixinOptional {}
+apply FooMixinRequired$someMember @required
 ```
 
 

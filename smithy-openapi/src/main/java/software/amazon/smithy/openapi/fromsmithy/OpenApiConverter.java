@@ -186,6 +186,9 @@ public final class OpenApiConverter {
         // generated for each operation.
         model = ModelTransformer.create().copyServiceErrorsToOperations(model, service);
 
+        // Remove mixins from the model.
+        model = ModelTransformer.create().flattenAndRemoveMixins(model);
+
         JsonSchemaConverter.Builder jsonSchemaConverterBuilder = JsonSchemaConverter.builder();
         jsonSchemaConverterBuilder.model(model);
 

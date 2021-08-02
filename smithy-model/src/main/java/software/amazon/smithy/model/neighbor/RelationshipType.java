@@ -201,7 +201,13 @@ public enum RelationshipType {
      * with {@link NeighborProvider#withTraitRelationships(Model, NeighborProvider)}
      * in order to yield trait relationships.
      */
-    TRAIT("trait", RelationshipDirection.DIRECTED);
+    TRAIT("trait", RelationshipDirection.DIRECTED),
+
+    /**
+     * Relationship that exists between a structure or union and a mixin applied
+     * to the shape.
+     */
+    MIXIN("mixin", RelationshipDirection.DIRECTED);
 
     private String selectorLabel;
     private RelationshipDirection direction;
