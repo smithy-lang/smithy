@@ -63,7 +63,7 @@ public abstract class CollectionShape extends Shape {
      * @param <B> Concrete builder type.
      * @param <S> Shape type being created.
      */
-    public abstract static class Builder<B extends Builder<?, ?>, S extends CollectionShape>
+    public abstract static class Builder<B extends Builder<B, S>, S extends CollectionShape>
             extends AbstractShapeBuilder<B, S> {
 
         private MemberShape member;

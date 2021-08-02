@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.utils;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -60,6 +61,34 @@ public final class ListUtils {
      */
     public static <T> List<T> of(T value) {
         return Collections.singletonList(value);
+    }
+
+    /**
+     * Returns an unmodifiable list containing two entries.
+     *
+     * @param value1 The first value.
+     * @param value2 The second value.
+     * @param <T> the List's value type.
+     * @return a List containing the specified values.
+     */
+    @SuppressWarnings("varargs")
+    public static <T> List<T> of(T value1, T value2) {
+        // Note that AbstractList is immutable by default.
+        return new AbstractList<T>() {
+            @Override
+            public T get(int index) {
+                switch (index) {
+                    case 0: return value1;
+                    case 1: return value2;
+                    default: throw new IndexOutOfBoundsException("Index: " + index + ", Size: 2");
+                }
+            }
+
+            @Override
+            public int size() {
+                return 2;
+            }
+        };
     }
 
     /**
