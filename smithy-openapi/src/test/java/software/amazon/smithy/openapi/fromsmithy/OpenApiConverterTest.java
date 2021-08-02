@@ -514,4 +514,23 @@ public class OpenApiConverterTest {
 
         Node.assertEquals(result, expectedNode);
     }
+
+    @Test
+    public void removesMixins() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("model-with-mixins.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#HasMixin"));
+        config.setProtocol(ShapeId.from("aws.protocols#restJson1"));
+        ObjectNode result = OpenApiConverter.create()
+                .config(config)
+                .convertToNode(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("model-with-mixins.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
 }

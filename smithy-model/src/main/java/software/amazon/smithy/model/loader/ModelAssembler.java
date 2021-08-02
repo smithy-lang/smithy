@@ -551,7 +551,7 @@ public final class ModelAssembler {
             TraitContainer traits = composite.resolveShapes(composite.shapeIds(), composite::getShapeType);
             Model model = Model.builder()
                     .metadata(composite.metadata())
-                    .addShapes(composite.createShapes(traits))
+                    .addShapes(composite.createShapes(traits).getCreatedShapes())
                     .build();
             return validate(model, traits, composite.events());
         } catch (SourceException e) {

@@ -67,7 +67,12 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
         mappers.addAll(builder.mappers);
         config = SmithyBuilder.requiredState("config", builder.config);
         propertyNamingStrategy = SmithyBuilder.requiredState("propertyNamingStrategy", builder.propertyNamingStrategy);
-        model = SmithyBuilder.requiredState("model", builder.model);
+
+        // Flatten mixins out of the model before using the model at all. Mixins are
+        // not relevant to JSON Schema documents.
+        Model builderModel = SmithyBuilder.requiredState("model", builder.model);
+        model = ModelTransformer.create().flattenAndRemoveMixins(builderModel);
+
         shapePredicate = builder.shapePredicate;
 
         LOGGER.fine("Building filtered JSON schema shape index");

@@ -33,7 +33,7 @@ public final class StringShape extends SimpleShape implements ToSmithyBuilder<St
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this);
+        return updateBuilder(builder());
     }
 
     @Override
