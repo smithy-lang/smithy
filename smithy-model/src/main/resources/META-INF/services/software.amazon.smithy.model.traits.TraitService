@@ -34,6 +34,7 @@ software.amazon.smithy.model.traits.InternalTrait$Provider
 software.amazon.smithy.model.traits.JsonNameTrait$Provider
 software.amazon.smithy.model.traits.LengthTrait$Provider
 software.amazon.smithy.model.traits.MediaTypeTrait$Provider
+software.amazon.smithy.model.traits.MixinTrait$Provider
 software.amazon.smithy.model.traits.NoReplaceTrait$Provider
 software.amazon.smithy.model.traits.OptionalAuthTrait$Provider
 software.amazon.smithy.model.traits.PaginatedTrait$Provider

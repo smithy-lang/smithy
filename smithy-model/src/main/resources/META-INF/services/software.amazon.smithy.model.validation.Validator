@@ -19,6 +19,7 @@ software.amazon.smithy.model.validation.validators.HttpResponseCodeSemanticsVali
 software.amazon.smithy.model.validation.validators.HttpUriConflictValidator
 software.amazon.smithy.model.validation.validators.LengthTraitValidator
 software.amazon.smithy.model.validation.validators.MediaTypeValidator
+software.amazon.smithy.model.validation.validators.MixinValidator
 software.amazon.smithy.model.validation.validators.NoInlineDocumentSupportValidator
 software.amazon.smithy.model.validation.validators.PaginatedTraitValidator
 software.amazon.smithy.model.validation.validators.PrivateAccessValidator

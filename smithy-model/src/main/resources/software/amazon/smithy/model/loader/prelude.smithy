@@ -817,3 +817,24 @@ structure httpChecksumProperty {
     },
 ])
 string HttpChecksumLocation
+
+/// Makes a structure or union a mixin.
+@trait(selector: ":is(structure, union)")
+structure mixin {
+    localTraits: LocalMixinTraitList
+}
+
+@private
+list LocalMixinTraitList {
+    member: LocalMixinTrait
+}
+
+@idRef(
+    selector: "[trait|trait]",
+    failWhenMissing: true,
+    errorMessage: """
+            Strings provided to the localTraits property of a mixin trait
+            must target a valid trait.""")
+@private
+string LocalMixinTrait
+

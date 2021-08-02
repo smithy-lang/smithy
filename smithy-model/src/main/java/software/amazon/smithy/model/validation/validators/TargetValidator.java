@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -17,14 +17,13 @@ package software.amazon.smithy.model.validation.validators;
 
 import static java.lang.String.format;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
@@ -34,11 +33,11 @@ import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.FunctionalUtils;
-import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -53,31 +52,47 @@ public final class TargetValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
+        List<ValidationEvent> events = new ArrayList<>();
         NeighborProvider neighborProvider = NeighborProviderIndex.of(model).getProvider();
-        return model.shapes()
-                .flatMap(shape -> validateShape(model, shape, neighborProvider.getNeighbors(shape)))
-                .collect(Collectors.toList());
+        for (Shape shape : model.toSet()) {
+            validateShape(model, shape, neighborProvider.getNeighbors(shape), events);
+        }
+        return events;
     }
 
-    private Stream<ValidationEvent> validateShape(Model model, Shape shape, List<Relationship> relationships) {
-        return relationships.stream().flatMap(relationship -> {
+    private void validateShape(
+            Model model,
+            Shape shape,
+            List<Relationship> relationships,
+            List<ValidationEvent> mutableEvents
+    ) {
+        for (Relationship relationship : relationships) {
             if (relationship.getNeighborShape().isPresent()) {
-                return OptionalUtils.stream(
-                        validateTarget(model, shape, relationship.getNeighborShape().get(), relationship));
+                validateTarget(model, shape, relationship.getNeighborShape().get(), relationship)
+                        .ifPresent(mutableEvents::add);
             } else {
-                return Stream.of(unresolvedTarget(model, shape, relationship));
+                mutableEvents.add(unresolvedTarget(model, shape, relationship));
             }
-        });
+        }
     }
 
     private Optional<ValidationEvent> validateTarget(Model model, Shape shape, Shape target, Relationship rel) {
         RelationshipType relType = rel.getRelationshipType();
 
-        if (relType.getDirection() == RelationshipDirection.DIRECTED && target.hasTrait(TraitDefinition.class)) {
-            return Optional.of(error(shape, format(
-                    "Found a %s reference to trait definition `%s`. Trait definitions cannot be targeted by "
-                    + "members or referenced by shapes in any other context other than applying them as "
-                    + "traits.", relType, rel.getNeighborShapeId())));
+        if (relType != RelationshipType.MIXIN && relType.getDirection() == RelationshipDirection.DIRECTED) {
+            if (target.hasTrait(TraitDefinition.class)) {
+                return Optional.of(error(shape, format(
+                        "Found a %s reference to trait definition `%s`. Trait definitions cannot be targeted by "
+                        + "members or referenced by shapes in any other context other than applying them as "
+                        + "traits.", relType, rel.getNeighborShapeId())));
+            }
+
+            // Ignoring members with the mixin trait, forbid shapes to reference mixins except as mixins.
+            if (!target.isMemberShape() && target.hasTrait(MixinTrait.class)) {
+                return Optional.of(error(shape, format(
+                        "Illegal %s reference to mixin `%s`; shapes marked with the mixin trait can only be "
+                        + "referenced to apply them as a mixin.", relType, rel.getNeighborShapeId())));
+            }
         }
 
         switch (relType) {
@@ -131,6 +146,12 @@ public final class TargetValidator extends AbstractValidator {
                             relType.toString().toLowerCase(Locale.US), target)));
                 } else {
                     return Optional.empty();
+                }
+            case MIXIN:
+                if (!target.hasTrait(MixinTrait.class)) {
+                    return Optional.of(error(shape, format(
+                            "Attempted to use %s as a mixin, but it is not marked with the mixin trait",
+                            target.getId())));
                 }
             default:
                 return Optional.empty();

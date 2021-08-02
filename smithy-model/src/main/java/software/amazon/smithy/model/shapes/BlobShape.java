@@ -33,7 +33,7 @@ public final class BlobShape extends SimpleShape implements ToSmithyBuilder<Blob
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this);
+        return updateBuilder(builder());
     }
 
     @Override

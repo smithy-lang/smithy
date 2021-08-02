@@ -47,6 +47,7 @@ import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.TitleTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.OpenApiException;
@@ -172,6 +173,9 @@ public final class OpenApiConverter {
         if (serviceShapeId == null) {
             throw new OpenApiException("openapi is missing required property, `service`");
         }
+
+        // Remove mixins from the model.
+        model = ModelTransformer.create().flattenAndRemoveMixins(model);
 
         JsonSchemaConverter.Builder jsonSchemaConverterBuilder = JsonSchemaConverter.builder();
         jsonSchemaConverterBuilder.model(model);

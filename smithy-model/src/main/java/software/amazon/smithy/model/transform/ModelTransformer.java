@@ -478,4 +478,14 @@ public final class ModelTransformer {
     public Model changeShapeType(Model model, Map<ShapeId, ShapeType> shapeToType) {
         return new ChangeShapeType(shapeToType).transform(this, model);
     }
+
+    /**
+     * Flattens mixins out of the model and removes them from the model.
+     *
+     * @param model Model to flatten.
+     * @return Returns the flattened model.
+     */
+    public Model flattenAndRemoveMixins(Model model) {
+        return new FlattenAndRemoveMixins().transform(this, model);
+    }
 }

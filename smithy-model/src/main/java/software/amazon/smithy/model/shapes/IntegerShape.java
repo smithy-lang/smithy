@@ -33,7 +33,7 @@ public final class IntegerShape extends NumberShape implements ToSmithyBuilder<I
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this);
+        return updateBuilder(builder());
     }
 
     @Override
