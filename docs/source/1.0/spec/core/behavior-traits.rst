@@ -701,10 +701,10 @@ The ``httpChecksum`` trait is a structure that contains the following members:
                 { algorithm: "sha256", in: "header", name: "x-checksum-sha256"},
                 { algorithm: "crc32", in: "header", name: "x-checksum-crc32"}
             ],
-            response: {
+            response: [
                 { algorithm: "sha256", in: "header", name: "x-checksum-sha256"},
                 { algorithm: "crc32", in: "header", name: "x-checksum-crc32"}
-            }
+            ]
         )
         operation PutSomething {
             input: PutSomethingInput,
