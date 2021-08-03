@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -174,9 +175,11 @@ final class DefaultNodeDeserializers {
                     || targetType.equals(ArrayList.class)
                     || targetType.equals(Iterable.class)) {
                 return ArrayList::new;
-            } else if (targetType.equals(Set.class) || targetType.equals(HashSet.class)) {
+            } else if (targetType.equals(Set.class)
+                    || targetType.equals(HashSet.class)
+                    || targetType.equals(LinkedHashSet.class)) {
                 // Special casing for Set or HashSet.
-                return HashSet::new;
+                return LinkedHashSet::new;
             } else if (Collection.class.isAssignableFrom(targetType)) {
                 return createSupplierFromReflection(targetType);
             }

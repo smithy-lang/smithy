@@ -516,7 +516,7 @@ public final class OpenApiConverter {
         // If the operation explicitly removes authentication, ensure that "security" is set to an empty
         // list as opposed to simply being unset as unset will result in the operation inheriting global
         // configuration.
-        if (shape.getTrait(AuthTrait.class).map(trait -> trait.getValues().isEmpty()).orElse(false)) {
+        if (shape.getTrait(AuthTrait.class).map(trait -> trait.getValueSet().isEmpty()).orElse(false)) {
             builder.security(Collections.emptyList());
             return;
         }

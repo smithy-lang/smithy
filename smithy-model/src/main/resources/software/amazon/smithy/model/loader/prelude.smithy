@@ -116,8 +116,7 @@ map externalDocumentation {
 
 /// Defines the list of authentication schemes supported by a service or operation.
 @trait(selector: ":is(service, operation)")
-@uniqueItems
-list auth {
+set auth {
     member: AuthTraitReference
 }
 
@@ -492,6 +491,7 @@ structure sparse {}
 
 /// Indicates that the items in a list MUST be unique.
 @trait(selector: "list")
+@deprecated(message: "The uniqueItems trait has been deprecated in favor of using sets.", since: "2.0")
 structure uniqueItems {}
 
 /// Indicates that the shape is unstable and could change in the future.
