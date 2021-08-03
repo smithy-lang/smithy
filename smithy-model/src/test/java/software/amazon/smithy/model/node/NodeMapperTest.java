@@ -784,7 +784,7 @@ public class NodeMapperTest {
         NodeMapper mapper = new NodeMapper();
 
         Set<String> result = mapper.deserializeCollection(value, Set.class, String.class);
-        assertThat(result, instanceOf(HashSet.class));
+        assertThat(result, instanceOf(LinkedHashSet.class));
         assertThat(result, contains("a", "b"));
     }
 
@@ -794,7 +794,7 @@ public class NodeMapperTest {
         NodeMapper mapper = new NodeMapper();
 
         Set<String> result = mapper.deserializeCollection(value, HashSet.class, String.class);
-        assertThat(result, instanceOf(HashSet.class));
+        assertThat(result, instanceOf(LinkedHashSet.class));
         assertThat(result, contains("a", "b"));
     }
 

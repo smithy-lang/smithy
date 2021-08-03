@@ -597,6 +597,11 @@ in a response.
 ``uniqueItems`` trait
 ---------------------
 
+.. warning:
+
+    This trait has been deprecated. It may be removed in future versions. Set
+    shapes should be used instead.
+
 Summary
     Indicates that the items in a :ref:`list` MUST be unique.
 Trait selector

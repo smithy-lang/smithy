@@ -458,7 +458,7 @@ reference other shapes using :ref:`members <member>`.
     * - :ref:`list`
       - Ordered collection of homogeneous values
     * - :ref:`set`
-      - Unordered collection of unique homogeneous values
+      - Collection of unique homogeneous values
     * - :ref:`map`
       - Map data structure that maps string keys to homogeneous values
     * - :ref:`structure`
@@ -565,7 +565,7 @@ example is ``smithy.example#MyList$member``.
 Set
 ===
 
-The :dfn:`set` type represents an unordered collection of unique homogeneous
+The :dfn:`set` type represents a collection of unique homogeneous
 values. A set shape requires a single member named ``member``.
 Sets are defined in the IDL using a :ref:`set_statement <idl-set>`.
 The following example defines a set of strings:
@@ -617,6 +617,13 @@ Not all programming languages support set data structures. Such languages
 SHOULD represent sets as a custom set data structure that can interpret value
 hash codes and equality, or alternatively, store the values of a set data
 structure in a list and rely on validation to ensure uniqueness.
+
+.. rubric:: Set member ordering
+
+Sets MUST be insertion ordered. Not all programming languages that support
+sets support ordered sets, requiring them may be overly burdensome for users,
+or conflict with language idioms. Such languages SHOULD store the values
+of sets in a list and rely on validation to ensure uniqueness.
 
 
 .. _map:

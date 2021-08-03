@@ -15,8 +15,9 @@
 
 package software.amazon.smithy.model.traits;
 
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -24,6 +25,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Specifies the auth schemes supported by default for operations
@@ -33,14 +35,25 @@ public final class AuthTrait extends AbstractTrait {
 
     public static final ShapeId ID = ShapeId.from("smithy.api#auth");
 
-    private final List<ShapeId> values;
+    private final Set<ShapeId> values;
 
+    @Deprecated
     public AuthTrait(List<ShapeId> values, FromSourceLocation sourceLocation) {
         super(ID, sourceLocation);
-        this.values = ListUtils.copyOf(values);
+        this.values = SetUtils.orderedCopyOf(values);
     }
 
+    @Deprecated
     public AuthTrait(List<ShapeId> values) {
+        this(values, SourceLocation.NONE);
+    }
+
+    public AuthTrait(Set<ShapeId> values, FromSourceLocation sourceLocation) {
+        super(ID, sourceLocation);
+        this.values = SetUtils.orderedCopyOf(values);
+    }
+
+    public AuthTrait(Set<ShapeId> values) {
         this(values, SourceLocation.NONE);
     }
 
@@ -49,8 +62,13 @@ public final class AuthTrait extends AbstractTrait {
      *
      * @return Returns the supported auth schemes.
      */
-    public List<ShapeId> getValues() {
+    public Set<ShapeId> getValueSet() {
         return values;
+    }
+
+    @Deprecated
+    public List<ShapeId> getValues() {
+        return ListUtils.copyOf(values);
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -60,7 +78,7 @@ public final class AuthTrait extends AbstractTrait {
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            List<ShapeId> values = new ArrayList<>();
+            Set<ShapeId> values = new LinkedHashSet<>();
             for (StringNode node : value.expectArrayNode().getElementsAs(StringNode.class)) {
                 values.add(node.expectShapeId());
             }
@@ -70,7 +88,7 @@ public final class AuthTrait extends AbstractTrait {
 
     @Override
     protected Node createNode() {
-        return getValues().stream().map(ShapeId::toString).map(Node::from)
+        return getValueSet().stream().map(ShapeId::toString).map(Node::from)
                 .collect(ArrayNode.collect(getSourceLocation()));
     }
 }
