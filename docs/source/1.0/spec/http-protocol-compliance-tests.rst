@@ -56,6 +56,7 @@ constraints:
   ``00000000-0000-4000-8000-000000000000``.
 
 
+.. smithy-trait:: smithy.test#httpRequestTests
 .. _httpRequestTests-trait:
 
 ----------------
@@ -350,6 +351,7 @@ that uses :ref:`HTTP binding traits <http-traits>`.
         }
 
 
+.. smithy-trait:: smithy.test#httpResponseTests
 .. _httpResponseTests-trait:
 
 -----------------

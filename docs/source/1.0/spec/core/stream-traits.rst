@@ -13,6 +13,7 @@ once. This includes both streaming binary data and event streams.
     :backlinks: none
 
 
+.. smithy-trait:: smithy.api#streaming
 .. _streaming-trait:
 
 -------------------
@@ -59,6 +60,7 @@ Validation
         blob StreamingBlob
 
 
+.. smithy-trait:: smithy.api#requiresLength
 .. _requiresLength-trait:
 
 ------------------------
@@ -643,6 +645,7 @@ based protocol, the event payload is serialized as a JSON object:
 Event stream traits
 ===================
 
+.. smithy-trait:: smithy.api#eventHeader
 .. _eventheader-trait:
 
 ``eventHeader`` trait
@@ -708,6 +711,8 @@ The following example defines multiple event headers:
             }
         }
 
+
+.. smithy-trait:: smithy.api#eventPayload
 .. _eventpayload-trait:
 
 ``eventPayload`` trait

@@ -13,6 +13,7 @@ in a way that does not materially affect the semantics of the model.
     :backlinks: none
 
 
+.. smithy-trait:: smithy.api#deprecated
 .. _deprecated-trait:
 
 --------------------
@@ -77,6 +78,7 @@ The ``deprecated`` trait is a structure that supports the following members:
         }
 
 
+.. smithy-trait:: smithy.api#documentation
 .. _documentation-trait:
 
 -----------------------
@@ -161,6 +163,7 @@ the effective documentation of ``Foo$baz`` resolves to "Member documentation",
 ``Baz`` resolves to "Shape documentation", and ``Foo`` is not documented.
 
 
+.. smithy-trait:: smithy.api#examples
 .. _examples-trait:
 
 ------------------
@@ -237,6 +240,7 @@ These values use the same semantics and format as
         ])
 
 
+.. smithy-trait:: smithy.api#externalDocumentation
 .. _externalDocumentation-trait:
 
 -------------------------------
@@ -264,6 +268,7 @@ Value type
         }
 
 
+.. smithy-trait:: smithy.api#internal
 .. _internal-trait:
 
 ------------------
@@ -296,6 +301,7 @@ filtered version of the model.
         }
 
 
+.. smithy-trait:: smithy.api#recommended
 .. _recommended-trait:
 
 ---------------------
@@ -338,6 +344,7 @@ Conflicts with
         }
 
 
+.. smithy-trait:: smithy.api#sensitive
 .. _sensitive-trait:
 
 -------------------
@@ -366,6 +373,7 @@ output. Application of this trait SHOULD NOT affect wire logging
         string MyString
 
 
+.. smithy-trait:: smithy.api#since
 .. _since-trait:
 
 ---------------
@@ -381,6 +389,7 @@ Value type
     ``string`` representing the date it was added.
 
 
+.. smithy-trait:: smithy.api#tags
 .. _tags-trait:
 
 --------------
@@ -407,6 +416,7 @@ tags trait are arbitrary and up to the model author.
         string SomeStructure {}
 
 
+.. smithy-trait:: smithy.api#title
 .. _title-trait:
 
 ---------------
@@ -436,6 +446,7 @@ Value type
         }
 
 
+.. smithy-trait:: smithy.api#unstable
 .. _unstable-trait:
 
 ------------------

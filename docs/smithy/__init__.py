@@ -8,10 +8,13 @@ from docutils.parsers.rst import Directive, directives
 from docutils.statemachine import StringList
 from docutils.writers.html4css1 import HTMLTranslator as BaseTranslator
 
+from .traitindex import setup_smithy_trait_index
+
 
 def setup(app):
     app.set_translator('html', HTMLTranslator)
     app.add_directive("text-figure", TextFigure)
+    setup_smithy_trait_index(app)
 
 # Finds the href part of a header.
 HREF = re.compile('href="([^"]+)"')

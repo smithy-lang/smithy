@@ -24,6 +24,7 @@ Interface`_ to build, register, and deploy `resource providers`_.
     :backlinks: none
 
 
+.. smithy-trait:: aws.cloudformation#cfnResource
 .. _aws.cloudformation#cfnResource-trait:
 
 ----------------------------------------
@@ -139,6 +140,7 @@ of these structures can be excluded by applying the :ref:`aws.cloudformation#cfn
     derived.
 
 
+.. smithy-trait:: aws.cloudformation#cfnExcludeProperty
 .. _aws.cloudformation#cfnExcludeProperty-trait:
 
 -----------------------------------------------
@@ -330,6 +332,7 @@ The computed resource property mutabilities are:
       - + Specified in the ``create`` lifecycle via ``CreateFooRequest``.
 
 
+.. smithy-trait:: aws.cloudformation#cfnMutability
 .. _aws.cloudformation#cfnMutability-trait:
 
 ------------------------------------------
@@ -531,6 +534,7 @@ derivable ``secret`` and ``password`` properties as write only:
         }
 
 
+.. smithy-trait:: aws.cloudformation#cfnName
 .. _aws.cloudformation#cfnName-trait:
 
 ------------------------------------
@@ -573,6 +577,8 @@ the following property names are derived from it:
     "bar"
     "Tags"
 
+
+.. smithy-trait:: aws.cloudformation#cfnAdditionalIdentifier
 .. _aws.cloudformation#cfnAdditionalIdentifier-trait:
 
 ----------------------------------------------------

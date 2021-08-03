@@ -12,6 +12,7 @@ This document defines AWS authentication schemes.
     :backlinks: none
 
 
+.. smithy-trait:: aws.auth#sigv4
 .. _aws.auth#sigv4-trait:
 
 ------------------------
@@ -79,6 +80,7 @@ Trait value
         }
 
 
+.. smithy-trait:: aws.auth#unsignedPayload
 .. _aws.auth#unsignedPayload-trait:
 
 ----------------------------------
@@ -143,6 +145,7 @@ literal string ``UNSIGNED-PAYLOAD`` is used when constructing a
 `x-amz-content-sha256`_ header when sending an HTTP request.
 
 
+.. smithy-trait:: aws.auth#cognitoUserPools
 .. _aws.auth#cognitoUserPools-trait:
 
 -----------------------------------

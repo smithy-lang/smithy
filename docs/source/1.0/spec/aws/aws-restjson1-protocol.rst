@@ -15,6 +15,7 @@ status codes.
     :backlinks: none
 
 
+.. smithy-trait:: aws.protocols#restJson1
 .. _aws.protocols#restJson1-trait:
 
 ---------------------------------

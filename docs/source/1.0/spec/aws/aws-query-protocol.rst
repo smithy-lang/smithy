@@ -441,6 +441,7 @@ following process:
 2. The :token:`shape name <identifier>` of the error's :ref:`shape-id`.
 
 
+.. smithy-trait:: aws.protocols#awsQuery
 .. _aws.protocols#awsQuery-trait:
 
 --------------------------------
@@ -491,6 +492,8 @@ See
             }
         }
 
+
+.. smithy-trait:: aws.protocols#awsQueryError
 .. _aws.protocols#awsQueryError-trait:
 
 -------------------------------------

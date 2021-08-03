@@ -13,6 +13,7 @@ request endpoints.
     :backlinks: none
 
 
+.. smithy-trait:: smithy.api#endpoint
 .. _endpoint-trait:
 
 ------------------
@@ -389,6 +390,7 @@ the expanded ``hostPrefix`` evaluates to ``abc.data.`` AND the ``X-Foo`` HTTP
 header will contain the value ``abc``.
 
 
+.. smithy-trait:: smithy.api#hostLabel
 .. _hostLabel-trait:
 
 -------------------

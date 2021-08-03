@@ -11,6 +11,7 @@ schemes, and OpenAPI specifications.
     :backlinks: none
 
 
+.. smithy-trait:: aws.apigateway#apiKeySource
 .. _aws.apigateway#apiKeySource-trait:
 
 -------------------------------------
@@ -78,6 +79,7 @@ The following example sets the ``X-API-Key`` header as the API key source.
     customers.
 
 
+.. smithy-trait:: aws.apigateway#authorizers
 .. _aws.apigateway#authorizers-trait:
 
 ------------------------------------
@@ -217,6 +219,7 @@ An *authorizer* definition is a structure that supports the following members:
     customers.
 
 
+.. smithy-trait:: aws.apigateway#authorizer
 .. _aws.apigateway#authorizer-trait:
 
 -----------------------------------
@@ -242,6 +245,7 @@ Value type
     customers.
 
 
+.. smithy-trait:: aws.apigateway#requestValidator
 .. _aws.apigateway#requestValidator-trait:
 
 -----------------------------------------
@@ -313,6 +317,7 @@ Then following example enables request validation on a service:
     customers.
 
 
+.. smithy-trait:: aws.apigateway#integration
 .. _aws.apigateway#integration-trait:
 
 ------------------------------------
@@ -489,6 +494,7 @@ operation within the service.
     customers.
 
 
+.. smithy-trait:: aws.apigateway#mockIntegration
 .. _aws.apigateway#mockIntegration-trait:
 
 ----------------------------------------

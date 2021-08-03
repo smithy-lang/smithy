@@ -10,6 +10,7 @@ Resource traits augment resources and resource operation semantics.
     :backlinks: none
 
 
+.. smithy-trait:: smithy.api#noReplace
 .. _noReplace-trait:
 
 -------------------
@@ -76,6 +77,7 @@ to call ``CreateTable`` on a table that already exists will return an error.
         }
 
 
+.. smithy-trait:: smithy.api#references
 .. _references-trait:
 
 --------------------
@@ -264,6 +266,7 @@ conditions:
    names that target string shapes.
 
 
+.. smithy-trait:: smithy.api#resourceIdentifier
 .. _resourceIdentifier-trait:
 
 ----------------------------
