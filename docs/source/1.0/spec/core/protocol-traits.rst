@@ -11,6 +11,7 @@ the wire.
     :backlinks: none
 
 
+.. smithy-trait:: smithy.api#protocolDefinition
 .. _protocolDefinition-trait:
 
 ----------------------------
@@ -133,6 +134,7 @@ support configuration settings.
     }
 
 
+.. smithy-trait:: smithy.api#jsonName
 .. _jsonName-trait:
 
 ------------------
@@ -202,6 +204,7 @@ following document:
     }
 
 
+.. smithy-trait:: smithy.api#mediaType
 .. _mediaType-trait:
 
 -------------------
@@ -267,6 +270,7 @@ document types when the exact bytes of a value are required for an
 application to function.
 
 
+.. smithy-trait:: smithy.api#timestampFormat
 .. _timestampFormat-trait:
 
 -------------------------

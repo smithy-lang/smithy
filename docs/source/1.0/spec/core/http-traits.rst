@@ -18,6 +18,7 @@ and error structures are considered when serializing HTTP messages.
     :backlinks: none
 
 
+.. smithy-trait:: smithy.api#http
 .. _http-trait:
 
 ``http`` trait
@@ -449,6 +450,7 @@ following rules are in place:
      ``hostPrefix``.
 
 
+.. smithy-trait:: smithy.api#httpError
 .. _httpError-trait:
 
 ``httpError`` trait
@@ -487,6 +489,7 @@ HTTP status code of the :ref:`error-trait`.
 * ``500`` is used for "server" errors
 
 
+.. smithy-trait:: smithy.api#httpHeader
 .. _httpHeader-trait:
 
 ``httpHeader`` trait
@@ -588,6 +591,7 @@ Various HTTP headers are highly discouraged for the ``httpHeader`` and
         need to be modeled.
 
 
+.. smithy-trait:: smithy.api#httpLabel
 .. _httpLabel-trait:
 
 ``httpLabel`` trait
@@ -677,6 +681,7 @@ of an operation, then those members are sent as part of the
 the body of the response.
 
 
+.. smithy-trait:: smithy.api#httpPayload
 .. _httpPayload-trait:
 
 ``httpPayload`` trait
@@ -758,6 +763,7 @@ or :ref:`httpPrefixHeaders-trait`.
    document that is sent as the body of the message.
 
 
+.. smithy-trait:: smithy.api#httpPrefixHeaders
 .. _httpPrefixHeaders-trait:
 
 ``httpPrefixHeaders`` trait
@@ -838,6 +844,7 @@ start with the same prefix provided in ``httpPrefixHeaders`` trait. If
 bound to ``headers``.
 
 
+.. smithy-trait:: smithy.api#httpQuery
 .. _httpQuery-trait:
 
 ``httpQuery`` trait
@@ -934,6 +941,8 @@ many HTTP client and server implementations enforce limits in practice.
 Carefully consider the maximum allowed length of each member that is bound to
 an HTTP query string or path.
 
+
+.. smithy-trait:: smithy.api#httpQueryParams
 .. _httpQueryParams-trait:
 
 ``httpQueryParams`` trait
@@ -1044,6 +1053,8 @@ An example HTTP request would be serialized as:
     POST /things?thingId=realId&otherTag=value
     Host: <server>
 
+
+.. smithy-trait:: smithy.api#httpResponseCode
 .. _httpResponseCode-trait:
 
 ``httpResponseCode`` trait
@@ -1082,6 +1093,8 @@ input structure of an operation, then those members are sent as part of the
 :ref:`protocol-specific document <http-protocol-document-payloads>` sent in
 the body of the request.
 
+
+.. smithy-trait:: smithy.api#cors
 .. _cors-trait:
 
 ``cors`` trait

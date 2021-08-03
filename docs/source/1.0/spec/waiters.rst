@@ -26,6 +26,7 @@ following client pseudocode:
             .wait();
 
 
+.. smithy-trait:: smithy.waiters#waitable
 .. _smithy.waiters#waitable-trait:
 
 ``smithy.waiters#waitable`` trait

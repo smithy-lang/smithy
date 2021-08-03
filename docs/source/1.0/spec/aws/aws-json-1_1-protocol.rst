@@ -12,6 +12,7 @@ This specification defines the ``aws.protocols#awsJson1_1`` protocol.
     :backlinks: none
 
 
+.. smithy-trait:: aws.protocols#awsJson1_1
 .. _aws.protocols#awsJson1_1-trait:
 
 ----------------------------------

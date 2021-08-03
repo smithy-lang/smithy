@@ -12,6 +12,7 @@ This specification defines the ``aws.protocols#restXml`` protocol.
     :backlinks: none
 
 
+.. smithy-trait:: aws.protocols#restXml
 .. _aws.protocols#restXml-trait:
 
 -------------------------------

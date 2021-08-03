@@ -12,6 +12,7 @@ Authentication traits define how a client authenticates with a service.
     :backlinks: none
 
 
+.. smithy-trait:: smithy.api#authDefinition
 .. _authDefinition-trait:
 
 ------------------------
@@ -113,6 +114,7 @@ can also support configuration settings.
     }
 
 
+.. smithy-trait:: smithy.api#httpBasicAuth
 .. _httpBasicAuth-trait:
 
 -----------------------
@@ -135,6 +137,7 @@ Value type
     }
 
 
+.. smithy-trait:: smithy.api#httpDigestAuth
 .. _httpDigestAuth-trait:
 
 ------------------------
@@ -157,6 +160,7 @@ Value type
     }
 
 
+.. smithy-trait:: smithy.api#httpBearerAuth
 .. _httpBearerAuth-trait:
 
 ------------------------
@@ -179,6 +183,7 @@ Value type
     }
 
 
+.. smithy-trait:: smithy.api#httpApiKeyAuth
 .. _httpApiKeyAuth-trait:
 
 ------------------------
@@ -223,6 +228,7 @@ HTTP header:
     }
 
 
+.. smithy-trait:: smithy.api#optionalAuth
 .. _optionalAuth-trait:
 
 ----------------------
@@ -261,6 +267,7 @@ The following example defines an operation that does not support
     operation SomeUnauthenticatedOperation {}
 
 
+.. smithy-trait:: smithy.api#auth
 .. _auth-trait:
 
 --------------

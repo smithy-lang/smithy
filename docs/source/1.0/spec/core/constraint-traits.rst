@@ -11,6 +11,7 @@ for a shape.
     :backlinks: none
 
 
+.. smithy-trait:: smithy.api#enum
 .. _enum-trait:
 
 --------------
@@ -157,6 +158,7 @@ The following example defines an enum of valid string values for ``MyString``.
         }
 
 
+.. smithy-trait:: smithy.api#idRef
 .. _idref-trait:
 
 ---------------
@@ -385,6 +387,8 @@ blob         The size of the blob in bytes
             }
         }
 
+
+.. smithy-trait:: smithy.api#pattern
 .. _pattern-trait:
 
 -----------------
@@ -444,6 +448,7 @@ languages.
         }
 
 
+.. smithy-trait:: smithy.api#private
 .. _private-trait:
 
 -----------------
@@ -464,6 +469,7 @@ access from within the model itself and SHOULD NOT influence code-generation
 of the targeted shape.
 
 
+.. smithy-trait:: smithy.api#range
 .. _range-trait:
 
 ---------------
@@ -527,6 +533,7 @@ of the targeted numeric shape to which it is applied.
         }
 
 
+.. smithy-trait:: smithy.api#required
 .. _required-trait:
 
 ------------------
@@ -583,6 +590,7 @@ in a response.
    :ref:`recommended-trait`
 
 
+.. smithy-trait:: smithy.api#uniqueItems
 .. _uniqueItems:
 
 ---------------------

@@ -23,6 +23,7 @@ more information, see :ref:`deriving-condition-keys`.
     :backlinks: none
 
 
+.. smithy-trait:: aws.iam#actionPermissionDescription
 .. _aws.iam#actionPermissionDescription-trait:
 
 ---------------------------------------------
@@ -62,6 +63,8 @@ Value type
             }
         }
 
+
+.. smithy-trait:: aws.iam#conditionKeys
 .. _aws.iam#conditionKeys-trait:
 
 -------------------------------
@@ -169,6 +172,7 @@ The following example's ``MyResource`` resource has the
     without being defined on the service.
 
 
+.. smithy-trait:: aws.iam#defineConditionKeys
 .. _aws.iam#defineConditionKeys-trait:
 
 -------------------------------------
@@ -312,6 +316,7 @@ Condition keys in IAM policies can be evaluated with `condition operators`_.
       - An unordered list of String types.
 
 
+.. smithy-trait:: aws.iam#disableConditionKeyInference
 .. _aws.iam#disableConditionKeyInference-trait:
 
 ----------------------------------------------
@@ -392,6 +397,8 @@ condition key inference disabled.
             }
         }
 
+
+.. smithy-trait:: aws.iam#requiredActions
 .. _aws.iam#requiredActions-trait:
 
 ---------------------------------
