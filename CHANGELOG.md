@@ -1,5 +1,25 @@
 # Smithy Changelog
 
+## 1.11.0 (2021-08-03)
+
+### Features
+
+* Updated CORS header configuration when converting to OpenAPI while using `sigv4` or `restJson1`. ([#868](https://github.com/awslabs/smithy/pull/868))
+* Added the (unstable) `httpMalformedRequestTests` trait to validate service behavior around malformed requests. ([#871](https://github.com/awslabs/smithy/pull/871))
+* Added `smithy-diff` error when an enum entry is inserted. ([#873](https://github.com/awslabs/smithy/pull/873))
+* Added a `restXml` protocol test. ([#866](https://github.com/awslabs/smithy/pull/866))
+* Added a `httpChecksumRequired` protocol test. ([#869](https://github.com/awslabs/smithy/pull/869))
+
+### Bug Fixes
+
+* Updated `NodeMapper` to properly handle `sourceLocation` for traits. ([#865](https://github.com/awslabs/smithy/pull/865))
+* Removed warning when an operation using the HTTP `PATCH` method is marked with the `@idempotent` trait. ([#867](https://github.com/awslabs/smithy/pull/867))
+* Fixed several issues where a `sourceLocation` wasn't propagated for traits. ([#864](https://github.com/awslabs/smithy/pull/864))
+
+### Documentation
+
+* Fixed various documentation issues. ([#870](https://github.com/awslabs/smithy/pull/870), [#874](https://github.com/awslabs/smithy/pull/874))
+
 ## 1.10.0 (2021-07-14)
 
 ### Features
