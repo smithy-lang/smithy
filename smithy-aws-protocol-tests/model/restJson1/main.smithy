@@ -106,6 +106,18 @@ service RestJson {
         MalformedShort,
         MalformedLong,
         MalformedFloat,
-        MalformedDouble
+        MalformedDouble,
+        MalformedTimestampPathDefault,
+        MalformedTimestampPathHttpDate,
+        MalformedTimestampPathEpoch,
+        MalformedTimestampQueryDefault,
+        MalformedTimestampQueryHttpDate,
+        MalformedTimestampQueryEpoch,
+        MalformedTimestampHeaderDefault,
+        MalformedTimestampHeaderDateTime,
+        MalformedTimestampHeaderEpoch,
+        MalformedTimestampBodyDefault,
+        MalformedTimestampBodyDateTime,
+        MalformedTimestampBodyHttpDate
     ]
 }
