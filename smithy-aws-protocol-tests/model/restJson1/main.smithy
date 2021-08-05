@@ -118,6 +118,14 @@ service RestJson {
         MalformedTimestampHeaderEpoch,
         MalformedTimestampBodyDefault,
         MalformedTimestampBodyDateTime,
-        MalformedTimestampBodyHttpDate
+        MalformedTimestampBodyHttpDate,
+        MalformedContentTypeWithoutBody,
+        MalformedContentTypeWithBody,
+        MalformedContentTypeWithPayload,
+        MalformedContentTypeWithGenericString,
+        MalformedAcceptWithoutBody,
+        MalformedAcceptWithBody,
+        MalformedAcceptWithPayload,
+        MalformedAcceptWithGenericString,
     ]
 }

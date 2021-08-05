@@ -122,6 +122,9 @@ timestamp HttpDate
 @mediaType("text/plain")
 blob TextPlainBlob
 
+@mediaType("image/jpeg")
+blob JpegBlob
+
 structure GreetingStruct {
     hi: String,
 }
