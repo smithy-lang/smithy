@@ -957,6 +957,8 @@ Conflicts with
    :ref:`httpLabel-trait`, :ref:`httpHeader-trait`, :ref:`httpQuery-trait`,
    :ref:`httpPrefixHeaders-trait`, :ref:`httpPayload-trait`,
    :ref:`httpResponseCode-trait`
+Structurally exclusive
+    Only a single structure member can be bound to ``httpQueryParams``.
 
 The following example defines an operation that optionally sends the
 target input map as query string parameters in an HTTP request:
