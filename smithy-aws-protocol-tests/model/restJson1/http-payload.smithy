@@ -87,7 +87,45 @@ apply HttpPayloadTraits @httpResponseTests([
         params: {
             foo: "Foo"
         }
-    }
+    },
+    {
+        id: "RestJsonHttpPayloadTraitsWithBlobAcceptsAllContentTypes",
+        documentation: """
+            Servers must accept any content type for blob inputs
+            without the media type trait.""",
+        protocol: restJson1,
+        code: 200,
+        body: "This is definitely a jpeg",
+        bodyMediaType: "application/octet-stream",
+        headers: {
+            "X-Foo": "Foo",
+            "Content-Type": "image/jpeg"
+        },
+        params: {
+            foo: "Foo",
+            blob: "This is definitely a jpeg"
+        },
+        appliesTo: "server",
+    },
+    {
+        id: "RestJsonHttpPayloadTraitsWithBlobAcceptsAllAccepts",
+        documentation: """
+            Servers must accept any accept header for blob inputs
+            without the media type trait.""",
+        protocol: restJson1,
+        code: 200,
+        body: "This is definitely a jpeg",
+        bodyMediaType: "application/octet-stream",
+        headers: {
+            "X-Foo": "Foo",
+            "Accept": "image/jpeg"
+        },
+        params: {
+            foo: "Foo",
+            blob: "This is definitely a jpeg"
+        },
+        appliesTo: "server",
+    },
 ])
 
 structure HttpPayloadTraitsInputOutput {

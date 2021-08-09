@@ -123,7 +123,6 @@ service RestJson {
         MalformedContentTypeWithBody,
         MalformedContentTypeWithPayload,
         MalformedContentTypeWithGenericString,
-        MalformedAcceptWithoutBody,
         MalformedAcceptWithBody,
         MalformedAcceptWithPayload,
         MalformedAcceptWithGenericString,
