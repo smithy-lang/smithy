@@ -669,12 +669,22 @@ final class IdlModelParser extends SimpleParser {
         String name = ParserUtils.parseShapeId(this);
         ws();
 
-        TraitEntry traitEntry = IdlTraitParser.parseTraitValue(this);
+        // Account for singular or block apply statements.
+        List<TraitEntry> traitsToApply;
+        if (peek() == '{') {
+            expect('{');
+            ws();
+            traitsToApply = IdlTraitParser.parseTraits(this);
+            expect('}');
+        } else {
+            traitsToApply = Collections.singletonList(IdlTraitParser.parseTraitValue(this));
+        }
 
         // First, resolve the targeted shape.
         modelFile.addForwardReference(name, id -> {
-            // Next, resolve the trait ID.
-            onDeferredTrait(id, traitEntry.traitName, traitEntry.value, traitEntry.isAnnotation);
+            for (TraitEntry traitEntry : traitsToApply) {
+                onDeferredTrait(id, traitEntry.traitName, traitEntry.value, traitEntry.isAnnotation);
+            }
         });
 
         // Clear out any errantly captured pending docs.
