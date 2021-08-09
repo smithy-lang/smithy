@@ -7,30 +7,6 @@ use smithy.test#httpMalformedRequestTests
 use aws.protocoltests.shared#GreetingStruct
 use aws.protocoltests.shared#JpegBlob
 
-apply MalformedAcceptWithoutBody @httpMalformedRequestTests([
-    {
-        id: "RestJsonWithoutBodyExpectsEmptyAccept",
-        documentation: """
-        When there is no modeled output, accept must not be set.""",
-        protocol: restJson1,
-        request: {
-            method: "POST",
-            uri: "/MalformedAcceptWithoutBody",
-            headers: {
-                // this should be omitted
-                "accept": "application/json"
-            }
-        },
-        response: {
-            code: 406,
-            headers: {
-                "x-amzn-errortype": "NotAcceptableException"
-            }
-        },
-        tags: [ "accept" ]
-    }
-])
-
 apply MalformedAcceptWithBody @httpMalformedRequestTests([
     {
         id: "RestJsonWithBodyExpectsApplicationJsonAccept",
@@ -103,9 +79,6 @@ apply MalformedAcceptWithGenericString @httpMalformedRequestTests([
         tags: [ "accept" ]
     }
 ])
-
-@http(method: "POST", uri: "/MalformedAcceptWithoutBody")
-operation MalformedAcceptWithoutBody {}
 
 @http(method: "POST", uri: "/MalformedAcceptWithBody")
 operation MalformedAcceptWithBody {

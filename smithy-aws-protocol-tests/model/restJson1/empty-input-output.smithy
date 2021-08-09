@@ -28,6 +28,20 @@ apply NoInputAndNoOutput @httpRequestTests([
         method: "POST",
         uri: "/NoInputAndNoOutput",
         body: ""
+    },
+    {
+        id: "RestJsonNoInputAllowsAccept",
+        documentation: """
+                Servers should allow the accept header to be set to the
+                default content-type.""",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/NoInputAndNoOutput",
+        body: "",
+        headers: {
+            "Accept": "application/json"
+        },
+       appliesTo: "server",
     }
 ])
 
@@ -63,7 +77,10 @@ apply NoInputAndOutput @httpRequestTests([
         protocol: restJson1,
         method: "POST",
         uri: "/NoInputAndOutputOutput",
-        body: ""
+        body: "",
+        headers: {
+            "Accept": "application/json"
+        },
     }
 ])
 
