@@ -207,7 +207,9 @@ The Smithy IDL is defined by the following ABNF:
     trait_body_value    :`trait_structure` / `node_value`
     trait_structure     :`trait_structure_kvp` *(`ws` `trait_structure_kvp`)
     trait_structure_kvp :`node_object_key` `ws` ":" `ws` `node_value`
-    apply_statement :"apply" `ws` `shape_id` `ws` `trait` `ws`
+    apply_statement     :`apply_statement_singular` / `apply_statement_block`
+    apply_statement_singular: "apply" `ws` `shape_id` `ws` `trait` `ws`
+    apply_statement_block: "apply" `ws` `shape_id` `ws` "{" `trait_statements` "}"
 
 .. rubric:: Shape ID
 
@@ -1491,22 +1493,52 @@ Apply statement
 Traits can be applied to shapes outside of a shape's definition using an
 :token:`apply_statement`.
 
-The following example applies the :ref:`documentation-trait` and
-:ref:`length-trait` to the ``smithy.example#MyString`` shape:
+The following example applies the :ref:`documentation-trait` to the
+``smithy.example#MyString`` shape:
 
 .. tabs::
 
     .. code-tab:: smithy
 
+        $version: "1.1"
         namespace smithy.example
 
         apply MyString @documentation("This is my string!")
-        apply MyString @length(min: 1, max: 10)
 
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.1",
+            "shapes": {
+                "smithy.example#MyString": {
+                    "type": "apply",
+                    "traits": {
+                        "smithy.api#documentation": "This is my string!"
+                    }
+                }
+            }
+        }
+
+Multiple traits can be applied to the same shape using a block apply
+statement. The following example applies the :ref:`documentation-trait`
+and :ref:`length-trait` to the ``smithy.example#MyString`` shape:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        $version: "1.1"
+        namespace smithy.example
+
+        apply MyString {
+            @documentation("This is my string!")
+            @length(min: 1, max: 10)
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.1",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "apply",
@@ -1525,6 +1557,7 @@ Traits can be applied to members too:
 
 .. code-block:: smithy
 
+    $version: "1.1"
     namespace smithy.example
 
     apply MyStructure$foo @documentation("Structure member documentation")
