@@ -17,6 +17,7 @@ package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -53,9 +54,11 @@ public final class ExamplesTraitValidator extends AbstractValidator {
                     events.addAll(input.accept(validator));
                 });
             } else if (!example.getInput().isEmpty()) {
-                events.add(error(shape, trait, String.format("Input parameters provided for operation with no "
-                                                             + "input structure members: `%s`", example.getTitle())));
+                events.add(error(shape, trait, String.format(
+                        "Input parameters provided for operation with no input structure members: `%s`",
+                        example.getTitle())));
             }
+
             if (shape.getOutput().isPresent()) {
                 model.getShape(shape.getOutput().get()).ifPresent(output -> {
                     NodeValidationVisitor validator = createVisitor(
@@ -66,6 +69,20 @@ public final class ExamplesTraitValidator extends AbstractValidator {
                 events.add(error(shape, trait, String.format(
                         "Output parameters provided for operation with no output structure members: `%s`",
                         example.getTitle())));
+            }
+
+            if (example.getError().isPresent()) {
+                ExamplesTrait.ErrorExample errorExample = example.getError().get();
+                Optional<Shape> errorShape = model.getShape(errorExample.getShapeId());
+                if (errorShape.isPresent() && shape.getErrors().contains(errorExample.getShapeId())) {
+                    NodeValidationVisitor validator = createVisitor(
+                            "error", errorExample.getContent(), model, shape, example);
+                    events.addAll(errorShape.get().accept(validator));
+                } else {
+                    events.add(error(shape, trait, String.format(
+                        "Error parameters provided for operation without the `%s` error: `%s`",
+                            errorExample.getShapeId(), example.getTitle())));
+                }
             }
         }
 
