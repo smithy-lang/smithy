@@ -37,7 +37,10 @@ public class ExamplesTraitTest {
                         .withMember("title", Node.from("qux"))
                         .withMember("documentation", Node.from("docs"))
                         .withMember("input", Node.objectNode().withMember("a", Node.from("b")))
-                        .withMember("output", Node.objectNode().withMember("c", Node.from("d"))));
+                        .withMember("output", Node.objectNode().withMember("c", Node.from("d")))
+                        .withMember("error", Node.objectNode()
+                                .withMember(Node.from("shapeId"), Node.from("smithy.example#FooError"))
+                                .withMember(Node.from("content"), Node.objectNode().withMember("e", Node.from("f")))));
 
         Optional<Trait> trait = provider.createTrait(
                 ShapeId.from("smithy.api#examples"), ShapeId.from("ns.qux#foo"), node);

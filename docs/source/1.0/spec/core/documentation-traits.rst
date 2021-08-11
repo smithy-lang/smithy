@@ -202,6 +202,10 @@ Each ``example`` trait value is a structure with the following members:
       - Provides example output parameters for the operation. Each key is
         the name of a top-level output structure member, and each value is the
         value of the member.
+    * - error
+      - :ref:`examples-ErrorExample-structure`
+      - Provides an error shape ID and example error parameters for the
+        operation.
 
 The values provided for the ``input`` and ``output`` members MUST be
 compatible with the shapes and constraints of the corresponding structure.
@@ -215,7 +219,8 @@ These values use the same semantics and format as
         @readonly
         operation MyOperation {
             input: MyOperationInput,
-            output: MyOperationOutput
+            output: MyOperationOutput,
+            errors: [MyOperationError]
         }
 
         apply MyOperation @examples([
@@ -237,7 +242,46 @@ These values use the same semantics and format as
                     status: "PENDING",
                 }
             },
+            {
+                title: "Error example for MyOperation",
+                input: {
+                    foo: 1,
+                },
+                error: {
+                    shapeId: MyOperationError,
+                    content: {
+                        message: "Invalid 'foo'",
+                    }
+                }
+            },
         ])
+
+
+.. _examples-ErrorExample-structure:
+
+``ErrorExample`` structure
+==========================
+
+The ``ErrorExample`` structure defines an error example using the following
+members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Property
+      - Type
+      - Description
+    * - shapeId
+      - :ref:`shape-id`
+      - The shape ID of the error in this example. This shape ID MUST be of
+        a structure shape with the error trait. The structure shape MUST be
+        bound as an error to the operation this example trait is applied to.
+    * - content
+      - ``document``
+      - Provides example error parameters for the operation. Each key is
+        the name of a top-level error structure member, and each value is the
+        value of the member.
 
 
 .. smithy-trait:: smithy.api#externalDocumentation

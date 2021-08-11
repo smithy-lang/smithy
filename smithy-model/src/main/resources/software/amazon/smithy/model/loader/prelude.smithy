@@ -231,7 +231,17 @@ structure Example {
 
     input: Document,
 
-    output: Document
+    output: Document,
+
+    error: ExampleError,
+}
+
+@private
+structure ExampleError {
+    @idRef(selector: "structure[trait|error]")
+    shapeId: String,
+
+    content: Document,
 }
 
 /// Indicates that a structure shape represents an error.
