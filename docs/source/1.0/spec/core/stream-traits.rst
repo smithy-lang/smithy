@@ -214,11 +214,19 @@ stream in its output:
             down: Movement,
             left: Movement,
             right: Movement,
+            throttlingError: ThrottlingError
         }
 
         structure Movement {
             velocity: Float,
         }
+
+        /// An example error emitted when the client is throttled
+        /// and should terminate the event stream.
+        @error("client")
+        @retryable(throttling: true)
+        structure ThrottlingError {}
+
 
     .. code-tab:: json
 
@@ -253,6 +261,9 @@ stream in its output:
                         },
                         "right": {
                             "target": "smithy.example#Movement"
+                        },
+                        "throttlingError": {
+                            "target": "smithy.example#ThrottlingError"
                         }
                     },
                     "traits": {
@@ -266,9 +277,27 @@ stream in its output:
                             "target": "smithy.api#Float"
                         }
                     }
+                },
+                "smithy.example#ThrottlingError": {
+                    "type": "structure",
+                    "traits": {
+                        "smithy.api#documentation": "An example error emitted when the client is throttled and should terminate the event stream.",
+                        "smithy.api#error": "client",
+                        "smithy.api#retryable": {
+                            "throttling": true
+                        }
+                    }
                 }
             }
         }
+
+
+Modeled errors in event streams
+===============================
+
+Event streams MAY target shapes marked with the :ref:`error-trait`. These
+events are considered terminal errors and MUST terminate the event stream
+when received.
 
 
 .. _initial-messages:
