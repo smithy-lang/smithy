@@ -182,6 +182,23 @@
                 },
                 "smithy.api#idempotent": {}
             }
+        },
+        "ns.foo#Options": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "method": "OPTIONS",
+                    "uri": "/options"
+                },
+                "smithy.api#readonly": {}
+            },
+            "input": {
+                "target": "ns.foo#OptionsInput"
+            }
+        },
+        "ns.foo#OptionsInput": {
+            "type": "structure",
+            "members": {}
         }
     }
 }

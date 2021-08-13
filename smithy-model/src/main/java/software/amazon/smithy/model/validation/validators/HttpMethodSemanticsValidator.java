@@ -45,20 +45,27 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
      *     <li>(Boolean) isReadonly</li>
      *     <li>(Boolean) isIdempotent</li>
      *     <li>(Boolean) allowsRequestPayload</li>
+     *     <li>(Boolean) warningMessageWhenModeled</li>
      * </ul>
      *
      * <p>Setting any of the Boolean properties to {@code null} means that
      * the validator will have no enforced semantic on a specific property.
      */
     private static final Map<String, HttpMethodSemantics> EXPECTED = MapUtils.of(
-            "GET", new HttpMethodSemantics(true, false, false),
-            "HEAD", new HttpMethodSemantics(true, false, false),
-            "OPTIONS", new HttpMethodSemantics(true, false, false),
-            "TRACE", new HttpMethodSemantics(true, false, false),
-            "POST", new HttpMethodSemantics(false, null, true),
-            "DELETE", new HttpMethodSemantics(false, true, false),
-            "PUT", new HttpMethodSemantics(false, true, true),
-            "PATCH", new HttpMethodSemantics(false, null, true));
+            "GET", new HttpMethodSemantics(true, false, false, null),
+            "HEAD", new HttpMethodSemantics(true, false, false, null),
+            "OPTIONS", new HttpMethodSemantics(true, false, true,
+                    "OPTIONS requests are typically used as part of CORS and should not be modeled explicitly. They "
+                    + "are an implementation detail that should not appear in generated client or server code. "
+                    + "Instead, tooling should use the `cors` trait on a service to automatically configure CORS on "
+                    + "clients and servers. It is the responsibility of service frameworks and API gateways to "
+                    + "automatically manage OPTIONS requests. For example, OPTIONS requests are automatically "
+                    + "created when using Smithy models with Amazon API Gateway."),
+            "TRACE", new HttpMethodSemantics(true, false, false, null),
+            "POST", new HttpMethodSemantics(false, null, true, null),
+            "DELETE", new HttpMethodSemantics(false, true, false, null),
+            "PUT", new HttpMethodSemantics(false, true, true, null),
+            "PATCH", new HttpMethodSemantics(false, null, true, null));
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -88,6 +95,11 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
         }
 
         HttpMethodSemantics semantics = EXPECTED.get(method);
+
+        if (semantics.warningWhenModeled != null) {
+            events.add(warning(shape, trait, semantics.warningWhenModeled));
+        }
+
         boolean isReadonly = shape.getTrait(ReadonlyTrait.class).isPresent();
         if (semantics.isReadonly != null && semantics.isReadonly != isReadonly) {
             events.add(warning(shape, trait, String.format(
@@ -123,11 +135,18 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
         private final Boolean isReadonly;
         private final Boolean isIdempotent;
         private final Boolean allowsRequestPayload;
+        private final String warningWhenModeled;
 
-        private HttpMethodSemantics(Boolean isReadonly, Boolean isIdempotent, Boolean allowsRequestPayload) {
+        private HttpMethodSemantics(
+                Boolean isReadonly,
+                Boolean isIdempotent,
+                Boolean allowsRequestPayload,
+                String warningWhenModeled
+        ) {
             this.isReadonly = isReadonly;
             this.isIdempotent = isIdempotent;
             this.allowsRequestPayload = allowsRequestPayload;
+            this.warningWhenModeled = warningWhenModeled;
         }
     }
 }
