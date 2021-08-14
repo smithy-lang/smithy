@@ -545,7 +545,7 @@ public class CodeWriter {
         }
 
         if (result.isEmpty()) {
-            return trailingNewline ? String.valueOf(currentState.newline) : "";
+            return trailingNewline ? currentState.newline : "";
         }
 
         // This accounts for cases where the only write on the CodeWriter was
@@ -556,10 +556,10 @@ public class CodeWriter {
 
         if (trailingNewline) {
             // Add a trailing newline if needed.
-            return result.charAt(result.length() - 1) != currentState.newline ? result + currentState.newline : result;
-        } else if (result.charAt(result.length() - 1) == currentState.newline) {
+            return result.endsWith(currentState.newline) ? result : result + currentState.newline;
+        } else if (result.endsWith(currentState.newline)) {
             // Strip the trailing newline if present.
-            return result.substring(0, result.length() - 1);
+            return result.substring(0, result.length() - currentState.newline.length());
         } else {
             return result;
         }
@@ -663,8 +663,9 @@ public class CodeWriter {
                 // and not written to the builder of the parent state. This ensures that
                 // inline sections are captured inside of strings and then later written
                 // back into a parent state.
-                popped.builder.setLength(0);
-                popped.builder.append(result);
+                StringBuilder builder = popped.getBuilder();
+                builder.setLength(0);
+                builder.append(result);
             } else if (!result.isEmpty()) {
                 // Sections can be added that are just placeholders. In those cases,
                 // do not write anything unless the section emitted a non-empty string.
@@ -677,16 +678,12 @@ public class CodeWriter {
     }
 
     private String getTrimmedPoppedStateContents(State state) {
-        StringBuilder builder = state.builder;
-        String result = "";
+        String result = state.toString();
 
         // Remove the trailing newline, if present, since it gets added in the
         // final call to writeOptional.
-        if (builder != null && builder.length() > 0) {
-            if (builder.charAt(builder.length() - 1) == currentState.newline) {
-                builder.delete(builder.length() - 1, builder.length());
-            }
-            result = builder.toString();
+        if (result.endsWith(currentState.newline)) {
+            result = result.substring(0, result.length() - currentState.newline.length());
         }
 
         return result;
@@ -823,9 +820,8 @@ public class CodeWriter {
      * {@link #disableNewlines()}, and does not actually change the newline
      * character of the current state.
      *
-     * <p>When the provided string is not empty, then the string must contain
-     * exactly one character. Setting the newline character to a non-empty
-     * string also implicitly enables newlines in the current state.
+     * <p>Setting the newline character to a non-empty string implicitly
+     * enables newlines in the current state.
      *
      * @param newline Newline character to use.
      * @return Returns the CodeWriter.
@@ -833,10 +829,9 @@ public class CodeWriter {
     public final CodeWriter setNewline(String newline) {
         if (newline.isEmpty()) {
             return disableNewlines();
-        } else if (newline.length() > 1) {
-            throw new IllegalArgumentException("newline must be set to an empty string or a single character");
         } else {
-            return setNewline(newline.charAt(0));
+            currentState.newline = newline;
+            return enableNewlines();
         }
     }
 
@@ -851,9 +846,7 @@ public class CodeWriter {
      * @return Returns the CodeWriter.
      */
     public final CodeWriter setNewline(char newline) {
-        currentState.newline = newline;
-        enableNewlines();
-        return this;
+        return setNewline(String.valueOf(newline));
     }
 
     /**
@@ -1350,7 +1343,7 @@ public class CodeWriter {
         private int indentation;
         private boolean trimTrailingSpaces;
         private boolean disableNewline;
-        private char newline = '\n';
+        private String newline = "\n";
         private char expressionStart = '$';
 
         private transient String sectionName;
@@ -1422,41 +1415,62 @@ public class CodeWriter {
             interceptors.computeIfAbsent(section, s -> new ArrayList<>()).add(interceptor);
         }
 
-        void write(String contents) {
+        StringBuilder getBuilder() {
             if (builder == null) {
                 builder = new StringBuilder();
             }
+            return builder;
+        }
 
-            // Write each character, accounting for newlines along the way.
-            for (int i = 0; i < contents.length(); i++) {
-                append(contents.charAt(i));
+        void write(String contents) {
+            int position = 0;
+            int nextNewline = contents.indexOf(newline);
+
+            while (nextNewline > -1) {
+                for (; position < nextNewline; position++) {
+                    append(contents.charAt(position));
+                }
+                writeNewline();
+                position += newline.length();
+                nextNewline = contents.indexOf(newline, position);
+            }
+
+            // Write anything remaining in the string after the last newline.
+            for (; position < contents.length(); position++) {
+                append(contents.charAt(position));
             }
         }
 
-        void append(char c) {
+        private void append(char c) {
+            checkIndentationBeforeWriting();
+            getBuilder().append(c);
+        }
+
+        private void checkIndentationBeforeWriting() {
             if (needsIndentation) {
-                builder.append(leadingIndentString);
-                builder.append(newlinePrefix);
+                getBuilder().append(leadingIndentString).append(newlinePrefix);
                 needsIndentation = false;
             }
-
-            if (c == newline) {
-                // The next appended character will get indentation and a
-                // leading prefix string.
-                needsIndentation = true;
-                // Trim spaces before each newline. This only mutates the builder
-                // if space trimming is enabled.
-                trimSpaces();
-            }
-
-            builder.append(c);
         }
 
-        void writeLine(String line) {
+        private void writeNewline() {
+            checkIndentationBeforeWriting();
+            // Trim spaces before each newline. This only mutates the builder
+            // if space trimming is enabled.
+            trimSpaces();
+            // Newlines are never split across writes, which could potentially cause
+            // indentation logic to mess it up.
+            getBuilder().append(newline);
+            // The next appended character will get indentation and a
+            // leading prefix string.
+            needsIndentation = true;
+        }
+
+        private void writeLine(String line) {
             write(line);
 
             if (!disableNewline) {
-                append(newline);
+                writeNewline();
             }
         }
 
@@ -1465,9 +1479,10 @@ public class CodeWriter {
                 return;
             }
 
+            StringBuilder buffer = getBuilder();
             int toRemove = 0;
-            for (int i = builder.length() - 1; i > 0; i--) {
-                if (builder.charAt(i) == ' ') {
+            for (int i = buffer.length() - 1; i > 0; i--) {
+                if (buffer.charAt(i) == ' ') {
                     toRemove++;
                 } else {
                     break;
@@ -1475,7 +1490,7 @@ public class CodeWriter {
             }
 
             if (toRemove > 0) {
-                builder.delete(builder.length() - toRemove, builder.length());
+                buffer.delete(buffer.length() - toRemove, buffer.length());
             }
         }
 

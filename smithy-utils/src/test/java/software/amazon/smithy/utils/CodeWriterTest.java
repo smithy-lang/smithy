@@ -620,13 +620,6 @@ public class CodeWriterTest {
     }
 
     @Test
-    public void newlineLengthMustBe1() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            CodeWriter.createDefault().setNewline("  ");
-        });
-    }
-
-    @Test
     public void newlineCanBeDisabled() {
         CodeWriter writer = CodeWriter
                 .createDefault()
@@ -651,6 +644,34 @@ public class CodeWriterTest {
                 .toString();
 
         assertThat(result, equalTo("[hi]\n"));
+    }
+
+    @Test
+    public void newlineCanBeMultipleCharacters() {
+        CodeWriter writer = CodeWriter
+                .createDefault()
+                .insertTrailingNewline()
+                .setNewline("\r\n");
+        String result = writer
+                .openBlock("[", "]", () -> writer.write("hi"))
+                .enableNewlines()
+                .toString();
+
+        assertThat(result, equalTo("[\r\n    hi\r\n]\r\n"));
+    }
+
+    @Test
+    public void newlineCanBeLotsOfCharacters() {
+        CodeWriter writer = CodeWriter
+                .createDefault()
+                .insertTrailingNewline()
+                .setNewline("HELLO_THIS_IS_A_NEWLINE!!!");
+        String result = writer
+                .write("Hi.")
+                .write("There.")
+                .toString();
+
+        assertThat(result, equalTo("Hi.HELLO_THIS_IS_A_NEWLINE!!!There.HELLO_THIS_IS_A_NEWLINE!!!"));
     }
 
     @Test
@@ -726,6 +747,7 @@ public class CodeWriterTest {
         assertThat(writer.toString(), equalTo("[1, 2, 3]\n"));
     }
 
+    @Test
     public void sectionWithWrite() {
         String testSection = "TEST_SECTION";
         CodeWriter writer = new CodeWriter();
