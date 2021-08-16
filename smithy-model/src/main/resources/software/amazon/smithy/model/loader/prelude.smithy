@@ -196,6 +196,9 @@ structure httpApiKeyAuth {
     /// can be set to `"header"` or `"query"`.
     @required
     in: HttpApiKeyLocations,
+
+    /// Defines an ApiKey scheme when Authorization header is used
+    scheme: NonEmptyString,
 }
 
 @private

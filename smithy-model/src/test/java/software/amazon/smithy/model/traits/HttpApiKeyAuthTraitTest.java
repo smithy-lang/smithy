@@ -18,6 +18,7 @@ package software.amazon.smithy.model.traits;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
@@ -39,6 +40,7 @@ public class HttpApiKeyAuthTraitTest {
         assertThat(trait.get(), instanceOf(HttpApiKeyAuthTrait.class));
         HttpApiKeyAuthTrait auth = (HttpApiKeyAuthTrait) trait.get();
 
+        assertThat(auth.getScheme().isPresent(), is(Boolean.FALSE));
         assertThat(auth.getName(), equalTo("X-Foo"));
         assertThat(auth.getIn(), equalTo(HttpApiKeyAuthTrait.Location.HEADER));
         assertThat(auth.toNode(), equalTo(node));
@@ -57,6 +59,47 @@ public class HttpApiKeyAuthTraitTest {
         assertThat(trait.get(), instanceOf(HttpApiKeyAuthTrait.class));
         HttpApiKeyAuthTrait auth = (HttpApiKeyAuthTrait) trait.get();
 
+        assertThat(auth.getScheme().isPresent(), is(Boolean.FALSE));
+        assertThat(auth.getName(), equalTo("blerg"));
+        assertThat(auth.getIn(), equalTo(HttpApiKeyAuthTrait.Location.QUERY));
+        assertThat(auth.toNode(), equalTo(node));
+        assertThat(auth.toBuilder().build(), equalTo(auth));
+    }
+
+    @Test
+    public void loadsTraitWithHeaderAndScheme() {
+        TraitFactory provider = TraitFactory.createServiceFactory();
+        ObjectNode node = Node.objectNode()
+                .withMember("scheme", "fenty")
+                .withMember("name", "X-Foo")
+                .withMember("in", "header");
+        Optional<Trait> trait = provider.createTrait(
+                HttpApiKeyAuthTrait.ID, ShapeId.from("ns.qux#foo"), node);
+        assertTrue(trait.isPresent());
+        assertThat(trait.get(), instanceOf(HttpApiKeyAuthTrait.class));
+        HttpApiKeyAuthTrait auth = (HttpApiKeyAuthTrait) trait.get();
+
+        assertThat(auth.getScheme().get(), equalTo("fenty"));
+        assertThat(auth.getName(), equalTo("X-Foo"));
+        assertThat(auth.getIn(), equalTo(HttpApiKeyAuthTrait.Location.HEADER));
+        assertThat(auth.toNode(), equalTo(node));
+        assertThat(auth.toBuilder().build(), equalTo(auth));
+    }
+
+    @Test
+    public void loadsTraitWithQueryAndScheme() {
+        TraitFactory provider = TraitFactory.createServiceFactory();
+        ObjectNode node = Node.objectNode()
+                .withMember("scheme", "fenty")
+                .withMember("name", "blerg")
+                .withMember("in", "query");
+        Optional<Trait> trait = provider.createTrait(
+                HttpApiKeyAuthTrait.ID, ShapeId.from("ns.qux#foo"), node);
+        assertTrue(trait.isPresent());
+        assertThat(trait.get(), instanceOf(HttpApiKeyAuthTrait.class));
+        HttpApiKeyAuthTrait auth = (HttpApiKeyAuthTrait) trait.get();
+
+        assertThat(auth.getScheme().get(), equalTo("fenty"));
         assertThat(auth.getName(), equalTo("blerg"));
         assertThat(auth.getIn(), equalTo(HttpApiKeyAuthTrait.Location.QUERY));
         assertThat(auth.toNode(), equalTo(node));
