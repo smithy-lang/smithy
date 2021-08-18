@@ -216,6 +216,9 @@ properties:
       - ``string``
       - **Required**. Defines the location of where the key is serialized.
         This value can be set to ``header`` or ``query``.
+    * - scheme
+      - ``string``
+      - Defines the ApiKey scheme to set on the intended Authoriation header
 
 The following example defines a service that accepts an API key in the "X-Api-Key"
 HTTP header:
@@ -223,6 +226,14 @@ HTTP header:
 .. code-block:: smithy
 
     @httpApiKeyAuth(name: "X-Api-Key", in: "header")
+    service WeatherService {
+        version: "2017-02-11",
+    }
+
+
+.. code-block:: smithy
+
+    @httpApiKeyAuth(scheme: "ApiKey", name: "Authorization", in: "header")
     service WeatherService {
         version: "2017-02-11",
     }
