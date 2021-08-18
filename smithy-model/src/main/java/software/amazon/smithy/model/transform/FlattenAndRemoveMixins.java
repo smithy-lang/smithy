@@ -25,7 +25,7 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.MixinTrait;
 
 /**
- * Flattens out mixins out of the model.
+ * Flattens mixins out of the model.
  */
 final class FlattenAndRemoveMixins {
     Model transform(ModelTransformer transformer, Model model) {

@@ -530,16 +530,15 @@ structure Invalid with
 ### Mixins in the IDL
 
 To support mixins, `structure_statement` and `union_statement` ABNF rules
-will be updated to contain an optional series of `add_mixin` productions
-that comes after the shape name and before `{`. Each `with` in the
-`add_mixin` MUST be followed by a single shape ID, and each shape MUST
-target a valid shape marked with the `@mixin` trait. Any number of mixins can
-be added to a shape.
+will be updated to contain an optional `mixins` production
+that comes after the shape name and before `{`. Each shape ID referenced in
+the `mixins` production MUST target a shape of the same type as the
+shape being defined and MUST be marked with the `@mixin` trait.
 
 ```
-structure_statement = "structure" ws `identifier` ws *add_mixin structure_members
-union_statement = "union" ws `identifier` ws *add_mixin union_members
-add_mixin = "with" `ws` `shape_id`
+structure_statement = "structure" ws identifier ws [mixins ws] structure_members
+union_statement = "union" ws identifier ws [mixins ws] union_members
+mixins = "with" 1*(ws shape_id)
 ```
 
 

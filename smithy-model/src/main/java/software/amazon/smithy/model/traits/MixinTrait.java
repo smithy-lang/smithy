@@ -93,7 +93,7 @@ public final class MixinTrait extends AbstractTrait implements ToSmithyBuilder<M
 
         Map<ShapeId, Trait> filtered = new HashMap<>(traits);
 
-        // Technically the trait could be a dynamic trait is some wacky,
+        // Technically the trait could be a dynamic trait in some wacky,
         // hand-made model that isn't sent through the assembler. That is
         // so beyond unlikely, that a hard cast here works fine.
         MixinTrait mixinTrait = (MixinTrait) traits.get(MixinTrait.ID);

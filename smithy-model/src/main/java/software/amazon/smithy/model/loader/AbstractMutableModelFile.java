@@ -49,7 +49,7 @@ abstract class AbstractMutableModelFile implements ModelFile {
     private final Set<ShapeId> allShapeIds = new HashSet<>();
     private final Map<ShapeId, AbstractShapeBuilder<?, ?>> shapes = new LinkedHashMap<>();
     private final Map<ShapeId, Map<String, MemberShape.Builder>> members = new HashMap<>();
-    private final Map<ShapeId, Set<ShapeId>> shapesPendings = new HashMap<>();
+    private final Map<ShapeId, Set<ShapeId>> pendingShapes = new HashMap<>();
     private final List<ValidationEvent> events = new ArrayList<>();
     private final MetadataContainer metadata = new MetadataContainer(events);
     private final TraitFactory traitFactory;
@@ -87,7 +87,7 @@ abstract class AbstractMutableModelFile implements ModelFile {
     }
 
     void addPendingMixin(ShapeId shape, ShapeId mixin) {
-        shapesPendings.computeIfAbsent(shape, id -> new LinkedHashSet<>()).add(mixin);
+        pendingShapes.computeIfAbsent(shape, id -> new LinkedHashSet<>()).add(mixin);
     }
 
     private SourceException onConflict(AbstractShapeBuilder<?, ?> builder, AbstractShapeBuilder<?, ?> previous) {
@@ -153,7 +153,7 @@ abstract class AbstractMutableModelFile implements ModelFile {
         List<Shape> resolvedShapes = new ArrayList<>(shapes.size());
         List<PendingShape> pendingMixins = new ArrayList<>();
 
-        for (Map.Entry<ShapeId, Set<ShapeId>> entry : shapesPendings.entrySet()) {
+        for (Map.Entry<ShapeId, Set<ShapeId>> entry : pendingShapes.entrySet()) {
             ShapeId subject = entry.getKey();
             Set<ShapeId> mixins = entry.getValue();
             AbstractShapeBuilder<?, ?> builder = shapes.get(entry.getKey());
@@ -205,9 +205,9 @@ abstract class AbstractMutableModelFile implements ModelFile {
             // Add each mixin and ensure there are no member conflicts.
             for (ShapeId mixin : mixins) {
                 Shape mixinShape = shapeMap.get(mixin);
-                // Members cannot be redefined.
                 for (MemberShape member : mixinShape.members()) {
                     if (builderMembers.containsKey(member.getMemberName())) {
+                        // Members cannot be redefined.
                         MemberShape.Builder conflict = builderMembers.get(member.getMemberName());
                         events.add(ValidationEvent.builder()
                                 .severity(Severity.ERROR)

@@ -32,7 +32,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
- * Ensures that mixins do no introduce conflicting members across
+ * Ensures that mixins do not introduce conflicting members across
  * mixin closures.
  *
  * <p>The kinds of errors detected by this validator are not actually

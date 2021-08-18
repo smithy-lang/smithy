@@ -276,6 +276,15 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<B, S>,
         return (B) this;
     }
 
+    /**
+     * Removes mixins from a shape and flattens them into the shape.
+     *
+     * <p>Flattening a mixin into a shape copies the traits and members of a
+     * mixin onto the shape, effectively resulting in the same shape but with
+     * no trace of the mixin relationship.
+     *
+     * @return Returns the updated builder.
+     */
     @SuppressWarnings("unchecked")
     public B flattenMixins() {
         if (mixins != null) {

@@ -70,7 +70,7 @@ public final class SmithyIdlModelSerializer {
         OMIT_REQUIRED,
 
         /** Inline documentation traits with other traits as opposed to using /// syntax. */
-        INLINE_DOCUMENTATION;
+        NO_SPECIAL_DOCS_SYNTAX;
 
         /**
          * Checks if the current enum value is present in an array of enum values.
@@ -412,12 +412,12 @@ public final class SmithyIdlModelSerializer {
                         // Use short form for a single trait, and block form for multiple traits.
                         if (member.getIntroducedTraits().size() == 1) {
                             codeWriter.writeInline("apply $I ", member.getId());
-                            serializeTraits(member.getIntroducedTraits(), TraitFeature.INLINE_DOCUMENTATION);
+                            serializeTraits(member.getIntroducedTraits(), TraitFeature.NO_SPECIAL_DOCS_SYNTAX);
                             codeWriter.write("");
                         } else {
                             codeWriter.openBlock("apply $I {", "}", member.getId(), () -> {
                                 // Only serialize local traits, and don't use special documentation syntax here.
-                                serializeTraits(member.getIntroducedTraits(), TraitFeature.INLINE_DOCUMENTATION);
+                                serializeTraits(member.getIntroducedTraits(), TraitFeature.NO_SPECIAL_DOCS_SYNTAX);
                             }).write("");
                         }
                     }
@@ -430,11 +430,11 @@ public final class SmithyIdlModelSerializer {
         }
 
         private void serializeTraits(Map<ShapeId, Trait> traits, TraitFeature... traitFeatures) {
-            boolean inlineDocumentation = TraitFeature.INLINE_DOCUMENTATION.hasFeature(traitFeatures);
+            boolean noSpecialDocsSyntax = TraitFeature.NO_SPECIAL_DOCS_SYNTAX.hasFeature(traitFeatures);
             boolean omitRequired = TraitFeature.OMIT_REQUIRED.hasFeature(traitFeatures);
 
             // The documentation trait always needs to be serialized first since it uses special syntax.
-            if (!inlineDocumentation && traits.containsKey(DocumentationTrait.ID)) {
+            if (!noSpecialDocsSyntax && traits.containsKey(DocumentationTrait.ID)) {
                 Trait documentation = traits.get(DocumentationTrait.ID);
                 if (traitFilter.test(documentation)) {
                     serializeDocumentation(documentation.toNode().expectStringNode().getValue());
@@ -442,7 +442,7 @@ public final class SmithyIdlModelSerializer {
             }
 
             traits.values().stream()
-                    .filter(trait -> inlineDocumentation || !(trait instanceof DocumentationTrait))
+                    .filter(trait -> noSpecialDocsSyntax || !(trait instanceof DocumentationTrait))
                     .filter(trait -> !(omitRequired && trait.toShapeId().equals(RequiredTrait.ID)))
                     .filter(traitFilter)
                     .sorted(Comparator.comparing(Trait::toShapeId))
