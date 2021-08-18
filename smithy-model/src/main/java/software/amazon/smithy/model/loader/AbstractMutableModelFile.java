@@ -222,10 +222,11 @@ abstract class AbstractMutableModelFile implements ModelFile {
                         ShapeId targetId = builder.getId().withMember(member.getMemberName());
                         Map<ShapeId, Trait> introducedTraits = traitContainer.getTraitsForShape(targetId);
                         if (!introducedTraits.isEmpty()) {
-                            builder.addMember(member.toBuilder()
+                            builder.addMember(MemberShape.builder()
                                     .id(targetId)
+                                    .target(member.getTarget())
+                                    .source(member.getSourceLocation())
                                     .addTraits(introducedTraits.values())
-                                    .clearMixins()
                                     .addMixin(member)
                                     .build());
                         }

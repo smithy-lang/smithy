@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -368,55 +367,61 @@ public final class SmithyIdlModelSerializer {
         }
 
         private void shapeWithMembers(Shape shape, List<MemberShape> members, boolean structureMember) {
+            List<MemberShape> nonMixinMembers = new ArrayList<>();
+            List<MemberShape> mixinMembers = new ArrayList<>();
+            for (MemberShape member : members) {
+                if (member.getMixins().isEmpty()) {
+                    nonMixinMembers.add(member);
+                } else if (!member.getIntroducedTraits().isEmpty()) {
+                    mixinMembers.add(member);
+                }
+            }
+
             serializeTraits(shape.getIntroducedTraits());
             codeWriter.writeInline("$L $L ", shape.getType(), shape.getId().getName());
 
-            if (!shape.getMixins().isEmpty()) {
-                codeWriter.writeInline("with ");
-                // Add pretty commas between mixin shape IDs.
-                Iterator<ShapeId> mixins = shape.getMixins().iterator();
-                do {
-                    ShapeId value = mixins.next();
-                    if (!mixins.hasNext()) {
-                        codeWriter.writeInline("$I ", value);
-                        break;
-                    } else {
-                        codeWriter.writeInline("$I, ", value);
-                    }
-                } while (true);
+            if (shape.getMixins().size() == 1) {
+                codeWriter.writeInline("with $I ", shape.getMixins().iterator().next());
+            } else if (shape.getMixins().size() > 1) {
+                codeWriter.writeInline("with");
+                for (ShapeId id : shape.getMixins()) {
+                    // Trailing spaces are trimmed.
+                    codeWriter.writeInline("\n    $I ", id);
+                }
+                if (!nonMixinMembers.isEmpty()) {
+                    codeWriter.write("");
+                }
             }
 
-            if (members.isEmpty()) {
-                // If there are no members then we don't want to introduce an unnecessary newline by opening a block.
-                codeWriter.write("{}").write("");
-                return;
-            }
-
-            List<MemberShape> mixinMembers = new ArrayList<>();
-            codeWriter.openBlock("{", "}", () -> {
-                for (MemberShape member : members) {
-                    if (!member.getMixins().isEmpty()) {
-                        if (!member.getIntroducedTraits().isEmpty()) {
-                            mixinMembers.add(member);
-                        }
-                    } else {
+            if (nonMixinMembers.isEmpty()) {
+                // When the are no members to write, put "{}" on the same line.
+                codeWriter.writeInline("{}").write("").write("");
+            } else {
+                codeWriter.openBlock("{", "}", () -> {
+                    for (MemberShape member : nonMixinMembers) {
                         // Omit required traits and instead use "!" syntax.
                         serializeTraits(member.getAllTraits(), TraitFeature.OMIT_REQUIRED);
                         // Suffix with "!" if it's a required structure member.
                         String requiredSuffix = structureMember && member.isRequired() ? "!" : "";
                         codeWriter.write("$L: $I$L", member.getMemberName(), member.getTarget(), requiredSuffix);
                     }
-                }
-            }).write("");
+                }).write("");
 
-            if (!mixinMembers.isEmpty()) {
-                for (MemberShape member : mixinMembers) {
-                    codeWriter.openBlock("apply $I {", "}", member.getId(), () -> {
-                        // Only serialize local traits, and don't use special documentation syntax here.
-                        serializeTraits(member.getIntroducedTraits(), TraitFeature.INLINE_DOCUMENTATION);
-                    });
+                if (!mixinMembers.isEmpty()) {
+                    for (MemberShape member : mixinMembers) {
+                        // Use short form for a single trait, and block form for multiple traits.
+                        if (member.getIntroducedTraits().size() == 1) {
+                            codeWriter.writeInline("apply $I ", member.getId());
+                            serializeTraits(member.getIntroducedTraits(), TraitFeature.INLINE_DOCUMENTATION);
+                            codeWriter.write("");
+                        } else {
+                            codeWriter.openBlock("apply $I {", "}", member.getId(), () -> {
+                                // Only serialize local traits, and don't use special documentation syntax here.
+                                serializeTraits(member.getIntroducedTraits(), TraitFeature.INLINE_DOCUMENTATION);
+                            }).write("");
+                        }
+                    }
                 }
-                codeWriter.write("");
             }
         }
 

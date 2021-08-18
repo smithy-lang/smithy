@@ -53,11 +53,25 @@ structure E with D {
 
 /// F
 @internal
-structure F with B, E {
+structure F with
+    B
+    E
+{
     /// F.f
     f: String
 }
 
 apply F$a {
     @documentation("I've changed")
+    @sensitive
 }
+
+apply F$e @sensitive
+
+structure G with
+    B
+    E {}
+
+structure H with B {}
+
+structure I {}
