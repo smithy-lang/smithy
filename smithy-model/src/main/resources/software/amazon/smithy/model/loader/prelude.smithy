@@ -197,7 +197,7 @@ structure httpApiKeyAuth {
     @required
     in: HttpApiKeyLocations,
 
-    /// Defines an ApiKey scheme when Authorization header is used
+    /// Defines an ApiKey scheme when Authorization header is used.
     scheme: NonEmptyString,
 }
 
