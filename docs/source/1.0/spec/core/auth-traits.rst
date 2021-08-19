@@ -218,7 +218,7 @@ properties:
         This value can be set to ``header`` or ``query``.
     * - scheme
       - ``string``
-      - Defines the ApiKey scheme to set on the intended Authoriation header
+      - Defines the ApiKey scheme to set on the intended Authorization header.
 
 The following example defines a service that accepts an API key in the "X-Api-Key"
 HTTP header:

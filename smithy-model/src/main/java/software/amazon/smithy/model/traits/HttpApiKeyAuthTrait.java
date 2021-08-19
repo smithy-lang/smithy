@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ public final class HttpApiKeyAuthTrait extends AbstractTrait implements ToSmithy
                 .withMember("name", getName())
                 .withMember("in", getIn().toString());
         getScheme().ifPresent(scheme -> {
-            builder.withMember("scheme", getScheme().get());
+            builder.withMember("scheme", scheme);
         });
         return builder.build();
     }

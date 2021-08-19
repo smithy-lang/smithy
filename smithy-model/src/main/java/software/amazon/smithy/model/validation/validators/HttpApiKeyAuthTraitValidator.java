@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -26,7 +26,8 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 
 /**
  * Validates that if an HttpApiKeyAuth trait's scheme field is present then
- * the 'in' field must specify "header".
+ * the 'in' field must specify "header". Scheme should only be used with the
+ * "Authorization" http header.
  */
 public final class HttpApiKeyAuthTraitValidator extends AbstractValidator {
     @Override
