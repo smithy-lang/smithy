@@ -28,4 +28,5 @@ dependencies {
     implementation project(":smithy-cli")
     implementation project(":smithy-protocol-test-traits")
     implementation project(":smithy-aws-traits")
+    api project(":smithy-validation-model")
 }
