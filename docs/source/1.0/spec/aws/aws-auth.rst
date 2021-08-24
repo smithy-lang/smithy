@@ -148,6 +148,33 @@ literal string ``UNSIGNED-PAYLOAD`` is used when constructing a
 .. smithy-trait:: aws.auth#cognitoUserPools
 .. _aws.auth#cognitoUserPools-trait:
 
+------------------------
+``presignable`` trait
+------------------------
+
+Trait Summary
+    A presigner is a client-side utility that generates a presigned request for a given
+    operation invocation that may be used in contexts where direct calls may be
+    difficult or impossible.  This trait indicates that a client presigner could be
+    generated for the given operation.
+
+Trait selector
+    ``operation``
+Trait value
+    Annotation trait.
+
+The following example defines a service operation for which presigned requests can be generated for.
+
+.. code-block:: smithy
+
+    service WeatherService {
+        version: "2017-02-11",
+        operations: [PingServer]
+    }
+
+    @presignable
+    operation PingServer {}
+
 -----------------------------------
 ``aws.auth#cognitoUserPools`` trait
 -----------------------------------

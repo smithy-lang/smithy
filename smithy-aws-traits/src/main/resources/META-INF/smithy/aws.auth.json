@@ -42,6 +42,15 @@
                 "smithy.api#documentation": "Indicates that the request payload of a signed request is not to be used as part of the signature."
             }
         },
+        "aws.auth#presignable": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "operation"
+                },
+                "smithy.api#documentation": "indicates that a client presigner could be generated for the given operation."
+            }
+        },
         "aws.auth#cognitoUserPools": {
             "type": "structure",
             "members": {
