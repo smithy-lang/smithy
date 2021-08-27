@@ -35,12 +35,12 @@ public final class HttpApiKeyAuthTraitValidator extends AbstractValidator {
         Set<ServiceShape> serviceShapesWithTrait = model.getServiceShapesWithTrait(HttpApiKeyAuthTrait.class);
         List<ValidationEvent> events = new ArrayList<>();
 
-        for (ServiceShape serviceShape:serviceShapesWithTrait) {
+        for (ServiceShape serviceShape : serviceShapesWithTrait) {
             HttpApiKeyAuthTrait trait = serviceShape.expectTrait(HttpApiKeyAuthTrait.class);
             trait.getScheme().ifPresent(scheme -> {
                 if (trait.getIn() != HttpApiKeyAuthTrait.Location.HEADER) {
-                    events.add(error(serviceShape,
-                            "httpApiKeyAuth trait must use in=\"header\" when scheme is specified."));
+                    events.add(error(serviceShape, trait,
+                            String.format("The httpApiKeyAuth trait must have an `in` value of `header` when a `scheme` is provided, found: %s", trait.getIn())));
                 }
             });
         }
