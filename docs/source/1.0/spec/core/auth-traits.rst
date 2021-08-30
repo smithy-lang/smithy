@@ -231,6 +231,8 @@ HTTP header:
         version: "2017-02-11",
     }
 
+The following example defines a service that uses an API key auth scheme through
+the HTTP ``Authorization`` header:
 
 .. code-block:: smithy
 
