@@ -40,7 +40,8 @@ public final class HttpApiKeyAuthTraitValidator extends AbstractValidator {
             trait.getScheme().ifPresent(scheme -> {
                 if (trait.getIn() != HttpApiKeyAuthTrait.Location.HEADER) {
                     events.add(error(serviceShape, trait,
-                            String.format("The httpApiKeyAuth trait must have an `in` value of `header` when a `scheme` is provided, found: %s", trait.getIn())));
+                            String.format("The httpApiKeyAuth trait must have an `in` value of `header` when a `scheme`"
+                                    + " is provided, found: %s", trait.getIn())));
                 }
             });
         }

@@ -1,1 +1,0 @@
-[ERROR] ns.foo#MyService: httpApiKeyAuth trait must use in="header" when scheme is specified. | HttpApiKeyAuthTrait
