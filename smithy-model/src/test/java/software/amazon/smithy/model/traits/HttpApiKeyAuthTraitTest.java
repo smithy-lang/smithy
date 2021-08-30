@@ -18,7 +18,6 @@ package software.amazon.smithy.model.traits;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -60,7 +59,7 @@ public class HttpApiKeyAuthTraitTest {
         assertThat(trait.get(), instanceOf(HttpApiKeyAuthTrait.class));
         HttpApiKeyAuthTrait auth = (HttpApiKeyAuthTrait) trait.get();
 
-        assertThat(auth.getScheme().isPresent(), is(Boolean.FALSE));
+        assertFalse(auth.getScheme().isPresent());
         assertThat(auth.getName(), equalTo("blerg"));
         assertThat(auth.getIn(), equalTo(HttpApiKeyAuthTrait.Location.QUERY));
         assertThat(auth.toNode(), equalTo(node));
