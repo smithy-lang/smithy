@@ -36,9 +36,9 @@ public final class HttpApiKeyAuthTrait extends AbstractTrait implements ToSmithy
 
     private HttpApiKeyAuthTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
-        scheme = builder.scheme;
         name = SmithyBuilder.requiredState("name", builder.name);
         in = SmithyBuilder.requiredState("in", builder.in);
+        scheme = builder.scheme;
     }
 
     public Optional<String> getScheme() {
