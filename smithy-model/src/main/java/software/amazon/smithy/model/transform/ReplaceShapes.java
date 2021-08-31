@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -84,7 +85,7 @@ final class ReplaceShapes {
             return model;
         }
 
-        assertNoShapeChangedType(model, shouldReplace);
+        assertShapeTypeChangesSound(model, shouldReplace);
         Model.Builder builder = createReplacedModelBuilder(model, shouldReplace);
 
         // If a member shape changes, then ensure that the containing shape
@@ -121,16 +122,49 @@ final class ReplaceShapes {
                 .collect(toList());
     }
 
-    private void assertNoShapeChangedType(Model model, List<Shape> shouldReplace) {
+    private void assertShapeTypeChangesSound(Model model, List<Shape> shouldReplace) {
         // Throws if any mappings attempted to change a shape's type.
         shouldReplace.stream()
                 .flatMap(previous -> Pair.flatMapStream(previous, p -> model.getShape(p.getId())))
                 .filter(pair -> pair.getLeft().getType() != pair.getRight().getType())
+                .filter(pair -> !isReplacementValid(model, pair.getLeft(), pair.getRight()))
                 .forEach(pair -> {
-                    throw new RuntimeException(String.format(
+                    throw new IllegalStateException(String.format(
                             "Cannot change the type of %s from %s to %s",
-                            pair.getLeft().getId(), pair.getLeft().getType(), pair.getRight().getType()));
+                            pair.getLeft().getId(), pair.getRight().getType(), pair.getLeft().getType()));
                 });
+    }
+
+    private boolean isReplaceable(Shape shape) {
+        return !shape.isDocumentShape()
+                && !shape.isMapShape()
+                && !shape.isMemberShape()
+                && !shape.isOperationShape()
+                && !shape.isResourceShape()
+                && !shape.isServiceShape()
+                && !shape.isStructureShape()
+                && !shape.isUnionShape();
+    }
+
+    private boolean isReplacementValid(Model model, Shape left, Shape right) {
+        if (isListCollection(left) && isListCollection(right)) {
+            validateListCollectionReplacement(model, (CollectionShape) left, (CollectionShape) right);
+        }
+        return isReplaceable(left) && isReplaceable(right) && isListCollection(left) == isListCollection(right);
+    }
+
+    private boolean isListCollection(Shape shape) {
+        return shape.isListShape() || shape.isSetShape();
+    }
+
+    private void validateListCollectionReplacement(Model model, CollectionShape left, CollectionShape right) {
+        Shape leftTarget = model.expectShape(left.getMember().getTarget());
+        Shape rightTarget = model.expectShape(right.getMember().getTarget());
+        if (!isReplacementValid(model, leftTarget, rightTarget)) {
+            throw new IllegalStateException(String.format(
+                    "Cannot change the type of %s from %s to %s",
+                    left.getMember().getId(), rightTarget.getType(), leftTarget.getType()));
+        }
     }
 
     private Model.Builder createReplacedModelBuilder(Model model, List<Shape> shouldReplace) {
