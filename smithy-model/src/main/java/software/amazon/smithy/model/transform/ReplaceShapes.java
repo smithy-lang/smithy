@@ -35,6 +35,7 @@ import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
+import software.amazon.smithy.model.shapes.SimpleShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.utils.OptionalUtils;
@@ -135,26 +136,12 @@ final class ReplaceShapes {
                 });
     }
 
-    private boolean isReplaceable(Shape shape) {
-        return !shape.isDocumentShape()
-                && !shape.isMapShape()
-                && !shape.isMemberShape()
-                && !shape.isOperationShape()
-                && !shape.isResourceShape()
-                && !shape.isServiceShape()
-                && !shape.isStructureShape()
-                && !shape.isUnionShape();
-    }
-
     private boolean isReplacementValid(Model model, Shape left, Shape right) {
-        if (isListCollection(left) && isListCollection(right)) {
+        if (left instanceof CollectionShape && right instanceof CollectionShape) {
             validateListCollectionReplacement(model, (CollectionShape) left, (CollectionShape) right);
+            return true;
         }
-        return isReplaceable(left) && isReplaceable(right) && isListCollection(left) == isListCollection(right);
-    }
-
-    private boolean isListCollection(Shape shape) {
-        return shape.isListShape() || shape.isSetShape();
+        return left instanceof SimpleShape && right instanceof SimpleShape;
     }
 
     private void validateListCollectionReplacement(Model model, CollectionShape left, CollectionShape right) {
