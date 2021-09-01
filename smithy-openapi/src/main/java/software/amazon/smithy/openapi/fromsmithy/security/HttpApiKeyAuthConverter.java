@@ -40,6 +40,16 @@ public final class HttpApiKeyAuthConverter implements SecuritySchemeConverter<Ht
 
     @Override
     public SecurityScheme createSecurityScheme(Context<? extends Trait> context, HttpApiKeyAuthTrait trait) {
+        if (trait.getScheme().isPresent()) {
+            return SecurityScheme.builder()
+                    .type("http")
+                    .scheme(trait.getScheme().get())
+                    .name(trait.getName())
+                    .in(trait.getIn().toString())
+                    .description("ApiKey authentication semantics via 'Authorization' header")
+                    .build();
+        }
+
         return SecurityScheme.builder()
                 .type("apiKey")
                 .name(trait.getName())

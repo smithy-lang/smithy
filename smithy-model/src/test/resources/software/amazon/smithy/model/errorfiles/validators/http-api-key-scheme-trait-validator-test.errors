@@ -1,0 +1,1 @@
+[ERROR] ns.foo#MyService: The httpApiKeyAuth trait must have an `in` value of `header` when a `scheme` is provided, found: query | HttpApiKeyAuthTrait

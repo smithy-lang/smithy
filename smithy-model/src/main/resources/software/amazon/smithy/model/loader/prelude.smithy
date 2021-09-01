@@ -196,6 +196,10 @@ structure httpApiKeyAuth {
     /// can be set to `"header"` or `"query"`.
     @required
     in: HttpApiKeyLocations,
+
+    /// Defines the security scheme to use on the ``Authorization`` header value
+    /// This can only be set if the "in" property is set to ``header``.
+    scheme: NonEmptyString,
 }
 
 @private
