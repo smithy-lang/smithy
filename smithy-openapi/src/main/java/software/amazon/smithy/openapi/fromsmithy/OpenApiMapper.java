@@ -58,6 +58,20 @@ public interface OpenApiMapper {
     }
 
     /**
+     * Preprocesses the provided Smithy model before the conversion is
+     * performed, and returns a new model.
+     *
+     * <p>This method is invoked before {@link #updateDefaultSettings}.
+     *
+     * @param model Model being converted to OpenAPI.
+     * @param config OpenAPI configuration object.
+     * @return Returns the model, or an updated model.
+     */
+    default Model preprocessModel(Model model, OpenApiConfig config) {
+        return model;
+    }
+
+    /**
      * Sets default values on the OpenAPI configuration object.
      *
      * <p>Use this method <strong>and not {@link #before}</strong>
@@ -278,6 +292,14 @@ public interface OpenApiMapper {
                 for (OpenApiMapper plugin : sorted) {
                     plugin.updateDefaultSettings(model, config);
                 }
+            }
+
+            @Override
+            public Model preprocessModel(Model model, OpenApiConfig config) {
+                for (OpenApiMapper plugin : sorted) {
+                    model = plugin.preprocessModel(model, config);
+                }
+                return model;
             }
 
             @Override

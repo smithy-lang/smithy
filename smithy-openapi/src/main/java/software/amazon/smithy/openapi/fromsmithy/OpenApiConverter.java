@@ -173,15 +173,22 @@ public final class OpenApiConverter {
             throw new OpenApiException("openapi is missing required property, `service`");
         }
 
+        // Discover OpenAPI extensions.
+        List<Smithy2OpenApiExtension> extensions = new ArrayList<>();
+        for (Smithy2OpenApiExtension extension : ServiceLoader.load(Smithy2OpenApiExtension.class, classLoader)) {
+            extensions.add(extension);
+        }
+        OpenApiMapper composedMapper = createComposedMapper(extensions, mappers);
+
+        // Preprocess and potentially replace the model.
+        model = composedMapper.preprocessModel(model, config);
+
+        // Now that the model is finalized, start building stuff up around it.
         JsonSchemaConverter.Builder jsonSchemaConverterBuilder = JsonSchemaConverter.builder();
         jsonSchemaConverterBuilder.model(model);
 
-        // Discover OpenAPI extensions.
-        List<Smithy2OpenApiExtension> extensions = new ArrayList<>();
-
-        for (Smithy2OpenApiExtension extension : ServiceLoader.load(Smithy2OpenApiExtension.class, classLoader)) {
-            extensions.add(extension);
-            // Add JSON schema mappers from found extensions.
+        // Add JSON schema mappers from found extensions.
+        for (Smithy2OpenApiExtension extension : extensions) {
             for (JsonSchemaMapper mapper : extension.getJsonSchemaMappers()) {
                 jsonSchemaConverterBuilder.addMapper(mapper);
             }
@@ -201,7 +208,6 @@ public final class OpenApiConverter {
         // Add default values from mappers. This is needed instead of just using `before`
         // because the JSON schema machinery uses configuration settings like
         // `alphanumericOnlyRefs` when it is created.
-        OpenApiMapper composedMapper = createComposedMapper(extensions, mappers);
         composedMapper.updateDefaultSettings(model, config);
 
         // Update with protocol default values.
