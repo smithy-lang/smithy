@@ -145,17 +145,17 @@ literal string ``UNSIGNED-PAYLOAD`` is used when constructing a
 `x-amz-content-sha256`_ header when sending an HTTP request.
 
 
-.. smithy-trait:: aws.auth#cognitoUserPools
-.. _aws.auth#cognitoUserPools-trait:
+.. smithy-trait:: aws.auth#presignable
+.. _aws.auth#presignable-trait:
 
 ------------------------
-``presignable`` trait
+``aws.auth#presignable`` trait
 ------------------------
 
 Trait Summary
     A presigner is a client-side utility that generates a presigned request for a given
     operation invocation that may be used in contexts where direct calls may be
-    difficult or impossible.  This trait indicates that a client presigner could be
+    difficult or impossible. This trait indicates that a client presigner can be
     generated for the given operation.
 
 Trait selector
@@ -174,6 +174,14 @@ The following example defines a service operation for which presigned requests c
 
     @presignable
     operation PingServer {}
+
+
+Given this model, a client-side code generator may generate a function that presigns a `PingServer` request.
+Generation of an operation presigner will vary based on the auth scheme that the service utilizes. Many AWS
+services use `sigv4`. [Here are details](https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-query-string-auth.html) for how requests can be signed using `sigv4`.
+
+.. smithy-trait:: aws.auth#cognitoUserPools
+.. _aws.auth#cognitoUserPools-trait:
 
 -----------------------------------
 ``aws.auth#cognitoUserPools`` trait

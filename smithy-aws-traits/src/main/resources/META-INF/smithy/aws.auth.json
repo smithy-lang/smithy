@@ -48,7 +48,7 @@
                 "smithy.api#trait": {
                     "selector": "operation"
                 },
-                "smithy.api#documentation": "indicates that a client presigner could be generated for the given operation."
+                "smithy.api#documentation": "Indicates that a client presigner can be generated for the given operation."
             }
         },
         "aws.auth#cognitoUserPools": {
