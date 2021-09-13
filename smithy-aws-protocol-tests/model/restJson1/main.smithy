@@ -107,6 +107,7 @@ service RestJson {
         MalformedLong,
         MalformedFloat,
         MalformedDouble,
+        MalformedString,
         MalformedTimestampPathDefault,
         MalformedTimestampPathHttpDate,
         MalformedTimestampPathEpoch,

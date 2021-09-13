@@ -34,7 +34,7 @@ apply MalformedBlob @httpMalformedRequestTests([
         },
         testParameters: {
             value: ["blob", "\"xyz\"", "\"YmxvYg=\"", "[98, 108, 11, 98]",
-                    "[\"b\", \"l\",\"o\",\"b\"]", "981081198", "true"]
+                    "[\"b\", \"l\",\"o\",\"b\"]", "981081198", "true", "[][]", "-_=="]
         }
     },
 ])
