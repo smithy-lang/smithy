@@ -86,7 +86,6 @@ public class OpenApiConfig extends JsonSchemaConfig {
     private List<String> externalDocs = ListUtils.of(
             "Homepage", "API Reference", "User Guide", "Developer Guide", "Reference", "Guide");
     private boolean useIntegerType;
-    private String removeUriPrefix;
 
     public OpenApiConfig() {
         super();
@@ -329,24 +328,6 @@ public class OpenApiConfig extends JsonSchemaConfig {
      */
     public void setUseIntegerType(boolean useIntegerType) {
         this.useIntegerType = useIntegerType;
-    }
-
-    public String getRemoveUriPrefix() {
-        return removeUriPrefix;
-    }
-
-    /**
-     * Sets a prefix string that is removed from every modeled Smithy operation.
-     *
-     * <p>Only OpenAPI operations derived from Smithy operations are affected by
-     * this configuration setting. Operations defined through jsonAdd, schemaExtensions,
-     * or added through other plugins are not affected.
-     *
-     * @param removeUriPrefix Set to a non-null string to remove from the start of
-     *                        every operation defined in Smithy.
-     */
-    public void setRemoveUriPrefix(String removeUriPrefix) {
-        this.removeUriPrefix = removeUriPrefix;
     }
 
     /**

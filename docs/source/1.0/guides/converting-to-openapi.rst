@@ -492,40 +492,6 @@ jsonAdd (``Map<String, Node>``)
             }
         }
 
-
-.. _remove-path-prefix:
-
-removeUriPrefix (``string``)
-    Removes a prefix from paths derived from modeled Smithy operations. This
-    can be useful when operations in a Smithy model include a prefix in the
-    ``uri`` of the :ref:`http-trait` to specify a version or "stage" of the
-    API, but you need to integrate with gateways like Amazon API Gateway that
-    expect to own placing this prefix onto the paths defined in OpenAPI
-    models.
-
-    For example, if every operation in a Smithy model starts with "/v1", the
-    following configuration would strip "/v1" from the beginning of every
-    OpenAPI path generated from them:
-
-    .. code-block:: json
-
-        {
-            "version": "1.0",
-            "plugins": {
-                "openapi": {
-                    "service": "smithy.example#Weather",
-                    "removeUriPrefix": "/v1"
-                }
-            }
-        }
-
-    .. note::
-
-        This configuration option only removes prefixes from operations
-        modeled in Smithy. It does not affect OpenAPI paths defined through
-        things like ``jsonAdd``, ``schemaDocumentExtensions``, or other
-        OpenAPI plugins applied when converting Smithy to OpenAPI.
-
 .. _generate-openapi-setting-useIntegerType:
 
 useIntegerType (``boolean``)
