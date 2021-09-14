@@ -49,6 +49,11 @@ The configuration file accepts the following properties:
       - Defines the plugins to apply to the model when building every
         projection. Plugins are a mapping of plugin names to an arbitrary
         plugin configuration object.
+    * - ignoreMissingPlugins
+      - ``bool``
+      - If a plugin can't be found, Smithy will by default fail the build. This
+        setting can be set to ``true`` to allow the build to progress even if
+        a plugin can't be found on the classpath.
 
 The following is an example ``smithy-build.json`` configuration:
 

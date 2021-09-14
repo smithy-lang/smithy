@@ -362,9 +362,14 @@ final class SmithyBuildImpl {
         SmithyBuildPlugin resolved = pluginFactory.apply(pluginName).orElse(null);
 
         if (resolved == null) {
-            LOGGER.info(() -> String.format(
-                    "Unable to find a plugin for `%s` in the `%s` projection",
-                    pluginName, projectionName));
+            String message = "Unable to find a plugin named `" + pluginName + "` in the `" + projectionName + "` "
+                             + "projection. Is this the correct spelling? Are you missing a dependency? Is your "
+                             + "classpath configured correctly?";
+            if (config.isIgnoreMissingPlugins()) {
+                LOGGER.severe(message);
+            } else {
+                throw new SmithyBuildException(message);
+            }
         } else if (resolved.requiresValidModel() && modelResult.isBroken()) {
             LOGGER.fine(() -> String.format(
                     "Skipping `%s` plugin for `%s` projection because the model is broken",
@@ -411,7 +416,9 @@ final class SmithyBuildImpl {
 
             ProjectionTransformer transformer = transformFactory.apply(name)
                     .orElseThrow(() -> new UnknownTransformException(String.format(
-                            "Unable to find a transform for `%s` in the `%s` projection.", name, projectionName)));
+                            "Unable to find a transform named `%s` in the `%s` projection. Is this the correct "
+                            + "spelling? Are you missing a dependency? Is your classpath configured correctly?",
+                            name, projectionName)));
             resolved.add(Pair.of(transformConfig.getArgs(), transformer));
         }
 
