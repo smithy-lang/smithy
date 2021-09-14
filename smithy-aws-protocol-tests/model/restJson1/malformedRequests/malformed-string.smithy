@@ -21,8 +21,6 @@ apply MalformedString @httpMalformedRequestTests([
         request: {
             method: "POST",
             uri: "/MalformedString",
-            body: """
-            { "blob" : $value:L }""",
             headers: {
                 "content-type": "application/json",
                 "amz-media-typed-header": "$value:L",
@@ -51,7 +49,7 @@ apply MalformedString @httpMalformedRequestTests([
 ])
 
 structure MalformedStringInput {
-    @httpHeader("x-media-typed-header")
+    @httpHeader("amz-media-typed-header")
     blob: JsonHeaderString,
 }
 
