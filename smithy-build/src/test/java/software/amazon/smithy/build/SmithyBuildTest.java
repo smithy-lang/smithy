@@ -187,9 +187,9 @@ public class SmithyBuildTest {
     }
 
     @Test
-    public void ignoresUnknownPlugins() throws Exception {
+    public void canIgnoreUnknownPlugins() throws Exception {
         SmithyBuildConfig config = SmithyBuildConfig.builder()
-                .load(Paths.get(getClass().getResource("unknown-plugin.json").toURI()))
+                .load(Paths.get(getClass().getResource("unknown-plugin-ignored.json").toURI()))
                 .outputDirectory(outputDirectory.toString())
                 .build();
         Model model = Model.assembler()
@@ -198,6 +198,25 @@ public class SmithyBuildTest {
                 .unwrap();
         SmithyBuild builder = new SmithyBuild(config).model(model);
         builder.build();
+    }
+
+    @Test
+    public void failsByDefaultForUnknownPlugins() throws Exception {
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource("unknown-plugin.json").toURI()))
+                .outputDirectory(outputDirectory.toString())
+                .build();
+        Model model = Model.assembler()
+                .addImport(Paths.get(getClass().getResource("resource-model.json").toURI()))
+                .assemble()
+                .unwrap();
+
+        SmithyBuildException e = Assertions.assertThrows(SmithyBuildException.class, () -> {
+            SmithyBuild builder = new SmithyBuild(config).model(model);
+            builder.build();
+        });
+
+        assertThat(e.getMessage(), containsString("Unable to find a plugin named `unknown1`"));
     }
 
     @Test

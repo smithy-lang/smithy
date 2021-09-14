@@ -157,4 +157,26 @@ public class SmithyBuildConfigTest {
             throw new RuntimeException(e);
         }
     }
+
+    @Test
+    public void convertingToBuilderRetainsIgnoreMissingPlugins() {
+        SmithyBuildConfig a = SmithyBuildConfig.builder()
+                .version("1")
+                .ignoreMissingPlugins(true)
+                .build();
+
+        assertThat(a.toBuilder().build().isIgnoreMissingPlugins(), equalTo(true));
+    }
+
+    @Test
+    public void mergingTakesIgnoreMissingPluginsFromEither() {
+        SmithyBuildConfig a = SmithyBuildConfig.builder()
+                .version("1")
+                .ignoreMissingPlugins(true)
+                .build();
+        SmithyBuildConfig b = SmithyBuildConfig.builder().version("1").build();
+
+        assertThat(a.toBuilder().merge(b).build().isIgnoreMissingPlugins(), equalTo(true));
+        assertThat(b.toBuilder().merge(a).build().isIgnoreMissingPlugins(), equalTo(true));
+    }
 }

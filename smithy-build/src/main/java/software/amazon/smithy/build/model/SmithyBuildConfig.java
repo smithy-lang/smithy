@@ -45,6 +45,7 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
     private final String outputDirectory;
     private final Map<String, ProjectionConfig> projections;
     private final Map<String, ObjectNode> plugins;
+    private final boolean ignoreMissingPlugins;
 
     private SmithyBuildConfig(Builder builder) {
         SmithyBuilder.requiredState("version", builder.version);
@@ -53,6 +54,7 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
         imports = ListUtils.copyOf(builder.imports);
         projections = MapUtils.copyOf(builder.projections);
         plugins = new HashMap<>(builder.plugins);
+        ignoreMissingPlugins = builder.ignoreMissingPlugins;
         for (String builtin : BUILTIN_PLUGINS) {
             plugins.put(builtin, Node.objectNode());
         }
@@ -113,7 +115,8 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
                 .outputDirectory(outputDirectory)
                 .imports(imports)
                 .projections(projections)
-                .plugins(plugins);
+                .plugins(plugins)
+                .ignoreMissingPlugins(ignoreMissingPlugins);
     }
 
     /**
@@ -164,6 +167,17 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
     }
 
     /**
+     * If a plugin can't be found, Smithy will by default fail the build.
+     * This setting can be set to true to allow the build to progress even
+     * if there is a missing plugin.
+     *
+     * @return Returns true if missing build plugins are allowed.
+     */
+    public boolean isIgnoreMissingPlugins() {
+        return ignoreMissingPlugins;
+    }
+
+    /**
      * Builder used to create a {@link SmithyBuildConfig}.
      */
     public static final class Builder implements SmithyBuilder<SmithyBuildConfig> {
@@ -172,6 +186,7 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
         private final Map<String, ObjectNode> plugins = new LinkedHashMap<>();
         private String version;
         private String outputDirectory;
+        private boolean ignoreMissingPlugins;
 
         Builder() {}
 
@@ -213,6 +228,12 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
             imports.addAll(config.getImports());
             projections.putAll(config.getProjections());
             plugins.putAll(config.getPlugins());
+
+            // If either one wants to ignore missing plugins, then ignore them.
+            if (config.isIgnoreMissingPlugins()) {
+                ignoreMissingPlugins(config.ignoreMissingPlugins);
+            }
+
             return this;
         }
 
@@ -260,6 +281,17 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
         public Builder plugins(Map<String, ObjectNode> plugins) {
             this.plugins.clear();
             this.plugins.putAll(plugins);
+            return this;
+        }
+
+        /**
+         * Logs instead of failing when a plugin can't be found by name.
+         *
+         * @param ignoreMissingPlugins Set to true to ignore missing plugins on the classpath.
+         * @return Returns the builder.
+         */
+        public Builder ignoreMissingPlugins(boolean ignoreMissingPlugins) {
+            this.ignoreMissingPlugins = ignoreMissingPlugins;
             return this;
         }
     }
