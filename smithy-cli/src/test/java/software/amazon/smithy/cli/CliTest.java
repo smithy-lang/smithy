@@ -17,6 +17,7 @@ package software.amazon.smithy.cli;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -95,5 +96,82 @@ public class CliTest {
         String help = outputStream.toString("UTF-8");
 
         assertThat(help, containsString("Unknown command or argument"));
+    }
+
+    @Test
+    public void canDisableLogging() throws Exception {
+        Cli cli = new Cli("mytest");
+        cli.addCommand(new BuildCommand());
+        PrintStream err = System.err;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(outputStream);
+
+        try {
+            System.setErr(printStream);
+            cli.run(new String[]{"build", "--logging", "OFF"});
+            String result = outputStream.toString("UTF-8");
+
+            assertThat(result, not(containsString("INFO -")));
+        } finally {
+            System.setErr(err);
+        }
+    }
+
+    @Test
+    public void canEnableLoggingViaLogLevel() throws Exception {
+        Cli cli = new Cli("mytest");
+        cli.addCommand(new BuildCommand());
+        PrintStream err = System.err;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(outputStream);
+
+        try {
+            System.setErr(printStream);
+            cli.run(new String[]{"build", "--logging", "INFO"});
+            String result = outputStream.toString("UTF-8");
+
+            assertThat(result, containsString("INFO -"));
+        } finally {
+            System.setErr(err);
+        }
+    }
+
+    @Test
+    public void canEnableLogging() throws Exception {
+        Cli cli = new Cli("mytest");
+        cli.setConfigureLogging(true);
+        cli.addCommand(new BuildCommand());
+        PrintStream err = System.err;
+
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            PrintStream printStream = new PrintStream(outputStream);
+            System.setErr(printStream);
+            cli.run(new String[]{"build"});
+            String result = outputStream.toString("UTF-8");
+
+            assertThat(result, containsString("INFO -"));
+        } finally {
+            System.setErr(err);
+        }
+    }
+
+    @Test
+    public void canEnableDebugLogging() throws Exception {
+        Cli cli = new Cli("mytest");
+        cli.addCommand(new BuildCommand());
+        PrintStream err = System.err;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(outputStream);
+
+        try {
+            System.setErr(printStream);
+            cli.run(new String[]{"build", "--debug"});
+            String result = outputStream.toString("UTF-8");
+
+            assertThat(result, containsString("FINE -"));
+        } finally {
+            System.setErr(err);
+        }
     }
 }

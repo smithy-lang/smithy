@@ -32,6 +32,7 @@ public final class SmithyCli {
     public static final String SEVERITY = "--severity";
 
     private ClassLoader classLoader = getClass().getClassLoader();
+    private boolean configureLogging;
 
     private SmithyCli() {}
 
@@ -51,7 +52,9 @@ public final class SmithyCli {
      */
     public static void main(String... args) {
         try {
-            SmithyCli.create().run(args);
+            SmithyCli cli = SmithyCli.create();
+            cli.configureLogging = true;
+            cli.run(args);
         } catch (CliError e) {
             System.exit(e.code);
         } catch (Exception e) {
@@ -85,12 +88,17 @@ public final class SmithyCli {
      * @param args Arguments to parse and execute.
      */
     public void run(String... args) {
+        createCliRunner().run(args);
+    }
+
+    private Cli createCliRunner() {
         Cli cli = new Cli("smithy", classLoader);
         cli.addCommand(new ValidateCommand());
         cli.addCommand(new BuildCommand());
         cli.addCommand(new DiffCommand());
         cli.addCommand(new SelectCommand());
         cli.addCommand(new AstCommand());
-        cli.run(args);
+        cli.setConfigureLogging(configureLogging);
+        return cli;
     }
 }
