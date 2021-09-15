@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -17,19 +17,11 @@ package software.amazon.smithy.cli;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Formatter;
-import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -68,15 +60,14 @@ public final class Cli {
     /** Configures whether or not to use ANSI colors. */
     static boolean useAnsiColors = isAnsiColorSupported();
 
-    private static final SimpleDateFormat FORMAT = new SimpleDateFormat("HH:mm:ss.SSS");
-
     // Note that we don't use a method reference here in case System.out or System.err are changed.
     private static Consumer<String> stdout = s -> System.out.println(s);
     private static Consumer<String> stderr = s -> System.err.println(s);
 
     private final String applicationName;
     private final ClassLoader classLoader;
-    private Map<String, Command> commands = new TreeMap<>();
+    private final Map<String, Command> commands = new TreeMap<>();
+    private boolean configureLogging;
 
     /**
      * Creates a new CLI with the given name.
@@ -105,6 +96,15 @@ public final class Cli {
      */
     public void addCommand(Command command) {
         commands.put(command.getName(), command);
+    }
+
+    /**
+     * Set to true to configure logging for the CLI.
+     *
+     * @param configureLogging Set to true to configure logging.
+     */
+    public void setConfigureLogging(boolean configureLogging) {
+        this.configureLogging = configureLogging;
     }
 
     /**
@@ -149,6 +149,16 @@ public final class Cli {
         } catch (Exception e) {
             printException(args, e);
             throw e;
+        }
+    }
+
+    private void configureLogging(Arguments parsedArguments) {
+        // Logging is configured if --logging is provided, if --debug is provided, or if configureLogging is used.
+        boolean needsConfiguration = configureLogging || parsedArguments.has(DEBUG) || parsedArguments.has(LOGGING);
+
+        if (needsConfiguration) {
+            Level level = Level.parse(parsedArguments.parameter(LOGGING, Level.ALL.getName()));
+            LoggingUtil.configureLogging(parsedArguments.has(DEBUG), level);
         }
     }
 
@@ -222,44 +232,6 @@ public final class Cli {
      */
     private static boolean isAnsiColorSupported() {
         return System.console() != null && System.getenv().get("TERM") != null;
-    }
-
-    private void configureLogging(Arguments parsedArgs) {
-        boolean configureLogging = parsedArgs.has(DEBUG) || parsedArgs.has(LOGGING);
-
-        if (!configureLogging) {
-            return;
-        }
-
-        Level level = Level.parse(parsedArgs.parameter(LOGGING, Level.ALL.getName()));
-
-        // Remove any currently present console loggers.
-        Logger rootLogger = Logger.getLogger("");
-        removeConsoleHandler(rootLogger);
-
-        if (parsedArgs.has(DEBUG)) {
-            // Debug ignores the given logging level and just logs everything.
-            CliLogHandler handler = new CliLogHandler(new DebugFormatter());
-            handler.setLevel(Level.ALL);
-            rootLogger.addHandler(handler);
-            rootLogger.setLevel(Level.ALL);
-            for (Handler h : rootLogger.getHandlers()) {
-                h.setLevel(Level.ALL);
-            }
-        } else if (level != Level.OFF) {
-            CliLogHandler handler = new CliLogHandler(new BasicFormatter());
-            handler.setLevel(level);
-            rootLogger.addHandler(handler);
-        }
-    }
-
-    private static void removeConsoleHandler(Logger rootLogger) {
-        for (Handler handler : rootLogger.getHandlers()) {
-            if (handler instanceof ConsoleHandler) {
-                // Remove any console log handlers.
-                rootLogger.removeHandler(handler);
-            }
-        }
     }
 
     private boolean hasArgument(String[] args, String name) {
@@ -371,51 +343,6 @@ public final class Cli {
         arg.getLongName().ifPresent(sink::append);
         if (arg.getArity() == Parser.Arity.MANY) {
             sink.append(" ...");
-        }
-    }
-
-    private static final class BasicFormatter extends SimpleFormatter {
-        @Override
-        public synchronized String format(LogRecord r) {
-            return FORMAT.format(new Date(r.getMillis()))
-                   + " [" + r.getLevel().getLocalizedName() + "] "
-                   + r.getMessage() + System.lineSeparator();
-        }
-    }
-
-    private static final class DebugFormatter extends SimpleFormatter {
-        @Override
-        public synchronized String format(LogRecord r) {
-            return FORMAT.format(new Date(r.getMillis()))
-                   + " [" + r.getLevel().getLocalizedName() + "] ["
-                   + r.getLoggerName() + "] "
-                   + r.getMessage() + System.lineSeparator();
-        }
-    }
-
-    /**
-     * Logs messages to the CLI's redirect stderr.
-     */
-    private static final class CliLogHandler extends Handler {
-        private final Formatter formatter;
-
-        CliLogHandler(Formatter formatter) {
-            this.formatter = formatter;
-        }
-
-        @Override
-        public void publish(LogRecord record) {
-            if (isLoggable(record)) {
-                Cli.stderr(formatter.format(record));
-            }
-        }
-
-        @Override
-        public void flush() {
-        }
-
-        @Override
-        public void close() {
         }
     }
 }
