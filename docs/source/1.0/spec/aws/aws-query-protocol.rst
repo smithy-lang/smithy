@@ -508,7 +508,7 @@ Summary
 Trait selector
     ``structure [trait|error]``
 
-    The ``httpError`` trait can only be applied to :ref:`structure <structure>`
+    The ``awsQueryError`` trait can only be applied to :ref:`structure <structure>`
     shapes that also have the :ref:`error-trait`.
 Value type
     ``structure`` that supports the following members:
