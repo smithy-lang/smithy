@@ -109,7 +109,8 @@ abstract class NamedMembersShape extends Shape {
      * @param <B> Concrete builder type.
      * @param <S> Shape type being created.
      */
-    abstract static class Builder<B extends Builder, S extends NamedMembersShape> extends AbstractShapeBuilder<B, S> {
+    abstract static class Builder<B extends Builder<?, ?>, S extends NamedMembersShape>
+            extends AbstractShapeBuilder<B, S> {
 
         Map<String, MemberShape> members = new LinkedHashMap<>();
 
