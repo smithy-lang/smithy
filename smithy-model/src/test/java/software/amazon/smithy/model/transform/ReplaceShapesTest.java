@@ -45,7 +45,7 @@ public class ReplaceShapesTest {
 
     @Test
     public void cannotChangeComplexShapeTypes() {
-        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> {
+        ModelTransformException ex = assertThrows(ModelTransformException.class, () -> {
             ShapeId shapeId = ShapeId.from("ns.foo#id1");
             StringShape shape = StringShape.builder().id(shapeId).build();
             Model model = Model.builder()
@@ -67,6 +67,7 @@ public class ReplaceShapesTest {
                 return s;
             });
         });
+
         assertEquals("Cannot change the type of ns.foo#id1 from string to structure", ex.getMessage());
     }
 
@@ -94,35 +95,6 @@ public class ReplaceShapesTest {
             }
             return s;
         });
-    }
-
-    @Test
-    public void canNotExchangeListCollectionTypesWithNonReplaceableMembers() {
-        ShapeId shapeId = ShapeId.from("ns.foo#id1");
-        ShapeId structId = ShapeId.from("ns.foo#id2");
-        ListShape shape = ListShape.builder().id(shapeId).member(ShapeId.from("smithy.api#Long")).build();
-        Model model = Model.builder()
-                .addShape(shape)
-                .addShape(LongShape.builder().id(ShapeId.from("smithy.api#Long")).build())
-                .addShape(StructureShape.builder()
-                        .id(structId)
-                        .addMember(
-                                MemberShape.builder()
-                                        .id(structId.withMember("member1"))
-                                        .target("smithy.api#Long")
-                                        .build()
-                        ).build())
-                .build();
-        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> {
-            ModelTransformer transformer = ModelTransformer.create();
-            transformer.mapShapes(model, s -> {
-                if (s.getId().equals(shapeId)) {
-                    return SetShape.builder().id(shapeId).member(structId).build();
-                }
-                return s;
-            });
-        });
-        assertEquals("Cannot change the type of ns.foo#id1$member from long to structure", ex.getMessage());
     }
 
     @Test

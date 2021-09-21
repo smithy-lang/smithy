@@ -35,6 +35,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.utils.FunctionalUtils;
@@ -454,5 +455,27 @@ public final class ModelTransformer {
      */
     public Model sortMembers(Model model, Comparator<MemberShape> comparator) {
         return new SortMembers(comparator).transform(this, model);
+    }
+
+    /**
+     * Changes the type of each given shape.
+     *
+     * <p>The following transformations are permitted:
+     *
+     * <ul>
+     *     <li>Any simple type to any simple type</li>
+     *     <li>List to set</li>
+     *     <li>Set to list</li>
+     *     <li>Structure to union</li>
+     *     <li>Union to structure</li>
+     * </ul>
+     *
+     * @param model Model to transform.
+     * @param shapeToType Map of shape IDs to the new type to use for the shape.
+     * @return Returns the transformed model.
+     * @throws ModelTransformException if an incompatible type transform is attempted.
+     */
+    public Model changeShapeType(Model model, Map<ShapeId, ShapeType> shapeToType) {
+        return new ChangeShapeType(shapeToType).transform(this, model);
     }
 }

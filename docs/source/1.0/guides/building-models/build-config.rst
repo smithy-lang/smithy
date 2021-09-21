@@ -248,6 +248,56 @@ Applies the transforms defined in the given projection names.
         }
 
 
+.. _changeTypes:
+
+changeTypes
+-----------
+
+Changes the types of shapes.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - shapeTypes
+      - ``Map<ShapeId, String>``
+      - A map of shape IDs to the type to assign to the shape.
+
+Only the following shape type changes are supported:
+
+* Any simple type to any other simple type
+* List to set
+* Set to list
+* Structure to union
+* Union to structure
+
+.. tabs::
+
+    .. code-tab:: json
+
+        {
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {
+                            "name": "changeTypes",
+                            "args": {
+                                "shapeTypes": {
+                                    "smithy.example#Foo": "string",
+                                    "smithy.example#Baz": "union"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+
+
 .. _excludeShapesByTag-transform:
 
 excludeShapesByTag
