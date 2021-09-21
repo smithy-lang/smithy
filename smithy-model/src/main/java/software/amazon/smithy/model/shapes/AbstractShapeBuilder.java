@@ -31,7 +31,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
  * @param <B> Concrete builder type.
  * @param <S> Shape being created.
  */
-public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S extends Shape>
+public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<?, ?>, S extends Shape>
         implements SmithyBuilder<S>, FromSourceLocation {
 
     private ShapeId id;

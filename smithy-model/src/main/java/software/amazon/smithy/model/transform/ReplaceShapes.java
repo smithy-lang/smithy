@@ -18,8 +18,8 @@ package software.amazon.smithy.model.transform;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -74,7 +74,7 @@ import software.amazon.smithy.utils.SetUtils;
  * attempt to change the type of a shape will throw an exception.
  */
 final class ReplaceShapes {
-    private Collection<Shape> replacements;
+    private final Collection<Shape> replacements;
 
     ReplaceShapes(Collection<Shape> replacements) {
         this.replacements = Objects.requireNonNull(replacements);
@@ -128,29 +128,23 @@ final class ReplaceShapes {
         shouldReplace.stream()
                 .flatMap(previous -> Pair.flatMapStream(previous, p -> model.getShape(p.getId())))
                 .filter(pair -> pair.getLeft().getType() != pair.getRight().getType())
-                .filter(pair -> !isReplacementValid(model, pair.getLeft(), pair.getRight()))
+                .filter(pair -> !isReplacementValid(pair.getLeft(), pair.getRight()))
                 .forEach(pair -> {
-                    throw new IllegalStateException(String.format(
+                    throw new ModelTransformException(String.format(
                             "Cannot change the type of %s from %s to %s",
                             pair.getLeft().getId(), pair.getRight().getType(), pair.getLeft().getType()));
                 });
     }
 
-    private boolean isReplacementValid(Model model, Shape left, Shape right) {
+    private boolean isReplacementValid(Shape left, Shape right) {
         if (left instanceof CollectionShape && right instanceof CollectionShape) {
-            validateListCollectionReplacement(model, (CollectionShape) left, (CollectionShape) right);
             return true;
-        }
-        return left instanceof SimpleShape && right instanceof SimpleShape;
-    }
-
-    private void validateListCollectionReplacement(Model model, CollectionShape left, CollectionShape right) {
-        Shape leftTarget = model.expectShape(left.getMember().getTarget());
-        Shape rightTarget = model.expectShape(right.getMember().getTarget());
-        if (!isReplacementValid(model, leftTarget, rightTarget)) {
-            throw new IllegalStateException(String.format(
-                    "Cannot change the type of %s from %s to %s",
-                    left.getMember().getId(), rightTarget.getType(), leftTarget.getType()));
+        } else if (left instanceof StructureShape && right instanceof UnionShape) {
+            return true;
+        } else if (left instanceof UnionShape && right instanceof StructureShape) {
+            return true;
+        } else {
+            return left instanceof SimpleShape && right instanceof SimpleShape;
         }
     }
 
@@ -230,31 +224,27 @@ final class ReplaceShapes {
 
         @Override
         public Collection<Shape> unionShape(UnionShape shape) {
-            return onNamedMemberContainer(
-                    shape.getAllMembers(),
-                    previous.asUnionShape().get().getAllMembers());
+            // Use previous.members() in case of a type change to prevent needing to call asUnion.
+            return onNamedMemberContainer(shape.getAllMembers(), previous.members());
         }
 
         @Override
         public Collection<Shape> structureShape(StructureShape shape) {
-            return onNamedMemberContainer(
-                    getStructureMemberMap(shape),
-                    getStructureMemberMap(previous.asStructureShape().get()));
-        }
-
-        private Map<String, MemberShape> getStructureMemberMap(StructureShape shape) {
-            return shape.getAllMembers().entrySet().stream()
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            // Use previous.members() in case of a type change to prevent needing to call asStructure.
+            return onNamedMemberContainer(shape.getAllMembers(), previous.members());
         }
 
         private Collection<Shape> onNamedMemberContainer(
                 Map<String, MemberShape> members,
-                Map<String, MemberShape> previousMembers
+                Collection<MemberShape> previous
         ) {
-            // Find members that were removed as a result of transforming the shape.
-            Set<String> removedMembers = new HashSet<>(previousMembers.keySet());
-            removedMembers.removeAll(members.keySet());
-            return removedMembers.stream().map(previousMembers::get).collect(Collectors.toSet());
+            List<Shape> result = new ArrayList<>();
+            for (MemberShape previousMember : previous) {
+                if (!members.containsKey(previousMember.getMemberName())) {
+                    result.add(previousMember);
+                }
+            }
+            return result;
         }
     }
 
