@@ -109,7 +109,6 @@ final class IdlModelParser extends SimpleParser {
 
     final ForwardReferenceModelFile modelFile;
     private final String filename;
-    private String definedVersion;
     private TraitEntry pendingDocumentationComment;
 
     // A pending trait that also doesn't yet have a resolved trait shape ID.
@@ -168,10 +167,16 @@ final class IdlModelParser extends SimpleParser {
 
     @Override
     public ModelSyntaxException syntax(String message) {
-        String formatted = format(
-                "Parse error at line %d, column %d near `%s`: %s",
-                line(), column(), peekDebugMessage(), message);
-        return new ModelSyntaxException(formatted, filename, line(), column());
+        return syntax(null, message);
+    }
+
+    ModelSyntaxException syntax(ShapeId shapeId, String message) {
+        return ModelSyntaxException.builder()
+                .message(format("Parse error at line %d, column %d near `%s`: %s",
+                                line(), column(), peekDebugMessage(), message))
+                .sourceLocation(filename, line(), column())
+                .shapeId(shapeId)
+                .build();
     }
 
     private void parseControlSection() {
@@ -184,7 +189,7 @@ final class IdlModelParser extends SimpleParser {
             ws();
 
             // Validation here for better error location.
-            if (key.equals("version") && definedVersion != null) {
+            if (key.equals("version") && modelFile.getVersion() != Version.UNKNOWN) {
                 throw syntax("Cannot define multiple versions in the same file");
             }
 
@@ -212,11 +217,13 @@ final class IdlModelParser extends SimpleParser {
         }
 
         String parsedVersion = value.expectStringNode().getValue();
-        if (!LoaderUtils.isVersionSupported(parsedVersion)) {
+        Version resolvedVersion = Version.fromString(parsedVersion);
+
+        if (resolvedVersion == null) {
             throw syntax("Unsupported Smithy version number: " + parsedVersion);
         }
 
-        definedVersion = parsedVersion;
+        modelFile.setVersion(resolvedVersion);
     }
 
     private void parseMetadataSection() {
@@ -422,7 +429,7 @@ final class IdlModelParser extends SimpleParser {
                 break;
             default:
                 // Unreachable.
-                throw syntax("Unexpected shape type: " + shapeType);
+                throw syntax(id, "Unexpected shape type: " + shapeType);
         }
 
         addTraits(id, traits);
@@ -477,7 +484,7 @@ final class IdlModelParser extends SimpleParser {
         }
 
         if (!remaining.isEmpty()) {
-            throw syntax("Missing required members of shape `" + id + "`: ["
+            throw syntax(id, "Missing required members of shape `" + id + "`: ["
                          + ValidationUtils.tickedList(remaining) + ']');
         }
 
@@ -498,7 +505,7 @@ final class IdlModelParser extends SimpleParser {
 
         if (defined.contains(memberName)) {
             // This is a duplicate member name.
-            throw syntax("Duplicate member of " + parent + ": '" + memberName + '\'');
+            throw syntax(parent, "Duplicate member of " + parent + ": '" + memberName + '\'');
         }
 
         defined.add(memberName);
@@ -506,7 +513,7 @@ final class IdlModelParser extends SimpleParser {
 
         // Only enforce "allowedMembers" if it isn't empty.
         if (!required.isEmpty() && !required.contains(memberName)) {
-            throw syntax("Unexpected member of " + parent + ": '" + memberName + '\'');
+            throw syntax(parent, "Unexpected member of " + parent + ": '" + memberName + '\'');
         }
 
         ws();
@@ -517,6 +524,12 @@ final class IdlModelParser extends SimpleParser {
         String target = ParserUtils.parseShapeId(this);
 
         if (structureMember && peek() == '!') {
+            if (!modelFile.getVersion().supportsRequiredSugar()) {
+                throw syntax(memberId, String.format(
+                        "The '!' suffix can only be used on structure members when using Smithy 2.0 or later, but "
+                        + "you're using version `%s`. Make `$version: \"2\"` the first line of this file.",
+                        modelFile.getVersion()));
+            }
             // Create a synthetic Node to specify the location.
             Node requiredTrait = new ObjectNode(Collections.emptyMap(), currentLocation());
             expect('!');
@@ -553,13 +566,20 @@ final class IdlModelParser extends SimpleParser {
         // "Member `foo.baz#Foo$Baz` cannot be added to software.amazon.smithy.model.shapes.OperationShape$Builder"
         modelFile.onShape(builder.id(id).source(location));
 
-        // Parse optional "with" statements to add mixins.
         ws();
+
+        // Parse optional "with" statements to add mixins, but only if it's supported by the version.
         if (peek() == 'w') {
             expect('w');
             expect('i');
             expect('t');
             expect('h');
+
+            if (!modelFile.getVersion().supportsMixins()) {
+                throw syntax(id, "Mixins can only be used with Smithy version 2 or later. "
+                                 + "Attempted to use mixins with version `" + modelFile.getVersion() + "`.");
+            }
+
             ws();
             do {
                 String target = ParserUtils.parseShapeId(this);

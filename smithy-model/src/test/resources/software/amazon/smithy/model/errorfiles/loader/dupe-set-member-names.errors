@@ -1,1 +1,1 @@
-[ERROR] -: Parse error at line 5, column 11 near `: `: Duplicate member of com.foo#Set: 'member' | Model
+[ERROR] com.foo#Set: Parse error at line 5, column 11 near `: `: Duplicate member of com.foo#Set: 'member' | Model

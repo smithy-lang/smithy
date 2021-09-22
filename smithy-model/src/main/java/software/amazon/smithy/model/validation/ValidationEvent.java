@@ -85,12 +85,29 @@ public final class ValidationEvent implements Comparable<ValidationEvent>, ToNod
      * @return Returns a created validation event with an ID of Model.
      */
     public static ValidationEvent fromSourceException(SourceException exception, String prefix) {
+        // Extract shape IDs from exceptions that implement ToShapeId.
+        ShapeId id = (exception instanceof ToShapeId)
+                ? ((ToShapeId) exception).toShapeId()
+                : null;
+        return fromSourceException(exception, prefix, id);
+    }
+
+    /**
+     * Creates a new ValidationEvent from a {@link SourceException}.
+     *
+     * @param exception Exception to use to create the event.
+     * @param prefix Prefix string to add to the message.
+     * @param shapeId ShapeId to associate with the event.
+     * @return Returns a created validation event with an ID of Model.
+     */
+    public static ValidationEvent fromSourceException(SourceException exception, String prefix, ShapeId shapeId) {
         // Get the message without source location since it's in the event.
         return ValidationEvent.builder()
                 .id(MODEL_ERROR)
                 .severity(ERROR)
                 .message(prefix + exception.getMessageWithoutLocation())
                 .sourceLocation(exception.getSourceLocation())
+                .shapeId(shapeId)
                 .build();
     }
 
