@@ -15,7 +15,9 @@
 
 package software.amazon.smithy.utils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1604,5 +1606,102 @@ public final class StringUtils {
         }
 
         return -1;
+    }
+
+    /**
+     * <p>Splits a String by Character type as returned by
+     * {@code java.lang.Character.getType(char)}. Groups of contiguous
+     * characters of the same type are returned as complete tokens.
+     * <pre>
+     * StringUtils.splitByCharacterType(null)         = null
+     * StringUtils.splitByCharacterType("")           = []
+     * StringUtils.splitByCharacterType("ab de fg")   = ["ab", " ", "de", " ", "fg"]
+     * StringUtils.splitByCharacterType("ab   de fg") = ["ab", "   ", "de", " ", "fg"]
+     * StringUtils.splitByCharacterType("ab:cd:ef")   = ["ab", ":", "cd", ":", "ef"]
+     * StringUtils.splitByCharacterType("number5")    = ["number", "5"]
+     * StringUtils.splitByCharacterType("fooBar")     = ["foo", "B", "ar"]
+     * StringUtils.splitByCharacterType("foo200Bar")  = ["foo", "200", "B", "ar"]
+     * StringUtils.splitByCharacterType("ASFRules")   = ["ASFR", "ules"]
+     * </pre>
+     * @param str the String to split, may be {@code null}
+     * @return an array of parsed Strings, {@code null} if null String input
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
+     */
+    public static String[] splitByCharacterType(final String str) {
+        return splitByCharacterType(str, false);
+    }
+
+    /**
+     * <p>Splits a String by Character type as returned by
+     * {@code java.lang.Character.getType(char)}. Groups of contiguous
+     * characters of the same type are returned as complete tokens, with the
+     * following exception: if {@code camelCase} is {@code true},
+     * the character of type {@code Character.UPPERCASE_LETTER}, if any,
+     * immediately preceding a token of type {@code Character.LOWERCASE_LETTER}
+     * will belong to the following token rather than to the preceding, if any,
+     * {@code Character.UPPERCASE_LETTER} token.
+     * @param str the String to split, may be {@code null}
+     * @param camelCase whether to use so-called "camel-case" for letter types
+     * @return an array of parsed Strings, {@code null} if null String input
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
+     */
+    private static String[] splitByCharacterType(final String str, final boolean camelCase) {
+        if (str == null) {
+            return null;
+        }
+        if (str.isEmpty()) {
+            return new String[]{};
+        }
+        final char[] c = str.toCharArray();
+        final List<String> list = new ArrayList<>();
+        int tokenStart = 0;
+        int currentType = Character.getType(c[tokenStart]);
+        for (int pos = tokenStart + 1; pos < c.length; pos++) {
+            final int type = Character.getType(c[pos]);
+            if (type == currentType) {
+                continue;
+            }
+            if (camelCase && type == Character.LOWERCASE_LETTER && currentType == Character.UPPERCASE_LETTER) {
+                final int newTokenStart = pos - 1;
+                if (newTokenStart != tokenStart) {
+                    list.add(new String(c, tokenStart, newTokenStart - tokenStart));
+                    tokenStart = newTokenStart;
+                }
+            } else {
+                list.add(new String(c, tokenStart, pos - tokenStart));
+                tokenStart = pos;
+            }
+            currentType = type;
+        }
+        list.add(new String(c, tokenStart, c.length - tokenStart));
+        return list.toArray(new String[]{});
+    }
+
+    /**
+     * <p>Splits a String by Character type as returned by
+     * {@code java.lang.Character.getType(char)}. Groups of contiguous
+     * characters of the same type are returned as complete tokens, with the
+     * following exception: the character of type
+     * {@code Character.UPPERCASE_LETTER}, if any, immediately
+     * preceding a token of type {@code Character.LOWERCASE_LETTER}
+     * will belong to the following token rather than to the preceding, if any,
+     * {@code Character.UPPERCASE_LETTER} token.
+     * <pre>
+     * StringUtils.splitByCharacterTypeCamelCase(null)         = null
+     * StringUtils.splitByCharacterTypeCamelCase("")           = []
+     * StringUtils.splitByCharacterTypeCamelCase("ab de fg")   = ["ab", " ", "de", " ", "fg"]
+     * StringUtils.splitByCharacterTypeCamelCase("ab   de fg") = ["ab", "   ", "de", " ", "fg"]
+     * StringUtils.splitByCharacterTypeCamelCase("ab:cd:ef")   = ["ab", ":", "cd", ":", "ef"]
+     * StringUtils.splitByCharacterTypeCamelCase("number5")    = ["number", "5"]
+     * StringUtils.splitByCharacterTypeCamelCase("fooBar")     = ["foo", "Bar"]
+     * StringUtils.splitByCharacterTypeCamelCase("foo200Bar")  = ["foo", "200", "Bar"]
+     * StringUtils.splitByCharacterTypeCamelCase("ASFRules")   = ["ASF", "Rules"]
+     * </pre>
+     * @param str the String to split, may be {@code null}
+     * @return an array of parsed Strings, {@code null} if null String input
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
+     */
+    public static String[] splitByCharacterTypeCamelCase(final String str) {
+        return splitByCharacterType(str, true);
     }
 }
