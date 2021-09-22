@@ -1,1 +1,1 @@
-[ERROR] -: Parse error at line 5, column 8 near `: `: Duplicate member of com.foo#Map: 'key' | Model
+[ERROR] com.foo#Map: Parse error at line 5, column 8 near `: `: Duplicate member of com.foo#Map: 'key' | Model
