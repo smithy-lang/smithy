@@ -55,18 +55,6 @@ final class LoaderUtils {
     }
 
     /**
-     * Checks if the given version string is supported.
-     *
-     * @param versionString Version string to check (e.g., 1, 1.0).
-     * @return Returns true if this is a supported model version.
-     */
-    static boolean isVersionSupported(String versionString) {
-        return versionString.equals("1")
-               || versionString.equals("1.0")
-               || versionString.equals("1.1");
-    }
-
-    /**
      * Create a {@link ValidationEvent} for a shape conflict.
      *
      * @param id Shape ID in conflict.
