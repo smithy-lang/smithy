@@ -44,7 +44,7 @@ import software.amazon.smithy.model.validation.Validator;
  */
 abstract class AbstractMutableModelFile implements ModelFile {
 
-    protected final TraitContainer traitContainer;
+    protected TraitContainer.VersionAwareTraitContainer traitContainer;
 
     private final Set<ShapeId> allShapeIds = new HashSet<>();
     private final Map<ShapeId, AbstractShapeBuilder<?, ?>> shapes = new LinkedHashMap<>();
@@ -59,7 +59,8 @@ abstract class AbstractMutableModelFile implements ModelFile {
      */
     AbstractMutableModelFile(TraitFactory traitFactory) {
         this.traitFactory = Objects.requireNonNull(traitFactory, "traitFactory must not be null");
-        traitContainer = new TraitContainer.TraitHashMap(traitFactory, events);
+        TraitContainer traitStore = new TraitContainer.TraitHashMap(traitFactory, events);
+        traitContainer = new TraitContainer.VersionAwareTraitContainer(traitStore);
     }
 
     /**
@@ -126,6 +127,24 @@ abstract class AbstractMutableModelFile implements ModelFile {
      */
     final void onTrait(ShapeId target, Trait trait) {
         traitContainer.onTrait(target, trait);
+    }
+
+    /**
+     * Sets the version of the model file being loaded.
+     *
+     * @param version Version to set.
+     */
+    final void setVersion(Version version) {
+        traitContainer.setVersion(version);
+    }
+
+    /**
+     * Gets the currently defined version.
+     *
+     * @return Returns the defined version.
+     */
+    final Version getVersion() {
+        return traitContainer.getVersion();
     }
 
     @Override
@@ -248,7 +267,7 @@ abstract class AbstractMutableModelFile implements ModelFile {
             }
             return Optional.of(builder.build());
         } catch (SourceException e) {
-            events.add(ValidationEvent.fromSourceException(e).toBuilder().shapeId(builder.getId()).build());
+            events.add(ValidationEvent.fromSourceException(e, "", builder.getId()));
             resolvedTraits.clearTraitsForShape(builder.getId());
             return Optional.empty();
         }
