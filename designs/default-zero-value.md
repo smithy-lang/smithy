@@ -736,7 +736,7 @@ structure Foo {
 3. When `Baz` is updated on _day 2_, the `@box` trait is added to `Baz` to
    prevent any structure member from ever using a non-null accessor with it.
    This would almost certainly be forgotten by modelers, and would all but
-   required smithy-diff to point out the compatibility issue.
+   require smithy-diff to point out the compatibility issue.
 
 ```
 @box
