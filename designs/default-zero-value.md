@@ -636,7 +636,7 @@ will likely need to make very few changes because nullability calculations are
 centralized in this `KnowledgeIndex`.
 
 
-### How will this impact Smithy2OpenAPI?
+### How will this impact smithy-openapi?
 
 We will start using the `default` property of OpenAPI and JSON Schema. For
 example:
