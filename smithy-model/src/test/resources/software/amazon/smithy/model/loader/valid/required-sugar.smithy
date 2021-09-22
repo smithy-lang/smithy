@@ -1,3 +1,4 @@
+$version: "2"
 namespace example.weather
 
 structure Foo {

@@ -88,8 +88,9 @@ enum AstModelLoader {
     private static final Set<String> SERVICE_PROPERTIES = SetUtils.of(
             TYPE, "version", "operations", "resources", "rename", ERRORS, TRAITS);
 
-    ModelFile load(TraitFactory traitFactory, ObjectNode model) {
+    ModelFile load(Version modelVersion, TraitFactory traitFactory, ObjectNode model) {
         FullyResolvedModelFile modelFile = new FullyResolvedModelFile(traitFactory);
+        modelFile.setVersion(modelVersion);
         LoaderUtils.checkForAdditionalProperties(model, null, TOP_LEVEL_PROPERTIES, modelFile.events());
         loadMetadata(model, modelFile);
         loadShapes(model, modelFile);

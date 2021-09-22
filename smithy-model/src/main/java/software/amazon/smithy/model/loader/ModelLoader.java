@@ -87,13 +87,14 @@ final class ModelLoader {
     // This loader supports version 1.0 and 1.1. Support for 0.5 and 0.4 was removed in 0.10.
     static ModelFile loadParsedNode(TraitFactory traitFactory, Node node) {
         ObjectNode model = node.expectObjectNode("Smithy documents must be an object. Found {type}.");
-        StringNode version = model.expectStringMember(SMITHY);
+        StringNode versionNode = model.expectStringMember(SMITHY);
+        Version version = Version.fromString(versionNode.getValue());
 
-        if (LoaderUtils.isVersionSupported(version.getValue())) {
-            return AstModelLoader.INSTANCE.load(traitFactory, model);
-        } else {
-            throw new ModelSyntaxException("Unsupported Smithy version number: " + version.getValue(), version);
+        if (version != null) {
+            return AstModelLoader.INSTANCE.load(version, traitFactory, model);
         }
+
+        throw new ModelSyntaxException("Unsupported Smithy version number: " + versionNode.getValue(), versionNode);
     }
 
     // Allows importing JAR files by discovering models inside of a JAR file.

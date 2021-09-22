@@ -252,7 +252,7 @@ public class IdlModelLoaderTest {
         MemberShape member = shape.getMember("foo").get();
         RequiredTrait trait = member.expectTrait(RequiredTrait.class);
 
-        assertThat(trait.getSourceLocation().getLine(), equalTo(4));
+        assertThat(trait.getSourceLocation().getLine(), equalTo(5));
         assertThat(trait.getSourceLocation().getColumn(), equalTo(16));
     }
 }
