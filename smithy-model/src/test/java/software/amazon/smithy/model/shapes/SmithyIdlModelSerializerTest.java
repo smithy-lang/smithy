@@ -3,6 +3,7 @@ package software.amazon.smithy.model.shapes;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.params.provider.EnumSource;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.DocumentationTrait;
@@ -135,5 +137,17 @@ public class SmithyIdlModelSerializerTest {
                 .build();
         Map<Path, String> serialized = serializer.serialize(model);
         assertThat(serialized.keySet(), contains(basePath.resolve("metadata.smithy")));
+    }
+
+    @Test
+    public void emptyServiceVersionNotSerialized() {
+        ServiceShape service = ServiceShape.builder()
+                .id("com.foo#Example")
+                .build();
+        Model model = Model.builder().addShape(service).build();
+        SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder().build();
+        Map<Path, String> serialized = serializer.serialize(model);
+
+        assertThat(serialized.get(Paths.get("com.foo.smithy")), not(containsString("version: \"\"")));
     }
 }

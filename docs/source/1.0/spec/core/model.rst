@@ -1002,8 +1002,8 @@ The service shape supports the following properties:
       - Description
     * - version
       - ``string``
-      - **Required**. Defines the version of the service. The version can be
-        provided in any format (e.g., ``2017-02-11``, ``2.0``, etc).
+      - Defines the optional version of the service. The version can be provided in
+        any format (e.g., ``2017-02-11``, ``2.0``, etc).
     * - :ref:`operations <service-operations>`
       - [``string``]
       - Binds a set of ``operation`` shapes to the service. Each

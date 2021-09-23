@@ -18,6 +18,7 @@ package software.amazon.smithy.model.shapes;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodePointer;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
@@ -140,5 +142,21 @@ public class ModelSerializerTest {
         ObjectNode serialized = serializer.serialize(model);
 
         assertFalse(serialized.getMember("smithy.api").isPresent());
+    }
+
+    @Test
+    public void doesNotSerializeEmptyServiceVersions() {
+        ServiceShape service = ServiceShape.builder()
+                .id("com.foo#Example")
+                .build();
+        Model model = Model.builder().addShape(service).build();
+        ModelSerializer serializer = ModelSerializer.builder().build();
+        ObjectNode result = serializer.serialize(model);
+
+        assertThat(NodePointer.parse("/shapes/com.foo#Example")
+                           .getValue(result)
+                           .expectObjectNode()
+                           .getStringMap(),
+                   not(hasKey("version")));
     }
 }
