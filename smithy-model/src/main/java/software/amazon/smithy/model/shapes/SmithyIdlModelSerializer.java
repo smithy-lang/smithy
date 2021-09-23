@@ -424,8 +424,12 @@ public final class SmithyIdlModelSerializer {
         @Override
         public Void serviceShape(ServiceShape shape) {
             serializeTraits(shape);
-            codeWriter.openBlock("service $L {", shape.getId().getName())
-                    .write("version: $S,", shape.getVersion());
+            codeWriter.openBlock("service $L {", shape.getId().getName());
+
+            if (!StringUtils.isBlank(shape.getVersion())) {
+                codeWriter.write("version: $S,", shape.getVersion());
+            }
+
             codeWriter.writeOptionalIdList("operations", shape.getOperations());
             codeWriter.writeOptionalIdList("resources", shape.getResources());
             if (!shape.getRename().isEmpty()) {

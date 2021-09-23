@@ -20,7 +20,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
 import software.amazon.smithy.utils.MapUtils;
-import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -33,7 +32,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
 
     private ServiceShape(Builder builder) {
         super(builder);
-        version = SmithyBuilder.requiredState("version", builder.version);
+        version = builder.version;
         rename = MapUtils.orderedCopyOf(builder.rename);
     }
 
@@ -71,6 +70,9 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
     }
 
     /**
+     * Get the version of the service. An empty string is returned
+     * if the version is undefined.
+     *
      * @return The version of the service.
      */
     public String getVersion() {
@@ -107,7 +109,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
      * Builder used to create a {@link ServiceShape}.
      */
     public static final class Builder extends EntityShape.Builder<Builder, ServiceShape> {
-        private String version;
+        private String version = "";
         private final Map<ShapeId, String> rename = new TreeMap<>();
 
         @Override
@@ -121,7 +123,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
         }
 
         public Builder version(String version) {
-            this.version = version;
+            this.version = version == null ? "" : version;
             return this;
         }
 

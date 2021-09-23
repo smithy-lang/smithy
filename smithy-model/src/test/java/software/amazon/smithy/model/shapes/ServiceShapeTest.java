@@ -58,4 +58,13 @@ public class ServiceShapeTest {
 
         assertThat(serviceShape.getContextualName(id), equalTo("FooName"));
     }
+
+    @Test
+    public void versionDefaultsToEmptyString() {
+        ServiceShape shape = ServiceShape.builder()
+                .id("com.foo#Example")
+                .build();
+
+        assertThat(shape.getVersion(), equalTo(""));
+    }
 }
