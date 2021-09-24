@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -22,15 +22,15 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.diff.ModelDiff;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
-public class RemovedOperationErrorTest {
+public class AddedServiceErrorTest {
     @Test
-    public void detectsRemovedErrors() {
+    public void detectsAddedErrors() {
         Shape e1 = StructureShape.builder()
                 .id("foo.baz#E1")
                 .addTrait(new ErrorTrait("client"))
@@ -39,17 +39,12 @@ public class RemovedOperationErrorTest {
                 .id("foo.baz#E2")
                 .addTrait(new ErrorTrait("client"))
                 .build();
-        OperationShape operation1 = OperationShape.builder()
-                .id("foo.baz#Operation")
-                .addError(e1)
-                .addError(e2)
-                .build();
-        Shape operation2 = operation1.toBuilder().clearErrors().build();
-        Model modelA = Model.assembler().addShapes(operation1, e1, e2).assemble().unwrap();
-        Model modelB = Model.assembler().addShapes(operation2, e1, e2).assemble().unwrap();
+        ServiceShape service1 = ServiceShape.builder().id("foo.baz#S").version("X").build();
+        ServiceShape service2 = service1.toBuilder().addError(e1.getId()).addError(e2.getId()).build();
+        Model modelA = Model.assembler().addShapes(service1, e1, e2).assemble().unwrap();
+        Model modelB = Model.assembler().addShapes(service2, e1, e2).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        // Emits an event for each removal.
-        assertThat(TestHelper.findEvents(events, "RemovedOperationError").size(), equalTo(2));
+        assertThat(TestHelper.findEvents(events, "AddedServiceError").size(), equalTo(2));
     }
 }
