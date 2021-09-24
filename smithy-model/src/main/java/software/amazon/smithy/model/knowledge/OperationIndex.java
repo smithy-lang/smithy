@@ -18,11 +18,11 @@ package software.amazon.smithy.model.knowledge;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeSet;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -189,7 +189,7 @@ public final class OperationIndex implements KnowledgeIndex {
      * @return Returns the list of error structures, or an empty list.
      */
     public List<StructureShape> getErrors(ToShapeId service, ToShapeId operation) {
-        Set<StructureShape> result = new TreeSet<>(getErrors(service));
+        Set<StructureShape> result = new LinkedHashSet<>(getErrors(service));
         result.addAll(getErrors(operation));
         return new ArrayList<>(result);
     }

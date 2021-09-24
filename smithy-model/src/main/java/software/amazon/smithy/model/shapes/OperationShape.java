@@ -17,9 +17,12 @@ package software.amazon.smithy.model.shapes;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -79,16 +82,41 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
     }
 
     /**
-     * <p>Gets a list of the error shape IDs that can be encountered.</p>
+     * <p>Gets a list of the error shape IDs bound directly to the operation
+     * that can be encountered.
+     *
+     * <p>This DOES NOT include errors that are common to a service. Operations
+     * can be bound to multiple services, so common service errors cannot be
+     * returned by this method. Use {@link #getErrors(ServiceShape)} or
+     * {@link OperationIndex#getErrors(ToShapeId, ToShapeId)} to get all of the
+     * errors an operation can encounter when used within a service.</p>
      *
      * <p>Each returned {@link ShapeId} must resolve to a
      * {@link StructureShape} that is targeted by an error trait; however,
      * this is only guaranteed after a model is validated.</p>
      *
      * @return Returns the errors.
+     * @see #getErrors(ServiceShape)
+     * @see OperationIndex#getErrors(ToShapeId, ToShapeId)
      */
     public List<ShapeId> getErrors() {
         return errors;
+    }
+
+    /**
+     * <p>Gets a list of the error shape IDs the operation can encounter,
+     * including any common errors of a service.
+     *
+     * <p>No validation is performed here to ensure that the operation is
+     * actually bound to the given service shape.
+     *
+     * @return Returns the errors.
+     * @see OperationIndex#getErrors(ToShapeId, ToShapeId)
+     */
+    public List<ShapeId> getErrors(ServiceShape service) {
+        Set<ShapeId> result = new LinkedHashSet<>(service.getErrors());
+        result.addAll(getErrors());
+        return new ArrayList<>(result);
     }
 
     @Override
@@ -109,7 +137,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
     public static final class Builder extends AbstractShapeBuilder<Builder, OperationShape> {
         private ShapeId input;
         private ShapeId output;
-        private List<ShapeId> errors = new ArrayList<>();
+        private final List<ShapeId> errors = new ArrayList<>();
 
         @Override
         public ShapeType getShapeType() {
