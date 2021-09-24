@@ -71,6 +71,10 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
         for (ShapeId resource : shape.getResources()) {
             addBinding(result, shape, resource, RelationshipType.RESOURCE);
         }
+        // Add ERROR relationships from service -> errors.
+        for (ShapeId errorId : shape.getErrors()) {
+            result.add(relationship(shape, RelationshipType.ERROR, errorId));
+        }
         return result;
     }
 

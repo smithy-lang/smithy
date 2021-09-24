@@ -223,7 +223,7 @@ public final class TargetValidator extends AbstractValidator {
 
     private ValidationEvent errorNoTrait(Shape shape, ShapeId target) {
         return error(shape, format(
-                "Operation error targets an invalid structure, `%s`, that is not marked with the `error` trait.",
+                "`%s` cannot be bound as an error because it is not marked with the `error` trait.",
                 target));
     }
 }

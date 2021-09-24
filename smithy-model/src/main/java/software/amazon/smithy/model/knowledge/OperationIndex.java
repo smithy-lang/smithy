@@ -21,9 +21,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -50,13 +53,20 @@ public final class OperationIndex implements KnowledgeIndex {
             operation.getOutput()
                     .flatMap(id -> getStructure(model, id))
                     .ifPresent(shape -> outputs.put(operation.getId(), shape));
-
-            List<StructureShape> errorShapes = new ArrayList<>(operation.getErrors().size());
-            for (ShapeId target : operation.getErrors()) {
-                model.getShape(target).flatMap(Shape::asStructureShape).ifPresent(errorShapes::add);
-            }
-            errors.put(operation.getId(), errorShapes);
+            addErrorsFromShape(model, operation.getId(), operation.getErrors());
         }
+
+        for (ServiceShape service : model.getServiceShapes()) {
+            addErrorsFromShape(model, service.getId(), service.getErrors());
+        }
+    }
+
+    private void addErrorsFromShape(Model model, ShapeId source, List<ShapeId> errorShapeIds) {
+        List<StructureShape> errorShapes = new ArrayList<>(errorShapeIds.size());
+        for (ShapeId target : errorShapeIds) {
+            model.getShape(target).flatMap(Shape::asStructureShape).ifPresent(errorShapes::add);
+        }
+        errors.put(source, errorShapes);
     }
 
     public static OperationIndex of(Model model) {
@@ -161,9 +171,27 @@ public final class OperationIndex implements KnowledgeIndex {
      *
      * @param operation Operation to get the errors of.
      * @return Returns the list of error structures, or an empty list.
+     * @see #getErrors(ToShapeId, ToShapeId) to get errors that inherit from a service.
      */
     public List<StructureShape> getErrors(ToShapeId operation) {
         return errors.getOrDefault(operation.toShapeId(), ListUtils.of());
+    }
+
+    /**
+     * Gets the list of error structures defined on an operation,
+     * including any common errors inherited from a service shape.
+     *
+     * <p>An empty list is returned if the operation is not found or
+     * has no errors.
+     *
+     * @param service Service shape to inherit common errors from.
+     * @param operation Operation to get the errors of.
+     * @return Returns the list of error structures, or an empty list.
+     */
+    public List<StructureShape> getErrors(ToShapeId service, ToShapeId operation) {
+        Set<StructureShape> result = new TreeSet<>(getErrors(service));
+        result.addAll(getErrors(operation));
+        return new ArrayList<>(result);
     }
 
     private Optional<StructureShape> getStructure(Model model, ToShapeId id) {

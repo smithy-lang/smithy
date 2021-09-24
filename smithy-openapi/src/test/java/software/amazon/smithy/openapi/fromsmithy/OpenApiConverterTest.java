@@ -498,4 +498,20 @@ public class OpenApiConverterTest {
 
         Node.assertEquals(result, expectedNode);
     }
+
+    @Test
+    public void generatesOpenApiForSharedErrors() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("service-with-common-errors.json"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#MyService"));
+        Node result = OpenApiConverter.create().config(config).convertToNode(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("service-with-common-errors.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
 }

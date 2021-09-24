@@ -42,10 +42,13 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.DynamicTrait;
+import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.ListUtils;
@@ -1025,5 +1028,24 @@ public class SelectorTest {
         selector.consumeMatches(httpModel, matches2::add);
 
         assertThat(matches, equalTo(matches2));
+    }
+
+    @Test
+    public void canPathToErrorsOfStructure() {
+        ServiceShape service = ServiceShape.builder()
+                .id("ns.foo#Svc")
+                .version("2017-01-17")
+                .addError("ns.foo#Common1")
+                .build();
+        StructureShape errorShape = StructureShape.builder()
+                .id("ns.foo#Common1")
+                .addTrait(new ErrorTrait("client"))
+                .build();
+        Model model = Model.builder().addShapes(service, errorShape).build();
+
+        Selector selector = Selector.parse("service -[error]-> structure");
+        Set<Shape> result = selector.select(model);
+
+        assertThat(result, containsInAnyOrder(errorShape));
     }
 }

@@ -37,6 +37,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.IdempotentTrait;
 import software.amazon.smithy.model.traits.ReadonlyTrait;
 
@@ -208,6 +209,25 @@ public class NeighborVisitorTest {
                 Relationship.create(service, RelationshipType.OPERATION, operationShape),
                 Relationship.create(resourceShape, RelationshipType.BOUND, service),
                 Relationship.create(operationShape, RelationshipType.BOUND, service)));
+    }
+
+    @Test
+    public void serviceErrors() {
+        ServiceShape service = ServiceShape.builder()
+                .id("ns.foo#Svc")
+                .version("2017-01-17")
+                .addError("ns.foo#Common1")
+                .build();
+        StructureShape errorShape = StructureShape.builder()
+                .id("ns.foo#Common1")
+                .addTrait(new ErrorTrait("client"))
+                .build();
+        Model model = Model.builder().addShapes(service, errorShape).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
+        List<Relationship> relationships = service.accept(neighborVisitor);
+
+        assertThat(relationships, contains(
+                Relationship.create(service, RelationshipType.ERROR, errorShape)));
     }
 
     @Test

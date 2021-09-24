@@ -11,6 +11,14 @@
                 {
                     "target": "ns.foo#B"
                 }
+            ],
+            "errors": [
+                {
+                    "target": "ns.foo#CommonError1"
+                },
+                {
+                    "target": "ns.foo#CommonError2"
+                }
             ]
         },
         "ns.foo#A": {
@@ -52,6 +60,18 @@
             }
         },
         "ns.foo#Error2": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#error": "server"
+            }
+        },
+        "ns.foo#CommonError1": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#error": "server"
+            }
+        },
+        "ns.foo#CommonError2": {
             "type": "structure",
             "traits": {
                 "smithy.api#error": "server"

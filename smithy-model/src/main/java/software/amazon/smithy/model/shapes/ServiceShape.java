@@ -15,10 +15,14 @@
 
 package software.amazon.smithy.model.shapes;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -29,11 +33,13 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
 
     private final String version;
     private final Map<ShapeId, String> rename;
+    private final List<ShapeId> errors;
 
     private ServiceShape(Builder builder) {
         super(builder);
         version = builder.version;
         rename = MapUtils.orderedCopyOf(builder.rename);
+        errors = ListUtils.copyOf(builder.errors);
     }
 
     public static Builder builder() {
@@ -42,11 +48,13 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
 
     @Override
     public Builder toBuilder() {
-        Builder builder = builder().from(this).version(version);
-        getOperations().forEach(builder::addOperation);
-        getResources().forEach(builder::addResource);
-        builder.rename(rename);
-        return builder;
+        return builder()
+                .from(this)
+                .version(version)
+                .errors(errors)
+                .rename(rename)
+                .operations(getOperations())
+                .resources(getResources());
     }
 
     @Override
@@ -66,7 +74,9 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
         }
 
         ServiceShape o = (ServiceShape) other;
-        return version.equals(o.version) && rename.equals(o.rename);
+        return version.equals(o.version)
+               && rename.equals(o.rename)
+               && errors.equals(o.errors);
     }
 
     /**
@@ -84,6 +94,20 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
      */
     public Map<ShapeId, String> getRename() {
         return rename;
+    }
+
+    /**
+     * <p>Gets a list of the common errors that can be encountered by
+     * every operation in the service.</p>
+     *
+     * <p>Each returned {@link ShapeId} must resolve to a
+     * {@link StructureShape} that is targeted by an error trait; however,
+     * this is only guaranteed after a model is validated.</p>
+     *
+     * @return Returns the errors.
+     */
+    public List<ShapeId> getErrors() {
+        return errors;
     }
 
     /**
@@ -111,6 +135,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
     public static final class Builder extends EntityShape.Builder<Builder, ServiceShape> {
         private String version = "";
         private final Map<ShapeId, String> rename = new TreeMap<>();
+        private final List<ShapeId> errors = new ArrayList<>();
 
         @Override
         public ServiceShape build() {
@@ -145,6 +170,75 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
 
         public Builder removeRename(ToShapeId from) {
             rename.remove(from.toShapeId());
+            return this;
+        }
+
+        /**
+         * Sets and replaces the errors of the service. Each error is implicitly
+         * bound to every operation within the closure of the service.
+         *
+         * @param errorShapeIds Error shape IDs to set.
+         * @return Returns the builder.
+         */
+        public Builder errors(Collection<ShapeId> errorShapeIds) {
+            errors.clear();
+            errorShapeIds.forEach(this::addError);
+            return this;
+        }
+
+        /**
+         * Adds an error to the service that is implicitly bound to every operation
+         * within the closure of the service.
+         *
+         * @param errorShapeId Error shape ID to add.
+         * @return Returns the builder.
+         */
+        public Builder addError(ToShapeId errorShapeId) {
+            errors.add(errorShapeId.toShapeId());
+            return this;
+        }
+
+        /**
+         * Adds an error to the service that is implicitly bound to every
+         * operation within the closure of the service.
+         *
+         * @param errorShapeId Error shape ID to add.
+         * @return Returns the builder.
+         * @throws ShapeIdSyntaxException if the shape ID is invalid.
+         */
+        public Builder addError(String errorShapeId) {
+            return addError(ShapeId.from(errorShapeId));
+        }
+
+        /**
+         * Adds errors to the service that are implicitly bound to every operation
+         * within the closure of the service.
+         *
+         * @param errorShapeIds Error shape IDs to add.
+         * @return Returns the builder.
+         */
+        public Builder addErrors(List<ShapeId> errorShapeIds) {
+            errors.addAll(Objects.requireNonNull(errorShapeIds));
+            return this;
+        }
+
+        /**
+         * Removes an error by Shape ID.
+         *
+         * @param errorShapeId Error shape ID to remove.
+         * @return Returns the builder.
+         */
+        public Builder removeError(ToShapeId errorShapeId) {
+            errors.remove(errorShapeId.toShapeId());
+            return this;
+        }
+
+        /**
+         * Removes all errors.
+         * @return Returns the builder.
+         */
+        public Builder clearErrors() {
+            errors.clear();
             return this;
         }
     }

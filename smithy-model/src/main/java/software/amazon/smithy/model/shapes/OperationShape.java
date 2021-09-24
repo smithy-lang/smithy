@@ -180,7 +180,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
          * @param errorShapeIds Error shape IDs to add.
          * @return Returns the builder.
          */
-        public Builder addErrors(List<ShapeId> errorShapeIds) {
+        public Builder addErrors(Collection<ShapeId> errorShapeIds) {
             errors.addAll(Objects.requireNonNull(errorShapeIds));
             return this;
         }

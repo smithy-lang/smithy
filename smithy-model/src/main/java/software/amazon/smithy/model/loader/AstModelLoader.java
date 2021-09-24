@@ -68,6 +68,7 @@ enum AstModelLoader {
     private static final String TRAITS = "traits";
     private static final String TYPE = "type";
     private static final String TARGET = "target";
+    private static final String ERRORS = "errors";
 
     private static final List<String> TOP_LEVEL_PROPERTIES = ListUtils.of("smithy", SHAPES, METADATA);
     private static final List<String> APPLY_PROPERTIES = ListUtils.of(TYPE, TRAITS);
@@ -78,12 +79,12 @@ enum AstModelLoader {
     private static final Set<String> MEMBER_PROPERTIES = SetUtils.of(TARGET, TRAITS);
     private static final Set<String> REFERENCE_PROPERTIES = SetUtils.of(TARGET);
     private static final Set<String> OPERATION_PROPERTY_NAMES = SetUtils.of(
-            TYPE, "input", "output", "errors", TRAITS);
+            TYPE, "input", "output", ERRORS, TRAITS);
     private static final Set<String> RESOURCE_PROPERTIES = SetUtils.of(
             TYPE, "create", "read", "update", "delete", "list", "put",
             "identifiers", "resources", "operations", "collectionOperations", TRAITS);
     private static final Set<String> SERVICE_PROPERTIES = SetUtils.of(
-            TYPE, "version", "operations", "resources", "rename", TRAITS);
+            TYPE, "version", "operations", "resources", "rename", ERRORS, TRAITS);
 
     ModelFile load(TraitFactory traitFactory, ObjectNode model) {
         FullyResolvedModelFile modelFile = new FullyResolvedModelFile(traitFactory);
@@ -244,7 +245,7 @@ enum AstModelLoader {
         OperationShape.Builder builder = OperationShape.builder()
                 .id(id)
                 .source(node.getSourceLocation())
-                .addErrors(loadOptionalTargetList(modelFile, id, node, "errors"));
+                .addErrors(loadOptionalTargetList(modelFile, id, node, ERRORS));
 
         loadOptionalTarget(modelFile, id, node, "input").ifPresent(builder::input);
         loadOptionalTarget(modelFile, id, node, "output").ifPresent(builder::output);
@@ -285,6 +286,7 @@ enum AstModelLoader {
         builder.operations(loadOptionalTargetList(modelFile, id, node, "operations"));
         builder.resources(loadOptionalTargetList(modelFile, id, node, "resources"));
         loadServiceRenameIntoBuilder(builder, node);
+        builder.addErrors(loadOptionalTargetList(modelFile, id, node, ERRORS));
         modelFile.onShape(builder);
     }
 

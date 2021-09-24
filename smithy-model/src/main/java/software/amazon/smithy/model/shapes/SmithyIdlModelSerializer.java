@@ -432,6 +432,7 @@ public final class SmithyIdlModelSerializer {
 
             codeWriter.writeOptionalIdList("operations", shape.getOperations());
             codeWriter.writeOptionalIdList("resources", shape.getResources());
+            codeWriter.writeOptionalIdList("errors", shape.getErrors());
             if (!shape.getRename().isEmpty()) {
                 codeWriter.openBlock("rename: {", "}", () -> {
                     for (Map.Entry<ShapeId, String> entry : shape.getRename().entrySet()) {

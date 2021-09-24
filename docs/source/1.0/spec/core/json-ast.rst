@@ -399,6 +399,12 @@ shapes defined in JSON support the same properties as the Smithy IDL.
       - [:ref:`AST shape reference <ast-shape-reference>`]
       - Binds a list of resources to the service. Each reference MUST target
         a resource.
+    * - errors
+      - [:ref:`AST shape reference <ast-shape-reference>`]
+      - Defines a list of common errors that every operation bound within the
+        closure of the service can return. Each provided shape ID MUST target
+        a :ref:`structure <structure>` shape that is marked with the
+        :ref:`error-trait`.
     * - traits
       - map of :ref:`shape ID <shape-id>` to trait values
       - Traits to apply to the service
@@ -423,6 +429,11 @@ shapes defined in JSON support the same properties as the Smithy IDL.
                 "resources": [
                     {
                         "target": "smithy.example#SomeResource"
+                    }
+                ],
+                "errors": [
+                    {
+                        "target": "smithy.example#SomeError"
                     }
                 ],
                 "traits": {
