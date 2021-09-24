@@ -1,0 +1,3 @@
+[ERROR] ns.foo#InvalidService1: service shape has an `error` relationship to an unresolved shape `ns.foo#NotFound` | Target
+[ERROR] ns.foo#InvalidService2: service shape `error` relationships must target a structure shape, but found (string: `smithy.api#String`) | Target
+[ERROR] ns.foo#InvalidService3: `ns.foo#NotError` cannot be bound as an error because it is not marked with the `error` trait. | Target

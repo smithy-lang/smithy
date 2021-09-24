@@ -1,0 +1,31 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "ns.foo#Common1": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#error": "client"
+            }
+        },
+        "ns.foo#Common2": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#error": "server"
+            }
+        },
+        "ns.foo#EmptyService": {
+            "type": "service",
+            "version": "2020-02-18",
+            "errors": [
+                {
+                    "target": "ns.foo#Common1"
+                },
+                {
+                    "target": "ns.foo#Common2"
+                }
+            ]
+        }
+    }
+}

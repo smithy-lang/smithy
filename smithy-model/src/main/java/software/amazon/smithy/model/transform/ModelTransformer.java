@@ -33,6 +33,7 @@ import software.amazon.smithy.model.neighbor.UnreferencedShapes;
 import software.amazon.smithy.model.neighbor.UnreferencedTraitDefinitions;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
@@ -477,5 +478,17 @@ public final class ModelTransformer {
      */
     public Model changeShapeType(Model model, Map<ShapeId, ShapeType> shapeToType) {
         return new ChangeShapeType(shapeToType).transform(this, model);
+    }
+
+    /**
+     * Copies the errors defined on the given service onto each operation bound to the
+     * service, effectively flattening service error inheritance.
+     *
+     * @param model Model to modify.
+     * @param forService Service shape to use as the basis for copying errors to operations.
+     * @return Returns the transformed model.
+     */
+    public Model copyServiceErrorsToOperations(Model model, ServiceShape forService) {
+        return new CopyServiceErrorsToOperationsTransform(forService).transform(this, model);
     }
 }

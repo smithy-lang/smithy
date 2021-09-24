@@ -1014,6 +1014,12 @@ The service shape supports the following properties:
       - Binds a set of ``resource`` shapes to the service. Each element in
         the given list MUST be a valid :ref:`shape ID <shape-id>` that targets
         a :ref:`resource <resource>` shape.
+    * - errors
+      - [``string``]
+      - Defines a list of common errors that every operation bound within the
+        closure of the service can return. Each provided shape ID MUST target
+        a :ref:`structure <structure>` shape that is marked with the
+        :ref:`error-trait`.
     * - rename
       - map of :ref:`shape ID <shape-id>` to ``string``
       - Disambiguates shape name conflicts in the
@@ -1059,6 +1065,47 @@ The following example defines a service with no operations or resources.
                 }
             }
         }
+
+The following example defines a service shape that defines a set of errors
+that are common to every operation in the service:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        namespace smithy.example
+
+        service MyService {
+            version: "2017-02-11",
+            errors: [SomeError]
+        }
+
+        @error("client")
+        structure SomeError {}
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#MyService": {
+                    "type": "service",
+                    "version": "2017-02-11",
+                    "errors": [
+                        {
+                            "target": "smithy.example#SomeError"
+                        }
+                    ]
+                },
+                "smithy.example#SomeError": {
+                    "type": "structure",
+                    "traits": {
+                        "smithy.api#error": "client"
+                    }
+                }
+            }
+        }
+
 
 
 .. _service-operations:

@@ -47,6 +47,7 @@ import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.TitleTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.OpenApiException;
@@ -173,6 +174,18 @@ public final class OpenApiConverter {
             throw new OpenApiException("openapi is missing required property, `service`");
         }
 
+        // Find the service shape.
+        ServiceShape service = model.getShape(serviceShapeId)
+                .orElseThrow(() -> new IllegalArgumentException(String.format(
+                        "Shape `%s` not found in model", serviceShapeId)))
+                .asServiceShape()
+                .orElseThrow(() -> new IllegalArgumentException(String.format(
+                        "Shape `%s` is not a service shape", serviceShapeId)));
+
+        // Copy service errors onto each operation to ensure that common errors are
+        // generated for each operation.
+        model = ModelTransformer.create().copyServiceErrorsToOperations(model, service);
+
         JsonSchemaConverter.Builder jsonSchemaConverterBuilder = JsonSchemaConverter.builder();
         jsonSchemaConverterBuilder.model(model);
 
@@ -186,14 +199,6 @@ public final class OpenApiConverter {
                 jsonSchemaConverterBuilder.addMapper(mapper);
             }
         }
-
-        // Find the service shape.
-        ServiceShape service = model.getShape(serviceShapeId)
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                        "Shape `%s` not found in model", serviceShapeId)))
-                .asServiceShape()
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                        "Shape `%s` is not a service shape", serviceShapeId)));
 
         Trait protocolTrait = loadOrDeriveProtocolTrait(model, service);
         OpenApiProtocol<Trait> openApiProtocol = loadOpenApiProtocol(service, protocolTrait, extensions);
