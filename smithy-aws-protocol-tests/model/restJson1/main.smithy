@@ -127,5 +127,11 @@ service RestJson {
         MalformedAcceptWithBody,
         MalformedAcceptWithPayload,
         MalformedAcceptWithGenericString,
+
+        // request body and content-type handling
+        TestBodyStructure,
+        TestPayloadStructure,
+        TestPayloadBlob,
+        TestNoPayload,
     ]
 }
