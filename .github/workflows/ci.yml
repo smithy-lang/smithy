@@ -20,9 +20,10 @@ jobs:
       - uses: gradle/wrapper-validation-action@v1
 
       - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: ${{ matrix.java }}
+          distribution: 'zulu'
 
       - name: Clean and build
         run: ./gradlew clean build -Plog-tests
