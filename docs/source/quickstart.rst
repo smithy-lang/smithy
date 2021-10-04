@@ -295,11 +295,12 @@ resource.
 Defining operations
 ===================
 
-The ``create``, ``read``, ``update``, ``delete``, and ``list`` properties of a
-resource are used to define the :ref:`lifecycle operations <lifecycle-operations>`
-of a resource. Lifecycle operations are the canonical methods used to read and
-transition the state of a resource using well-defined semantics. Defining
-lifecycle operations helps automated tooling reason about your API.
+The ``put``, ``create``, ``read``, ``update``, ``delete``, and ``list``
+properties of a resource are used to define the :ref:`lifecycle operations
+<lifecycle-operations>` of a resource. Lifecycle operations are the canonical
+methods used to read and transition the state of a resource using well-defined
+semantics. Defining lifecycle operations helps automated tooling reason about
+your API.
 
 Let's define the operation used to "read" a ``City``.
 
