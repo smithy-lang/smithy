@@ -147,7 +147,7 @@ A projection accepts the following configuration:
       - Defines the plugins to apply to the model when building this
         projection. Plugins are a mapping of plugin names to an arbitrary
         plugin configuration object. smithy-build will attempt to resolve
-        plugin names using `Java SPI`_ to locate and instance of ``software.amazon.smithy.build.SmithyBuildPlugin``
+        plugin names using `Java SPI`_ to locate an instance of ``software.amazon.smithy.build.SmithyBuildPlugin``
         that returns a matching name when calling ``getName``. smithy-build will
         emit a warning when a plugin cannot be resolved.
 
