@@ -1,5 +1,36 @@
 # Smithy Changelog
 
+## 1.12.0 (2021-10-05)
+
+### Features
+
+* Added support for binding common errors to a `service` shape. ([#919](https://github.com/awslabs/smithy/pull/919))
+* Loosened the requirement of setting a `version` property when defining a `service`. ([#918](https://github.com/awslabs/smithy/pull/918))
+* Updated `smithy-build` to fail when a build plugin cannot be found. ([#909](https://github.com/awslabs/smithy/pull/909))
+* Added a `changeTypes` build transform. ([#912](https://github.com/awslabs/smithy/pull/912))
+* Added support for replacing simple shapes in `ModelTransformer`. ([#900](https://github.com/awslabs/smithy/pull/900))
+* Added a `scheme` property to the `@httpApiKeyAuth` trait. ([#893](https://github.com/awslabs/smithy/pull/893))
+* Added support for specifying errors in the `@examples` trait. ([#888](https://github.com/awslabs/smithy/pull/888))
+* Added multi-character newline support in `CodeWriter`. ([#892](https://github.com/awslabs/smithy/pull/892))
+* Updated semantic validation of modeled `OPTIONS` operations. ([#890](https://github.com/awslabs/smithy/pull/890))
+* Added several malformed request protocol tests. ([#879](https://github.com/awslabs/smithy/pull/879), [#882](https://github.com/awslabs/smithy/pull/882),
+  [#881](https://github.com/awslabs/smithy/pull/881), [#898](https://github.com/awslabs/smithy/pull/898), [#901](https://github.com/awslabs/smithy/pull/901),
+  [#905](https://github.com/awslabs/smithy/pull/905), [#908](https://github.com/awslabs/smithy/pull/908))
+* Added protocol tests for path prefixes. ([#899](https://github.com/awslabs/smithy/pull/899))
+
+### Bug Fixes
+
+* Fixed how `NodeMapper` handles generic params. ([#912](https://github.com/awslabs/smithy/pull/912))
+* Fixed how the CLI logs messages and interacts with logging levels. ([#910](https://github.com/awslabs/smithy/pull/910))
+
+### Documentation
+
+* Updated guidance on ordering of `set` shapes. ([#875](https://github.com/awslabs/smithy/pull/875))
+* Clarify that event streams contain modeled errors. ([#891](https://github.com/awslabs/smithy/pull/891))
+* Added an index that lists all traits. ([#876](https://github.com/awslabs/smithy/pull/876))
+* Fixed various documentation issues. ([#884](https://github.com/awslabs/smithy/pull/884), [#911](https://github.com/awslabs/smithy/pull/911),
+  [#927](https://github.com/awslabs/smithy/pull/927))
+
 ## 1.11.0 (2021-08-03)
 
 ### Features
