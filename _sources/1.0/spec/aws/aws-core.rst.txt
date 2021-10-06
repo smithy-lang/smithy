@@ -11,6 +11,7 @@ AWS products like AWS CloudFormation and tools like the AWS SDKs.
     :backlinks: none
 
 
+.. smithy-trait:: aws.api#service
 .. _aws.api#service-trait:
 
 -------------------------
@@ -256,6 +257,7 @@ a static, unique identifier. :ref:`service-sdk-id` should be used for those
 purposes. Additionally, this value can be used to attempt to resolve endpoints.
 
 
+.. smithy-trait:: aws.api#arn
 .. _aws.api#arn-trait:
 
 ---------------------
@@ -492,6 +494,8 @@ resource.
             }
         }
 
+
+.. smithy-trait:: aws.api#arnReference
 .. _aws.api#arnReference-trait:
 
 ------------------------------
@@ -607,6 +611,8 @@ previous example:
             }
         }
 
+
+.. smithy-trait:: aws.api#data
 .. _aws.api#data-trait:
 
 ----------------------
@@ -739,6 +745,7 @@ applied through the ``aws.api#data`` trait.
         :ref:`sensitive-trait`.
 
 
+.. smithy-trait:: aws.api#controlPlane
 .. _aws.api#controlPlane-trait:
 
 ------------------------------
@@ -793,6 +800,8 @@ plane unless an operation or resource is marked with the
             }
         }
 
+
+.. smithy-trait:: aws.api#dataPlane
 .. _aws.api#dataPlane-trait:
 
 ---------------------------
@@ -860,6 +869,7 @@ automatically discover, cache, and connect to service endpoints. The
 following traits provide the information needed to perform this.
 
 
+.. smithy-trait:: aws.api#clientEndpointDiscovery
 .. _client-endpoint-discovery-trait:
 
 ``aws.api#clientEndpointDiscovery`` trait
@@ -908,6 +918,7 @@ The operation output MUST contain a member ``Endpoints`` that is a list of
 - a ``long`` member named ``CachePeriodInMinutes``
 
 
+.. smithy-trait:: aws.api#clientDiscoveredEndpoint
 .. _client-discovered-endpoint-trait:
 
 ``aws.api#clientDiscoveredEndpoint`` trait
@@ -940,6 +951,7 @@ following members:
         discover a more specific endpoint.
 
 
+.. smithy-trait:: aws.api#clientEndpointDiscoveryId
 .. _client-endpoint-discovery-id-trait:
 
 ``aws.api#clientEndpointDiscoveryId`` trait

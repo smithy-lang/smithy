@@ -12,6 +12,7 @@ Authentication traits define how a client authenticates with a service.
     :backlinks: none
 
 
+.. smithy-trait:: smithy.api#authDefinition
 .. _authDefinition-trait:
 
 ------------------------
@@ -113,6 +114,7 @@ can also support configuration settings.
     }
 
 
+.. smithy-trait:: smithy.api#httpBasicAuth
 .. _httpBasicAuth-trait:
 
 -----------------------
@@ -135,6 +137,7 @@ Value type
     }
 
 
+.. smithy-trait:: smithy.api#httpDigestAuth
 .. _httpDigestAuth-trait:
 
 ------------------------
@@ -157,6 +160,7 @@ Value type
     }
 
 
+.. smithy-trait:: smithy.api#httpBearerAuth
 .. _httpBearerAuth-trait:
 
 ------------------------
@@ -179,6 +183,7 @@ Value type
     }
 
 
+.. smithy-trait:: smithy.api#httpApiKeyAuth
 .. _httpApiKeyAuth-trait:
 
 ------------------------
@@ -211,6 +216,10 @@ properties:
       - ``string``
       - **Required**. Defines the location of where the key is serialized.
         This value can be set to ``header`` or ``query``.
+    * - scheme
+      - ``string``
+      - Defines the security scheme to use on the ``Authorization`` header value
+        This can only be set if the "in" property is set to ``header``.
 
 The following example defines a service that accepts an API key in the "X-Api-Key"
 HTTP header:
@@ -222,7 +231,18 @@ HTTP header:
         version: "2017-02-11",
     }
 
+The following example defines a service that uses an API key auth scheme through
+the HTTP ``Authorization`` header:
 
+.. code-block:: smithy
+
+    @httpApiKeyAuth(scheme: "ApiKey", name: "Authorization", in: "header")
+    service WeatherService {
+        version: "2017-02-11",
+    }
+
+
+.. smithy-trait:: smithy.api#optionalAuth
 .. _optionalAuth-trait:
 
 ----------------------
@@ -261,6 +281,7 @@ The following example defines an operation that does not support
     operation SomeUnauthenticatedOperation {}
 
 
+.. smithy-trait:: smithy.api#auth
 .. _auth-trait:
 
 --------------

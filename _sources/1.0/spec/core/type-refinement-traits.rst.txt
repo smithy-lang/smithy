@@ -11,6 +11,7 @@ the type of a shape.
     :backlinks: none
 
 
+.. smithy-trait:: smithy.api#box
 .. _box-trait:
 
 -------------
@@ -66,6 +67,7 @@ The :ref:`prelude <prelude>` contains predefined simple shapes that can be
 used in all Smithy models, including boxed and unboxed shapes.
 
 
+.. smithy-trait:: smithy.api#error
 .. _error-trait:
 
 ---------------
@@ -136,6 +138,7 @@ in Java).
         }
 
 
+.. smithy-trait:: smithy.api#sparse
 .. _sparse-trait:
 
 ----------------

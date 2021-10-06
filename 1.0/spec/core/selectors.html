@@ -1085,101 +1085,105 @@ to any shapes:</p>
 <td>resource</td>
 <td>Each resource that is bound to a service.</td>
 </tr>
-<tr class="row-even"><td>resource</td>
+<tr class="row-even"><td>service</td>
+<td>error</td>
+<td>Each error structure referenced by the service (if present).</td>
+</tr>
+<tr class="row-odd"><td>resource</td>
 <td>identifier</td>
 <td>The identifier referenced by the resource (if specified).</td>
 </tr>
-<tr class="row-odd"><td>resource</td>
+<tr class="row-even"><td>resource</td>
 <td>operation</td>
 <td>Each operation that is bound to a resource through the
 &quot;operations&quot;, &quot;create&quot;, &quot;put&quot;, &quot;read&quot;, &quot;update&quot;, &quot;delete&quot;, and &quot;list&quot;
 properties.</td>
 </tr>
-<tr class="row-even"><td>resource</td>
+<tr class="row-odd"><td>resource</td>
 <td>instanceOperation</td>
 <td>Each operation that is bound to a resource through the
 &quot;operations&quot;, &quot;put&quot;, &quot;read&quot;, &quot;update&quot;, and &quot;delete&quot; properties.</td>
 </tr>
-<tr class="row-odd"><td>resource</td>
+<tr class="row-even"><td>resource</td>
 <td>collectionOperation</td>
 <td>Each operation that is bound to a resource through the
 &quot;collectionOperations&quot;, &quot;create&quot;, and &quot;list&quot; properties.</td>
 </tr>
-<tr class="row-even"><td>resource</td>
+<tr class="row-odd"><td>resource</td>
 <td>resource</td>
 <td>Each resource that is bound to a resource.</td>
 </tr>
-<tr class="row-odd"><td>resource</td>
+<tr class="row-even"><td>resource</td>
 <td>create</td>
 <td>The operation referenced by the <a class="reference internal" href="model.html#create-lifecycle"><span class="std std-ref">Create lifecycle</span></a> property of
 a resource (if present).</td>
 </tr>
-<tr class="row-even"><td>resource</td>
+<tr class="row-odd"><td>resource</td>
 <td>read</td>
 <td>The operation referenced by the <a class="reference internal" href="model.html#read-lifecycle"><span class="std std-ref">Read lifecycle</span></a> property of
 a resource (if present).</td>
 </tr>
-<tr class="row-odd"><td>resource</td>
+<tr class="row-even"><td>resource</td>
 <td>update</td>
 <td>The operation referenced by the <a class="reference internal" href="model.html#update-lifecycle"><span class="std std-ref">Update lifecycle</span></a> property of
 a resource (if present).</td>
 </tr>
-<tr class="row-even"><td>resource</td>
+<tr class="row-odd"><td>resource</td>
 <td>delete</td>
 <td>The operation referenced by the <a class="reference internal" href="model.html#delete-lifecycle"><span class="std std-ref">Delete lifecycle</span></a> property of
 a resource (if present).</td>
 </tr>
-<tr class="row-odd"><td>resource</td>
+<tr class="row-even"><td>resource</td>
 <td>list</td>
 <td>The operation referenced by the <a class="reference internal" href="model.html#list-lifecycle"><span class="std std-ref">List lifecycle</span></a> property of
 a resource (if present).</td>
 </tr>
-<tr class="row-even"><td>resource</td>
+<tr class="row-odd"><td>resource</td>
 <td>bound</td>
 <td>The service or resource to which the resource is bound.</td>
 </tr>
-<tr class="row-odd"><td>operation</td>
+<tr class="row-even"><td>operation</td>
 <td>bound</td>
 <td>The service or resource to which the operation is bound.</td>
 </tr>
-<tr class="row-even"><td>operation</td>
+<tr class="row-odd"><td>operation</td>
 <td>input</td>
 <td>The input structure of the operation (if present).</td>
 </tr>
-<tr class="row-odd"><td>operation</td>
+<tr class="row-even"><td>operation</td>
 <td>output</td>
 <td>The output structure of the operation (if present).</td>
 </tr>
-<tr class="row-even"><td>operation</td>
+<tr class="row-odd"><td>operation</td>
 <td>error</td>
 <td>Each error structure referenced by the operation (if present).</td>
 </tr>
-<tr class="row-odd"><td>list</td>
+<tr class="row-even"><td>list</td>
 <td>member</td>
 <td>The <a class="reference internal" href="model.html#member"><span class="std std-ref">Member</span></a> of the list. Note that this is not the shape targeted
 by the member.</td>
 </tr>
-<tr class="row-even"><td>map</td>
+<tr class="row-odd"><td>map</td>
 <td>member</td>
 <td>The key and value members of the map. Note that these are not the
 shapes targeted by the member.</td>
 </tr>
-<tr class="row-odd"><td>structure</td>
+<tr class="row-even"><td>structure</td>
 <td>member</td>
 <td>Each structure member. Note that these are not the shapes targeted by
 the members.</td>
 </tr>
-<tr class="row-even"><td>union</td>
+<tr class="row-odd"><td>union</td>
 <td>member</td>
 <td>Each union member. Note that these are not the shapes targeted by
 the members.</td>
 </tr>
-<tr class="row-odd"><td>member</td>
+<tr class="row-even"><td>member</td>
 <td>&#160;</td>
 <td>The shape targeted by the member. Note that member targets have no
 relationship name.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">*</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">*</span></code></td>
 <td>trait</td>
 <td>Each trait applied to a shape. The neighbor shape is the shape that
 defines the trait. This kind of relationship is only traversed if the

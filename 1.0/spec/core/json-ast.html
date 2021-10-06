@@ -433,11 +433,18 @@ an operation.</td>
 <td>Binds a list of resources to the service. Each reference MUST target
 a resource.</td>
 </tr>
-<tr class="row-even"><td>traits</td>
+<tr class="row-even"><td>errors</td>
+<td>[<a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a>]</td>
+<td>Defines a list of common errors that every operation bound within the
+closure of the service can return. Each provided shape ID MUST target
+a <a class="reference internal" href="model.html#structure"><span class="std std-ref">structure</span></a> shape that is marked with the
+<a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>.</td>
+</tr>
+<tr class="row-odd"><td>traits</td>
 <td>map of <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape ID</span></a> to trait values</td>
 <td>Traits to apply to the service</td>
 </tr>
-<tr class="row-odd"><td>rename</td>
+<tr class="row-even"><td>rename</td>
 <td>map of <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape ID</span></a> to <code class="docutils literal notranslate"><span class="pre">string</span></code> <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">identifier</span></code></a></td>
 <td>Disambiguates shape name conflicts in the
 <a class="reference internal" href="model.html#service-closure"><span class="std std-ref">service closure</span></a>.</td>
@@ -458,6 +465,11 @@ a resource.</td>
             <span class="nt">&quot;resources&quot;</span><span class="p">:</span> <span class="p">[</span>
                 <span class="p">{</span>
                     <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#SomeResource&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;errors&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#SomeError&quot;</span>
                 <span class="p">}</span>
             <span class="p">],</span>
             <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>

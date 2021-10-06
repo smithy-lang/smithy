@@ -458,7 +458,7 @@ reference other shapes using :ref:`members <member>`.
     * - :ref:`list`
       - Ordered collection of homogeneous values
     * - :ref:`set`
-      - Unordered collection of unique homogeneous values
+      - Collection of unique homogeneous values
     * - :ref:`map`
       - Map data structure that maps string keys to homogeneous values
     * - :ref:`structure`
@@ -565,7 +565,7 @@ example is ``smithy.example#MyList$member``.
 Set
 ===
 
-The :dfn:`set` type represents an unordered collection of unique homogeneous
+The :dfn:`set` type represents a collection of unique homogeneous
 values. A set shape requires a single member named ``member``.
 Sets are defined in the IDL using a :ref:`set_statement <idl-set>`.
 The following example defines a set of strings:
@@ -617,6 +617,13 @@ Not all programming languages support set data structures. Such languages
 SHOULD represent sets as a custom set data structure that can interpret value
 hash codes and equality, or alternatively, store the values of a set data
 structure in a list and rely on validation to ensure uniqueness.
+
+.. rubric:: Set member ordering
+
+Sets MUST be insertion ordered. Not all programming languages that support
+sets support ordered sets, requiring them may be overly burdensome for users,
+or conflict with language idioms. Such languages SHOULD store the values
+of sets in a list and rely on validation to ensure uniqueness.
 
 
 .. _map:
@@ -995,8 +1002,8 @@ The service shape supports the following properties:
       - Description
     * - version
       - ``string``
-      - **Required**. Defines the version of the service. The version can be
-        provided in any format (e.g., ``2017-02-11``, ``2.0``, etc).
+      - Defines the optional version of the service. The version can be provided in
+        any format (e.g., ``2017-02-11``, ``2.0``, etc).
     * - :ref:`operations <service-operations>`
       - [``string``]
       - Binds a set of ``operation`` shapes to the service. Each
@@ -1007,6 +1014,12 @@ The service shape supports the following properties:
       - Binds a set of ``resource`` shapes to the service. Each element in
         the given list MUST be a valid :ref:`shape ID <shape-id>` that targets
         a :ref:`resource <resource>` shape.
+    * - errors
+      - [``string``]
+      - Defines a list of common errors that every operation bound within the
+        closure of the service can return. Each provided shape ID MUST target
+        a :ref:`structure <structure>` shape that is marked with the
+        :ref:`error-trait`.
     * - rename
       - map of :ref:`shape ID <shape-id>` to ``string``
       - Disambiguates shape name conflicts in the
@@ -1052,6 +1065,47 @@ The following example defines a service with no operations or resources.
                 }
             }
         }
+
+The following example defines a service shape that defines a set of errors
+that are common to every operation in the service:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        namespace smithy.example
+
+        service MyService {
+            version: "2017-02-11",
+            errors: [SomeError]
+        }
+
+        @error("client")
+        structure SomeError {}
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#MyService": {
+                    "type": "service",
+                    "version": "2017-02-11",
+                    "errors": [
+                        {
+                            "target": "smithy.example#SomeError"
+                        }
+                    ]
+                },
+                "smithy.example#SomeError": {
+                    "type": "structure",
+                    "traits": {
+                        "smithy.api#error": "client"
+                    }
+                }
+            }
+        }
+
 
 
 .. _service-operations:

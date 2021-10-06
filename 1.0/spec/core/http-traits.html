@@ -95,7 +95,7 @@ and error structures are considered when serializing HTTP messages.</p>
 </ul>
 </div>
 <div class="section" id="http-trait">
-<span id="id1"></span><h2><a href="#http-trait">11.1. <code class="docutils literal notranslate"><span class="pre">http</span></code> trait</a></h2>
+<span id="smithy-api-http-trait"></span><span id="id1"></span><h2><a href="#http-trait">11.1. <code class="docutils literal notranslate"><span class="pre">http</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Configures the HTTP bindings of an operation.</dd>
@@ -597,7 +597,7 @@ endpoint trait and the other specifies <code class="docutils literal notranslate
 </div>
 </div>
 <div class="section" id="httperror-trait">
-<span id="id3"></span><h2><a href="#httperror-trait">11.2. <code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait</a></h2>
+<span id="smithy-api-httperror-trait"></span><span id="id3"></span><h2><a href="#httperror-trait">11.2. <code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Defines an HTTP response code for an operation error.</dd>
@@ -638,7 +638,7 @@ HTTP status code of the <a class="reference internal" href="type-refinement-trai
 </ul>
 </div>
 <div class="section" id="httpheader-trait">
-<span id="id4"></span><h2><a href="#httpheader-trait">11.3. <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait</a></h2>
+<span id="smithy-api-httpheader-trait"></span><span id="id4"></span><h2><a href="#httpheader-trait">11.3. <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Binds a structure member to an HTTP header.</dd>
@@ -752,7 +752,7 @@ need to be modeled.</td>
 </div>
 </div>
 <div class="section" id="httplabel-trait">
-<span id="id5"></span><h2><a href="#httplabel-trait">11.4. <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait</a></h2>
+<span id="smithy-api-httplabel-trait"></span><span id="id5"></span><h2><a href="#httplabel-trait">11.4. <code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Binds an operation input structure member to an
@@ -841,7 +841,7 @@ of an operation, then those members are sent as part of the
 the body of the response.</p>
 </div>
 <div class="section" id="httppayload-trait">
-<span id="id6"></span><h2><a href="#httppayload-trait">11.5. <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait</a></h2>
+<span id="smithy-api-httppayload-trait"></span><span id="id6"></span><h2><a href="#httppayload-trait">11.5. <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Binds a single structure member to the body of an HTTP message.</dd>
@@ -919,7 +919,7 @@ document that is sent as the body of the message.</li>
 </ol>
 </div>
 <div class="section" id="httpprefixheaders-trait">
-<span id="id7"></span><h2><a href="#httpprefixheaders-trait">11.6. <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait</a></h2>
+<span id="smithy-api-httpprefixheaders-trait"></span><span id="id7"></span><h2><a href="#httpprefixheaders-trait">11.6. <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Binds a map of key-value pairs to prefixed HTTP headers.</dd>
@@ -996,7 +996,7 @@ start with the same prefix provided in <code class="docutils literal notranslate
 bound to <code class="docutils literal notranslate"><span class="pre">headers</span></code>.</p>
 </div>
 <div class="section" id="httpquery-trait">
-<span id="id8"></span><h2><a href="#httpquery-trait">11.7. <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait</a></h2>
+<span id="smithy-api-httpquery-trait"></span><span id="id8"></span><h2><a href="#httpquery-trait">11.7. <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Binds an operation input structure member to a query string parameter.</dd>
@@ -1094,7 +1094,7 @@ Carefully consider the maximum allowed length of each member that is bound to
 an HTTP query string or path.</p>
 </div>
 <div class="section" id="httpqueryparams-trait">
-<span id="id9"></span><h2><a href="#httpqueryparams-trait">11.8. <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait</a></h2>
+<span id="smithy-api-httpqueryparams-trait"></span><span id="id9"></span><h2><a href="#httpqueryparams-trait">11.8. <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Binds a map of key-value pairs to query string parameters.</dd>
@@ -1113,6 +1113,8 @@ that target a <code class="docutils literal notranslate"><span class="pre">map</
 <dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>, <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>,
 <a class="reference internal" href="#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a>, <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
 <a class="reference internal" href="#httpresponsecode-trait"><span class="std std-ref">httpResponseCode trait</span></a></dd>
+<dt>Structurally exclusive</dt>
+<dd>Only a single structure member can be bound to <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code>.</dd>
 </dl>
 <p>The following example defines an operation that optionally sends the
 target input map as query string parameters in an HTTP request:</p>
@@ -1206,7 +1208,7 @@ Host: &lt;server&gt;
 </div>
 </div>
 <div class="section" id="httpresponsecode-trait">
-<span id="id10"></span><h2><a href="#httpresponsecode-trait">11.9. <code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait</a></h2>
+<span id="smithy-api-httpresponsecode-trait"></span><span id="id10"></span><h2><a href="#httpresponsecode-trait">11.9. <code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Binds a structure member to the HTTP response status code so that an
@@ -1239,7 +1241,7 @@ input structure of an operation, then those members are sent as part of the
 the body of the request.</p>
 </div>
 <div class="section" id="cors-trait">
-<span id="id11"></span><h2><a href="#cors-trait">11.10. <code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></h2>
+<span id="smithy-api-cors-trait"></span><span id="id11"></span><h2><a href="#cors-trait">11.10. <code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Defines how a service supports cross-origin resource sharing</dd>

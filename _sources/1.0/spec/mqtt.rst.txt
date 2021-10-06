@@ -169,6 +169,7 @@ MQTT topic templates MUST adhere to the following constraints:
   in the topic template.
 
 
+.. smithy-trait:: smithy.mqtt#publish
 .. _smithy.mqtt#publish-trait:
 
 -----------------------------
@@ -274,6 +275,7 @@ Publish validation
   the resolved MQTT topics of subscribe operations.
 
 
+.. smithy-trait:: smithy.mqtt#subscribe
 .. _smithy.mqtt#subscribe-trait:
 
 -------------------------------
@@ -421,6 +423,7 @@ Subscribe validation
   custom headers to messages.
 
 
+.. smithy-trait:: smithy.mqtt#topicLabel
 .. _smithy.mqtt#topicLabel-trait:
 
 --------------------------------

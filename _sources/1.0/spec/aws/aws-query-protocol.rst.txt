@@ -441,6 +441,7 @@ following process:
 2. The :token:`shape name <identifier>` of the error's :ref:`shape-id`.
 
 
+.. smithy-trait:: aws.protocols#awsQuery
 .. _aws.protocols#awsQuery-trait:
 
 --------------------------------
@@ -491,6 +492,8 @@ See
             }
         }
 
+
+.. smithy-trait:: aws.protocols#awsQueryError
 .. _aws.protocols#awsQueryError-trait:
 
 -------------------------------------
@@ -505,7 +508,7 @@ Summary
 Trait selector
     ``structure [trait|error]``
 
-    The ``httpError`` trait can only be applied to :ref:`structure <structure>`
+    The ``awsQueryError`` trait can only be applied to :ref:`structure <structure>`
     shapes that also have the :ref:`error-trait`.
 Value type
     ``structure`` that supports the following members:

@@ -122,6 +122,12 @@ to the configuration file.</td>
 projection. Plugins are a mapping of plugin names to an arbitrary
 plugin configuration object.</td>
 </tr>
+<tr class="row-odd"><td>ignoreMissingPlugins</td>
+<td><code class="docutils literal notranslate"><span class="pre">bool</span></code></td>
+<td>If a plugin can't be found, Smithy will by default fail the build. This
+setting can be set to <code class="docutils literal notranslate"><span class="pre">true</span></code> to allow the build to progress even if
+a plugin can't be found on the classpath.</td>
+</tr>
 </tbody>
 </table>
 <p>The following is an example <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> configuration:</p>
@@ -225,7 +231,7 @@ projection. Transforms are applied in the order defined.</td>
 <td>Defines the plugins to apply to the model when building this
 projection. Plugins are a mapping of plugin names to an arbitrary
 plugin configuration object. smithy-build will attempt to resolve
-plugin names using <a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">Java SPI</a> to locate and instance of <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.build.SmithyBuildPlugin</span></code>
+plugin names using <a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">Java SPI</a> to locate an instance of <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.build.SmithyBuildPlugin</span></code>
 that returns a matching name when calling <code class="docutils literal notranslate"><span class="pre">getName</span></code>. smithy-build will
 emit a warning when a plugin cannot be resolved.</td>
 </tr>
@@ -330,6 +336,67 @@ JSON</div>
                     <span class="p">}</span>
                 <span class="p">},</span>
                 <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;bar&quot;</span><span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="changetypes">
+<span id="id4"></span><h3><a href="#changetypes">changeTypes</a></h3>
+<p>Changes the types of shapes.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>shapeTypes</td>
+<td><code class="docutils literal notranslate"><span class="pre">Map&lt;ShapeId,</span> <span class="pre">String&gt;</span></code></td>
+<td>A map of shape IDs to the type to assign to the shape.</td>
+</tr>
+</tbody>
+</table>
+<p>Only the following shape type changes are supported:</p>
+<ul class="simple">
+<li>Any simple type to any other simple type</li>
+<li>List to set</li>
+<li>Set to list</li>
+<li>Structure to union</li>
+<li>Union to structure</li>
+</ul>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;changeTypes&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;shapeTypes&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;smithy.example#Foo&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                            <span class="nt">&quot;smithy.example#Baz&quot;</span><span class="p">:</span> <span class="s2">&quot;union&quot;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
             <span class="p">]</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -1109,7 +1176,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="flattennamespaces">
-<span id="id4"></span><h3><a href="#flattennamespaces">flattenNamespaces</a></h3>
+<span id="id5"></span><h3><a href="#flattennamespaces">flattenNamespaces</a></h3>
 <p>Flattens namespaces of any shapes connected to a service into a target
 namespace. Shapes not connected to a service will not be flattened.</p>
 <table border="1" class="colwidths-given docutils">
@@ -1411,7 +1478,7 @@ environment variable set to &quot;hi&quot;, this file is equivalent to:</p>
 </div>
 </div>
 <div class="section" id="plugins">
-<span id="id5"></span><h2><a href="#plugins">Plugins</a></h2>
+<span id="id6"></span><h2><a href="#plugins">Plugins</a></h2>
 <p>Plugins are defined in either the top-level &quot;plugins&quot; key-value pair of the
 configuration file, or in the &quot;plugins&quot; key-value pair of a projection.
 Plugins defined at the top-level of the configuration file are applied to
@@ -1429,18 +1496,18 @@ them to be discovered.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">model</span></code>, <code class="docutils literal notranslate"><span class="pre">build-info</span></code>, and <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugins are plugins that are
 always run in every non-abstract projection.</p>
 <div class="section" id="model-plugin">
-<span id="id6"></span><h3><a href="#model-plugin">model plugin</a></h3>
+<span id="id7"></span><h3><a href="#model-plugin">model plugin</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">model</span></code> plugin serializes a self-contained and filtered version of the
 model as a single file. All of the dependencies of the model are included
 in the file.</p>
 </div>
 <div class="section" id="build-info-plugin">
-<span id="id7"></span><h3><a href="#build-info-plugin">build-info plugin</a></h3>
+<span id="id8"></span><h3><a href="#build-info-plugin">build-info plugin</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">build-info</span></code> plugin produces a JSON document that contains information
 about the projection and model.</p>
 </div>
 <div class="section" id="sources-plugin">
-<span id="id8"></span><h3><a href="#sources-plugin">sources plugin</a></h3>
+<span id="id9"></span><h3><a href="#sources-plugin">sources plugin</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugin copies the source models and creates a manifest.
 When building the <code class="docutils literal notranslate"><span class="pre">source</span></code> projection, the models that were used to build the
 model are copied over literally. When a JAR is used as a source model, the
@@ -1488,6 +1555,7 @@ All model names referenced by the manifest are relative to <code class="docutils
 </li>
 <li><a class="reference internal" href="#transforms">Transforms</a><ul>
 <li><a class="reference internal" href="#apply">apply</a></li>
+<li><a class="reference internal" href="#changetypes">changeTypes</a></li>
 <li><a class="reference internal" href="#excludeshapesbytag">excludeShapesByTag</a></li>
 <li><a class="reference internal" href="#excludeshapesbytrait">excludeShapesByTrait</a></li>
 <li><a class="reference internal" href="#includeshapesbytag">includeShapesByTag</a></li>

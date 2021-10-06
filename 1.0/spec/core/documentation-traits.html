@@ -90,7 +90,7 @@ in a way that does not materially affect the semantics of the model.</p>
 </ul>
 </div>
 <div class="section" id="deprecated-trait">
-<span id="id2"></span><h2><a href="#deprecated-trait">4.1. <code class="docutils literal notranslate"><span class="pre">deprecated</span></code> trait</a></h2>
+<span id="smithy-api-deprecated-trait"></span><span id="id2"></span><h2><a href="#deprecated-trait">4.1. <code class="docutils literal notranslate"><span class="pre">deprecated</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Marks a shape or member as deprecated.</dd>
@@ -171,7 +171,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="documentation-trait">
-<span id="id3"></span><h2><a href="#documentation-trait">4.2. <code class="docutils literal notranslate"><span class="pre">documentation</span></code> trait</a></h2>
+<span id="smithy-api-documentation-trait"></span><span id="id3"></span><h2><a href="#documentation-trait">4.2. <code class="docutils literal notranslate"><span class="pre">documentation</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Adds documentation to a shape or member using the <a class="reference external" href="https://spec.commonmark.org/">CommonMark</a> format.</dd>
@@ -267,7 +267,7 @@ JSON</div>
 <code class="docutils literal notranslate"><span class="pre">Baz</span></code> resolves to &quot;Shape documentation&quot;, and <code class="docutils literal notranslate"><span class="pre">Foo</span></code> is not documented.</p>
 </div>
 <div class="section" id="examples-trait">
-<span id="id4"></span><h2><a href="#examples-trait">4.3. <code class="docutils literal notranslate"><span class="pre">examples</span></code> trait</a></h2>
+<span id="smithy-api-examples-trait"></span><span id="id4"></span><h2><a href="#examples-trait">4.3. <code class="docutils literal notranslate"><span class="pre">examples</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Provides example inputs and outputs for operations.</dd>
@@ -310,6 +310,11 @@ value of the member.</td>
 the name of a top-level output structure member, and each value is the
 value of the member.</td>
 </tr>
+<tr class="row-even"><td>error</td>
+<td><a class="reference internal" href="#examples-errorexample-structure"><span class="std std-ref">ErrorExample structure</span></a></td>
+<td>Provides an error shape ID and example error parameters for the
+operation.</td>
+</tr>
 </tbody>
 </table>
 <p>The values provided for the <code class="docutils literal notranslate"><span class="pre">input</span></code> and <code class="docutils literal notranslate"><span class="pre">output</span></code> members MUST be
@@ -327,7 +332,8 @@ Smithy</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@readonly</span>
 <span class="kd">operation</span><span class="nc"> MyOperation</span> {
     <span class="nl">input:</span> <span class="vc">MyOperationInput</span>,
-    <span class="nl">output:</span> <span class="vc">MyOperationOutput</span>
+    <span class="nl">output:</span> <span class="vc">MyOperationOutput</span>,
+    <span class="nl">errors:</span> [<span class="vc">MyOperationError</span>]
 }
 
 <span class="kd">apply</span><span class="nc"> MyOperation</span> <span class="nd">@examples</span>([
@@ -349,14 +355,58 @@ Smithy</div>
             <span class="nl">status:</span> <span class="s2">&quot;PENDING&quot;</span>,
         }
     },
+    {
+        <span class="nl">title:</span> <span class="s2">&quot;Error example for MyOperation&quot;</span>,
+        <span class="nl">input:</span> {
+            <span class="nl">foo:</span> <span class="m">1</span>,
+        },
+        <span class="nl">error:</span> {
+            <span class="nl">shapeId:</span> <span class="vc">MyOperationError</span>,
+            <span class="nl">content:</span> {
+                <span class="nl">message:</span> <span class="s2">&quot;Invalid &#39;foo&#39;&quot;</span>,
+            }
+        }
+    },
 ])
 </pre></div>
 </div>
 </div>
 </div>
+<div class="section" id="errorexample-structure">
+<span id="examples-errorexample-structure"></span><h3><a href="#errorexample-structure">4.3.1. <code class="docutils literal notranslate"><span class="pre">ErrorExample</span></code> structure</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">ErrorExample</span></code> structure defines an error example using the following
+members:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>shapeId</td>
+<td><a class="reference internal" href="model.html#shape-id"><span class="std std-ref">Shape ID</span></a></td>
+<td>The shape ID of the error in this example. This shape ID MUST be of
+a structure shape with the error trait. The structure shape MUST be
+bound as an error to the operation this example trait is applied to.</td>
+</tr>
+<tr class="row-odd"><td>content</td>
+<td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
+<td>Provides example error parameters for the operation. Each key is
+the name of a top-level error structure member, and each value is the
+value of the member.</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="section" id="externaldocumentation-trait">
-<span id="id5"></span><h2><a href="#externaldocumentation-trait">4.4. <code class="docutils literal notranslate"><span class="pre">externalDocumentation</span></code> trait</a></h2>
+<span id="smithy-api-externaldocumentation-trait"></span><span id="id5"></span><h2><a href="#externaldocumentation-trait">4.4. <code class="docutils literal notranslate"><span class="pre">externalDocumentation</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Provides named links to external documentation for a shape.</dd>
@@ -387,7 +437,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="internal-trait">
-<span id="id6"></span><h2><a href="#internal-trait">4.5. <code class="docutils literal notranslate"><span class="pre">internal</span></code> trait</a></h2>
+<span id="smithy-api-internal-trait"></span><span id="id6"></span><h2><a href="#internal-trait">4.5. <code class="docutils literal notranslate"><span class="pre">internal</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Shapes marked with the internal trait are meant only for internal use.
@@ -422,7 +472,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="recommended-trait">
-<span id="id7"></span><h2><a href="#recommended-trait">4.6. <code class="docutils literal notranslate"><span class="pre">recommended</span></code> trait</a></h2>
+<span id="smithy-api-recommended-trait"></span><span id="id7"></span><h2><a href="#recommended-trait">4.6. <code class="docutils literal notranslate"><span class="pre">recommended</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Indicates that a structure member SHOULD be set. This trait is useful when
@@ -477,7 +527,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="sensitive-trait">
-<span id="id8"></span><h2><a href="#sensitive-trait">4.7. <code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait</a></h2>
+<span id="smithy-api-sensitive-trait"></span><span id="id8"></span><h2><a href="#sensitive-trait">4.7. <code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Indicates that the data stored in the shape or member is sensitive
@@ -508,7 +558,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="since-trait">
-<span id="id9"></span><h2><a href="#since-trait">4.8. <code class="docutils literal notranslate"><span class="pre">since</span></code> trait</a></h2>
+<span id="smithy-api-since-trait"></span><span id="id9"></span><h2><a href="#since-trait">4.8. <code class="docutils literal notranslate"><span class="pre">since</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Defines the version or date in which a shape or member was added to
@@ -520,7 +570,7 @@ the model.</dd>
 </dl>
 </div>
 <div class="section" id="tags-trait">
-<span id="id10"></span><h2><a href="#tags-trait">4.9. <code class="docutils literal notranslate"><span class="pre">tags</span></code> trait</a></h2>
+<span id="smithy-api-tags-trait"></span><span id="id10"></span><h2><a href="#tags-trait">4.9. <code class="docutils literal notranslate"><span class="pre">tags</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Tags a shape with arbitrary tag names that can be used to filter and group
@@ -549,7 +599,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="title-trait">
-<span id="id11"></span><h2><a href="#title-trait">4.10. <code class="docutils literal notranslate"><span class="pre">title</span></code> trait</a></h2>
+<span id="smithy-api-title-trait"></span><span id="id11"></span><h2><a href="#title-trait">4.10. <code class="docutils literal notranslate"><span class="pre">title</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Defines a proper name for a service or resource shape. This title can be
@@ -582,7 +632,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="unstable-trait">
-<span id="id12"></span><h2><a href="#unstable-trait">4.11. <code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait</a></h2>
+<span id="smithy-api-unstable-trait"></span><span id="id12"></span><h2><a href="#unstable-trait">4.11. <code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Indicates a shape is unstable and MAY change in the future. This trait can
@@ -635,7 +685,10 @@ Smithy</div>
 <li><a class="reference internal" href="#">4. Documentation traits</a><ul>
 <li><a class="reference internal" href="#deprecated-trait">4.1. <code class="docutils literal notranslate"><span class="pre">deprecated</span></code> trait</a></li>
 <li><a class="reference internal" href="#documentation-trait">4.2. <code class="docutils literal notranslate"><span class="pre">documentation</span></code> trait</a></li>
-<li><a class="reference internal" href="#examples-trait">4.3. <code class="docutils literal notranslate"><span class="pre">examples</span></code> trait</a></li>
+<li><a class="reference internal" href="#examples-trait">4.3. <code class="docutils literal notranslate"><span class="pre">examples</span></code> trait</a><ul>
+<li><a class="reference internal" href="#errorexample-structure">4.3.1. <code class="docutils literal notranslate"><span class="pre">ErrorExample</span></code> structure</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#externaldocumentation-trait">4.4. <code class="docutils literal notranslate"><span class="pre">externalDocumentation</span></code> trait</a></li>
 <li><a class="reference internal" href="#internal-trait">4.5. <code class="docutils literal notranslate"><span class="pre">internal</span></code> trait</a></li>
 <li><a class="reference internal" href="#recommended-trait">4.6. <code class="docutils literal notranslate"><span class="pre">recommended</span></code> trait</a></li>

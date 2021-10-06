@@ -10,6 +10,7 @@ Behavior traits are used to alter the behavior of operations.
     :backlinks: none
 
 
+.. smithy-trait:: smithy.api#idempotencyToken
 .. _idempotencyToken-trait:
 
 --------------------------
@@ -55,6 +56,7 @@ member if and only if the member is not explicitly provided.
         }
 
 
+.. smithy-trait:: smithy.api#idempotent
 .. _idempotent-trait:
 
 --------------------
@@ -88,6 +90,7 @@ Conflicts with
     idempotent.
 
 
+.. smithy-trait:: smithy.api#readonly
 .. _readonly-trait:
 
 ------------------
@@ -114,6 +117,7 @@ Conflicts with
         }
 
 
+.. smithy-trait:: smithy.api#retryable
 .. _retryable-trait:
 
 -------------------
@@ -159,6 +163,7 @@ The retryable trait is a structure that contains the following members:
 
 .. _pagination:
 
+.. smithy-trait:: smithy.api#paginated
 .. _paginated-trait:
 
 -------------------
@@ -629,6 +634,7 @@ The following changes are considered backward compatible:
 .. _UUID: https://tools.ietf.org/html/rfc4122
 
 
+.. smithy-trait:: smithy.api#httpChecksumRequired
 .. _httpChecksumRequired-trait:
 
 ------------------------------
@@ -657,6 +663,7 @@ See
         }
 
 
+.. smithy-trait:: smithy.api#httpChecksum
 .. _httpChecksum-trait:
 
 ----------------------
@@ -701,10 +708,10 @@ The ``httpChecksum`` trait is a structure that contains the following members:
                 { algorithm: "sha256", in: "header", name: "x-checksum-sha256"},
                 { algorithm: "crc32", in: "header", name: "x-checksum-crc32"}
             ],
-            response: {
+            response: [
                 { algorithm: "sha256", in: "header", name: "x-checksum-sha256"},
                 { algorithm: "crc32", in: "header", name: "x-checksum-crc32"}
-            }
+            ]
         )
         operation PutSomething {
             input: PutSomethingInput,

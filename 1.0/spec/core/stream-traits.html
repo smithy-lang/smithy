@@ -79,17 +79,18 @@ once. This includes both streaming binary data and event streams.</p>
 <li><a class="reference internal" href="#streaming-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait</a></li>
 <li><a class="reference internal" href="#requireslength-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">requiresLength</span></code> trait</a></li>
 <li><a class="reference internal" href="#event-streams" id="id12">Event streams</a><ul>
-<li><a class="reference internal" href="#initial-messages" id="id13">Initial messages</a><ul>
-<li><a class="reference internal" href="#initial-request" id="id14">Initial-request</a></li>
-<li><a class="reference internal" href="#initial-response" id="id15">Initial-response</a></li>
-<li><a class="reference internal" href="#initial-message-client-and-server-behavior" id="id16">Initial message client and server behavior</a></li>
+<li><a class="reference internal" href="#modeled-errors-in-event-streams" id="id13">Modeled errors in event streams</a></li>
+<li><a class="reference internal" href="#initial-messages" id="id14">Initial messages</a><ul>
+<li><a class="reference internal" href="#initial-request" id="id15">Initial-request</a></li>
+<li><a class="reference internal" href="#initial-response" id="id16">Initial-response</a></li>
+<li><a class="reference internal" href="#initial-message-client-and-server-behavior" id="id17">Initial message client and server behavior</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#client-behavior" id="id17">Client behavior</a></li>
-<li><a class="reference internal" href="#event-message-serialization" id="id18">Event message serialization</a></li>
-<li><a class="reference internal" href="#event-stream-traits" id="id19">Event stream traits</a><ul>
-<li><a class="reference internal" href="#eventheader-trait" id="id20"><code class="docutils literal notranslate"><span class="pre">eventHeader</span></code> trait</a></li>
-<li><a class="reference internal" href="#eventpayload-trait" id="id21"><code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait</a></li>
+<li><a class="reference internal" href="#client-behavior" id="id18">Client behavior</a></li>
+<li><a class="reference internal" href="#event-message-serialization" id="id19">Event message serialization</a></li>
+<li><a class="reference internal" href="#event-stream-traits" id="id20">Event stream traits</a><ul>
+<li><a class="reference internal" href="#eventheader-trait" id="id21"><code class="docutils literal notranslate"><span class="pre">eventHeader</span></code> trait</a></li>
+<li><a class="reference internal" href="#eventpayload-trait" id="id22"><code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait</a></li>
 </ul>
 </li>
 </ul>
@@ -97,7 +98,7 @@ once. This includes both streaming binary data and event streams.</p>
 </ul>
 </div>
 <div class="section" id="streaming-trait">
-<span id="id1"></span><h2><a href="#streaming-trait">10.1. <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait</a></h2>
+<span id="smithy-api-streaming-trait"></span><span id="id1"></span><h2><a href="#streaming-trait">10.1. <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd><p class="first">Indicates that the data represented by the shape needs to be streamed.</p>
@@ -149,7 +150,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="requireslength-trait">
-<span id="id2"></span><h2><a href="#requireslength-trait">10.2. <code class="docutils literal notranslate"><span class="pre">requiresLength</span></code> trait</a></h2>
+<span id="smithy-api-requireslength-trait"></span><span id="id2"></span><h2><a href="#requireslength-trait">10.2. <code class="docutils literal notranslate"><span class="pre">requiresLength</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd><p class="first">Indicates that the streaming blob MUST be finite and has a known size.</p>
@@ -313,11 +314,18 @@ JSON</div>
     <span class="nl">down:</span> <span class="vc">Movement</span>,
     <span class="nl">left:</span> <span class="vc">Movement</span>,
     <span class="nl">right:</span> <span class="vc">Movement</span>,
+    <span class="nl">throttlingError:</span> <span class="vc">ThrottlingError</span>
 }
 
 <span class="kd">structure</span><span class="nc"> Movement</span> {
     <span class="nl">velocity:</span> <span class="vc">Float</span>,
 }
+
+<span class="cm">/// An example error emitted when the client is throttled</span>
+<span class="cm">/// and should terminate the event stream.</span>
+<span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nd">@retryable</span>(<span class="nl">throttling:</span> <span class="kc">true</span>)
+<span class="kd">structure</span><span class="nc"> ThrottlingError</span> {}
 </pre></div>
 </div>
 </div>
@@ -353,6 +361,9 @@ JSON</div>
                 <span class="p">},</span>
                 <span class="nt">&quot;right&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Movement&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;throttlingError&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#ThrottlingError&quot;</span>
                 <span class="p">}</span>
             <span class="p">},</span>
             <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -366,6 +377,16 @@ JSON</div>
                     <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Float&quot;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#ThrottlingError&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;An example error emitted when the client is throttled and should terminate the event stream.&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;smithy.api#error&quot;</span><span class="p">:</span> <span class="s2">&quot;client&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;smithy.api#retryable&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;throttling&quot;</span><span class="p">:</span> <span class="kc">true</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -373,14 +394,20 @@ JSON</div>
 </div>
 </div>
 </div>
+<div class="section" id="modeled-errors-in-event-streams">
+<h3><a href="#modeled-errors-in-event-streams">10.3.1. Modeled errors in event streams</a></h3>
+<p>Event streams MAY target shapes marked with the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>. These
+events are considered terminal errors and MUST terminate the event stream
+when received.</p>
+</div>
 <div class="section" id="initial-messages">
-<span id="id4"></span><h3><a href="#initial-messages">10.3.1. Initial messages</a></h3>
+<span id="id4"></span><h3><a href="#initial-messages">10.3.2. Initial messages</a></h3>
 <p>An <em>initial message</em> is comprised of the top-level input or output members
 of an operation that do not target the event stream union. Initial
 messages provide an opportunity for a client or server to provide metadata
 about an event stream before transmitting events.</p>
 <div class="section" id="initial-request">
-<span id="id5"></span><h4><a href="#initial-request">10.3.1.1. Initial-request</a></h4>
+<span id="id5"></span><h4><a href="#initial-request">10.3.2.1. Initial-request</a></h4>
 <p>An <em>initial-request</em> is an initial message that can be sent from a client to
 a server for an operation with an input event stream. The structure of an
 initial-request is the input of an operation with no value provided for the
@@ -493,7 +520,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="initial-response">
-<span id="id6"></span><h4><a href="#initial-response">10.3.1.2. Initial-response</a></h4>
+<span id="id6"></span><h4><a href="#initial-response">10.3.2.2. Initial-response</a></h4>
 <p>An <em>initial-response</em> is an initial message that can be sent from a server
 to a client for an operation with an output event stream. The structure of
 an initial-response is the output of an operation with no value provided for
@@ -595,7 +622,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="initial-message-client-and-server-behavior">
-<h4><a href="#initial-message-client-and-server-behavior">10.3.1.3. Initial message client and server behavior</a></h4>
+<h4><a href="#initial-message-client-and-server-behavior">10.3.2.3. Initial message client and server behavior</a></h4>
 <p>Initial messages, if received, MUST be provided to applications
 before event stream events.</p>
 <p>It is a backward compatible change to add an initial-request or
@@ -606,7 +633,7 @@ received for an initial message that contains only optional members.</p>
 </div>
 </div>
 <div class="section" id="client-behavior">
-<span id="event-stream-client-behavior"></span><h3><a href="#client-behavior">10.3.2. Client behavior</a></h3>
+<span id="event-stream-client-behavior"></span><h3><a href="#client-behavior">10.3.3. Client behavior</a></h3>
 <p>Clients that send or receive event streams are expected to
 provide an abstraction to end-users that allows values to be produced or
 consumed asynchronously for each named member of the targeted union. Adding
@@ -644,7 +671,7 @@ type (for example, when <code class="docutils literal notranslate"><span class="
 provided).</p>
 </div>
 <div class="section" id="event-message-serialization">
-<span id="id7"></span><h3><a href="#event-message-serialization">10.3.3. Event message serialization</a></h3>
+<span id="id7"></span><h3><a href="#event-message-serialization">10.3.4. Event message serialization</a></h3>
 <p>While the framing and serialization of an event stream is protocol-specific,
 traits can be used to influence the serialization of an event stream event.
 Structure members that are sent as part of an event stream are serialized
@@ -763,9 +790,9 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="event-stream-traits">
-<h3><a href="#event-stream-traits">10.3.4. Event stream traits</a></h3>
+<h3><a href="#event-stream-traits">10.3.5. Event stream traits</a></h3>
 <div class="section" id="eventheader-trait">
-<span id="id8"></span><h4><a href="#eventheader-trait">10.3.4.1. <code class="docutils literal notranslate"><span class="pre">eventHeader</span></code> trait</a></h4>
+<span id="smithy-api-eventheader-trait"></span><span id="id8"></span><h4><a href="#eventheader-trait">10.3.5.1. <code class="docutils literal notranslate"><span class="pre">eventHeader</span></code> trait</a></h4>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Binds a member of a structure to be serialized as an event header when
@@ -840,7 +867,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="eventpayload-trait">
-<span id="id9"></span><h4><a href="#eventpayload-trait">10.3.4.2. <code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait</a></h4>
+<span id="smithy-api-eventpayload-trait"></span><span id="id9"></span><h4><a href="#eventpayload-trait">10.3.5.2. <code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait</a></h4>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Binds a member of a structure to be serialized as the payload of an
@@ -962,17 +989,18 @@ JSON</div>
 <li><a class="reference internal" href="#streaming-trait">10.1. <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait</a></li>
 <li><a class="reference internal" href="#requireslength-trait">10.2. <code class="docutils literal notranslate"><span class="pre">requiresLength</span></code> trait</a></li>
 <li><a class="reference internal" href="#event-streams">10.3. Event streams</a><ul>
-<li><a class="reference internal" href="#initial-messages">10.3.1. Initial messages</a><ul>
-<li><a class="reference internal" href="#initial-request">10.3.1.1. Initial-request</a></li>
-<li><a class="reference internal" href="#initial-response">10.3.1.2. Initial-response</a></li>
-<li><a class="reference internal" href="#initial-message-client-and-server-behavior">10.3.1.3. Initial message client and server behavior</a></li>
+<li><a class="reference internal" href="#modeled-errors-in-event-streams">10.3.1. Modeled errors in event streams</a></li>
+<li><a class="reference internal" href="#initial-messages">10.3.2. Initial messages</a><ul>
+<li><a class="reference internal" href="#initial-request">10.3.2.1. Initial-request</a></li>
+<li><a class="reference internal" href="#initial-response">10.3.2.2. Initial-response</a></li>
+<li><a class="reference internal" href="#initial-message-client-and-server-behavior">10.3.2.3. Initial message client and server behavior</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#client-behavior">10.3.2. Client behavior</a></li>
-<li><a class="reference internal" href="#event-message-serialization">10.3.3. Event message serialization</a></li>
-<li><a class="reference internal" href="#event-stream-traits">10.3.4. Event stream traits</a><ul>
-<li><a class="reference internal" href="#eventheader-trait">10.3.4.1. <code class="docutils literal notranslate"><span class="pre">eventHeader</span></code> trait</a></li>
-<li><a class="reference internal" href="#eventpayload-trait">10.3.4.2. <code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait</a></li>
+<li><a class="reference internal" href="#client-behavior">10.3.3. Client behavior</a></li>
+<li><a class="reference internal" href="#event-message-serialization">10.3.4. Event message serialization</a></li>
+<li><a class="reference internal" href="#event-stream-traits">10.3.5. Event stream traits</a><ul>
+<li><a class="reference internal" href="#eventheader-trait">10.3.5.1. <code class="docutils literal notranslate"><span class="pre">eventHeader</span></code> trait</a></li>
+<li><a class="reference internal" href="#eventpayload-trait">10.3.5.2. <code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait</a></li>
 </ul>
 </li>
 </ul>

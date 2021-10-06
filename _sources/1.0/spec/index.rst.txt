@@ -43,3 +43,12 @@ AWS specifications
     :maxdepth: 2
 
     aws/index
+
+
+-----------
+Trait Index
+-----------
+
+The following is a list of all traits across all of the above specifications.
+
+.. smithy-trait-index::

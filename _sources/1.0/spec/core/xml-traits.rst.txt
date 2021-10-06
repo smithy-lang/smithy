@@ -594,6 +594,7 @@ The XML serialization of ``Choice`` is:
     </Choice>
 
 
+.. smithy-trait:: smithy.api#xmlAttribute
 .. _xmlAttribute-trait:
 
 ----------------------
@@ -698,6 +699,7 @@ The XML serialization is:
     <MyStructure NotFoo="example"/>
 
 
+.. smithy-trait:: smithy.api#xmlFlattened
 .. _xmlFlattened-trait:
 
 ----------------------
@@ -850,6 +852,7 @@ The XML serialization is:
     </Foo>
 
 
+.. smithy-trait:: smithy.api#xmlName
 .. _xmlName-trait:
 
 -----------------
@@ -934,6 +937,7 @@ The XML serialization is:
     </AnotherStructure>
 
 
+.. smithy-trait:: smithy.api#xmlNamespace
 .. _xmlNamespace-trait:
 
 ----------------------

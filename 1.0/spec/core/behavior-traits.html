@@ -85,7 +85,7 @@
 </ul>
 </div>
 <div class="section" id="idempotencytoken-trait">
-<span id="id1"></span><h2><a href="#idempotencytoken-trait">8.1. <code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait</a></h2>
+<span id="smithy-api-idempotencytoken-trait"></span><span id="id1"></span><h2><a href="#idempotencytoken-trait">8.1. <code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Defines the input member of an operation that is used by the server to
@@ -131,7 +131,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="idempotent-trait">
-<span id="id2"></span><h2><a href="#idempotent-trait">8.2. <code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait</a></h2>
+<span id="smithy-api-idempotent-trait"></span><span id="id2"></span><h2><a href="#idempotent-trait">8.2. <code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Indicates that the intended effect on the server of multiple identical
@@ -168,7 +168,7 @@ idempotent.</p>
 </div>
 </div>
 <div class="section" id="readonly-trait">
-<span id="id3"></span><h2><a href="#readonly-trait">8.3. <code class="docutils literal notranslate"><span class="pre">readonly</span></code> trait</a></h2>
+<span id="smithy-api-readonly-trait"></span><span id="id3"></span><h2><a href="#readonly-trait">8.3. <code class="docutils literal notranslate"><span class="pre">readonly</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Indicates that an operation is effectively read-only.</dd>
@@ -198,7 +198,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="retryable-trait">
-<span id="id4"></span><h2><a href="#retryable-trait">8.4. <code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait</a></h2>
+<span id="smithy-api-retryable-trait"></span><span id="id4"></span><h2><a href="#retryable-trait">8.4. <code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Indicates that an error MAY be retried by the client.</dd>
@@ -252,7 +252,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="paginated-trait">
-<span id="pagination"></span><span id="id5"></span><h2><a href="#paginated-trait">8.5. <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait</a></h2>
+<span id="smithy-api-paginated-trait"></span><span id="pagination"></span><span id="id5"></span><h2><a href="#paginated-trait">8.5. <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>The <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait indicates that an operation intentionally limits
@@ -743,7 +743,7 @@ to the <code class="docutils literal notranslate"><span class="pre">paginated</s
 </div>
 </div>
 <div class="section" id="httpchecksumrequired-trait">
-<span id="id6"></span><h2><a href="#httpchecksumrequired-trait">8.6. <code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait</a></h2>
+<span id="smithy-api-httpchecksumrequired-trait"></span><span id="id6"></span><h2><a href="#httpchecksumrequired-trait">8.6. <code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Indicates that an operation requires a checksum in its HTTP request. By
@@ -775,7 +775,7 @@ Smithy</div>
 </div>
 </div>
 <div class="section" id="httpchecksum-trait">
-<span id="id7"></span><h2><a href="#httpchecksum-trait">8.7. <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait</a></h2>
+<span id="smithy-api-httpchecksum-trait"></span><span id="id7"></span><h2><a href="#httpchecksum-trait">8.7. <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Indicates that an operation's HTTP request or response supports checksum
@@ -829,10 +829,10 @@ JSON</div>
         { <span class="nl">algorithm:</span> <span class="s2">&quot;sha256&quot;</span>, <span class="nl">in:</span> <span class="s2">&quot;header&quot;</span>, <span class="nl">name:</span> <span class="s2">&quot;x-checksum-sha256&quot;</span>},
         { <span class="nl">algorithm:</span> <span class="s2">&quot;crc32&quot;</span>, <span class="nl">in:</span> <span class="s2">&quot;header&quot;</span>, <span class="nl">name:</span> <span class="s2">&quot;x-checksum-crc32&quot;</span>}
     ],
-    <span class="nl">response:</span> {
+    <span class="nl">response:</span> [
         { <span class="nl">algorithm:</span> <span class="s2">&quot;sha256&quot;</span>, <span class="nl">in:</span> <span class="s2">&quot;header&quot;</span>, <span class="nl">name:</span> <span class="s2">&quot;x-checksum-sha256&quot;</span>},
         { <span class="nl">algorithm:</span> <span class="s2">&quot;crc32&quot;</span>, <span class="nl">in:</span> <span class="s2">&quot;header&quot;</span>, <span class="nl">name:</span> <span class="s2">&quot;x-checksum-crc32&quot;</span>}
-    }
+    ]
 )
 <span class="kd">operation</span><span class="nc"> PutSomething</span> {
     <span class="nl">input:</span> <span class="vc">PutSomethingInput</span>,
