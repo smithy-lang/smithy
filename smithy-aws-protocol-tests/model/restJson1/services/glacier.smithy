@@ -66,6 +66,7 @@ service Glacier {
         params: {
             accountId: "foo",
             vaultName: "bar",
+            body: "hello world"
         },
         appliesTo: "client",
     },
@@ -123,6 +124,7 @@ operation UploadArchive {
             accountId: "foo",
             vaultName: "bar",
             uploadId: "baz",
+            body: "hello world"
         },
         appliesTo: "client",
     }
