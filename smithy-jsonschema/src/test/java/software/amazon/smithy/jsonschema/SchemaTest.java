@@ -184,6 +184,16 @@ public class SchemaTest {
     }
 
     @Test
+    public void maintainsPropertyOrder() {
+        Schema schema = Schema.builder()
+                .putProperty("foo", Schema.builder().build())
+                .putProperty("bar", Schema.builder().build())
+                .build();
+
+        assertThat(schema.getProperties().keySet(), contains("foo", "bar"));
+    }
+
+    @Test
     public void removingPropertiesRemovesRequiredPropertiesToo() {
         Schema schema = Schema.builder()
                 .removeProperty("notThere")
