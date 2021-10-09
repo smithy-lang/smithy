@@ -14,6 +14,7 @@ service RestJsonValidation {
         MalformedEnum,
         MalformedLength,
         MalformedLengthOverride,
+        MalformedLengthQueryString,
         MalformedPattern,
         MalformedPatternOverride,
         MalformedRange,
