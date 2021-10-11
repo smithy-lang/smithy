@@ -20,10 +20,10 @@
         "securitySchemes": {
             "smithy.api.httpApiKeyAuth": {
                 "type": "http",
-                "description": "ApiKey authentication semantics via 'Authorization' header",
+                "description": "API key authentication via the 'Authorization' header",
                 "name": "Authorization",
                 "in": "header",
-                "scheme": "ApiKey"
+                "scheme": "whatever-scheme-we-want"
             }
         }
     },
