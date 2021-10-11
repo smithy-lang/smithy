@@ -14,7 +14,7 @@
                 "smithy.api#httpApiKeyAuth": {
                     "name": "Authorization",
                     "in": "header",
-                    "scheme": "ApiKey"
+                    "scheme": "whatever-scheme-we-want"
                 }
             }
         },

@@ -20,7 +20,7 @@
         "securitySchemes": {
             "smithy.api.httpApiKeyAuth": {
                 "type": "apiKey",
-                "description": "X-Api-Key authentication",
+                "description": "API key authentication via the 'x-api-key' header",
                 "name": "x-api-key",
                 "in": "header"
             }
