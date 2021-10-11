@@ -35,7 +35,7 @@ public class DocumentationMapperTest {
     @BeforeAll
     public static void loadModel() {
         model = Model.assembler()
-                .addImport(JsonAddTest.class.getResource("simple.smithy"))
+                .addImport(DocumentationMapperTest.class.getResource("simple.smithy"))
                 .discoverModels()
                 .assemble()
                 .unwrap();
