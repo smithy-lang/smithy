@@ -37,6 +37,7 @@ public final class CfnConfig extends JsonSchemaConfig {
     public static final String SCHEMA_COMPONENTS_POINTER = "#/definitions";
 
     private boolean disableDeprecatedPropertyGeneration = false;
+    private boolean disableRequiredPropertyGeneration = false;
     private boolean disableCapitalizedProperties = false;
     private List<String> externalDocs = ListUtils.of(
             "Documentation Url", "DocumentationUrl", "API Reference", "User Guide",
@@ -103,6 +104,23 @@ public final class CfnConfig extends JsonSchemaConfig {
      */
     public void setDisableDeprecatedPropertyGeneration(boolean disableDeprecatedPropertyGeneration) {
         this.disableDeprecatedPropertyGeneration = disableDeprecatedPropertyGeneration;
+    }
+
+    public boolean getDisableRequiredPropertyGeneration() {
+        return disableRequiredPropertyGeneration;
+    }
+
+    /**
+     * Set to true to disable generating {@code required} for Resource Schemas.
+     *
+     * <p>By default, required members are automatically added to the
+     * {@code required} schema property.
+     *
+     * @param disableRequiredPropertyGeneration True to disable {@code required}
+     *   generation, false otherwise.
+     */
+    public void setDisableRequiredPropertyGeneration(boolean disableRequiredPropertyGeneration) {
+        this.disableRequiredPropertyGeneration = disableRequiredPropertyGeneration;
     }
 
     public boolean getDisableCapitalizedProperties() {

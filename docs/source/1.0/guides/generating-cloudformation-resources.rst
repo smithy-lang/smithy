@@ -309,6 +309,26 @@ disableDeprecatedPropertyGeneration (``boolean``)
             }
         }
 
+.. _generate-cloudformation-setting-disableRequiredPropertyGeneration:
+
+disableRequiredPropertyGeneration (``boolean``)
+    Sets whether to disable generating ``required`` for Resource Schemas. By
+    default, required members are automatically added to the ``required``
+    schema property.
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "cloudformation": {
+                    "service": "smithy.example#Queues",
+                    "organizationName": "Smithy",
+                    "disableRequiredPropertyGeneration": true
+                }
+            }
+        }
+
 .. _generate-cloudformation-setting-disableCapitalizedProperties:
 
 disableCapitalizedProperties (``boolean``)

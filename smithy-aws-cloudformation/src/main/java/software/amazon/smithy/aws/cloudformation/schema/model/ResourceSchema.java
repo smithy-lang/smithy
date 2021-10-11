@@ -49,6 +49,7 @@ public final class ResourceSchema implements ToNode, ToSmithyBuilder<ResourceSch
     private final String documentationUrl;
     private final Map<String, Schema> definitions = new TreeMap<>();
     private final Map<String, Property> properties = new TreeMap<>();
+    private final Set<String> required = new TreeSet<>();
     private final Set<String> readOnlyProperties = new TreeSet<>();
     private final Set<String> writeOnlyProperties = new TreeSet<>();
     private final Set<String> primaryIdentifier = new TreeSet<>();
@@ -69,6 +70,7 @@ public final class ResourceSchema implements ToNode, ToSmithyBuilder<ResourceSch
         }
         properties.putAll(builder.properties);
 
+        required.addAll(builder.required);
         sourceUrl = builder.sourceUrl;
         documentationUrl = builder.documentationUrl;
         definitions.putAll(builder.definitions);
@@ -102,6 +104,9 @@ public final class ResourceSchema implements ToNode, ToSmithyBuilder<ResourceSch
 
         builder.withMember("properties", mapper.serialize(properties));
 
+        if (!required.isEmpty()) {
+            builder.withMember("required", mapper.serialize(required));
+        }
         if (!readOnlyProperties.isEmpty()) {
             builder.withMember("readOnlyProperties", mapper.serialize(readOnlyProperties));
         }
@@ -139,6 +144,7 @@ public final class ResourceSchema implements ToNode, ToSmithyBuilder<ResourceSch
                 .documentationUrl(documentationUrl)
                 .definitions(definitions)
                 .properties(properties)
+                .required(required)
                 .readOnlyProperties(readOnlyProperties)
                 .writeOnlyProperties(writeOnlyProperties)
                 .primaryIdentifier(primaryIdentifier)
@@ -216,6 +222,7 @@ public final class ResourceSchema implements ToNode, ToSmithyBuilder<ResourceSch
         private String documentationUrl;
         private final Map<String, Schema> definitions = new TreeMap<>();
         private final Map<String, Property> properties = new TreeMap<>();
+        private final Set<String> required = new TreeSet<>();
         private final Set<String> readOnlyProperties = new TreeSet<>();
         private final Set<String> writeOnlyProperties = new TreeSet<>();
         private final Set<String> primaryIdentifier = new TreeSet<>();
@@ -291,6 +298,27 @@ public final class ResourceSchema implements ToNode, ToSmithyBuilder<ResourceSch
 
         public Builder clearProperties() {
             this.properties.clear();
+            return this;
+        }
+
+        public Builder required(Collection<String> required) {
+            this.required.clear();
+            this.required.addAll(required);
+            return this;
+        }
+
+        public Builder addRequired(String required) {
+            this.required.add(required);
+            return this;
+        }
+
+        public Builder removeRequired(String required) {
+            this.required.remove(required);
+            return this;
+        }
+
+        public Builder clearRequired() {
+            this.required.clear();
             return this;
         }
 
