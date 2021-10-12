@@ -282,7 +282,7 @@ enum AstModelLoader {
         LoaderUtils.checkForAdditionalProperties(node, id, SERVICE_PROPERTIES, modelFile.events());
         applyShapeTraits(id, node, modelFile);
         ServiceShape.Builder builder = new ServiceShape.Builder().id(id).source(node.getSourceLocation());
-        builder.version(node.expectStringMember("version").getValue());
+        node.getStringMember("version").map(StringNode::getValue).ifPresent(builder::version);
         builder.operations(loadOptionalTargetList(modelFile, id, node, "operations"));
         builder.resources(loadOptionalTargetList(modelFile, id, node, "resources"));
         loadServiceRenameIntoBuilder(builder, node);
