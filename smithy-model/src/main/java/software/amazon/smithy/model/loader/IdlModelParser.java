@@ -559,7 +559,7 @@ final class IdlModelParser extends SimpleParser {
         ServiceShape.Builder builder = new ServiceShape.Builder().id(id).source(location);
         ObjectNode shapeNode = IdlNodeParser.parseObjectNode(this, id.toString());
         LoaderUtils.checkForAdditionalProperties(shapeNode, id, SERVICE_PROPERTY_NAMES, modelFile.events());
-        builder.version(shapeNode.expectStringMember(VERSION_KEY).getValue());
+        shapeNode.getStringMember(VERSION_KEY).map(StringNode::getValue).ifPresent(builder::version);
         modelFile.onShape(builder);
         optionalIdList(shapeNode, OPERATIONS_KEY, builder::addOperation);
         optionalIdList(shapeNode, RESOURCES_KEY, builder::addResource);
