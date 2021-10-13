@@ -15,8 +15,6 @@ service Service {
         EmptyInputAndOutput,
         OnlyErrorOutput,
         HttpChecksumRequired,
-        HttpChecksumInputOperation,
-        HttpChecksumOutputOperation,
         DescribeEndpoints,
         HasDiscoveredEndpoint
     ]
@@ -52,26 +50,6 @@ structure EmptyError {}
 @http(method: "GET", uri: "/HttpChecksumRequired")
 operation HttpChecksumRequired {}
 
-// The httpChecksum trait can add required headers. Its presence disables the
-// content-md5 defaulting of httpChecksumRequired
-@httpChecksumRequired
-@httpChecksum(request: [
-    {algorithm: "sha256", in: "header", name: "x-amz-checksum-sha256"},
-    {algorithm: "sha1", in: "trailer", name: "x-amz-checksum-sha1"},
-])
-@http(method: "GET", uri: "/HttpChecksumInputOperation")
-operation HttpChecksumInputOperation {
-    input: EmptyStruct,
-}
-
-// The httpChecksum trait can add required headers.
-@httpChecksum(response: [
-    {algorithm: "sha256", in: "header", name: "x-amz-checksum-sha256"},
-])
-@http(method: "GET", uri: "/HttpChecksumOutputOperation")
-operation HttpChecksumOutputOperation {
-    output: EmptyStruct,
-}
 
 @http(method: "GET", uri: "/HasDiscoveredEndpoint")
 @clientDiscoveredEndpoint(required: true)

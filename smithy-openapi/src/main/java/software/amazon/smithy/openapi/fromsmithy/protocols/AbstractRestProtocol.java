@@ -41,10 +41,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
-import software.amazon.smithy.model.traits.HttpChecksumProperty;
-import software.amazon.smithy.model.traits.HttpChecksumProperty.Location;
 import software.amazon.smithy.model.traits.HttpChecksumRequiredTrait;
-import software.amazon.smithy.model.traits.HttpChecksumTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.Trait;
@@ -90,9 +87,9 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
      * document payload, and in these cases, this method should return a
      * {@code String} and not throw.
      *
-     * @param context Conversion context.
+     * @param context          Conversion context.
      * @param operationOrError Operation shape or error shape.
-     * @param messageType The type of message being created (request, response, or error).
+     * @param messageType      The type of message being created (request, response, or error).
      * @return Returns the media type of the document payload.
      */
     abstract String getDocumentMediaType(Context<T> context, Shape operationOrError, MessageType messageType);
@@ -101,10 +98,10 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
      * Creates a schema to send a document payload in the request,
      * response, or error of an operation.
      *
-     * @param context Conversion context.
+     * @param context          Conversion context.
      * @param operationOrError Operation shape or error shape.
-     * @param bindings HTTP bindings of this shape.
-     * @param messageType The message type (request, response, or error).
+     * @param bindings         HTTP bindings of this shape.
+     * @param messageType      The message type (request, response, or error).
      * @return Returns the created document schema.
      */
     abstract Schema createDocumentSchema(
@@ -124,10 +121,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         bindingIndex.determineRequestContentType(operationShape, documentMediaType)
                 .ifPresent(c -> headers.addAll(ProtocolUtils.CONTENT_HEADERS));
 
-        if (operationShape.hasTrait(HttpChecksumTrait.class)) {
-            HttpChecksumTrait trait = operationShape.expectTrait(HttpChecksumTrait.class);
-            headers.addAll(getChecksumHeaders(trait.getRequestProperties()));
-        } else if (operationShape.hasTrait(HttpChecksumRequiredTrait.class)) {
+        if (operationShape.hasTrait(HttpChecksumRequiredTrait.class)) {
             headers.add("Content-Md5");
         }
         return headers;
@@ -142,20 +136,6 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             headers.addAll(ProtocolUtils.CONTENT_HEADERS);
         }
 
-        if (operationShape.hasTrait(HttpChecksumTrait.class)) {
-            HttpChecksumTrait trait = operationShape.expectTrait(HttpChecksumTrait.class);
-            headers.addAll(getChecksumHeaders(trait.getResponseProperties()));
-        }
-        return headers;
-    }
-
-    private Set<String> getChecksumHeaders(List<HttpChecksumProperty> httpChecksumProperties) {
-        Set<String> headers = new TreeSet<>();
-        for (HttpChecksumProperty property : httpChecksumProperties) {
-            if (property.getLocation().equals(Location.HEADER)) {
-                headers.add(property.getName());
-            }
-        }
         return headers;
     }
 
@@ -352,8 +332,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
                 .orElse(null);
 
         return payloadBindings.isEmpty()
-               ? createRequestDocument(mediaType, context, bindingIndex, operation)
-               : createRequestPayload(mediaType, context, payloadBindings.get(0), operation);
+                ? createRequestDocument(mediaType, context, bindingIndex, operation)
+                : createRequestPayload(mediaType, context, payloadBindings.get(0), operation);
     }
 
     /**
@@ -363,7 +343,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
      * media type, {@code application/vnd.amazon.eventstream}.
      *
      * @param context Conversion context.
-     * @param info Event stream info to provide the media type for.
+     * @param info    Event stream info to provide the media type for.
      * @return Returns the media type of the event stream.
      */
     protected String getEventStreamMediaType(Context<T> context, EventStreamInfo info) {
