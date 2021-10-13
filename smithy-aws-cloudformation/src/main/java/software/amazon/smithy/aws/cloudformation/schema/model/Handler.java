@@ -15,14 +15,15 @@
 
 package software.amazon.smithy.aws.cloudformation.schema.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -45,10 +46,10 @@ public final class Handler implements ToNode, ToSmithyBuilder<Handler> {
             DELETE, 3,
             LIST, 4);
 
-    private final List<String> permissions;
+    private final Set<String> permissions;
 
     private Handler(Builder builder) {
-        this.permissions = ListUtils.copyOf(builder.permissions);
+        this.permissions = SetUtils.orderedCopyOf(builder.permissions);
     }
 
     @Override
@@ -69,7 +70,7 @@ public final class Handler implements ToNode, ToSmithyBuilder<Handler> {
         return new Builder();
     }
 
-    public List<String> getPermissions() {
+    public Set<String> getPermissions() {
         return permissions;
     }
 
@@ -78,7 +79,7 @@ public final class Handler implements ToNode, ToSmithyBuilder<Handler> {
     }
 
     public static final class Builder implements SmithyBuilder<Handler> {
-        private final List<String> permissions = new ArrayList<>();
+        private final Set<String> permissions = new TreeSet<>();
 
         private Builder() {}
 
@@ -87,7 +88,7 @@ public final class Handler implements ToNode, ToSmithyBuilder<Handler> {
             return new Handler(this);
         }
 
-        public Builder permissions(List<String> permissions) {
+        public Builder permissions(Collection<String> permissions) {
             this.permissions.clear();
             this.permissions.addAll(permissions);
             return this;

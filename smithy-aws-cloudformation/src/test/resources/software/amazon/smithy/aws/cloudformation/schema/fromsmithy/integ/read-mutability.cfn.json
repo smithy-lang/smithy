@@ -22,5 +22,12 @@
   "primaryIdentifier": [
     "/properties/FooId"
   ],
+  "handlers": {
+    "read": {
+      "permissions": [
+        "testservice:GetFoo"
+      ]
+    }
+  },
   "additionalProperties": false
 }

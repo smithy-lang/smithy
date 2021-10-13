@@ -36,5 +36,24 @@
       "/properties/Arn"
     ]
   ],
+  "handlers": {
+    "create": {
+      "permissions": [
+        "otherservice:DescribeDependencyComponent",
+        "testservice:PutBarOperation"
+      ]
+    },
+    "read": {
+      "permissions": [
+        "testservice:GetBarOperation"
+      ]
+    },
+    "update": {
+      "permissions": [
+        "otherservice:DescribeDependencyComponent",
+        "testservice:PutBarOperation"
+      ]
+    }
+  },
   "additionalProperties": false
 }

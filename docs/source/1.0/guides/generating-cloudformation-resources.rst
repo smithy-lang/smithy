@@ -289,12 +289,79 @@ jsonAdd (``Map<String, Map<String, Node>>``)
             }
         }
 
+.. _generate-cloudformation-setting-disableHandlerPermissionGeneration:
+
+disableHandlerPermissionGeneration (``boolean``)
+    Sets whether to disable generating ``handler`` ``permission`` lists for
+    Resource Schemas. By default, handler permissions lists are automatically
+    added to schemas based on :ref:`lifecycle-operations` and permissions
+    listed in the :ref:`aws.iam#requiredActions-trait` on the operation. See
+    `the handlers section`_ in the CloudFormation Resource Schemas
+    documentation for more information.
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "cloudformation": {
+                    "service": "smithy.example#Queues",
+                    "organizationName": "Smithy",
+                    "disableHandlerPermissionGeneration": true
+                }
+            }
+        }
+
+    CloudFormation Resource Schema handlers determine what provisioning actions
+    can be performed for the resource. The handlers utilized by CloudFormation
+    align with some :ref:`lifecycle-operations`. These operations can also
+    define other permission actions required to invoke them with the :ref:`aws.iam#requiredActions-trait`.
+
+    When handler permission generation is enabled, all the actions required to
+    invoke the operations related to the handler, including the actions for the
+    operations themselves, are used to populate permission lists:
+
+    .. code-block:: json
+
+
+        "handlers": {
+            "create": {
+                "permissions": [
+                    "dependency:GetDependencyComponent",
+                    "queues:CreateQueue"
+                ]
+            },
+            "read": {
+                "permissions": [
+                    "queues:GetQueue"
+                ]
+            },
+            "update": {
+                "permissions": [
+                    "dependency:GetDependencyComponent",
+                    "queues:UpdateQueue"
+                ]
+            },
+            "delete": {
+                "permissions": [
+                    "queues:DeleteQueue"
+                ]
+            },
+            "list": {
+                "permissions": [
+                    "queues:ListQueues"
+                ]
+            }
+        },
+
 .. _generate-cloudformation-setting-disableDeprecatedPropertyGeneration:
 
 disableDeprecatedPropertyGeneration (``boolean``)
     Sets whether to disable generating ``deprecatedProperties`` for Resource
     Schemas. By default, deprecated members are automatically added to the
-    ``deprecatedProperties`` schema property.
+    ``deprecatedProperties`` schema property. See `the deprecatedProperties
+    section`_ in the CloudFormation Resource Schemas documentation for more
+    information.
 
     .. code-block:: json
 
@@ -314,7 +381,8 @@ disableDeprecatedPropertyGeneration (``boolean``)
 disableRequiredPropertyGeneration (``boolean``)
     Sets whether to disable generating ``required`` for Resource Schemas. By
     default, required members are automatically added to the ``required``
-    schema property.
+    schema property. See `the required property section`_ in the CloudFormation
+    Resource Schemas documentation for more information.
 
     .. code-block:: json
 
@@ -500,3 +568,6 @@ service providers. See the `Javadocs`_ for more information.
 .. _Smithy Gradle plugin: https://github.com/awslabs/smithy-gradle-plugin
 .. _type name: https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-typeName
 .. _Javadocs: https://awslabs.github.io/smithy/javadoc/__smithy_version__/software/amazon/smithy/aws/cloudformation/schema/fromsmithy/Smithy2CfnExtension.html
+.. _the handlers section: https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-handlers
+.. _the deprecatedProperties section: https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-deprecatedproperties
+.. _the required property section: https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-required

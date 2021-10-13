@@ -22,5 +22,12 @@
   "primaryIdentifier": [
     "/properties/FooId"
   ],
+  "handlers": {
+    "create": {
+      "permissions": [
+        "testservice:CreateFoo"
+      ]
+    }
+  },
   "additionalProperties": false
 }

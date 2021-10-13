@@ -28,6 +28,7 @@ resource FooResource {
     update: UpdateFooOperation,
 }
 
+@aws.iam#requiredActions(["otherservice:DescribeDependencyComponent"])
 operation CreateFooOperation {
     input: CreateFooRequest,
     output: CreateFooResponse,

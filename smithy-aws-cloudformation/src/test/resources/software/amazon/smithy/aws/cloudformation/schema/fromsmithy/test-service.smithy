@@ -108,6 +108,7 @@ resource BarResource {
 }
 
 @idempotent
+@aws.iam#requiredActions(["otherservice:DescribeDependencyComponent"])
 operation PutBarOperation {
     input: PutBarRequest,
 }
