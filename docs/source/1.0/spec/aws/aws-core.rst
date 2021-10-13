@@ -1219,6 +1219,345 @@ Clients SHOULD use an LRU cache implementation with an initial cache limit of
 Clients SHOULD scope the cache globally or to a specific client instance.
 
 
+.. smithy-trait:: aws.protocols#httpChecksum
+.. _httpChecksum-trait:
+
+----------------------
+``HttpChecksum`` trait
+----------------------
+
+Summary
+    Indicates that an operation's HTTP request or response supports checksum
+    validation. At least one of request or response checksum behavior MUST
+    be specified within the trait.
+
+Trait selector
+    ``operation``
+Value type
+    ``structure``
+
+The ``httpChecksum`` trait is a structure that contains the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Property
+      - Type
+      - Description
+    * - requestAlgorithmMember
+      - ``string``
+      - The ``requestAlgorithmMember`` property represents the member name of the operation input member used to
+        configure request checksum behavior. The operation input member MUST target an ENUM shape representing
+        supported checksum algorithms.
+
+    * - requestChecksumRequired
+      - ``boolean``
+      - The ``requestChecksumRequired`` property indicates an operation requires a checksum in its HTTP request.
+        By default, the checksum used for a service is a MD5 checksum passed in the Content-MD5 header. When
+        input member represented by ``requestAlgorithmMember`` property is set, Content-MD5 defaulting is disabled.
+
+    * - requestValidationModeMember
+      - ``string``
+      - The ``requestValidationModeMember`` property represents the member name of the operation
+        input member used to opt-in for best effort validation of a checksum value returned
+        with the HTTP response. The operation input member MUST target an ENUM shape.
+
+    * - responseAlgorithms
+      - ``list<string>``
+      - The ``responseAlgorithms`` property represents checksum algorithms for
+        which client should perform checksum validation when returned in HTTP
+        response. Each algorithm string within the ``responseAlgorithms`` list
+        represents a checksum algorithm supported within HTTP response.
+        A valid algorithm should follow ABNF:
+
+        .. code-block:: abnf
+
+            algorithms = 1*(upper-alpha / DIGIT)
+            upper-alpha = %x41–5A
+
+        That is, it should be comprised only of digits and upper-case letters.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @httpChecksum(
+            requestChecksumRequired: true,
+            requestAlgorithmMember: "ChecksumAlgorithm",
+            requestValidationModeMember: "ChecksumMode",
+            responseAlgorithms: ["CRC32C", "CRC32", "SHA1", "SHA256"]
+        )
+        operation PutSomething {
+            input: PutSomethingInput,
+            output: PutSomethingOutput
+        }
+
+        structure PutSomethingInput {
+            ChecksumAlgorithm: ChecksumAlgorithm,
+            ChecksumMode: ChecksumMode,
+
+            @httpPayload
+            content: Blob,
+        }
+
+        @enum([
+            {
+                value: "CRC32C",
+                name: "CRC32C"
+            },
+            {
+                value: "CRC32",
+                name: "CRC32"
+            },
+            {
+                value: "SHA1",
+                name: "SHA1"
+            },
+            {
+                value: "SHA256",
+                name: "SHA256"
+            }
+        ])
+        string ChecksumAlgorithm
+
+        @enum([
+            {
+                value: "ENABLED",
+                name: "ENABLED"
+            }
+        ])
+        string ChecksumMode
+
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#Example": {
+                    "type": "service",
+                    "version": "2019-06-27",
+                },
+                "smithy.example#PutSomething": {
+                    "type": "operation",
+                    "input": {
+                        "target": "smithy.example#PutSomethingInput"
+                    },
+                    "output": {
+                        "target": "smithy.example#PutSomethingOutput"
+                    },
+                    "traits": {
+                        "aws.protocols#httpChecksum": {
+                            "requestChecksumRequired": true,
+                            "requestAlgorithmMember": "ChecksumAlgorithm",
+                            "requestValidationModeMember": "ChecksumMode",
+                            "responseAlgorithms": ["CRC32C", "CRC32", "SHA1", "SHA256"]
+                        }
+                    }
+                },
+                "smithy.example#PutSomethingInput": {
+                    "type": "structure",
+                    "members": {
+                        "ChecksumAlgorithm": {
+                            "target": "smithy.example#ChecksumAlgorithm"
+                        },
+                        "ChecksumMode": {
+                            "target": "smithy.example#ChecksumMode"
+                        },
+                        "Body": {
+                            "target": "smithy.api#Blob",
+                            "traits": {
+                                "smithy.api#httpPayload": {},
+                            }
+                        }
+                    }
+                },
+                "smithy.example#ChecksumAlgorithm": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#enum" : [
+                            {
+                                "value": "CRC32C",
+                                "name": "CRC32C"
+                            },
+                            {
+                                "value": "CRC32",
+                                "name": "CRC32"
+                            },
+                            {
+                                "value": "SHA1",
+                                "name": "SHA1"
+                            },
+                            {
+                                "value": "SHA256",
+                                "name": "SHA256"
+                            }
+                        ]
+                    }
+                },
+                "smithy.example#ChecksumMode": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#enum" : [
+                            {
+                                "value": "ENABLED",
+                                "name": "ENABLED"
+                            }
+                        ]
+                    }
+                },
+            }
+        }
+
+
+.. _httpChecksum_trait_behavior:
+
+HttpChecksum Behavior
+=====================
+
+.. rubric:: Client Behavior
+
+If the ``httpChecksum`` trait models a ``requestAlgorithmMember`` property,
+the client MUST lookup input member represented by ``requestAlgorithmMember``
+property. The input member takes in an ENUM representing a checksum algorithm.
+If input member is set, client SHOULD use the checksum algorithm set as value,
+and compute the request payload checksum. The computed checksum SHOULD
+be supplied at a resolved location as per the
+:ref:`resolving checksum location<resolving-checksum-location>` section.
+If the resolved location is ``header``, the client MUST put the checksum into
+the HTTP request headers. If the resolved location is ``trailer``, the client
+MUST put the checksum into the `chunked trailer part`_ of the body.
+The header or trailer name to use with an algorithm is constructed as per the
+:ref:`resolving checksum name<resolving-checksum-name>` section.
+
+
+If the ``httpChecksum`` trait models a ``requestChecksumRequired`` boolean
+property with value as ``true``, the client MUST include a checksum in the
+HTTP request. By default, the client MUST set MD5 checksum of request payload
+in the Content-MD5 header.
+
+If the ``httpChecksum`` trait has a modeled ``requestValidationModeMember``
+property, the client MUST lookup input member represented by
+``requestValidationModeMember`` property. If the input member is set,
+client SHOULD opt in for best-case validation of checksum values returned
+in the HTTP response. Client MUST use the list of supported algorithms
+modeled with ``httpChecksum`` trait's ``responseAlgorithms`` property to
+look up the checksums for which validation SHOULD be performed. Client
+MUST look for HTTP header built as per :ref:`resolving checksum
+name<resolving-checksum-name>` section in HTTP response.
+
+
+.. _httpChecksum_trait_header_conflict_behavior:
+
+If the HTTP header corresponding to a checksum is set explicitly, the
+implementation MUST use the explicitly set header and skip computing the
+payload checksum.
+
+.. _chunked trailer part: https://tools.ietf.org/html/rfc7230#section-4.1.2
+
+
+.. rubric:: Service Behavior
+
+If the ``httpChecksum`` trait has a modeled ``requestAlgorithmMember``
+property or ``requestChecksumRequired`` property, the service MUST
+validate the received checksum by computing corresponding checksum
+of the request payload to ensure data integrity. The service MUST
+accept a checksum sent using the ``httpChecksum`` trait behavior
+to satisfy checksum validation requirements for the operation's
+HTTP Request.
+
+When using ``httpChecksum`` trait, service MUST always accept checksum
+values in HTTP header. For operation with streaming payload input,
+service MUST additionally accept checksum values sent in the
+`chunked trailer part`_ of the request body. Service MUST only send
+response checksums in HTTP header.
+
+
+.. _resolving-checksum-name:
+
+Resolving checksum name
+------------------------------
+
+The checksum name MUST be used as both header name, and trailer name.
+A checksum name MUST conform to ``x-amz-checksum-*`` pattern, where
+`*` is the defined algorithm name.
+
+For example, checksum name for ``SHA256`` algorithm is
+``x-amz-checksum-sha256``.
+
+A member with the :ref:`httpHeader-trait` or :ref:`httpPrefixHeaders-trait`
+MAY conflict with a ``httpChecksum`` header name, allowing a checksum
+to be supplied directly.
+
+.. seealso:: See :ref:`client behavior<httpChecksum_trait_header_conflict_behavior>` for more details.
+
+
+.. _resolving-checksum-location:
+
+Resolving checksum location
+---------------------------
+
+Valid values for resolved location are:
+
+* ``Header`` - Indicates the checksum is placed in an HTTP header.
+* ``Trailer`` - Indicates the checksum is placed in the `chunked trailer part`_ of the body.
+
+For an HTTP response, client only supports validating checksum sent in an
+HTTP header. Thus, the resolved location is always ``Header``.
+
+For an HTTP request, client resolves location as per the signing method used
+for the API request. Below table describes possible scenarios:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Payload type
+      - Signing Method used
+      - Resolved Location
+
+    * - Normal Payload
+      - `Header-based auth`_
+      - Header
+
+    * - Normal Payload
+      - :ref:`Unsigned payload auth<aws.auth#unsignedPayload-trait>`
+      - Header
+
+    * - Streaming Payload
+      - `Header-based auth`_
+      - Header
+
+    * - Streaming Payload
+      - `Streaming-signing auth`_
+      - Trailer
+
+    * - Streaming Payload
+      - :ref:`Unsigned payload auth<aws.auth#unsignedPayload-trait>`
+      - Trailer
+
+.. seealso:: See :ref:`httpChecksum_trait_behavior` for more details.
+
+.. _Header-based auth: https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html
+.. _Streaming-signing auth: https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-streaming.html
+.. _chunked trailer part: https://tools.ietf.org/html/rfc7230#section-4.1.2
+
+
+.. _checksum_trait_with_checksum_required:
+
+Behavior with HttpChecksumRequired
+----------------------------------
+
+The :ref:`httpChecksumRequired <httpChecksumRequired-trait>` trait
+is replaced by ``httpChecksum`` trait's ``requestChecksumRequired`` property.
+
+When the ``httpChecksum`` trait models both ``requestAlgorithmMember``
+property, and the ``requestChecksumRequired`` property as true, the client
+MUST prefer using a checksum algorithm provided as input by customer,
+over an MD5 digest.
+
+
 --------
 Appendix
 --------

@@ -16,226 +16,291 @@
 package software.amazon.smithy.aws.traits;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import software.amazon.smithy.aws.traits.auth.SigV4Trait;
-import software.amazon.smithy.aws.traits.protocols.AwsProtocolTrait;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
-import software.amazon.smithy.model.node.ExpectationNotMetException;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.HttpChecksumProperty;
-import software.amazon.smithy.model.traits.HttpChecksumProperty.Location;
-import software.amazon.smithy.model.traits.HttpChecksumTrait;
-import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.EnumTrait;
+import software.amazon.smithy.model.traits.HttpHeaderTrait;
+import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
- * Validates checksum location modeling specific to AWS usage. If service, operation uses sigv4 authentication scheme,
- * the request property within httpChecksum trait must include "header" as supported checksum location. Validates only
- * supported checksum behavior is modeled for request or response for AWS use cases.
+ * Validates the HttpChecksum trait is modeled with at least one of the
+ * request or response checksum behavior. Validates trait properties
+ * `requestAlgorithmMember` and `requestChecksumModeMember` point to
+ * valid input members. Also validates for possible conflict with
+ * `httpHeader` and `httpPrefixHeaders` bindings within the same
+ * operation input, output, or error structure.
  */
 @SmithyInternalApi
-public class HttpChecksumTraitValidator extends AbstractValidator {
-
-    /**
-     * @return Returns a supplier for valid target protocols for which validation should be performed.
-     */
-    protected Supplier<List<Class<? extends Trait>>> targetProtocolSupplier() {
-        return () -> ListUtils.of(AwsProtocolTrait.class);
-    }
-
-    /**
-     * @return Returns a supplier that supplies set of supported checksum behavior for request.
-     */
-    protected Supplier<Set<HttpChecksumProperty>> supportedRequestChecksumSupplier() {
-        HttpChecksumProperty.Builder builder = HttpChecksumProperty.builder();
-        return () -> SetUtils.of(
-                builder.algorithm("sha1").location("header").name("x-amz-checksum-sha1").build(),
-                builder.algorithm("sha1").location("trailer").name("x-amz-checksum-sha1").build(),
-                builder.algorithm("sha256").location("header").name("x-amz-checksum-sha256").build(),
-                builder.algorithm("sha256").location("trailer").name("x-amz-checksum-sha256").build(),
-                builder.algorithm("crc32").location("header").name("x-amz-checksum-crc32").build(),
-                builder.algorithm("crc32").location("trailer").name("x-amz-checksum-crc32").build(),
-                builder.algorithm("crc32c").location("header").name("x-amz-checksum-crc32c").build(),
-                builder.algorithm("crc32c").location("trailer").name("x-amz-checksum-crc32c").build()
-        );
-    }
-
-    /**
-     * @return Returns a supplier that supplies set of supported checksum behavior for response.
-     */
-    protected Supplier<Set<HttpChecksumProperty>> supportedResponseChecksumSupplier() {
-        HttpChecksumProperty.Builder builder = HttpChecksumProperty.builder();
-        return () -> SetUtils.of(
-                builder.algorithm("sha1").location("header").name("x-amz-checksum-sha1").build(),
-                builder.algorithm("sha256").location("header").name("x-amz-checksum-sha256").build(),
-                builder.algorithm("crc32").location("header").name("x-amz-checksum-crc32").build(),
-                builder.algorithm("crc32c").location("header").name("x-amz-checksum-crc32c").build()
-        );
-    }
+public final class HttpChecksumTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
-        ServiceIndex serviceIndex = ServiceIndex.of(model);
         TopDownIndex topDownIndex = TopDownIndex.of(model);
 
         List<ServiceShape> services = model.shapes(ServiceShape.class).collect(Collectors.toList());
-
-        Supplier<List<Class<? extends Trait>>> protocolSupplier = targetProtocolSupplier();
-        if (protocolSupplier == null) {
-            throw new ExpectationNotMetException("Expected non null supplier for the list of target protocols"
-                    + " for validation, found null.", SourceLocation.NONE);
-        }
-
-        Supplier<Set<HttpChecksumProperty>> requestChecksumSupplier = supportedRequestChecksumSupplier();
-        if (requestChecksumSupplier == null) {
-            throw new ExpectationNotMetException("Expected non null supplier for supported request checksum behavior"
-                    + " , found null.", SourceLocation.NONE);
-        }
-
-        Supplier<Set<HttpChecksumProperty>> responseChecksumSupplier = supportedResponseChecksumSupplier();
-        if (responseChecksumSupplier == null) {
-            throw new ExpectationNotMetException("Expected non null supplier for supported response checksum behavior"
-                    + " , found null.", SourceLocation.NONE);
-        }
-
         for (ServiceShape service : services) {
-            if (!isTargetProtocol(protocolSupplier, service)) {
-                continue;
-            }
-
             for (OperationShape operation : topDownIndex.getContainedOperations(service)) {
                 if (operation.hasTrait(HttpChecksumTrait.class)) {
-                    events.addAll(validateBehaviorIsSupported(operation, requestChecksumSupplier,
-                            responseChecksumSupplier));
-                    events.addAll(validateRequestSupportsHeaderLocation(serviceIndex, service, operation));
+                    events.addAll(validateOperation(model, service, operation));
                 }
             }
         }
-
         return events;
     }
 
     /**
-     * Validates checksum behavior modeled for request or response is supported for AWS usage.
+     * Validates an operation modeled with the `httpChecksum` trait.
      *
-     * @param operation Operation shape to validate.
-     * @param requestChecksumSupplier Supplier for set of supported request checksum behavior.
-     * @param responseChecksumSupplier Supplier for set of supported response checksum behavior.
-     * @return List of validation events that occurred when validating the model.
+     * @param model     Model to validate.
+     * @param service   Service the operation is bound within.
+     * @param operation Operation modeled with `httpChecksum` trait.
+     * @return Returns list of triggered validation events.
      */
-    private List<ValidationEvent> validateBehaviorIsSupported(
-            OperationShape operation,
-            Supplier<Set<HttpChecksumProperty>> requestChecksumSupplier,
-            Supplier<Set<HttpChecksumProperty>> responseChecksumSupplier
-    ) {
+    private List<ValidationEvent> validateOperation(Model model, ServiceShape service, OperationShape operation) {
         List<ValidationEvent> events = new ArrayList<>();
         HttpChecksumTrait trait = operation.expectTrait(HttpChecksumTrait.class);
-        String formattedError = "The checksum behavior for %s with algorithm \"%s\", location \"%s\" and name"
-                + " \"%s\" is not supported.";
 
-        // validate if request properties are supported.
-        Set<HttpChecksumProperty> validRequestChecksumBehavior = requestChecksumSupplier.get();
-        for (HttpChecksumProperty property : trait.getRequestProperties()) {
-            if (validRequestChecksumBehavior == null || !validRequestChecksumBehavior.contains(property)) {
-                events.add(error(operation, trait,
-                        String.format(formattedError, "request", property.getAlgorithm(), property.getLocation(),
-                                property.getName())));
-            }
+        // Modeled trait supports request checksum behavior when at least one of `requestChecksumRequired`
+        // property or `requestAlgorithmMember` property is modeled.
+        boolean isRequestChecksumConfiguration =
+                trait.isRequestChecksumRequired() || trait.getRequestAlgorithmMember().isPresent();
+
+        // Modeled trait supports response checksum behavior when both `requestValidationModeMember`
+        // property or `responseAlgorithms` property are modeled.
+        boolean isResponseChecksumConfiguration =
+                !trait.getResponseAlgorithms().isEmpty() || trait.getRequestValidationModeMember().isPresent();
+
+        if (!isRequestChecksumConfiguration && !isResponseChecksumConfiguration) {
+            events.add(error(operation, trait, "The `httpChecksum` trait must define at least one of the"
+                    + " `request` or `response` checksum behavior"));
+            return events;
         }
 
-        // validate if response properties are supported.
-        Set<HttpChecksumProperty> validResponseChecksumBehavior = responseChecksumSupplier.get();
-        for (HttpChecksumProperty property : trait.getResponseProperties()) {
-            if (validResponseChecksumBehavior == null || !validResponseChecksumBehavior.contains(property)) {
-                events.add(error(operation, trait,
-                        String.format(formattedError, "response", property.getAlgorithm(), property.getLocation(),
-                                property.getName())));
-            }
+        // validate httpChecksum trait models valid input member names.
+        if (!operation.getInput().isPresent()) {
+            events.add(error(operation, trait,
+                    String.format("Operations modeled with `httpChecksum` trait MUST have a modeled input,"
+                            + " `%s` does not.", operation.getId().getName(service))));
+            return events;
+        }
+        events.addAll(validateInputMember(model, service, operation));
+
+        if (isRequestChecksumConfiguration) {
+            // validate conflicts for header binding for input shape.
+            StructureShape inputShape = model.expectShape(operation.getInput().get(), StructureShape.class);
+            events.addAll(validateHeader(service, operation, inputShape));
         }
 
+        if (isResponseChecksumConfiguration) {
+            // validate response checksum behavior modeled on the trait.
+            events.addAll(validateResponseChecksumConfiguration(model, service, operation));
+
+            // validate conflicts for header bindings for error shape.
+            if (!operation.getErrors().isEmpty()) {
+                for (ShapeId id : operation.getErrors()) {
+                    StructureShape shape = model.expectShape(id, StructureShape.class);
+                    events.addAll(validateHeader(service, operation, shape));
+                }
+            }
+
+            // validate conflicts for header bindings for output shape.
+            if (!operation.getOutput().isPresent()) {
+                events.add(error(operation, trait,
+                        String.format("Operations modeled with `httpChecksum` trait MUST have a modeled output,"
+                                + " `%s` does not.", operation.getId().getName(service))));
+                return events;
+            }
+            StructureShape outputShape = model.expectShape(operation.getOutput().get(), StructureShape.class);
+            events.addAll(validateHeader(service, operation, outputShape));
+        }
         return events;
     }
 
     /**
-     * Validates the request property includes "header" as supported checksum location,
-     * when service, operation uses sigv4.
+     * Validates the prefix `x-amz-checksum-` used with the httpChecksum trait does not conflict with header names
+     * modeled using the `httpPrefixHeaders` trait or `httpHeader` trait.
      *
-     * @param serviceIndex index resolving auth schemes
-     * @param service      service shape for the API
-     * @param operation    operation shape
+     * @param service        Service shape for the API.
+     * @param operation      Operation shape on which httpChecksum trait is modeled.
+     * @param containerShape Structure shape referenced by the operation shape, this can be either input, output,
+     *                       or error shape.
+     * @return Returns list of triggered validation events.
+     */
+    private List<ValidationEvent> validateHeader(
+            ServiceShape service,
+            OperationShape operation,
+            StructureShape containerShape
+    ) {
+        String prefix = checksumHeaderPrefix().get();
+        List<ValidationEvent> events = new ArrayList<>();
+
+        for (MemberShape member : containerShape.members()) {
+            // Trigger a DANGER event if the prefix used with the HttpChecksum trait conflicts with any member
+            // with HttpPrefixHeaders trait within the container shape. This is a DANGER event as member modeled
+            // with HttpPrefixHeaders may unintentionally conflict with the checksum header resolved using
+            // HttpChecksum trait.
+            member.getTrait(HttpPrefixHeadersTrait.class).ifPresent(httpPrefixHeadersTrait -> {
+                String headerPrefix = httpPrefixHeadersTrait.getValue();
+                if (prefix.startsWith(headerPrefix)) {
+                    events.add(danger(operation, String.format("The `httpPrefixHeaders` binding of `%s` uses prefix"
+                                    + " `%s` that conflicts prefix `%s` used by the `httpChecksum` trait.",
+                            member.getId().getName(service), headerPrefix, prefix)));
+                }
+            });
+
+            // Service may model members that are bound to the http header for checksum on input or output shape.
+            // This enables customers to provide checksum as input, or access returned checksum value in output.
+            // We trigger a WARNING event to prevent any unintentional behavior.
+            member.getTrait(HttpHeaderTrait.class).ifPresent(headerTrait -> {
+                String headerName = headerTrait.getValue();
+                if (headerName.startsWith(prefix)) {
+                    events.add(warning(operation, String.format("The `httpHeader` binding of `%s` on `%s` starts with"
+                                    + " the prefix `%s` used by the `httpChecksum` trait.",
+                            headerName, member.getId().getName(service), prefix)));
+                }
+            });
+        }
+        return events;
+    }
+
+
+    /**
+     * Validates the `requestAlgorithmMember` and `requestValidationModeMember` property on
+     * the httpChecksum trait.
+     * <p>
+     * Both the `requestAlgorithmMember` and `requestValidationModeMember` must be modeled with the name of an
+     * input member targeting an Enum shape.
+     *
+     * @param model           The generation model.
+     * @param service         Service shape for the API.
+     * @param operation       Operation shape on which httpChecksum trait is modeled.
      * @return List of validation events that occurred when validating the model.
      */
-    private List<ValidationEvent> validateRequestSupportsHeaderLocation(
-            ServiceIndex serviceIndex,
+    private List<ValidationEvent> validateInputMember(
+            Model model,
+            ServiceShape service,
+            OperationShape operation
+    ) {
+        List<ValidationEvent> events = new ArrayList<>();
+        Map<String, String> modeledTraitMembers = new HashMap<String, String>();
+        HttpChecksumTrait trait = operation.expectTrait(HttpChecksumTrait.class);
+        StructureShape inputShape = model.expectShape(operation.getInput().get(), StructureShape.class);
+        Map<String, MemberShape> inputMembers = inputShape.getAllMembers();
+
+        Optional<String> requestAlgorithmMember = trait.getRequestAlgorithmMember();
+        if (requestAlgorithmMember.isPresent()) {
+            modeledTraitMembers.put("requestAlgorithmMember", requestAlgorithmMember.get());
+        }
+
+        Optional<String> requestValidationModeMember = trait.getRequestValidationModeMember();
+        if (requestValidationModeMember.isPresent()) {
+            modeledTraitMembers.put("requestValidationModeMember", requestValidationModeMember.get());
+        }
+
+        for (Map.Entry<String, String> entry : modeledTraitMembers.entrySet()) {
+            String propertyName = entry.getKey();
+            String memberName = entry.getValue();
+            if (!inputMembers.containsKey(memberName)) {
+                events.add(error(operation, trait,
+                        String.format("For operation `%s`, expected name modeled with `%s` property must"
+                                        + " correspond to an input member.",
+                                operation.getId().getName(service), propertyName)));
+                continue;
+            }
+
+            Shape targetShape = model.expectShape(inputMembers.get(memberName).getTarget());
+            if (!targetShape.hasTrait(EnumTrait.class)) {
+                events.add(error(operation, trait,
+                        String.format("For operation `%s`, input member name `%s` modeled with `%s` property"
+                                        + "  of httpChecksum trait must be an enum shape.",
+                                operation.getId().getName(service), memberName, propertyName)));
+            }
+        }
+        return events;
+    }
+
+
+    /**
+     * @return Returns a supplier that supplies set of supported checksum algorithm to validate when
+     * returned within the response.
+     */
+    protected Supplier<Set<String>> responseChecksumAlgorithmSupplier() {
+        Set<String> set = new HashSet<String>();
+        set.add("CRC32C");
+        set.add("CRC32");
+        set.add("SHA1");
+        set.add("SHA256");
+        return () -> set;
+    }
+
+    /**
+     * @return Returns a supplier that supplies prefix string used as checksum header prefix
+     * for request and response checksum headers.
+     */
+    protected Supplier<String> checksumHeaderPrefix() {
+        return () -> "x-amz-checksum-";
+    }
+
+    /**
+     * Validates response checksum behavior modeled with httpChecksum trait. Validates trait models both
+     * `requestValidationModeMember` property and non-empty `responseAlgorithms` property.
+     * Also validates modeled response algorithms are known checksum algorithms.
+     *
+     * @param model      The generation model.
+     * @param service    Service shape for the API.
+     * @param operation  Operation shape on which httpChecksum trait is modeled.
+     * @return List of validation events that occurred when validating the model.
+     */
+    private List<ValidationEvent> validateResponseChecksumConfiguration(
+            Model model,
             ServiceShape service,
             OperationShape operation
     ) {
         List<ValidationEvent> events = new ArrayList<>();
         HttpChecksumTrait trait = operation.expectTrait(HttpChecksumTrait.class);
+        if (!trait.getRequestValidationModeMember().isPresent()) {
+            events.add(error(operation, trait, String.format("For operation `%s`, the `httpChecksum` trait must model"
+                                    + " `requestValidationModeMember` property to support response checksum behavior.",
+                            operation.getId().getName(service))));
+            return events;
+        }
 
-        // if SigV4 auth scheme is used, validate request property locations contain "header" as supported location.
-        if (hasSigV4AuthScheme(serviceIndex, service, operation)) {
-            for (String algorithm : trait.getRequestAlgorithms()) {
-                Boolean supportsHeaderAsLocation = trait.getRequestPropertiesForAlgorithm(algorithm)
-                        .stream()
-                        .anyMatch(p -> p.getLocation().equals(Location.HEADER));
+        List<String> algorithms = trait.getResponseAlgorithms();
+        if (algorithms.isEmpty()) {
+            events.add(error(operation, trait, String.format("For operation `%s`, the `httpChecksum` trait must model"
+                            + " `responseAlgorithms` property with at least one algorithm to support response checksum"
+                            + " behavior.", operation.getId().getName(service))));
+            return events;
+        }
 
-                if (!supportsHeaderAsLocation) {
-                    events.add(error(operation, trait,
-                            String.format("Operations that support the `sigv4` trait MUST support the `header`"
-                                    + " checksum location on `request`, \"%s\" does not for \"%s\" algorithm.",
-                                    operation.getId().getName(service), algorithm)));
-                }
+        Set<String> validAlgorithms = responseChecksumAlgorithmSupplier().get();
+        for (String algorithm : algorithms) {
+            if (!validAlgorithms.contains(algorithm.toUpperCase())) {
+                events.add(error(operation, trait,
+                        String.format("For operation `%s`, httpChecksum trait models an unsupported response algorithm"
+                                        + " `%s`. Supported algorithms are `%s`.",
+                                operation.getId().getName(service), algorithm, validAlgorithms)));
             }
         }
+
         return events;
-    }
-
-    /**
-     * isTargetProtocol returns true if service uses any target protocol supplied via the target protocol supplier.
-     *
-     * @param service is the service shape for which target protocol usage is checked.
-     * @return boolean indicating target protocol is used by the service.
-     */
-    private boolean isTargetProtocol(Supplier<List<Class<? extends Trait>>> supplier, ServiceShape service) {
-        List<Class<?extends  Trait>> list = supplier.get();
-        if (list == null) {
-            return false;
-        }
-
-        for (Class<? extends Trait> t : list) {
-            if (service.hasTrait(t)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns true if the SigV4Trait is a auth scheme for the service and operation.
-     *
-     * @param serviceIndex index resolving auth schemes
-     * @param service      service shape for the API
-     * @param operation    operation shape
-     * @return if SigV4 is an auth scheme for the operation and service.
-     */
-    private boolean hasSigV4AuthScheme(ServiceIndex serviceIndex, ServiceShape service, OperationShape operation) {
-        Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(service.getId(), operation.getId());
-        return auth.containsKey(SigV4Trait.ID);
     }
 }

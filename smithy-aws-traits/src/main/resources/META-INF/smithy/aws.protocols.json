@@ -218,6 +218,42 @@
                 "smithy.api#documentation": "Provides the value in the 'Code' distinguishing field and HTTP response code for an operation error."
             }
         },
+        "aws.protocols#httpChecksum": {
+            "type": "structure",
+            "members": {
+                "requestAlgorithmMember": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Represents the member name of the operation input member used to configure request checksum behavior."
+                    }
+                },
+                "requestChecksumRequired": {
+                    "target": "smithy.api#Boolean",
+                    "traits": {
+                        "smithy.api#documentation": "Indicates an operation requires a checksum in its HTTP request."
+                    }
+                },
+                "requestValidationModeMember": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Represents the member name of the operation input member used to opt-in for response checksum validation."
+                    }
+                },
+                "responseAlgorithms": {
+                    "target": "aws.protocols#StringList",
+                    "traits": {
+                        "smithy.api#documentation": "Represents checksum algorithms for which client should perform checksum validation when returned in HTTP response."
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "operation"
+                },
+                "smithy.api#documentation": "Indicates the operation's HTTP request or response supports checksum validation.",
+                "smithy.api#unstable": {}
+            }
+        },
         "aws.protocols#StringList": {
             "type": "list",
             "member": {

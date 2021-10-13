@@ -7,7 +7,6 @@ software.amazon.smithy.model.validation.validators.ExclusiveStructureMemberTrait
 software.amazon.smithy.model.validation.validators.HostLabelTraitValidator
 software.amazon.smithy.model.validation.validators.HttpApiKeyAuthTraitValidator
 software.amazon.smithy.model.validation.validators.HttpBindingsMissingValidator
-software.amazon.smithy.model.validation.validators.HttpChecksumTraitValidator
 software.amazon.smithy.model.validation.validators.HttpHeaderTraitValidator
 software.amazon.smithy.model.validation.validators.HttpLabelTraitValidator
 software.amazon.smithy.model.validation.validators.HttpMethodSemanticsValidator

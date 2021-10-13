@@ -12,79 +12,285 @@
       },
       "operations" : [
         {
-          "target": "ns.foo#ValidOperation"
+          "target": "ns.foo#ValidOperation1"
         },
         {
-          "target": "ns.foo#InvalidOperation"
+          "target": "ns.foo#ValidOperation2"
+        },
+        {
+          "target": "ns.foo#ValidOperation3"
+        },
+        {
+          "target": "ns.foo#ValidOperation4"
+        },
+        {
+          "target": "ns.foo#ValidOperation5"
+        },
+        {
+          "target": "ns.foo#ValidOperation6"
+        },
+        {
+          "target": "ns.foo#ValidOperation7"
+        },
+        {
+          "target": "ns.foo#InvalidOperation1"
         },
         {
           "target": "ns.foo#InvalidOperation2"
+        },
+        {
+          "target": "ns.foo#InvalidOperation3"
+        },
+        {
+          "target": "ns.foo#InvalidOperation4"
+        },
+        {
+          "target": "ns.foo#InvalidOperation5"
+        },
+        {
+          "target": "ns.foo#InvalidOperation6"
+        },
+        {
+          "target": "ns.foo#OperationWithConflictingHeader"
+        },
+        {
+          "target": "ns.foo#OperationWithConflictingPrefixHeaders"
         }
       ]
     },
-    "ns.foo#ValidOperation": {
+    "ns.foo#ValidOperation1": {
       "type": "operation",
       "input": {
-        "target": "ns.foo#Input"
+        "target": "ns.foo#ValidInput"
       },
       "output": {
-        "target": "ns.foo#Output"
+        "target": "ns.foo#ValidOutput"
       },
       "traits": {
-        "smithy.api#httpChecksum": {
-          "request": [
-            { "algorithm": "sha256", "in": "trailer", "name": "x-amz-checksum-sha256"},
-            { "algorithm": "sha256", "in": "header", "name": "x-amz-checksum-sha256"},
-            { "algorithm": "sha1", "in": "trailer", "name": "x-amz-checksum-sha1"},
-            { "algorithm": "sha1", "in": "header", "name": "x-amz-checksum-sha1"}
-          ],
-          "response": [
-            { "algorithm": "sha256", "in": "header", "name": "x-amz-checksum-sha256"},
-            { "algorithm": "sha1", "in": "header", "name": "x-amz-checksum-sha1"}
-          ]
+        "aws.protocols#httpChecksum": {
+          "requestAlgorithmMember": "ChecksumAlgorithm",
+          "requestChecksumRequired": true
         }
       }
     },
-    "ns.foo#InvalidOperation": {
+    "ns.foo#ValidOperation2": {
       "type": "operation",
       "input": {
-        "target": "ns.foo#Input"
+        "target": "ns.foo#ValidInput"
       },
       "output": {
-        "target": "ns.foo#Output"
+        "target": "ns.foo#ValidOutput"
       },
       "traits": {
-        "smithy.api#httpChecksum": {
-          "request": [
-            { "algorithm": "crc32", "in": "trailer", "name": "x-amz-checksum-crc32"}
-          ],
-          "response": [
-            { "algorithm": "crc32", "in": "trailer", "name": "x-amz-checksum-crc32"},
-            { "algorithm": "crc32", "in": "header", "name": "x-amz-checksum-crc32"}
-          ]
+        "aws.protocols#httpChecksum": {
+          "requestChecksumRequired": true
+        }
+      }
+    },
+    "ns.foo#ValidOperation3": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#ValidInput"
+      },
+      "output": {
+        "target": "ns.foo#ValidOutput"
+      },
+      "traits": {
+        "aws.protocols#httpChecksum": {
+          "requestAlgorithmMember": "ChecksumAlgorithm"
+        }
+      }
+    },
+    "ns.foo#ValidOperation4": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#ValidInput"
+      },
+      "output": {
+        "target": "ns.foo#ValidOutput"
+      },
+      "traits": {
+        "aws.protocols#httpChecksum": {
+          "requestAlgorithmMember": "ChecksumAlgorithm",
+          "requestValidationModeMember": "ChecksumMode",
+          "responseAlgorithms": ["CRC32C", "CRC32", "SHA256", "SHA1"]
+        }
+      }
+    },
+    "ns.foo#ValidOperation5": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#ValidInput"
+      },
+      "output": {
+        "target": "ns.foo#ValidOutput"
+      },
+      "traits": {
+        "aws.protocols#httpChecksum": {
+          "requestChecksumRequired": true,
+          "requestValidationModeMember": "ChecksumMode",
+          "responseAlgorithms": ["CRC32C", "CRC32", "SHA256", "SHA1"]
+        }
+      }
+    },
+    "ns.foo#ValidOperation6": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#ValidInput"
+      },
+      "output": {
+        "target": "ns.foo#ValidOutput"
+      },
+      "traits": {
+        "aws.protocols#httpChecksum": {
+          "requestValidationModeMember": "ChecksumMode",
+          "responseAlgorithms": ["CRC32C", "CRC32", "SHA256", "SHA1"]
+        }
+      }
+    },
+    "ns.foo#ValidOperation7": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#ValidInput"
+      },
+      "output": {
+        "target": "ns.foo#ValidOutput"
+      },
+      "traits": {
+        "aws.protocols#httpChecksum": {
+          "requestAlgorithmMember": "ChecksumAlgorithm",
+          "requestChecksumRequired": true,
+          "requestValidationModeMember": "ChecksumMode",
+          "responseAlgorithms": ["CRC32C", "CRC32", "SHA256", "SHA1"]
+        }
+      }
+    },
+    "ns.foo#InvalidOperation1": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#InvalidInput"
+      },
+      "output": {
+        "target": "ns.foo#ValidOutput"
+      },
+      "traits": {
+        "aws.protocols#httpChecksum": {
+          "requestAlgorithmMember": "ChecksumAlgorithm"
         }
       }
     },
     "ns.foo#InvalidOperation2": {
       "type": "operation",
       "input": {
-        "target": "ns.foo#Input"
+        "target": "ns.foo#InvalidInput"
       },
       "output": {
-        "target": "ns.foo#Output"
+        "target": "ns.foo#ValidOutput"
       },
       "traits": {
-        "smithy.api#httpChecksum": {
-          "request": [
-            { "algorithm": "crc32", "in": "header", "name": "unknown"}
-          ],
-          "response": [
-            { "algorithm": "crc32", "in": "trailer", "name": "x-amz-checksum-crc32"}
-          ]
+        "aws.protocols#httpChecksum": {
+          "requestValidationModeMember": "ChecksumMode",
+          "responseAlgorithms": ["CRC32C", "CRC32", "SHA256", "SHA1"]
         }
       }
     },
-    "ns.foo#Input": {
+    "ns.foo#InvalidOperation3": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#ValidInput"
+      },
+      "output": {
+        "target": "ns.foo#ValidOutput"
+      },
+      "traits": {
+        "aws.protocols#httpChecksum": {
+          "requestValidationModeMember": "ChecksumMode"
+        }
+      }
+    },
+    "ns.foo#InvalidOperation4": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#ValidInput"
+      },
+      "output": {
+        "target": "ns.foo#ValidOutput"
+      },
+      "traits": {
+        "aws.protocols#httpChecksum": {
+        }
+      }
+    },
+    "ns.foo#InvalidOperation5": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#ValidInput"
+      },
+      "output": {
+        "target": "ns.foo#ValidOutput"
+      },
+      "traits": {
+        "aws.protocols#httpChecksum": {
+          "responseAlgorithms": ["CRC32C"]
+        }
+      }
+    },
+    "ns.foo#InvalidOperation6": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#TraitOnInput"
+      },
+      "output": {
+        "target": "ns.foo#ValidOutput"
+      }
+    },
+    "ns.foo#OperationWithConflictingHeader": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#InputWithConflictingHeader"
+      },
+      "output": {
+        "target": "ns.foo#OutputWithConflictingHeader"
+      },
+      "traits": {
+        "aws.protocols#httpChecksum": {
+          "requestAlgorithmMember": "ChecksumAlgorithm",
+          "requestValidationModeMember": "ChecksumMode",
+          "responseAlgorithms": ["CRC32C", "CRC32", "SHA256", "SHA1"]
+        }
+      }
+    },
+    "ns.foo#OperationWithConflictingPrefixHeaders": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#InputWithConflictingPrefixHeaders"
+      },
+      "output": {
+        "target": "ns.foo#OutputWithConflictingPrefixHeaders"
+      },
+      "traits": {
+        "aws.protocols#httpChecksum": {
+          "requestAlgorithmMember": "ChecksumAlgorithm",
+          "requestValidationModeMember": "ChecksumMode",
+          "responseAlgorithms": ["CRC32C", "CRC32", "SHA256", "SHA1"]
+        }
+      }
+    },
+    "ns.foo#ValidInput": {
+      "type": "structure",
+      "members": {
+        "ChecksumAlgorithm": {
+          "target": "ns.foo#ChecksumAlgorithm"
+        },
+        "ChecksumMode": {
+          "target": "ns.foo#ChecksumMode"
+        },
+        "Body": {
+          "target": "ns.foo#Blob"
+        }
+      }
+    },
+    "ns.foo#ValidOutput": {
       "type": "structure",
       "members": {
         "Body": {
@@ -92,16 +298,155 @@
         }
       }
     },
-    "ns.foo#Output": {
+    "ns.foo#InvalidInput": {
       "type": "structure",
       "members": {
+        "ChecksumAlgorithm": {
+          "target": "ns.foo#String"
+        },
+        "ChecksumMode": {
+          "target": "ns.foo#String"
+        },
         "Body": {
           "target": "ns.foo#Blob"
         }
+      }
+    },
+    "ns.foo#TraitOnInput": {
+      "type": "structure",
+      "members": {
+        "ChecksumAlgorithm": {
+          "target": "ns.foo#ChecksumAlgorithm"
+        },
+        "ChecksumMode": {
+          "target": "ns.foo#ChecksumMode"
+        },
+        "Body": {
+          "target": "ns.foo#Blob"
+        }
+      },
+      "traits": {
+        "aws.protocols#httpChecksum": {
+          "requestAlgorithmMember": "ChecksumAlgorithm"
+        }
+      }
+    },
+    "ns.foo#InputWithConflictingPrefixHeaders": {
+      "type": "structure",
+      "members": {
+        "ChecksumAlgorithm": {
+          "target": "ns.foo#ChecksumAlgorithm"
+        },
+        "ChecksumMode": {
+          "target": "ns.foo#ChecksumMode"
+        },
+        "ChecksumMetadata": {
+          "target": "ns.foo#Metadata",
+          "traits": {
+            "smithy.api#httpPrefixHeaders": "x-amz-checksum-"
+          }
+        },
+        "Body": {
+          "target": "ns.foo#Blob"
+        }
+      }
+    },
+    "ns.foo#InputWithConflictingHeader": {
+      "type": "structure",
+      "members": {
+        "ChecksumAlgorithm": {
+          "target": "ns.foo#ChecksumAlgorithm"
+        },
+        "ChecksumMode": {
+          "target": "ns.foo#ChecksumMode"
+        },
+        "ChecksumId": {
+          "target": "ns.foo#String",
+          "traits": {
+            "smithy.api#httpHeader": "x-amz-checksum-id"
+          }
+        },
+        "Body": {
+          "target": "ns.foo#Blob"
+        }
+      }
+    },
+    "ns.foo#OutputWithConflictingPrefixHeaders": {
+      "type": "structure",
+      "members": {
+        "ChecksumMetadata": {
+          "target": "ns.foo#Metadata",
+          "traits": {
+            "smithy.api#httpPrefixHeaders": "x-amz-checksum-"
+          }
+        },
+        "Body": {
+          "target": "ns.foo#Blob"
+        }
+      }
+    },
+    "ns.foo#OutputWithConflictingHeader": {
+      "type": "structure",
+      "members": {
+        "ChecksumId": {
+          "target": "ns.foo#String",
+          "traits": {
+            "smithy.api#httpHeader": "x-amz-checksum-id"
+          }
+        },
+        "Body": {
+          "target": "ns.foo#Blob"
+        }
+      }
+    },
+    "ns.foo#Metadata": {
+      "type": "map",
+      "key": {
+        "target": "ns.foo#String"
+      },
+      "value": {
+        "target": "ns.foo#String"
       }
     },
     "ns.foo#Blob": {
       "type": "blob"
+    },
+    "ns.foo#String": {
+      "type": "string"
+    },
+    "ns.foo#ChecksumAlgorithm": {
+      "type": "string",
+      "traits": {
+        "smithy.api#enum": [
+          {
+            "value": "CRC32C",
+            "name": "CRC32C"
+          },
+          {
+            "value": "CRC32",
+            "name": "CRC32"
+          },
+          {
+            "value": "SHA1",
+            "name": "SHA1"
+          },
+          {
+            "value": "SHA256",
+            "name": "SHA256"
+          }
+        ]
+      }
+    },
+    "ns.foo#ChecksumMode": {
+      "type": "string",
+      "traits": {
+        "smithy.api#enum": [
+          {
+            "value": "ENABLED",
+            "name": "ENABLED"
+          }
+        ]
+      }
     }
   }
 }

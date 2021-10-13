@@ -191,36 +191,6 @@ public class AwsRestJson1ProtocolTest {
                         )
                 ),
                 Arguments.of(
-                        "HttpChecksumInputOperation",
-                        SetUtils.of(
-                                "X-Amz-User-Agent",
-                                "X-Amzn-Trace-Id",
-                                "Amz-Sdk-Request",
-                                "Amz-Sdk-Invocation-Id",
-                                "x-amz-checksum-sha256"
-                        ),
-                        SetUtils.of(
-                                "X-Amzn-Requestid",
-                                "X-Amzn-Errortype"
-                        )
-                ),
-                Arguments.of(
-                        "HttpChecksumOutputOperation",
-                        SetUtils.of(
-                                "X-Amz-User-Agent",
-                                "X-Amzn-Trace-Id",
-                                "Amz-Sdk-Request",
-                                "Amz-Sdk-Invocation-Id"
-                        ),
-                        SetUtils.of(
-                                "X-Amzn-Requestid",
-                                "X-Amzn-Errortype",
-                                "Content-Length",
-                                "Content-Type",
-                                "x-amz-checksum-sha256"
-                        )
-                ),
-                Arguments.of(
                         "HasDiscoveredEndpoint",
                         SetUtils.of(
                                 "X-Amz-User-Agent",
