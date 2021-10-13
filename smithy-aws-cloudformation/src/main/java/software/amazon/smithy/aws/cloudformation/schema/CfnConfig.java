@@ -36,6 +36,7 @@ public final class CfnConfig extends JsonSchemaConfig {
     /** The JSON pointer to where CloudFormation schema shared resource properties should be written. */
     public static final String SCHEMA_COMPONENTS_POINTER = "#/definitions";
 
+    private boolean disableHandlerPermissionGeneration = false;
     private boolean disableDeprecatedPropertyGeneration = false;
     private boolean disableRequiredPropertyGeneration = false;
     private boolean disableCapitalizedProperties = false;
@@ -87,6 +88,25 @@ public final class CfnConfig extends JsonSchemaConfig {
             throw new CfnException("CloudFormation Resource Schemas MUST use alphanumeric only "
                     + "references. `alphanumericOnlyRefs` value of `false` was provided.");
         }
+    }
+
+    public boolean getDisableHandlerPermissionGeneration() {
+        return disableHandlerPermissionGeneration;
+    }
+
+    /**
+     * Set to true to disable generating {@code handler} property's {@code permissions}
+     * lists for Resource Schemas.
+     *
+     * <p>By default, handler permissions are automatically added to the {@code handler}
+     * property's {@code permissions} list. This includes the lifecycle operation used
+     * and any permissions listed in the {@code aws.iam#requiredActions} trait.
+     *
+     * @param disableHandlerPermissionGeneration True to disable handler {@code permissions}
+     *   generation
+     */
+    public void setDisableHandlerPermissionGeneration(boolean disableHandlerPermissionGeneration) {
+        this.disableHandlerPermissionGeneration = disableHandlerPermissionGeneration;
     }
 
     public boolean getDisableDeprecatedPropertyGeneration() {

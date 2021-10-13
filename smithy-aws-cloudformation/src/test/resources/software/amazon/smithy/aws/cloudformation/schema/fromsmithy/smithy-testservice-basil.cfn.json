@@ -39,5 +39,22 @@
     "/properties/BarId",
     "/properties/BazId"
   ],
+  "handlers": {
+    "create": {
+      "permissions": [
+        "testservice:CreateBazOperation"
+      ]
+    },
+    "read": {
+      "permissions": [
+        "testservice:GetBazOperation"
+      ]
+    },
+    "update": {
+      "permissions": [
+        "testservice:UpdateBazOperation"
+      ]
+    }
+  },
   "additionalProperties": false
 }
