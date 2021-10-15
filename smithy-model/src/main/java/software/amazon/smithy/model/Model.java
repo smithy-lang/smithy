@@ -862,6 +862,11 @@ public final class Model implements ToSmithyBuilder<Model> {
             return this;
         }
 
+        public Builder removeMetadataProperty(String key) {
+            metadata.remove(key);
+            return this;
+        }
+
         public Builder clearMetadata() {
             metadata.clear();
             return this;

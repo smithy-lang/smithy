@@ -675,6 +675,211 @@ orphaned shapes.
     This transformer does not remove shapes from the prelude.
 
 
+.. _filterSuppressions-transform:
+
+filterSuppressions
+------------------
+
+Removes and modifies suppressions found in :ref:`metadata <suppression-definition>`
+and the :ref:`suppress-trait`.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - removeUnused
+      - ``boolean``
+      - Set to true to remove suppressions that have no effect.
+
+        Shapes and validators are often removed when creating a filtered
+        version of model. After removing shapes and validators, suppressions
+        could be left in the model that no longer have any effect. These
+        suppressions could inadvertently disclose information about private
+        or unreleased features.
+
+        If a validation event ID is never emitted, then ``@suppress`` traits
+        will be updated to no longer refer to the ID and removed if they no
+        longer refer to any event. Metadata suppressions are also removed if
+        they have no effect.
+    * - removeReasons
+      - ``boolean``
+      - Set to true to remove the ``reason`` property from metadata suppressions.
+        The reason for a suppression could reveal internal or sensitive
+        information. Removing the "reason" from metadata suppressions is an
+        extra step teams can take to ensure they do not leak internal
+        information when publishing models outside of their organization.
+    * - eventIdAllowList
+      - ``[string]``
+      - Sets a list of event IDs that can be referred to in suppressions.
+        Suppressions that refer to any other event ID will be updated to
+        no longer refer to them, or removed if they no longer refer to any
+        events.
+
+        This setting cannot be used in tandem with ``eventIdDenyList``.
+    * - eventIdDenyList
+      - ``[string]``
+      - Sets a list of event IDs that cannot be referred to in suppressions.
+        Suppressions that refer to any of these event IDs will be updated to
+        no longer refer to them, or removed if they no longer refer to any
+        events.
+
+        This setting cannot be used in tandem with ``eventIdAllowList``.
+    * - namespaceAllowList
+      - ``[string]``
+      - Sets a list of namespaces that can be referred to in metadata
+        suppressions. Metadata suppressions that refer to namespaces
+        outside of this list, including "*", will be removed.
+
+        This setting cannot be used in tandem with ``namespaceDenyList``.
+    * - namespaceDenyList
+      - ``[string]``
+      - Sets a list of namespaces that cannot be referred to in metadata
+        suppressions. Metadata suppressions that refer to namespaces
+        in this list, including "*", will be removed.
+
+        This setting cannot be used in tandem with ``namespaceAllowList``.
+
+The following example removes suppressions that have no effect in the
+``exampleProjection``:
+
+.. tabs::
+
+    .. code-tab:: json
+
+        {
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {
+                            "name": "filterSuppressions",
+                            "args": {
+                                "removeUnused": true
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+
+The following example removes suppressions from metadata that refer to
+deny-listed namespaces:
+
+.. tabs::
+
+    .. code-tab:: json
+
+        {
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {
+                            "name": "filterSuppressions",
+                            "args": {
+                                "namespaceDenyList": ["com.internal"]
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+
+The following example removes suppressions from metadata that refer to
+namespaces outside of the allow-listed namespaces:
+
+.. tabs::
+
+    .. code-tab:: json
+
+        {
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {
+                            "name": "filterSuppressions",
+                            "args": {
+                                "namespaceAllowList": ["com.external"]
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+
+The following example removes suppressions that refer to deny-listed event IDs:
+
+.. tabs::
+
+    .. code-tab:: json
+
+        {
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {
+                            "name": "filterSuppressions",
+                            "args": {
+                                "eventIdDenyList": ["MyInternalValidator"]
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+
+The following example removes suppressions that refer to event IDs outside
+of the event ID allow list:
+
+.. tabs::
+
+    .. code-tab:: json
+
+        {
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {
+                            "name": "filterSuppressions",
+                            "args": {
+                                "eventIdAllowList": ["A", "B", "C"]
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+
+The following example removes the ``reason`` property from metadata
+suppressions:
+
+.. tabs::
+
+    .. code-tab:: json
+
+        {
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {
+                            "name": "filterSuppressions",
+                            "args": {
+                                "removeReasons": true
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+
+
 .. _includeTags-transform:
 
 includeTags

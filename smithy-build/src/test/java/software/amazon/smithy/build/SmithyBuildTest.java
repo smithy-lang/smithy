@@ -451,7 +451,8 @@ public class SmithyBuildTest {
             new SmithyBuild().config(config).build();
         });
 
-        assertThat(thrown.getMessage(), containsString("Unable to find projection named `bar` referenced by `foo`"));
+        assertThat(thrown.getMessage(),
+                   containsString("Unable to find projection named `bar` referenced by the `foo` projection"));
     }
 
     @Test
@@ -463,7 +464,7 @@ public class SmithyBuildTest {
             new SmithyBuild().config(config).build();
         });
 
-        assertThat(thrown.getMessage(), containsString("Cannot recursively apply the same projection:"));
+        assertThat(thrown.getMessage(), containsString("Cannot recursively apply the same projection: foo"));
     }
 
     @Test

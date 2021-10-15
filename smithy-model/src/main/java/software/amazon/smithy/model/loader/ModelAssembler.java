@@ -104,12 +104,6 @@ public final class ModelAssembler {
     private boolean disablePrelude;
     private Consumer<ValidationEvent> validationEventListener = DEFAULT_EVENT_LISTENER;
 
-    // Lazy initialization holder class idiom to hold a default validator factory.
-    private static final class LazyValidatorFactoryHolder {
-        static final ValidatorFactory INSTANCE = ValidatorFactory.createServiceFactory(
-                ModelAssembler.class.getClassLoader());
-    }
-
     // Lazy initialization holder class idiom to hold a default trait factory.
     static final class LazyTraitFactoryHolder {
         static final TraitFactory INSTANCE = TraitFactory.createServiceFactory(ModelAssembler.class.getClassLoader());
@@ -634,14 +628,14 @@ public final class ModelAssembler {
             return new ValidatedResult<>(model, events);
         }
 
-        if (validatorFactory == null) {
-            validatorFactory = LazyValidatorFactoryHolder.INSTANCE;
-        }
-
         // Validate the model based on the explicit validators and model metadata.
         // Note the ModelValidator handles emitting events to the validationEventListener.
-        List<ValidationEvent> mergedEvents = ModelValidator
-                .validate(model, validatorFactory, assembleValidators(), validationEventListener);
+        List<ValidationEvent> mergedEvents = new ModelValidator()
+                .validators(validators)
+                .validatorFactory(validatorFactory)
+                .eventListener(validationEventListener)
+                .createValidator()
+                .validate(model);
 
         mergedEvents.addAll(events);
         return new ValidatedResult<>(model, mergedEvents);
@@ -681,12 +675,5 @@ public final class ModelAssembler {
     private boolean areUnknownTraitsAllowed() {
         Object allowUnknown = properties.get(ModelAssembler.ALLOW_UNKNOWN_TRAITS);
         return allowUnknown != null && (boolean) allowUnknown;
-    }
-
-    private List<Validator> assembleValidators() {
-        // Find and register built-in validators with the validator.
-        List<Validator> copiedValidators = new ArrayList<>(validatorFactory.loadBuiltinValidators());
-        copiedValidators.addAll(validators);
-        return copiedValidators;
     }
 }

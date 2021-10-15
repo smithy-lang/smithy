@@ -201,8 +201,9 @@ public abstract class Node implements FromSourceLocation, ToNode {
      * @param values String values to add to the ArrayNode.
      * @return Returns the created ArrayNode.
      */
-    public static ArrayNode fromNodes(List<Node> values) {
-        return new ArrayNode(values, SourceLocation.none());
+    @SuppressWarnings("unchecked")
+    public static ArrayNode fromNodes(List<? extends Node> values) {
+        return new ArrayNode((List<Node>) values, SourceLocation.none());
     }
 
     /**

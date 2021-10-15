@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -16,8 +16,10 @@
 package software.amazon.smithy.build;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -25,6 +27,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -43,7 +46,8 @@ public final class TransformContext implements ToSmithyBuilder<TransformContext>
     private final Set<Path> sources;
     private final String projectionName;
     private final ModelTransformer transformer;
-    private final Set<String> visited;
+    private final List<String> queuedProjections = new ArrayList<>();
+    private final List<ValidationEvent> originalModelValidationEvents;
 
     private TransformContext(Builder builder) {
         model = SmithyBuilder.requiredState("model", builder.model);
@@ -52,7 +56,7 @@ public final class TransformContext implements ToSmithyBuilder<TransformContext>
         originalModel = builder.originalModel;
         sources = SetUtils.copyOf(builder.sources);
         projectionName = builder.projectionName;
-        visited = new LinkedHashSet<>(builder.visited);
+        originalModelValidationEvents = builder.originalModelValidationEvents;
     }
 
     /**
@@ -71,7 +75,8 @@ public final class TransformContext implements ToSmithyBuilder<TransformContext>
                 .sources(sources)
                 .projectionName(projectionName)
                 .transformer(transformer)
-                .visited(visited);
+                .queuedProjections(queuedProjections)
+                .originalModelValidationEvents(originalModelValidationEvents);
     }
 
     /**
@@ -138,15 +143,40 @@ public final class TransformContext implements ToSmithyBuilder<TransformContext>
     }
 
     /**
-     * Gets the set of previously visited transforms.
+     * Gets the queue of projections that need to be applied.
      *
-     * <p>This method is used as bookkeeping for the {@code apply}
-     * plugin to detect cycles.
+     * <p>This queue can be added to from transformers to invoke
+     * other projections. It's used by the apply transform, but is
+     * generic enough to be used by other transforms.
      *
-     * @return Returns the ordered set of visited projections.
+     * @return Returns the queue of projections to apply.
      */
-    public Set<String> getVisited() {
-        return visited;
+    public Collection<String> getQueuedProjections() {
+        return queuedProjections;
+    }
+
+    /**
+     * Adds a projection to the queue of projections to apply to the
+     * model.
+     *
+     * @param projection Projection to enqueue.
+     */
+    public void enqueueProjection(String projection) {
+        if (projection.equals(getProjectionName())) {
+            throw new SmithyBuildException("Cannot recursively apply the same projection: " + projection);
+        }
+
+        queuedProjections.add(projection);
+    }
+
+    /**
+     * Gets an immutable list of {@link ValidationEvent}s that were
+     * encountered when loading the source model.
+     *
+     * @return Returns the encountered validation events.
+     */
+    public List<ValidationEvent> getOriginalModelValidationEvents() {
+        return originalModelValidationEvents;
     }
 
     /**
@@ -160,7 +190,8 @@ public final class TransformContext implements ToSmithyBuilder<TransformContext>
         private Set<Path> sources = Collections.emptySet();
         private String projectionName = "source";
         private ModelTransformer transformer;
-        private Set<String> visited = Collections.emptySet();
+        private final List<ValidationEvent> originalModelValidationEvents = new ArrayList<>();
+        private final List<String> queuedProjections = new ArrayList<>();
 
         private Builder() {}
 
@@ -199,8 +230,15 @@ public final class TransformContext implements ToSmithyBuilder<TransformContext>
             return this;
         }
 
-        public Builder visited(Set<String> visited) {
-            this.visited = visited;
+        public Builder originalModelValidationEvents(List<ValidationEvent> originalModelValidationEvents) {
+            this.originalModelValidationEvents.clear();
+            this.originalModelValidationEvents.addAll(originalModelValidationEvents);
+            return this;
+        }
+
+        public Builder queuedProjections(Collection<String> queuedProjections) {
+            this.queuedProjections.clear();
+            this.queuedProjections.addAll(queuedProjections);
             return this;
         }
     }
