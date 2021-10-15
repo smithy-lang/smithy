@@ -58,6 +58,18 @@
                 "smithy.api#documentation": "Other actions that the invoker must be authorized to perform when executing the targeted operation."
             }
         },
+        "aws.iam#supportedPrincipalTypes": {
+            "type": "list",
+            "member": {
+                "target": "aws.iam#PrincipalType"
+            },
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": ":test(service, operation)"
+                },
+                "smithy.api#documentation": "The principal types that can use the service or operation."
+            }
+        },
         "aws.iam#IamIdentifier": {
             "type": "string",
             "traits": {
@@ -112,6 +124,19 @@
                     {"value": "ArrayOfBool", "name": "ARRAY_OF_BOOL"},
                     {"value": "IPAddress", "name": "IP_ADDRESS"},
                     {"value": "ArrayOfIPAddress", "name": "ARRAY_OF_IP_ADDRESS"}
+                ]
+            }
+        },
+        "aws.iam#PrincipalType": {
+            "type": "string",
+            "traits": {
+                "smithy.api#private": {},
+                "smithy.api#documentation": "An IAM policy principal type.",
+                "smithy.api#enum": [
+                    {"value": "Root", "name": "ROOT"},
+                    {"value": "IAMUser", "name": "IAM_USER"},
+                    {"value": "IAMRole", "name": "IAM_ROLE"},
+                    {"value": "FederatedUser", "name": "FEDERATED_USER"}
                 ]
             }
         }
