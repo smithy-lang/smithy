@@ -1,0 +1,15 @@
+{
+    "version": "1.0",
+    "projections": {
+        "foo": {
+            "transforms": [
+                {
+                    "name": "filterSuppressions",
+                    "args": {
+                        "namespaceDenyList": ["smithy.foo", "*"]
+                    }
+                }
+            ]
+        }
+    }
+}
