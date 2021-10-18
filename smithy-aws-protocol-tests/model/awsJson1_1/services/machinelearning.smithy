@@ -42,7 +42,7 @@ service AmazonML_20141212 {
         uri: "/",
         host: "example.com",
         resolvedHost: "custom.example.com",
-        body: "{\"MLModelId\": \"foo\", \"Record\": {}, \"PredictEndpoint\": \"https://custom.example.com\"}",
+        body: "{\"MLModelId\": \"foo\", \"Record\": {}, \"PredictEndpoint\": \"https://custom.example.com/\"}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
