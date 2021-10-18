@@ -142,7 +142,7 @@ apply TestPayloadStructure @httpRequestTests([
         documentation: "Serializes an request with header members but no payload",
         protocol: restJson1,
         method: "POST",
-        uri: "/body",
+        uri: "/payload",
         body: "{}",
         bodyMediaType: "application/json",
         headers: {
@@ -196,9 +196,6 @@ apply TestPayloadBlob @httpRequestTests([
         headers: {
             "Content-Type": "application/octet-stream"
         },
-        requireHeaders: [
-            "Content-Length"
-        ],
         params: {}
     }
 ])
@@ -209,10 +206,8 @@ apply TestPayloadBlob @httpRequestTests([
         documentation: "Serializes a payload targeting a blob",
         protocol: restJson1,
         method: "POST",
-        uri: "/payload_blob",
-        body: """
-              1234
-              """,
+        uri: "/blob_payload",
+        body: "1234",
         bodyMediaType: "image/jpg",
         headers: {
             "Content-Type": "image/jpg"
