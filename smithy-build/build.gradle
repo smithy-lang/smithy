@@ -24,4 +24,5 @@ ext {
 dependencies {
     api project(":smithy-utils")
     api project(":smithy-model")
+    implementation 'io.get-coursier:interface:1.0.4'
 }

@@ -15,6 +15,12 @@
 
 package software.amazon.smithy.build.model;
 
+import coursierapi.Dependency;
+import coursierapi.MavenRepository;
+import coursierapi.Repository;
+import coursierapi.error.CoursierError;
+import java.io.File;
+import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -40,7 +46,8 @@ import software.amazon.smithy.utils.Pair;
  */
 final class ConfigLoader {
 
-    private ConfigLoader() {}
+    private ConfigLoader() {
+    }
 
     static SmithyBuildConfig load(Path path) {
         try {
@@ -64,31 +71,57 @@ final class ConfigLoader {
         return resolveImports(baseImportPath, mapper.deserialize(node, SmithyBuildConfig.class));
     }
 
+    private static String urlString(File file) {
+        try {
+            return file.toURI().toURL().toString();
+        } catch (MalformedURLException e) {
+            throw new SmithyBuildException(e);
+        }
+    }
+
+    private static Dependency parseDependency(String depString) {
+        // The scala version is unimportant.
+        return Dependency.parse(depString, coursierapi.ScalaVersion.of("3.0.0"));
+    }
+
     private static SmithyBuildConfig resolveImports(Path baseImportPath, SmithyBuildConfig config) {
         List<String> imports = config.getImports().stream()
-                .map(importPath -> baseImportPath.resolve(importPath).toString())
-                .collect(Collectors.toList());
+                .map(importPath -> baseImportPath.resolve(importPath).toString()).collect(Collectors.toList());
 
-        Map<String, ProjectionConfig> projections = config.getProjections().entrySet().stream()
-                .map(entry -> Pair.of(entry.getKey(), resolveProjectionImports(baseImportPath, entry.getValue())))
-                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+        List<Repository> repositories = config.getMavenRepositories().stream()
+                .map(repoPath -> MavenRepository.of(repoPath)).collect(Collectors.toList());
 
-        return config.toBuilder()
-                .imports(imports)
-                .projections(projections)
-                .build();
+        repositories.addAll(Repository.defaults());
+
+        List<Dependency> dependencies = config.getMavenImports().stream()
+                .map(mavenImport -> parseDependency(mavenImport)).collect(Collectors.toList());
+
+        try {
+            List<String> fetchedDependencies = coursierapi.Fetch.create()
+                    .addRepositories(repositories.toArray(new Repository[repositories.size()]))
+                    .addDependencies(dependencies.toArray(new Dependency[dependencies.size()])).fetch().stream()
+                    .map(file -> urlString(file)).collect(Collectors.toList());
+
+            Map<String, ProjectionConfig> projections = config.getProjections().entrySet().stream()
+                    .map(entry -> Pair.of(entry.getKey(), resolveProjectionImports(baseImportPath, entry.getValue())))
+                    .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+
+            return config.toBuilder().imports(imports).mavenImports(fetchedDependencies).projections(projections)
+                    .build();
+        } catch (CoursierError e) {
+            throw new SmithyBuildException(e);
+        }
     }
 
     private static ProjectionConfig resolveProjectionImports(Path baseImportPath, ProjectionConfig config) {
         List<String> imports = config.getImports().stream()
-                .map(importPath -> baseImportPath.resolve(importPath).toString())
-                .collect(Collectors.toList());
+                .map(importPath -> baseImportPath.resolve(importPath).toString()).collect(Collectors.toList());
         return config.toBuilder().imports(imports).build();
     }
 
     /**
-     * Expands ${NAME} values inside of strings to a {@code System} property
-     * or an environment variable.
+     * Expands ${NAME} values inside of strings to a {@code System} property or an
+     * environment variable.
      */
     private static final class VariableExpander extends NodeVisitor.Default<Node> {
 
@@ -120,8 +153,10 @@ final class ConfigLoader {
             while (matcher.find()) {
                 String variable = matcher.group(1);
                 String replacement = expand(node.getSourceLocation(), variable);
-                // INLINE over-matches to allow for escaping. If the over-matched first group does not start with
-                // '${', we need to prepend the first character from that group on the replacement.
+                // INLINE over-matches to allow for escaping. If the over-matched first group
+                // does not start with
+                // '${', we need to prepend the first character from that group on the
+                // replacement.
                 if (!matcher.group(0).startsWith("${")) {
                     replacement = matcher.group(0).charAt(0) + replacement;
                 }
@@ -141,9 +176,8 @@ final class ConfigLoader {
                     .orElseGet(() -> System.getenv(variable));
 
             if (replacement == null) {
-                throw new SmithyBuildException(String.format(
-                        "Unable to expand variable `" + variable + "` to an environment variable or system "
-                        + "property: %s", sourceLocation));
+                throw new SmithyBuildException(String.format("Unable to expand variable `" + variable
+                        + "` to an environment variable or system " + "property: %s", sourceLocation));
             }
 
             return replacement;

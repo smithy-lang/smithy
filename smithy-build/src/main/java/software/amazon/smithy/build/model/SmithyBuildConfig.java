@@ -42,6 +42,8 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
 
     private final String version;
     private final List<String> imports;
+    private final List<String> mavenRepositories;
+    private final List<String> mavenImports;
     private final String outputDirectory;
     private final Map<String, ProjectionConfig> projections;
     private final Map<String, ObjectNode> plugins;
@@ -52,6 +54,8 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
         version = builder.version;
         outputDirectory = builder.outputDirectory;
         imports = ListUtils.copyOf(builder.imports);
+        mavenRepositories = ListUtils.copyOf(builder.mavenRepositories);
+        mavenImports = ListUtils.copyOf(builder.mavenImports);
         projections = MapUtils.copyOf(builder.projections);
         plugins = new HashMap<>(builder.plugins);
         ignoreMissingPlugins = builder.ignoreMissingPlugins;
@@ -140,6 +144,30 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
         return imports;
     }
 
+      /**
+   * Gets the maven repositories to all of the models to import.
+   *
+   * @return Gets the list of maven repositories to fetch maven imports from.
+   */
+  public List<String> getMavenRepositories() {
+    return mavenRepositories;
+  }
+
+  /**
+   * Gets the maven imports to all of the models to import.
+   *
+   * <p>
+   * Maven imports should follow the following syntax :
+   * `organization:artifact:version`
+   *
+   * @return The list of maven imports which should be fetched and imported into
+   *         the model.
+   */
+  public List<String> getMavenImports() {
+    return mavenImports;
+  }
+
+
     /**
      * @return Gets the optional output directory to store artifacts.
      */
@@ -182,6 +210,8 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
      */
     public static final class Builder implements SmithyBuilder<SmithyBuildConfig> {
         private final List<String> imports = new ArrayList<>();
+        private final List<String> mavenRepositories = new ArrayList<>();
+        private final List<String> mavenImports = new ArrayList<>();
         private final Map<String, ProjectionConfig> projections = new LinkedHashMap<>();
         private final Map<String, ObjectNode> plugins = new LinkedHashMap<>();
         private String version;
@@ -226,6 +256,8 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
             config.getOutputDirectory().ifPresent(this::outputDirectory);
             version(config.getVersion());
             imports.addAll(config.getImports());
+            mavenRepositories.addAll(config.getMavenRepositories());
+            mavenImports.addAll(config.getMavenImports());
             projections.putAll(config.getProjections());
             plugins.putAll(config.getPlugins());
 
@@ -258,6 +290,30 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
             this.imports.clear();
             this.imports.addAll(imports);
             return this;
+        }
+
+        /**
+         * Sets maven repositories on the config.
+         *
+         * @param mavenRepositories Maven repositories to set.
+         * @return Returns the builder.
+         */
+        public Builder mavenRepositories(Collection<String> mavenRepositories) {
+          this.mavenRepositories.clear();
+          this.mavenRepositories.addAll(mavenRepositories);
+          return this;
+        }
+
+        /**
+         * Sets maven repositories on the config.
+         *
+         * @param mavenImports Maven imports to set.
+         * @return Returns the builder.
+         */
+        public Builder mavenImports(Collection<String> mavenImports) {
+          this.mavenRepositories.clear();
+          this.mavenRepositories.addAll(mavenImports);
+          return this;
         }
 
         /**

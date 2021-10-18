@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.build;
 
+import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -255,6 +256,14 @@ final class SmithyBuildImpl {
         }
     }
 
+    private java.net.URL asUrl(String s) {
+      try {
+        return new java.net.URL(s);
+      } catch (MalformedURLException e) {
+        throw new SmithyBuildException(e);
+      }
+    }
+
     private Model createBaseModel() {
         Model resolvedModel = model;
 
@@ -262,6 +271,7 @@ final class SmithyBuildImpl {
             LOGGER.fine(() -> "Merging the following imports into the loaded model: " + config.getImports());
             ModelAssembler assembler = modelAssemblerSupplier.get().addModel(model);
             config.getImports().forEach(assembler::addImport);
+            config.getMavenImports().stream().map(this::asUrl).forEach(assembler::addImport);
             resolvedModel = assembler.assemble().unwrap();
         }
 
