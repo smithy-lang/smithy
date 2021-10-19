@@ -43,7 +43,7 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
     private final String version;
     private final List<String> imports;
     private final List<String> mavenRepositories;
-    private final List<String> mavenImports;
+    private final List<String> mavenDependencies;
     private final String outputDirectory;
     private final Map<String, ProjectionConfig> projections;
     private final Map<String, ObjectNode> plugins;
@@ -55,7 +55,7 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
         outputDirectory = builder.outputDirectory;
         imports = ListUtils.copyOf(builder.imports);
         mavenRepositories = ListUtils.copyOf(builder.mavenRepositories);
-        mavenImports = ListUtils.copyOf(builder.mavenImports);
+        mavenDependencies = ListUtils.copyOf(builder.mavenDependencies);
         projections = MapUtils.copyOf(builder.projections);
         plugins = new HashMap<>(builder.plugins);
         ignoreMissingPlugins = builder.ignoreMissingPlugins;
@@ -163,8 +163,8 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
    * @return The list of maven imports which should be fetched and imported into
    *         the model.
    */
-  public List<String> getMavenImports() {
-    return mavenImports;
+  public List<String> getMavenDependencies() {
+    return mavenDependencies;
   }
 
 
@@ -211,7 +211,7 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
     public static final class Builder implements SmithyBuilder<SmithyBuildConfig> {
         private final List<String> imports = new ArrayList<>();
         private final List<String> mavenRepositories = new ArrayList<>();
-        private final List<String> mavenImports = new ArrayList<>();
+        private final List<String> mavenDependencies = new ArrayList<>();
         private final Map<String, ProjectionConfig> projections = new LinkedHashMap<>();
         private final Map<String, ObjectNode> plugins = new LinkedHashMap<>();
         private String version;
@@ -257,7 +257,7 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
             version(config.getVersion());
             imports.addAll(config.getImports());
             mavenRepositories.addAll(config.getMavenRepositories());
-            mavenImports.addAll(config.getMavenImports());
+            mavenDependencies.addAll(config.getMavenDependencies());
             projections.putAll(config.getProjections());
             plugins.putAll(config.getPlugins());
 
@@ -307,12 +307,12 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
         /**
          * Sets maven repositories on the config.
          *
-         * @param mavenImports Maven imports to set.
+         * @param mavenDependencies Maven imports to set.
          * @return Returns the builder.
          */
-        public Builder mavenImports(Collection<String> mavenImports) {
+        public Builder mavenDependencies(Collection<String> mavenDependencies) {
           this.mavenRepositories.clear();
-          this.mavenRepositories.addAll(mavenImports);
+          this.mavenRepositories.addAll(mavenDependencies);
           return this;
         }
 

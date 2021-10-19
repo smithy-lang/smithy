@@ -16,6 +16,8 @@
 package software.amazon.smithy.build;
 
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import software.amazon.smithy.build.model.ProjectionConfig;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.build.model.TransformConfig;
@@ -46,8 +49,10 @@ import software.amazon.smithy.build.transforms.Apply;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.ValidatedResult;
+import software.amazon.smithy.model.validation.ValidatorFactory;
 import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyBuilder;
 
@@ -84,9 +89,7 @@ final class SmithyBuildImpl {
         transformFactory = builder.transformFactory != null
                 ? builder.transformFactory
                 : ProjectionTransformer.createServiceFactory(getClass().getClassLoader());
-        pluginFactory = builder.pluginFactory != null
-                ? builder.pluginFactory
-                : SmithyBuildPlugin.createServiceFactory(getClass().getClassLoader());
+        pluginFactory = makePluginFactory(config, builder.pluginFactory);
         model = builder.model != null
                 ? builder.model
                 : Model.builder().build();
@@ -256,13 +259,34 @@ final class SmithyBuildImpl {
         }
     }
 
-    private java.net.URL asUrl(String s) {
+    private static java.net.URL asUrl(String s) {
       try {
         return new java.net.URL(s);
       } catch (MalformedURLException e) {
         throw new SmithyBuildException(e);
       }
     }
+
+    private static ClassLoader classLoader(List<URL> classpath) {
+      return new URLClassLoader(classpath.toArray(new URL[0]), ModelAssembler.class.getClassLoader());
+    }
+
+    private static Function<String, Optional<SmithyBuildPlugin>> makePluginFactory(
+            SmithyBuildConfig smithyBuildConfig,
+            Function<String, Optional<SmithyBuildPlugin>> userDefinedFactory) {
+          List<URL> classpath = smithyBuildConfig.getMavenDependencies()
+            .stream()
+            .map(SmithyBuildImpl::asUrl)
+            .collect(Collectors.toList());
+          if (classpath.size() > 0) {
+            ClassLoader classLoader = classLoader(classpath);
+            return SmithyBuildPlugin.createServiceFactory(classLoader);
+          } else if (userDefinedFactory != null) {
+            return userDefinedFactory;
+          } else {
+            return SmithyBuildPlugin.createServiceFactory(ModelAssembler.class.getClassLoader());
+          }
+      }
 
     private Model createBaseModel() {
         Model resolvedModel = model;
@@ -271,7 +295,16 @@ final class SmithyBuildImpl {
             LOGGER.fine(() -> "Merging the following imports into the loaded model: " + config.getImports());
             ModelAssembler assembler = modelAssemblerSupplier.get().addModel(model);
             config.getImports().forEach(assembler::addImport);
-            config.getMavenImports().stream().map(this::asUrl).forEach(assembler::addImport);
+            List<URL> classpath = config.getMavenDependencies()
+              .stream()
+              .map(SmithyBuildImpl::asUrl)
+              .collect(Collectors.toList());
+            if (classpath.size() > 0) {
+              ClassLoader classLoader = classLoader(classpath);
+              assembler.discoverModels(classLoader);
+              assembler.validatorFactory(ValidatorFactory.createServiceFactory(classLoader));
+              assembler.traitFactory(TraitFactory.createServiceFactory(classLoader));
+            }
             resolvedModel = assembler.assemble().unwrap();
         }
 

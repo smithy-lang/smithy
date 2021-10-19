@@ -93,20 +93,22 @@ final class ConfigLoader {
 
         repositories.addAll(Repository.defaults());
 
-        List<Dependency> dependencies = config.getMavenImports().stream()
+        List<Dependency> dependencies = config.getMavenDependencies().stream()
                 .map(mavenImport -> parseDependency(mavenImport)).collect(Collectors.toList());
 
         try {
             List<String> fetchedDependencies = coursierapi.Fetch.create()
                     .addRepositories(repositories.toArray(new Repository[repositories.size()]))
-                    .addDependencies(dependencies.toArray(new Dependency[dependencies.size()])).fetch().stream()
+                    .addDependencies(dependencies.toArray(new Dependency[dependencies.size()]))
+                    .fetch()
+                    .stream()
                     .map(file -> urlString(file)).collect(Collectors.toList());
 
             Map<String, ProjectionConfig> projections = config.getProjections().entrySet().stream()
                     .map(entry -> Pair.of(entry.getKey(), resolveProjectionImports(baseImportPath, entry.getValue())))
                     .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
 
-            return config.toBuilder().imports(imports).mavenImports(fetchedDependencies).projections(projections)
+            return config.toBuilder().imports(imports).mavenDependencies(fetchedDependencies).projections(projections)
                     .build();
         } catch (CoursierError e) {
             throw new SmithyBuildException(e);
