@@ -6,6 +6,7 @@ use aws.protocols#restJson1
 use smithy.test#httpMalformedRequestTests
 use smithy.framework#ValidationException
 
+@suppress(["UnstableTrait"])
 @http(uri: "/MalformedEnum", method: "POST")
 operation MalformedEnum {
     input: MalformedEnumInput,

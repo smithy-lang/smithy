@@ -80,11 +80,13 @@ apply MalformedAcceptWithGenericString @httpMalformedRequestTests([
     }
 ])
 
+@suppress(["UnstableTrait"])
 @http(method: "POST", uri: "/MalformedAcceptWithBody")
 operation MalformedAcceptWithBody {
     output: GreetingStruct
 }
 
+@suppress(["UnstableTrait"])
 @http(method: "POST", uri: "/MalformedAcceptWithPayload")
 operation MalformedAcceptWithPayload {
     output: MalformedAcceptWithPayloadInput
@@ -95,6 +97,7 @@ structure MalformedAcceptWithPayloadInput {
     payload: JpegBlob
 }
 
+@suppress(["UnstableTrait"])
 @http(method: "POST", uri: "/MalformedAcceptWithGenericString")
 operation MalformedAcceptWithGenericString {
     input: MalformedAcceptWithGenericStringInput

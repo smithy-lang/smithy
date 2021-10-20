@@ -5,6 +5,7 @@ namespace aws.protocoltests.restjson
 use aws.protocols#restJson1
 use smithy.test#httpMalformedRequestTests
 
+@suppress(["UnstableTrait"])
 @http(uri: "/MalformedDouble/{doubleInPath}", method: "POST")
 operation MalformedDouble {
     input: MalformedDoubleInput

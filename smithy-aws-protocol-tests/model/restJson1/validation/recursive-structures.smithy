@@ -7,6 +7,7 @@ use smithy.test#httpMalformedRequestTests
 use smithy.test#httpRequestTests
 use smithy.framework#ValidationException
 
+@suppress(["UnstableTrait"])
 @http(uri: "/RecursiveStructures", method: "POST")
 operation RecursiveStructures {
     input: RecursiveStructuresInput,
