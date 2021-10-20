@@ -106,7 +106,9 @@ that support the following members:
         the query string (for example, "/foo/bar").
     * - host
       - ``string``
-      - The host / endpoint provided to the client (for example, "example.com").
+      - The host or endpoint provided as input used to generate the HTTP
+        request (for example, "example.com").
+
         ``host`` MAY contain a path to indicate a base path from which each
         operation in the service is appended to. For example, given a ``host``
         of ``example.com/foo/bar`` and an operation path of ``/MyOperation``,
@@ -114,11 +116,16 @@ that support the following members:
         path is ``/foo/bar/MyOperation``.
     * - resolvedHost
       - ``string``
-      - The host / endpoint that the client should send to, not including the
-        path or scheme (for example, "prefix.example.com").
+      - The expected host present in the ``Host`` header of the request, not
+        including the path or scheme (for example, "prefix.example.com"). If no
+        resolvedHost is defined, then no assertions are made about the resolved
+        host for the request.
 
-        This can differ from the host provided to the client if, for instance,
-        the operation has a member with the :ref:`endpoint-trait`.
+        This can differ from the ``host`` provided to the client if the
+        operation has a member with the :ref:`endpoint-trait`.
+
+        Server implementations SHOULD ignore discrepancies in paths when
+        comparing the ``host`` and ``resolvedHost`` properties.
     * - authScheme
       - shape ID
       - A shape ID that specifies the optional authentication scheme to
@@ -258,17 +265,21 @@ that uses :ref:`HTTP binding traits <http-traits>`.
 
         use smithy.test#httpRequestTests
 
+        @endpoint(hostPrefix: "{hostLabel}.prefix.")
         @http(method: "POST", uri: "/")
         @httpRequestTests([
             {
                 id: "say_hello",
                 protocol: exampleProtocol,
                 params: {
+                    "hostLabel": "foo",
                     "greeting": "Hi",
                     "name": "Teddy",
                     "query": "Hello there"
                 },
                 method: "POST",
+                host: "example.com",
+                resolvedHost: "foo.prefix.example.com",
                 uri: "/",
                 queryParams: [
                     "Hi=Hello%20there"
@@ -285,6 +296,10 @@ that uses :ref:`HTTP binding traits <http-traits>`.
         }
 
         structure SayHelloInput {
+            @required
+            @hostLabel
+            hostLabel: String,
+
             @httpHeader("X-Greeting")
             greeting: String,
 
@@ -305,6 +320,9 @@ that uses :ref:`HTTP binding traits <http-traits>`.
                         "target": "smithy.example#SayHelloInput"
                     },
                     "traits": {
+                        "smithy.api#endpoint": {
+                            "hostPrefix": "{hostLabel}.prefix."
+                        },
                         "smithy.api#http": {
                             "method": "POST",
                             "uri": "/",
@@ -315,6 +333,8 @@ that uses :ref:`HTTP binding traits <http-traits>`.
                                 "id": "say_hello",
                                 "protocol": "smithy.example#exampleProtocol",
                                 "method": "POST",
+                                "host": "example.com",
+                                "resolvedHost": "foo.prefix.example.com",
                                 "uri": "/",
                                 "headers": {
                                     "X-Greeting": "Hi"
@@ -325,6 +345,7 @@ that uses :ref:`HTTP binding traits <http-traits>`.
                                 "body": "{\"name\": \"Teddy\"}",
                                 "bodyMediaType": "application/json"
                                 "params": {
+                                    "hostLabel": "foo",
                                     "greeting": "Hi",
                                     "name": "Teddy",
                                     "query": "Hello there"
@@ -336,6 +357,13 @@ that uses :ref:`HTTP binding traits <http-traits>`.
                 "smithy.example#SayHelloInput": {
                     "type": "structure",
                     "members": {
+                        "hostLabel": {
+                            "target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#required": {},
+                                "smithy.api#hostLabel": {}
+                            }
+                        },
                         "greeting": {
                             "target": "smithy.api#String",
                             "traits": {
