@@ -400,14 +400,21 @@
                 "id": "ignored",
                 "name": "EmitEachSelector",
                 "configuration": {
-                    "selector": "[foo]"
+                    "selector": "[trait|notRealTrait|notFound]"
                 }
             },
             {
                 "id": "ignored",
                 "name": "EmitEachSelector",
                 "configuration": {
-                    "selector": "[foo=baz]"
+                    "selector": "[var|notRealVar|notFound]"
+                }
+            },
+            {
+                "id": "ignored",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[trait|error|nesting|into|things|is|tolerated]"
                 }
             },
             {
