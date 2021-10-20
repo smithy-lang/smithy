@@ -534,6 +534,53 @@ The following example defines two operations:
         operation OperationB {}
 
 
+.. smithy-trait:: aws.iam#iamResource
+.. _aws.iam#iamResource-trait:
+
+-----------------------------
+``aws.iam#iamResource`` trait
+-----------------------------
+
+Summary
+    Indicates properties of a Smithy resource in AWS IAM.
+Trait selector
+    ``resource``
+Value type
+    ``structure``
+
+The ``aws.iam#iamResource`` trait is a structure that supports the following
+members:
+
+.. list-table::
+    :header-rows: 1
+    :widths:  10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - name
+      - ``string``
+      - The name of the resource in AWS IAM.
+
+The following example defines a simple resource with a name in AWS IAM that
+deviates from the :ref:`shape name of the shape ID <shape-id>` of the resource.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        namespace smithy.example
+
+        use aws.iam#iamResource
+
+        @iamResource(name: "super")
+        resource SuperResource {
+            identifiers: {
+                superId: String,
+            },
+        }
+
+
 .. _deriving-condition-keys:
 
 -----------------------

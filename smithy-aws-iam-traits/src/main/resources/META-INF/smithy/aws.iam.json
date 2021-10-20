@@ -70,6 +70,23 @@
                 "smithy.api#documentation": "The principal types that can use the service or operation."
             }
         },
+        "aws.iam#iamResource": {
+            "type": "structure",
+            "members": {
+                "name": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The name of the resource in AWS IAM."
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "resource"
+                },
+                "smithy.api#documentation": "Indicates properties of a Smithy resource in AWS IAM."
+            }
+        },
         "aws.iam#IamIdentifier": {
             "type": "string",
             "traits": {
