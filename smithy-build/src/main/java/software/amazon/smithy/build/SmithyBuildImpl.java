@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.build;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
@@ -259,14 +258,6 @@ final class SmithyBuildImpl {
         }
     }
 
-    private static java.net.URL asUrl(String s) {
-      try {
-        return new java.net.URL(s);
-      } catch (MalformedURLException e) {
-        throw new SmithyBuildException(e);
-      }
-    }
-
     private static ClassLoader classLoader(List<URL> classpath) {
       return new URLClassLoader(classpath.toArray(new URL[0]), ModelAssembler.class.getClassLoader());
     }
@@ -274,9 +265,8 @@ final class SmithyBuildImpl {
     private static Function<String, Optional<SmithyBuildPlugin>> makePluginFactory(
             SmithyBuildConfig smithyBuildConfig,
             Function<String, Optional<SmithyBuildPlugin>> userDefinedFactory) {
-          List<URL> classpath = smithyBuildConfig.getMavenDependencies()
+          List<URL> classpath = smithyBuildConfig.resolveMavenDependencies()
             .stream()
-            .map(SmithyBuildImpl::asUrl)
             .collect(Collectors.toList());
           if (classpath.size() > 0) {
             ClassLoader classLoader = classLoader(classpath);
@@ -295,9 +285,8 @@ final class SmithyBuildImpl {
             LOGGER.fine(() -> "Merging the following imports into the loaded model: " + config.getImports());
             ModelAssembler assembler = modelAssemblerSupplier.get().addModel(model);
             config.getImports().forEach(assembler::addImport);
-            List<URL> classpath = config.getMavenDependencies()
+            List<URL> classpath = config.resolveMavenDependencies()
               .stream()
-              .map(SmithyBuildImpl::asUrl)
               .collect(Collectors.toList());
             if (classpath.size() > 0) {
               ClassLoader classLoader = classLoader(classpath);

@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -589,4 +590,20 @@ public class SmithyBuildTest {
         assertThat(e.getMessage(), containsString("(exampleProjection): java.lang.RuntimeException: Hi"));
         assertThat(e.getSuppressed(), equalTo(new Throwable[]{canned}));
     }
+
+    @Test
+    public void downloadsMavenArtifacts() throws Exception {
+        Path tmpDir = Files.createTempDirectory("coursier");
+        // Making sure cache is unique to the test run
+        System.setProperty("coursier.cache", tmpDir.toAbsolutePath().toString());
+        Path configPath = Paths.get(getClass().getResource("mavendeps/smithy-build.json").toURI());
+        SmithyBuildConfig config = SmithyBuildConfig.load(configPath);
+        List<URL> classpath = config.resolveMavenDependencies();
+        Path repoComponent = Paths.get("https", "repo1.maven.org", "maven2");
+        Path artifactComponent = Paths.get("com","google","code","findbugs","jsr305","3.0.2","jsr305-3.0.2.jar");
+        Path expectedAbsolute = tmpDir.resolve(repoComponent).resolve(artifactComponent);
+        URL expectedURL = expectedAbsolute.toUri().toURL();
+        assertThat(classpath, containsInAnyOrder(expectedURL));
+    }
+
 }

@@ -1,0 +1,5 @@
+{
+  "version": "1.0",
+  "imports": ["foo.json"],
+  "mavenDependencies": ["com.google.code.findbugs:jsr305:3.0.2"]
+}

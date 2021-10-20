@@ -15,12 +15,16 @@
 
 package software.amazon.smithy.build.model;
 
+import coursierapi.Cache;
 import coursierapi.Dependency;
 import coursierapi.MavenRepository;
 import coursierapi.Repository;
 import coursierapi.error.CoursierError;
+import coursierapi.shaded.coursier.paths.CoursierPaths;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -68,12 +72,13 @@ final class ConfigLoader {
 
     private static SmithyBuildConfig load(Path baseImportPath, ObjectNode node) {
         NodeMapper mapper = new NodeMapper();
-        return resolveImports(baseImportPath, mapper.deserialize(node, SmithyBuildConfig.class));
+        SmithyBuildConfig config = mapper.deserialize(node, SmithyBuildConfig.class);
+        return resolveImports(baseImportPath, config);
     }
 
-    private static String urlString(File file) {
+    private static URL url(File file) {
         try {
-            return file.toURI().toURL().toString();
+            return file.toURI().toURL();
         } catch (MalformedURLException e) {
             throw new SmithyBuildException(e);
         }
@@ -85,9 +90,21 @@ final class ConfigLoader {
     }
 
     private static SmithyBuildConfig resolveImports(Path baseImportPath, SmithyBuildConfig config) {
-        List<String> imports = config.getImports().stream()
-                .map(importPath -> baseImportPath.resolve(importPath).toString()).collect(Collectors.toList());
+      List<String> imports = config.getImports().stream()
+              .map(importPath -> baseImportPath.resolve(importPath).toString())
+              .collect(Collectors.toList());
 
+      Map<String, ProjectionConfig> projections = config.getProjections().entrySet().stream()
+              .map(entry -> Pair.of(entry.getKey(), resolveProjectionImports(baseImportPath, entry.getValue())))
+              .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+
+      return config.toBuilder()
+              .imports(imports)
+              .projections(projections)
+              .build();
+  }
+
+    static List<URL> resolveMavenDeps(SmithyBuildConfig config) {
         List<Repository> repositories = config.getMavenRepositories().stream()
                 .map(repoPath -> MavenRepository.of(repoPath)).collect(Collectors.toList());
 
@@ -97,20 +114,25 @@ final class ConfigLoader {
                 .map(mavenImport -> parseDependency(mavenImport)).collect(Collectors.toList());
 
         try {
-            List<String> fetchedDependencies = coursierapi.Fetch.create()
+            String coursierCacheProp = System.getProperty("coursier.cache");
+            // Coursier looks up the "coursier.cache" property when its classes are loaded.
+            // We customise the cache using a dynamic lookup of the property, mostly to
+            // facilitate testing (tests set up the cache manually).
+            File cacheDir = CoursierPaths.cacheDirectory();
+            if (coursierCacheProp != null) {
+              cacheDir = new File(coursierCacheProp);
+            }
+
+            List<URL> fetchedDependencies = coursierapi.Fetch.create()
                     .addRepositories(repositories.toArray(new Repository[repositories.size()]))
                     .addDependencies(dependencies.toArray(new Dependency[dependencies.size()]))
+                    .withCache(Cache.create().withLocation(cacheDir))
                     .fetch()
                     .stream()
-                    .map(file -> urlString(file)).collect(Collectors.toList());
+                    .map(file -> url(file)).collect(Collectors.toList());
 
-            Map<String, ProjectionConfig> projections = config.getProjections().entrySet().stream()
-                    .map(entry -> Pair.of(entry.getKey(), resolveProjectionImports(baseImportPath, entry.getValue())))
-                    .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
-
-            return config.toBuilder().imports(imports).mavenDependencies(fetchedDependencies).projections(projections)
-                    .build();
-        } catch (CoursierError e) {
+            return fetchedDependencies;
+        } catch (CoursierError | IOException e) {
             throw new SmithyBuildException(e);
         }
     }

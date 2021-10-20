@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.build.model;
 
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -118,6 +119,8 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
                 .version(version)
                 .outputDirectory(outputDirectory)
                 .imports(imports)
+                .mavenRepositories(mavenRepositories)
+                .mavenDependencies(mavenDependencies)
                 .projections(projections)
                 .plugins(plugins)
                 .ignoreMissingPlugins(ignoreMissingPlugins);
@@ -144,29 +147,41 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
         return imports;
     }
 
-      /**
-   * Gets the maven repositories to all of the models to import.
-   *
-   * @return Gets the list of maven repositories to fetch maven imports from.
-   */
-  public List<String> getMavenRepositories() {
-    return mavenRepositories;
-  }
+    /**
+     * Gets the maven repositories to all of the models to import.
+     *
+     * @return Gets the list of maven repositories to fetch maven imports from.
+     */
+    public List<String> getMavenRepositories() {
+      return mavenRepositories;
+    }
 
-  /**
-   * Gets the maven imports to all of the models to import.
-   *
-   * <p>
-   * Maven imports should follow the following syntax :
-   * `organization:artifact:version`
-   *
-   * @return The list of maven imports which should be fetched and imported into
-   *         the model.
-   */
-  public List<String> getMavenDependencies() {
-    return mavenDependencies;
-  }
+    /**
+     * Gets the maven imports to all of the models to import.
+     *
+     * <p>
+     * Maven imports should follow the following syntax :
+     * `organization:artifact:version`
+     *
+     * @return The list of maven imports which should be fetched and imported into
+     *         the model.
+     */
+    public List<String> getMavenDependencies() {
+      return mavenDependencies;
+    }
 
+    /**
+     * Fetches the defined maven dependencies and their transitives.
+     *
+     * If the artifacts are locally in cached, returns them. Otherwise the artifacts
+     * are downloaded from maven repositories and stored in the local cache before
+     * being returned.
+     *
+     * @return The list of URLs pointing to jars, cached in the local machine.
+     */
+    public List<URL> resolveMavenDependencies() {
+      return ConfigLoader.resolveMavenDeps(this);
+    }
 
     /**
      * @return Gets the optional output directory to store artifacts.
@@ -311,8 +326,8 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
          * @return Returns the builder.
          */
         public Builder mavenDependencies(Collection<String> mavenDependencies) {
-          this.mavenRepositories.clear();
-          this.mavenRepositories.addAll(mavenDependencies);
+          this.mavenDependencies.clear();
+          this.mavenDependencies.addAll(mavenDependencies);
           return this;
         }
 
