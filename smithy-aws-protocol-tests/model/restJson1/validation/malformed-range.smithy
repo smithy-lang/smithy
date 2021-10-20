@@ -6,12 +6,14 @@ use aws.protocols#restJson1
 use smithy.test#httpMalformedRequestTests
 use smithy.framework#ValidationException
 
+@suppress(["UnstableTrait"])
 @http(uri: "/MalformedRange", method: "POST")
 operation MalformedRange {
     input: MalformedRangeInput,
     errors: [ValidationException]
 }
 
+@suppress(["UnstableTrait"])
 @http(uri: "/MalformedRangeOverride", method: "POST")
 operation MalformedRangeOverride {
     input: MalformedRangeOverrideInput,

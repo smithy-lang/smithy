@@ -108,14 +108,17 @@ apply MalformedContentTypeWithGenericString @httpMalformedRequestTests([
     }
 ])
 
+@suppress(["UnstableTrait"])
 @http(method: "POST", uri: "/MalformedContentTypeWithoutBody")
 operation MalformedContentTypeWithoutBody {}
 
+@suppress(["UnstableTrait"])
 @http(method: "POST", uri: "/MalformedContentTypeWithBody")
 operation MalformedContentTypeWithBody {
     input: GreetingStruct
 }
 
+@suppress(["UnstableTrait"])
 @http(method: "POST", uri: "/MalformedContentTypeWithPayload")
 operation MalformedContentTypeWithPayload {
     input: MalformedContentTypeWithPayloadInput
@@ -126,6 +129,7 @@ structure MalformedContentTypeWithPayloadInput {
     payload: JpegBlob
 }
 
+@suppress(["UnstableTrait"])
 @http(method: "POST", uri: "/MalformedContentTypeWithGenericString")
 operation MalformedContentTypeWithGenericString {
     input: MalformedContentTypeWithGenericStringInput

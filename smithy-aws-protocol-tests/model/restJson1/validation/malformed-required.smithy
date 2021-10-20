@@ -6,6 +6,7 @@ use aws.protocols#restJson1
 use smithy.test#httpMalformedRequestTests
 use smithy.framework#ValidationException
 
+@suppress(["UnstableTrait"])
 @http(uri: "/MalformedRequired", method: "POST")
 operation MalformedRequired {
     input: MalformedRequiredInput,

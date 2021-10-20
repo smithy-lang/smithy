@@ -5,16 +5,19 @@ namespace aws.protocoltests.restjson
 use aws.protocols#restJson1
 use smithy.test#httpMalformedRequestTests
 
+@suppress(["UnstableTrait"])
 @http(uri: "/MalformedTimestampBodyDefault", method: "POST")
 operation MalformedTimestampBodyDefault {
     input: MalformedTimestampBodyDefaultInput
 }
 
+@suppress(["UnstableTrait"])
 @http(uri: "/MalformedTimestampBodyDateTime", method: "POST")
 operation MalformedTimestampBodyDateTime {
     input: MalformedTimestampBodyDateTimeInput
 }
 
+@suppress(["UnstableTrait"])
 @http(uri: "/MalformedTimestampBodyHttpDate", method: "POST")
 operation MalformedTimestampBodyHttpDate {
     input: MalformedTimestampBodyHttpDateInput

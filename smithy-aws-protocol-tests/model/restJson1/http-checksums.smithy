@@ -8,6 +8,7 @@ use aws.protocols#restJson1
 use smithy.test#httpRequestTests
 
 /// This example tests httpChecksumRequired trait
+@suppress(["UnstableTrait"])
 @httpChecksumRequired
 @http(uri: "/HttpChecksumRequired", method: "POST")
 operation HttpChecksumRequired {
