@@ -593,8 +593,8 @@ public class SelectorTest {
     }
 
     @Test
-    public void toleratesGettingNullPropertyFromString() {
-        assertThat(ids(traitModel, "[id|no|no=100]"), empty());
+    public void doesNotToleratesInvalidIdAccess() {
+        Assertions.assertThrows(SelectorException.class, () -> ids(traitModel, "[id|no|no=100]"));
     }
 
     @Test
@@ -633,12 +633,8 @@ public class SelectorTest {
     }
 
     @Test
-    public void toleratesUnknownServicePaths() {
-        Set<String> services1 = ids(traitModel, "[service|foo|baz='bam']");
-        Set<String> services2 = ids(traitModel, "[service|foo|baz]");
-
-        assertThat(services1, empty());
-        assertThat(services2, empty());
+    public void doesNotTolerateUnknownServicePaths() {
+        Assertions.assertThrows(SelectorException.class, () -> ids(traitModel, "[service|foo|baz='bam']"));
     }
 
     @Test

@@ -370,19 +370,6 @@ above selector:
     [trait | range
         | min = 1 ]
 
-Accessing an attribute or nested attribute property that does not exist
-returns an *empty value*. An empty value does not satisfy existence checks,
-returns an empty string when used with string comparators, and returns an
-empty value when attempting to access any properties.
-
-The following selector attempts to descend into non-existent properties of
-the :ref:`documentation-trait`. This example MUST NOT cause an error and
-MUST NOT match any shapes:
-
-.. code-block:: none
-
-    [trait|documentation|invalid|child = Hi]
-
 
 .. _id-attribute:
 
@@ -544,10 +531,11 @@ to a shape. The ``trait`` attribute supports the following properties:
 
         [trait|(length) > 10]
 ``*``
-    Other values are treated as shape IDs, where a relative shape ID is
+    Any other value is treated as a shape ID, where a relative shape ID is
     resolved to the ``smithy.api`` namespace. If a matching trait with the
     given shape ID is attached to the shape, it's :ref:`node value <node-attribute>`
-    is returned. An empty value is returned if the trait does not exist.
+    is returned. An :ref:`empty value <empty-attributes>` is returned if the
+    trait does not exist.
 
     The following selector matches shapes that have the
     :ref:`deprecated-trait`:
@@ -660,6 +648,30 @@ values return empty strings when used by string comparators.
     .. code-block:: none
 
         [trait|externalDocumentation|'Reference Docs']
+
+    Attempting to access a nested property that does not exist or
+    attempting to descend into nested values of a scalar type returns
+    an :ref:`empty value <empty-attributes>`.
+
+
+.. _empty-attributes:
+
+Empty attribute
+---------------
+
+Attempting to access a trait that does not exist, a variable that does
+not exist, or attempting to descend into node attribute values that do not
+exist returns an *empty value*. An empty value does not satisfy existence
+checks, returns an empty string when used with string comparators, and
+returns an empty value when attempting to access any properties.
+
+The following selector attempts to descend into non-existent properties of
+the :ref:`documentation-trait`. This example MUST NOT cause an error and
+MUST NOT match any shapes:
+
+.. code-block:: none
+
+    [trait|documentation|invalid|child = Hi]
 
 
 .. _projection-attribute:
@@ -1491,8 +1503,8 @@ A *var attribute* is an object accessible from a shape that provides
 access to the named :ref:`variables <selector-variables>` currently in scope.
 Variables are accessed by providing the variable name after ``var``. The
 values returned from ``var`` are :ref:`projections <projection-attribute>`
-that contain the set of shapes that were bound to the variable, or an empty
-value if the variable does not exist.
+that contain the set of shapes that were bound to the variable, or an
+:ref:`empty value <empty-attributes>` if the variable does not exist.
 
 The following selector finds all operations in the closure of a service
 where the operation has an :ref:`auth-trait` that is not a subset of the

@@ -313,7 +313,7 @@ final class AttributeValueImpl {
             } else if (key.equals("id")) {
                 return AttributeValue.id(service.getId());
             } else {
-                return EMPTY;
+                throw new SelectorException("Invalid nested 'service' selector attribute property: " + key);
             }
         }
     }
@@ -357,7 +357,7 @@ final class AttributeValueImpl {
                     // Length returns the length of the shape ID.
                     return AttributeValue.literal(id.toString().length());
                 default:
-                    return EMPTY;
+                    throw new SelectorException("Invalid nested 'id' selector attribute property: " + property);
             }
         }
     }
@@ -445,8 +445,7 @@ final class AttributeValueImpl {
                 case "var":
                     return new VariableValue(vars);
                 default:
-                    LOGGER.warning("Unsupported shape selector attribute: " + property);
-                    return EMPTY;
+                    throw new SelectorException("Invalid shape selector attribute: " + property);
             }
         }
     }
