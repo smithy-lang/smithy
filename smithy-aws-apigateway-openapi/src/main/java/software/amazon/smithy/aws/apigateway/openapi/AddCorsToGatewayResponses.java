@@ -129,7 +129,8 @@ final class AddCorsToGatewayResponses implements ApiGatewayMapper {
 
         // Add the modeled additional headers. These could potentially be added by an
         // apigateway feature, so they need to be present.
-        Set<String> exposedHeaders = new TreeSet<>(trait.getAdditionalExposedHeaders());
+        Set<String> exposedHeaders = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        exposedHeaders.addAll(trait.getAdditionalExposedHeaders());
 
         // Find all headers exposed already in the response. These need to be added to the
         // Access-Control-Expose-Headers header if any are found.

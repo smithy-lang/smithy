@@ -62,7 +62,8 @@ public final class AwsRestJson1Protocol extends AbstractRestProtocol<RestJson1Tr
     @Override
     public Set<String> getProtocolRequestHeaders(Context<RestJson1Trait> context, OperationShape operationShape) {
         // x-amz-api-version if it is an endpoint operation
-        Set<String> headers = new TreeSet<>(super.getProtocolRequestHeaders(context, operationShape));
+        Set<String> headers = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        headers.addAll(super.getProtocolRequestHeaders(context, operationShape));
         headers.addAll(AWS_REQUEST_HEADERS);
         if (operationShape.hasTrait(ClientDiscoveredEndpointTrait.class)) {
             headers.add("X-Amz-Api-Version");
@@ -72,7 +73,8 @@ public final class AwsRestJson1Protocol extends AbstractRestProtocol<RestJson1Tr
 
     @Override
     public Set<String> getProtocolResponseHeaders(Context<RestJson1Trait> context, OperationShape operationShape) {
-        Set<String> headers = new TreeSet<>(super.getProtocolResponseHeaders(context, operationShape));
+        Set<String> headers = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        headers.addAll(super.getProtocolResponseHeaders(context, operationShape));
         headers.addAll(AWS_RESPONSE_HEADERS);
         return headers;
     }

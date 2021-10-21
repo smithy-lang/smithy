@@ -53,7 +53,8 @@ enum CorsHeader {
         // The deduced response headers of an operation consist of any headers
         // returned by security schemes, any headers returned by the protocol,
         // and any headers explicitly modeled on the operation.
-        Set<String> result = new TreeSet<>(cors.getAdditionalExposedHeaders());
+        Set<String> result = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        result.addAll(cors.getAdditionalExposedHeaders());
         result.addAll(context.getOpenApiProtocol().getProtocolResponseHeaders(context, shape));
         result.addAll(context.getAllSecuritySchemeResponseHeaders());
 

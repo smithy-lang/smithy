@@ -114,11 +114,12 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
         // Access-Control-Allow-Headers header list. Note that any further modifications that
         // add headers during the Smithy to OpenAPI conversion process will need to update this
         // list of headers accordingly.
-        Set<String> headerNames = new TreeSet<>(corsTrait.getAdditionalAllowedHeaders());
+        Set<String> headerNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        headerNames.addAll(corsTrait.getAdditionalAllowedHeaders());
 
         // Sets additional allowed headers from the API Gateway config.
-        List<String> additionalAllowedHeaders = context.getConfig().getExtensions(ApiGatewayConfig.class)
-                .getAdditionalAllowedCorsHeaders();
+        Set<String> additionalAllowedHeaders = context.getConfig().getExtensions(ApiGatewayConfig.class)
+                .getAdditionalAllowedCorsHeadersSet();
         headerNames.addAll(additionalAllowedHeaders);
         headerNames.addAll(findAllHeaders(path, pathItem));
 
