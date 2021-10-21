@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.model.traits;
 
-import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -121,12 +120,12 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
         }
 
         public Builder additionalAllowedHeaders(Set<String> additionalAllowedHeaders) {
-            this.additionalAllowedHeaders = new LinkedHashSet<>(Objects.requireNonNull(additionalAllowedHeaders));
+            this.additionalAllowedHeaders = SetUtils.caseInsensitiveCopyOf(additionalAllowedHeaders);
             return this;
         }
 
         public Builder additionalExposedHeaders(Set<String> additionalExposedHeaders) {
-            this.additionalExposedHeaders = new LinkedHashSet<>(Objects.requireNonNull(additionalExposedHeaders));
+            this.additionalExposedHeaders = SetUtils.caseInsensitiveCopyOf(additionalExposedHeaders);
             return this;
         }
 

@@ -138,7 +138,8 @@ final class AddCorsToRestIntegrations implements ApiGatewayMapper {
         ObjectNode responseParams = response.getObjectMember(RESPONSE_PARAMETERS_KEY).orElseGet(Node::objectNode);
 
         // Created a sorted set of all headers exposed in the integration.
-        Set<String> headersToExpose = new TreeSet<>(deduced);
+        Set<String> headersToExpose = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        headersToExpose.addAll(deduced);
         responseParams.getStringMap().keySet().stream()
                 .filter(parameterName -> parameterName.startsWith(HEADER_PREFIX))
                 .map(parameterName -> parameterName.substring(HEADER_PREFIX.length()))

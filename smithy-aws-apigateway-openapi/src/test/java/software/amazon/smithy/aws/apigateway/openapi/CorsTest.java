@@ -56,7 +56,7 @@ public class CorsTest {
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("example.smithy#MyService"));
         ApiGatewayConfig apiGatewayConfig = new ApiGatewayConfig();
-        apiGatewayConfig.setAdditionalAllowedCorsHeaders(ListUtils.of("foo","bar"));
+        apiGatewayConfig.setAdditionalAllowedCorsHeaders(ListUtils.of("foo", "bar", "content-length"));
         config.putExtensions(apiGatewayConfig);
         ObjectNode result = OpenApiConverter.create().config(config).convertToNode(model);
         Node expectedNode = Node.parse(IoUtils.toUtf8String(

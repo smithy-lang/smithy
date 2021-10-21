@@ -94,7 +94,7 @@
               "statusCode": "200",
               "responseParameters": {
                 "method.response.header.Access-Control-Max-Age": "'86400'",
-                "method.response.header.Access-Control-Allow-Headers": "'Amz-Sdk-Invocation-Id,Amz-Sdk-Request,Authorization,Date,Host,X-Amz-Content-Sha256,X-Amz-Date,X-Amz-Security-Token,X-Amz-Target,X-Amz-User-Agent,X-Amzn-Trace-Id,X-Service-Input-Metadata,bar,foo'",
+                "method.response.header.Access-Control-Allow-Headers": "'Amz-Sdk-Invocation-Id,Amz-Sdk-Request,Authorization,bar,content-length,Date,foo,Host,X-Amz-Content-Sha256,X-Amz-Date,X-Amz-Security-Token,X-Amz-Target,X-Amz-User-Agent,X-Amzn-Trace-Id,X-Service-Input-Metadata'",
                 "method.response.header.Access-Control-Allow-Origin": "'https://www.example.com'",
                 "method.response.header.Access-Control-Allow-Methods": "'GET'"
               }
@@ -265,7 +265,7 @@
               "statusCode": "200",
               "responseParameters": {
                 "method.response.header.Access-Control-Max-Age": "'86400'",
-                "method.response.header.Access-Control-Allow-Headers": "'Amz-Sdk-Invocation-Id,Amz-Sdk-Request,Authorization,Content-Length,Content-Type,Date,Host,X-Amz-Content-Sha256,X-Amz-Date,X-Amz-Security-Token,X-Amz-Target,X-Amz-User-Agent,X-Amzn-Trace-Id,X-EnumString,X-Foo-Header,X-Service-Input-Metadata,bar,foo'",
+                "method.response.header.Access-Control-Allow-Headers": "'Amz-Sdk-Invocation-Id,Amz-Sdk-Request,Authorization,bar,content-length,Content-Type,Date,foo,Host,X-Amz-Content-Sha256,X-Amz-Date,X-Amz-Security-Token,X-Amz-Target,X-Amz-User-Agent,X-Amzn-Trace-Id,X-EnumString,X-Foo-Header,X-Service-Input-Metadata'",
                 "method.response.header.Access-Control-Allow-Origin": "'https://www.example.com'",
                 "method.response.header.Access-Control-Allow-Methods": "'DELETE,GET,PUT'"
               }

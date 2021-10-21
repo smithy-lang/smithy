@@ -116,7 +116,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
 
     @Override
     public Set<String> getProtocolRequestHeaders(Context<T> context, OperationShape operationShape) {
-        Set<String> headers = new TreeSet<>(OpenApiProtocol.super.getProtocolRequestHeaders(context, operationShape));
+        Set<String> headers = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        headers.addAll(OpenApiProtocol.super.getProtocolRequestHeaders(context, operationShape));
 
         HttpBindingIndex bindingIndex = HttpBindingIndex.of(context.getModel());
         String documentMediaType = getDocumentMediaType(context, operationShape, MessageType.REQUEST);
@@ -135,7 +136,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
 
     @Override
     public Set<String> getProtocolResponseHeaders(Context<T> context, OperationShape operationShape) {
-        Set<String> headers = new TreeSet<>(OpenApiProtocol.super.getProtocolResponseHeaders(context, operationShape));
+        Set<String> headers = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        headers.addAll(OpenApiProtocol.super.getProtocolResponseHeaders(context, operationShape));
 
         // If the operation has any defined output or errors, it can return content-type.
         if (operationShape.getOutput().isPresent() || !operationShape.getErrors().isEmpty()) {
@@ -150,7 +152,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     }
 
     private Set<String> getChecksumHeaders(List<HttpChecksumProperty> httpChecksumProperties) {
-        Set<String> headers = new TreeSet<>();
+        Set<String> headers = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
         for (HttpChecksumProperty property : httpChecksumProperties) {
             if (property.getLocation().equals(Location.HEADER)) {
                 headers.add(property.getName());
