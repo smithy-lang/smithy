@@ -112,7 +112,7 @@ operation UploadArchive {
         id: "GlacierMultipartChecksums",
         documentation: "Glacier requires checksum headers that are cumbersome to provide.",
         protocol: restJson1,
-        method: "POST",
+        method: "PUT",
         uri: "/foo/vaults/bar/multipart-uploads/baz",
         headers: {
             "X-Amz-Glacier-Version": "2012-06-01",
