@@ -323,14 +323,14 @@ Given a pattern of ``/path?requiredKey=requiredValue`` and an endpoint of
         or bound to another input member.
     * - ``http://yourhost/path``
       - No
-      - Does not contain a query string parameter named "requiredValue".
+      - Does not contain a query string parameter named "requiredKey".
     * - ``http://yourhost/path?``
       - No
-      - Does not contain a query string parameter named "requiredValue".
+      - Does not contain a query string parameter named "requiredKey".
     * - ``http://yourhost/path?requiredKey=otherValue``
       - No
-      - Contains a query string parameter named "requiredValue" but its value
-        is not "requiredValue" .
+      - Contains a query string parameter named "requiredKey" but its value
+        is not "requiredValue".
 
 
 .. _greedy-labels:
