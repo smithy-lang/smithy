@@ -400,6 +400,21 @@ apply OmitsNullSerializesEmptyString @httpRequestTests([
             emptyString: "",
         },
     },
+    {
+        id: "RestJsonServersAcceptStaticQueryParamAsEmptyString",
+        documentation: "Servers accept static query params as empty strings.",
+        protocol: restJson1,
+        method: "GET",
+        uri: "/OmitsNullSerializesEmptyString",
+        body: "",
+        queryParams: [
+            "Empty",
+        ],
+        params: {
+            emptyString: "",
+        },
+        appliesTo: "server"
+    },
 ])
 
 structure OmitsNullSerializesEmptyStringInput {
