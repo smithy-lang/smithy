@@ -54,7 +54,11 @@ public final class ModelSerializer {
 
     private ModelSerializer(Builder builder) {
         metadataFilter = builder.metadataFilter;
-        shapeFilter = builder.shapeFilter.and(FunctionalUtils.not(Prelude::isPreludeShape));
+        if (!builder.includePrelude) {
+            shapeFilter = builder.shapeFilter.and(FunctionalUtils.not(Prelude::isPreludeShape));
+        } else {
+            shapeFilter = builder.shapeFilter;
+        }
         traitFilter = builder.traitFilter;
     }
 
@@ -97,6 +101,7 @@ public final class ModelSerializer {
     public static final class Builder implements SmithyBuilder<ModelSerializer> {
         private Predicate<String> metadataFilter = FunctionalUtils.alwaysTrue();
         private Predicate<Shape> shapeFilter = FunctionalUtils.alwaysTrue();
+        private boolean includePrelude = false;
         private Predicate<Trait> traitFilter = FunctionalUtils.alwaysTrue();
 
         private Builder() {}
@@ -118,6 +123,25 @@ public final class ModelSerializer {
          */
         public Builder shapeFilter(Predicate<Shape> shapeFilter) {
             this.shapeFilter = Objects.requireNonNull(shapeFilter);
+            return this;
+        }
+
+        /**
+         * Enables or disables including the prelude in the serialized model.
+         *
+         * <p>By default, the prelude is not included.
+         *
+         * <p>This should nearly always be left at default, as per the spec the prelude is
+         * inherently part of every model, and so any Smithy implementation must build in
+         * an understanding of the prelude. Disabling this filter can be useful for those
+         * implementations to allow them to build their understanding of it from a JSON
+         * version of the prelude.
+         *
+         * @param includePrelude boolean indicating whether the prelude should be included or not.
+         * @return Returns the builder.
+         */
+        public Builder includePrelude(boolean includePrelude) {
+            this.includePrelude = includePrelude;
             return this;
         }
 

@@ -21,7 +21,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -141,7 +142,23 @@ public class ModelSerializerTest {
         ModelSerializer serializer = ModelSerializer.builder().build();
         ObjectNode serialized = serializer.serialize(model);
 
-        assertFalse(serialized.getMember("smithy.api").isPresent());
+        ObjectNode shapes = serialized.expectObjectMember("shapes");
+        shapes.getMembers().forEach((key, value) -> {
+            assertThat(key.getValue(), not(startsWith("smithy.api#")));
+        });
+    }
+
+    @Test
+    public void allowsDisablingPreludeFilter() {
+        Model model = Model.assembler().assemble().unwrap();
+        ModelSerializer serializer = ModelSerializer.builder().includePrelude(true).build();
+        ObjectNode serialized = serializer.serialize(model);
+
+        ObjectNode shapes = serialized.expectObjectMember("shapes");
+        assertTrue(shapes.getMembers().size() > 1);
+        shapes.getMembers().forEach((key, value) -> {
+            assertThat(key.getValue(), startsWith("smithy.api#"));
+        });
     }
 
     @Test
