@@ -186,18 +186,20 @@ Given an endpoint of ``https://yourhost`` and a pattern of ``/my/uri/path``:
 Labels
 ~~~~~~
 
-Patterns MAY contain label placeholders. :dfn:`Labels` consist of label name
-characters surrounded by open and closed braces (i.e., "{label_name}" is a
-label and ``label_name`` is the label name). The label name corresponds to a
-top-level operation input structure member name. Every label MUST have a
-corresponding input member, the input member MUST be marked as
-:ref:`required-trait`, the input member MUST have the :ref:`httpLabel-trait`,
+Patterns MAY contain label placeholders in the path. :dfn:`Labels` consist of
+label name characters surrounded by open and closed braces (i.e.,
+"{label_name}" is a label and ``label_name`` is the label name). The label
+name corresponds to a top-level operation input structure member name. Every
+label MUST have a corresponding input member, the input member MUST be marked
+as :ref:`required-trait`, the input member MUST have the :ref:`httpLabel-trait`,
 and the input member MUST reference a string, byte, short, integer, long,
-float, double, bigDecimal, bigInteger, boolean, or timestamp.
+float, double, bigDecimal, bigInteger, boolean, or timestamp. Labels only
+capture path segments.
 
 Labels MUST adhere to the following constraints:
 
 #. Labels MUST NOT appear in the query string.
+#. Labels MUST NOT appear in the fragment (e.g. "/foo#{bar}" is invalid).
 #. Each label MUST span an entire path segment (e.g., "/{foo}/bar" is valid,
    and "/{foo}bar" is invalid).
 
@@ -221,6 +223,12 @@ Given a pattern of ``/my/uri/{label}`` and an endpoint of ``http://yourhost``:
       - Yes
       - "/my/uri/" matches and "foo" is captured as ``label``. The trailing
         "/" is ignored.
+    * - ``http://yourhost/my/uri/foo?query=bar``
+      - Yes
+      - "/my/uri/" matches and "foo" is captured as ``label``.
+    * - ``http://yourhost/my/uri/foo#bar``
+      - Yes
+      - "/my/uri/" matches and "foo" is captured as ``label``.
     * - ``http://yourhost/my/uri/bar``
       - Yes
       - "/my/uri/" matches and "bar" is captured as ``label``.
