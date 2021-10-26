@@ -26,8 +26,6 @@ from smithy.lexer import SmithyLexer
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx_tabs.tabs',
-              # We use redirects to be able to change page names.
-              'sphinxcontrib.redirects',
               'smithy']
 
 # Add any paths that contain templates here, relative to this directory.
@@ -184,7 +182,7 @@ smithy_version_placeholder = "__smithy_version__"
 
 
 def setup(sphinx):
-    sphinx.add_lexer("smithy", SmithyLexer(startinline=True))
+    sphinx.add_lexer("smithy", SmithyLexer)
     sphinx.connect('source-read', source_read_handler)
     print("Finding and replacing '" + smithy_version_placeholder + "' with '" + smithy_version + "'")
 

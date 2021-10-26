@@ -9,12 +9,14 @@ from docutils.statemachine import StringList
 from docutils.writers.html4css1 import HTMLTranslator as BaseTranslator
 
 from .traitindex import setup_smithy_trait_index
+from .redirects import setup as setup_redirects
 
 
 def setup(app):
     app.set_translator('html', HTMLTranslator)
     app.add_directive("text-figure", TextFigure)
     setup_smithy_trait_index(app)
+    setup_redirects(app)
 
 # Finds the href part of a header.
 HREF = re.compile('href="([^"]+)"')
