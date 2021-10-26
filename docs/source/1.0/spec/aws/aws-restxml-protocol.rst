@@ -266,7 +266,7 @@ contains the serialized error structure members, unless bound to another
 location with HTTP protocol bindings.
 
 Serialized error shapes MUST also contain an additional child element ``Code``
-that contains only the :token:`shape name <identifier>` of the error's
+that contains only the :token:`shape name <smithy:identifier>` of the error's
 :ref:`shape-id`. This can be used to distinguish which specific error has been
 serialized in the response.
 
@@ -300,7 +300,7 @@ Error responses contain the following nested elements:
 * ``Error``: A container for the encountered error.
 * ``Type``: One of "Sender" or "Receiver"; whomever is at fault from the
   service perspective.
-* ``Code``: The :token:`shape name <identifier>` of the error's
+* ``Code``: The :token:`shape name <smithy:identifier>` of the error's
   :ref:`shape-id`.
 * ``RequestId``: Contains a unique identifier for the associated request.
 

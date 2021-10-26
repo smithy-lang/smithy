@@ -223,14 +223,14 @@ Namespace
     model file, while the JSON AST representation supports zero or more
     namespaces per model file.
 Absolute shape ID
-    An :dfn:`absolute shape ID` starts with a :token:`namespace` name,
+    An :dfn:`absolute shape ID` starts with a :token:`smithy:namespace` name,
     followed by "``#``", followed by a *relative shape ID*. All shape
     IDs in the semantic model MUST be absolute.
     For example, ``smithy.example#Foo`` and ``smithy.example#Foo$bar``
     are absolute shape IDs.
 Relative shape ID
-    A :dfn:`relative shape ID` contains a :token:`shape name <identifier>`
-    and an optional :token:`member name <identifier>`. The shape name and
+    A :dfn:`relative shape ID` contains a :token:`shape name <smithy:identifier>`
+    and an optional :token:`member name <smithy:identifier>`. The shape name and
     member name are separated by the "``$``" symbol if a member name is
     present. For example, ``Foo`` and ``Foo$bar`` are relative shape IDs.
 Root shape ID
@@ -1027,7 +1027,7 @@ The service shape supports the following properties:
         contained in the service, and map values are the disambiguated shape
         names to use in the context of the service. Each given shape ID MUST
         reference a shape contained in the closure of the service. Each given
-        map value MUST match the :token:`identifier` production used for
+        map value MUST match the :token:`smithy:identifier` production used for
         shape IDs. Renaming a shape *does not* give the shape a new shape ID.
 
         * No renamed shape name can case-insensitively match any other renamed
@@ -2202,7 +2202,7 @@ An instance of a trait applied to a shape is called an *applied trait*. Only
 a single instance of a trait can be applied to a shape. The way in which a
 trait is applied to a shape depends on the model file representation.
 
-Traits are applied to shapes in the IDL using :token:`trait_statements` that
+Traits are applied to shapes in the IDL using :token:`smithy:trait_statements` that
 immediately precede a shape. The following example applies the
 :ref:`sensitive-trait` and :ref:`documentation-trait` to ``MyString``:
 
@@ -2251,7 +2251,7 @@ Applying traits externally
 
 Both the IDL and JSON AST model representations allow traits to be applied
 to shapes outside of a shape's definition. This is done using an
-:token:`apply <apply_statement>` statement in the IDL, or the
+:token:`apply <smithy:apply_statement>` statement in the IDL, or the
 :ref:`apply <ast-apply>` type in the JSON AST. For example, this can be
 useful to allow different teams within the same organization to independently
 own different facets of a model; a service team could own the model that
@@ -2360,7 +2360,7 @@ Trait node values
 The value provided for a trait MUST be compatible with the ``shape`` of the
 trait. The following table defines each shape type that is available to
 target from traits and how their values are defined in
-:token:`node <node_value>` values.
+:token:`node <smithy:node_value>` values.
 
 .. list-table::
     :header-rows: 1

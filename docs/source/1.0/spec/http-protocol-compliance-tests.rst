@@ -89,7 +89,7 @@ that support the following members:
       - **Required**. The identifier of the test case. This identifier can
         be used by protocol test implementations to filter out unsupported
         test cases by ID, to generate test case names, etc. The provided
-        ``id`` MUST match Smithy's :token:`identifier` ABNF. No two
+        ``id`` MUST match Smithy's :token:`smithy:identifier` ABNF. No two
         ``httpRequestTests`` test cases can share the same ID.
     * - protocol
       - shape ID
@@ -412,7 +412,7 @@ structures that support the following members:
       - **Required**. The identifier of the test case. This identifier can
         be used by protocol test implementations to filter out unsupported
         test cases by ID, to generate test case names, etc. The provided
-        ``id`` MUST match Smithy's :token:`identifier` ABNF. No two
+        ``id`` MUST match Smithy's :token:`smithy:identifier` ABNF. No two
         ``httpResponseTests`` test cases can share the same ID.
     * - protocol
       - ``string``

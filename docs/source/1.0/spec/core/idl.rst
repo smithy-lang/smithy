@@ -25,7 +25,7 @@ The Smithy IDL is made up of 3, ordered sections, each of which is optional:
 2. **Metadata section**; applies metadata to the entire model.
 3. **Shape section**; where shapes and traits are defined. A namespace MUST
    be defined before any shapes or traits can be defined.
-   :token:`use_statement`\s can be defined after a namespace and before shapes
+   :token:`smithy:use_statement`\s can be defined after a namespace and before shapes
    or traits to refer to shapes in other namespaces using a shorter name.
 
 The following example defines a model file with each section:
@@ -229,8 +229,8 @@ The Smithy IDL is defined by the following ABNF:
 Comments
 --------
 
-A :token:`comment <comment>` can appear at any place between tokens where
-whitespace (:token:`ws`) can appear. Comments in Smithy are defined using two
+A :token:`comment <smithy:comment>` can appear at any place between tokens where
+whitespace (:token:`smithy:ws`) can appear. Comments in Smithy are defined using two
 forward slashes followed by any character. A newline terminates a comment.
 
 .. code-block:: smithy
@@ -253,8 +253,8 @@ forward slashes followed by any character. A newline terminates a comment.
 Control section
 ---------------
 
-The :token:`control section <control_section>` of a model contains
-:token:`control statements <control_statement>` that apply parser directives
+The :token:`control section <smithy:control_section>` of a model contains
+:token:`control statements <smithy:control_statement>` that apply parser directives
 to a *specific IDL file*. Because control statements influence parsing, they
 MUST appear at the beginning of a file before any other statements and have
 no effect on the :ref:`semantic model <semantic-model>`
@@ -328,10 +328,10 @@ supported by the tool loading the models.
 Metadata section
 ----------------
 
-The :token:`metadata section <metadata_section>` is used to apply untyped
-:ref:`metadata <metadata>` to the entire model. A :token:`metadata_statement`
+The :token:`metadata section <smithy:metadata_section>` is used to apply untyped
+:ref:`metadata <metadata>` to the entire model. A :token:`smithy:metadata_statement`
 consists of the metadata key to set, followed by ``=``, followed by the
-:token:`node value <node_value>` to assign to the key.
+:token:`node value <smithy:node_value>` to assign to the key.
 
 The following example defines metadata in the model:
 
@@ -357,7 +357,7 @@ The following example defines metadata in the model:
 Shape section
 -------------
 
-The :token:`shape section <shape_section>` of the IDL is used to define
+The :token:`shape section <smithy:shape_section>` of the IDL is used to define
 shapes and apply traits to shapes.
 
 
@@ -367,7 +367,7 @@ Namespaces
 ==========
 
 Shapes can only be defined after a namespace is declared. A namespace is
-declared using a :token:`namespace statement <namespace_statement>`. Only
+declared using a :token:`namespace statement <smithy:namespace_statement>`. Only
 one namespace can appear per file.
 
 The following example defines a string shape named ``MyString`` in the
@@ -398,9 +398,9 @@ The following example defines a string shape named ``MyString`` in the
 Referring to shapes
 ===================
 
-The :token:`use section <use_section>` of the IDL is used to import shapes
+The :token:`use section <smithy:use_section>` of the IDL is used to import shapes
 into the current namespace so that they can be referred to using a
-:ref:`relative shape ID <relative-shape-id>`. The :token:`use_statement <use_statement>`\s
+:ref:`relative shape ID <relative-shape-id>`. The :token:`use_statement <smithy:use_statement>`\s
 that make up this section have no effect on the :ref:`semantic model <semantic-model>`.
 
 The following example uses ``smithy.example#Foo`` and ``smithy.example#Baz``
@@ -448,7 +448,7 @@ Relative shape ID resolution
 
 Relative shape IDs are resolved using the following process:
 
-#. If a :token:`use_statement` has imported a shape with the same name,
+#. If a :token:`smithy:use_statement` has imported a shape with the same name,
    the shape ID resolves to the imported shape ID.
 #. If a shape is defined in the same namespace as the shape with the same name,
    the namespace of the shape resolves to the *current namespace*.
@@ -627,7 +627,7 @@ reference can be ignored.
 Defining shapes
 ===============
 
-Shapes are defined using a :token:`shape_statement`.
+Shapes are defined using a :token:`smithy:shape_statement`.
 
 
 .. _idl-simple:
@@ -636,7 +636,7 @@ Simple shapes
 -------------
 
 :ref:`Simple shapes <simple-types>` are defined using a
-:token:`simple_shape_statement`.
+:token:`smithy:simple_shape_statement`.
 
 The following example defines a ``string`` shape:
 
@@ -693,7 +693,7 @@ The following example defines an ``integer`` shape with a :ref:`range-trait`:
 List shapes
 -----------
 
-A :ref:`list <list>` shape is defined using a :token:`list_statement`.
+A :ref:`list <list>` shape is defined using a :token:`smithy:list_statement`.
 
 The following example defines a list with a string member from the
 :ref:`prelude <prelude>`:
@@ -768,7 +768,7 @@ Traits can be applied to the list shape and its member:
 Set shapes
 ----------
 
-A :ref:`set <set>` set shape is defined using a :token:`set_statement`.
+A :ref:`set <set>` set shape is defined using a :token:`smithy:set_statement`.
 
 The following example defines a set of strings:
 
@@ -833,7 +833,7 @@ Traits can be applied to the set shape and its members:
 Map shapes
 ----------
 
-A :ref:`map <map>` shape is defined using a :token:`map_statement`.
+A :ref:`map <map>` shape is defined using a :token:`smithy:map_statement`.
 
 The following example defines a map of strings to integers:
 
@@ -921,7 +921,7 @@ Structure shapes
 ----------------
 
 A :ref:`structure <structure>` shape is defined using a
-:token:`structure_statement`.
+:token:`smithy:structure_statement`.
 
 The following example defines a structure with two members:
 
@@ -1010,7 +1010,7 @@ Traits can be applied to structure members:
 Union shapes
 ------------
 
-A :ref:`union <union>` shape is defined using a :token:`union_statement`.
+A :ref:`union <union>` shape is defined using a :token:`smithy:union_statement`.
 
 The following example defines a union shape with several members:
 
@@ -1060,8 +1060,8 @@ The following example defines a union shape with several members:
 Service shape
 -------------
 
-A service shape is defined using a :token:`service_statement` and the provided
-:token:`node_object` supports the same properties defined in the
+A service shape is defined using a :token:`smithy:service_statement` and the provided
+:token:`smithy:node_object` supports the same properties defined in the
 :ref:`service specification <service>`.
 
 The following example defines a service named ``ModelRepository`` that binds
@@ -1106,8 +1106,8 @@ a resource named ``Model`` and an operation named ``PingService``:
 Operation shape
 ---------------
 
-An operation shape is defined using an :token:`operation_statement` and the
-provided :token:`node_object` supports the same properties defined in the
+An operation shape is defined using an :token:`smithy:operation_statement` and the
+provided :token:`smithy:node_object` supports the same properties defined in the
 :ref:`operation specification <operation>`.
 
 The following example defines an operation shape that accepts an input
@@ -1158,8 +1158,8 @@ can potentially return the ``Unavailable`` or ``BadRequest``
 Resource shape
 --------------
 
-A resource shape is defined using a :token:`resource_statement` and the
-provided :token:`node_object` supports the same properties defined in the
+A resource shape is defined using a :token:`smithy:resource_statement` and the
+provided :token:`smithy:node_object` supports the same properties defined in the
 :ref:`resource specification <resource>`.
 
 The following example defines a resource shape that has a single identifier,
@@ -1203,7 +1203,8 @@ and defines a :ref:`read <read-lifecycle>` operation:
 Documentation comment
 =====================
 
-:token:`Documentation comments <documentation_comment>` are a special kind of :token:`comment` that provide
+:token:`Documentation comments <smithy:documentation_comment>` are a
+special kind of :token:`smithy:comment` that provide
 :ref:`documentation <documentation-trait>` for shapes. A documentation
 comment is formed when three forward slashes (``"///"``) appear as the
 first non-whitespace characters on a line.
@@ -1294,7 +1295,7 @@ Applying traits
 ===============
 
 Trait values immediately preceding a shape definition are applied to the
-shape. The shape ID of a trait is *resolved* against :token:`use_statement`\s
+shape. The shape ID of a trait is *resolved* against :token:`smithy:use_statement`\s
 and the current namespace in exactly the same same way as
 :ref:`other shape IDs <relative-shape-id>`.
 
@@ -1425,7 +1426,7 @@ List and set trait values
 -------------------------
 
 Traits that are a ``list`` or ``set`` shape are defined inside
-of brackets (``[``) and (``]``) using a :token:`node_array` production.
+of brackets (``[``) and (``]``) using a :token:`smithy:node_array` production.
 
 .. code-block:: smithy
 
@@ -1451,7 +1452,7 @@ Apply statement
 ---------------
 
 Traits can be applied to shapes outside of a shape's definition using an
-:token:`apply_statement`.
+:token:`smithy:apply_statement`.
 
 The following example applies the :ref:`documentation-trait` and
 :ref:`length-trait` to the ``smithy.example#MyString`` shape:
@@ -1538,8 +1539,8 @@ node value:
 
 .. rubric:: Array node
 
-An array node is defined like a JSON array. A :token:`node_array` contains
-zero or more heterogeneous :token:`node_value`\s. A trailing comma is allowed
+An array node is defined like a JSON array. A :token:`smithy:node_array` contains
+zero or more heterogeneous :token:`smithy:node_value`\s. A trailing comma is allowed
 in a ``node_array``.
 
 The following examples define arrays with zero, one, and two values:
@@ -1550,9 +1551,9 @@ The following examples define arrays with zero, one, and two values:
 
 .. rubric:: Object node
 
-An object node is defined like a JSON object. A :token:`node_object` contains
-zero or more key value pairs of strings (a :token:`node_object_key`) that map
-to heterogeneous :token:`node_value`\s. A trailing comma is allowed
+An object node is defined like a JSON object. A :token:`smithy:node_object` contains
+zero or more key value pairs of strings (a :token:`smithy:node_object_key`) that map
+to heterogeneous :token:`smithy:node_value`\s. A trailing comma is allowed
 in a ``node_object``.
 
 The following examples define objects with zero, one, and two key value pairs:
@@ -1563,7 +1564,7 @@ The following examples define objects with zero, one, and two key value pairs:
 
 .. rubric:: Number node
 
-A node :token:`number` contains numeric data. It is defined like a JSON
+A node :token:`smithy:number` contains numeric data. It is defined like a JSON
 number. The following examples define several ``number`` values:
 
 * ``0``
@@ -1575,7 +1576,7 @@ number. The following examples define several ``number`` values:
 
 .. rubric:: Node keywords
 
-Several keywords are used when parsing :token:`node_value`.
+Several keywords are used when parsing :token:`smithy:node_value`.
 
 * ``true``: The value is treated as a boolean ``true``
 * ``false``: The value is treated as a boolean ``false``
@@ -1585,7 +1586,7 @@ Several keywords are used when parsing :token:`node_value`.
 String values
 =============
 
-A ``node_value`` can contain :token:`node_string_value` productions that all
+A ``node_value`` can contain :token:`smithy:node_string_value` productions that all
 define strings.
 
 .. rubric:: New lines
