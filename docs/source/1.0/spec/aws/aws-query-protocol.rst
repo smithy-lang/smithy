@@ -146,9 +146,9 @@ resolved using the following process:
        * - ``map`` value
          - The string literal "value"
        * - ``structure`` member
-         - The :token:`member name <shape_id_member>`
+         - The :token:`member name <smithy:shape_id_member>`
        * - ``union`` member
-         - The :token:`member name <shape_id_member>`
+         - The :token:`member name <smithy:shape_id_member>`
 
 
 Example requests
@@ -438,7 +438,7 @@ following process:
 
 1. Use the value of the ``code`` member of the :ref:`aws.protocols#awsQueryError-trait`
    applied to the error structure, if present.
-2. The :token:`shape name <identifier>` of the error's :ref:`shape-id`.
+2. The :token:`shape name <smithy:identifier>` of the error's :ref:`shape-id`.
 
 
 .. smithy-trait:: aws.protocols#awsQuery
