@@ -1,0 +1,20 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "com.example#Operation": {
+            "type": "operation",
+            "input": {
+                "target": "com.example#OperationRequest"
+            },
+            "output": {
+                "target": "com.example#OperationResponse"
+            }
+        },
+        "com.example#OperationRequest": {
+            "type": "structure"
+        },
+        "com.example#OperationResponse": {
+            "type": "structure"
+        }
+    }
+}
