@@ -40,6 +40,24 @@
                 "smithy.api#documentation": "The documentation\nof this trait!",
                 "smithy.api#trait": {}
             }
+        },
+        "smithy.example#MyOperation": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.example#MyOperationInput"
+            },
+            "output": {
+                "target": "smithy.example#MyOperationOutput"
+            }
+        },
+        "smithy.example#MyOperationInput": {
+            "type": "structure"
+        },
+        "smithy.example#MyOperationOutput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#documentation": "These are not ignored because they come AFTER the walrus\noperator."
+            }
         }
     }
 }
