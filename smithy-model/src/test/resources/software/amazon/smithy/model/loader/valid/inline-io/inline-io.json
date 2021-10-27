@@ -1,0 +1,184 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "com.example#DerivedNames": {
+            "type": "operation",
+            "input": {
+                "target": "com.example#DerivedNamesInput"
+            },
+            "output": {
+                "target": "com.example#DerivedNamesOutput"
+            }
+        },
+        "com.example#DerivedNamesInput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "com.example#DerivedNamesOutput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "com.example#UsesTraits": {
+            "type": "operation",
+            "input": {
+                "target": "com.example#UsesTraitsInput"
+            },
+            "output": {
+                "target": "com.example#UsesTraitsOutput"
+            }
+        },
+        "com.example#UsesTraitsInput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#sensitive": {}
+            }
+        },
+        "com.example#UsesTraitsOutput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#sensitive": {}
+            }
+        },
+        "com.example#NameBearer": {
+            "type": "structure",
+            "members": {
+                "name": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "com.example#UsesMixins": {
+            "type": "operation",
+            "input": {
+                "target": "com.example#UsesMixinsInput"
+            },
+            "output": {
+                "target": "com.example#UsesMixinsOutput"
+            }
+        },
+        "com.example#UsesMixinsInput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "mixins": [
+                {
+                    "target": "com.example#NameBearer"
+                }
+            ]
+        },
+        "com.example#UsesMixinsOutput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "mixins": [
+                {
+                    "target": "com.example#NameBearer"
+                }
+            ]
+        },
+        "com.example#UsesTraitsAndMixins": {
+            "type": "operation",
+            "input": {
+                "target": "com.example#UsesTraitsAndMixinsInput"
+            },
+            "output": {
+                "target": "com.example#UsesTraitsAndMixinsOutput"
+            }
+        },
+        "com.example#UsesTraitsAndMixinsInput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#sensitive": {}
+            },
+            "mixins": [
+                {
+                    "target": "com.example#NameBearer"
+                }
+            ]
+        },
+        "com.example#UsesTraitsAndMixinsOutput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#sensitive": {}
+            },
+            "mixins": [
+                {
+                    "target": "com.example#NameBearer"
+                }
+            ]
+        },
+        "com.example#EmptyShapes": {
+            "type": "operation",
+            "input": {
+                "target": "com.example#EmptyShapesInput"
+            },
+            "output": {
+                "target": "com.example#EmptyShapesOutput"
+            }
+        },
+        "com.example#EmptyShapesInput": {
+            "type": "structure"
+        },
+        "com.example#EmptyShapesOutput": {
+            "type": "structure"
+        },
+        "com.example#HasDocComments": {
+            "type": "operation",
+            "input": {
+                "target": "com.example#HasDocCommentsInput"
+            },
+            "output": {
+                "target": "com.example#HasDocCommentsOutput"
+            }
+        },
+        "com.example#HasDocCommentsInput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#documentation": "The trait parser automagically handles these"
+            }
+        },
+        "com.example#HasDocCommentsOutput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#documentation": "Here too"
+            }
+        }
+    }
+}
