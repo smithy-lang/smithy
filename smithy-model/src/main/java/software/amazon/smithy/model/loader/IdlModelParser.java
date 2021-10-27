@@ -112,6 +112,9 @@ final class IdlModelParser extends SimpleParser {
     private final String filename;
     private TraitEntry pendingDocumentationComment;
 
+    private String operationInputSuffix = "Input";
+    private String operationOutputSuffix = "Output";
+
     // A pending trait that also doesn't yet have a resolved trait shape ID.
     static final class TraitEntry {
         final String traitName;
@@ -181,6 +184,7 @@ final class IdlModelParser extends SimpleParser {
     }
 
     private void parseControlSection() {
+        Set<String> definedKeys = new HashSet<>();
         while (peek() == '$') {
             expect('$');
             ws();
@@ -189,15 +193,19 @@ final class IdlModelParser extends SimpleParser {
             expect(':');
             ws();
 
-            // Validation here for better error location.
-            if (key.equals("version") && modelFile.getVersion() != Version.UNKNOWN) {
-                throw syntax("Cannot define multiple versions in the same file");
+            if (definedKeys.contains(key)) {
+                throw syntax(format("Duplicate control statement `%s`", key));
             }
+            definedKeys.add(key);
 
             Node value = IdlNodeParser.parseNode(this);
 
             if (key.equals("version")) {
                 onVersion(value);
+            } else if (key.equals("operationInputSuffix")) {
+                operationInputSuffix = value.expectStringNode().getValue();
+            } else if (key.equals("operationOutputSuffix")) {
+                operationOutputSuffix = value.expectStringNode().getValue();
             } else {
                 modelFile.events().add(ValidationEvent.builder()
                         .id(Validator.MODEL_ERROR)
@@ -519,6 +527,12 @@ final class IdlModelParser extends SimpleParser {
 
         ws();
         expect(':');
+
+        if (peek() == '=') {
+            throw syntax("Defining structures inline with the `:=` syntax may only be used when "
+                    + "defining operation input and output shapes.");
+        }
+
         ws();
         ShapeId memberId = parent.withMember(memberName);
         MemberShape.Builder memberBuilder = MemberShape.builder().id(memberId).source(memberLocation);
@@ -570,37 +584,119 @@ final class IdlModelParser extends SimpleParser {
         ws();
 
         // Parse optional "with" statements to add mixins, but only if it's supported by the version.
-        if (peek() == 'w') {
-            expect('w');
-            expect('i');
-            expect('t');
-            expect('h');
-
-            if (!modelFile.getVersion().supportsMixins()) {
-                throw syntax(id, "Mixins can only be used with Smithy version 2 or later. "
-                                 + "Attempted to use mixins with version `" + modelFile.getVersion() + "`.");
-            }
-
-            ws();
-            do {
-                String target = ParserUtils.parseShapeId(this);
-                modelFile.addForwardReference(target, resolved -> modelFile.addPendingMixin(id, resolved));
-                ws();
-            } while (peek() != '{');
-        }
-
+        parseMixins(id);
         parseMembers(id, Collections.emptySet(), structureMember);
     }
 
-    private void parseOperationStatement(ShapeId id, SourceLocation location) {
+    private void parseMixins(ShapeId id) {
+        if (peek() != 'w') {
+            return;
+        }
+
+        expect('w');
+        expect('i');
+        expect('t');
+        expect('h');
+
+        if (!modelFile.getVersion().supportsMixins()) {
+            throw syntax(id, "Mixins can only be used with Smithy version 2 or later. "
+                    + "Attempted to use mixins with version `" + modelFile.getVersion() + "`.");
+        }
+
         ws();
+        do {
+            String target = ParserUtils.parseShapeId(this);
+            modelFile.addForwardReference(target, resolved -> modelFile.addPendingMixin(id, resolved));
+            ws();
+        } while (peek() != '{');
+    }
+
+    private void parseOperationStatement(ShapeId id, SourceLocation location) {
         OperationShape.Builder builder = OperationShape.builder().id(id).source(location);
-        ObjectNode node = IdlNodeParser.parseObjectNode(this, id.toString());
-        LoaderUtils.checkForAdditionalProperties(node, id, OPERATION_PROPERTY_NAMES, modelFile.events());
+        parseProperties(id, propertyName -> {
+            switch (propertyName) {
+                case "input":
+                    parseInlineableOperationMember(id, operationInputSuffix, builder::input);
+                    break;
+                case "output":
+                    parseInlineableOperationMember(id, operationOutputSuffix, builder::output);
+                    break;
+                case "errors":
+                    parseIdList(builder::addError);
+                    break;
+                default:
+                    throw syntax(id, String.format("Unknown property %s for %s", propertyName, id));
+            }
+        });
         modelFile.onShape(builder);
-        optionalId(node, "input", builder::input);
-        optionalId(node, "output", builder::output);
-        optionalIdList(node, ERRORS_KEYS, builder::addError);
+    }
+
+    private void parseProperties(ShapeId id, Consumer<String> valueParser) {
+        ws();
+        expect('{');
+        ws();
+
+        Set<String> defined = new HashSet<>();
+        while (!eof() && peek() != '}') {
+            String key = IdlNodeParser.parseNodeObjectKey(this);
+            if (defined.contains(key)) {
+                throw syntax(id, String.format("Duplicate %s binding for %s", key, id));
+            }
+            defined.add(key);
+
+            ws();
+            expect(':');
+            valueParser.accept(key);
+            ws();
+        }
+
+        expect('}');
+    }
+
+    private void parseInlineableOperationMember(ShapeId id, String suffix, Consumer<ShapeId> consumer) {
+        if (peek() == '=') {
+            if (!modelFile.getVersion().supportsInlineOperationIO()) {
+                throw syntax(id, "Inlined operation inputs and outputs can only be used with Smithy version 2 or "
+                        + "later. Attempted to use inlined IO with version `" + modelFile.getVersion() + "`.");
+            }
+            expect('=');
+            clearPendingDocs();
+            ws();
+            consumer.accept(parseInlineStructure(id.getName() + suffix));
+        } else {
+            ws();
+            modelFile.addForwardReference(ParserUtils.parseShapeId(this), consumer);
+        }
+    }
+
+    private ShapeId parseInlineStructure(String name) {
+        List<TraitEntry> traits = parseDocsAndTraits();
+        ShapeId id = ShapeId.fromRelative(modelFile.namespace(), name);
+        SourceLocation location = currentLocation();
+        parseMixins(id);
+        StructureShape.Builder builder = StructureShape.builder().id(id).source(location);
+
+        modelFile.onShape(builder);
+        parseMembers(id, Collections.emptySet(), true);
+        addTraits(id, traits);
+        clearPendingDocs();
+        ws();
+        return id;
+    }
+
+    private void parseIdList(Consumer<ShapeId> consumer) {
+        increaseNestingLevel();
+        ws();
+        expect('[');
+        ws();
+
+        while (!eof() && peek() != ']') {
+            modelFile.addForwardReference(ParserUtils.parseShapeId(this), consumer);
+            ws();
+        }
+
+        expect(']');
+        decreaseNestingLevel();
     }
 
     private void parseServiceStatement(ShapeId id, SourceLocation location) {
