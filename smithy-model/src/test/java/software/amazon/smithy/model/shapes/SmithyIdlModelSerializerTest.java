@@ -45,7 +45,7 @@ public class SmithyIdlModelSerializerTest {
         }
 
         String serializedString = serialized.entrySet().iterator().next().getValue();
-        Assertions.assertEquals(serializedString, IoUtils.readUtf8File(path).replaceAll("\\R", "\n"));
+        Assertions.assertEquals(IoUtils.readUtf8File(path).replaceAll("\\R", "\n"), serializedString);
     }
 
     @Test

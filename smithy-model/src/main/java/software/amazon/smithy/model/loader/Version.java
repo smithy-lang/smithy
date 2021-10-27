@@ -83,6 +83,15 @@ enum Version {
     }
 
     /**
+     * Checks if this version of the IDL supports inlined operation IO shapes.
+     *
+     * @return Returns true if this version supports inlined operation IO shapes.
+     */
+    boolean supportsInlineOperationIO() {
+        return this == VERSION_1_1 || this == VERSION_2_0;
+    }
+
+    /**
      * Perform version-specific trait validation.
      *
      * @param target Shape the trait is applied to.

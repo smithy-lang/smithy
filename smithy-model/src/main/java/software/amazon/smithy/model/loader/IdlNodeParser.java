@@ -135,6 +135,10 @@ final class IdlNodeParser {
                 String key = parseNodeObjectKey(parser);
                 parser.ws();
                 parser.expect(':');
+                if (parser.peek() == '=') {
+                    throw parser.syntax("The `:=` syntax may only be used when defining inline operation input and "
+                            + "output shapes.");
+                }
                 parser.ws();
                 Node value = parseNode(parser);
                 StringNode keyNode = new StringNode(key, keyLocation);

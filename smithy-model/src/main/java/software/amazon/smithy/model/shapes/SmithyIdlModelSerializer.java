@@ -145,13 +145,37 @@ public final class SmithyIdlModelSerializer {
         SmithyCodeWriter codeWriter = new SmithyCodeWriter(namespace, fullModel);
         NodeSerializer nodeSerializer = new NodeSerializer(codeWriter, fullModel);
 
-        ShapeSerializer shapeSerializer = new ShapeSerializer(codeWriter, nodeSerializer, traitFilter, fullModel);
+        Set<ShapeId> inlineableShapes = getInlineableShapes(fullModel, shapes);
+        ShapeSerializer shapeSerializer = new ShapeSerializer(
+                codeWriter, nodeSerializer, traitFilter, fullModel, inlineableShapes);
         shapes.stream()
                 .filter(FunctionalUtils.not(Shape::isMemberShape))
+                .filter(shape -> !inlineableShapes.contains(shape.getId()))
                 .sorted(new ShapeComparator())
                 .forEach(shape -> shape.accept(shapeSerializer));
 
         return serializeHeader(fullModel, namespace) + codeWriter.toString();
+    }
+
+    private Set<ShapeId> getInlineableShapes(Model fullModel, Collection<Shape> shapes) {
+        Set<ShapeId> inlineableShapes = new HashSet<>();
+        for (Shape shape : shapes) {
+            if (!shape.isOperationShape()) {
+                continue;
+            }
+            OperationShape operation = shape.asOperationShape().get();
+            operation.getInput().ifPresent(shapeId -> {
+                if (shapes.contains(fullModel.expectShape(shapeId))) {
+                    inlineableShapes.add(shapeId);
+                }
+            });
+            operation.getOutput().ifPresent(shapeId -> {
+                if (shapes.contains(fullModel.expectShape(shapeId))) {
+                    inlineableShapes.add(shapeId);
+                }
+            });
+        }
+        return inlineableShapes;
     }
 
     private String serializeHeader(Model fullModel, String namespace) {
@@ -342,17 +366,20 @@ public final class SmithyIdlModelSerializer {
         private final NodeSerializer nodeSerializer;
         private final Predicate<Trait> traitFilter;
         private final Model model;
+        private final Set<ShapeId> inlineableShapes;
 
         ShapeSerializer(
                 SmithyCodeWriter codeWriter,
                 NodeSerializer nodeSerializer,
                 Predicate<Trait> traitFilter,
-                Model model
+                Model model,
+                Set<ShapeId> inlineableShapes
         ) {
             this.codeWriter = codeWriter;
             this.nodeSerializer = nodeSerializer;
             this.traitFilter = traitFilter;
             this.model = model;
+            this.inlineableShapes = inlineableShapes;
         }
 
         @Override
@@ -380,6 +407,13 @@ public final class SmithyIdlModelSerializer {
             serializeTraits(shape.getIntroducedTraits());
             codeWriter.writeInline("$L $L ", shape.getType(), shape.getId().getName());
 
+            writeMixins(shape, !nonMixinMembers.isEmpty());
+            writeShapeMembers(nonMixinMembers, structureMember);
+            codeWriter.write("");
+            applyIntroducedTraits(mixinMembers);
+        }
+
+        private void writeMixins(Shape shape, boolean hasNonMixinMembers) {
             if (shape.getMixins().size() == 1) {
                 codeWriter.writeInline("with $I ", shape.getMixins().iterator().next());
             } else if (shape.getMixins().size() > 1) {
@@ -388,39 +422,41 @@ public final class SmithyIdlModelSerializer {
                     // Trailing spaces are trimmed.
                     codeWriter.writeInline("\n    $I ", id);
                 }
-                if (!nonMixinMembers.isEmpty()) {
+                if (hasNonMixinMembers) {
                     codeWriter.write("");
                 }
             }
+        }
 
-            if (nonMixinMembers.isEmpty()) {
+        private void writeShapeMembers(Collection<MemberShape> members, boolean isStructure) {
+            if (members.isEmpty()) {
                 // When the are no members to write, put "{}" on the same line.
-                codeWriter.writeInline("{}").write("").write("");
+                codeWriter.writeInline("{}").write("");
             } else {
                 codeWriter.openBlock("{", "}", () -> {
-                    for (MemberShape member : nonMixinMembers) {
+                    for (MemberShape member : members) {
                         // Omit required traits and instead use "!" syntax.
                         serializeTraits(member.getAllTraits(), TraitFeature.OMIT_REQUIRED);
                         // Suffix with "!" if it's a required structure member.
-                        String requiredSuffix = structureMember && member.isRequired() ? "!" : "";
+                        String requiredSuffix = isStructure && member.isRequired() ? "!" : "";
                         codeWriter.write("$L: $I$L", member.getMemberName(), member.getTarget(), requiredSuffix);
                     }
-                }).write("");
+                });
+            }
+        }
 
-                if (!mixinMembers.isEmpty()) {
-                    for (MemberShape member : mixinMembers) {
-                        // Use short form for a single trait, and block form for multiple traits.
-                        if (member.getIntroducedTraits().size() == 1) {
-                            codeWriter.writeInline("apply $I ", member.getId());
-                            serializeTraits(member.getIntroducedTraits(), TraitFeature.NO_SPECIAL_DOCS_SYNTAX);
-                            codeWriter.write("");
-                        } else {
-                            codeWriter.openBlock("apply $I {", "}", member.getId(), () -> {
-                                // Only serialize local traits, and don't use special documentation syntax here.
-                                serializeTraits(member.getIntroducedTraits(), TraitFeature.NO_SPECIAL_DOCS_SYNTAX);
-                            }).write("");
-                        }
-                    }
+        private void applyIntroducedTraits(Collection<MemberShape> members) {
+            for (MemberShape member : members) {
+                // Use short form for a single trait, and block form for multiple traits.
+                if (member.getIntroducedTraits().size() == 1) {
+                    codeWriter.writeInline("apply $I ", member.getId());
+                    serializeTraits(member.getIntroducedTraits(), TraitFeature.NO_SPECIAL_DOCS_SYNTAX);
+                    codeWriter.write("");
+                } else if (!member.getIntroducedTraits().isEmpty()) {
+                    codeWriter.openBlock("apply $I {", "}", member.getId(), () -> {
+                        // Only serialize local traits, and don't use special documentation syntax here.
+                        serializeTraits(member.getIntroducedTraits(), TraitFeature.NO_SPECIAL_DOCS_SYNTAX);
+                    }).write("");
                 }
             }
         }
@@ -570,16 +606,57 @@ public final class SmithyIdlModelSerializer {
             }
 
             codeWriter.openBlock("operation $L {", shape.getId().getName());
-            shape.getInput().ifPresent(shapeId -> codeWriter.write("input: $I", shapeId));
-            shape.getOutput().ifPresent(shapeId -> codeWriter.write("output: $I", shapeId));
+            List<MemberShape> mixinMembers = new ArrayList<>();
+            shape.getInput().ifPresent(shapeId -> {
+                mixinMembers.addAll(writeInlineableProperty("input", shapeId, shape.getId().getName() + "Input"));
+            });
+            shape.getOutput().ifPresent(shapeId -> {
+                mixinMembers.addAll(writeInlineableProperty("output", shapeId, shape.getId().getName() + "Output"));
+            });
             codeWriter.writeOptionalIdList("errors", shape.getErrors());
             codeWriter.closeBlock("}");
             codeWriter.write("");
+            applyIntroducedTraits(mixinMembers);
             return null;
         }
 
         private boolean isEmptyOperation(OperationShape shape) {
             return !(shape.getInput().isPresent() || shape.getOutput().isPresent() || !shape.getErrors().isEmpty());
+        }
+
+        private Collection<MemberShape> writeInlineableProperty(String key, ShapeId shapeId, String defaultName) {
+            if (!inlineableShapes.contains(shapeId)) {
+                codeWriter.write("$L: $I", key, shapeId);
+                return Collections.emptyList();
+            }
+
+            StructureShape structure = model.expectShape(shapeId, StructureShape.class);
+            if (structure.getAllTraits().isEmpty()) {
+                codeWriter.writeInline("$L := ", key);
+            } else {
+                codeWriter.write("$L := ", key);
+                codeWriter.indent();
+                serializeTraits(structure);
+            }
+
+            List<MemberShape> nonMixinMembers = new ArrayList<>();
+            List<MemberShape> mixinMembers = new ArrayList<>();
+            for (MemberShape member : structure.members()) {
+                if (member.getMixins().isEmpty()) {
+                    nonMixinMembers.add(member);
+                } else if (!member.getIntroducedTraits().isEmpty()) {
+                    mixinMembers.add(member);
+                }
+            }
+
+            writeMixins(structure, !nonMixinMembers.isEmpty());
+            writeShapeMembers(nonMixinMembers, true);
+
+            if (!structure.getAllTraits().isEmpty()) {
+                codeWriter.dedent();
+            }
+
+            return mixinMembers;
         }
     }
 

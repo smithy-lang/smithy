@@ -49,8 +49,8 @@ resource SubResource {
 operation EmptyOperation {}
 
 operation MyOperation {
-    input: InputOutput
-    output: InputOutput
+    input := {}
+    output := {}
     errors: [
         Error
     ]
@@ -58,19 +58,17 @@ operation MyOperation {
 
 @readonly
 operation ReadonlyResourceOperation {
-    input: ResourceOperationInput
+    input := {
+        id: String
+    }
 }
 
 @idempotent
 operation ResourceOperation {
-    input: ResourceOperationInput
+    input := {
+        id: String
+    }
 }
 
 @error("client")
 structure Error {}
-
-structure InputOutput {}
-
-structure ResourceOperationInput {
-    id: String
-}
