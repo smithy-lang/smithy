@@ -1,3 +1,4 @@
+$version: "2.0"
 /// This comment is ignored.
 namespace smithy.example
 
@@ -31,6 +32,18 @@ structure MyStructure {
 structure MyTrait {
     /// These are treated as comments.
     /// more...
+}
+
+operation MyOperation {
+    input
+        /// These docs are ignored because they come BEFORE the walrus
+        /// operator.
+        := {}
+
+    output :=
+        /// These are not ignored because they come AFTER the walrus
+        /// operator.
+        {}
 }
 
 /// This is treated as a comment.
