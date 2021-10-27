@@ -52,8 +52,8 @@ operation EmptyOperation {
 }
 
 operation MyOperation {
-    input: InputOutput
-    output: InputOutput
+    input := {}
+    output := {}
     errors: [
         Error
     ]
@@ -61,21 +61,19 @@ operation MyOperation {
 
 @readonly
 operation ReadonlyResourceOperation {
-    input: ResourceOperationInput
+    input := {
+        id: String
+    }
     output: Unit
 }
 
 @idempotent
 operation ResourceOperation {
-    input: ResourceOperationInput
+    input := {
+        id: String
+    }
     output: Unit
 }
 
 @error("client")
 structure Error {}
-
-structure InputOutput {}
-
-structure ResourceOperationInput {
-    id: String
-}
