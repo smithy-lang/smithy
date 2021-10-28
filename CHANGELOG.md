@@ -1,5 +1,37 @@
 # Smithy Changelog
 
+## 1.13.0 (2021-10-29)
+
+### Features
+
+* Added a `filterSuppressions` model transform. ([#940](https://github.com/awslabs/smithy/pull/940))
+* Updated selector attributes to be stricter. ([#946](https://github.com/awslabs/smithy/pull/946))
+* Added support for generating the `required` property when generating CloudFormation Resource Schemas. ([#937](https://github.com/awslabs/smithy/pull/937))
+* Added support for generating the `handlers` property when generating CloudFormation Resource Schemas. ([#939](https://github.com/awslabs/smithy/pull/939))
+* Added the `@aws.iam#iamResource` trait to indicate properties of a Smithy resource in AWS IAM. ([#948](https://github.com/awslabs/smithy/pull/948))
+* Added the `@aws.iam#supportedPrincipleTypes` trait to indicate which IAM principal types can use a service or
+  operation. ([#941](https://github.com/awslabs/smithy/pull/941))
+* Updated model serializers to allow for serializing the prelude. ([#955](https://github.com/awslabs/smithy/pull/955))
+* Updated JSON Schema conversion to maintain property order. ([#932](https://github.com/awslabs/smithy/pull/932))
+* Improved `@httpApiKeyAuth` description when converting to OpenAPI. ([#934](https://github.com/awslabs/smithy/pull/934))
+* Updated the error message received when http request body content issues are encountered. ([#959](https://github.com/awslabs/smithy/pull/959))
+* Updated request tests for `restJson1` query strings. ([#933](https://github.com/awslabs/smithy/pull/933), [#958](https://github.com/awslabs/smithy/pull/958))
+* Added protocol tests for `restJson1` content types. ([#924](https://github.com/awslabs/smithy/pull/924), [#945](https://github.com/awslabs/smithy/pull/945))
+
+### Bug Fixes
+
+* Fixed issues in model loading that required a service `version` property. ([#936](https://github.com/awslabs/smithy/pull/936))
+* Fixed an issue that where CORS headers in OpenAPI conversions were not case-insensitive. ([#950](https://github.com/awslabs/smithy/pull/950))
+* Fixed various issues in protocol tests. ([#930](https://github.com/awslabs/smithy/pull/930), [#933](https://github.com/awslabs/smithy/pull/933),
+  [#935](https://github.com/awslabs/smithy/pull/935), [#944](https://github.com/awslabs/smithy/pull/944), [#949](https://github.com/awslabs/smithy/pull/949),
+  [#954](https://github.com/awslabs/smithy/pull/954))
+
+### Documentation
+
+* Clarified host-related settings in the `@httpRequestTests` trait documentation. ([#951](https://github.com/awslabs/smithy/pull/951))
+* Clarified uri samples and descriptions. ([#960](https://github.com/awslabs/smithy/pull/960))
+* Fixed some issues in documentation. ([#952](https://github.com/awslabs/smithy/pull/952))
+
 ## 1.12.0 (2021-10-05)
 
 ### Features
