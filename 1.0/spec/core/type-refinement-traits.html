@@ -1,28 +1,23 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>5. Type refinement traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx_tabs/tabs.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
     <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
 
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../_static/sphinx_tabs/tabs.js"></script>
-    <script type="text/javascript" src="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/tabs.js"></script>
     <script type="text/javascript" src="../../../_static/smithy.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -70,7 +65,7 @@
                     
                     
   <div class="section" id="type-refinement-traits">
-<h1><a href="#type-refinement-traits">5. Type refinement traits</a></h1>
+<h1><a href="#type-refinement-traits"><span class="section-number">5. </span>Type refinement traits</a></h1>
 <p>Type refinement traits are traits that significantly refine, or change,
 the type of a shape.</p>
 <div class="contents local topic" id="table-of-contents">
@@ -82,50 +77,34 @@ the type of a shape.</p>
 </ul>
 </div>
 <div class="section" id="box-trait">
-<span id="smithy-api-box-trait"></span><span id="id1"></span><h2><a href="#box-trait">5.1. <code class="docutils literal notranslate"><span class="pre">box</span></code> trait</a></h2>
+<span id="smithy-api-box-trait"></span><span id="id1"></span><h2><a href="#box-trait"><span class="section-number">5.1. </span><code class="docutils literal notranslate"><span class="pre">box</span></code> trait</a></h2>
 <dl class="docutils">
-<dt>Summary</dt>
-<dd><p class="first">Indicates that a shape is boxed. When a structure <a class="reference internal" href="model.html#member"><span class="std std-ref">member</span></a> is
+<dt>Summary</dt><dd><p>Indicates that a shape is boxed. When a structure <a class="reference internal" href="model.html#member"><span class="std std-ref">member</span></a> is
 marked with this trait or the shape targeted by a structure member is marked
 with the <code class="docutils literal notranslate"><span class="pre">box</span></code> trait, the member may or may not contain a value, and the
 member has no <a class="reference internal" href="model.html#default-values"><span class="std std-ref">default value</span></a>.</p>
-<p class="last">Boolean, byte, short, integer, long, float, and double shapes are only
+<p>Boolean, byte, short, integer, long, float, and double shapes are only
 considered boxed if they are marked with the <code class="docutils literal notranslate"><span class="pre">box</span></code> trait. All other
 shapes are always considered boxed.</p>
 </dd>
-<dt>Trait selector</dt>
-<dd><div class="first highlight-none notranslate"><div class="highlight"><pre><span></span>:test(boolean, byte, short, integer, long, float, double,
+<dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>:test(boolean, byte, short, integer, long, float, double,
       member &gt; :test(boolean, byte, short, integer, long, float, double))
 </pre></div>
 </div>
-<p class="last"><em>A boolean, byte, short, integer, long, float, double shape or a member that targets one of these shapes</em></p>
+<p><em>A boolean, byte, short, integer, long, float, double shape or a member that targets one of these shapes</em></p>
 </dd>
-<dt>Value type</dt>
-<dd>Annotation trait.</dd>
+<dt>Value type</dt><dd>Annotation trait.</dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">box</span></code> trait is primarily used to influence code generation. For example,
 in Java, this might mean the value provided as the member of an aggregate
 shape can be set to null. In a language like Rust, this might mean the value
 is wrapped in an <a class="reference external" href="https://doc.rust-lang.org/std/option/enum.Option.html">Option type</a>.</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@box</span>
-<span class="kd">integer</span><span class="nc"> BoxedInteger</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@box</span><span class="w"></span>
+<span class="kd">integer</span><span class="nc"> BoxedInteger</span><span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-0-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-0-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#BoxedInteger&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -138,136 +117,83 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 <p>The <a class="reference internal" href="prelude-model.html#prelude"><span class="std std-ref">prelude</span></a> contains predefined simple shapes that can be
 used in all Smithy models, including boxed and unboxed shapes.</p>
 </div>
 <div class="section" id="error-trait">
-<span id="smithy-api-error-trait"></span><span id="id2"></span><h2><a href="#error-trait">5.2. <code class="docutils literal notranslate"><span class="pre">error</span></code> trait</a></h2>
+<span id="smithy-api-error-trait"></span><span id="id2"></span><h2><a href="#error-trait"><span class="section-number">5.2. </span><code class="docutils literal notranslate"><span class="pre">error</span></code> trait</a></h2>
 <dl class="docutils">
-<dt>Summary</dt>
-<dd>Indicates that a structure shape represents an error. All shapes
+<dt>Summary</dt><dd>Indicates that a structure shape represents an error. All shapes
 referenced by the <a class="reference internal" href="model.html#operation"><span class="std std-ref">errors list of an operation</span></a>
 MUST be targeted with this trait.</dd>
-<dt>Trait selector</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
-<dt>Value type</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">string</span></code> that MUST be set to &quot;client&quot; or &quot;server&quot; to indicate if the
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code> that MUST be set to &quot;client&quot; or &quot;server&quot; to indicate if the
 client or server is at fault for the error.</dd>
-<dt>Conflicts with</dt>
-<dd><a class="reference internal" href="model.html#trait-shapes"><span class="std std-ref">trait</span></a></dd>
+<dt>Conflicts with</dt><dd><a class="reference internal" href="model.html#trait-shapes"><span class="std std-ref">trait</span></a></dd>
 </dl>
 <p>The following structure defines a throttling error.</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)
-<span class="kd">structure</span><span class="nc"> ThrottlingError</span> {}
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> ThrottlingError</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 <p>Note that this structure is lacking the <code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait that generically
 lets clients know that the error is retryable.</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)
-<span class="nd">@retryable</span>
-<span class="kd">structure</span><span class="nc"> ThrottlingError</span> {}
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-2-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-2-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-2-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
+<span class="nd">@retryable</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> ThrottlingError</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 <p>When using an HTTP-based protocol, it is recommended to add an
 <a class="reference internal" href="http-traits.html#httperror-trait"><span class="std std-ref">httpError trait</span></a> to use an appropriate HTTP status code with
 the error.</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)
-<span class="nd">@retryable</span>
-<span class="nd">@httpError</span>(<span class="m">429</span>)
-<span class="kd">structure</span><span class="nc"> ThrottlingError</span> {}
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-3-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-3-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-3-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
+<span class="nd">@retryable</span><span class="w"></span>
+<span class="nd">@httpError</span>(<span class="m">429</span>)<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> ThrottlingError</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 <p>The <code class="docutils literal notranslate"><span class="pre">message</span></code> member of an error structure is special-cased. It contains
 the human-readable message that describes the error. If the <code class="docutils literal notranslate"><span class="pre">message</span></code> member
 is not defined in the structure, code generated for the error may not provide
 an idiomatic way to access the error message (e.g., an exception message
 in Java).</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)
-<span class="nd">@retryable</span>
-<span class="nd">@httpError</span>(<span class="m">429</span>)
-<span class="kd">structure</span><span class="nc"> ThrottlingError</span> {
-    <span class="nd">@required</span>
-    <span class="nl">message:</span> <span class="vc">String</span>,
-}
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-4-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-4-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-4-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
+<span class="nd">@retryable</span><span class="w"></span>
+<span class="nd">@httpError</span>(<span class="m">429</span>)<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> ThrottlingError</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nl">message:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 <div class="section" id="sparse-trait">
-<span id="smithy-api-sparse-trait"></span><span id="id3"></span><h2><a href="#sparse-trait">5.3. <code class="docutils literal notranslate"><span class="pre">sparse</span></code> trait</a></h2>
+<span id="smithy-api-sparse-trait"></span><span id="id3"></span><h2><a href="#sparse-trait"><span class="section-number">5.3. </span><code class="docutils literal notranslate"><span class="pre">sparse</span></code> trait</a></h2>
 <dl class="docutils">
-<dt>Summary</dt>
-<dd>Indicates that lists and maps MAY contain <code class="docutils literal notranslate"><span class="pre">null</span></code> values. The <code class="docutils literal notranslate"><span class="pre">sparse</span></code>
+<dt>Summary</dt><dd>Indicates that lists and maps MAY contain <code class="docutils literal notranslate"><span class="pre">null</span></code> values. The <code class="docutils literal notranslate"><span class="pre">sparse</span></code>
 trait has no effect on map keys; map keys are never allowed to be <code class="docutils literal notranslate"><span class="pre">null</span></code>.</dd>
-<dt>Trait selector</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">:is(list,</span> <span class="pre">map)</span></code></dd>
-<dt>Value type</dt>
-<dd>Annotation trait.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:is(list,</span> <span class="pre">map)</span></code></dd>
+<dt>Value type</dt><dd>Annotation trait.</dd>
 </dl>
 <p>The following example defines a <a class="reference internal" href="model.html#list"><span class="std std-ref">list</span></a> shape that MAY contain
 <code class="docutils literal notranslate"><span class="pre">null</span></code> values:</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@sparse</span>
-<span class="kd">list</span><span class="nc"> SparseList</span> {
-    <span class="nl">member:</span> <span class="vc">String</span>
-}
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-5-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-5-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-5-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-5-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-5-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-5-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@sparse</span><span class="w"></span>
+<span class="kd">list</span><span class="nc"> SparseList</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">member:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-5-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-5-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#SparseList&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -283,32 +209,18 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 <p>The following example defines a <a class="reference internal" href="model.html#map"><span class="std std-ref">map</span></a> shape that MAY contain
 <code class="docutils literal notranslate"><span class="pre">null</span></code> values:</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@sparse</span>
-<span class="kd">map</span><span class="nc"> SparseMap</span> {
-    <span class="nl">key:</span> <span class="vc">String</span>,
-    <span class="nl">value:</span> <span class="vc">String</span>
-}
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-6-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-6-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-6-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-6-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@sparse</span><span class="w"></span>
+<span class="kd">map</span><span class="nc"> SparseMap</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">key:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">value:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-6-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-6-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#SparseMap&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -327,8 +239,7 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 </div>
 
@@ -336,9 +247,9 @@ JSON</div>
                     
                     <section class="relations">
                         
-                        <a href="documentation-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 4. Documentation traits</a>
+                        <a href="documentation-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← <span class="section-number">4. </span>Documentation traits</a>
                         
-                        <a href="protocol-traits.html" title="next chapter" class="next-page clearfix">6. Protocol traits →</a>
+                        <a href="protocol-traits.html" title="next chapter" class="next-page clearfix"><span class="section-number">6. </span>Protocol traits →</a>
                     </section>
                     
                 </article><aside id="right-column" class="side-column hidden-sm">

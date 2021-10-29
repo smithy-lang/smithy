@@ -1,28 +1,23 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>15. Model validation &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx_tabs/tabs.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
     <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
 
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../_static/sphinx_tabs/tabs.js"></script>
-    <script type="text/javascript" src="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/tabs.js"></script>
     <script type="text/javascript" src="../../../_static/smithy.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -70,7 +65,7 @@
                     
                     
   <div class="section" id="model-validation">
-<span id="validation"></span><h1><a href="#model-validation">15. Model validation</a></h1>
+<span id="validation"></span><h1><a href="#model-validation"><span class="section-number">15. </span>Model validation</a></h1>
 <p>Smithy provides a customizable validation system that can be used by
 API designers and organizations to ensure that their APIs adhere to their
 own standards and best practices.</p>
@@ -96,7 +91,7 @@ own standards and best practices.</p>
 </ul>
 </div>
 <div class="section" id="introduction">
-<h2><a href="#introduction">15.1. Introduction</a></h2>
+<h2><a href="#introduction"><span class="section-number">15.1. </span>Introduction</a></h2>
 <p>APIs require a great deal of care and discipline to ensure that they provide
 a coherent interface to customers, particularly after an API is released and
 new features are added. This specification defines metadata that is used to
@@ -111,11 +106,11 @@ their enforcement. This validation standard allows the same level of
 conformity and rigor to be applied to Smithy models and API definitions.</p>
 </div>
 <div class="section" id="validators">
-<span id="validator-definition"></span><h2><a href="#validators">15.2. Validators</a></h2>
+<span id="validator-definition"></span><h2><a href="#validators"><span class="section-number">15.2. </span>Validators</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">validators</span></code> metadata property contains an array of validator
 objects that are used to constrain a model. Each object in the
 <code class="docutils literal notranslate"><span class="pre">validators</span></code> array supports the following properties:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -184,32 +179,32 @@ configuration properties are provided.</td>
 </tbody>
 </table>
 <p>The following Smithy document applies a custom validator named &quot;SomeValidator&quot;:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [
-    {
-        <span class="c">// The name of the validator.</span>
-        <span class="nl">name:</span> <span class="s2">&quot;SomeValidator&quot;</span>,
-        <span class="c">// Uses a custom event ID for each validation event emitted.</span>
-        <span class="nl">id:</span> <span class="s2">&quot;CustomEventId&quot;</span>,
-        <span class="c">// Uses a custom message that also includes the default message.</span>
-        <span class="nl">message:</span> <span class="s2">&quot;My custom message name. {super}&quot;</span>,
-        <span class="c">// Applies the rule only to the following namespaces.</span>
-        <span class="nl">namespaces:</span> [<span class="s2">&quot;foo.baz&quot;</span>, <span class="s2">&quot;bar.qux&quot;</span>],
-        <span class="c">// The following properties are specific to the validator.</span>
-        <span class="nl">configuration:</span> {
-          <span class="s2">&quot;someProperty&quot;</span>: <span class="s2">&quot;foo&quot;</span>,
-        }
-    }
-]
+<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="c">// The name of the validator.</span><span class="w"></span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;SomeValidator&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="c">// Uses a custom event ID for each validation event emitted.</span><span class="w"></span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s2">&quot;CustomEventId&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="c">// Uses a custom message that also includes the default message.</span><span class="w"></span>
+<span class="w">        </span><span class="nl">message:</span><span class="w"> </span><span class="s2">&quot;My custom message name. {super}&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="c">// Applies the rule only to the following namespaces.</span><span class="w"></span>
+<span class="w">        </span><span class="nl">namespaces:</span><span class="w"> </span>[<span class="s2">&quot;foo.baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;bar.qux&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="c">// The following properties are specific to the validator.</span><span class="w"></span>
+<span class="w">        </span><span class="nl">configuration:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">          </span><span class="s2">&quot;someProperty&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+]<span class="w"></span>
 
-<span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="c">// shapes are defined here...</span>
+<span class="c">// shapes are defined here...</span><span class="w"></span>
 </pre></div>
 </div>
 <div class="section" id="missing-validators">
-<span id="id1"></span><h3><a href="#missing-validators">15.2.1. Missing validators</a></h3>
+<span id="id1"></span><h3><a href="#missing-validators"><span class="section-number">15.2.1. </span>Missing validators</a></h3>
 <p>The actual implementation of a validator is defined in code and is
 not defined in the Smithy model itself. If a Smithy implementation does not
 have an implementation for a specific validator by name, the Smithy
@@ -222,75 +217,60 @@ severity of WARNING.</p>
 </div>
 </div>
 <div class="section" id="severity">
-<span id="severity-definition"></span><h2><a href="#severity">15.3. Severity</a></h2>
+<span id="severity-definition"></span><h2><a href="#severity"><span class="section-number">15.3. </span>Severity</a></h2>
 <p>When a model is in violation of a validator, a <em>validation event</em> is emitted.
 This validation event contains metadata about the violation, including the
 optional shape that was in violation, the validator ID, and the severity of
 the violation. <em>Severity</em> is used to define the importance or impact of
 a violation.</p>
 <dl class="docutils">
-<dt><strong>ERROR</strong></dt>
-<dd><p class="first">Indicates that something is structurally wrong with the model and cannot
+<dt><strong>ERROR</strong></dt><dd><p>Indicates that something is structurally wrong with the model and cannot
 be suppressed.</p>
-<p class="last">Validation events with a severity of ERROR are reserved for enforcing that
+<p>Validation events with a severity of ERROR are reserved for enforcing that
 models adhere to the Smithy specification. Validators cannot emit a
 validation event with a severity of ERROR.</p>
 </dd>
-<dt><strong>DANGER</strong></dt>
-<dd>Indicates that something is very likely wrong with the model. Unsuppressed
+<dt><strong>DANGER</strong></dt><dd>Indicates that something is very likely wrong with the model. Unsuppressed
 DANGER validation events indicate that a model is invalid.</dd>
-<dt><strong>WARNING</strong></dt>
-<dd>Indicates that something might be wrong with the model.</dd>
-<dt><strong>NOTE</strong></dt>
-<dd>Informational message that does not imply anything is wrong with the model.</dd>
+<dt><strong>WARNING</strong></dt><dd>Indicates that something might be wrong with the model.</dd>
+<dt><strong>NOTE</strong></dt><dd>Informational message that does not imply anything is wrong with the model.</dd>
 </dl>
 </div>
 <div class="section" id="suppressions">
-<span id="suppression-definition"></span><h2><a href="#suppressions">15.4. Suppressions</a></h2>
+<span id="suppression-definition"></span><h2><a href="#suppressions"><span class="section-number">15.4. </span>Suppressions</a></h2>
 <p>Suppressions are used to suppress specific validation events.
 Suppressions are created using the <a class="reference internal" href="#suppress-trait"><span class="std std-ref">suppress trait</span></a> and
 <a class="reference internal" href="#suppressions-metadata"><span class="std std-ref">suppressions metadata</span></a>.</p>
 <div class="section" id="suppress-trait">
-<span id="id2"></span><h3><a href="#suppress-trait">15.4.1. <code class="docutils literal notranslate"><span class="pre">suppress</span></code> trait</a></h3>
+<span id="id2"></span><h3><a href="#suppress-trait"><span class="section-number">15.4.1. </span><code class="docutils literal notranslate"><span class="pre">suppress</span></code> trait</a></h3>
 <dl class="docutils">
-<dt>Summary</dt>
-<dd>The suppress trait is used to suppress validation events(s) for a
+<dt>Summary</dt><dd>The suppress trait is used to suppress validation events(s) for a
 specific shape. Each value in the <code class="docutils literal notranslate"><span class="pre">suppress</span></code> trait is a
 validation event ID to suppress for the shape.</dd>
-<dt>Trait selector</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">*</span></code></dd>
-<dt>Value type</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">[string]</span></code></dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">*</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">[string]</span></code></dd>
 </dl>
 <p>The following example suppresses the <code class="docutils literal notranslate"><span class="pre">Foo</span></code> and <code class="docutils literal notranslate"><span class="pre">Bar</span></code> validation events
 for the <code class="docutils literal notranslate"><span class="pre">smithy.example#MyString</span></code> shape:</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="nd">@suppress</span>([<span class="s2">&quot;Foo&quot;</span>, <span class="s2">&quot;Bar&quot;</span>])
-<span class="kd">string</span><span class="nc"> MyString</span>
+<span class="nd">@suppress</span>([<span class="s2">&quot;Foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Bar&quot;</span>])<span class="w"></span>
+<span class="kd">string</span><span class="nc"> MyString</span><span class="w"></span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 <div class="section" id="suppression-metadata">
-<span id="suppressions-metadata"></span><h3><a href="#suppression-metadata">15.4.2. Suppression metadata</a></h3>
+<span id="suppressions-metadata"></span><h3><a href="#suppression-metadata"><span class="section-number">15.4.2. </span>Suppression metadata</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">suppressions</span></code> metadata property contains an array of suppression objects
 that are used to suppress validation events for the entire model or for an
 entire namespace.</p>
 <p>Each suppression object in the <code class="docutils literal notranslate"><span class="pre">suppressions</span></code> array supports the
 following properties:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -322,49 +302,46 @@ specific shape.</td>
 </table>
 <p>The following example suppresses all validation events on shapes
 in the <code class="docutils literal notranslate"><span class="pre">foo.baz</span></code> namespace with an ID of <code class="docutils literal notranslate"><span class="pre">UnreferencedShape</span></code>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata</span><span class="nc"> suppressions </span><span class="nd">=</span> [
-    {
-        <span class="nl">id:</span> <span class="s2">&quot;UnreferencedShape&quot;</span>,
-        <span class="nl">namespace:</span> <span class="s2">&quot;foo.baz&quot;</span>,
-        <span class="nl">reason:</span> <span class="s2">&quot;This is a test namespace.&quot;</span>
-    }
-]
+<span class="kd">metadata</span><span class="nc"> suppressions </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s2">&quot;UnreferencedShape&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">namespace:</span><span class="w"> </span><span class="s2">&quot;foo.baz&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">reason:</span><span class="w"> </span><span class="s2">&quot;This is a test namespace.&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+]<span class="w"></span>
 </pre></div>
 </div>
 <p>The following example suppresses all validation events with an
 ID of <code class="docutils literal notranslate"><span class="pre">OverlyBroadValidator</span></code>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata</span><span class="nc"> suppressions </span><span class="nd">=</span> [
-    {
-        <span class="nl">id:</span> <span class="s2">&quot;OverlyBroadValidator&quot;</span>,
-        <span class="nl">namespace:</span> <span class="s2">&quot;*&quot;</span>
-    }
-]
+<span class="kd">metadata</span><span class="nc"> suppressions </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s2">&quot;OverlyBroadValidator&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">namespace:</span><span class="w"> </span><span class="s2">&quot;*&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+]<span class="w"></span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="built-in-validators">
-<h2><a href="#built-in-validators">15.5. Built-in validators</a></h2>
+<h2><a href="#built-in-validators"><span class="section-number">15.5. </span>Built-in validators</a></h2>
 <p>Smithy provides built-in validators that can be used in any model in
 the <code class="docutils literal notranslate"><span class="pre">validators</span></code> metadata property. Implementations MAY support
 additional validators.</p>
 <div class="section" id="emiteachselector">
-<span id="id3"></span><h3><a href="#emiteachselector">15.5.1. EmitEachSelector</a></h3>
+<span id="id3"></span><h3><a href="#emiteachselector"><span class="section-number">15.5.1. </span>EmitEachSelector</a></h3>
 <p>Emits a validation event for each shape that matches the given
 <a class="reference internal" href="selectors.html#selectors"><span class="std std-ref">selector</span></a>.</p>
 <dl class="docutils">
-<dt>Rationale</dt>
-<dd>Detecting shapes that violate a validation rule using customizable
+<dt>Rationale</dt><dd>Detecting shapes that violate a validation rule using customizable
 validators allows organizations to create custom Smithy validators
 without needing to write code.</dd>
-<dt>Default severity</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
-<dt>Configuration</dt>
-<dd><table border="1" class="colwidths-given first last docutils">
+<dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
+<dt>Configuration</dt><dd><table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -406,74 +383,74 @@ following constraints:</p>
 <li>Simple types are excluded.</li>
 <li>List and map members are excluded.</li>
 </ul>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [{
-    <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
-    <span class="nl">id:</span> <span class="s2">&quot;MissingDocumentation&quot;</span>,
-    <span class="nl">message:</span> <span class="s2">&quot;This shape is missing documentation&quot;</span>
-    <span class="nl">configuration:</span> {
-        <span class="nl">selector:</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">            :not([trait|documentation])</span>
-<span class="s2">            :not(simpleType)</span>
-<span class="s2">            :not(member :test(&lt; :test(list, map)))</span>
-<span class="s2">            :not(member &gt; [trait|documentation])&quot;&quot;&quot;</span>
-    }
-}]
+<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[{<span class="w"></span>
+<span class="w">    </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">id:</span><span class="w"> </span><span class="s2">&quot;MissingDocumentation&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">message:</span><span class="w"> </span><span class="s2">&quot;This shape is missing documentation&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nl">configuration:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">selector:</span><span class="w"> </span><span class="s1">&quot;&quot;&quot;</span>
+<span class="s1">            :not([trait|documentation])</span>
+<span class="s1">            :not(simpleType)</span>
+<span class="s1">            :not(member :test(&lt; :test(list, map)))</span>
+<span class="s1">            :not(member &gt; [trait|documentation])&quot;&quot;&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}]<span class="w"></span>
 </pre></div>
 </div>
 <p>The following example emits a validation event for each structure referenced as
 input/output that has a shape name that does not case-insensitively end with
 &quot;Input&quot;/&quot;Output&quot;:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [
-    {
-        <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
-        <span class="nl">id:</span> <span class="s2">&quot;OperationInputName&quot;</span>,
-        <span class="nl">message:</span> <span class="s2">&quot;This shape is referenced as input but the name does not end with &#39;Input&#39;&quot;</span>,
-        <span class="nl">configuration:</span> {
-            <span class="nl">selector:</span> <span class="s2">&quot;operation -[input]-&gt; :not([id|name$=Input i])&quot;</span>
-        }
-    },
-    {
-        <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
-        <span class="nl">id:</span> <span class="s2">&quot;OperationOutputName&quot;</span>,
-        <span class="nl">message:</span> <span class="s2">&quot;This shape is referenced as output but the name does not end with &#39;Output&#39;&quot;</span>,
-        <span class="nl">configuration:</span> {
-            <span class="nl">selector:</span> <span class="s2">&quot;operation -[output]-&gt; :not([id|name$=Output i])&quot;</span>
-        }
-    }
-]
+<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s2">&quot;OperationInputName&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">message:</span><span class="w"> </span><span class="s2">&quot;This shape is referenced as input but the name does not end with &#39;Input&#39;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">configuration:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;operation -[input]-&gt; :not([id|name$=Input i])&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s2">&quot;OperationOutputName&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">message:</span><span class="w"> </span><span class="s2">&quot;This shape is referenced as output but the name does not end with &#39;Output&#39;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">configuration:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;operation -[output]-&gt; :not([id|name$=Output i])&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+]<span class="w"></span>
 </pre></div>
 </div>
 <p>The following example emits a validation event for each operation referenced
 as lifecycle 'read' or 'delete' that has a shape name that does not start with
 &quot;Get&quot; or &quot;Delete&quot;:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [
-    {
-        <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
-        <span class="nl">id:</span> <span class="s2">&quot;LifecycleGetName&quot;</span>,
-        <span class="nl">message:</span> <span class="s2">&quot;Lifecycle &#39;read&#39; operation shape names should start with &#39;Get&#39;&quot;</span>,
-        <span class="nl">configuration:</span> {
-            <span class="nl">selector:</span> <span class="s2">&quot;operation [read]-&gt; :not([id|name^=Get i])&quot;</span>
-        }
-    },
-    {
-        <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
-        <span class="nl">id:</span> <span class="s2">&quot;LifecycleDeleteName&quot;</span>,
-        <span class="nl">message:</span> <span class="s2">&quot;Lifecycle &#39;delete&#39; operation shape names should start with &#39;Delete&#39;&quot;</span>,
-        <span class="nl">configuration:</span> {
-            <span class="nl">selector:</span> <span class="s2">&quot;operation -[delete]-&gt; :not([id|name^=Delete i])&quot;</span>
-        }
-    }
-]
+<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s2">&quot;LifecycleGetName&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">message:</span><span class="w"> </span><span class="s2">&quot;Lifecycle &#39;read&#39; operation shape names should start with &#39;Get&#39;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">configuration:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;operation [read]-&gt; :not([id|name^=Get i])&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s2">&quot;LifecycleDeleteName&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">message:</span><span class="w"> </span><span class="s2">&quot;Lifecycle &#39;delete&#39; operation shape names should start with &#39;Delete&#39;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">configuration:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;operation -[delete]-&gt; :not([id|name^=Delete i])&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+]<span class="w"></span>
 </pre></div>
 </div>
 <div class="section" id="binding-events-to-traits">
-<span id="emit-each-bind-to-trait"></span><h4><a href="#binding-events-to-traits">15.5.1.1. Binding events to traits</a></h4>
+<span id="emit-each-bind-to-trait"></span><h4><a href="#binding-events-to-traits"><span class="section-number">15.5.1.1. </span>Binding events to traits</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">bindToTrait</span></code> property contains a <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape ID</span></a> that MUST
 reference a <a class="reference internal" href="model.html#trait-shapes"><span class="std std-ref">trait definition</span></a> shape. When set, this
 property causes the <code class="docutils literal notranslate"><span class="pre">EmitEachSelector</span></code> validator to only emit validation
@@ -481,27 +458,27 @@ events for shapes that have the referenced trait. The contextual location of
 where the violation occurred in the model SHOULD point to the location where
 the trait is applied to the matched shape.</p>
 <p>Consider the following model:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [
-    {
-        <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
-        <span class="nl">id:</span> <span class="s2">&quot;DocumentedString&quot;</span>,
-        <span class="nl">configuration:</span> {
-            <span class="c">// matches all shapes</span>
-            <span class="nl">selector:</span> <span class="s2">&quot;*&quot;</span>,
-            <span class="c">// Only emitted for shapes with the documentation</span>
-            <span class="c">// trait, and each event points to where the</span>
-            <span class="c">// trait is defined.</span>
-            <span class="nl">bindToTrait:</span> <span class="vc">documentation</span>
-        }
-    }
-]
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s2">&quot;DocumentedString&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">configuration:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="c">// matches all shapes</span><span class="w"></span>
+<span class="w">            </span><span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;*&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="c">// Only emitted for shapes with the documentation</span><span class="w"></span>
+<span class="w">            </span><span class="c">// trait, and each event points to where the</span><span class="w"></span>
+<span class="w">            </span><span class="c">// trait is defined.</span><span class="w"></span>
+<span class="w">            </span><span class="nl">bindToTrait:</span><span class="w"> </span><span class="vc">documentation</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+]<span class="w"></span>
 
-<span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="nd">@documentation</span>(<span class="s2">&quot;Hello&quot;</span>)
-<span class="kd">string</span><span class="nc"> A</span> <span class="c">// &lt;-- Emits an event</span>
+<span class="nd">@documentation</span>(<span class="s2">&quot;Hello&quot;</span>)<span class="w"></span>
+<span class="kd">string</span><span class="nc"> A</span><span class="w"> </span><span class="c">// &lt;-- Emits an event</span><span class="w"></span>
 
-<span class="kd">string</span><span class="nc"> B</span> <span class="c">// &lt;-- Does not emit an event</span>
+<span class="kd">string</span><span class="nc"> B</span><span class="w"> </span><span class="c">// &lt;-- Does not emit an event</span><span class="w"></span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">DocumentedString</span></code> validator will only emit an event for
@@ -509,9 +486,9 @@ the trait is applied to the matched shape.</p>
 <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a>.</p>
 </div>
 <div class="section" id="message-templates">
-<span id="emit-each-message-template"></span><h4><a href="#message-templates">15.5.1.2. Message templates</a></h4>
+<span id="emit-each-message-template"></span><h4><a href="#message-templates"><span class="section-number">15.5.1.2. </span>Message templates</a></h4>
 <p>A <code class="docutils literal notranslate"><span class="pre">messageTemplate</span></code> is used to create more granular error messages. The
-template consists of literal spans and <a class="reference internal" href="selectors.html#grammar-token-selector_context_value"><code class="xref std std-token docutils literal notranslate"><span class="pre">selector</span> <span class="pre">context</span> <span class="pre">value</span></code></a>
+template consists of literal spans and <a class="reference internal" href="selectors.html#grammar-token-selectors-selector_context_value"><code class="xref std std-token docutils literal notranslate"><span class="pre">selector</span> <span class="pre">context</span> <span class="pre">value</span></code></a>
 templates (for example, <code class="docutils literal notranslate"><span class="pre">&#64;{id}</span></code>). A selector context value MAY be escaped
 by placing a <code class="docutils literal notranslate"><span class="pre">&#64;</span></code> before a <code class="docutils literal notranslate"><span class="pre">&#64;</span></code> character (for example, <code class="docutils literal notranslate"><span class="pre">&#64;&#64;</span></code> expands to
 <code class="docutils literal notranslate"><span class="pre">&#64;</span></code>). <code class="docutils literal notranslate"><span class="pre">&#64;</span></code> characters in the message template that are not escaped MUST
@@ -524,29 +501,29 @@ template is then expanded by retrieving nested properties from the shape
 using a pipe-delimited path (for example, <code class="docutils literal notranslate"><span class="pre">&#64;{id|name}</span></code> expands to the
 name of the matching shape's <a class="reference internal" href="selectors.html#id-attribute"><span class="std std-ref">shape ID</span></a>).</p>
 <p>Consider the following model:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [
-    {
-        <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
-        <span class="nl">configuration:</span> {
-            <span class="nl">selector:</span> <span class="s2">&quot;[trait|documentation]&quot;</span>,
-            <span class="nl">messageTemplate:</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">                This shape has a name of @{id|name} and a @@documentation \</span>
-<span class="s2">                trait of &quot;</span><span class="nd">@</span>{<span class="vc">trait</span><span class="err">|</span><span class="vc">documentation</span>}<span class="s2">&quot;.&quot;&quot;&quot;</span>
-        }
-    }
-]
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">configuration:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;[trait|documentation]&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nl">messageTemplate:</span><span class="w"> </span><span class="s1">&quot;&quot;&quot;</span>
+<span class="s1">                This shape has a name of @{id|name} and a @@documentation \</span>
+<span class="s1">                trait of &quot;@{trait|documentation}&quot;.&quot;&quot;&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+]<span class="w"></span>
 
-<span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="nd">@documentation</span>(<span class="s2">&quot;Hello&quot;</span>)
-<span class="kd">string</span><span class="nc"> A</span>
+<span class="nd">@documentation</span>(<span class="s2">&quot;Hello&quot;</span>)<span class="w"></span>
+<span class="kd">string</span><span class="nc"> A</span><span class="w"></span>
 
-<span class="nd">@documentation</span>(<span class="s2">&quot;Goodbye&quot;</span>)
-<span class="kd">string</span><span class="nc"> B</span>
+<span class="nd">@documentation</span>(<span class="s2">&quot;Goodbye&quot;</span>)<span class="w"></span>
+<span class="kd">string</span><span class="nc"> B</span><span class="w"></span>
 </pre></div>
 </div>
 <p>The above selector will emit two validation events:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="80%" />
@@ -567,31 +544,31 @@ name of the matching shape's <a class="reference internal" href="selectors.html#
 </table>
 <p><a class="reference internal" href="selectors.html#selector-variables"><span class="std std-ref">Selector variables</span></a> can be used in the selector
 to make message templates more descriptive. Consider the following example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [
-    {
-        <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
-        <span class="nl">id:</span> <span class="s2">&quot;UnstableTrait&quot;</span>,
-        <span class="nl">configuration:</span> {
-            <span class="nl">selector:</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">                  $matches(-[trait]-&gt; [trait|unstable])</span>
-<span class="s2">                  ${matches}&quot;&quot;&quot;</span>,
-            <span class="nl">messageTemplate:</span> <span class="s2">&quot;This shape applies traits(s) that are unstable: @{var|matches|id}&quot;</span>
-        }
-    }
-]
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s2">&quot;UnstableTrait&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">configuration:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">selector:</span><span class="w"> </span><span class="s1">&quot;&quot;&quot;</span>
+<span class="s1">                  $matches(-[trait]-&gt; [trait|unstable])</span>
+<span class="s1">                  ${matches}&quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nl">messageTemplate:</span><span class="w"> </span><span class="s2">&quot;This shape applies traits(s) that are unstable: @{var|matches|id}&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+]<span class="w"></span>
 
-<span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="nd">@trait</span>
-<span class="nd">@unstable</span>
-<span class="kd">structure</span><span class="nc"> doNotUseMe</span> {}
+<span class="nd">@trait</span><span class="w"></span>
+<span class="nd">@unstable</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> doNotUseMe</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="nd">@doNotUseMe</span>
-<span class="kd">string</span><span class="nc"> A</span>
+<span class="nd">@doNotUseMe</span><span class="w"></span>
+<span class="kd">string</span><span class="nc"> A</span><span class="w"></span>
 </pre></div>
 </div>
 <p>The above selector will emit the following validation event:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="80%" />
@@ -609,10 +586,10 @@ to make message templates more descriptive. Consider the following example:</p>
 </table>
 </div>
 <div class="section" id="variable-message-formatting">
-<h4><a href="#variable-message-formatting">15.5.1.3. Variable message formatting</a></h4>
+<h4><a href="#variable-message-formatting"><span class="section-number">15.5.1.3. </span>Variable message formatting</a></h4>
 <p>Different types of variables expand to different kinds of strings in message
 templates.</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="80%" />
@@ -686,18 +663,15 @@ to:</p>
 </div>
 </div>
 <div class="section" id="emitnoneselector">
-<span id="id9"></span><h3><a href="#emitnoneselector">15.5.2. EmitNoneSelector</a></h3>
+<span id="id9"></span><h3><a href="#emitnoneselector"><span class="section-number">15.5.2. </span>EmitNoneSelector</a></h3>
 <p>Emits a validation event if no shape in the model matches the given
 <a class="reference internal" href="selectors.html#selectors"><span class="std std-ref">selector</span></a>.</p>
 <dl class="docutils">
-<dt>Rationale</dt>
-<dd>Detecting the omission of a specific trait, pattern, or other requirement
+<dt>Rationale</dt><dd>Detecting the omission of a specific trait, pattern, or other requirement
 can help developers to remember to apply constraint traits, documentation,
 etc.</dd>
-<dt>Default severity</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
-<dt>Configuration</dt>
-<dd><table border="1" class="colwidths-given first last docutils">
+<dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
+<dt>Configuration</dt><dd><table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -722,18 +696,18 @@ is emitted.</td>
 </dl>
 <p>The following example detects if the model does not contain any constraint
 traits.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [{
-    <span class="nl">name:</span> <span class="s2">&quot;EmitNoneSelector&quot;</span>,
-    <span class="nl">id:</span> <span class="s2">&quot;MissingConstraintTraits&quot;</span>,
-    <span class="nl">message:</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        No instances of the enum, pattern, length, or range trait</span>
-<span class="s2">        could be found. Did you forget to apply these traits?&quot;&quot;&quot;</span>,
-    <span class="nl">configuration:</span> {
-        <span class="nl">selector:</span> <span class="s2">&quot;:is([trait|enum], [trait|pattern], [trait|length], [trait|range])&quot;</span>,
-    }
-}]
+<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[{<span class="w"></span>
+<span class="w">    </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;EmitNoneSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">id:</span><span class="w"> </span><span class="s2">&quot;MissingConstraintTraits&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">message:</span><span class="w"> </span><span class="s1">&quot;&quot;&quot;</span>
+<span class="s1">        No instances of the enum, pattern, length, or range trait</span>
+<span class="s1">        could be found. Did you forget to apply these traits?&quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">configuration:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;:is([trait|enum], [trait|pattern], [trait|length], [trait|range])&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}]<span class="w"></span>
 </pre></div>
 </div>
 </div>
@@ -744,9 +718,9 @@ traits.</p>
                     
                     <section class="relations">
                         
-                        <a href="selectors.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 14. Selectors</a>
+                        <a href="selectors.html" title="previous chapter" class="previous-page clearfix hidden-xs">← <span class="section-number">14. </span>Selectors</a>
                         
-                        <a href="idl.html" title="next chapter" class="next-page clearfix">16. Smithy IDL →</a>
+                        <a href="idl.html" title="next chapter" class="next-page clearfix"><span class="section-number">16. </span>Smithy IDL →</a>
                     </section>
                     
                 </article><aside id="right-column" class="side-column hidden-sm">

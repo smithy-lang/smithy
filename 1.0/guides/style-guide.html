@@ -1,22 +1,22 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Style Guide &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../_static/bootstrap-reboot.css" type="text/css" />
     
-    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
     <link rel="stylesheet" href="../../_static/custom-tabs.css" type="text/css" />
 
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/smithy.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -95,32 +95,32 @@ style guide makes models easier to read.</p>
 <h2><a href="#model-files">Model files</a></h2>
 <p>Smithy models SHOULD be authored using the <a class="reference internal" href="../spec/core/idl.html#idl"><span class="std std-ref">Smithy IDL</span></a>.
 Smithy models SHOULD resemble the following example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> []
-<span class="kd">metadata</span><span class="nc"> suppressions </span><span class="nd">=</span> []
+<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[]<span class="w"></span>
+<span class="kd">metadata</span><span class="nc"> suppressions </span><span class="nd">=</span><span class="w"> </span>[]<span class="w"></span>
 
-<span class="kd">namespace</span><span class="nc"> smithy.example.namespace</span>
+<span class="kd">namespace</span><span class="nc"> smithy.example.namespace</span><span class="w"></span>
 
-<span class="cm">/// This is the documentation</span>
-<span class="nd">@sensitive</span>
-<span class="kd">string</span><span class="nc"> MyShape</span>
+<span class="cm">/// This is the documentation</span><span class="w"></span>
+<span class="nd">@sensitive</span><span class="w"></span>
+<span class="kd">string</span><span class="nc"> MyShape</span><span class="w"></span>
 
-<span class="cm">/// This is the documentation.</span>
-<span class="kd">integer</span><span class="nc"> AnotherShape</span>
+<span class="cm">/// This is the documentation.</span><span class="w"></span>
+<span class="kd">integer</span><span class="nc"> AnotherShape</span><span class="w"></span>
 
-<span class="cm">/// Documentation about the structure.</span>
-<span class="cm">///</span>
-<span class="cm">/// More descriptive documentation if needed...</span>
-<span class="kd">structure</span><span class="nc"> MyStructure</span> {
-    <span class="cm">/// Documentation about the member.</span>
-    <span class="nd">@required</span>
-    <span class="nl">foo:</span> <span class="vc">String</span>,
-}
+<span class="cm">/// Documentation about the structure.</span><span class="w"></span>
+<span class="cm">///</span><span class="w"></span>
+<span class="cm">/// More descriptive documentation if needed...</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> MyStructure</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="cm">/// Documentation about the member.</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nl">foo:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="c">// Example of creating custom traits.</span>
-<span class="nd">@trait</span>(<span class="nl">selector:</span> <span class="s2">&quot;string&quot;</span>)
-<span class="kd">structure</span><span class="nc"> myTrait</span> {}
+<span class="c">// Example of creating custom traits.</span><span class="w"></span>
+<span class="nd">@trait</span>(<span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>)<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> myTrait</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
 <div class="section" id="file-encoding">
@@ -177,13 +177,13 @@ Smithy models SHOULD resemble the following example:</p>
 <div class="section" id="trait-names">
 <h3><a href="#trait-names">Trait names</a></h3>
 <p>By convention, traits use lowerCamelCase (e.g., &quot;xmlRequest&quot;, &quot;fooId&quot;).</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example.namespace</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example.namespace</span><span class="w"></span>
 
-<span class="cm">/// This is the documentation about the trait.</span>
-<span class="cm">///</span>
-<span class="cm">/// This is more documentation.</span>
-<span class="nd">@trait</span>(<span class="nl">selector:</span> <span class="s2">&quot;string&quot;</span>)
-<span class="kd">structure</span><span class="nc"> myTrait</span> {}
+<span class="cm">/// This is the documentation about the trait.</span><span class="w"></span>
+<span class="cm">///</span><span class="w"></span>
+<span class="cm">/// This is more documentation.</span><span class="w"></span>
+<span class="nd">@trait</span>(<span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>)<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> myTrait</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
 </div>

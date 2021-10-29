@@ -1,28 +1,23 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AWS IAM traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx_tabs/tabs.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
     <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
 
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../_static/sphinx_tabs/tabs.js"></script>
-    <script type="text/javascript" src="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/tabs.js"></script>
     <script type="text/javascript" src="../../../_static/smithy.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -84,51 +79,37 @@ more information, see <a class="reference internal" href="#deriving-condition-ke
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#aws-iam-actionpermissiondescription-trait" id="id9"><code class="docutils literal notranslate"><span class="pre">aws.iam#actionPermissionDescription</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-iam-conditionkeys-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeys</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-iam-defineconditionkeys-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">aws.iam#defineConditionKeys</span></code> trait</a><ul>
-<li><a class="reference internal" href="#condition-key-types" id="id12">Condition Key Types</a></li>
+<li><a class="reference internal" href="#aws-iam-actionpermissiondescription-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">aws.iam#actionPermissionDescription</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-iam-conditionkeys-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeys</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-iam-defineconditionkeys-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">aws.iam#defineConditionKeys</span></code> trait</a><ul>
+<li><a class="reference internal" href="#condition-key-types" id="id14">Condition Key Types</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#aws-iam-disableconditionkeyinference-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-iam-requiredactions-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">aws.iam#requiredActions</span></code> trait</a></li>
-<li><a class="reference internal" href="#deriving-condition-keys" id="id15">Deriving Condition Keys</a></li>
+<li><a class="reference internal" href="#aws-iam-disableconditionkeyinference-trait" id="id15"><code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-iam-requiredactions-trait" id="id16"><code class="docutils literal notranslate"><span class="pre">aws.iam#requiredActions</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-iam-supportedprincipaltypes-trait" id="id17"><code class="docutils literal notranslate"><span class="pre">aws.iam#supportedPrincipalTypes</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-iam-iamresource-trait" id="id18"><code class="docutils literal notranslate"><span class="pre">aws.iam#iamResource</span></code> trait</a></li>
+<li><a class="reference internal" href="#deriving-condition-keys" id="id19">Deriving Condition Keys</a></li>
 </ul>
 </div>
 <div class="section" id="aws-iam-actionpermissiondescription-trait">
 <span id="aws-iam-actionpermissiondescription-trait"></span><span id="id2"></span><h2><a href="#aws-iam-actionpermissiondescription-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#actionPermissionDescription</span></code> trait</a></h2>
 <dl class="docutils">
-<dt>Summary</dt>
-<dd>A brief description of what granting the user permission to invoke an
+<dt>Summary</dt><dd>A brief description of what granting the user permission to invoke an
 operation would entail.</dd>
-<dt>Trait selector</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
-<dt>Value type</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
 </dl>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> aws.iam#actionPermissionDescription</span>
+<span class="kd">use</span><span class="nc"> aws.iam#actionPermissionDescription</span><span class="w"></span>
 
-<span class="nd">@actionPermissionDescription</span>(<span class="s2">&quot;This will allow the user to Foo.&quot;</span>)
-<span class="kd">operation</span><span class="nc"> FooOperation</span> {}
+<span class="nd">@actionPermissionDescription</span>(<span class="s2">&quot;This will allow the user to Foo.&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> FooOperation</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-0-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-0-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#FooOperation&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -141,18 +122,14 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 <div class="section" id="aws-iam-conditionkeys-trait">
 <span id="aws-iam-conditionkeys-trait"></span><span id="id3"></span><h2><a href="#aws-iam-conditionkeys-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeys</span></code> trait</a></h2>
 <dl class="docutils">
-<dt>Summary</dt>
-<dd>Applies condition keys, by name, to a resource or operation.</dd>
-<dt>Trait selector</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">:test(resource,</span> <span class="pre">operation)</span></code></dd>
-<dt>Value type</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></dd>
+<dt>Summary</dt><dd>Applies condition keys, by name, to a resource or operation.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(resource,</span> <span class="pre">operation)</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></dd>
 </dl>
 <p>Condition keys derived automatically can be applied to a resource or operation
 explicitly. Condition keys applied this way MUST be either inferred or
@@ -161,43 +138,30 @@ explicitly defined via the <a class="reference internal" href="#aws-iam-defineco
 <code class="docutils literal notranslate"><span class="pre">myservice:MyResourceFoo</span></code> and  <code class="docutils literal notranslate"><span class="pre">otherservice:Bar</span></code> condition keys. The
 <code class="docutils literal notranslate"><span class="pre">MyOperation</span></code> operation has the <code class="docutils literal notranslate"><span class="pre">aws:region</span></code> condition key.</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-1-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> aws.api#service</span>
-<span class="kd">use</span><span class="nc"> aws.iam#definedContextKeys</span>
-<span class="kd">use</span><span class="nc"> aws.iam#conditionKeys</span>
+<span class="kd">use</span><span class="nc"> aws.api#service</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> aws.iam#definedContextKeys</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> aws.iam#conditionKeys</span><span class="w"></span>
 
-<span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
-<span class="nd">@defineConditionKeys</span>(<span class="s2">&quot;otherservice:Bar&quot;</span>: { <span class="nl">type:</span> <span class="s2">&quot;String&quot;</span> })
-<span class="kd">service</span><span class="nc"> MyService</span> {
-    <span class="nl">version:</span> <span class="s2">&quot;2017-02-11&quot;</span>,
-    <span class="nl">resources:</span> [<span class="vc">MyResource</span>],
-}
+<span class="nd">@service</span>(<span class="nl">sdkId:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">arnNamespace:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)<span class="w"></span>
+<span class="nd">@defineConditionKeys</span>(<span class="s2">&quot;otherservice:Bar&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="nl">type:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>})<span class="w"></span>
+<span class="kd">service</span><span class="nc"> MyService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">resources:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nd">@conditionKeys</span>([<span class="s2">&quot;otherservice:Bar&quot;</span>])
-<span class="kd">resource</span><span class="nc"> MyResource</span> {
-    <span class="nl">identifiers:</span> {<span class="nl">foo:</span> <span class="vc">String</span>},
-    <span class="nl">operations:</span> [<span class="vc">MyOperation</span>],
-}
+<span class="nd">@conditionKeys</span>([<span class="s2">&quot;otherservice:Bar&quot;</span>])<span class="w"></span>
+<span class="kd">resource</span><span class="nc"> MyResource</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">identifiers:</span><span class="w"> </span>{<span class="nl">foo:</span><span class="w"> </span><span class="vc">String</span>}<span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">operations:</span><span class="w"> </span>[<span class="vc">MyOperation</span>]<span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nd">@conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])
-<span class="kd">operation</span><span class="nc"> MyOperation</span> {}
+<span class="nd">@conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> MyOperation</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-1-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-1-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -250,8 +214,7 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Condition keys that refer to global <code class="docutils literal notranslate"><span class="pre">&quot;aws:*&quot;</span></code> keys can be referenced
@@ -261,20 +224,17 @@ without being defined on the service.</p>
 <div class="section" id="aws-iam-defineconditionkeys-trait">
 <span id="aws-iam-defineconditionkeys-trait"></span><span id="id4"></span><h2><a href="#aws-iam-defineconditionkeys-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#defineConditionKeys</span></code> trait</a></h2>
 <dl class="docutils">
-<dt>Summary</dt>
-<dd>Defines the set of condition keys that appear within a service in
+<dt>Summary</dt><dd>Defines the set of condition keys that appear within a service in
 addition to inferred and global condition keys.</dd>
-<dt>Trait selector</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
-<dt>Value type</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">map</span></code> of IAM identifiers to condition key <code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">map</span></code> of IAM identifiers to condition key <code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.iam#defineConditionKeys</span></code> trait defines additional condition keys
 that appear within a service. Keys in the map must be valid IAM identifiers,
 meaning they must adhere to the following regular expression:
 <code class="docutils literal notranslate"><span class="pre">&quot;^([A-Za-z0-9][A-Za-z0-9-\\.]{0,62}:[^:]+)$&quot;</span></code>.
 Each condition key structure supports the following members:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="10%" />
@@ -307,38 +267,25 @@ for more information.</td>
 </tbody>
 </table>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-2-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-2-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-2-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-2-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> aws.api#service</span>
-<span class="kd">use</span><span class="nc"> aws.iam#defineConditionKeys</span>
+<span class="kd">use</span><span class="nc"> aws.api#service</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> aws.iam#defineConditionKeys</span><span class="w"></span>
 
-<span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
-<span class="nd">@defineConditionKeys</span>(
-    <span class="s2">&quot;otherservice:Bar&quot;</span>: {
-        <span class="nl">type:</span> <span class="s2">&quot;String&quot;</span>,
-        <span class="nl">documentation:</span> <span class="s2">&quot;The Bar string&quot;</span>,
-        <span class="nl">externalDocumentation:</span> <span class="s2">&quot;http://example.com&quot;</span>
-    })
-<span class="kd">service</span><span class="nc"> MyService</span> {
-    <span class="nl">version:</span> <span class="s2">&quot;2017-02-11&quot;</span>,
-    <span class="nl">resources:</span> [<span class="vc">MyResource</span>],
-}
+<span class="nd">@service</span>(<span class="nl">sdkId:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">arnNamespace:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)<span class="w"></span>
+<span class="nd">@defineConditionKeys</span>(<span class="w"></span>
+<span class="w">    </span><span class="s2">&quot;otherservice:Bar&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">type:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">documentation:</span><span class="w"> </span><span class="s2">&quot;The Bar string&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">externalDocumentation:</span><span class="w"> </span><span class="s2">&quot;http://example.com&quot;</span><span class="w"></span>
+<span class="w">    </span>})<span class="w"></span>
+<span class="kd">service</span><span class="nc"> MyService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">resources:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-2-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-2-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -367,8 +314,7 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Condition keys that refer to global <code class="docutils literal notranslate"><span class="pre">&quot;aws:*&quot;</span></code> keys are allowed to not be
@@ -378,7 +324,7 @@ defined on the service.</p>
 <span id="id5"></span><h3><a href="#condition-key-types">Condition Key Types</a></h3>
 <p>The following table describes the available types a condition key can have.
 Condition keys in IAM policies can be evaluated with <a class="reference external" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html">condition operators</a>.</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="80%" />
@@ -438,12 +384,9 @@ Condition keys in IAM policies can be evaluated with <a class="reference externa
 <div class="section" id="aws-iam-disableconditionkeyinference-trait">
 <span id="aws-iam-disableconditionkeyinference-trait"></span><span id="id6"></span><h2><a href="#aws-iam-disableconditionkeyinference-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code> trait</a></h2>
 <dl class="docutils">
-<dt>Summary</dt>
-<dd>Declares that the condition keys of a resource should not be inferred.</dd>
-<dt>Trait selector</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">resource</span></code></dd>
-<dt>Value type</dt>
-<dd>Annotation trait</dd>
+<dt>Summary</dt><dd>Declares that the condition keys of a resource should not be inferred.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">resource</span></code></dd>
+<dt>Value type</dt><dd>Annotation trait</dd>
 </dl>
 <p>A resource marked with the <code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code> trait will
 not have its condition keys automatically inferred from its identifiers and
@@ -451,40 +394,27 @@ the identifiers of its ancestors (if present.)</p>
 <p>The following example shows a resource, <code class="docutils literal notranslate"><span class="pre">MyResource</span></code>, that has had its
 condition key inference disabled.</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-3-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-3-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-3-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-3-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> aws.api#service</span>
-<span class="kd">use</span><span class="nc"> aws.iam#disableConditionKeyInference</span>
+<span class="kd">use</span><span class="nc"> aws.api#service</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> aws.iam#disableConditionKeyInference</span><span class="w"></span>
 
-<span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
-<span class="kd">service</span><span class="nc"> MyService</span> {
-    <span class="nl">version:</span> <span class="s2">&quot;2017-02-11&quot;</span>,
-    <span class="nl">resources:</span> [<span class="vc">MyResource</span>],
-}
+<span class="nd">@service</span>(<span class="nl">sdkId:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">arnNamespace:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)<span class="w"></span>
+<span class="kd">service</span><span class="nc"> MyService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">resources:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nd">@disableConditionKeyInference</span>
-<span class="kd">resource</span><span class="nc"> MyResource</span> {
-    <span class="nl">identifiers:</span> {
-        <span class="nl">foo:</span> <span class="vc">String</span>,
-        <span class="nl">bar:</span> <span class="vc">String</span>,
-    },
-}
+<span class="nd">@disableConditionKeyInference</span><span class="w"></span>
+<span class="kd">resource</span><span class="nc"> MyResource</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">identifiers:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">foo:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">bar:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-3-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-3-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -520,19 +450,15 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 <div class="section" id="aws-iam-requiredactions-trait">
 <span id="aws-iam-requiredactions-trait"></span><span id="id7"></span><h2><a href="#aws-iam-requiredactions-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#requiredActions</span></code> trait</a></h2>
 <dl class="docutils">
-<dt>Summary</dt>
-<dd>Other actions that the invoker must be authorized to perform when
+<dt>Summary</dt><dd>Other actions that the invoker must be authorized to perform when
 executing the targeted operation.</dd>
-<dt>Trait selector</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
-<dt>Value type</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code> where each string value references condition keys
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code> where each string value references condition keys
 defined in the closure of the service.</dd>
 </dl>
 <p>Defines the actions, in addition to the targeted operation, that a user must
@@ -541,40 +467,27 @@ indicates that, in order to invoke the <code class="docutils literal notranslate
 must also be authorized to execute the <code class="docutils literal notranslate"><span class="pre">otherservice:OtherOperation</span></code>
 operation for it to complete successfully.</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-4-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-4-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-4-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-4-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> aws.api#service</span>
-<span class="kd">use</span><span class="nc"> aws.iam#requiredActions</span>
+<span class="kd">use</span><span class="nc"> aws.api#service</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> aws.iam#requiredActions</span><span class="w"></span>
 
-<span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
-<span class="kd">service</span><span class="nc"> MyService</span> {
-    <span class="nl">version:</span> <span class="s2">&quot;2017-02-11&quot;</span>,
-    <span class="nl">resources:</span> [<span class="vc">MyResource</span>],
-}
+<span class="nd">@service</span>(<span class="nl">sdkId:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">arnNamespace:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)<span class="w"></span>
+<span class="kd">service</span><span class="nc"> MyService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">resources:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">resource</span><span class="nc"> MyResource</span> {
-    <span class="nl">identifiers:</span> {<span class="nl">foo:</span> <span class="vc">String</span>},
-    <span class="nl">operations:</span> [<span class="vc">MyOperation</span>],
-}
+<span class="kd">resource</span><span class="nc"> MyResource</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">identifiers:</span><span class="w"> </span>{<span class="nl">foo:</span><span class="w"> </span><span class="vc">String</span>}<span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">operations:</span><span class="w"> </span>[<span class="vc">MyOperation</span>]<span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nd">@requiredActions</span>([<span class="s2">&quot;otherservice:OtherOperation&quot;</span>])
-<span class="kd">operation</span><span class="nc"> MyOperation</span> {}
+<span class="nd">@requiredActions</span>([<span class="s2">&quot;otherservice:OtherOperation&quot;</span>])<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> MyOperation</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-4-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-4-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -617,11 +530,92 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
+</div></div>
 </div>
+<div class="section" id="aws-iam-supportedprincipaltypes-trait">
+<span id="aws-iam-supportedprincipaltypes-trait"></span><span id="id8"></span><h2><a href="#aws-iam-supportedprincipaltypes-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#supportedPrincipalTypes</span></code> trait</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>The <a class="reference external" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html">IAM principal types</a> that can use the service or operation.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">operation)</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code> where each string is an IAM principal type: <code class="docutils literal notranslate"><span class="pre">Root</span></code>,
+<code class="docutils literal notranslate"><span class="pre">IAMUser</span></code>, <code class="docutils literal notranslate"><span class="pre">IAMRole</span></code>, or <code class="docutils literal notranslate"><span class="pre">FederatedUser</span></code>.</dd>
+</dl>
+<p>Operations that are not annotated with the <code class="docutils literal notranslate"><span class="pre">supportedPrincipalTypes</span></code> trait
+inherit the <code class="docutils literal notranslate"><span class="pre">supportedPrincipalTypes</span></code> of the service they are bound to.</p>
+<p>The following example defines two operations:</p>
+<ul class="simple">
+<li>OperationA defines an explicit list of the IAM principal types it supports
+using the <code class="docutils literal notranslate"><span class="pre">supportedPrincipalTypes</span></code> trait.</li>
+<li>OperationB is not annotated with the <code class="docutils literal notranslate"><span class="pre">supportedPrincipalTypes</span></code> trait, so
+the IAM principal types supported by this operation are the principal types
+applied to the service.</li>
+</ul>
+<div class="sphinx-tabs docutils container">
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-5-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-5-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-5-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-5-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+
+<span class="kd">use</span><span class="nc"> aws.iam#supportedPrincipalTypes</span><span class="w"></span>
+
+<span class="nd">@supportedPrincipalTypes</span>([<span class="s2">&quot;Root&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;IAMUser&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;IAMRole&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;FederatedUser&quot;</span>])<span class="w"></span>
+<span class="kd">service</span><span class="nc"> MyService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2020-07-02&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">operations:</span><span class="w"> </span>[<span class="vc">OperationA</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationB</span>]<span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nd">@supportedPrincipalTypes</span>([<span class="s2">&quot;Root&quot;</span>])<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> OperationA</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="kd">operation</span><span class="nc"> OperationB</span><span class="w"> </span>{}<span class="w"></span>
+</pre></div>
 </div>
+</div></div>
+</div>
+<div class="section" id="aws-iam-iamresource-trait">
+<span id="aws-iam-iamresource-trait"></span><span id="id9"></span><h2><a href="#aws-iam-iamresource-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#iamResource</span></code> trait</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>Indicates properties of a Smithy resource in AWS IAM.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">resource</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.iam#iamResource</span></code> trait is a structure that supports the following
+members:</p>
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>name</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>The name of the resource in AWS IAM.</td>
+</tr>
+</tbody>
+</table>
+<p>The following example defines a simple resource with a name in AWS IAM that
+deviates from the <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">shape name of the shape ID</span></a> of the resource.</p>
+<div class="sphinx-tabs docutils container">
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-6-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-6-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-6-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+
+<span class="kd">use</span><span class="nc"> aws.iam#iamResource</span><span class="w"></span>
+
+<span class="nd">@iamResource</span>(<span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;super&quot;</span>)<span class="w"></span>
+<span class="kd">resource</span><span class="nc"> SuperResource</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">identifiers:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">superId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div></div>
 </div>
 <div class="section" id="deriving-condition-keys">
-<span id="id8"></span><h2><a href="#deriving-condition-keys">Deriving Condition Keys</a></h2>
+<span id="id10"></span><h2><a href="#deriving-condition-keys">Deriving Condition Keys</a></h2>
 <p>Smithy will automatically derive condition key information for a service, as
 well as its resources and operations.</p>
 <p>A resource's condition keys include those that are inferred from their
@@ -634,48 +628,35 @@ resources, are only derived from those applied via the <a class="reference inter
 trait.</p>
 <p>Given the following model,</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-7-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-7-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-7-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-7-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> aws.api#service</span>
-<span class="kd">use</span><span class="nc"> aws.iam#defineConditionKeys</span>
-<span class="kd">use</span><span class="nc"> aws.iam#conditionKeys</span>
+<span class="kd">use</span><span class="nc"> aws.api#service</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> aws.iam#defineConditionKeys</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> aws.iam#conditionKeys</span><span class="w"></span>
 
-<span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
-<span class="nd">@defineConditionKeys</span>(<span class="s2">&quot;otherservice:Bar&quot;</span>: { <span class="nl">type:</span> <span class="s2">&quot;String&quot;</span> })
-<span class="kd">service</span><span class="nc"> MyService</span> {
-    <span class="nl">version:</span> <span class="s2">&quot;2017-02-11&quot;</span>,
-    <span class="nl">resources:</span> [<span class="vc">MyResource</span>],
-}
+<span class="nd">@service</span>(<span class="nl">sdkId:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">arnNamespace:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)<span class="w"></span>
+<span class="nd">@defineConditionKeys</span>(<span class="s2">&quot;otherservice:Bar&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="nl">type:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>})<span class="w"></span>
+<span class="kd">service</span><span class="nc"> MyService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">resources:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nd">@conditionKeys</span>([<span class="s2">&quot;otherservice:Bar&quot;</span>])
-<span class="kd">resource</span><span class="nc"> MyResource</span> {
-    <span class="nl">identifiers:</span> {<span class="nl">foo:</span> <span class="vc">String</span>},
-    <span class="nl">operations:</span> [<span class="vc">MyOperation</span>],
-    <span class="nl">resources:</span> [<span class="vc">MyInnerResource</span>],
-}
+<span class="nd">@conditionKeys</span>([<span class="s2">&quot;otherservice:Bar&quot;</span>])<span class="w"></span>
+<span class="kd">resource</span><span class="nc"> MyResource</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">identifiers:</span><span class="w"> </span>{<span class="nl">foo:</span><span class="w"> </span><span class="vc">String</span>}<span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">operations:</span><span class="w"> </span>[<span class="vc">MyOperation</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">resources:</span><span class="w"> </span>[<span class="vc">MyInnerResource</span>]<span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">resource</span><span class="nc"> MyInnerResource</span> {
-    <span class="nl">identifiers:</span> {<span class="nl">yum:</span> <span class="vc">String</span>}
-}
+<span class="kd">resource</span><span class="nc"> MyInnerResource</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">identifiers:</span><span class="w"> </span>{<span class="nl">yum:</span><span class="w"> </span><span class="vc">String</span>}<span class="w"></span>
+}<span class="w"></span>
 
-<span class="nd">@conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])
-<span class="kd">operation</span><span class="nc"> MyOperation</span> {}
+<span class="nd">@conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> MyOperation</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-7-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-7-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -718,10 +699,9 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 <p>The computed condition keys for the service are:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="80%" />
@@ -788,6 +768,8 @@ JSON</div>
 </li>
 <li><a class="reference internal" href="#aws-iam-disableconditionkeyinference-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-iam-requiredactions-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#requiredActions</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-iam-supportedprincipaltypes-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#supportedPrincipalTypes</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-iam-iamresource-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#iamResource</span></code> trait</a></li>
 <li><a class="reference internal" href="#deriving-condition-keys">Deriving Condition Keys</a></li>
 </ul>
 </li>

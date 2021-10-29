@@ -1,22 +1,22 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Converting Smithy to OpenAPI &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../_static/bootstrap-reboot.css" type="text/css" />
     
-    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
     <link rel="stylesheet" href="../../_static/custom-tabs.css" type="text/css" />
 
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/smithy.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -191,22 +191,22 @@ specification from a Smithy model using a buildscript dependency:</p>
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#openapi-smithy-build-gradle" title="Permalink to this code">¶</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span> <span class="p">{</span>
     <span class="n">java</span>
-    <span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="n">version</span><span class="p">(</span><span class="s">&quot;0.5.3&quot;</span><span class="p">)</span>
+    <span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;0.5.3&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.12.0&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.13.0&quot;</span><span class="p">)</span>
         <span class="c1">// The openapi plugin configured in the smithy-build.json example below</span>
         <span class="c1">// uses the restJson1 protocol defined in the aws-traits package. This</span>
         <span class="c1">// additional dependency must added to use that protocol.</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.12.0&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.13.0&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="n">dependencies</span> <span class="p">{</span>
     <span class="c1">// The dependency for restJson1 is required here too.</span>
-    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.12.0&quot;</span><span class="p">)</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.13.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -232,7 +232,7 @@ that builds an OpenAPI specification from a service for the
 </div>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-openapi:1.12.0&quot; is
+<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-openapi:1.13.0&quot; is
 required in order for smithy-build to map the &quot;openapi&quot; plugin name to the
 correct Java library implementation.</p>
 </div>
@@ -248,8 +248,7 @@ tools and vendors.</p>
 </div>
 <p>The following key-value pairs are supported:</p>
 <dl class="docutils" id="generate-openapi-setting-service">
-<dt>service (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
-<dd><p class="first"><strong>Required</strong>. The Smithy service <a class="reference internal" href="../spec/core/model.html#shape-id"><span class="std std-ref">shape ID</span></a> to convert.
+<dt>service (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p><strong>Required</strong>. The Smithy service <a class="reference internal" href="../spec/core/model.html#shape-id"><span class="std std-ref">shape ID</span></a> to convert.
 For example, <code class="docutils literal notranslate"><span class="pre">smithy.example#Weather</span></code>.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
@@ -261,7 +260,7 @@ For example, <code class="docutils literal notranslate"><span class="pre">smithy
 <span class="p">}</span>
 </pre></div>
 </div>
-<div class="last admonition note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Any <a class="reference internal" href="../spec/core/model.html#service-closure"><span class="std std-ref">rename</span></a> defined in the given service
 affects the generated schema names when converting to OpenAPI.</p>
@@ -269,8 +268,7 @@ affects the generated schema names when converting to OpenAPI.</p>
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-setting-protocol">
-<dt>protocol (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
-<dd><p class="first">The protocol shape ID to use when converting Smithy to OpenAPI.
+<dt>protocol (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p>The protocol shape ID to use when converting Smithy to OpenAPI.
 For example, <code class="docutils literal notranslate"><span class="pre">aws.protocols#restJson1</span></code>.</p>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
@@ -282,7 +280,7 @@ implementation is registered by a <code class="docutils literal notranslate"><sp
 service provider found on the classpath.</li>
 </ul>
 </div>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -296,11 +294,10 @@ service provider found on the classpath.</li>
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-setting-tags">
-<dt>tags (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
-<dd><p class="first">Whether or not to include Smithy <a class="reference internal" href="../spec/core/documentation-traits.html#tags-trait"><span class="std std-ref">tags</span></a> in the result
+<dt>tags (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Whether or not to include Smithy <a class="reference internal" href="../spec/core/documentation-traits.html#tags-trait"><span class="std std-ref">tags</span></a> in the result
 as <a class="reference external" href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#tagObject">OpenAPI tags</a>. The following example adds all tags in the Smithy
 model to the OpenAPI model.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -314,11 +311,10 @@ model to the OpenAPI model.</p>
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-setting-supportedtags">
-<dt>supportedTags (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt>
-<dd><p class="first">Limits the exported <code class="docutils literal notranslate"><span class="pre">tags</span></code> to a specific set of tags. The value
+<dt>supportedTags (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt><dd><p>Limits the exported <code class="docutils literal notranslate"><span class="pre">tags</span></code> to a specific set of tags. The value
 must be a list of strings. This property requires that <code class="docutils literal notranslate"><span class="pre">tags</span></code> is set to
 <code class="docutils literal notranslate"><span class="pre">true</span></code> in order to have an effect.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -333,11 +329,10 @@ must be a list of strings. This property requires that <code class="docutils lit
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-setting-defaultblobformat">
-<dt>defaultBlobFormat (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
-<dd><p class="first">Sets the default format property used when converting blob shapes in
+<dt>defaultBlobFormat (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p>Sets the default format property used when converting blob shapes in
 Smithy to strings in OpenAPI. Defaults to &quot;byte&quot;, meaning Base64 encoded.
 See <a class="reference external" href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#data-types">OpenAPI Data types</a> for more information.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -351,13 +346,12 @@ See <a class="reference external" href="https://github.com/OAI/OpenAPI-Specifica
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-setting-externaldocs">
-<dt>externalDocs (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt>
-<dd><p class="first">Limits the source of converted &quot;externalDocs&quot; fields to the specified
+<dt>externalDocs (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt><dd><p>Limits the source of converted &quot;externalDocs&quot; fields to the specified
 priority ordered list of names in an <a class="reference internal" href="../spec/core/documentation-traits.html#externaldocumentation-trait"><span class="std std-ref">externalDocumentation trait</span></a>.
 This list is case insensitive. By default, this is a list of the following
 values: &quot;Homepage&quot;, &quot;API Reference&quot;, &quot;User Guide&quot;, &quot;Developer Guide&quot;,
 &quot;Reference&quot;, and &quot;Guide&quot;.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -374,10 +368,9 @@ values: &quot;Homepage&quot;, &quot;API Reference&quot;, &quot;User Guide&quot;,
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-setting-keepunusedcomponents">
-<dt>keepUnusedComponents (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
-<dd><p class="first">Set to <code class="docutils literal notranslate"><span class="pre">true</span></code> to prevent unused OpenAPI <code class="docutils literal notranslate"><span class="pre">components</span></code> from being
+<dt>keepUnusedComponents (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Set to <code class="docutils literal notranslate"><span class="pre">true</span></code> to prevent unused OpenAPI <code class="docutils literal notranslate"><span class="pre">components</span></code> from being
 removed from the created specification.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -391,10 +384,9 @@ removed from the created specification.</p>
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-setting-jsoncontenttype">
-<dt>jsonContentType (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
-<dd><p class="first">Sets a custom media-type to associate with the JSON payload of
+<dt>jsonContentType (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p>Sets a custom media-type to associate with the JSON payload of
 JSON-based protocols.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -408,11 +400,10 @@ JSON-based protocols.</p>
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-setting-forbidgreedylabels">
-<dt>forbidGreedyLabels (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
-<dd><p class="first">Set to true to forbid greedy URI labels. By default, greedy labels will
+<dt>forbidGreedyLabels (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Set to true to forbid greedy URI labels. By default, greedy labels will
 appear as-is in the path generated for an operation. For example,
 &quot;/{foo+}&quot;.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -426,12 +417,11 @@ appear as-is in the path generated for an operation. For example,
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-setting-removegreedyparametersuffix">
-<dt>removeGreedyParameterSuffix (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
-<dd><p class="first">Set to true to remove the <code class="docutils literal notranslate"><span class="pre">+</span></code> suffix on the parameter name. By default, greedy
+<dt>removeGreedyParameterSuffix (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Set to true to remove the <code class="docutils literal notranslate"><span class="pre">+</span></code> suffix on the parameter name. By default, greedy
 labels will have a corresponding parameter name generated that will include
 the <code class="docutils literal notranslate"><span class="pre">+</span></code> suffix. Given a label &quot;/{foo+}&quot;, the parameter name will be &quot;foo+&quot;.
 If enabled, the parameter name will instead be &quot;foo&quot;.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -445,8 +435,7 @@ If enabled, the parameter name will instead be &quot;foo&quot;.</p>
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-setting-onhttpprefixheaders">
-<dt>onHttpPrefixHeaders (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
-<dd><p class="first">Specifies what to do when the <a class="reference internal" href="../spec/core/http-traits.html#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a> is found in
+<dt>onHttpPrefixHeaders (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p>Specifies what to do when the <a class="reference internal" href="../spec/core/http-traits.html#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a> is found in
 a model. OpenAPI does not support <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code>. By default, the
 conversion will fail when this trait is encountered, but this behavior
 can be customized using the following values for the <code class="docutils literal notranslate"><span class="pre">onHttpPrefixHeaders</span></code>
@@ -455,7 +444,7 @@ setting:</p>
 <li>FAIL: The default setting that causes the build to fail.</li>
 <li>WARN: The header is omitted from the OpenAPI model and a warning is logged.</li>
 </ul>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -469,10 +458,9 @@ setting:</p>
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-setting-ignoreunsupportedtraits">
-<dt>ignoreUnsupportedTraits (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
-<dd><p class="first">Emits warnings rather than failing when unsupported traits like
+<dt>ignoreUnsupportedTraits (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Emits warnings rather than failing when unsupported traits like
 <code class="docutils literal notranslate"><span class="pre">endpoint</span></code> and <code class="docutils literal notranslate"><span class="pre">hostLabel</span></code> are encountered.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -486,8 +474,7 @@ setting:</p>
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-setting-substitutions">
-<dt>substitutions (<code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">any&gt;</span></code>)</dt>
-<dd><p class="first">Defines a map of strings to any JSON value to find and replace in the
+<dt>substitutions (<code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">any&gt;</span></code>)</dt><dd><p>Defines a map of strings to any JSON value to find and replace in the
 generated OpenAPI model.</p>
 <p>String values are replaced if the string in its entirety matches
 one of the keys provided in the <code class="docutils literal notranslate"><span class="pre">substitutions</span></code> map. The
@@ -503,7 +490,7 @@ of <code class="docutils literal notranslate"><span class="pre">ANOTHER_REPLACEM
 performed on the generated document is more explicit and resilient to
 change.</p>
 </div>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -520,8 +507,7 @@ change.</p>
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-setting-jsonadd">
-<dt>jsonAdd (<code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">Node&gt;</span></code>)</dt>
-<dd><p class="first">Adds or replaces the JSON value in the generated OpenAPI document at the
+<dt>jsonAdd (<code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">Node&gt;</span></code>)</dt><dd><p>Adds or replaces the JSON value in the generated OpenAPI document at the
 given JSON pointer locations with a different JSON value. The value must
 be a map where each key is a valid JSON pointer string as defined in
 <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc6901.html"><strong>RFC 6901</strong></a>. Each value in the map is the JSON value to add or replace
@@ -530,7 +516,7 @@ at the given target.</p>
 JSON Patch, as specified in <span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc6902.html"><strong>RFC 6902</strong></a>, with the exception that adding
 properties to an undefined object will create nested objects in the
 result as needed.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -550,13 +536,12 @@ result as needed.</p>
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-setting-useintegertype">
-<dt>useIntegerType (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
-<dd><p class="first">Set to true to use the &quot;integer&quot; type when converting <code class="docutils literal notranslate"><span class="pre">byte</span></code>, <code class="docutils literal notranslate"><span class="pre">short</span></code>,
+<dt>useIntegerType (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Set to true to use the &quot;integer&quot; type when converting <code class="docutils literal notranslate"><span class="pre">byte</span></code>, <code class="docutils literal notranslate"><span class="pre">short</span></code>,
 <code class="docutils literal notranslate"><span class="pre">integer</span></code>, and <code class="docutils literal notranslate"><span class="pre">long</span></code> shapes to OpenAPI. Configuring this setting to
 true, like the example below, is recommended.</p>
 <p>By default, these shape types are converted to OpenAPI with a type of
 &quot;number&quot;.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -573,11 +558,10 @@ true, like the example below, is recommended.</p>
 <div class="section" id="json-schema-configuration-settings">
 <h2><a href="#json-schema-configuration-settings">JSON schema configuration settings</a></h2>
 <dl class="docutils" id="generate-openapi-jsonschema-setting-alphanumericonlyrefs">
-<dt>alphanumericOnlyRefs (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
-<dd><p class="first">Creates JSON schema names that strip out non-alphanumeric characters.</p>
+<dt>alphanumericOnlyRefs (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Creates JSON schema names that strip out non-alphanumeric characters.</p>
 <p>This is necessary for compatibility with some vendors like
 Amazon API Gateway that only allow alphanumeric shape names.</p>
-<div class="last admonition note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">This setting is enabled by default when
 <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy:smithy-aws-apigateway-openapi</span></code> is on the classpath
@@ -586,11 +570,10 @@ and <code class="docutils literal notranslate"><span class="pre">apiGatewayType<
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-jsonschema-setting-usejsonname">
-<dt>useJsonName (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
-<dd><p class="first">Uses the value of the <a class="reference internal" href="../spec/core/protocol-traits.html#jsonname-trait"><span class="std std-ref">jsonName trait</span></a> when creating JSON schema
+<dt>useJsonName (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Uses the value of the <a class="reference internal" href="../spec/core/protocol-traits.html#jsonname-trait"><span class="std std-ref">jsonName trait</span></a> when creating JSON schema
 properties for structure and union shapes. This property MAY be
 automatically set to <code class="docutils literal notranslate"><span class="pre">true</span></code> depending on the protocol being converted.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -604,12 +587,11 @@ automatically set to <code class="docutils literal notranslate"><span class="pre
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-jsonschema-setting-defaulttimestampformat">
-<dt>defaultTimestampFormat (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
-<dd><p class="first">Sets the assumed <a class="reference internal" href="../spec/core/protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a> value for timestamps with
+<dt>defaultTimestampFormat (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p>Sets the assumed <a class="reference internal" href="../spec/core/protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a> value for timestamps with
 no explicit timestampFormat trait. The provided value is expected to be
 a string. Defaults to &quot;date-time&quot; if not set. Can be set to &quot;date-time&quot;,
 &quot;epoch-seconds&quot;, or &quot;http-date&quot;.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -623,8 +605,7 @@ a string. Defaults to &quot;date-time&quot; if not set. Can be set to &quot;date
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-jsonschema-setting-unionstrategy">
-<dt>unionStrategy (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
-<dd><p class="first">Configures how Smithy union shapes are converted to JSON Schema.</p>
+<dt>unionStrategy (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p>Configures how Smithy union shapes are converted to JSON Schema.</p>
 <p>This property must be a string set to one of the following values:</p>
 <ul class="simple">
 <li><code class="docutils literal notranslate"><span class="pre">oneOf</span></code>: Converts to a schema that uses &quot;oneOf&quot;. This is the
@@ -633,7 +614,7 @@ default setting used if not configured.</li>
 <li><code class="docutils literal notranslate"><span class="pre">structure</span></code>: Converts to an object with properties just like a
 structure.</li>
 </ul>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -647,8 +628,7 @@ structure.</li>
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-jsonschema-setting-mapstrategy">
-<dt>mapStrategy (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
-<dd><p class="first">Configures how Smithy map shapes are converted to JSON Schema.</p>
+<dt>mapStrategy (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p>Configures how Smithy map shapes are converted to JSON Schema.</p>
 <p>This property must be a string set to one of the following values:</p>
 <ul class="simple">
 <li><code class="docutils literal notranslate"><span class="pre">propertyNames</span></code>:  Converts to a schema that uses a combination of
@@ -659,7 +639,7 @@ used if not configured.</li>
 &quot;pattern&quot; trait, a default indicating one or more of any character (&quot;.+&quot;)
 is applied.</li>
 </ul>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -673,10 +653,9 @@ is applied.</li>
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-jsonschema-setting-schemadocumentextensions">
-<dt>schemaDocumentExtensions (<code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">any&gt;</span></code>)</dt>
-<dd><p class="first">Adds custom top-level key-value pairs to the created OpenAPI specification.
+<dt>schemaDocumentExtensions (<code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">any&gt;</span></code>)</dt><dd><p>Adds custom top-level key-value pairs to the created OpenAPI specification.
 Any existing value is overwritten.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -695,10 +674,9 @@ Any existing value is overwritten.</p>
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-jsonschema-setting-disablefeatures">
-<dt>disableFeatures (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt>
-<dd><p class="first">Disables JSON schema and OpenAPI property names from appearing in the
+<dt>disableFeatures (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt><dd><p>Disables JSON schema and OpenAPI property names from appearing in the
 generated OpenAPI model.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -712,8 +690,7 @@ generated OpenAPI model.</p>
 </dd>
 </dl>
 <dl class="docutils" id="generate-openapi-setting-supportnonnumericfloats">
-<dt>supportNonNumericFloats (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
-<dd><p class="first">Set to true to add support for NaN, Infinity, and -Infinity in float
+<dt>supportNonNumericFloats (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Set to true to add support for NaN, Infinity, and -Infinity in float
 and double shapes. These values will be serialized as strings. The
 JSON Schema document will be updated to refer to them as a &quot;oneOf&quot; of
 number and string.</p>
@@ -739,7 +716,7 @@ look like this:</p>
 </pre></div>
 </div>
 <p>With this enabled, references to floats/doubles will look like this:</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;floatMember&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;oneOf&quot;</span><span class="p">:</span> <span class="p">[</span>
             <span class="p">{</span>
@@ -780,19 +757,19 @@ OpenAPI security schemes.</p>
 <li><a class="reference internal" href="../spec/core/auth-traits.html#httpdigestauth-trait"><span class="std std-ref">httpDigestAuth</span></a></li>
 </ul>
 <p>For example, given the following Smithy model:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> aws.protocols#restJson1</span>
+<span class="kd">use</span><span class="nc"> aws.protocols#restJson1</span><span class="w"></span>
 
-<span class="nd">@restJson1</span>
-<span class="nd">@httpApiKeyAuth</span>(<span class="nl">name:</span> <span class="s2">&quot;x-api-key&quot;</span>, <span class="nl">in:</span> <span class="s2">&quot;header&quot;</span>)
-<span class="kd">service</span><span class="nc"> Foo</span> {
-    <span class="nl">version:</span> <span class="s2">&quot;2006-03-01&quot;</span>,
-    <span class="nl">operations:</span> [<span class="vc">ExampleOperation</span>],
-}
+<span class="nd">@restJson1</span><span class="w"></span>
+<span class="nd">@httpApiKeyAuth</span>(<span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;x-api-key&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">in:</span><span class="w"> </span><span class="s2">&quot;header&quot;</span>)<span class="w"></span>
+<span class="kd">service</span><span class="nc"> Foo</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">operations:</span><span class="w"> </span>[<span class="vc">ExampleOperation</span>]<span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;GET&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/&quot;</span>)
-<span class="kd">operation</span><span class="nc"> ExampleOperation</span> {}
+<span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> ExampleOperation</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
 <p>Smithy will generate the following OpenAPI model:</p>
@@ -843,7 +820,7 @@ dependency on <code class="docutils literal notranslate"><span class="pre">softw
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#apigateway-build-gradle" title="Permalink to this code">¶</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-apigateway-openapi:1.12.0&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-apigateway-openapi:1.13.0&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -852,8 +829,7 @@ dependency on <code class="docutils literal notranslate"><span class="pre">softw
 <div class="section" id="amazon-api-gateway-configuration-settings">
 <h3><a href="#amazon-api-gateway-configuration-settings">Amazon API Gateway configuration settings</a></h3>
 <dl class="docutils">
-<dt>apiGatewayType (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
-<dd><p class="first">Defines the type of API Gateway to define in the generated OpenAPI model.
+<dt>apiGatewayType (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p>Defines the type of API Gateway to define in the generated OpenAPI model.
 This setting influences which API Gateway specific plugins apply
 to the generated OpenAPI model.</p>
 <p>This setting can be set to one of the following:</p>
@@ -865,7 +841,7 @@ configured.</li>
 OpenAPI model. This is useful if <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy:smithy-aws-apigateway-openapi</span></code>
 is inadvertently placed on the classpath by a dependency.</li>
 </ul>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -877,8 +853,7 @@ is inadvertently placed on the classpath by a dependency.</li>
 </pre></div>
 </div>
 </dd>
-<dt>disableCloudFormationSubstitution (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
-<dd><p class="first">Disables automatically converting <code class="docutils literal notranslate"><span class="pre">${}</span></code> templates in specific properties
+<dt>disableCloudFormationSubstitution (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Disables automatically converting <code class="docutils literal notranslate"><span class="pre">${}</span></code> templates in specific properties
 into CloudFormation intrinsic functions.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
@@ -891,17 +866,16 @@ into CloudFormation intrinsic functions.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<div class="last admonition seealso">
+<div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="#openapi-cfn-substitutions"><span class="std std-ref">AWS CloudFormation substitutions</span></a></p>
 </div>
 </dd>
-<dt>additionalAllowedCorsHeaders (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt>
-<dd><p class="first">Sets additional allowed CORS headers on the preflight requests. If this
+<dt>additionalAllowedCorsHeaders (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt><dd><p>Sets additional allowed CORS headers on the preflight requests. If this
 option is not set, the default <code class="docutils literal notranslate"><span class="pre">amz-sdk-invocation-id</span></code> and <code class="docutils literal notranslate"><span class="pre">amz-sdk-request</span></code>
 headers will be added. By setting this option to an empty array, those default
 headers will be omitted.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -937,27 +911,24 @@ service. It can also be applied to an operation to set a specific validator
 for the operation.</p>
 <p>Smithy defines the following canned request validators:</p>
 <dl class="docutils">
-<dt>full</dt>
-<dd><p class="first">Creates a request validator configured as</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<dt>full</dt><dd><p>Creates a request validator configured as</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;validateRequestBody&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;validateRequestParameters&quot;</span><span class="p">:</span> <span class="kc">true</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </dd>
-<dt>params-only</dt>
-<dd><p class="first">Creates a request validator configured as</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<dt>params-only</dt><dd><p>Creates a request validator configured as</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;validateRequestBody&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
     <span class="nt">&quot;validateRequestParameters&quot;</span><span class="p">:</span> <span class="kc">true</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </dd>
-<dt>body-only</dt>
-<dd><p class="first">Creates a request validator configured as</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<dt>body-only</dt><dd><p>Creates a request validator configured as</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;validateRequestBody&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;validateRequestParameters&quot;</span><span class="p">:</span> <span class="kc">false</span>
 <span class="p">}</span>
@@ -1009,56 +980,56 @@ attach to authentication schemes defined on a service. Authorizers are
 first defined on a service, and then attached to the service, resources,
 or operations using the <code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizer-trait</span></code>.</p>
 <p>The following Smithy model:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> aws.apigateway#authorizer</span>
-<span class="kd">use</span><span class="nc"> aws.apigateway#authorizers</span>
-<span class="kd">use</span><span class="nc"> aws.auth#sigv4</span>
-<span class="kd">use</span><span class="nc"> aws.protocols#restJson1</span>
+<span class="kd">use</span><span class="nc"> aws.apigateway#authorizer</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> aws.apigateway#authorizers</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> aws.auth#sigv4</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> aws.protocols#restJson1</span><span class="w"></span>
 
-<span class="nd">@restJson1</span>
-<span class="nd">@sigv4</span>(<span class="nl">name:</span> <span class="s2">&quot;service&quot;</span>)
-<span class="nd">@authorizer</span>(<span class="s2">&quot;foo&quot;</span>)
-<span class="nd">@authorizers</span>(
-    <span class="nl">foo:</span> {<span class="nl">scheme:</span> <span class="vc">sigv4</span>, <span class="nl">type:</span> <span class="s2">&quot;aws&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;arn:foo&quot;</span>},
-    <span class="nl">baz:</span> {<span class="nl">scheme:</span> <span class="vc">sigv4</span>, <span class="nl">type:</span> <span class="s2">&quot;aws&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;arn:foo&quot;</span>})
-<span class="kd">service</span><span class="nc"> Example</span> {
-  <span class="nl">version:</span> <span class="s2">&quot;2019-06-17&quot;</span>,
-  <span class="nl">operations:</span> [<span class="vc">OperationA</span>, <span class="vc">OperationB</span>],
-  <span class="nl">resources:</span> [<span class="vc">ResourceA</span>, <span class="vc">ResourceB</span>],
-}
+<span class="nd">@restJson1</span><span class="w"></span>
+<span class="nd">@sigv4</span>(<span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)<span class="w"></span>
+<span class="nd">@authorizer</span>(<span class="s2">&quot;foo&quot;</span>)<span class="w"></span>
+<span class="nd">@authorizers</span>(<span class="w"></span>
+<span class="w">    </span><span class="nl">foo:</span><span class="w"> </span>{<span class="nl">scheme:</span><span class="w"> </span><span class="vc">sigv4</span><span class="p">,</span><span class="w"> </span><span class="nl">type:</span><span class="w"> </span><span class="s2">&quot;aws&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;arn:foo&quot;</span>}<span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">baz:</span><span class="w"> </span>{<span class="nl">scheme:</span><span class="w"> </span><span class="vc">sigv4</span><span class="p">,</span><span class="w"> </span><span class="nl">type:</span><span class="w"> </span><span class="s2">&quot;aws&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;arn:foo&quot;</span>})<span class="w"></span>
+<span class="kd">service</span><span class="nc"> Example</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">  </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2019-06-17&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nl">operations:</span><span class="w"> </span>[<span class="vc">OperationA</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationB</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nl">resources:</span><span class="w"> </span>[<span class="vc">ResourceA</span><span class="p">,</span><span class="w"> </span><span class="vc">ResourceB</span>]<span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="c">// Inherits the authorizer of the service</span>
-<span class="kd">operation</span><span class="nc"> OperationA</span> {}
+<span class="c">// Inherits the authorizer of the service</span><span class="w"></span>
+<span class="kd">operation</span><span class="nc"> OperationA</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="c">// Overrides the authorizer of the service</span>
-<span class="nd">@authorizer</span>(<span class="s2">&quot;baz&quot;</span>)
-<span class="kd">operation</span><span class="nc"> OperationB</span> {}
+<span class="c">// Overrides the authorizer of the service</span><span class="w"></span>
+<span class="nd">@authorizer</span>(<span class="s2">&quot;baz&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> OperationB</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="c">// Inherits the authorizer of the service</span>
-<span class="kd">resource</span><span class="nc"> ResourceA</span> {
-  <span class="nl">operations:</span> [<span class="vc">OperationC</span>, <span class="vc">OperationD</span>]
-}
+<span class="c">// Inherits the authorizer of the service</span><span class="w"></span>
+<span class="kd">resource</span><span class="nc"> ResourceA</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">  </span><span class="nl">operations:</span><span class="w"> </span>[<span class="vc">OperationC</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationD</span>]<span class="w"></span>
+}<span class="w"></span>
 
-<span class="c">// Inherits the authorizer of the service</span>
-<span class="kd">operation</span><span class="nc"> OperationC</span> {}
+<span class="c">// Inherits the authorizer of the service</span><span class="w"></span>
+<span class="kd">operation</span><span class="nc"> OperationC</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="c">// Overrides the authorizer of the service</span>
-<span class="nd">@authorizer</span>(<span class="s2">&quot;baz&quot;</span>)
-<span class="kd">operation</span><span class="nc"> OperationD</span> {}
+<span class="c">// Overrides the authorizer of the service</span><span class="w"></span>
+<span class="nd">@authorizer</span>(<span class="s2">&quot;baz&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> OperationD</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="c">// Overrides the authorizer of the service</span>
-<span class="nd">@authorizer</span>(<span class="s2">&quot;baz&quot;</span>)
-<span class="kd">resource</span><span class="nc"> ResourceB</span> {
-  <span class="nl">operations:</span> [<span class="vc">OperationE</span>, <span class="vc">OperationF</span>]
-}
+<span class="c">// Overrides the authorizer of the service</span><span class="w"></span>
+<span class="nd">@authorizer</span>(<span class="s2">&quot;baz&quot;</span>)<span class="w"></span>
+<span class="kd">resource</span><span class="nc"> ResourceB</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">  </span><span class="nl">operations:</span><span class="w"> </span>[<span class="vc">OperationE</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationF</span>]<span class="w"></span>
+}<span class="w"></span>
 
-<span class="c">// Inherits the authorizer of ResourceB</span>
-<span class="kd">operation</span><span class="nc"> OperationE</span> {}
+<span class="c">// Inherits the authorizer of ResourceB</span><span class="w"></span>
+<span class="kd">operation</span><span class="nc"> OperationE</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="c">// Overrides the authorizer of ResourceB</span>
-<span class="nd">@authorizer</span>(<span class="s2">&quot;foo&quot;</span>)
-<span class="kd">operation</span><span class="nc"> OperationF</span> {}
+<span class="c">// Overrides the authorizer of ResourceB</span><span class="w"></span>
+<span class="nd">@authorizer</span>(<span class="s2">&quot;foo&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> OperationF</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
 <p>Is converted to the following OpenAPI model:</p>
@@ -1242,36 +1213,34 @@ from the trait.</p>
 <a class="reference internal" href="../spec/core/auth-traits.html#httpapikeyauth-trait"><span class="std std-ref">httpApiKeyAuth trait</span></a> is set and configured as <a class="reference internal" href="../spec/aws/amazon-apigateway.html#aws-apigateway-authorizers-trait"><span class="std std-ref">an authorizer</span></a> with no <code class="docutils literal notranslate"><span class="pre">type</span></code> property set.</p>
 <p>The following Smithy model enables API Gateway's API key usage plans on the
 <code class="docutils literal notranslate"><span class="pre">OperationA</span></code> operation:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> aws.apigateway#authorizer</span>
-<span class="kd">use</span><span class="nc"> aws.apigateway#authorizers</span>
-<span class="kd">use</span><span class="nc"> aws.protocols#restJson1</span>
+<span class="kd">use</span><span class="nc"> aws.apigateway#authorizer</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> aws.apigateway#authorizers</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> aws.protocols#restJson1</span><span class="w"></span>
 
-<span class="nd">@restJson1</span>
-<span class="nd">@httpApiKeyAuth</span>(<span class="nl">name:</span> <span class="s2">&quot;x-api-key&quot;</span>, <span class="nl">in:</span> <span class="s2">&quot;header&quot;</span>)
-<span class="nd">@authorizer</span>(<span class="s2">&quot;api_key&quot;</span>)
-<span class="nd">@authorizers</span>(<span class="nl">api_key:</span> {<span class="nl">scheme:</span> <span class="s2">&quot;smithy.api#httpApiKeyAuth&quot;</span>})
-<span class="kd">service</span><span class="nc"> Example</span> {
-  <span class="nl">version:</span> <span class="s2">&quot;2019-06-17&quot;</span>,
-  <span class="nl">operations:</span> [<span class="vc">OperationA</span>],
-}
+<span class="nd">@restJson1</span><span class="w"></span>
+<span class="nd">@httpApiKeyAuth</span>(<span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;x-api-key&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">in:</span><span class="w"> </span><span class="s2">&quot;header&quot;</span>)<span class="w"></span>
+<span class="nd">@authorizer</span>(<span class="s2">&quot;api_key&quot;</span>)<span class="w"></span>
+<span class="nd">@authorizers</span>(<span class="nl">api_key:</span><span class="w"> </span>{<span class="nl">scheme:</span><span class="w"> </span><span class="s2">&quot;smithy.api#httpApiKeyAuth&quot;</span>})<span class="w"></span>
+<span class="kd">service</span><span class="nc"> Example</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">  </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2019-06-17&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nl">operations:</span><span class="w"> </span>[<span class="vc">OperationA</span>]<span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">operation</span><span class="nc"> OperationA</span> {}
+<span class="kd">operation</span><span class="nc"> OperationA</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="other-traits-that-influence-api-gateway">
 <span id="other-traits"></span><h3><a href="#other-traits-that-influence-api-gateway">Other traits that influence API Gateway</a></h3>
 <dl class="docutils">
-<dt><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeySource</span></code></dt>
-<dd>Specifies the source of the caller identifier that will be used to
+<dt><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeySource</span></code></dt><dd>Specifies the source of the caller identifier that will be used to
 throttle API methods that require a key. This trait is converted into
 the <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html">x-amazon-apigateway-api-key-source</a> OpenAPI extension.</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizers</span></code></dt>
-<dd><p class="first">Lambda authorizers to attach to the authentication schemes defined on
+<dt><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizers</span></code></dt><dd><p>Lambda authorizers to attach to the authentication schemes defined on
 this service.</p>
-<div class="last admonition seealso">
+<div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last">See <a class="reference internal" href="#authorizers"><span class="std std-ref">Authorizers</span></a></p>
 </div>
@@ -1290,7 +1259,7 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#openapi-code-build-gradle" title="Permalink to this code">¶</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.12.0&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.13.0&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>

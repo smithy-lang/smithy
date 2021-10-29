@@ -1,28 +1,23 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AWS EC2 query protocol &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx_tabs/tabs.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
     <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
 
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../_static/sphinx_tabs/tabs.js"></script>
-    <script type="text/javascript" src="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/tabs.js"></script>
     <script type="text/javascript" src="../../../_static/smithy.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -98,17 +93,14 @@
 <div class="section" id="aws-protocols-ec2query-trait">
 <span id="aws-protocols-ec2query-trait"></span><span id="id2"></span><h2><a href="#aws-protocols-ec2query-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#ec2Query</span></code> trait</a></h2>
 <dl class="docutils">
-<dt>Summary</dt>
-<dd>Adds support for an HTTP protocol that sends requests in a
+<dt>Summary</dt><dd>Adds support for an HTTP protocol that sends requests in a
 <code class="docutils literal notranslate"><span class="pre">application/x-www-form-url-encoded</span></code> body and responses in XML
 documents. This protocol is an Amazon EC2-specific extension
 of the <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol.</dd>
-<dt>Trait selector</dt>
-<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">service</span> <span class="pre">[trait|xmlNamespace]</span></code></p>
-<p class="last"><em>Service shapes with the xmlNamespace trait</em></p>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">service</span> <span class="pre">[trait|xmlNamespace]</span></code></p>
+<p><em>Service shapes with the xmlNamespace trait</em></p>
 </dd>
-<dt>Value type</dt>
-<dd>Annotation trait.</dd>
+<dt>Value type</dt><dd>Annotation trait.</dd>
 </dl>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
@@ -120,30 +112,17 @@ of the <code class="docutils literal notranslate"><span class="pre">awsQuery</sp
 members that target structures, documents, strings, blobs, or unions.</p>
 </div>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> aws.protocols#ec2Query</span>
+<span class="kd">use</span><span class="nc"> aws.protocols#ec2Query</span><span class="w"></span>
 
-<span class="nd">@ec2Query</span>
-<span class="kd">service</span><span class="nc"> MyService</span> {
-    <span class="nl">version:</span> <span class="s2">&quot;2020-02-05&quot;</span>
-}
+<span class="nd">@ec2Query</span><span class="w"></span>
+<span class="kd">service</span><span class="nc"> MyService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-0-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-0-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -157,21 +136,17 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 <div class="section" id="aws-protocols-ec2queryname-trait">
 <span id="aws-protocols-ec2queryname-trait"></span><span id="id3"></span><h2><a href="#aws-protocols-ec2queryname-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#ec2QueryName</span></code> trait</a></h2>
 <dl class="docutils">
-<dt>Summary</dt>
-<dd>Allows a serialized query key to differ from a structure member name when
+<dt>Summary</dt><dd>Allows a serialized query key to differ from a structure member name when
 used in the model.</dd>
-<dt>Trait selector</dt>
-<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></p>
-<p class="last"><em>Any structure member</em></p>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></p>
+<p><em>Any structure member</em></p>
 </dd>
-<dt>Value type</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
 </dl>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
@@ -180,28 +155,15 @@ operation inputs using the <code class="docutils literal notranslate"><span clas
 </div>
 <p>Given the following structure definition:</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.protocols#ec2QueryName</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-1-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.protocols#ec2QueryName</span><span class="w"></span>
 
-<span class="kd">structure</span><span class="nc"> MyStruct</span> {
-    <span class="nd">@ec2QueryName</span>(<span class="s2">&quot;foo&quot;</span>)
-    <span class="nl">bar:</span> <span class="vc">String</span>
-}
+<span class="kd">structure</span><span class="nc"> MyStruct</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@ec2QueryName</span>(<span class="s2">&quot;foo&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">bar:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-1-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-1-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#MyStruct&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -219,8 +181,7 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 <p>and the following values provided for <code class="docutils literal notranslate"><span class="pre">MyStruct</span></code>,</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;bar&quot;</span> <span class="o">=</span> <span class="s2">&quot;baz&quot;</span>
 </pre></div>
@@ -242,7 +203,7 @@ member, if present.</p>
 member with the first letter capitalized, if present.</p>
 </li>
 <li><p class="first">Use the default value for the member, if present:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="50%" />
 <col width="50%" />
@@ -254,10 +215,10 @@ member with the first letter capitalized, if present.</p>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">structure</span></code> member</td>
-<td>The <a class="reference internal" href="../core/model.html#grammar-token-shape_id_member"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a> capitalized</td>
+<td>The <a class="reference internal" href="../core/model.html#grammar-token-smithy-shape_id_member"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a> capitalized</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">union</span></code> member</td>
-<td>The <a class="reference internal" href="../core/model.html#grammar-token-shape_id_member"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a> capitalized</td>
+<td>The <a class="reference internal" href="../core/model.html#grammar-token-smithy-shape_id_member"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a> capitalized</td>
 </tr>
 </tbody>
 </table>
@@ -269,7 +230,7 @@ member with the first letter capitalized, if present.</p>
 <h2><a href="#supported-traits">Supported traits</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.protocols#ec2Query</span></code> protocol supports the following traits
 that affect serialization:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="80%" />
@@ -334,7 +295,7 @@ values MUST be encoded according to <span class="target" id="index-0"></span><a 
 a Content-Length header; this protocol does not support chunked
 Transfer-Encoding.</p>
 <p>Requests MUST include the following key value pairs in the serialized body:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="30%" />
 <col width="70%" />
@@ -346,7 +307,7 @@ Transfer-Encoding.</p>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">Action</span></code></td>
-<td>The <a class="reference internal" href="../core/model.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the operation's <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>.</td>
+<td>The <a class="reference internal" href="../core/model.html#grammar-token-smithy-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the operation's <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">Version</span></code></td>
 <td>The value of the <a class="reference internal" href="../core/model.html#service"><span class="std std-ref">&quot;version&quot; property of the service</span></a>.</td>
@@ -363,7 +324,7 @@ concatenated with the following rules:</p>
 <div class="section" id="x-www-form-urlencoded-shape-serialization">
 <h3><a href="#x-www-form-urlencoded-shape-serialization">x-www-form-urlencoded shape serialization</a></h3>
 <p>Simple shapes are serialized according to the following rules:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="25%" />
 <col width="75%" />
@@ -425,7 +386,7 @@ MAY be used to customize timestamp serialization.</td>
 </table>
 <p>Aggregate shapes are serialized with additional segments for members appended
 to the input's key.</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="25%" />
 <col width="75%" />
@@ -475,25 +436,25 @@ with a &quot;.&quot; separator and the member name appended to the container's k
 See <a class="reference internal" href="#aws-protocols-ec2queryname-query-key-naming"><span class="std std-ref">Query key resolution</span></a>
 for how to serialize a property using a custom name. Members with null values are not serialized.</p>
 <p>For example, given the following:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> Ec2QueryStructuresInput</span> {
-    <span class="nl">foo:</span> <span class="vc">String</span>,
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> Ec2QueryStructuresInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">foo:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-    <span class="nd">@ec2QueryName</span>(<span class="s2">&quot;A&quot;</span>)
-    <span class="nl">HasQueryName:</span> <span class="vc">String</span>,
+<span class="w">    </span><span class="nd">@ec2QueryName</span>(<span class="s2">&quot;A&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">HasQueryName:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-    <span class="nd">@ec2QueryName</span>(<span class="s2">&quot;B&quot;</span>)
-    <span class="nd">@xmlName</span>(<span class="s2">&quot;IgnoreMe&quot;</span>)
-    <span class="nl">HasQueryAndXmlName:</span> <span class="vc">String</span>,
+<span class="w">    </span><span class="nd">@ec2QueryName</span>(<span class="s2">&quot;B&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nd">@xmlName</span>(<span class="s2">&quot;IgnoreMe&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">HasQueryAndXmlName:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-    <span class="nd">@xmlName</span>(<span class="s2">&quot;c&quot;</span>)
-    <span class="nl">UsesXmlName:</span> <span class="vc">String</span>,
+<span class="w">    </span><span class="nd">@xmlName</span>(<span class="s2">&quot;c&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">UsesXmlName:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-    <span class="nl">baz:</span> <span class="vc">MyStructure</span>,
-}
+<span class="w">    </span><span class="nl">baz:</span><span class="w"> </span><span class="vc">MyStructure</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">structure</span><span class="nc"> MyStructure</span> {
-    <span class="nl">temp:</span> <span class="vc">String</span>,
-}
+<span class="kd">structure</span><span class="nc"> MyStructure</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">temp:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">x-www-form-urlencoded</span></code> serialization is:</p>
@@ -513,26 +474,26 @@ for how to serialize a property using a custom name. Members with null values ar
 a &quot;.&quot; separator and a &quot;1&quot; indexed incrementing counter appended to the
 container's key.</p>
 <p>For example, given the following:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> Ec2QueryListsInput</span> {
-    <span class="nl">ListArg:</span> <span class="vc">StringList</span>,
-    <span class="nl">ComplexListArg:</span> <span class="vc">GreetingList</span>,
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> Ec2QueryListsInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">ListArg:</span><span class="w"> </span><span class="vc">StringList</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">ComplexListArg:</span><span class="w"> </span><span class="vc">GreetingList</span><span class="p">,</span><span class="w"></span>
 
-    <span class="nd">@ec2QueryName</span>(<span class="s2">&quot;Renamed&quot;</span>)
-    <span class="nd">@xmlName</span>(<span class="s2">&quot;IgnoreMe&quot;</span>)
-    <span class="nl">RenamedListArg:</span> <span class="vc">StringList</span>,
-}
+<span class="w">    </span><span class="nd">@ec2QueryName</span>(<span class="s2">&quot;Renamed&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nd">@xmlName</span>(<span class="s2">&quot;IgnoreMe&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">RenamedListArg:</span><span class="w"> </span><span class="vc">StringList</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">list</span><span class="nc"> StringList</span> {
-    <span class="nl">member:</span> <span class="vc">String</span>
-}
+<span class="kd">list</span><span class="nc"> StringList</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">member:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">list</span><span class="nc"> GreetingList</span> {
-    <span class="nl">member:</span> <span class="vc">GreetingStruct</span>
-}
+<span class="kd">list</span><span class="nc"> GreetingList</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">member:</span><span class="w"> </span><span class="vc">GreetingStruct</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">structure</span><span class="nc"> GreetingStruct</span> {
-    <span class="nl">hi:</span> <span class="vc">String</span>,
-}
+<span class="kd">structure</span><span class="nc"> GreetingStruct</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">hi:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code> serialization is:</p>
@@ -565,7 +526,7 @@ following is a sample response to an operation named <code class="docutils liter
 </div>
 <div class="section" id="xml-shape-serialization">
 <h3><a href="#xml-shape-serialization">XML shape serialization</a></h3>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="25%" />
 <col width="75%" />
@@ -677,7 +638,7 @@ the actual error, and a <code class="docutils literal notranslate"><span class="
 of the <code class="docutils literal notranslate"><span class="pre">Errors</span></code> tag is an <code class="docutils literal notranslate"><span class="pre">Error</span></code> tag which contains the serialized error
 structure members.</p>
 <p>Serialized error shapes MUST also contain an additional child element <code class="docutils literal notranslate"><span class="pre">Code</span></code>
-that contains only the <a class="reference internal" href="../core/model.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
+that contains only the <a class="reference internal" href="../core/model.html#grammar-token-smithy-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
 <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>. This can be used to distinguish which specific error has been
 serialized in the response.</p>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;Response&gt;</span>
@@ -693,7 +654,7 @@ serialized in the response.</p>
 </pre></div>
 </div>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">Code</span></code>: The <a class="reference internal" href="../core/model.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
+<li><code class="docutils literal notranslate"><span class="pre">Code</span></code>: The <a class="reference internal" href="../core/model.html#grammar-token-smithy-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
 <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>.</li>
 <li><code class="docutils literal notranslate"><span class="pre">RequestId</span></code>: Contains a unique identifier for the associated request.</li>
 </ul>
@@ -706,7 +667,7 @@ hypothetical members of the serialized error structure.</p>
 for &quot;not a number&quot; and both positive and negative infinity. Unless otherwise
 specified, the <code class="docutils literal notranslate"><span class="pre">ec2Query</span></code> protocol treats those special values as
 strings with the following values:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="50%" />
 <col width="50%" />

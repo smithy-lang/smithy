@@ -1,28 +1,23 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Model linters &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../_static/bootstrap-reboot.css" type="text/css" />
     
-    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx_tabs/tabs.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
     <link rel="stylesheet" href="../../_static/custom-tabs.css" type="text/css" />
 
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/sphinx_tabs/tabs.js"></script>
-    <script type="text/javascript" src="../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/tabs.js"></script>
     <script type="text/javascript" src="../../_static/smithy.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -99,21 +94,13 @@ can be used to apply additional validation to Smithy models.</p>
 <p>The following example adds <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code> as a Gradle dependency
 to a <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code> file:</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-S290bGlu docutils container">
-<div class="docutils container">
-Kotlin</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-S290bGlu active docutils container">
-<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span> <span class="p">{</span>
-    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.12.0&quot;</span><span class="p">)</span>
-    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.12.0&quot;</span><span class="p">)</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-S290bGlu" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-S290bGlu" name="S290bGlu" role="tab" tabindex="0">Kotlin</button></div><div aria-labelledby="tab-0-S290bGlu" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-S290bGlu" name="S290bGlu" role="tabpanel" tabindex="0"><div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span> <span class="p">{</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.13.0&quot;</span><span class="p">)</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.13.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 <p>After the dependency is added and available on the Java classpath, validators
 defined in the package and registered using <a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">Java SPI</a> are available for
 use in Smithy models.</p>
@@ -127,16 +114,13 @@ use in Smithy models.</p>
 with all uppercase letters. For example, instead of using &quot;XMLRequest&quot; or
 &quot;instanceID&quot;, this validator recommends using &quot;XmlRequest&quot; and &quot;instanceId&quot;.</p>
 <dl class="docutils">
-<dt>Rationale</dt>
-<dd>Using a strict form of camelCase where abbreviations are written just
+<dt>Rationale</dt><dd>Using a strict form of camelCase where abbreviations are written just
 like other words makes names more predictable and easier to work with
 in tooling. For example, a tool that generates code in Python might wish
 to represent camelCase words using snake_case; utilizing strict camel
 casing makes it easier to split words apart.</dd>
-<dt>Default severity</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
-<dt>Configuration</dt>
-<dd><table border="1" class="colwidths-given first last docutils">
+<dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
+<dt>Configuration</dt><dd><table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -159,11 +143,11 @@ letters. Defaults to an empty list.</td>
 </dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [
-    {<span class="nl">name:</span> <span class="s2">&quot;AbbreviationName&quot;</span>}
-]
+<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span>{<span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;AbbreviationName&quot;</span>}<span class="w"></span>
+]<span class="w"></span>
 </pre></div>
 </div>
 </div>
@@ -174,14 +158,11 @@ camel casing. By default, this validator will ensure that shape names use
 UpperCamelCase, trait shape names use lowerCamelCase, and that member names
 use lowerCamelCase.</p>
 <dl class="docutils">
-<dt>Rationale</dt>
-<dd>Utilizing a consistent camelCase style makes it easier to understand a
+<dt>Rationale</dt><dd>Utilizing a consistent camelCase style makes it easier to understand a
 model and can lead to consistent naming in code generated from Smithy
 models.</dd>
-<dt>Default severity</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
-<dt>Configuration</dt>
-<dd><table border="1" class="colwidths-given first last docutils">
+<dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
+<dt>Configuration</dt><dd><table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -204,11 +185,11 @@ models.</dd>
 </dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [
-    {<span class="nl">name:</span> <span class="s2">&quot;CamelCase&quot;</span>}
-]
+<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span>{<span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;CamelCase&quot;</span>}<span class="w"></span>
+]<span class="w"></span>
 </pre></div>
 </div>
 </div>
@@ -220,18 +201,15 @@ reserved words.</p>
 and support a leading and trailing wildcard character, &quot;*&quot;. See
 <a class="reference internal" href="#reserved-words-wildcards"><span class="std std-ref">wildcard evaluation</span></a> for more detail.</p>
 <dl class="docutils">
-<dt>Rationale</dt>
-<dd>Tools that generate code from Smithy models SHOULD automatically convert
+<dt>Rationale</dt><dd>Tools that generate code from Smithy models SHOULD automatically convert
 reserved words into symbols that are safe to use in the targeted
 programming language. This validator can be used to warn about these
 conversions as well as to prevent sensitive words, like internal
 code-names, from appearing in public artifacts.</dd>
-<dt>Default Severity</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
-<dt>Configuration</dt>
-<dd><p class="first">A single key, <code class="docutils literal notranslate"><span class="pre">reserved</span></code>, is <strong>Required</strong> in the configuration. Its
+<dt>Default Severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
+<dt>Configuration</dt><dd><p>A single key, <code class="docutils literal notranslate"><span class="pre">reserved</span></code>, is <strong>Required</strong> in the configuration. Its
 value is a list of objects with the following properties:</p>
-<table border="1" class="colwidths-given last docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -270,20 +248,20 @@ evaluated instead of the shape name.</p>
 </dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [{
-    <span class="nl">id:</span> <span class="s2">&quot;FooReservedWords&quot;</span>
-    <span class="nl">name:</span> <span class="s2">&quot;ReservedWords&quot;</span>,
-    <span class="nl">configuration:</span> {
-        <span class="nl">reserved:</span> [
-            {
-                <span class="nl">words:</span> [<span class="s2">&quot;Codename&quot;</span>],
-                <span class="nl">reason:</span> <span class="s2">&quot;This is the internal project name.&quot;</span>,
-            },
-        ]
-    }
-}]
+<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[{<span class="w"></span>
+<span class="w">    </span><span class="nl">id:</span><span class="w"> </span><span class="s2">&quot;FooReservedWords&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;ReservedWords&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">configuration:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">reserved:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">            </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">words:</span><span class="w"> </span>[<span class="s2">&quot;Codename&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="nl">reason:</span><span class="w"> </span><span class="s2">&quot;This is the internal project name.&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">        </span>]<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}]<span class="w"></span>
 </pre></div>
 </div>
 <div class="section" id="wildcards-in-reservedwords">
@@ -294,7 +272,7 @@ be specified.</p>
 <li><p class="first">Using both a leading and trailing wildcard indicates that shape or member
 names match when case-insensitively <strong>containing</strong> the word. The following
 table shows matches for a reserved word of <code class="docutils literal notranslate"><span class="pre">*codename*</span></code>:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="75%" />
 <col width="25%" />
@@ -323,7 +301,7 @@ table shows matches for a reserved word of <code class="docutils literal notrans
 <li><p class="first">Using a leading wildcard indicates that shape or member names match when
 case-insensitively <strong>ending with</strong> the word. The following table shows
 matches for a reserved word of <code class="docutils literal notranslate"><span class="pre">*codename</span></code>:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="75%" />
 <col width="25%" />
@@ -352,7 +330,7 @@ matches for a reserved word of <code class="docutils literal notranslate"><span 
 <li><p class="first">Using a trailing wildcard indicates that shape or member names match when
 case-insensitively <strong>starting with</strong> the word. The following table shows
 matches for a reserved word of <code class="docutils literal notranslate"><span class="pre">codename*</span></code>:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="75%" />
 <col width="25%" />
@@ -381,7 +359,7 @@ matches for a reserved word of <code class="docutils literal notranslate"><span 
 <li><p class="first">Using no wildcards indicates that shape or member names match when
 case-insensitively <strong>the same as</strong> the word. The following table shows
 matches for a reserved word of <code class="docutils literal notranslate"><span class="pre">codename</span></code>:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="75%" />
 <col width="25%" />
@@ -421,13 +399,10 @@ that has better alternatives.</p>
 in order for this validator to properly function.</p>
 </div>
 <dl class="docutils">
-<dt>Rationale</dt>
-<dd>Using consistent verbs for operation shape names helps consumers of the
+<dt>Rationale</dt><dd>Using consistent verbs for operation shape names helps consumers of the
 API to more easily understand the semantics of an operation.</dd>
-<dt>Default severity</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
-<dt>Configuration</dt>
-<dd><table border="1" class="colwidths-given first last docutils">
+<dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
+<dt>Configuration</dt><dd><table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -467,19 +442,19 @@ verbs to use instead.</td>
 be provided.</p>
 </div>
 <p>Example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [{
-    <span class="nl">name:</span> <span class="s2">&quot;StandardOperationVerb&quot;</span>,
-    <span class="nl">configuration:</span> {
-        <span class="nl">verbs:</span> [<span class="s2">&quot;Register&quot;</span>, <span class="s2">&quot;Deregister&quot;</span>, <span class="s2">&quot;Associate&quot;</span>],
-        <span class="nl">prefixes:</span> [<span class="s2">&quot;Batch&quot;</span>],
-        <span class="nl">suggestAlternatives:</span> {
-            <span class="s2">&quot;Make&quot;</span>: [<span class="s2">&quot;Create&quot;</span>],
-            <span class="s2">&quot;Transition&quot;</span>: [<span class="s2">&quot;Update&quot;</span>],
-        }
-    }
-}]
+<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[{<span class="w"></span>
+<span class="w">    </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;StandardOperationVerb&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">configuration:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">verbs:</span><span class="w"> </span>[<span class="s2">&quot;Register&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Deregister&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Associate&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">prefixes:</span><span class="w"> </span>[<span class="s2">&quot;Batch&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">suggestAlternatives:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;Make&quot;</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Create&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;Transition&quot;</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Update&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}]<span class="w"></span>
 </pre></div>
 </div>
 </div>
@@ -490,11 +465,9 @@ names do not stutter their shape names.</p>
 <p>As an example, if a structure named &quot;Table&quot; contained a member named
 &quot;TableName&quot;, then this validator would emit a WARNING event.</p>
 <dl class="docutils">
-<dt>Rationale</dt>
-<dd>Repeating a shape name in the members of identifier of the shape is
+<dt>Rationale</dt><dd>Repeating a shape name in the members of identifier of the shape is
 redundant.</dd>
-<dt>Default severity</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">WARNING</span></code></dd>
+<dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">WARNING</span></code></dd>
 </dl>
 </div>
 <div class="section" id="inputoutputstructurereuse">
@@ -502,8 +475,7 @@ redundant.</dd>
 <p>Detects when a structure is used as both input and output or if a structure
 is referenced as the input or output for multiple operations.</p>
 <dl class="docutils">
-<dt>Rationale</dt>
-<dd><ol class="first last arabic simple">
+<dt>Rationale</dt><dd><ol class="arabic simple">
 <li>Using the same structure for both input and output can lead to
 backward-compatibility problems in the future if the members or traits
 used in input needs to diverge from those used in output. It is always
@@ -516,8 +488,7 @@ same structure, you are unnecessarily tying the interfaces of these
 operations together.</li>
 </ol>
 </dd>
-<dt>Default severity</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
+<dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
 </dl>
 </div>
 <div class="section" id="missingpaginatedtrait">
@@ -525,14 +496,11 @@ operations together.</li>
 <p>Checks for operations that look like they should be paginated but do not
 have the <a class="reference internal" href="../spec/core/behavior-traits.html#paginated-trait"><span class="std std-ref">paginated trait</span></a>.</p>
 <dl class="docutils">
-<dt>Rationale</dt>
-<dd>Paginating operations that can return potentially unbounded lists of
+<dt>Rationale</dt><dd>Paginating operations that can return potentially unbounded lists of
 data helps to maintain a predictable SLA and helps to prevent operational
 issues in the future.</dd>
-<dt>Default severity</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
-<dt>Configuration</dt>
-<dd><table border="1" class="colwidths-given first last docutils">
+<dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
+<dt>Configuration</dt><dd><table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -581,9 +549,9 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">[&quot;
 </dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [
-    {<span class="nl">name:</span> <span class="s2">&quot;MissingPaginatedTrait&quot;</span>}
-]
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span>{<span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;MissingPaginatedTrait&quot;</span>}<span class="w"></span>
+]<span class="w"></span>
 </pre></div>
 </div>
 </div>
@@ -614,13 +582,10 @@ are separated by either an underscore character, or by mixed case characters.
 For example, &quot;FooBar&quot;, &quot;fooBar&quot;, &quot;foo_bar&quot;, &quot;Foo_Bar&quot;, and &quot;FOO_BAR&quot; all
 contain the same two words, &quot;foo&quot; and &quot;bar&quot;.</p>
 <dl class="docutils">
-<dt>Rationale</dt>
-<dd>Smithy tooling can convert timestamp shapes into idiomatic language types
+<dt>Rationale</dt><dd>Smithy tooling can convert timestamp shapes into idiomatic language types
 that make them easier to work with in client tooling.</dd>
-<dt>Default severity</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
-<dt>Configuration</dt>
-<dd><table border="1" class="colwidths-given first last docutils">
+<dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
+<dt>Configuration</dt><dd><table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -786,16 +751,16 @@ Java package:</p>
 <p>When added to the classpath (typically as a dependency of a published JAR),
 the custom validator is available to be used as a validator. The following
 example warns each time the word &quot;meow&quot; appears in documentation:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [
-    {
-        <span class="nl">name:</span> <span class="s2">&quot;ForbiddenDocumentation&quot;</span>,
-        <span class="nl">configuration:</span> {
-            <span class="nl">forbid:</span> [<span class="s2">&quot;meow&quot;</span>]
-        }
-    }
-]
+<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;ForbiddenDocumentation&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">configuration:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">forbid:</span><span class="w"> </span>[<span class="s2">&quot;meow&quot;</span>]<span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+]<span class="w"></span>
 </pre></div>
 </div>
 <div class="admonition tip">
@@ -803,18 +768,18 @@ example warns each time the word &quot;meow&quot; appears in documentation:</p>
 <p>The <a class="reference internal" href="../spec/core/model-validation.html#emiteachselector"><span class="std std-ref">EmitEachSelector</span></a> can get you pretty far without needing to
 write any Java code. For example, the above linter can be implemented
 using the following Smithy model:</p>
-<div class="last highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+<div class="last highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [
-    {
-        <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
-        <span class="nl">id:</span> <span class="s2">&quot;ForbiddenDocumentation&quot;</span>,
-        <span class="nl">message:</span> <span class="s2">&quot;Documentation uses forbidden text&quot;</span>,
-        <span class="nl">configuration:</span> {
-            <span class="nl">selector:</span> <span class="s2">&quot;[trait|documentation*=&#39;meow&#39;]&quot;</span>
-        }
-    }
-]
+<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s2">&quot;ForbiddenDocumentation&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">message:</span><span class="w"> </span><span class="s2">&quot;Documentation uses forbidden text&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">configuration:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;[trait|documentation*=&#39;meow&#39;]&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+]<span class="w"></span>
 </pre></div>
 </div>
 </div>

@@ -1,22 +1,22 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Generating CloudFormation Resource Schemas from Smithy &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../_static/bootstrap-reboot.css" type="text/css" />
     
-    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
     <link rel="stylesheet" href="../../_static/custom-tabs.css" type="text/css" />
 
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/smithy.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -116,12 +116,12 @@ Resource Schemas from a Smithy model <a class="reference internal" href="buildin
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#cfn-smithy-build-gradle" title="Permalink to this code">¶</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span> <span class="p">{</span>
     <span class="n">java</span>
-    <span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="n">version</span><span class="p">(</span><span class="s">&quot;0.5.3&quot;</span><span class="p">)</span>
+    <span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;0.5.3&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.12.0&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.13.0&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -165,21 +165,21 @@ generate one Resource Schema with the <code class="docutils literal notranslate"
 </div>
 <div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text">model.smithy</span><a class="headerlink" href="#id4" title="Permalink to this code">¶</a></div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> aws.api#service</span>
+<span class="kd">use</span><span class="nc"> aws.api#service</span><span class="w"></span>
 
-<span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;Queues&quot;</span>, <span class="nl">cloudFormationName:</span> <span class="s2">&quot;Queues&quot;</span>)
-<span class="kd">service</span><span class="nc"> QueueService</span> {
-    <span class="nl">version:</span> <span class="s2">&quot;2020-07-02&quot;</span>,
-    <span class="nl">resources:</span> [<span class="vc">Queue</span>],
-}
+<span class="nd">@service</span>(<span class="nl">sdkId:</span><span class="w"> </span><span class="s2">&quot;Queues&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">cloudFormationName:</span><span class="w"> </span><span class="s2">&quot;Queues&quot;</span>)<span class="w"></span>
+<span class="kd">service</span><span class="nc"> QueueService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2020-07-02&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">resources:</span><span class="w"> </span>[<span class="vc">Queue</span>]<span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-aws-cloudformation:1.12.0&quot; is
+<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-aws-cloudformation:1.13.0&quot; is
 required in order for smithy-build to map the &quot;cloudformation&quot; plugin name
 to the correct Java library implementation.</p>
 </div>
@@ -195,10 +195,9 @@ Resource Schemas that it generates.</p>
 </div>
 <p>The following settings are supported:</p>
 <dl class="docutils" id="generate-cloudformation-setting-service">
-<dt>service (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
-<dd><p class="first"><strong>Required</strong>. The Smithy service <a class="reference internal" href="../spec/core/model.html#shape-id"><span class="std std-ref">shape ID</span></a> to convert.
+<dt>service (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p><strong>Required</strong>. The Smithy service <a class="reference internal" href="../spec/core/model.html#shape-id"><span class="std std-ref">shape ID</span></a> to convert.
 For example, <code class="docutils literal notranslate"><span class="pre">smithy.example#Queues</span></code>.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -212,11 +211,10 @@ For example, <code class="docutils literal notranslate"><span class="pre">smithy
 </dd>
 </dl>
 <dl class="docutils" id="generate-cloudformation-setting-organizationname">
-<dt>organizationName (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
-<dd><p class="first">The <code class="docutils literal notranslate"><span class="pre">Organization</span></code> component of the resource's <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-typeName">type name</a>. Defaults to
+<dt>organizationName (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p>The <code class="docutils literal notranslate"><span class="pre">Organization</span></code> component of the resource's <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-typeName">type name</a>. Defaults to
 &quot;AWS&quot; if the <a class="reference internal" href="../spec/aws/aws-core.html#aws-api-service-trait"><span class="std std-ref">aws.api#service trait</span></a> is present, otherwise is
 <strong>required</strong>.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -230,12 +228,11 @@ For example, <code class="docutils literal notranslate"><span class="pre">smithy
 </dd>
 </dl>
 <dl class="docutils" id="generate-cloudformation-setting-servicename">
-<dt>serviceName (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
-<dd><p class="first">Allows overriding the <code class="docutils literal notranslate"><span class="pre">Service</span></code> component of the resource's <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-typeName">type name</a>.
+<dt>serviceName (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p>Allows overriding the <code class="docutils literal notranslate"><span class="pre">Service</span></code> component of the resource's <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-typeName">type name</a>.
 This value defaults to the <a class="reference internal" href="../spec/aws/aws-core.html#service-cloudformation-name"><span class="std std-ref">cloudFormationName property of the
 aws.api#service trait</span></a> if present, or the
 shape name of the specified service shape otherwise.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -250,13 +247,12 @@ shape name of the specified service shape otherwise.</p>
 </dd>
 </dl>
 <dl class="docutils" id="generate-cloudformation-setting-externaldocs">
-<dt>externalDocs (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt>
-<dd><p class="first">Limits the source of generated <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-documentationUrl">&quot;documentationUrl&quot; fields</a> to the
+<dt>externalDocs (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt><dd><p>Limits the source of generated <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-documentationUrl">&quot;documentationUrl&quot; fields</a> to the
 specified priority ordered list of names in an <a class="reference internal" href="../spec/core/documentation-traits.html#externaldocumentation-trait"><span class="std std-ref">externalDocumentation trait</span></a>.
 This list is case insensitive. By default, this is a list of the following
 values: &quot;Documentation Url&quot;, &quot;DocumentationUrl&quot;, &quot;API Reference&quot;, &quot;User
 Guide&quot;, &quot;Developer Guide&quot;, &quot;Reference&quot;, and &quot;Guide&quot;.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -274,12 +270,11 @@ Guide&quot;, &quot;Developer Guide&quot;, &quot;Reference&quot;, and &quot;Guide
 </dd>
 </dl>
 <dl class="docutils" id="generate-cloudformation-setting-sourcedocs">
-<dt>sourceDocs (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt>
-<dd><p class="first">Limits the source of generated <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-sourceUrl">&quot;sourceUrl&quot; fields</a> to the specified
+<dt>sourceDocs (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt><dd><p>Limits the source of generated <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-sourceUrl">&quot;sourceUrl&quot; fields</a> to the specified
 priority ordered list of names in an <a class="reference internal" href="../spec/core/documentation-traits.html#externaldocumentation-trait"><span class="std std-ref">externalDocumentation trait</span></a>.
 This list is case insensitive. By default, this is a list of the following
 values: &quot;Source Url&quot;, &quot;SourceUrl&quot;, &quot;Source&quot;, and &quot;Source Code&quot;.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -297,8 +292,7 @@ values: &quot;Source Url&quot;, &quot;SourceUrl&quot;, &quot;Source&quot;, and &
 </dd>
 </dl>
 <dl class="docutils" id="generate-cloudformation-setting-jsonadd">
-<dt>jsonAdd (<code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">Map&lt;String,</span> <span class="pre">Node&gt;&gt;</span></code>)</dt>
-<dd><p class="first">Adds or replaces the JSON value in the generated Resource Schemas at the
+<dt>jsonAdd (<code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">Map&lt;String,</span> <span class="pre">Node&gt;&gt;</span></code>)</dt><dd><p>Adds or replaces the JSON value in the generated Resource Schemas at the
 given JSON pointer locations with a different JSON value. The value must be
 a map where each key is a resource shape ID. The value is a map where each
 key is a valid JSON pointer string as defined in <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc6901.html"><strong>RFC 6901</strong></a>. Each value in
@@ -307,7 +301,7 @@ the nested map is the JSON value to add or replace at the given target.</p>
 JSON Patch, as specified in <span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc6902.html"><strong>RFC 6902</strong></a>, with the exception that adding
 properties to an undefined object will create nested objects in the
 result as needed.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -329,12 +323,72 @@ result as needed.</p>
 </div>
 </dd>
 </dl>
+<dl class="docutils" id="generate-cloudformation-setting-disablehandlerpermissiongeneration">
+<dt>disableHandlerPermissionGeneration (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Sets whether to disable generating <code class="docutils literal notranslate"><span class="pre">handler</span></code> <code class="docutils literal notranslate"><span class="pre">permission</span></code> lists for
+Resource Schemas. By default, handler permissions lists are automatically
+added to schemas based on <a class="reference internal" href="../spec/core/model.html#lifecycle-operations"><span class="std std-ref">Resource lifecycle operations</span></a> and permissions
+listed in the <a class="reference internal" href="../spec/aws/aws-iam.html#aws-iam-requiredactions-trait"><span class="std std-ref">aws.iam#requiredActions trait</span></a> on the operation. See
+<a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-handlers">the handlers section</a> in the CloudFormation Resource Schemas
+documentation for more information.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;organizationName&quot;</span><span class="p">:</span> <span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;disableHandlerPermissionGeneration&quot;</span><span class="p">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>CloudFormation Resource Schema handlers determine what provisioning actions
+can be performed for the resource. The handlers utilized by CloudFormation
+align with some <a class="reference internal" href="../spec/core/model.html#lifecycle-operations"><span class="std std-ref">Resource lifecycle operations</span></a>. These operations can also
+define other permission actions required to invoke them with the <a class="reference internal" href="../spec/aws/aws-iam.html#aws-iam-requiredactions-trait"><span class="std std-ref">aws.iam#requiredActions trait</span></a>.</p>
+<p>When handler permission generation is enabled, all the actions required to
+invoke the operations related to the handler, including the actions for the
+operations themselves, are used to populate permission lists:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;handlers&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;create&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;permissions&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;dependency:GetDependencyComponent&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;queues:CreateQueue&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;read&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;permissions&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;queues:GetQueue&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;update&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;permissions&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;dependency:GetDependencyComponent&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;queues:UpdateQueue&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;delete&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;permissions&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;queues:DeleteQueue&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;list&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;permissions&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;queues:ListQueues&quot;</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">},</span>
+</pre></div>
+</div>
+</dd>
+</dl>
 <dl class="docutils" id="generate-cloudformation-setting-disabledeprecatedpropertygeneration">
-<dt>disableDeprecatedPropertyGeneration (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
-<dd><p class="first">Sets whether to disable generating <code class="docutils literal notranslate"><span class="pre">deprecatedProperties</span></code> for Resource
+<dt>disableDeprecatedPropertyGeneration (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Sets whether to disable generating <code class="docutils literal notranslate"><span class="pre">deprecatedProperties</span></code> for Resource
 Schemas. By default, deprecated members are automatically added to the
-<code class="docutils literal notranslate"><span class="pre">deprecatedProperties</span></code> schema property.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<code class="docutils literal notranslate"><span class="pre">deprecatedProperties</span></code> schema property. See <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-deprecatedproperties">the deprecatedProperties
+section</a> in the CloudFormation Resource Schemas documentation for more
+information.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -348,13 +402,31 @@ Schemas. By default, deprecated members are automatically added to the
 </div>
 </dd>
 </dl>
+<dl class="docutils" id="generate-cloudformation-setting-disablerequiredpropertygeneration">
+<dt>disableRequiredPropertyGeneration (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Sets whether to disable generating <code class="docutils literal notranslate"><span class="pre">required</span></code> for Resource Schemas. By
+default, required members are automatically added to the <code class="docutils literal notranslate"><span class="pre">required</span></code>
+schema property. See <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-required">the required property section</a> in the CloudFormation
+Resource Schemas documentation for more information.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;organizationName&quot;</span><span class="p">:</span> <span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;disableRequiredPropertyGeneration&quot;</span><span class="p">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
 <dl class="docutils" id="generate-cloudformation-setting-disablecapitalizedproperties">
-<dt>disableCapitalizedProperties (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt>
-<dd><p class="first">Sets whether to disable automatically capitalizing names of properties of
+<dt>disableCapitalizedProperties (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Sets whether to disable automatically capitalizing names of properties of
 Resource Schemas. By default, property names of resource schemas are
 capitalized if no <a class="reference internal" href="../spec/aws/aws-cloudformation.html#aws-cloudformation-cfnname-trait"><span class="std std-ref">cfnName</span></a> trait
 is applied.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -372,12 +444,11 @@ is applied.</p>
 <div class="section" id="json-schema-configuration-settings">
 <h2><a href="#json-schema-configuration-settings">JSON schema configuration settings</a></h2>
 <dl class="docutils" id="generate-cloudformation-jsonschema-setting-defaulttimestampformat">
-<dt>defaultTimestampFormat (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt>
-<dd><p class="first">Sets the assumed <a class="reference internal" href="../spec/core/protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a> value for timestamps with
+<dt>defaultTimestampFormat (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p>Sets the assumed <a class="reference internal" href="../spec/core/protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a> value for timestamps with
 no explicit timestampFormat trait. The provided value is expected to be
 a string. Defaults to &quot;date-time&quot; if not set. Can be set to &quot;date-time&quot;,
 &quot;epoch-seconds&quot;, or &quot;http-date&quot;.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -392,10 +463,9 @@ a string. Defaults to &quot;date-time&quot; if not set. Can be set to &quot;date
 </dd>
 </dl>
 <dl class="docutils" id="generate-cloudformation-jsonschema-setting-schemadocumentextensions">
-<dt>schemaDocumentExtensions (<code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">any&gt;</span></code>)</dt>
-<dd><p class="first">Adds custom top-level key-value pairs to all of the generated
+<dt>schemaDocumentExtensions (<code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">any&gt;</span></code>)</dt><dd><p>Adds custom top-level key-value pairs to all of the generated
 CloudFormation Resource Schemas. Any existing value is overwritten.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -415,10 +485,9 @@ CloudFormation Resource Schemas. Any existing value is overwritten.</p>
 </dd>
 </dl>
 <dl class="docutils" id="generate-cloudformation-jsonschema-setting-disablefeatures">
-<dt>disableFeatures (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt>
-<dd><p class="first">Disables JSON schema and CloudFormation schema property names from
+<dt>disableFeatures (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt><dd><p>Disables JSON schema and CloudFormation schema property names from
 appearing in the generated CloudFormation Resource Schemas.</p>
-<div class="last highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -438,11 +507,9 @@ appearing in the generated CloudFormation Resource Schemas.</p>
 <p>In addition to the <a class="reference internal" href="../spec/aws/aws-cloudformation.html#aws-cloudformation-traits"><span class="std std-ref">AWS CloudFormation traits</span></a>,
 the following traits affect the generation of CloudFormation Resource Schemas.</p>
 <dl class="docutils">
-<dt><code class="docutils literal notranslate"><span class="pre">documentation</span></code></dt>
-<dd>When applied to a <a class="reference internal" href="../spec/core/model.html#resource"><span class="std std-ref">Resource</span></a> shape, the contents will be converted
+<dt><code class="docutils literal notranslate"><span class="pre">documentation</span></code></dt><dd>When applied to a <a class="reference internal" href="../spec/core/model.html#resource"><span class="std std-ref">Resource</span></a> shape, the contents will be converted
 into the <code class="docutils literal notranslate"><span class="pre">description</span></code> property of the generated Resource Schema.</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">externalDocumentation</span></code></dt>
-<dd>When applied to a <a class="reference internal" href="../spec/core/model.html#resource"><span class="std std-ref">resource</span></a> shape, the contents will be
+<dt><code class="docutils literal notranslate"><span class="pre">externalDocumentation</span></code></dt><dd>When applied to a <a class="reference internal" href="../spec/core/model.html#resource"><span class="std std-ref">resource</span></a> shape, the contents will be
 converted according to the <a class="reference internal" href="#generate-cloudformation-setting-externaldocs"><span class="std std-ref">externalDocs</span></a>
 and <a class="reference internal" href="#generate-cloudformation-setting-sourcedocs"><span class="std std-ref">sourceDocs</span></a>
 settings.</dd>
@@ -467,7 +534,7 @@ Gradle:</p>
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#cfn-code-build-gradle" title="Permalink to this code">¶</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.12.0&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.13.0&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -493,7 +560,7 @@ Gradle:</p>
 </div>
 <p>The conversion process is highly extensible through
 <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.aws.cloudformation.schema.fromsmithy.Smithy2CfnExtension</span></code>
-service providers. See the <a class="reference external" href="https://awslabs.github.io/smithy/javadoc/1.12.0/software/amazon/smithy/aws/cloudformation/schema/fromsmithy/Smithy2CfnExtension.html">Javadocs</a> for more information.</p>
+service providers. See the <a class="reference external" href="https://awslabs.github.io/smithy/javadoc/1.13.0/software/amazon/smithy/aws/cloudformation/schema/fromsmithy/Smithy2CfnExtension.html">Javadocs</a> for more information.</p>
 </div>
 </div>
 

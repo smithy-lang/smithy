@@ -1,28 +1,23 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AWS Core Specification &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx_tabs/tabs.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
     <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
 
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../_static/sphinx_tabs/tabs.js"></script>
-    <script type="text/javascript" src="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/tabs.js"></script>
     <script type="text/javascript" src="../../../_static/smithy.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -114,15 +109,12 @@ AWS products like AWS CloudFormation and tools like the AWS SDKs.</p>
 <div class="section" id="aws-api-service-trait">
 <span id="aws-api-service-trait"></span><span id="id1"></span><h2><a href="#aws-api-service-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#service</span></code> trait</a></h2>
 <dl class="docutils">
-<dt>Summary</dt>
-<dd>An AWS service is defined using the <code class="docutils literal notranslate"><span class="pre">aws.api#service</span></code> trait. This
+<dt>Summary</dt><dd>An AWS service is defined using the <code class="docutils literal notranslate"><span class="pre">aws.api#service</span></code> trait. This
 trait provides information about the service like the name used to
 generate AWS SDK client classes and the namespace used in ARNs.</dd>
-<dt>Trait selector</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
-<dt>Value type</dt>
-<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">structure</span></code> that contains the following members:</p>
-<ul class="last simple">
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code> that contains the following members:</p>
+<ul class="simple">
 <li><a class="reference internal" href="#service-sdk-id"><span class="std std-ref">sdkId</span></a> (required)</li>
 <li><a class="reference internal" href="#service-cloudformation-name"><span class="std std-ref">cloudFormationName</span></a></li>
 <li><a class="reference internal" href="#service-arn-namespace"><span class="std std-ref">arnNamespace</span></a></li>
@@ -134,31 +126,18 @@ generate AWS SDK client classes and the namespace used in ARNs.</dd>
 <p>The following example defines an AWS service that uses the default values of
 <code class="docutils literal notranslate"><span class="pre">cloudFormationService</span></code>, <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code>, and <code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code>:</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
-<span class="kd">namespace</span><span class="nc"> aws.fooBaz</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
+<span class="kd">namespace</span><span class="nc"> aws.fooBaz</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> aws.api#service</span>
+<span class="kd">use</span><span class="nc"> aws.api#service</span><span class="w"></span>
 
-<span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>)
-<span class="kd">service</span><span class="nc"> FooBaz</span> {
-    <span class="nl">version:</span> <span class="s2">&quot;2018-03-17&quot;</span>,
-}
+<span class="nd">@service</span>(<span class="nl">sdkId:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)<span class="w"></span>
+<span class="kd">service</span><span class="nc"> FooBaz</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-0-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-0-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;aws.fooBaz#FooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -174,41 +153,27 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 <p>The following example provides explicit values for all properties:</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
-<span class="kd">namespace</span><span class="nc"> aws.fooBaz</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-1-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
+<span class="kd">namespace</span><span class="nc"> aws.fooBaz</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> aws.api#service</span>
+<span class="kd">use</span><span class="nc"> aws.api#service</span><span class="w"></span>
 
-<span class="nd">@service</span>(
-    <span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>,
-    <span class="nl">cloudFormationName:</span> <span class="s2">&quot;FooBaz&quot;</span>,
-    <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>,
-    <span class="nl">cloudTrailEventSource:</span> <span class="s2">&quot;myservice.amazon.aws&quot;</span>,
-    <span class="nl">endpointPrefix:</span> <span class="s2">&quot;my-endpoint&quot;</span>
-)
-<span class="kd">service</span><span class="nc"> FooBaz</span> {
-    <span class="nl">version:</span> <span class="s2">&quot;2018-03-17&quot;</span>,
-}
+<span class="nd">@service</span>(<span class="w"></span>
+<span class="w">    </span><span class="nl">sdkId:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">cloudFormationName:</span><span class="w"> </span><span class="s2">&quot;FooBaz&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">arnNamespace:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">cloudTrailEventSource:</span><span class="w"> </span><span class="s2">&quot;myservice.amazon.aws&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">endpointPrefix:</span><span class="w"> </span><span class="s2">&quot;my-endpoint&quot;</span><span class="w"></span>
+)<span class="w"></span>
+<span class="kd">service</span><span class="nc"> FooBaz</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-1-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-1-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;aws.fooBaz#FooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -227,8 +192,7 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 <div class="section" id="sdkid">
 <span id="service-sdk-id"></span><h3><a href="#sdkid"><code class="docutils literal notranslate"><span class="pre">sdkId</span></code></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">sdkId</span></code> property is a <strong>required</strong> <code class="docutils literal notranslate"><span class="pre">string</span></code> value that specifies
@@ -351,16 +315,13 @@ purposes. Additionally, this value can be used to attempt to resolve endpoints.<
 <div class="section" id="aws-api-arn-trait">
 <span id="aws-api-arn-trait"></span><span id="id2"></span><h2><a href="#aws-api-arn-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait</a></h2>
 <dl class="docutils">
-<dt>Trait summary</dt>
-<dd>Defines an ARN of a Smithy resource shape.</dd>
-<dt>Trait selector</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">resource</span></code></dd>
-<dt>Trait value</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+<dt>Trait summary</dt><dd>Defines an ARN of a Smithy resource shape.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">resource</span></code></dd>
+<dt>Trait value</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait is a structure that supports the following
 members:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -419,26 +380,21 @@ based on the ARN identifier of a parent resource.</td>
 </pre></div>
 </div>
 <dl class="docutils">
-<dt>partition</dt>
-<dd>The partition that the resource is in. For standard AWS regions, the
+<dt>partition</dt><dd>The partition that the resource is in. For standard AWS regions, the
 partition is &quot;aws&quot;. If you have resources in other partitions, the
 partition is aws-partitionname. For example, the partition for resources
 in the China (Beijing) region is aws-cn.</dd>
-<dt>service</dt>
-<dd>The service namespace that identifies the AWS product (for example,
+<dt>service</dt><dd>The service namespace that identifies the AWS product (for example,
 Amazon S3 is &quot;s3&quot;, IAM is &quot;iam&quot;, and Amazon RDS is &quot;rds&quot;). For a list
 of namespaces, see <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#genref-aws-service-namespaces">AWS Service Namespaces</a>. The namespace used by
 Smithy services is defined by the <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code> property of the
 <a class="reference internal" href="#aws-api-service-trait"><span class="std std-ref">aws.api#service trait</span></a>.</dd>
-<dt>region</dt>
-<dd>The region the resource resides in. Note that the ARNs for some resources
+<dt>region</dt><dd>The region the resource resides in. Note that the ARNs for some resources
 do not require a region, so this component MAY be omitted.</dd>
-<dt>account-id</dt>
-<dd>The ID of the AWS account that owns the resource, without the hyphens. For
+<dt>account-id</dt><dd>The ID of the AWS account that owns the resource, without the hyphens. For
 example, <code class="docutils literal notranslate"><span class="pre">123456789012</span></code>. Note that the ARNs for some resources don't
 require an account number, so this component MAY be omitted.</dd>
-<dt>resource</dt>
-<dd>Defines a specific resource within a service. The content of this segment of
+<dt>resource</dt><dd>Defines a specific resource within a service. The content of this segment of
 an ARN varies by service. It often includes an indicator of the type of
 resource—for example, an IAM user or Amazon RDS database —followed by a
 slash (/) or a colon (:), followed by the resource name itself. Some
@@ -467,37 +423,24 @@ actual values for the partition, region name, account ID, and identifier
 label placeholders.</p>
 <p>For example, given the following service:</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> aws.fooBaz</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-2-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-2-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-2-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-2-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> aws.fooBaz</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> aws.api#service</span>
-<span class="kd">use</span><span class="nc"> aws.api#arn</span>
+<span class="kd">use</span><span class="nc"> aws.api#service</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> aws.api#arn</span><span class="w"></span>
 
-<span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>)
-<span class="kd">service</span><span class="nc"> FooBaz</span> {
-    <span class="nl">version:</span> <span class="s2">&quot;2018-03-17&quot;</span>,
-    <span class="nl">resources:</span> [<span class="vc">MyResource</span>],
-}
+<span class="nd">@service</span>(<span class="nl">sdkId:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)<span class="w"></span>
+<span class="kd">service</span><span class="nc"> FooBaz</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">resources:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nd">@arn</span>(<span class="nl">template:</span> <span class="s2">&quot;myresource/{myId}&quot;</span>)
-<span class="kd">resource</span><span class="nc"> MyResource</span> {
-    <span class="nl">identifiers:</span> {<span class="nl">myId:</span> <span class="vc">MyResourceId</span>},
-}
+<span class="nd">@arn</span>(<span class="nl">template:</span><span class="w"> </span><span class="s2">&quot;myresource/{myId}&quot;</span>)<span class="w"></span>
+<span class="kd">resource</span><span class="nc"> MyResource</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">identifiers:</span><span class="w"> </span>{<span class="nl">myId:</span><span class="w"> </span><span class="vc">MyResourceId</span>}<span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-2-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-2-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#FooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -531,8 +474,7 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 <p>The ARN template assigned to <code class="docutils literal notranslate"><span class="pre">MyResource</span></code> when used with the <code class="docutils literal notranslate"><span class="pre">FooBaz</span></code>
 service expands to <code class="docutils literal notranslate"><span class="pre">arn:{AWS::partition}:myservice:{AWS::Region}:{AWS::AccountId}:myresource/{myId}</span></code>
 at runtime. The label <code class="docutils literal notranslate"><span class="pre">{myId}</span></code> indicates that the value of the resource's
@@ -547,32 +489,19 @@ its identifier, an absolute ARN template MUST be defined on the resource
 that uses a placeholder containing the name of the identifier of the
 resource.</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.api#arn</span>
-<span class="kd">use</span><span class="nc"> aws.api#arnReference</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-3-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-3-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-3-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-3-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.api#arn</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> aws.api#arnReference</span><span class="w"></span>
 
-<span class="nd">@arn</span>(<span class="nl">template:</span> <span class="s2">&quot;{arn}&quot;</span>, <span class="nl">absolute:</span> <span class="kc">true</span>)
-<span class="kd">resource</span><span class="nc"> MyResource</span> {
-    <span class="nl">identifiers:</span> {<span class="nl">arn:</span> <span class="vc">Arn</span>}
-}
+<span class="nd">@arn</span>(<span class="nl">template:</span><span class="w"> </span><span class="s2">&quot;{arn}&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">absolute:</span><span class="w"> </span><span class="kc">true</span>)<span class="w"></span>
+<span class="kd">resource</span><span class="nc"> MyResource</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">identifiers:</span><span class="w"> </span>{<span class="nl">arn:</span><span class="w"> </span><span class="vc">Arn</span>}<span class="w"></span>
+}<span class="w"></span>
 
-<span class="nd">@arnReference</span>(<span class="nl">service:</span> <span class="vc">FooBaz</span>, <span class="nl">resource:</span> <span class="vc">MyResource</span>)
-<span class="kd">string</span><span class="nc"> Arn</span>
+<span class="nd">@arnReference</span>(<span class="nl">service:</span><span class="w"> </span><span class="vc">FooBaz</span><span class="p">,</span><span class="w"> </span><span class="nl">resource:</span><span class="w"> </span><span class="vc">MyResource</span>)<span class="w"></span>
+<span class="kd">string</span><span class="nc"> Arn</span><span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-3-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-3-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#MyResource&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -602,19 +531,15 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 </div>
 <div class="section" id="aws-api-arnreference-trait">
 <span id="aws-api-arnreference-trait"></span><span id="id3"></span><h2><a href="#aws-api-arnreference-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait</a></h2>
 <dl class="docutils">
-<dt>Trait summary</dt>
-<dd>Specifies that a string shape contains a fully formed AWS ARN.</dd>
-<dt>Trait selector</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
-<dt>Trait value</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+<dt>Trait summary</dt><dd>Specifies that a string shape contains a fully formed AWS ARN.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
+<dt>Trait value</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
 </dl>
 <p>Smithy models can refer to AWS resources using ARNs. The
 <code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> can be applied to a string shape to indicate
@@ -622,7 +547,7 @@ that the string contains an ARN and what resource is targeted by the
 ARN.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait is a structure that supports the following
 optional members:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -664,31 +589,18 @@ The CloudFormation name of the resource and the Smithy service and resource
 shape IDs are provided to give tooling additional information about the
 referenced resource.</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-4-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-4-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-4-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-4-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> aws.api#arnReference</span>
+<span class="kd">use</span><span class="nc"> aws.api#arnReference</span><span class="w"></span>
 
-<span class="nd">@arnReference</span>(
-    <span class="nl">type:</span> <span class="s2">&quot;AWS::SomeService::SomeResource&quot;</span>,
-    <span class="nl">service:</span> <span class="vc">com.foo#SomeService</span>,
-    <span class="nl">resource:</span> <span class="vc">com.foo#SomeResource</span>)
-<span class="kd">string</span><span class="nc"> SomeResourceId</span>
+<span class="nd">@arnReference</span>(<span class="w"></span>
+<span class="w">    </span><span class="nl">type:</span><span class="w"> </span><span class="s2">&quot;AWS::SomeService::SomeResource&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">service:</span><span class="w"> </span><span class="vc">com.foo#SomeService</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">resource:</span><span class="w"> </span><span class="vc">com.foo#SomeResource</span>)<span class="w"></span>
+<span class="kd">string</span><span class="nc"> SomeResourceId</span><span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-4-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-4-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#SomeResourceId&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -705,35 +617,21 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 <p>The following example defines an ARN reference that doesn't provide an context
 about the referenced shape. While this is valid, it is not as useful as the
 previous example:</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
-<span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-5-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-5-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-5-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-5-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-5-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-5-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
+<span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> aws.api#arnReference</span>
+<span class="kd">use</span><span class="nc"> aws.api#arnReference</span><span class="w"></span>
 
-<span class="nd">@arnReference</span>
-<span class="kd">string</span><span class="nc"> SomeResourceId</span>
+<span class="nd">@arnReference</span><span class="w"></span>
+<span class="kd">string</span><span class="nc"> SomeResourceId</span><span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-5-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-5-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#SomeResourceId&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -746,18 +644,14 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 <div class="section" id="aws-api-data-trait">
 <span id="aws-api-data-trait"></span><span id="id4"></span><h2><a href="#aws-api-data-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait</a></h2>
 <dl class="docutils">
-<dt>Summary</dt>
-<dd>Indicates that the target contains data of the specified classification.</dd>
-<dt>Trait selector</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">:test(simpleType,</span> <span class="pre">collection,</span> <span class="pre">structure,</span> <span class="pre">union,</span> <span class="pre">member)</span></code></dd>
-<dt>Value type</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">string</span></code> that is one of: <code class="docutils literal notranslate"><span class="pre">content</span></code>, <code class="docutils literal notranslate"><span class="pre">account</span></code>, <code class="docutils literal notranslate"><span class="pre">usage</span></code>,
+<dt>Summary</dt><dd>Indicates that the target contains data of the specified classification.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(simpleType,</span> <span class="pre">collection,</span> <span class="pre">structure,</span> <span class="pre">union,</span> <span class="pre">member)</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code> that is one of: <code class="docutils literal notranslate"><span class="pre">content</span></code>, <code class="docutils literal notranslate"><span class="pre">account</span></code>, <code class="docutils literal notranslate"><span class="pre">usage</span></code>,
 <code class="docutils literal notranslate"><span class="pre">tagging</span></code>, or <code class="docutils literal notranslate"><span class="pre">permissions</span></code>. See <a class="reference internal" href="#data-classifications"><span class="std std-ref">Data Classifications</span></a> for more
 information.</dd>
 </dl>
@@ -765,38 +659,25 @@ information.</dd>
 of a member inherits the effective data classification applied to a parent
 structure, union, or collection unless overridden.</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.api#data</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-6-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-6-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-6-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-6-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.api#data</span><span class="w"></span>
 
-<span class="nd">@data</span>(<span class="s2">&quot;permissions&quot;</span>)
-<span class="kd">structure</span><span class="nc"> MyStructure</span> {
-    <span class="nl">name:</span> <span class="vc">String</span>,
+<span class="nd">@data</span>(<span class="s2">&quot;permissions&quot;</span>)<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> MyStructure</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">name:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-    <span class="nd">@data</span>(<span class="s2">&quot;content&quot;</span>)
-    <span class="nl">content:</span> <span class="vc">String</span>,
+<span class="w">    </span><span class="nd">@data</span>(<span class="s2">&quot;content&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">content:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-    <span class="nl">tags:</span> <span class="vc">TagList</span>,
-}
+<span class="w">    </span><span class="nl">tags:</span><span class="w"> </span><span class="vc">TagList</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nd">@data</span>(<span class="s2">&quot;tagging&quot;</span>)
-<span class="kd">list</span><span class="nc"> TagList</span> {
-    <span class="nl">member:</span> <span class="vc">String</span>
-}
+<span class="nd">@data</span>(<span class="s2">&quot;tagging&quot;</span>)<span class="w"></span>
+<span class="kd">list</span><span class="nc"> TagList</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">member:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-6-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-6-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#MyStructure&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -825,10 +706,9 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 <p>The effective data classifications in the previous example are as follows:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="40%" />
 <col width="60%" />
@@ -865,7 +745,7 @@ JSON</div>
 <span id="id5"></span><h3><a href="#data-classifications">Data Classifications</a></h3>
 <p>The following table describes the available data classifications that can be
 applied through the <code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait.</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="80%" />
@@ -909,15 +789,11 @@ permissions. Data of this classification should be marked with the
 <div class="section" id="aws-api-controlplane-trait">
 <span id="aws-api-controlplane-trait"></span><span id="id6"></span><h2><a href="#aws-api-controlplane-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#controlPlane</span></code> trait</a></h2>
 <dl class="docutils">
-<dt>Summary</dt>
-<dd>Indicates that a service, resource, or operation is considered part of
+<dt>Summary</dt><dd>Indicates that a service, resource, or operation is considered part of
 the <em>control plane</em>.</dd>
-<dt>Trait selector</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">resource,</span> <span class="pre">operation)</span></code></dd>
-<dt>Value type</dt>
-<dd>Annotation trait</dd>
-<dt>Conflicts with</dt>
-<dd><a class="reference internal" href="#aws-api-dataplane-trait"><span class="std std-ref">aws.api#dataPlane trait</span></a></dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">resource,</span> <span class="pre">operation)</span></code></dd>
+<dt>Value type</dt><dd>Annotation trait</dd>
+<dt>Conflicts with</dt><dd><a class="reference internal" href="#aws-api-dataplane-trait"><span class="std std-ref">aws.api#dataPlane trait</span></a></dd>
 </dl>
 <p>This trait is effectively inherited by shapes bound within a service or
 resource. When applied to a service or resource shape, all resources and
@@ -925,29 +801,16 @@ operations bound within the shape are also considered part of the control
 plane unless an operation or resource is marked with the
 <a class="reference internal" href="#aws-api-dataplane-trait"><span class="std std-ref">aws.api#dataPlane trait</span></a>.</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.api#controlPlane</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-7-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-7-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-7-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-7-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.api#controlPlane</span><span class="w"></span>
 
-<span class="nd">@controlPlane</span>
-<span class="kd">operation</span><span class="nc"> PutThings</span> {
-    <span class="nl">input:</span> <span class="vc">PutThingsInput</span>,
-    <span class="nl">output:</span> <span class="vc">PutThingsOutput</span>
-}
+<span class="nd">@controlPlane</span><span class="w"></span>
+<span class="kd">operation</span><span class="nc"> PutThings</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">PutThingsInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">PutThingsOutput</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-7-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-7-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#PutThings&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -966,21 +829,16 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 <div class="section" id="aws-api-dataplane-trait">
 <span id="aws-api-dataplane-trait"></span><span id="id7"></span><h2><a href="#aws-api-dataplane-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#dataPlane</span></code> trait</a></h2>
 <dl class="docutils">
-<dt>Summary</dt>
-<dd>Indicates that a service, resource, or operation is considered part of
+<dt>Summary</dt><dd>Indicates that a service, resource, or operation is considered part of
 the <em>data plane</em>.</dd>
-<dt>Trait selector</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">resource,</span> <span class="pre">operation)</span></code></dd>
-<dt>Value type</dt>
-<dd>Annotation trait</dd>
-<dt>Conflicts with</dt>
-<dd><a class="reference internal" href="#aws-api-controlplane-trait"><span class="std std-ref">aws.api#controlPlane trait</span></a></dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">resource,</span> <span class="pre">operation)</span></code></dd>
+<dt>Value type</dt><dd>Annotation trait</dd>
+<dt>Conflicts with</dt><dd><a class="reference internal" href="#aws-api-controlplane-trait"><span class="std std-ref">aws.api#controlPlane trait</span></a></dd>
 </dl>
 <p>This trait is effectively inherited by shapes bound within a service or
 resource. When applied to a service or resource shape, all resources and
@@ -988,29 +846,16 @@ operations bound within the shape are also considered part of the data
 plane unless an operation or resource is marked with the
 <a class="reference internal" href="#aws-api-controlplane-trait"><span class="std std-ref">aws.api#controlPlane trait</span></a>.</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.api#controlPlane</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-8-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-8-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-8-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-8-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.api#controlPlane</span><span class="w"></span>
 
-<span class="nd">@dataPlane</span>
-<span class="kd">operation</span><span class="nc"> PutThings</span> {
-    <span class="nl">input:</span> <span class="vc">PutThingsInput</span>,
-    <span class="nl">output:</span> <span class="vc">PutThingsOutput</span>
-}
+<span class="nd">@dataPlane</span><span class="w"></span>
+<span class="kd">operation</span><span class="nc"> PutThings</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">PutThingsInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">PutThingsOutput</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-8-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-8-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#PutThings&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1029,8 +874,7 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 <div class="section" id="client-endpoint-discovery">
 <span id="endpoint-discovery"></span><h2><a href="#client-endpoint-discovery">Client Endpoint Discovery</a></h2>
@@ -1041,18 +885,15 @@ following traits provide the information needed to perform this.</p>
 <div class="section" id="aws-api-clientendpointdiscovery-trait">
 <span id="client-endpoint-discovery-trait"></span><span id="aws-api-clientendpointdiscovery-trait"></span><h3><a href="#aws-api-clientendpointdiscovery-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscovery</span></code> trait</a></h3>
 <dl class="docutils">
-<dt>Trait summary</dt>
-<dd>The <code class="docutils literal notranslate"><span class="pre">clientEndpointDiscovery</span></code> trait indicates the operation that the
+<dt>Trait summary</dt><dd>The <code class="docutils literal notranslate"><span class="pre">clientEndpointDiscovery</span></code> trait indicates the operation that the
 client should use to discover endpoints for the service and the error
 returned when the endpoint being accessed has expired.</dd>
-<dt>Trait selector</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
-<dt>Trait value</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
+<dt>Trait value</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscovery</span></code> trait is a structure that supports the
 following members:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -1095,17 +936,14 @@ or both of the following members:</p>
 <div class="section" id="aws-api-clientdiscoveredendpoint-trait">
 <span id="client-discovered-endpoint-trait"></span><span id="aws-api-clientdiscoveredendpoint-trait"></span><h3><a href="#aws-api-clientdiscoveredendpoint-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#clientDiscoveredEndpoint</span></code> trait</a></h3>
 <dl class="docutils">
-<dt>Trait summary</dt>
-<dd>The <code class="docutils literal notranslate"><span class="pre">clientDiscoveredEndpoint</span></code> trait indicates that the target operation
+<dt>Trait summary</dt><dd>The <code class="docutils literal notranslate"><span class="pre">clientDiscoveredEndpoint</span></code> trait indicates that the target operation
 should use the client's endpoint discovery logic.</dd>
-<dt>Trait selector</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
-<dt>Trait value</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
+<dt>Trait value</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.api#clientDiscoveredEndpoint</span></code> trait is a structure that supports the
 following members:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="20%" />
@@ -1132,13 +970,10 @@ discover a more specific endpoint.</td>
 <div class="section" id="aws-api-clientendpointdiscoveryid-trait">
 <span id="client-endpoint-discovery-id-trait"></span><span id="aws-api-clientendpointdiscoveryid-trait"></span><h3><a href="#aws-api-clientendpointdiscoveryid-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscoveryId</span></code> trait</a></h3>
 <dl class="docutils">
-<dt>Summary</dt>
-<dd>The <code class="docutils literal notranslate"><span class="pre">clientEndpointDiscoveryId</span></code> trait indicates which member(s) of the
+<dt>Summary</dt><dd>The <code class="docutils literal notranslate"><span class="pre">clientEndpointDiscoveryId</span></code> trait indicates which member(s) of the
 operation input should be used to discover an endpoint for the service.</dd>
-<dt>Trait selector</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">operation[trait|aws.api#clientDiscoveredEndpoint]</span> <span class="pre">-[input]-&gt;</span> <span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">:test(member[trait|required]</span> <span class="pre">&gt;</span> <span class="pre">string)</span></code></dd>
-<dt>Trait value</dt>
-<dd>Annotation trait</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation[trait|aws.api#clientDiscoveredEndpoint]</span> <span class="pre">-[input]-&gt;</span> <span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">:test(member[trait|required]</span> <span class="pre">&gt;</span> <span class="pre">string)</span></code></dd>
+<dt>Trait value</dt><dd>Annotation trait</dd>
 </dl>
 </div>
 <div class="section" id="example-model">
@@ -1147,79 +982,66 @@ operation input should be used to discover an endpoint for the service.</dd>
 operation to perform endpoint discovery for a <code class="docutils literal notranslate"><span class="pre">GetObject</span></code> operation
 using an <code class="docutils literal notranslate"><span class="pre">clientEndpointDiscoveryId</span></code>.</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@aws.api#clientEndpointDiscovery</span>(
-    <span class="nl">operation:</span> <span class="vc">DescribeEndpoints</span>,
-    <span class="nl">error:</span> <span class="vc">InvalidEndpointError</span>,
-)
-<span class="kd">service</span><span class="nc"> FooService</span> {
-  <span class="nl">version:</span> <span class="s2">&quot;2019-09-10&quot;</span>,
-  <span class="nl">operations:</span> [<span class="vc">DescribeEndpoints</span>, <span class="vc">GetObject</span>]
-}
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-9-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-9-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-9-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-9-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-9-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-9-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@aws.api#clientEndpointDiscovery</span>(<span class="w"></span>
+<span class="w">    </span><span class="nl">operation:</span><span class="w"> </span><span class="vc">DescribeEndpoints</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">error:</span><span class="w"> </span><span class="vc">InvalidEndpointError</span><span class="p">,</span><span class="w"></span>
+)<span class="w"></span>
+<span class="kd">service</span><span class="nc"> FooService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">  </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2019-09-10&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nl">operations:</span><span class="w"> </span>[<span class="vc">DescribeEndpoints</span><span class="p">,</span><span class="w"> </span><span class="vc">GetObject</span>]<span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">operation</span><span class="nc"> DescribeEndpoints</span> {
-    <span class="nl">input:</span> <span class="vc">DescribeEndpointsInput</span>,
-    <span class="nl">output:</span> <span class="vc">DescribeEndpointsOutput</span>,
-    <span class="nl">errors:</span> [<span class="vc">InvalidEndpointError</span>]
-}
+<span class="kd">operation</span><span class="nc"> DescribeEndpoints</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">DescribeEndpointsInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">DescribeEndpointsOutput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">errors:</span><span class="w"> </span>[<span class="vc">InvalidEndpointError</span>]<span class="w"></span>
+}<span class="w"></span>
 
-<span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)
-<span class="nd">@httpError</span>(<span class="m">421</span>)
-<span class="kd">structure</span><span class="nc"> InvalidEndpointError</span> {}
+<span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
+<span class="nd">@httpError</span>(<span class="m">421</span>)<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> InvalidEndpointError</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="kd">structure</span><span class="nc"> DescribeEndpointsInput</span> {
-  <span class="nl">Operation:</span> <span class="vc">String</span>,
-  <span class="nl">Identifiers:</span> <span class="vc">Identifiers</span>,
-}
+<span class="kd">structure</span><span class="nc"> DescribeEndpointsInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">  </span><span class="nl">Operation:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nl">Identifiers:</span><span class="w"> </span><span class="vc">Identifiers</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">map</span><span class="nc"> Identifiers</span> {
-  <span class="nl">key:</span> <span class="vc">String</span>,
-  <span class="nl">value:</span> <span class="vc">String</span>
-}
+<span class="kd">map</span><span class="nc"> Identifiers</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">  </span><span class="nl">key:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nl">value:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">structure</span><span class="nc"> DescribeEndpointsOutput</span> {
-  <span class="nl">Endpoints:</span> <span class="vc">Endpoints</span>,
-}
+<span class="kd">structure</span><span class="nc"> DescribeEndpointsOutput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">  </span><span class="nl">Endpoints:</span><span class="w"> </span><span class="vc">Endpoints</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">list</span><span class="nc"> Endpoints</span> {
-  <span class="nl">member:</span> <span class="vc">Endpoint</span>
-}
+<span class="kd">list</span><span class="nc"> Endpoints</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">  </span><span class="nl">member:</span><span class="w"> </span><span class="vc">Endpoint</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">structure</span><span class="nc"> Endpoint</span> {
-  <span class="nl">Address:</span> <span class="vc">String</span>,
-  <span class="nl">CachePeriodInMinutes:</span> <span class="vc">Long</span>,
-}
+<span class="kd">structure</span><span class="nc"> Endpoint</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">  </span><span class="nl">Address:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nl">CachePeriodInMinutes:</span><span class="w"> </span><span class="vc">Long</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nd">@aws.api#clientDiscoveredEndpoint</span>(<span class="nl">required:</span> <span class="kc">true</span>)
-<span class="kd">operation</span><span class="nc"> GetObject</span> {
-    <span class="nl">input:</span> <span class="vc">GetObjectInput</span>,
-    <span class="nl">output:</span> <span class="vc">GetObjectOutput</span>
-}
+<span class="nd">@aws.api#clientDiscoveredEndpoint</span>(<span class="nl">required:</span><span class="w"> </span><span class="kc">true</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> GetObject</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">GetObjectInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetObjectOutput</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">structure</span><span class="nc"> GetObjectInput</span> {
-  <span class="nd">@clientEndpointDiscoveryId</span>
-  <span class="nd">@required</span>
-  <span class="nl">Id:</span> <span class="vc">String</span>,
-}
+<span class="kd">structure</span><span class="nc"> GetObjectInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">  </span><span class="nd">@clientEndpointDiscoveryId</span><span class="w"></span>
+<span class="w">  </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">  </span><span class="nl">Id:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">structure</span><span class="nc"> GetObjectOutput</span> {
-  <span class="nl">Object:</span> <span class="vc">Blob</span>,
-}
+<span class="kd">structure</span><span class="nc"> GetObjectOutput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">  </span><span class="nl">Object:</span><span class="w"> </span><span class="vc">Blob</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-9-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-9-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;ns.foo#FooService&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1344,8 +1166,7 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 <div class="section" id="client-behavior">
 <h3><a href="#client-behavior">Client Behavior</a></h3>
@@ -1400,7 +1221,7 @@ context.</p>
 <span id="aws-service-appendix-a"></span><h3><a href="#appendix-a-example-sdk-service-ids">Appendix A: Example SDK service IDs</a></h3>
 <p>The following, non-exhaustive, table defines the SDK service ID of many
 existing AWS services.</p>
-<table border="1" class="docutils">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="50%" />
 <col width="50%" />

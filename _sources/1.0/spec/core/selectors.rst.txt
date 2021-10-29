@@ -175,7 +175,7 @@ contains a non-empty ``tags`` list.
 Attribute comparison
 --------------------
 
-An attribute selector with a :token:`comparator <selector_comparator>`
+An attribute selector with a :token:`comparator <selectors:selector_comparator>`
 checks for the existence of an attribute and compares the resolved
 attribute value to a comma separated list of possible values. The
 resolved attribute value on the left hand side of the comparator MUST
@@ -194,7 +194,7 @@ There are three kinds of comparators:
 String comparators
 ------------------
 
-:token:`String comparators <selector_string_comparator>` are used to compare
+:token:`String comparators <selectors:selector_string_comparator>` are used to compare
 the string representation of values. Attributes that do not have a string
 representation are treated as an empty string when these comparisons are
 performed.
@@ -291,7 +291,7 @@ Numeric comparators
 -------------------
 
 Relative comparators only match if both values being compared contain valid
-:token:`number` productions when converted to a string.
+:token:`smithy:number` productions when converted to a string.
 
 .. list-table::
     :header-rows: 1
@@ -370,19 +370,6 @@ above selector:
     [trait | range
         | min = 1 ]
 
-Accessing an attribute or nested attribute property that does not exist
-returns an *empty value*. An empty value does not satisfy existence checks,
-returns an empty string when used with string comparators, and returns an
-empty value when attempting to access any properties.
-
-The following selector attempts to descend into non-existent properties of
-the :ref:`documentation-trait`. This example MUST NOT cause an error and
-MUST NOT match any shapes:
-
-.. code-block:: none
-
-    [trait|documentation|invalid|child = Hi]
-
 
 .. _id-attribute:
 
@@ -412,7 +399,7 @@ The ``id`` attribute can be used as an object, and it supports the
 following properties.
 
 ``namespace``
-    Gets the :token:`namespace` part of a shape ID.
+    Gets the :token:`smithy:namespace` part of a shape ID.
 
     The following selector matches shapes in the ``foo.baz`` namespace:
 
@@ -544,10 +531,11 @@ to a shape. The ``trait`` attribute supports the following properties:
 
         [trait|(length) > 10]
 ``*``
-    Other values are treated as shape IDs, where a relative shape ID is
+    Any other value is treated as a shape ID, where a relative shape ID is
     resolved to the ``smithy.api`` namespace. If a matching trait with the
     given shape ID is attached to the shape, it's :ref:`node value <node-attribute>`
-    is returned. An empty value is returned if the trait does not exist.
+    is returned. An :ref:`empty value <empty-attributes>` is returned if the
+    trait does not exist.
 
     The following selector matches shapes that have the
     :ref:`deprecated-trait`:
@@ -563,7 +551,7 @@ to a shape. The ``trait`` attribute supports the following properties:
 
         [trait|deprecated]
 
-    Traits are converted to their serialized :token:`node <node_value>` form
+    Traits are converted to their serialized :token:`node <smithy:node_value>` form
     when matching against their values. Only string, boolean, and numeric
     values can be compared using a :ref:`string comparator <string-comparators>`.
     Boolean values are converted to "true" or "false". Numeric values are
@@ -660,6 +648,30 @@ values return empty strings when used by string comparators.
     .. code-block:: none
 
         [trait|externalDocumentation|'Reference Docs']
+
+    Attempting to access a nested property that does not exist or
+    attempting to descend into nested values of a scalar type returns
+    an :ref:`empty value <empty-attributes>`.
+
+
+.. _empty-attributes:
+
+Empty attribute
+---------------
+
+Attempting to access a trait that does not exist, a variable that does
+not exist, or attempting to descend into node attribute values that do not
+exist returns an *empty value*. An empty value does not satisfy existence
+checks, returns an empty string when used with string comparators, and
+returns an empty value when attempting to access any properties.
+
+The following selector attempts to descend into non-existent properties of
+the :ref:`documentation-trait`. This example MUST NOT cause an error and
+MUST NOT match any shapes:
+
+.. code-block:: none
+
+    [trait|documentation|invalid|child = Hi]
 
 
 .. _projection-attribute:
@@ -864,7 +876,7 @@ the comparator are projections.
 Scoped attribute selectors
 ==========================
 
-A :token:`scoped attribute selector <selector_scoped_attr>` is similar to an
+A :token:`scoped attribute selector <selectors:selector_scoped_attr>` is similar to an
 attribute selector, but it allows multiple complex comparisons to be made
 against a scoped attribute.
 
@@ -874,8 +886,8 @@ Context values
 
 The first part of a scoped attribute selector is the attribute that is scoped
 for the expression, followed by ``:``. The scoped attribute is accessed using
-a :token:`context value <selector_context_value>` in the form of
-``@{`` :token:`identifier` ``}``.
+a :token:`context value <selectors:selector_context_value>` in the form of
+``@{`` :token:`smithy:identifier` ``}``.
 
 In the following selector, the ``trait|range`` attribute is used as the scoped
 attribute of the expression, and the selector matches shapes marked with
@@ -987,7 +999,7 @@ a shape.
 Forward undirected neighbor
 ----------------------------
 
-A :token:`forward undirected neighbor <selector_forward_undirected_neighbor>`
+A :token:`forward undirected neighbor <selectors:selector_forward_undirected_neighbor>`
 (``>``) yields every shape that is connected to the current shape. For
 example, the following selector matches the key and value members of
 every map:
@@ -1016,7 +1028,7 @@ relationships of each operation:
 
     operation > *
 
-A forward directed edge traversal is applied using :token:`selector_forward_directed_neighbor`
+A forward directed edge traversal is applied using :token:`selectors:selector_forward_directed_neighbor`
 (``-[X, Y, Z]->``). The following selector matches all structure shapes
 referenced as operation ``input`` or ``output``.
 
@@ -1460,7 +1472,7 @@ results that are computed multiples times in a selector or for capturing
 information about the current shape that is referenced later in a selector
 after traversing neighbors.
 
-A variable is set using a :token:`selector_variable_set` expression.
+A variable is set using a :token:`selectors:selector_variable_set` expression.
 Variables can be reassigned without error.
 
 The following selector defines a variable named ``foo`` that sets the
@@ -1470,7 +1482,7 @@ variable to the result of applying the ``*`` selector to the current shape.
 
     $foo(*)
 
-A variable is retrieved by name using a :token:`selector_variable_get`
+A variable is retrieved by name using a :token:`selectors:selector_variable_get`
 expression. Retrieving a variable yields the set of shapes stored in the
 variable. Attempting to get a variable that does not exist yields no shapes.
 
@@ -1491,8 +1503,8 @@ A *var attribute* is an object accessible from a shape that provides
 access to the named :ref:`variables <selector-variables>` currently in scope.
 Variables are accessed by providing the variable name after ``var``. The
 values returned from ``var`` are :ref:`projections <projection-attribute>`
-that contain the set of shapes that were bound to the variable, or an empty
-value if the variable does not exist.
+that contain the set of shapes that were bound to the variable, or an
+:ref:`empty value <empty-attributes>` if the variable does not exist.
 
 The following selector finds all operations in the closure of a service
 where the operation has an :ref:`auth-trait` that is not a subset of the
@@ -1586,20 +1598,20 @@ Selectors are defined by the following ABNF_ grammar.
                                          :/ `selector_forward_recursive_neighbor`
                                          :/ `selector_variable_set`
                                          :/ `selector_variable_get`
-    selector_shape_types                 :"*" / `identifier`
+    selector_shape_types                 :"*" / `smithy:identifier`
     selector_forward_undirected_neighbor :">"
     selector_reverse_undirected_neighbor :"<"
     selector_forward_directed_neighbor   :"-[" `selector_directed_relationships` "]->"
     selector_reverse_directed_neighbor   :"<-[" selector_directed_relationships "]-"
-    selector_directed_relationships      :`identifier` *("," `identifier`)
+    selector_directed_relationships      :`smithy:identifier` *("," `smithy:identifier`)
     selector_forward_recursive_neighbor  :"~>"
     selector_attr                        :"[" `selector_key` [selector_attr_comparison] "]"
     selector_attr_comparison             :`selector_comparator` `selector_attr_values` ["i"]
-    selector_key                         :`identifier` ["|" `selector_path`]
+    selector_key                         :`smithy:identifier` ["|" `selector_path`]
     selector_path                        :`selector_path_segment` *("|" `selector_path_segment`)
     selector_path_segment                :`selector_value` / `selector_function_property`
-    selector_value                       :`selector_text` / `number` / `root_shape_id`
-    selector_function_property           :"(" `identifier` ")"
+    selector_value                       :`selector_text` / `smithy:number` / `smithy:root_shape_id`
+    selector_function_property           :"(" `smithy:identifier` ")"
     selector_attr_values                 :`selector_value` *("," `selector_value`)
     selector_comparator                  :`selector_string_comparator`
                                          :/ `selector_numeric_comparator`
@@ -1607,22 +1619,22 @@ Selectors are defined by the following ABNF_ grammar.
     selector_string_comparator           :"^=" / "$=" / "*=" / "!=" / "=" / "?="
     selector_numeric_comparator          :">=" / ">" / "<=" / "<"
     selector_projection_comparator       :"{=}" / "{!=}" / "{<}" / "{<<}"
-    selector_absolute_root_shape_id      :`namespace` "#" `identifier`
+    selector_absolute_root_shape_id      :`smithy:namespace` "#" `smithy:identifier`
     selector_scoped_attr                 :"[@" [`selector_key`] ":" `selector_scoped_assertions` "]"
     selector_scoped_assertions           :`selector_scoped_assertion` *("&&" `selector_scoped_assertion`)
     selector_scoped_assertion            :`selector_scoped_value` `selector_comparator` `selector_scoped_values` ["i"]
     selector_scoped_value                :`selector_value` / `selector_context_value`
     selector_context_value               :"@{" `selector_path` "}"
     selector_scoped_values               :`selector_scoped_value` *("," `selector_scoped_value`)
-    selector_function                    :":" `identifier` "(" `selector_function_args` ")"
+    selector_function                    :":" `smithy:identifier` "(" `selector_function_args` ")"
     selector_function_args               :`selector` *("," `selector`)
     selector_text                        :`selector_single_quoted_text` / `selector_double_quoted_text`
     selector_single_quoted_text          :"'" 1*`selector_single_quoted_char` "'"
     selector_double_quoted_text          :DQUOTE 1*`selector_double_quoted_char` DQUOTE
     selector_single_quoted_char          :%x20-26 / %x28-5B / %x5D-10FFFF ; Excludes (')
     selector_double_quoted_char          :%x20-21 / %x23-5B / %x5D-10FFFF ; Excludes (")
-    selector_variable_set                :"$" `identifier` "(" selector ")"
-    selector_variable_get                :"${" `identifier` "}"
+    selector_variable_set                :"$" `smithy:identifier` "(" selector ")"
+    selector_variable_get                :"${" `smithy:identifier` "}"
 
 .. _ABNF: https://tools.ietf.org/html/rfc5234
 .. _set: https://en.wikipedia.org/wiki/Set_(abstract_data_type)

@@ -487,6 +487,100 @@ operation for it to complete successfully.
             }
         }
 
+
+.. smithy-trait:: aws.iam#supportedPrincipalTypes
+.. _aws.iam#supportedPrincipalTypes-trait:
+
+-----------------------------------------
+``aws.iam#supportedPrincipalTypes`` trait
+-----------------------------------------
+
+Summary
+    The `IAM principal types`_ that can use the service or operation.
+Trait selector
+    ``:test(service, operation)``
+Value type
+    ``list<string>`` where each string is an IAM principal type: ``Root``,
+    ``IAMUser``, ``IAMRole``, or ``FederatedUser``.
+
+Operations that are not annotated with the ``supportedPrincipalTypes`` trait
+inherit the ``supportedPrincipalTypes`` of the service they are bound to.
+
+The following example defines two operations:
+
+* OperationA defines an explicit list of the IAM principal types it supports
+  using the ``supportedPrincipalTypes`` trait.
+* OperationB is not annotated with the ``supportedPrincipalTypes`` trait, so
+  the IAM principal types supported by this operation are the principal types
+  applied to the service.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        namespace smithy.example
+
+        use aws.iam#supportedPrincipalTypes
+
+        @supportedPrincipalTypes(["Root", "IAMUser", "IAMRole", "FederatedUser"])
+        service MyService {
+            version: "2020-07-02",
+            operations: [OperationA, OperationB],
+        }
+
+        @supportedPrincipalTypes(["Root"])
+        operation OperationA {}
+
+        operation OperationB {}
+
+
+.. smithy-trait:: aws.iam#iamResource
+.. _aws.iam#iamResource-trait:
+
+-----------------------------
+``aws.iam#iamResource`` trait
+-----------------------------
+
+Summary
+    Indicates properties of a Smithy resource in AWS IAM.
+Trait selector
+    ``resource``
+Value type
+    ``structure``
+
+The ``aws.iam#iamResource`` trait is a structure that supports the following
+members:
+
+.. list-table::
+    :header-rows: 1
+    :widths:  10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - name
+      - ``string``
+      - The name of the resource in AWS IAM.
+
+The following example defines a simple resource with a name in AWS IAM that
+deviates from the :ref:`shape name of the shape ID <shape-id>` of the resource.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        namespace smithy.example
+
+        use aws.iam#iamResource
+
+        @iamResource(name: "super")
+        resource SuperResource {
+            identifiers: {
+                superId: String,
+            },
+        }
+
+
 .. _deriving-condition-keys:
 
 -----------------------
@@ -613,3 +707,4 @@ The computed condition keys for the service are:
 .. _condition operators: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html
 .. _Amazon Resource Name (ARN): https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
 .. _ISO 8601: http://www.w3.org/TR/NOTE-datetime
+.. _IAM principal types: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html

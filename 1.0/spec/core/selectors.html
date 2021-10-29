@@ -1,22 +1,22 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>14. Selectors &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
     <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
 
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/smithy.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -64,7 +64,7 @@
                     
                     
   <div class="section" id="selectors">
-<span id="id1"></span><h1><a href="#selectors">14. Selectors</a></h1>
+<span id="id1"></span><h1><a href="#selectors"><span class="section-number">14. </span>Selectors</a></h1>
 <p>A <em class="dfn">Smithy selector</em> is a domain specific language (DSL) used to match
 shapes within a model. Selectors are used to build custom
 <a class="reference internal" href="model-validation.html#emiteachselector"><span class="std std-ref">validators</span></a> and to specify where it is valid to
@@ -85,7 +85,7 @@ apply a <a class="reference internal" href="model.html#defining-traits"><span cl
 </ul>
 </div>
 <div class="section" id="introduction">
-<h2><a href="#introduction">14.1. Introduction</a></h2>
+<h2><a href="#introduction"><span class="section-number">14.1. </span>Introduction</a></h2>
 <p>A <em>selector</em> is used to traverse a model as a graph and find matching shapes.
 A model can be thought of as a traversable graph, more specifically, as a
 labeled multidigraph: each <a class="reference internal" href="model.html#shapes"><span class="std std-ref">shape</span></a> in a model is a labeled graph
@@ -97,7 +97,7 @@ shape has a member that targets a shape; thus, the list shape is connected
 to the member shape, and the member shape is connected to the targeted shape.</p>
 </div>
 <div class="section" id="matching-shapes-with-selectors">
-<h2><a href="#matching-shapes-with-selectors">14.2. Matching shapes with selectors</a></h2>
+<h2><a href="#matching-shapes-with-selectors"><span class="section-number">14.2. </span>Matching shapes with selectors</a></h2>
 <p>Every shape in a model is sent through a selector, one at a time. The
 individual shape that is sent through a selector is called the
 <em>starting shape</em>. When given a shape, a selector <em>yields</em> zero or more
@@ -122,9 +122,9 @@ selector results.</p>
 </div>
 </div>
 <div class="section" id="matching-shapes-by-type">
-<h2><a href="#matching-shapes-by-type">14.3. Matching shapes by type</a></h2>
+<h2><a href="#matching-shapes-by-type"><span class="section-number">14.3. </span>Matching shapes by type</a></h2>
 <p>Shapes can be matched by type using the following tokens:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
@@ -226,12 +226,12 @@ selector results.</p>
 </div>
 </div>
 <div class="section" id="attribute-selectors">
-<h2><a href="#attribute-selectors">14.4. Attribute selectors</a></h2>
+<h2><a href="#attribute-selectors"><span class="section-number">14.4. </span>Attribute selectors</a></h2>
 <p><em>Attribute selectors</em> are used to match shapes based on
 <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape IDs</span></a>, <a class="reference internal" href="model.html#traits"><span class="std std-ref">traits</span></a>, and other
 <a class="reference internal" href="#selector-attributes"><span class="std std-ref">attributes</span></a>.</p>
 <div class="section" id="attribute-existence">
-<span id="id2"></span><h3><a href="#attribute-existence">14.4.1. Attribute existence</a></h3>
+<span id="id2"></span><h3><a href="#attribute-existence"><span class="section-number">14.4.1. </span>Attribute existence</a></h3>
 <p>An attribute existence check tests for the existence of an attribute without
 any kind of comparison.</p>
 <p>The following selector matches shapes that are marked with the
@@ -249,8 +249,8 @@ contains a non-empty <code class="docutils literal notranslate"><span class="pre
 </div>
 </div>
 <div class="section" id="attribute-comparison">
-<h3><a href="#attribute-comparison">14.4.2. Attribute comparison</a></h3>
-<p>An attribute selector with a <a class="reference internal" href="#grammar-token-selector_comparator"><code class="xref std std-token docutils literal notranslate"><span class="pre">comparator</span></code></a>
+<h3><a href="#attribute-comparison"><span class="section-number">14.4.2. </span>Attribute comparison</a></h3>
+<p>An attribute selector with a <a class="reference internal" href="#grammar-token-selectors-selector_comparator"><code class="xref std std-token docutils literal notranslate"><span class="pre">comparator</span></code></a>
 checks for the existence of an attribute and compares the resolved
 attribute value to a comma separated list of possible values. The
 resolved attribute value on the left hand side of the comparator MUST
@@ -264,12 +264,12 @@ side of the comparator.</p>
 </ul>
 </div>
 <div class="section" id="string-comparators">
-<span id="id3"></span><h3><a href="#string-comparators">14.4.3. String comparators</a></h3>
-<p><a class="reference internal" href="#grammar-token-selector_string_comparator"><code class="xref std std-token docutils literal notranslate"><span class="pre">String</span> <span class="pre">comparators</span></code></a> are used to compare
+<span id="id3"></span><h3><a href="#string-comparators"><span class="section-number">14.4.3. </span>String comparators</a></h3>
+<p><a class="reference internal" href="#grammar-token-selectors-selector_string_comparator"><code class="xref std std-token docutils literal notranslate"><span class="pre">String</span> <span class="pre">comparators</span></code></a> are used to compare
 the string representation of values. Attributes that do not have a string
 representation are treated as an empty string when these comparisons are
 performed.</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
@@ -356,10 +356,10 @@ that case-insensitively contains the word &quot;token&quot;:</p>
 </div>
 </div>
 <div class="section" id="numeric-comparators">
-<span id="id4"></span><h3><a href="#numeric-comparators">14.4.4. Numeric comparators</a></h3>
+<span id="id4"></span><h3><a href="#numeric-comparators"><span class="section-number">14.4.4. </span>Numeric comparators</a></h3>
 <p>Relative comparators only match if both values being compared contain valid
-<a class="reference internal" href="idl.html#grammar-token-number"><code class="xref std std-token docutils literal notranslate"><span class="pre">number</span></code></a> productions when converted to a string.</p>
-<table border="1" class="colwidths-given docutils">
+<a class="reference internal" href="idl.html#grammar-token-smithy-number"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:number</span></code></a> productions when converted to a string.</p>
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
@@ -401,11 +401,11 @@ is not a valid number:</p>
 </div>
 </div>
 <div class="section" id="attributes">
-<span id="selector-attributes"></span><h2><a href="#attributes">14.5. Attributes</a></h2>
+<span id="selector-attributes"></span><h2><a href="#attributes"><span class="section-number">14.5. </span>Attributes</a></h2>
 <p>Selector attributes return objects that MAY have nested properties. Objects
 returned from selectors MAY be available to cast to a string. Shapes support
 the following attributes:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
@@ -444,18 +444,8 @@ above selector:</p>
     | min = 1 ]
 </pre></div>
 </div>
-<p>Accessing an attribute or nested attribute property that does not exist
-returns an <em>empty value</em>. An empty value does not satisfy existence checks,
-returns an empty string when used with string comparators, and returns an
-empty value when attempting to access any properties.</p>
-<p>The following selector attempts to descend into non-existent properties of
-the <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a>. This example MUST NOT cause an error and
-MUST NOT match any shapes:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|documentation|invalid|child = Hi]
-</pre></div>
-</div>
 <div class="section" id="id-attribute">
-<span id="id5"></span><h3><a href="#id-attribute">14.5.1. <code class="docutils literal notranslate"><span class="pre">id</span></code> attribute</a></h3>
+<span id="id5"></span><h3><a href="#id-attribute"><span class="section-number">14.5.1. </span><code class="docutils literal notranslate"><span class="pre">id</span></code> attribute</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">id</span></code> attribute of a shape returns an object that contains information
 about the shape ID of a shape. When used as a string, <code class="docutils literal notranslate"><span class="pre">id</span></code> contains the
 absolute <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape ID</span></a> of a shape.</p>
@@ -472,31 +462,27 @@ is enclosed in single or double quotes:</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">id</span></code> attribute can be used as an object, and it supports the
 following properties.</p>
 <dl class="docutils">
-<dt><code class="docutils literal notranslate"><span class="pre">namespace</span></code></dt>
-<dd><p class="first">Gets the <a class="reference internal" href="model.html#grammar-token-namespace"><code class="xref std std-token docutils literal notranslate"><span class="pre">namespace</span></code></a> part of a shape ID.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">namespace</span></code></dt><dd><p>Gets the <a class="reference internal" href="model.html#grammar-token-smithy-namespace"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:namespace</span></code></a> part of a shape ID.</p>
 <p>The following selector matches shapes in the <code class="docutils literal notranslate"><span class="pre">foo.baz</span></code> namespace:</p>
-<div class="last highlight-none notranslate"><div class="highlight"><pre><span></span>[id|namespace = &#39;foo.baz&#39;]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[id|namespace = &#39;foo.baz&#39;]
 </pre></div>
 </div>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">name</span></code></dt>
-<dd><p class="first">Gets the name part of a shape ID.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">name</span></code></dt><dd><p>Gets the name part of a shape ID.</p>
 <p>The following selector matches shapes named <code class="docutils literal notranslate"><span class="pre">MyShape</span></code>.</p>
-<div class="last highlight-none notranslate"><div class="highlight"><pre><span></span>[id|name = MyShape]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[id|name = MyShape]
 </pre></div>
 </div>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">member</span></code></dt>
-<dd><p class="first">Gets the member part of a shape ID (if available). If the shape ID does
+<dt><code class="docutils literal notranslate"><span class="pre">member</span></code></dt><dd><p>Gets the member part of a shape ID (if available). If the shape ID does
 not contain a member, an <em>empty value</em> is returned.</p>
 <p>The following selector matches all members in the model that have a member
 name of <code class="docutils literal notranslate"><span class="pre">foo</span></code>.</p>
-<div class="last highlight-none notranslate"><div class="highlight"><pre><span></span>[id|member = foo]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[id|member = foo]
 </pre></div>
 </div>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">(length)</span></code></dt>
-<dd><p class="first">The <code class="docutils literal notranslate"><span class="pre">(length)</span></code> property returns the length of the absolute shape ID.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">(length)</span></code></dt><dd><p>The <code class="docutils literal notranslate"><span class="pre">(length)</span></code> property returns the length of the absolute shape ID.</p>
 <p>The following selector matches shapes where the absolute shape ID is
 longer than 80 characters:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[id|(length) &gt; 80]
@@ -506,14 +492,14 @@ longer than 80 characters:</p>
 the <code class="docutils literal notranslate"><span class="pre">namespace</span></code>, <code class="docutils literal notranslate"><span class="pre">name</span></code>, and <code class="docutils literal notranslate"><span class="pre">member</span></code> properties.</p>
 <p>The following selector matches shapes where the member name is longer
 than 20 characters:</p>
-<div class="last highlight-none notranslate"><div class="highlight"><pre><span></span>[id|member|(length) &gt; 20]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[id|member|(length) &gt; 20]
 </pre></div>
 </div>
 </dd>
 </dl>
 </div>
 <div class="section" id="service-attribute">
-<span id="id6"></span><h3><a href="#service-attribute">14.5.2. <code class="docutils literal notranslate"><span class="pre">service</span></code> attribute</a></h3>
+<span id="id6"></span><h3><a href="#service-attribute"><span class="section-number">14.5.2. </span><code class="docutils literal notranslate"><span class="pre">service</span></code> attribute</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">service</span></code> attribute is an object that is available for service shapes.
 The following selector matches all service shapes:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[service]
@@ -534,56 +520,51 @@ absolute shape ID of the service shape.</p>
 <p><strong>Properties</strong></p>
 <p>The <code class="docutils literal notranslate"><span class="pre">service</span></code> attribute supports the following properties:</p>
 <dl class="docutils">
-<dt><code class="docutils literal notranslate"><span class="pre">id</span></code></dt>
-<dd>Returns the service shape ID as an <a class="reference internal" href="#id-attribute"><span class="std std-ref">id attribute</span></a>.</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">version</span></code></dt>
-<dd><p class="first">Gets the version property of a service shape as a string.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">id</span></code></dt><dd>Returns the service shape ID as an <a class="reference internal" href="#id-attribute"><span class="std std-ref">id attribute</span></a>.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">version</span></code></dt><dd><p>Gets the version property of a service shape as a string.</p>
 <p>The following selector matches all service shapes that have a version
 property that starts with <code class="docutils literal notranslate"><span class="pre">2018-</span></code>:</p>
-<div class="last highlight-none notranslate"><div class="highlight"><pre><span></span>[service|version ^= &#39;2018-&#39;]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[service|version ^= &#39;2018-&#39;]
 </pre></div>
 </div>
 </dd>
 </dl>
 </div>
 <div class="section" id="trait-attribute">
-<span id="id7"></span><h3><a href="#trait-attribute">14.5.3. <code class="docutils literal notranslate"><span class="pre">trait</span></code> attribute</a></h3>
+<span id="id7"></span><h3><a href="#trait-attribute"><span class="section-number">14.5.3. </span><code class="docutils literal notranslate"><span class="pre">trait</span></code> attribute</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">trait</span></code> attribute returns an object that contains every trait applied
 to a shape. The <code class="docutils literal notranslate"><span class="pre">trait</span></code> attribute supports the following properties:</p>
 <dl class="docutils">
-<dt><code class="docutils literal notranslate"><span class="pre">(keys)</span></code></dt>
-<dd><p class="first">The <code class="docutils literal notranslate"><span class="pre">(keys)</span></code> property returns a <a class="reference internal" href="#projection-attribute"><span class="std std-ref">projection</span></a>
+<dt><code class="docutils literal notranslate"><span class="pre">(keys)</span></code></dt><dd><p>The <code class="docutils literal notranslate"><span class="pre">(keys)</span></code> property returns a <a class="reference internal" href="#projection-attribute"><span class="std std-ref">projection</span></a>
 that contains the shape ID of every trait applied to a shape.</p>
 <p>The following selector matches shapes that apply a trait from the
 <code class="docutils literal notranslate"><span class="pre">smithy.example</span></code> namespace:</p>
-<div class="last highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|(keys)|namespace = &#39;smithy.example&#39;]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|(keys)|namespace = &#39;smithy.example&#39;]
 </pre></div>
 </div>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">(values)</span></code></dt>
-<dd><p class="first">The <code class="docutils literal notranslate"><span class="pre">(values)</span></code> property returns a <a class="reference internal" href="#projection-attribute"><span class="std std-ref">projection</span></a>
+<dt><code class="docutils literal notranslate"><span class="pre">(values)</span></code></dt><dd><p>The <code class="docutils literal notranslate"><span class="pre">(values)</span></code> property returns a <a class="reference internal" href="#projection-attribute"><span class="std std-ref">projection</span></a>
 that contains every trait attached to a shape as a
 <a class="reference internal" href="#node-attribute"><span class="std std-ref">node value</span></a>.</p>
 <p>The following selector matches shapes that apply a trait that
 contains a top-level structure member named <code class="docutils literal notranslate"><span class="pre">tags</span></code>:</p>
-<div class="last highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|(values)|tags]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|(values)|tags]
 </pre></div>
 </div>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">(length)</span></code></dt>
-<dd><p class="first">The <code class="docutils literal notranslate"><span class="pre">(length)</span></code> property returns the number of traits applied to a
+<dt><code class="docutils literal notranslate"><span class="pre">(length)</span></code></dt><dd><p>The <code class="docutils literal notranslate"><span class="pre">(length)</span></code> property returns the number of traits applied to a
 shape.</p>
 <p>The following selector matches shapes with more than 10 traits
 applied to it:</p>
-<div class="last highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|(length) &gt; 10]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|(length) &gt; 10]
 </pre></div>
 </div>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">*</span></code></dt>
-<dd><p class="first">Other values are treated as shape IDs, where a relative shape ID is
+<dt><code class="docutils literal notranslate"><span class="pre">*</span></code></dt><dd><p>Any other value is treated as a shape ID, where a relative shape ID is
 resolved to the <code class="docutils literal notranslate"><span class="pre">smithy.api</span></code> namespace. If a matching trait with the
 given shape ID is attached to the shape, it's <a class="reference internal" href="#node-attribute"><span class="std std-ref">node value</span></a>
-is returned. An empty value is returned if the trait does not exist.</p>
+is returned. An <a class="reference internal" href="#empty-attributes"><span class="std std-ref">empty value</span></a> is returned if the
+trait does not exist.</p>
 <p>The following selector matches shapes that have the
 <a class="reference internal" href="documentation-traits.html#deprecated-trait"><span class="std std-ref">deprecated trait</span></a>:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|smithy.api#deprecated]
@@ -594,7 +575,7 @@ attribute without a namespace.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|deprecated]
 </pre></div>
 </div>
-<p>Traits are converted to their serialized <a class="reference internal" href="idl.html#grammar-token-node_value"><code class="xref std std-token docutils literal notranslate"><span class="pre">node</span></code></a> form
+<p>Traits are converted to their serialized <a class="reference internal" href="idl.html#grammar-token-smithy-node_value"><code class="xref std std-token docutils literal notranslate"><span class="pre">node</span></code></a> form
 when matching against their values. Only string, boolean, and numeric
 values can be compared using a <a class="reference internal" href="#string-comparators"><span class="std std-ref">string comparator</span></a>.
 Boolean values are converted to &quot;true&quot; or &quot;false&quot;. Numeric values are
@@ -611,7 +592,7 @@ where its value is not <code class="docutils literal notranslate"><span class="p
 </div>
 <p>The following selector matches shapes with the <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a>
 with a value that contains &quot;TODO&quot; or &quot;FIXME&quot;:</p>
-<div class="last highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|documentation *= TODO, FIXME]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|documentation *= TODO, FIXME]
 </pre></div>
 </div>
 </dd>
@@ -623,7 +604,7 @@ a string comparator.</p>
 </div>
 </div>
 <div class="section" id="node-attribute">
-<span id="id8"></span><h3><a href="#node-attribute">14.5.4. Node attribute</a></h3>
+<span id="id8"></span><h3><a href="#node-attribute"><span class="section-number">14.5.4. </span>Node attribute</a></h3>
 <p>A <em>node attribute</em> is created by retrieving nested values from a <code class="docutils literal notranslate"><span class="pre">trait</span></code>
 attribute. The node value created from a trait is defined in <a class="reference internal" href="model.html#trait-node-values"><span class="std std-ref">Trait node values</span></a>.
 A node that contains a string, number, or boolean value is converted to a
@@ -632,19 +613,17 @@ string value when used by <a class="reference internal" href="#string-comparator
 values return empty strings when used by string comparators.</p>
 <p><strong>Properties</strong></p>
 <dl class="docutils">
-<dt><code class="docutils literal notranslate"><span class="pre">(keys)</span></code></dt>
-<dd><p class="first">When applied to an object node, the <code class="docutils literal notranslate"><span class="pre">(keys)</span></code> property returns a
+<dt><code class="docutils literal notranslate"><span class="pre">(keys)</span></code></dt><dd><p>When applied to an object node, the <code class="docutils literal notranslate"><span class="pre">(keys)</span></code> property returns a
 <a class="reference internal" href="#projection-attribute"><span class="std std-ref">projection</span></a> that contains all of the
 keys of the object. When applied to any other kind of node, an
 empty value is returned.</p>
 <p>The following selector matches shapes that have an
 <a class="reference internal" href="documentation-traits.html#externaldocumentation-trait"><span class="std std-ref">externalDocumentation trait</span></a> with an entry named <code class="docutils literal notranslate"><span class="pre">Homepage</span></code>:</p>
-<div class="last highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|externalDocumentation|(keys) = Homepage]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|externalDocumentation|(keys) = Homepage]
 </pre></div>
 </div>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">(values)</span></code></dt>
-<dd><p class="first">When applied to an array node, the <code class="docutils literal notranslate"><span class="pre">(values)</span></code> property returns a
+<dt><code class="docutils literal notranslate"><span class="pre">(values)</span></code></dt><dd><p>When applied to an array node, the <code class="docutils literal notranslate"><span class="pre">(values)</span></code> property returns a
 <a class="reference internal" href="#projection-attribute"><span class="std std-ref">projection</span></a> that contains every value in
 the array. When applied to an object node, <code class="docutils literal notranslate"><span class="pre">(values)</span></code> returns a
 projection that contains every value in the object. When applied to
@@ -652,12 +631,11 @@ any other kind of node, an empty value is returned.</p>
 <p>The following selector matches shapes that have an <a class="reference internal" href="constraint-traits.html#enum-trait"><span class="std std-ref">enum trait</span></a>
 where one or more of the enum definitions has a <code class="docutils literal notranslate"><span class="pre">tags</span></code> property list
 in which one or more values in the list equals <code class="docutils literal notranslate"><span class="pre">internal</span></code>:</p>
-<div class="last highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|enum|(values)|tags|(values) = internal]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|enum|(values)|tags|(values) = internal]
 </pre></div>
 </div>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">(length)</span></code></dt>
-<dd><p class="first">When applied to an array node, the <code class="docutils literal notranslate"><span class="pre">(length)</span></code> property returns the
+<dt><code class="docutils literal notranslate"><span class="pre">(length)</span></code></dt><dd><p>When applied to an array node, the <code class="docutils literal notranslate"><span class="pre">(length)</span></code> property returns the
 number of items in the array. When applied to an object node, the
 <code class="docutils literal notranslate"><span class="pre">(length)</span></code> property returns the number of entries in the object. When
 applied to a string node, the <code class="docutils literal notranslate"><span class="pre">(length)</span></code> property returns the number of
@@ -665,39 +643,53 @@ characters in the string. When applied to any other kind of node, an
 empty value is returned.</p>
 <p>The following selector matches shapes that have a
 <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a> value that is less than 3 characters:</p>
-<div class="last highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|documentation|(length) &lt; 3]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|documentation|(length) &lt; 3]
 </pre></div>
 </div>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">*</span></code></dt>
-<dd><p class="first">Properties of an object node can be accessed by name.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">*</span></code></dt><dd><p>Properties of an object node can be accessed by name.</p>
 <p>The following selector matches shapes that have an
 <code class="docutils literal notranslate"><span class="pre">externalDocumentation</span></code> trait that defines an entry named
 <code class="docutils literal notranslate"><span class="pre">Reference</span> <span class="pre">Docs</span></code>:</p>
-<div class="last highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|externalDocumentation|&#39;Reference Docs&#39;]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|externalDocumentation|&#39;Reference Docs&#39;]
 </pre></div>
 </div>
+<p>Attempting to access a nested property that does not exist or
+attempting to descend into nested values of a scalar type returns
+an <a class="reference internal" href="#empty-attributes"><span class="std std-ref">empty value</span></a>.</p>
 </dd>
 </dl>
 </div>
+<div class="section" id="empty-attribute">
+<span id="empty-attributes"></span><h3><a href="#empty-attribute"><span class="section-number">14.5.5. </span>Empty attribute</a></h3>
+<p>Attempting to access a trait that does not exist, a variable that does
+not exist, or attempting to descend into node attribute values that do not
+exist returns an <em>empty value</em>. An empty value does not satisfy existence
+checks, returns an empty string when used with string comparators, and
+returns an empty value when attempting to access any properties.</p>
+<p>The following selector attempts to descend into non-existent properties of
+the <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a>. This example MUST NOT cause an error and
+MUST NOT match any shapes:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|documentation|invalid|child = Hi]
+</pre></div>
+</div>
+</div>
 <div class="section" id="projection-attribute">
-<span id="id9"></span><h3><a href="#projection-attribute">14.5.5. Projection attribute</a></h3>
+<span id="id9"></span><h3><a href="#projection-attribute"><span class="section-number">14.5.6. </span>Projection attribute</a></h3>
 <p>A <em>projection</em> is created using the <code class="docutils literal notranslate"><span class="pre">(keys)</span></code> or <code class="docutils literal notranslate"><span class="pre">(values)</span></code> property of
 a <a class="reference internal" href="#trait-attribute"><span class="std std-ref">trait attribute</span></a> or
 <a class="reference internal" href="#node-attribute"><span class="std std-ref">node attribute</span></a>.</p>
 <p><strong>Properties</strong></p>
 <p>Projections support the following properties:</p>
 <dl class="docutils">
-<dt><code class="docutils literal notranslate"><span class="pre">(first)</span></code></dt>
-<dd>Recursively flattens the values of a projection and returns the
+<dt><code class="docutils literal notranslate"><span class="pre">(first)</span></code></dt><dd>Recursively flattens the values of a projection and returns the
 first value. Projections are unordered. This property SHOULD only be
 used when the contents of a projection are known to have a single value.</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">*</span></code></dt>
-<dd>All other property access is forwarded to each value stored in the
+<dt><code class="docutils literal notranslate"><span class="pre">*</span></code></dt><dd>All other property access is forwarded to each value stored in the
 projection, and the results are returned in a new projection.</dd>
 </dl>
 <div class="section" id="comparisons-to-non-projections">
-<span id="projection-comparisons"></span><h4><a href="#comparisons-to-non-projections">14.5.5.1. Comparisons to non-projections</a></h4>
+<span id="projection-comparisons"></span><h4><a href="#comparisons-to-non-projections"><span class="section-number">14.5.6.1. </span>Comparisons to non-projections</a></h4>
 <p>When a projection is compared against a value that is not also a projection,
 the comparison matches if any value in the projection satisfies the
 comparator assertion against the other value.</p>
@@ -708,7 +700,7 @@ contains a value that is the string literal value <code class="docutils literal 
 </div>
 </div>
 <div class="section" id="comparisons-to-projections">
-<h4><a href="#comparisons-to-projections">14.5.5.2. Comparisons to projections</a></h4>
+<h4><a href="#comparisons-to-projections"><span class="section-number">14.5.6.2. </span>Comparisons to projections</a></h4>
 <p>When a projection is compared against another projection using a
 <a class="reference internal" href="#string-comparators"><span class="std std-ref">string comparator</span></a> or <a class="reference internal" href="#numeric-comparators"><span class="std std-ref">numeric comparator</span></a>,
 the comparison matches if any value in the left projection satisfies the
@@ -716,49 +708,49 @@ comparator when compared against any value in the right projection.</p>
 <p>To illustrate an example, the following model defines a trait,
 <code class="docutils literal notranslate"><span class="pre">allowedTags</span></code>, that is meant to constrain the set of tags that can appear
 in the closure of a service.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="nd">@trait</span>(<span class="nl">selector:</span> <span class="s2">&quot;service&quot;</span>)
-<span class="kd">list</span><span class="nc"> allowedTags</span> {
-    <span class="nl">member:</span> <span class="vc">String</span>,
-}
+<span class="nd">@trait</span>(<span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)<span class="w"></span>
+<span class="kd">list</span><span class="nc"> allowedTags</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">member:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nd">@allowedTags</span>([<span class="s2">&quot;internal&quot;</span>, <span class="s2">&quot;external&quot;</span>])
-<span class="kd">service</span><span class="nc"> MyService</span> {
-    <span class="nl">version:</span> <span class="s2">&quot;2020-04-28&quot;</span>,
-    <span class="nl">operations:</span> [<span class="vc">OperationA</span>, <span class="vc">OperationB</span>, <span class="vc">OperationC</span>, <span class="vc">OperationD</span>]
-}
+<span class="nd">@allowedTags</span>([<span class="s2">&quot;internal&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;external&quot;</span>])<span class="w"></span>
+<span class="kd">service</span><span class="nc"> MyService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2020-04-28&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">operations:</span><span class="w"> </span>[<span class="vc">OperationA</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationB</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationC</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationD</span>]<span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">operation</span><span class="nc"> OperationA</span> {
-    <span class="nl">input:</span> <span class="vc">OperationAInput</span>,
-}
+<span class="kd">operation</span><span class="nc"> OperationA</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">OperationAInput</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nd">@tags</span>([<span class="s2">&quot;internal&quot;</span>])
-<span class="kd">operation</span><span class="nc"> OperationB</span> {}
+<span class="nd">@tags</span>([<span class="s2">&quot;internal&quot;</span>])<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> OperationB</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="nd">@tags</span>([<span class="s2">&quot;internal&quot;</span>, <span class="s2">&quot;external&quot;</span>])
-<span class="kd">operation</span><span class="nc"> OperationC</span> {}
+<span class="nd">@tags</span>([<span class="s2">&quot;internal&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;external&quot;</span>])<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> OperationC</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="nd">@tags</span>([<span class="s2">&quot;invalid&quot;</span>])
-<span class="kd">operation</span><span class="nc"> OperationD</span> {}
+<span class="nd">@tags</span>([<span class="s2">&quot;invalid&quot;</span>])<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> OperationD</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="kd">structure</span><span class="nc"> OperationAInput</span> {
-    <span class="nl">badValue:</span> <span class="vc">BadEnum</span>,
-    <span class="nl">goodValue:</span> <span class="vc">GoodEnum</span>,
-}
+<span class="kd">structure</span><span class="nc"> OperationAInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">badValue:</span><span class="w"> </span><span class="vc">BadEnum</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">goodValue:</span><span class="w"> </span><span class="vc">GoodEnum</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nd">@enum</span>([
-    {<span class="nl">value:</span> <span class="s2">&quot;a&quot;</span>, <span class="nl">tags:</span> [<span class="s2">&quot;internal&quot;</span>]},
-    {<span class="nl">value:</span> <span class="s2">&quot;b&quot;</span>, <span class="nl">tags:</span> [<span class="s2">&quot;invalid&quot;</span>]},
-])
-<span class="kd">string</span><span class="nc"> BadEnum</span>
+<span class="nd">@enum</span>([<span class="w"></span>
+<span class="w">    </span>{<span class="nl">value:</span><span class="w"> </span><span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">tags:</span><span class="w"> </span>[<span class="s2">&quot;internal&quot;</span>]}<span class="p">,</span><span class="w"></span>
+<span class="w">    </span>{<span class="nl">value:</span><span class="w"> </span><span class="s2">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">tags:</span><span class="w"> </span>[<span class="s2">&quot;invalid&quot;</span>]}<span class="p">,</span><span class="w"></span>
+])<span class="w"></span>
+<span class="kd">string</span><span class="nc"> BadEnum</span><span class="w"></span>
 
-<span class="nd">@enum</span>([
-    {<span class="nl">value:</span> <span class="s2">&quot;a&quot;</span>},
-    {<span class="nl">value:</span> <span class="s2">&quot;b&quot;</span>, <span class="nl">tags:</span> [<span class="s2">&quot;internal&quot;</span>, <span class="s2">&quot;external&quot;</span>]},
-    {<span class="nl">value:</span> <span class="s2">&quot;c&quot;</span>, <span class="nl">tags:</span> [<span class="s2">&quot;internal&quot;</span>]},
-])
-<span class="kd">string</span><span class="nc"> GoodEnum</span>
+<span class="nd">@enum</span>([<span class="w"></span>
+<span class="w">    </span>{<span class="nl">value:</span><span class="w"> </span><span class="s2">&quot;a&quot;</span>}<span class="p">,</span><span class="w"></span>
+<span class="w">    </span>{<span class="nl">value:</span><span class="w"> </span><span class="s2">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">tags:</span><span class="w"> </span>[<span class="s2">&quot;internal&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;external&quot;</span>]}<span class="p">,</span><span class="w"></span>
+<span class="w">    </span>{<span class="nl">value:</span><span class="w"> </span><span class="s2">&quot;c&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">tags:</span><span class="w"> </span>[<span class="s2">&quot;internal&quot;</span>]}<span class="p">,</span><span class="w"></span>
+])<span class="w"></span>
+<span class="kd">string</span><span class="nc"> GoodEnum</span><span class="w"></span>
 </pre></div>
 </div>
 <p>The following selector finds all shapes within the closure of a service
@@ -815,13 +807,13 @@ $service(*)
 </div>
 </div>
 <div class="section" id="projection-comparators">
-<span id="id10"></span><h4><a href="#projection-comparators">14.5.5.3. Projection comparators</a></h4>
+<span id="id10"></span><h4><a href="#projection-comparators"><span class="section-number">14.5.6.3. </span>Projection comparators</a></h4>
 <p>Projection comparators are used to compare projections to test if they are
 equal, not equal, a subset, or a proper subset to another projection. With
 the exception of the <code class="docutils literal notranslate"><span class="pre">{!=}</span></code> comparator, projection comparators match if and
 only if both the left hand side of the comparator and the right hand side of
 the comparator are projections.</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
@@ -861,16 +853,16 @@ projection.</td>
 </div>
 </div>
 <div class="section" id="scoped-attribute-selectors">
-<span id="id11"></span><h2><a href="#scoped-attribute-selectors">14.6. Scoped attribute selectors</a></h2>
-<p>A <a class="reference internal" href="#grammar-token-selector_scoped_attr"><code class="xref std std-token docutils literal notranslate"><span class="pre">scoped</span> <span class="pre">attribute</span> <span class="pre">selector</span></code></a> is similar to an
+<span id="id11"></span><h2><a href="#scoped-attribute-selectors"><span class="section-number">14.6. </span>Scoped attribute selectors</a></h2>
+<p>A <a class="reference internal" href="#grammar-token-selectors-selector_scoped_attr"><code class="xref std std-token docutils literal notranslate"><span class="pre">scoped</span> <span class="pre">attribute</span> <span class="pre">selector</span></code></a> is similar to an
 attribute selector, but it allows multiple complex comparisons to be made
 against a scoped attribute.</p>
 <div class="section" id="context-values">
-<h3><a href="#context-values">14.6.1. Context values</a></h3>
+<h3><a href="#context-values"><span class="section-number">14.6.1. </span>Context values</a></h3>
 <p>The first part of a scoped attribute selector is the attribute that is scoped
 for the expression, followed by <code class="docutils literal notranslate"><span class="pre">:</span></code>. The scoped attribute is accessed using
-a <a class="reference internal" href="#grammar-token-selector_context_value"><code class="xref std std-token docutils literal notranslate"><span class="pre">context</span> <span class="pre">value</span></code></a> in the form of
-<code class="docutils literal notranslate"><span class="pre">&#64;{</span></code> <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">identifier</span></code></a> <code class="docutils literal notranslate"><span class="pre">}</span></code>.</p>
+a <a class="reference internal" href="#grammar-token-selectors-selector_context_value"><code class="xref std std-token docutils literal notranslate"><span class="pre">context</span> <span class="pre">value</span></code></a> in the form of
+<code class="docutils literal notranslate"><span class="pre">&#64;{</span></code> <a class="reference internal" href="model.html#grammar-token-smithy-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:identifier</span></code></a> <code class="docutils literal notranslate"><span class="pre">}</span></code>.</p>
 <p>In the following selector, the <code class="docutils literal notranslate"><span class="pre">trait|range</span></code> attribute is used as the scoped
 attribute of the expression, and the selector matches shapes marked with
 the <a class="reference internal" href="constraint-traits.html#range-trait"><span class="std std-ref">range trait</span></a> where the <code class="docutils literal notranslate"><span class="pre">min</span></code> value is greater than the <code class="docutils literal notranslate"><span class="pre">max</span></code>
@@ -901,7 +893,7 @@ an entry in its <code class="docutils literal notranslate"><span class="pre">tag
 </div>
 </div>
 <div class="section" id="and-logic">
-<h3><a href="#and-logic">14.6.2. And-logic</a></h3>
+<h3><a href="#and-logic"><span class="section-number">14.6.2. </span>And-logic</a></h3>
 <p>Scoped attribute selector assertions can be combined together using
 <em>and</em> statements with <code class="docutils literal notranslate"><span class="pre">&amp;&amp;</span></code>. All assertions MUST match in order for
 the selector to match.</p>
@@ -914,7 +906,7 @@ set <code class="docutils literal notranslate"><span class="pre">failWhenMissing
 </div>
 </div>
 <div class="section" id="matching-multiple-values">
-<h3><a href="#matching-multiple-values">14.6.3. Matching multiple values</a></h3>
+<h3><a href="#matching-multiple-values"><span class="section-number">14.6.3. </span>Matching multiple values</a></h3>
 <p>Like non-scoped selectors, multiple values can be provided using a comma
 separated list. One or more resolved attribute values MUST match one or more
 provided values.</p>
@@ -928,7 +920,7 @@ where the <code class="docutils literal notranslate"><span class="pre">in</span>
 </div>
 </div>
 <div class="section" id="case-insensitive-comparisons">
-<h3><a href="#case-insensitive-comparisons">14.6.4. Case insensitive comparisons</a></h3>
+<h3><a href="#case-insensitive-comparisons"><span class="section-number">14.6.4. </span>Case insensitive comparisons</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">i</span></code> token used before <code class="docutils literal notranslate"><span class="pre">&amp;&amp;</span></code> or the closing <code class="docutils literal notranslate"><span class="pre">]</span></code> makes a comparison
 case-insensitive.</p>
 <p>The following selector matches on the <code class="docutils literal notranslate"><span class="pre">httpApiKeyAuth</span></code> trait using
@@ -948,15 +940,15 @@ uses a case-insensitive comparison on <code class="docutils literal notranslate"
 </div>
 </div>
 <div class="section" id="neighbors">
-<h2><a href="#neighbors">14.7. Neighbors</a></h2>
+<h2><a href="#neighbors"><span class="section-number">14.7. </span>Neighbors</a></h2>
 <p>Neighbor selectors yield shapes that are connected to the current shape.
 Most selectors are used to determine if a shape matches some criteria,
 meaning the selector yields zero or exactly one shape. However, neighbor
 selectors yield zero or more shapes by traversing the relationships of
 a shape.</p>
 <div class="section" id="forward-undirected-neighbor">
-<h3><a href="#forward-undirected-neighbor">14.7.1. Forward undirected neighbor</a></h3>
-<p>A <a class="reference internal" href="#grammar-token-selector_forward_undirected_neighbor"><code class="xref std std-token docutils literal notranslate"><span class="pre">forward</span> <span class="pre">undirected</span> <span class="pre">neighbor</span></code></a>
+<h3><a href="#forward-undirected-neighbor"><span class="section-number">14.7.1. </span>Forward undirected neighbor</a></h3>
+<p>A <a class="reference internal" href="#grammar-token-selectors-selector_forward_undirected_neighbor"><code class="xref std std-token docutils literal notranslate"><span class="pre">forward</span> <span class="pre">undirected</span> <span class="pre">neighbor</span></code></a>
 (<code class="docutils literal notranslate"><span class="pre">&gt;</span></code>) yields every shape that is connected to the current shape. For
 example, the following selector matches the key and value members of
 every map:</p>
@@ -970,7 +962,7 @@ selector yields strings that are targeted by list members:</p>
 </div>
 </div>
 <div class="section" id="forward-directed-neighbors">
-<h3><a href="#forward-directed-neighbors">14.7.2. Forward directed neighbors</a></h3>
+<h3><a href="#forward-directed-neighbors"><span class="section-number">14.7.2. </span>Forward directed neighbors</a></h3>
 <p>The forward undirected neighbor selector (<code class="docutils literal notranslate"><span class="pre">&gt;</span></code>) is an <em>undirected</em> edge
 traversal. Sometimes, a directed edge traversal is necessary. For example,
 the following selector matches the &quot;bound&quot;, &quot;input&quot;, &quot;output&quot;, and &quot;error&quot;
@@ -978,7 +970,7 @@ relationships of each operation:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>operation &gt; *
 </pre></div>
 </div>
-<p>A forward directed edge traversal is applied using <a class="reference internal" href="#grammar-token-selector_forward_directed_neighbor"><code class="xref std std-token docutils literal notranslate"><span class="pre">selector_forward_directed_neighbor</span></code></a>
+<p>A forward directed edge traversal is applied using <a class="reference internal" href="#grammar-token-selectors-selector_forward_directed_neighbor"><code class="xref std std-token docutils literal notranslate"><span class="pre">selectors:selector_forward_directed_neighbor</span></code></a>
 (<code class="docutils literal notranslate"><span class="pre">-[X,</span> <span class="pre">Y,</span> <span class="pre">Z]-&gt;</span></code>). The following selector matches all structure shapes
 referenced as operation <code class="docutils literal notranslate"><span class="pre">input</span></code> or <code class="docutils literal notranslate"><span class="pre">output</span></code>.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>operation -[input, output]-&gt; structure
@@ -1002,7 +994,7 @@ applied to it (that is, a trait that is marked with the
 </div>
 </div>
 <div class="section" id="forward-recursive-neighbors">
-<h3><a href="#forward-recursive-neighbors">14.7.3. Forward recursive neighbors</a></h3>
+<h3><a href="#forward-recursive-neighbors"><span class="section-number">14.7.3. </span>Forward recursive neighbors</a></h3>
 <p>The forward recursive neighbor selector (<code class="docutils literal notranslate"><span class="pre">~&gt;</span></code>) yields all shapes that are
 recursively connected in the closure of another shape. The shapes yielded
 by this selector are equivalent to yielding every shape connected to the
@@ -1021,7 +1013,7 @@ trait:</p>
 </div>
 </div>
 <div class="section" id="reverse-undirected-neighbor">
-<h3><a href="#reverse-undirected-neighbor">14.7.4. Reverse undirected neighbor</a></h3>
+<h3><a href="#reverse-undirected-neighbor"><span class="section-number">14.7.4. </span>Reverse undirected neighbor</a></h3>
 <p>A <em>reverse undirected neighbor</em> yields all of the shapes that have a
 relationship that points to the current shape.</p>
 <p>The following selector matches strings that are targeted by members of lists:</p>
@@ -1041,7 +1033,7 @@ is preferred over a reverse neighbor traversal when possible.</p>
 </div>
 </div>
 <div class="section" id="reverse-directed-neighbor">
-<h3><a href="#reverse-directed-neighbor">14.7.5. Reverse directed neighbor</a></h3>
+<h3><a href="#reverse-directed-neighbor"><span class="section-number">14.7.5. </span>Reverse directed neighbor</a></h3>
 <p>A <em>reverse directed neighbor</em> yields all of the shapes that have a
 relationship of a specific type that points to the current shape.</p>
 <p>For example, shapes marked with the <a class="reference internal" href="stream-traits.html#streaming-trait"><span class="std std-ref">streaming trait</span></a> can only
@@ -1062,9 +1054,9 @@ to any shapes:</p>
 </div>
 </div>
 <div class="section" id="relationships">
-<span id="selector-relationships"></span><h3><a href="#relationships">14.7.6. Relationships</a></h3>
+<span id="selector-relationships"></span><h3><a href="#relationships"><span class="section-number">14.7.6. </span>Relationships</a></h3>
 <p>The table below lists the labeled directed relationships from each shape.</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="15%" />
 <col width="15%" />
@@ -1201,7 +1193,7 @@ no shapes.</p>
 </div>
 </div>
 <div class="section" id="functions">
-<h2><a href="#functions">14.8. Functions</a></h2>
+<h2><a href="#functions"><span class="section-number">14.8. </span>Functions</a></h2>
 <p>Functions are used to filter and yield shapes using a variadic argument
 list of selectors separated by a comma (<code class="docutils literal notranslate"><span class="pre">,</span></code>). Functions always start with
 a colon (<code class="docutils literal notranslate"><span class="pre">:</span></code>).</p>
@@ -1211,7 +1203,7 @@ a colon (<code class="docutils literal notranslate"><span class="pre">:</span></
 evaluated, an unknown function yields no shapes.</p>
 </div>
 <div class="section" id="test">
-<span id="test-function"></span><h3><a href="#test">14.8.1. <code class="docutils literal notranslate"><span class="pre">:test</span></code></a></h3>
+<span id="test-function"></span><h3><a href="#test"><span class="section-number">14.8.1. </span><code class="docutils literal notranslate"><span class="pre">:test</span></code></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">:test</span></code> function is used to test if a shape is matched by any of the
 provided predicate selectors. The <code class="docutils literal notranslate"><span class="pre">:test</span></code> function stops testing predicates
 and yields the current shape as soon as the first predicate yields a shape.</p>
@@ -1234,7 +1226,7 @@ no documentation:</p>
 </div>
 </div>
 <div class="section" id="is">
-<h3><a href="#is">14.8.2. <code class="docutils literal notranslate"><span class="pre">:is</span></code></a></h3>
+<h3><a href="#is"><span class="section-number">14.8.2. </span><code class="docutils literal notranslate"><span class="pre">:is</span></code></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">:is</span></code> function passes the current shape to each selector and
 yields the shapes yielded by each selector.</p>
 <p>The following selector yields string and number shapes:</p>
@@ -1260,7 +1252,7 @@ SHOULD update to use <code class="docutils literal notranslate"><span class="pre
 </div>
 </div>
 <div class="section" id="not">
-<span id="not-function"></span><h3><a href="#not">14.8.3. <code class="docutils literal notranslate"><span class="pre">:not</span></code></a></h3>
+<span id="not-function"></span><h3><a href="#not"><span class="section-number">14.8.3. </span><code class="docutils literal notranslate"><span class="pre">:not</span></code></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">:not</span></code> function is used to filter out shapes. This function MUST be
 provided a <strong>single</strong> predicate selector argument. If the predicate
 selector yields any shapes when given the current shape as input, then
@@ -1292,7 +1284,7 @@ trait applied to it:</p>
 </div>
 </div>
 <div class="section" id="topdown">
-<h3><a href="#topdown">14.8.4. <code class="docutils literal notranslate"><span class="pre">:topdown</span></code></a></h3>
+<h3><a href="#topdown"><span class="section-number">14.8.4. </span><code class="docutils literal notranslate"><span class="pre">:topdown</span></code></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">:topdown</span></code> function matches service, resource, and operation shapes
 and resource and operation shapes within their containment hierarchy. The
 <code class="docutils literal notranslate"><span class="pre">:topdown</span></code> function starts at each given shape and forward-traverses
@@ -1338,24 +1330,24 @@ to override the default.</p>
 <p>The above selector applied to the following model matches <code class="docutils literal notranslate"><span class="pre">Example</span></code>,
 <code class="docutils literal notranslate"><span class="pre">OperationA</span></code>, and <code class="docutils literal notranslate"><span class="pre">OperationB</span></code>. It does not match <code class="docutils literal notranslate"><span class="pre">Foo</span></code> because <code class="docutils literal notranslate"><span class="pre">Foo</span></code>
 matches the disqualifier selector.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="nd">@aws.api#dataPlane</span>
-<span class="kd">service</span><span class="nc"> Example</span> {
-    <span class="nl">version:</span> <span class="s2">&quot;2020-09-08&quot;</span>,
-    <span class="nl">resources:</span> [<span class="vc">Foo</span>],
-    <span class="nl">operations:</span> [<span class="vc">OperationA</span>],
-}
+<span class="nd">@aws.api#dataPlane</span><span class="w"></span>
+<span class="kd">service</span><span class="nc"> Example</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2020-09-08&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">resources:</span><span class="w"> </span>[<span class="vc">Foo</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">operations:</span><span class="w"> </span>[<span class="vc">OperationA</span>]<span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">operation</span><span class="nc"> OperationA</span> {}
+<span class="kd">operation</span><span class="nc"> OperationA</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="nd">@aws.api#controlPlane</span>
-<span class="kd">resource</span><span class="nc"> Foo</span> {
-    <span class="nl">operations:</span> [<span class="vc">OperationB</span>]
-}
+<span class="nd">@aws.api#controlPlane</span><span class="w"></span>
+<span class="kd">resource</span><span class="nc"> Foo</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">operations:</span><span class="w"> </span>[<span class="vc">OperationB</span>]<span class="w"></span>
+}<span class="w"></span>
 
-<span class="nd">@aws.api#dataPlane</span>
-<span class="kd">operation</span><span class="nc"> OperationB</span> {}
+<span class="nd">@aws.api#dataPlane</span><span class="w"></span>
+<span class="kd">operation</span><span class="nc"> OperationB</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
 <p>In the following example, the <code class="docutils literal notranslate"><span class="pre">:topdown</span></code> function does not inherit any
@@ -1368,20 +1360,20 @@ selector matches only <code class="docutils literal notranslate"><span class="pr
 </div>
 </div>
 <div class="section" id="variables">
-<span id="selector-variables"></span><h2><a href="#variables">14.9. Variables</a></h2>
+<span id="selector-variables"></span><h2><a href="#variables"><span class="section-number">14.9. </span>Variables</a></h2>
 <p>Variables are used to store eagerly computed, named intermediate results that
 can be accessed later in a selector. Variables are useful for caching
 results that are computed multiples times in a selector or for capturing
 information about the current shape that is referenced later in a selector
 after traversing neighbors.</p>
-<p>A variable is set using a <a class="reference internal" href="#grammar-token-selector_variable_set"><code class="xref std std-token docutils literal notranslate"><span class="pre">selector_variable_set</span></code></a> expression.
+<p>A variable is set using a <a class="reference internal" href="#grammar-token-selectors-selector_variable_set"><code class="xref std std-token docutils literal notranslate"><span class="pre">selectors:selector_variable_set</span></code></a> expression.
 Variables can be reassigned without error.</p>
 <p>The following selector defines a variable named <code class="docutils literal notranslate"><span class="pre">foo</span></code> that sets the
 variable to the result of applying the <code class="docutils literal notranslate"><span class="pre">*</span></code> selector to the current shape.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$foo(*)
 </pre></div>
 </div>
-<p>A variable is retrieved by name using a <a class="reference internal" href="#grammar-token-selector_variable_get"><code class="xref std std-token docutils literal notranslate"><span class="pre">selector_variable_get</span></code></a>
+<p>A variable is retrieved by name using a <a class="reference internal" href="#grammar-token-selectors-selector_variable_get"><code class="xref std std-token docutils literal notranslate"><span class="pre">selectors:selector_variable_get</span></code></a>
 expression. Retrieving a variable yields the set of shapes stored in the
 variable. Attempting to get a variable that does not exist yields no shapes.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>${foo}
@@ -1390,13 +1382,13 @@ variable. Attempting to get a variable that does not exist yields no shapes.</p>
 <p>Variables can also be accessed inside of <a class="reference internal" href="#scoped-attribute-selectors"><span class="std std-ref">scoped attribute selectors</span></a>
 from shapes using the <code class="docutils literal notranslate"><span class="pre">var</span></code> attribute.</p>
 <div class="section" id="var-attribute">
-<span id="id12"></span><h3><a href="#var-attribute">14.9.1. <code class="docutils literal notranslate"><span class="pre">var</span></code> attribute</a></h3>
+<span id="id12"></span><h3><a href="#var-attribute"><span class="section-number">14.9.1. </span><code class="docutils literal notranslate"><span class="pre">var</span></code> attribute</a></h3>
 <p>A <em>var attribute</em> is an object accessible from a shape that provides
 access to the named <a class="reference internal" href="#selector-variables"><span class="std std-ref">variables</span></a> currently in scope.
 Variables are accessed by providing the variable name after <code class="docutils literal notranslate"><span class="pre">var</span></code>. The
 values returned from <code class="docutils literal notranslate"><span class="pre">var</span></code> are <a class="reference internal" href="#projection-attribute"><span class="std std-ref">projections</span></a>
-that contain the set of shapes that were bound to the variable, or an empty
-value if the variable does not exist.</p>
+that contain the set of shapes that were bound to the variable, or an
+<a class="reference internal" href="#empty-attributes"><span class="std std-ref">empty value</span></a> if the variable does not exist.</p>
 <p>The following selector finds all operations in the closure of a service
 where the operation has an <a class="reference internal" href="auth-traits.html#auth-trait"><span class="std std-ref">auth trait</span></a> that is not a subset of the
 <a class="reference internal" href="auth-traits.html#authdefinition-trait"><span class="std std-ref">authDefinition traits</span></a> applied to the service.</p>
@@ -1410,22 +1402,22 @@ operation
 </div>
 <p>Given the following model, the selector matches the <code class="docutils literal notranslate"><span class="pre">HasDigestAuth</span></code>
 operation:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="nd">@httpBasicAuth</span>
-<span class="nd">@httpBearerAuth</span>
-<span class="kd">service</span><span class="nc"> MyService</span> {
-    <span class="nl">version:</span> <span class="s2">&quot;2020-04-21&quot;</span>,
-    <span class="nl">operations:</span> [<span class="vc">HasDigestAuth</span>, <span class="vc">HasBasicAuth</span>, <span class="vc">NoAuth</span>]
-}
+<span class="nd">@httpBasicAuth</span><span class="w"></span>
+<span class="nd">@httpBearerAuth</span><span class="w"></span>
+<span class="kd">service</span><span class="nc"> MyService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2020-04-21&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">operations:</span><span class="w"> </span>[<span class="vc">HasDigestAuth</span><span class="p">,</span><span class="w"> </span><span class="vc">HasBasicAuth</span><span class="p">,</span><span class="w"> </span><span class="vc">NoAuth</span>]<span class="w"></span>
+}<span class="w"></span>
 
-<span class="nd">@auth</span>([<span class="vc">httpDigestAuth</span>])
-<span class="kd">operation</span><span class="nc"> HasDigestAuth</span> {}
+<span class="nd">@auth</span>([<span class="vc">httpDigestAuth</span>])<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> HasDigestAuth</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="nd">@auth</span>([<span class="vc">httpBasicAuth</span>])
-<span class="kd">operation</span><span class="nc"> HasBasicAuth</span> {}
+<span class="nd">@auth</span>([<span class="vc">httpBasicAuth</span>])<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> HasBasicAuth</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="kd">operation</span><span class="nc"> NoAuth</span> {}
+<span class="kd">operation</span><span class="nc"> NoAuth</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">HasDigestAuth</span></code> operation is matched because it is bound within the
@@ -1460,7 +1452,7 @@ and <code class="docutils literal notranslate"><span class="pre">MyService</span
 </div>
 </div>
 <div class="section" id="grammar">
-<h2><a href="#grammar">14.10. Grammar</a></h2>
+<h2><a href="#grammar"><span class="section-number">14.10. </span>Grammar</a></h2>
 <p>Selectors are defined by the following <a class="reference external" href="https://tools.ietf.org/html/rfc5234">ABNF</a> grammar.</p>
 <div class="note admonition">
 <p class="first admonition-title">Lexical note</p>
@@ -1468,128 +1460,128 @@ and <code class="docutils literal notranslate"><span class="pre">MyService</span
 changing the semantics of a selector.</p>
 </div>
 <pre class="productionlist">
-<strong id="grammar-token-selector">selector</strong> =
-    <a class="reference internal" href="#grammar-token-selector_expression"><code class="xref docutils literal notranslate"><span class="pre">selector_expression</span></code></a> *(<a class="reference internal" href="#grammar-token-selector_expression"><code class="xref docutils literal notranslate"><span class="pre">selector_expression</span></code></a>)
+<strong id="grammar-token-selectors-selector"><span id="grammar-token-selector"></span>selector</strong> =
+    <a class="reference internal" href="#grammar-token-selectors-selector_expression"><code class="xref docutils literal notranslate"><span class="pre">selector_expression</span></code></a> *(<a class="reference internal" href="#grammar-token-selectors-selector_expression"><code class="xref docutils literal notranslate"><span class="pre">selector_expression</span></code></a>)
 
-<strong id="grammar-token-selector_expression">selector_expression</strong> =
-    <a class="reference internal" href="#grammar-token-selector_shape_types"><code class="xref docutils literal notranslate"><span class="pre">selector_shape_types</span></code></a>
-  / <a class="reference internal" href="#grammar-token-selector_attr"><code class="xref docutils literal notranslate"><span class="pre">selector_attr</span></code></a>
-  / <a class="reference internal" href="#grammar-token-selector_scoped_attr"><code class="xref docutils literal notranslate"><span class="pre">selector_scoped_attr</span></code></a>
-  / <a class="reference internal" href="#grammar-token-selector_function"><code class="xref docutils literal notranslate"><span class="pre">selector_function</span></code></a>
-  / <a class="reference internal" href="#grammar-token-selector_forward_undirected_neighbor"><code class="xref docutils literal notranslate"><span class="pre">selector_forward_undirected_neighbor</span></code></a>
-  / <a class="reference internal" href="#grammar-token-selector_reverse_undirected_neighbor"><code class="xref docutils literal notranslate"><span class="pre">selector_reverse_undirected_neighbor</span></code></a>
-  / <a class="reference internal" href="#grammar-token-selector_forward_directed_neighbor"><code class="xref docutils literal notranslate"><span class="pre">selector_forward_directed_neighbor</span></code></a>
-  / <a class="reference internal" href="#grammar-token-selector_reverse_directed_neighbor"><code class="xref docutils literal notranslate"><span class="pre">selector_reverse_directed_neighbor</span></code></a>
-  / <a class="reference internal" href="#grammar-token-selector_forward_recursive_neighbor"><code class="xref docutils literal notranslate"><span class="pre">selector_forward_recursive_neighbor</span></code></a>
-  / <a class="reference internal" href="#grammar-token-selector_variable_set"><code class="xref docutils literal notranslate"><span class="pre">selector_variable_set</span></code></a>
-  / <a class="reference internal" href="#grammar-token-selector_variable_get"><code class="xref docutils literal notranslate"><span class="pre">selector_variable_get</span></code></a>
+<strong id="grammar-token-selectors-selector_expression"><span id="grammar-token-selector-expression"></span>selector_expression</strong> =
+    <a class="reference internal" href="#grammar-token-selectors-selector_shape_types"><code class="xref docutils literal notranslate"><span class="pre">selector_shape_types</span></code></a>
+  / <a class="reference internal" href="#grammar-token-selectors-selector_attr"><code class="xref docutils literal notranslate"><span class="pre">selector_attr</span></code></a>
+  / <a class="reference internal" href="#grammar-token-selectors-selector_scoped_attr"><code class="xref docutils literal notranslate"><span class="pre">selector_scoped_attr</span></code></a>
+  / <a class="reference internal" href="#grammar-token-selectors-selector_function"><code class="xref docutils literal notranslate"><span class="pre">selector_function</span></code></a>
+  / <a class="reference internal" href="#grammar-token-selectors-selector_forward_undirected_neighbor"><code class="xref docutils literal notranslate"><span class="pre">selector_forward_undirected_neighbor</span></code></a>
+  / <a class="reference internal" href="#grammar-token-selectors-selector_reverse_undirected_neighbor"><code class="xref docutils literal notranslate"><span class="pre">selector_reverse_undirected_neighbor</span></code></a>
+  / <a class="reference internal" href="#grammar-token-selectors-selector_forward_directed_neighbor"><code class="xref docutils literal notranslate"><span class="pre">selector_forward_directed_neighbor</span></code></a>
+  / <a class="reference internal" href="#grammar-token-selectors-selector_reverse_directed_neighbor"><code class="xref docutils literal notranslate"><span class="pre">selector_reverse_directed_neighbor</span></code></a>
+  / <a class="reference internal" href="#grammar-token-selectors-selector_forward_recursive_neighbor"><code class="xref docutils literal notranslate"><span class="pre">selector_forward_recursive_neighbor</span></code></a>
+  / <a class="reference internal" href="#grammar-token-selectors-selector_variable_set"><code class="xref docutils literal notranslate"><span class="pre">selector_variable_set</span></code></a>
+  / <a class="reference internal" href="#grammar-token-selectors-selector_variable_get"><code class="xref docutils literal notranslate"><span class="pre">selector_variable_get</span></code></a>
 
-<strong id="grammar-token-selector_shape_types">selector_shape_types</strong> =
-    &quot;*&quot; / <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>
+<strong id="grammar-token-selectors-selector_shape_types"><span id="grammar-token-selector-shape-types"></span>selector_shape_types</strong> =
+    &quot;*&quot; / <a class="reference internal" href="model.html#grammar-token-smithy-identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:identifier</span></code></a>
 
-<strong id="grammar-token-selector_forward_undirected_neighbor">selector_forward_undirected_neighbor</strong> =
+<strong id="grammar-token-selectors-selector_forward_undirected_neighbor"><span id="grammar-token-selector-forward-undirected-neighbor"></span>selector_forward_undirected_neighbor</strong> =
     &quot;&gt;&quot;
 
-<strong id="grammar-token-selector_reverse_undirected_neighbor">selector_reverse_undirected_neighbor</strong> =
+<strong id="grammar-token-selectors-selector_reverse_undirected_neighbor"><span id="grammar-token-selector-reverse-undirected-neighbor"></span>selector_reverse_undirected_neighbor</strong> =
     &quot;&lt;&quot;
 
-<strong id="grammar-token-selector_forward_directed_neighbor">selector_forward_directed_neighbor</strong> =
-    &quot;-[&quot; <a class="reference internal" href="#grammar-token-selector_directed_relationships"><code class="xref docutils literal notranslate"><span class="pre">selector_directed_relationships</span></code></a> &quot;]-&gt;&quot;
+<strong id="grammar-token-selectors-selector_forward_directed_neighbor"><span id="grammar-token-selector-forward-directed-neighbor"></span>selector_forward_directed_neighbor</strong> =
+    &quot;-[&quot; <a class="reference internal" href="#grammar-token-selectors-selector_directed_relationships"><code class="xref docutils literal notranslate"><span class="pre">selector_directed_relationships</span></code></a> &quot;]-&gt;&quot;
 
-<strong id="grammar-token-selector_reverse_directed_neighbor">selector_reverse_directed_neighbor</strong> =
+<strong id="grammar-token-selectors-selector_reverse_directed_neighbor"><span id="grammar-token-selector-reverse-directed-neighbor"></span>selector_reverse_directed_neighbor</strong> =
     &quot;&lt;-[&quot; selector_directed_relationships &quot;]-&quot;
 
-<strong id="grammar-token-selector_directed_relationships">selector_directed_relationships</strong> =
-    <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> *(&quot;,&quot; <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>)
+<strong id="grammar-token-selectors-selector_directed_relationships"><span id="grammar-token-selector-directed-relationships"></span>selector_directed_relationships</strong> =
+    <a class="reference internal" href="model.html#grammar-token-smithy-identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:identifier</span></code></a> *(&quot;,&quot; <a class="reference internal" href="model.html#grammar-token-smithy-identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:identifier</span></code></a>)
 
-<strong id="grammar-token-selector_forward_recursive_neighbor">selector_forward_recursive_neighbor</strong> =
+<strong id="grammar-token-selectors-selector_forward_recursive_neighbor"><span id="grammar-token-selector-forward-recursive-neighbor"></span>selector_forward_recursive_neighbor</strong> =
     &quot;~&gt;&quot;
 
-<strong id="grammar-token-selector_attr">selector_attr</strong> =
-    &quot;[&quot; <a class="reference internal" href="#grammar-token-selector_key"><code class="xref docutils literal notranslate"><span class="pre">selector_key</span></code></a> [selector_attr_comparison] &quot;]&quot;
+<strong id="grammar-token-selectors-selector_attr"><span id="grammar-token-selector-attr"></span>selector_attr</strong> =
+    &quot;[&quot; <a class="reference internal" href="#grammar-token-selectors-selector_key"><code class="xref docutils literal notranslate"><span class="pre">selector_key</span></code></a> [selector_attr_comparison] &quot;]&quot;
 
-<strong id="grammar-token-selector_attr_comparison">selector_attr_comparison</strong> =
-    <a class="reference internal" href="#grammar-token-selector_comparator"><code class="xref docutils literal notranslate"><span class="pre">selector_comparator</span></code></a> <a class="reference internal" href="#grammar-token-selector_attr_values"><code class="xref docutils literal notranslate"><span class="pre">selector_attr_values</span></code></a> [&quot;i&quot;]
+<strong id="grammar-token-selectors-selector_attr_comparison"><span id="grammar-token-selector-attr-comparison"></span>selector_attr_comparison</strong> =
+    <a class="reference internal" href="#grammar-token-selectors-selector_comparator"><code class="xref docutils literal notranslate"><span class="pre">selector_comparator</span></code></a> <a class="reference internal" href="#grammar-token-selectors-selector_attr_values"><code class="xref docutils literal notranslate"><span class="pre">selector_attr_values</span></code></a> [&quot;i&quot;]
 
-<strong id="grammar-token-selector_key">selector_key</strong> =
-    <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> [&quot;|&quot; <a class="reference internal" href="#grammar-token-selector_path"><code class="xref docutils literal notranslate"><span class="pre">selector_path</span></code></a>]
+<strong id="grammar-token-selectors-selector_key"><span id="grammar-token-selector-key"></span>selector_key</strong> =
+    <a class="reference internal" href="model.html#grammar-token-smithy-identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:identifier</span></code></a> [&quot;|&quot; <a class="reference internal" href="#grammar-token-selectors-selector_path"><code class="xref docutils literal notranslate"><span class="pre">selector_path</span></code></a>]
 
-<strong id="grammar-token-selector_path">selector_path</strong> =
-    <a class="reference internal" href="#grammar-token-selector_path_segment"><code class="xref docutils literal notranslate"><span class="pre">selector_path_segment</span></code></a> *(&quot;|&quot; <a class="reference internal" href="#grammar-token-selector_path_segment"><code class="xref docutils literal notranslate"><span class="pre">selector_path_segment</span></code></a>)
+<strong id="grammar-token-selectors-selector_path"><span id="grammar-token-selector-path"></span>selector_path</strong> =
+    <a class="reference internal" href="#grammar-token-selectors-selector_path_segment"><code class="xref docutils literal notranslate"><span class="pre">selector_path_segment</span></code></a> *(&quot;|&quot; <a class="reference internal" href="#grammar-token-selectors-selector_path_segment"><code class="xref docutils literal notranslate"><span class="pre">selector_path_segment</span></code></a>)
 
-<strong id="grammar-token-selector_path_segment">selector_path_segment</strong> =
-    <a class="reference internal" href="#grammar-token-selector_value"><code class="xref docutils literal notranslate"><span class="pre">selector_value</span></code></a> / <a class="reference internal" href="#grammar-token-selector_function_property"><code class="xref docutils literal notranslate"><span class="pre">selector_function_property</span></code></a>
+<strong id="grammar-token-selectors-selector_path_segment"><span id="grammar-token-selector-path-segment"></span>selector_path_segment</strong> =
+    <a class="reference internal" href="#grammar-token-selectors-selector_value"><code class="xref docutils literal notranslate"><span class="pre">selector_value</span></code></a> / <a class="reference internal" href="#grammar-token-selectors-selector_function_property"><code class="xref docutils literal notranslate"><span class="pre">selector_function_property</span></code></a>
 
-<strong id="grammar-token-selector_value">selector_value</strong> =
-    <a class="reference internal" href="#grammar-token-selector_text"><code class="xref docutils literal notranslate"><span class="pre">selector_text</span></code></a> / <a class="reference internal" href="idl.html#grammar-token-number"><code class="xref docutils literal notranslate"><span class="pre">number</span></code></a> / <a class="reference internal" href="model.html#grammar-token-root_shape_id"><code class="xref docutils literal notranslate"><span class="pre">root_shape_id</span></code></a>
+<strong id="grammar-token-selectors-selector_value"><span id="grammar-token-selector-value"></span>selector_value</strong> =
+    <a class="reference internal" href="#grammar-token-selectors-selector_text"><code class="xref docutils literal notranslate"><span class="pre">selector_text</span></code></a> / <a class="reference internal" href="idl.html#grammar-token-smithy-number"><code class="xref docutils literal notranslate"><span class="pre">smithy:number</span></code></a> / <a class="reference internal" href="model.html#grammar-token-smithy-root_shape_id"><code class="xref docutils literal notranslate"><span class="pre">smithy:root_shape_id</span></code></a>
 
-<strong id="grammar-token-selector_function_property">selector_function_property</strong> =
-    &quot;(&quot; <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> &quot;)&quot;
+<strong id="grammar-token-selectors-selector_function_property"><span id="grammar-token-selector-function-property"></span>selector_function_property</strong> =
+    &quot;(&quot; <a class="reference internal" href="model.html#grammar-token-smithy-identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:identifier</span></code></a> &quot;)&quot;
 
-<strong id="grammar-token-selector_attr_values">selector_attr_values</strong> =
-    <a class="reference internal" href="#grammar-token-selector_value"><code class="xref docutils literal notranslate"><span class="pre">selector_value</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-selector_value"><code class="xref docutils literal notranslate"><span class="pre">selector_value</span></code></a>)
+<strong id="grammar-token-selectors-selector_attr_values"><span id="grammar-token-selector-attr-values"></span>selector_attr_values</strong> =
+    <a class="reference internal" href="#grammar-token-selectors-selector_value"><code class="xref docutils literal notranslate"><span class="pre">selector_value</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-selectors-selector_value"><code class="xref docutils literal notranslate"><span class="pre">selector_value</span></code></a>)
 
-<strong id="grammar-token-selector_comparator">selector_comparator</strong> =
-    <a class="reference internal" href="#grammar-token-selector_string_comparator"><code class="xref docutils literal notranslate"><span class="pre">selector_string_comparator</span></code></a>
-  / <a class="reference internal" href="#grammar-token-selector_numeric_comparator"><code class="xref docutils literal notranslate"><span class="pre">selector_numeric_comparator</span></code></a>
-  / <a class="reference internal" href="#grammar-token-selector_projection_comparator"><code class="xref docutils literal notranslate"><span class="pre">selector_projection_comparator</span></code></a>
+<strong id="grammar-token-selectors-selector_comparator"><span id="grammar-token-selector-comparator"></span>selector_comparator</strong> =
+    <a class="reference internal" href="#grammar-token-selectors-selector_string_comparator"><code class="xref docutils literal notranslate"><span class="pre">selector_string_comparator</span></code></a>
+  / <a class="reference internal" href="#grammar-token-selectors-selector_numeric_comparator"><code class="xref docutils literal notranslate"><span class="pre">selector_numeric_comparator</span></code></a>
+  / <a class="reference internal" href="#grammar-token-selectors-selector_projection_comparator"><code class="xref docutils literal notranslate"><span class="pre">selector_projection_comparator</span></code></a>
 
-<strong id="grammar-token-selector_string_comparator">selector_string_comparator</strong> =
+<strong id="grammar-token-selectors-selector_string_comparator"><span id="grammar-token-selector-string-comparator"></span>selector_string_comparator</strong> =
     &quot;^=&quot; / &quot;$=&quot; / &quot;*=&quot; / &quot;!=&quot; / &quot;=&quot; / &quot;?=&quot;
 
-<strong id="grammar-token-selector_numeric_comparator">selector_numeric_comparator</strong> =
+<strong id="grammar-token-selectors-selector_numeric_comparator"><span id="grammar-token-selector-numeric-comparator"></span>selector_numeric_comparator</strong> =
     &quot;&gt;=&quot; / &quot;&gt;&quot; / &quot;&lt;=&quot; / &quot;&lt;&quot;
 
-<strong id="grammar-token-selector_projection_comparator">selector_projection_comparator</strong> =
+<strong id="grammar-token-selectors-selector_projection_comparator"><span id="grammar-token-selector-projection-comparator"></span>selector_projection_comparator</strong> =
     &quot;{=}&quot; / &quot;{!=}&quot; / &quot;{&lt;}&quot; / &quot;{&lt;&lt;}&quot;
 
-<strong id="grammar-token-selector_absolute_root_shape_id">selector_absolute_root_shape_id</strong> =
-    <a class="reference internal" href="model.html#grammar-token-namespace"><code class="xref docutils literal notranslate"><span class="pre">namespace</span></code></a> &quot;#&quot; <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>
+<strong id="grammar-token-selectors-selector_absolute_root_shape_id"><span id="grammar-token-selector-absolute-root-shape-id"></span>selector_absolute_root_shape_id</strong> =
+    <a class="reference internal" href="model.html#grammar-token-smithy-namespace"><code class="xref docutils literal notranslate"><span class="pre">smithy:namespace</span></code></a> &quot;#&quot; <a class="reference internal" href="model.html#grammar-token-smithy-identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:identifier</span></code></a>
 
-<strong id="grammar-token-selector_scoped_attr">selector_scoped_attr</strong> =
-    &quot;[&#64;&quot; [<a class="reference internal" href="#grammar-token-selector_key"><code class="xref docutils literal notranslate"><span class="pre">selector_key</span></code></a>] &quot;:&quot; <a class="reference internal" href="#grammar-token-selector_scoped_assertions"><code class="xref docutils literal notranslate"><span class="pre">selector_scoped_assertions</span></code></a> &quot;]&quot;
+<strong id="grammar-token-selectors-selector_scoped_attr"><span id="grammar-token-selector-scoped-attr"></span>selector_scoped_attr</strong> =
+    &quot;[&#64;&quot; [<a class="reference internal" href="#grammar-token-selectors-selector_key"><code class="xref docutils literal notranslate"><span class="pre">selector_key</span></code></a>] &quot;:&quot; <a class="reference internal" href="#grammar-token-selectors-selector_scoped_assertions"><code class="xref docutils literal notranslate"><span class="pre">selector_scoped_assertions</span></code></a> &quot;]&quot;
 
-<strong id="grammar-token-selector_scoped_assertions">selector_scoped_assertions</strong> =
-    <a class="reference internal" href="#grammar-token-selector_scoped_assertion"><code class="xref docutils literal notranslate"><span class="pre">selector_scoped_assertion</span></code></a> *(&quot;&amp;&amp;&quot; <a class="reference internal" href="#grammar-token-selector_scoped_assertion"><code class="xref docutils literal notranslate"><span class="pre">selector_scoped_assertion</span></code></a>)
+<strong id="grammar-token-selectors-selector_scoped_assertions"><span id="grammar-token-selector-scoped-assertions"></span>selector_scoped_assertions</strong> =
+    <a class="reference internal" href="#grammar-token-selectors-selector_scoped_assertion"><code class="xref docutils literal notranslate"><span class="pre">selector_scoped_assertion</span></code></a> *(&quot;&amp;&amp;&quot; <a class="reference internal" href="#grammar-token-selectors-selector_scoped_assertion"><code class="xref docutils literal notranslate"><span class="pre">selector_scoped_assertion</span></code></a>)
 
-<strong id="grammar-token-selector_scoped_assertion">selector_scoped_assertion</strong> =
-    <a class="reference internal" href="#grammar-token-selector_scoped_value"><code class="xref docutils literal notranslate"><span class="pre">selector_scoped_value</span></code></a> <a class="reference internal" href="#grammar-token-selector_comparator"><code class="xref docutils literal notranslate"><span class="pre">selector_comparator</span></code></a> <a class="reference internal" href="#grammar-token-selector_scoped_values"><code class="xref docutils literal notranslate"><span class="pre">selector_scoped_values</span></code></a> [&quot;i&quot;]
+<strong id="grammar-token-selectors-selector_scoped_assertion"><span id="grammar-token-selector-scoped-assertion"></span>selector_scoped_assertion</strong> =
+    <a class="reference internal" href="#grammar-token-selectors-selector_scoped_value"><code class="xref docutils literal notranslate"><span class="pre">selector_scoped_value</span></code></a> <a class="reference internal" href="#grammar-token-selectors-selector_comparator"><code class="xref docutils literal notranslate"><span class="pre">selector_comparator</span></code></a> <a class="reference internal" href="#grammar-token-selectors-selector_scoped_values"><code class="xref docutils literal notranslate"><span class="pre">selector_scoped_values</span></code></a> [&quot;i&quot;]
 
-<strong id="grammar-token-selector_scoped_value">selector_scoped_value</strong> =
-    <a class="reference internal" href="#grammar-token-selector_value"><code class="xref docutils literal notranslate"><span class="pre">selector_value</span></code></a> / <a class="reference internal" href="#grammar-token-selector_context_value"><code class="xref docutils literal notranslate"><span class="pre">selector_context_value</span></code></a>
+<strong id="grammar-token-selectors-selector_scoped_value"><span id="grammar-token-selector-scoped-value"></span>selector_scoped_value</strong> =
+    <a class="reference internal" href="#grammar-token-selectors-selector_value"><code class="xref docutils literal notranslate"><span class="pre">selector_value</span></code></a> / <a class="reference internal" href="#grammar-token-selectors-selector_context_value"><code class="xref docutils literal notranslate"><span class="pre">selector_context_value</span></code></a>
 
-<strong id="grammar-token-selector_context_value">selector_context_value</strong> =
-    &quot;&#64;{&quot; <a class="reference internal" href="#grammar-token-selector_path"><code class="xref docutils literal notranslate"><span class="pre">selector_path</span></code></a> &quot;}&quot;
+<strong id="grammar-token-selectors-selector_context_value"><span id="grammar-token-selector-context-value"></span>selector_context_value</strong> =
+    &quot;&#64;{&quot; <a class="reference internal" href="#grammar-token-selectors-selector_path"><code class="xref docutils literal notranslate"><span class="pre">selector_path</span></code></a> &quot;}&quot;
 
-<strong id="grammar-token-selector_scoped_values">selector_scoped_values</strong> =
-    <a class="reference internal" href="#grammar-token-selector_scoped_value"><code class="xref docutils literal notranslate"><span class="pre">selector_scoped_value</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-selector_scoped_value"><code class="xref docutils literal notranslate"><span class="pre">selector_scoped_value</span></code></a>)
+<strong id="grammar-token-selectors-selector_scoped_values"><span id="grammar-token-selector-scoped-values"></span>selector_scoped_values</strong> =
+    <a class="reference internal" href="#grammar-token-selectors-selector_scoped_value"><code class="xref docutils literal notranslate"><span class="pre">selector_scoped_value</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-selectors-selector_scoped_value"><code class="xref docutils literal notranslate"><span class="pre">selector_scoped_value</span></code></a>)
 
-<strong id="grammar-token-selector_function">selector_function</strong> =
-    &quot;:&quot; <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> &quot;(&quot; <a class="reference internal" href="#grammar-token-selector_function_args"><code class="xref docutils literal notranslate"><span class="pre">selector_function_args</span></code></a> &quot;)&quot;
+<strong id="grammar-token-selectors-selector_function"><span id="grammar-token-selector-function"></span>selector_function</strong> =
+    &quot;:&quot; <a class="reference internal" href="model.html#grammar-token-smithy-identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:identifier</span></code></a> &quot;(&quot; <a class="reference internal" href="#grammar-token-selectors-selector_function_args"><code class="xref docutils literal notranslate"><span class="pre">selector_function_args</span></code></a> &quot;)&quot;
 
-<strong id="grammar-token-selector_function_args">selector_function_args</strong> =
-    <a class="reference internal" href="#grammar-token-selector"><code class="xref docutils literal notranslate"><span class="pre">selector</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-selector"><code class="xref docutils literal notranslate"><span class="pre">selector</span></code></a>)
+<strong id="grammar-token-selectors-selector_function_args"><span id="grammar-token-selector-function-args"></span>selector_function_args</strong> =
+    <a class="reference internal" href="#grammar-token-selectors-selector"><code class="xref docutils literal notranslate"><span class="pre">selector</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-selectors-selector"><code class="xref docutils literal notranslate"><span class="pre">selector</span></code></a>)
 
-<strong id="grammar-token-selector_text">selector_text</strong> =
-    <a class="reference internal" href="#grammar-token-selector_single_quoted_text"><code class="xref docutils literal notranslate"><span class="pre">selector_single_quoted_text</span></code></a> / <a class="reference internal" href="#grammar-token-selector_double_quoted_text"><code class="xref docutils literal notranslate"><span class="pre">selector_double_quoted_text</span></code></a>
+<strong id="grammar-token-selectors-selector_text"><span id="grammar-token-selector-text"></span>selector_text</strong> =
+    <a class="reference internal" href="#grammar-token-selectors-selector_single_quoted_text"><code class="xref docutils literal notranslate"><span class="pre">selector_single_quoted_text</span></code></a> / <a class="reference internal" href="#grammar-token-selectors-selector_double_quoted_text"><code class="xref docutils literal notranslate"><span class="pre">selector_double_quoted_text</span></code></a>
 
-<strong id="grammar-token-selector_single_quoted_text">selector_single_quoted_text</strong> =
-    &quot;'&quot; 1*<a class="reference internal" href="#grammar-token-selector_single_quoted_char"><code class="xref docutils literal notranslate"><span class="pre">selector_single_quoted_char</span></code></a> &quot;'&quot;
+<strong id="grammar-token-selectors-selector_single_quoted_text"><span id="grammar-token-selector-single-quoted-text"></span>selector_single_quoted_text</strong> =
+    &quot;'&quot; 1*<a class="reference internal" href="#grammar-token-selectors-selector_single_quoted_char"><code class="xref docutils literal notranslate"><span class="pre">selector_single_quoted_char</span></code></a> &quot;'&quot;
 
-<strong id="grammar-token-selector_double_quoted_text">selector_double_quoted_text</strong> =
-    DQUOTE 1*<a class="reference internal" href="#grammar-token-selector_double_quoted_char"><code class="xref docutils literal notranslate"><span class="pre">selector_double_quoted_char</span></code></a> DQUOTE
+<strong id="grammar-token-selectors-selector_double_quoted_text"><span id="grammar-token-selector-double-quoted-text"></span>selector_double_quoted_text</strong> =
+    DQUOTE 1*<a class="reference internal" href="#grammar-token-selectors-selector_double_quoted_char"><code class="xref docutils literal notranslate"><span class="pre">selector_double_quoted_char</span></code></a> DQUOTE
 
-<strong id="grammar-token-selector_single_quoted_char">selector_single_quoted_char</strong> =
+<strong id="grammar-token-selectors-selector_single_quoted_char"><span id="grammar-token-selector-single-quoted-char"></span>selector_single_quoted_char</strong> =
     %x20-26 / %x28-5B / %x5D-10FFFF ; Excludes (')
 
-<strong id="grammar-token-selector_double_quoted_char">selector_double_quoted_char</strong> =
+<strong id="grammar-token-selectors-selector_double_quoted_char"><span id="grammar-token-selector-double-quoted-char"></span>selector_double_quoted_char</strong> =
     %x20-21 / %x23-5B / %x5D-10FFFF ; Excludes (&quot;)
 
-<strong id="grammar-token-selector_variable_set">selector_variable_set</strong> =
-    &quot;$&quot; <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> &quot;(&quot; selector &quot;)&quot;
+<strong id="grammar-token-selectors-selector_variable_set"><span id="grammar-token-selector-variable-set"></span>selector_variable_set</strong> =
+    &quot;$&quot; <a class="reference internal" href="model.html#grammar-token-smithy-identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:identifier</span></code></a> &quot;(&quot; selector &quot;)&quot;
 
-<strong id="grammar-token-selector_variable_get">selector_variable_get</strong> =
-    &quot;${&quot; <a class="reference internal" href="model.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> &quot;}&quot;
+<strong id="grammar-token-selectors-selector_variable_get"><span id="grammar-token-selector-variable-get"></span>selector_variable_get</strong> =
+    &quot;${&quot; <a class="reference internal" href="model.html#grammar-token-smithy-identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:identifier</span></code></a> &quot;}&quot;
 </pre>
 </div>
 </div>
@@ -1598,9 +1590,9 @@ changing the semantics of a selector.</p>
                     
                     <section class="relations">
                         
-                        <a href="endpoint-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 13. Endpoint Traits</a>
+                        <a href="endpoint-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← <span class="section-number">13. </span>Endpoint Traits</a>
                         
-                        <a href="model-validation.html" title="next chapter" class="next-page clearfix">15. Model validation →</a>
+                        <a href="model-validation.html" title="next chapter" class="next-page clearfix"><span class="section-number">15. </span>Model validation →</a>
                     </section>
                     
                 </article><aside id="right-column" class="side-column hidden-sm">
@@ -1631,10 +1623,11 @@ changing the semantics of a selector.</p>
 <li><a class="reference internal" href="#service-attribute">14.5.2. <code class="docutils literal notranslate"><span class="pre">service</span></code> attribute</a></li>
 <li><a class="reference internal" href="#trait-attribute">14.5.3. <code class="docutils literal notranslate"><span class="pre">trait</span></code> attribute</a></li>
 <li><a class="reference internal" href="#node-attribute">14.5.4. Node attribute</a></li>
-<li><a class="reference internal" href="#projection-attribute">14.5.5. Projection attribute</a><ul>
-<li><a class="reference internal" href="#comparisons-to-non-projections">14.5.5.1. Comparisons to non-projections</a></li>
-<li><a class="reference internal" href="#comparisons-to-projections">14.5.5.2. Comparisons to projections</a></li>
-<li><a class="reference internal" href="#projection-comparators">14.5.5.3. Projection comparators</a></li>
+<li><a class="reference internal" href="#empty-attribute">14.5.5. Empty attribute</a></li>
+<li><a class="reference internal" href="#projection-attribute">14.5.6. Projection attribute</a><ul>
+<li><a class="reference internal" href="#comparisons-to-non-projections">14.5.6.1. Comparisons to non-projections</a></li>
+<li><a class="reference internal" href="#comparisons-to-projections">14.5.6.2. Comparisons to projections</a></li>
+<li><a class="reference internal" href="#projection-comparators">14.5.6.3. Projection comparators</a></li>
 </ul>
 </li>
 </ul>

@@ -1,28 +1,23 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>HTTP Protocol Compliance Tests &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../_static/bootstrap-reboot.css" type="text/css" />
     
-    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx_tabs/tabs.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
     <link rel="stylesheet" href="../../_static/custom-tabs.css" type="text/css" />
 
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/sphinx_tabs/tabs.js"></script>
-    <script type="text/javascript" src="../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/tabs.js"></script>
     <script type="text/javascript" src="../../_static/smithy.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -98,11 +93,9 @@ implement a protocol specification.</p>
 <p>This specification defines two traits in the <code class="docutils literal notranslate"><span class="pre">smithy.test</span></code> namespace that
 are used to make assertions about client and server protocol implementations.</p>
 <dl class="docutils">
-<dt><a class="reference internal" href="#httprequesttests-trait"><span class="std std-ref">smithy.test#httpRequestTests</span></a></dt>
-<dd>Used to define how an HTTP request is serialized given a specific
+<dt><a class="reference internal" href="#httprequesttests-trait"><span class="std std-ref">smithy.test#httpRequestTests</span></a></dt><dd>Used to define how an HTTP request is serialized given a specific
 protocol, authentication scheme, and set of input parameters.</dd>
-<dt><a class="reference internal" href="#httpresponsetests-trait"><span class="std std-ref">smithy.test#httpResponseTests</span></a></dt>
-<dd>Used to define how an HTTP response is serialized given a specific
+<dt><a class="reference internal" href="#httpresponsetests-trait"><span class="std std-ref">smithy.test#httpResponseTests</span></a></dt><dd>Used to define how an HTTP response is serialized given a specific
 protocol, authentication scheme, and set of output or error parameters.</dd>
 </dl>
 <p>Protocol implementation developers use these traits to ensure that their
@@ -132,21 +125,18 @@ with the <a class="reference internal" href="core/behavior-traits.html#idempoten
 <div class="section" id="httprequesttests">
 <span id="httprequesttests-trait"></span><span id="smithy-test-httprequesttests-trait"></span><h2><a href="#httprequesttests">httpRequestTests</a></h2>
 <dl class="docutils">
-<dt>Summary</dt>
-<dd>The <code class="docutils literal notranslate"><span class="pre">httpRequestTests</span></code> trait is used to define how an HTTP request is
+<dt>Summary</dt><dd>The <code class="docutils literal notranslate"><span class="pre">httpRequestTests</span></code> trait is used to define how an HTTP request is
 serialized given a specific protocol, authentication scheme, and set of
 input parameters.</dd>
-<dt>Trait selector</dt>
-<dd><div class="first last highlight-none notranslate"><div class="highlight"><pre><span></span>operation
+<dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>operation
 </pre></div>
 </div>
 </dd>
-<dt>Value type</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">HttpRequestTestCase</span></code> structures</dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">HttpRequestTestCase</span></code> structures</dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpRequestTests</span></code> trait is a list of <code class="docutils literal notranslate"><span class="pre">HttpRequestTestCase</span></code> structures
 that support the following members:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
@@ -164,7 +154,7 @@ that support the following members:</p>
 <td><strong>Required</strong>. The identifier of the test case. This identifier can
 be used by protocol test implementations to filter out unsupported
 test cases by ID, to generate test case names, etc. The provided
-<code class="docutils literal notranslate"><span class="pre">id</span></code> MUST match Smithy's <a class="reference internal" href="core/model.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">identifier</span></code></a> ABNF. No two
+<code class="docutils literal notranslate"><span class="pre">id</span></code> MUST match Smithy's <a class="reference internal" href="core/model.html#grammar-token-smithy-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:identifier</span></code></a> ABNF. No two
 <code class="docutils literal notranslate"><span class="pre">httpRequestTests</span></code> test cases can share the same ID.</td>
 </tr>
 <tr class="row-odd"><td>protocol</td>
@@ -185,19 +175,25 @@ the query string (for example, &quot;/foo/bar&quot;).</td>
 </tr>
 <tr class="row-even"><td>host</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>The host / endpoint provided to the client (for example, &quot;example.com&quot;).
-<code class="docutils literal notranslate"><span class="pre">host</span></code> MAY contain a path to indicate a base path from which each
+<td><p class="first">The host or endpoint provided as input used to generate the HTTP
+request (for example, &quot;example.com&quot;).</p>
+<p class="last"><code class="docutils literal notranslate"><span class="pre">host</span></code> MAY contain a path to indicate a base path from which each
 operation in the service is appended to. For example, given a <code class="docutils literal notranslate"><span class="pre">host</span></code>
 of <code class="docutils literal notranslate"><span class="pre">example.com/foo/bar</span></code> and an operation path of <code class="docutils literal notranslate"><span class="pre">/MyOperation</span></code>,
 the resolved host of the operation is <code class="docutils literal notranslate"><span class="pre">example.com</span></code> and the resolved
-path is <code class="docutils literal notranslate"><span class="pre">/foo/bar/MyOperation</span></code>.</td>
+path is <code class="docutils literal notranslate"><span class="pre">/foo/bar/MyOperation</span></code>.</p>
+</td>
 </tr>
 <tr class="row-odd"><td>resolvedHost</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td><p class="first">The host / endpoint that the client should send to, not including the
-path or scheme (for example, &quot;prefix.example.com&quot;).</p>
-<p class="last">This can differ from the host provided to the client if, for instance,
-the operation has a member with the <a class="reference internal" href="core/endpoint-traits.html#endpoint-trait"><span class="std std-ref">endpoint trait</span></a>.</p>
+<td><p class="first">The expected host present in the <code class="docutils literal notranslate"><span class="pre">Host</span></code> header of the request, not
+including the path or scheme (for example, &quot;prefix.example.com&quot;). If no
+resolvedHost is defined, then no assertions are made about the resolved
+host for the request.</p>
+<p>This can differ from the <code class="docutils literal notranslate"><span class="pre">host</span></code> provided to the client if the
+operation has a member with the <a class="reference internal" href="core/endpoint-traits.html#endpoint-trait"><span class="std std-ref">endpoint trait</span></a>.</p>
+<p class="last">Server implementations SHOULD ignore discrepancies in paths when
+comparing the <code class="docutils literal notranslate"><span class="pre">host</span></code> and <code class="docutils literal notranslate"><span class="pre">resolvedHost</span></code> properties.</p>
 </td>
 </tr>
 <tr class="row-even"><td>authScheme</td>
@@ -342,61 +338,56 @@ member are implemented by both client and server implementations.</p>
 <p>The following example defines a protocol compliance test for a JSON protocol
 that uses <a class="reference internal" href="core/http-traits.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a>.</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> smithy.test#httpRequestTests</span>
+<span class="kd">use</span><span class="nc"> smithy.test#httpRequestTests</span><span class="w"></span>
 
-<span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;POST&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/&quot;</span>)
-<span class="nd">@httpRequestTests</span>([
-    {
-        <span class="nl">id:</span> <span class="s2">&quot;say_hello&quot;</span>,
-        <span class="nl">protocol:</span> <span class="vc">exampleProtocol</span>,
-        <span class="nl">params:</span> {
-            <span class="s2">&quot;greeting&quot;</span>: <span class="s2">&quot;Hi&quot;</span>,
-            <span class="s2">&quot;name&quot;</span>: <span class="s2">&quot;Teddy&quot;</span>,
-            <span class="s2">&quot;query&quot;</span>: <span class="s2">&quot;Hello there&quot;</span>
-        },
-        <span class="nl">method:</span> <span class="s2">&quot;POST&quot;</span>,
-        <span class="nl">uri:</span> <span class="s2">&quot;/&quot;</span>,
-        <span class="nl">queryParams:</span> [
-            <span class="s2">&quot;Hi=Hello%20there&quot;</span>
-        ],
-        <span class="nl">headers:</span> {
-            <span class="s2">&quot;X-Greeting&quot;</span>: <span class="s2">&quot;Hi&quot;</span>,
-        },
-        <span class="nl">body:</span> <span class="s2">&quot;{\&quot;name\&quot;: \&quot;Teddy\&quot;}&quot;</span>,
-        <span class="nl">bodyMediaType:</span> <span class="s2">&quot;application/json&quot;</span>
-    }
-])
-<span class="kd">operation</span><span class="nc"> SayHello</span> {
-    <span class="nl">input:</span> <span class="vc">SayHelloInput</span>
-}
+<span class="nd">@endpoint</span>(<span class="nl">hostPrefix:</span><span class="w"> </span><span class="s2">&quot;{hostLabel}.prefix.&quot;</span>)<span class="w"></span>
+<span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span>)<span class="w"></span>
+<span class="nd">@httpRequestTests</span>([<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s2">&quot;say_hello&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">protocol:</span><span class="w"> </span><span class="vc">exampleProtocol</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">params:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;hostLabel&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;greeting&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hi&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Teddy&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;query&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hello there&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">host:</span><span class="w"> </span><span class="s2">&quot;example.com&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">resolvedHost:</span><span class="w"> </span><span class="s2">&quot;foo.prefix.example.com&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">queryParams:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;Hi=Hello%20there&quot;</span><span class="w"></span>
+<span class="w">        </span>]<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">headers:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;X-Greeting&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hi&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">body:</span><span class="w"> </span><span class="s2">&quot;{\&quot;name\&quot;: \&quot;Teddy\&quot;}&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">bodyMediaType:</span><span class="w"> </span><span class="s2">&quot;application/json&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+])<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> SayHello</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">SayHelloInput</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">structure</span><span class="nc"> SayHelloInput</span> {
-    <span class="nd">@httpHeader</span>(<span class="s2">&quot;X-Greeting&quot;</span>)
-    <span class="nl">greeting:</span> <span class="vc">String</span>,
+<span class="kd">structure</span><span class="nc"> SayHelloInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@hostLabel</span><span class="w"></span>
+<span class="w">    </span><span class="nl">hostLabel:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-    <span class="nd">@httpQuery</span>(<span class="s2">&quot;Hi&quot;</span>)
-    <span class="nl">query:</span> <span class="vc">String</span>,
+<span class="w">    </span><span class="nd">@httpHeader</span>(<span class="s2">&quot;X-Greeting&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">greeting:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-    <span class="nl">name:</span> <span class="vc">String</span>
-}
+<span class="w">    </span><span class="nd">@httpQuery</span>(<span class="s2">&quot;Hi&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">query:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+
+<span class="w">    </span><span class="nl">name:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-0-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-0-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#SayHello&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -405,6 +396,9 @@ JSON</div>
                 <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#SayHelloInput&quot;</span>
             <span class="p">},</span>
             <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#endpoint&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;hostPrefix&quot;</span><span class="p">:</span> <span class="s2">&quot;{hostLabel}.prefix.&quot;</span>
+                <span class="p">},</span>
                 <span class="nt">&quot;smithy.api#http&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
                     <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span>
@@ -415,6 +409,8 @@ JSON</div>
                         <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;say_hello&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;protocol&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#exampleProtocol&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;host&quot;</span><span class="p">:</span> <span class="s2">&quot;example.com&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;resolvedHost&quot;</span><span class="p">:</span> <span class="s2">&quot;foo.prefix.example.com&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;headers&quot;</span><span class="p">:</span> <span class="p">{</span>
                             <span class="nt">&quot;X-Greeting&quot;</span><span class="p">:</span> <span class="s2">&quot;Hi&quot;</span>
@@ -425,6 +421,7 @@ JSON</div>
                         <span class="nt">&quot;body&quot;</span><span class="p">:</span> <span class="s2">&quot;{\&quot;name\&quot;: \&quot;Teddy\&quot;}&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;bodyMediaType&quot;</span><span class="p">:</span> <span class="nt">&quot;application/json&quot;</span>
                         <span class="nt">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;hostLabel&quot;</span><span class="p">:</span> <span class="s2">&quot;foo&quot;</span><span class="p">,</span>
                             <span class="nt">&quot;greeting&quot;</span><span class="p">:</span> <span class="s2">&quot;Hi&quot;</span><span class="p">,</span>
                             <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Teddy&quot;</span><span class="p">,</span>
                             <span class="nt">&quot;query&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello there&quot;</span>
@@ -436,6 +433,13 @@ JSON</div>
         <span class="nt">&quot;smithy.example#SayHelloInput&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
             <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;hostLabel&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                        <span class="nt">&quot;smithy.api#hostLabel&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
                 <span class="nt">&quot;greeting&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
                     <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -451,28 +455,24 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 </div>
 <div class="section" id="httpresponsetests">
 <span id="httpresponsetests-trait"></span><span id="smithy-test-httpresponsetests-trait"></span><h2><a href="#httpresponsetests">httpResponseTests</a></h2>
 <dl class="docutils">
-<dt>Summary</dt>
-<dd>The <code class="docutils literal notranslate"><span class="pre">httpResponseTests</span></code> trait is used to define how an HTTP response
+<dt>Summary</dt><dd>The <code class="docutils literal notranslate"><span class="pre">httpResponseTests</span></code> trait is used to define how an HTTP response
 is serialized given a specific protocol, authentication scheme, and set
 of output or error parameters.</dd>
-<dt>Trait selector</dt>
-<dd><div class="first last highlight-none notranslate"><div class="highlight"><pre><span></span>:test(operation, structure[trait|error])
+<dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>:test(operation, structure[trait|error])
 </pre></div>
 </div>
 </dd>
-<dt>Value type</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">HttpResponseTestCase</span></code> structures</dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">HttpResponseTestCase</span></code> structures</dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpResponseTests</span></code> trait is a list of <code class="docutils literal notranslate"><span class="pre">HttpResponseTestCase</span></code>
 structures that support the following members:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
@@ -490,7 +490,7 @@ structures that support the following members:</p>
 <td><strong>Required</strong>. The identifier of the test case. This identifier can
 be used by protocol test implementations to filter out unsupported
 test cases by ID, to generate test case names, etc. The provided
-<code class="docutils literal notranslate"><span class="pre">id</span></code> MUST match Smithy's <a class="reference internal" href="core/model.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">identifier</span></code></a> ABNF. No two
+<code class="docutils literal notranslate"><span class="pre">id</span></code> MUST match Smithy's <a class="reference internal" href="core/model.html#grammar-token-smithy-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:identifier</span></code></a> ABNF. No two
 <code class="docutils literal notranslate"><span class="pre">httpResponseTests</span></code> test cases can share the same ID.</td>
 </tr>
 <tr class="row-odd"><td>protocol</td>
@@ -603,47 +603,34 @@ member are implemented by both client and server implementations.</p>
 <p>The following example defines a protocol compliance test for a JSON protocol
 that uses <a class="reference internal" href="core/http-traits.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a>.</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-1-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> smithy.test#httpResponseTests</span>
+<span class="kd">use</span><span class="nc"> smithy.test#httpResponseTests</span><span class="w"></span>
 
-<span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;POST&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/&quot;</span>)
-<span class="nd">@httpResponseTests</span>([
-    {
-        <span class="nl">id:</span> <span class="s2">&quot;say_goodbye&quot;</span>,
-        <span class="nl">protocol:</span> <span class="vc">exampleProtocol</span>,
-        <span class="nl">params:</span> {<span class="nl">farewell:</span> <span class="s2">&quot;Bye&quot;</span>},
-        <span class="nl">code:</span> <span class="m">200</span>,
-        <span class="nl">headers:</span> {
-            <span class="s2">&quot;X-Farewell&quot;</span>: <span class="s2">&quot;Bye&quot;</span>,
-            <span class="s2">&quot;Content-Length&quot;</span>: <span class="s2">&quot;0&quot;</span>
-        }
-    }
-])
-<span class="kd">operation</span><span class="nc"> SayGoodbye</span> {
-    <span class="nl">output:</span> <span class="vc">SayGoodbyeOutput</span>
-}
+<span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span>)<span class="w"></span>
+<span class="nd">@httpResponseTests</span>([<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s2">&quot;say_goodbye&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">protocol:</span><span class="w"> </span><span class="vc">exampleProtocol</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">params:</span><span class="w"> </span>{<span class="nl">farewell:</span><span class="w"> </span><span class="s2">&quot;Bye&quot;</span>}<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">code:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">headers:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;X-Farewell&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Bye&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;Content-Length&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+])<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> SayGoodbye</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">SayGoodbyeOutput</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">structure</span><span class="nc"> SayGoodbyeOutput</span> {
-    <span class="nd">@httpHeader</span>(<span class="s2">&quot;X-Farewell&quot;</span>)
-    <span class="nl">farewell:</span> <span class="vc">String</span>,
-}
+<span class="kd">structure</span><span class="nc"> SayGoodbyeOutput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@httpHeader</span>(<span class="s2">&quot;X-Farewell&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">farewell:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-1-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-1-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#SayGoodbye&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -688,8 +675,7 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 <div class="section" id="http-error-response-example">
 <h3><a href="#http-error-response-example">HTTP error response example</a></h3>
@@ -700,45 +686,32 @@ trait associated with an operation can be properly deserialized.</p>
 <p>The following example defines a protocol compliance test for a JSON protocol
 that uses <a class="reference internal" href="core/http-traits.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a>.</p>
 <div class="sphinx-tabs docutils container">
-<div class="ui top attached tabular menu sphinx-menu docutils container">
-<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
-<div class="docutils container">
-Smithy</div>
-</div>
-<div class="item sphinx-data-tab-SlNPTg== docutils container">
-<div class="docutils container">
-JSON</div>
-</div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-2-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-2-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-2-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-2-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> smithy.test#httpResponseTests</span>
+<span class="kd">use</span><span class="nc"> smithy.test#httpResponseTests</span><span class="w"></span>
 
-<span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)
-<span class="nd">@httpError</span>(<span class="m">400</span>)
-<span class="nd">@httpResponseTests</span>([
-    {
-        <span class="nl">id:</span> <span class="s2">&quot;invalid_greeting&quot;</span>,
-        <span class="nl">protocol:</span> <span class="vc">exampleProtocol</span>,
-        <span class="nl">params:</span> {<span class="nl">foo:</span> <span class="s2">&quot;baz&quot;</span>, <span class="nl">message:</span> <span class="s2">&quot;Hi&quot;</span>},
-        <span class="nl">code:</span> <span class="m">400</span>,
-        <span class="nl">headers:</span> {<span class="s2">&quot;X-Foo&quot;</span>: <span class="s2">&quot;baz&quot;</span>},
-        <span class="nl">body:</span> <span class="s2">&quot;{\&quot;message\&quot;: \&quot;Hi\&quot;}&quot;</span>,
-        <span class="nl">bodyMediaType:</span> <span class="s2">&quot;application/json&quot;</span>,
-    }
-])
-<span class="kd">structure</span><span class="nc"> InvalidGreeting</span> {
-    <span class="nd">@httpHeader</span>(<span class="s2">&quot;X-Foo&quot;</span>)
-    <span class="nl">foo:</span> <span class="vc">String</span>,
+<span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
+<span class="nd">@httpError</span>(<span class="m">400</span>)<span class="w"></span>
+<span class="nd">@httpResponseTests</span>([<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s2">&quot;invalid_greeting&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">protocol:</span><span class="w"> </span><span class="vc">exampleProtocol</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">params:</span><span class="w"> </span>{<span class="nl">foo:</span><span class="w"> </span><span class="s2">&quot;baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">message:</span><span class="w"> </span><span class="s2">&quot;Hi&quot;</span>}<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">code:</span><span class="w"> </span><span class="m">400</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">headers:</span><span class="w"> </span>{<span class="s2">&quot;X-Foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;baz&quot;</span>}<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">body:</span><span class="w"> </span><span class="s2">&quot;{\&quot;message\&quot;: \&quot;Hi\&quot;}&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">bodyMediaType:</span><span class="w"> </span><span class="s2">&quot;application/json&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+])<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> InvalidGreeting</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@httpHeader</span>(<span class="s2">&quot;X-Foo&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">foo:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-    <span class="nl">message:</span> <span class="vc">String</span>,
-}
+<span class="w">    </span><span class="nl">message:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-2-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-2-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#InvalidGreeting&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -779,8 +752,7 @@ JSON</div>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 </div>
 </div>
@@ -789,7 +761,7 @@ JSON</div>
                     
                     <section class="relations">
                         
-                        <a href="core/json-ast.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 17. JSON AST</a>
+                        <a href="core/json-ast.html" title="previous chapter" class="previous-page clearfix hidden-xs">← <span class="section-number">17. </span>JSON AST</a>
                         
                         <a href="waiters.html" title="next chapter" class="next-page clearfix">Waiters →</a>
                     </section>

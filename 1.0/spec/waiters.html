@@ -1,22 +1,22 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Waiters &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../_static/bootstrap-reboot.css" type="text/css" />
     
-    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
     <link rel="stylesheet" href="../../_static/custom-tabs.css" type="text/css" />
 
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/smithy.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -85,47 +85,44 @@ following client pseudocode:</p>
 <div class="section" id="smithy-waiters-waitable-trait">
 <span id="smithy-waiters-waitable-trait"></span><span id="id2"></span><h2><a href="#smithy-waiters-waitable-trait"><code class="docutils literal notranslate"><span class="pre">smithy.waiters#waitable</span></code> trait</a></h2>
 <dl class="docutils">
-<dt>Summary</dt>
-<dd>Indicates that an operation has various named &quot;waiters&quot; that can be used
+<dt>Summary</dt><dd>Indicates that an operation has various named &quot;waiters&quot; that can be used
 to poll a resource until it enters a desired state.</dd>
-<dt>Trait selector</dt>
-<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">operation</span> <span class="pre">:not(-[input,</span> <span class="pre">output]-&gt;</span> <span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">union[trait|streaming])</span></code></p>
-<p class="last">(Operations that do not use <a class="reference internal" href="core/stream-traits.html#event-streams"><span class="std std-ref">event streams</span></a> in their input or output)</p>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">operation</span> <span class="pre">:not(-[input,</span> <span class="pre">output]-&gt;</span> <span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">union[trait|streaming])</span></code></p>
+<p>(Operations that do not use <a class="reference internal" href="core/stream-traits.html#event-streams"><span class="std std-ref">event streams</span></a> in their input or output)</p>
 </dd>
-<dt>Value type</dt>
-<dd>A <code class="docutils literal notranslate"><span class="pre">map</span></code> of <a class="reference internal" href="#waiter-names"><span class="std std-ref">waiter names</span></a> to
+<dt>Value type</dt><dd>A <code class="docutils literal notranslate"><span class="pre">map</span></code> of <a class="reference internal" href="#waiter-names"><span class="std std-ref">waiter names</span></a> to
 <a class="reference internal" href="#waiter-structure"><span class="std std-ref">Waiter structures</span></a>.</dd>
 </dl>
 <p>The following example defines a waiter that waits until an Amazon S3 bucket
 exists:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> com.amazonaws.s3</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> com.amazonaws.s3</span><span class="w"></span>
 
-<span class="hll"><span class="kd">use</span><span class="nc"> smithy.waiters#waitable</span>
+<span class="hll"><span class="kd">use</span><span class="nc"> smithy.waiters#waitable</span><span class="w"></span>
 </span>
-<span class="nd">@waitable</span>(
-    <span class="nl">BucketExists:</span> {
-        <span class="nl">documentation:</span> <span class="s2">&quot;Wait until a bucket exists&quot;</span>,
-        <span class="nl">acceptors:</span> [
-            {
-                <span class="nl">state:</span> <span class="s2">&quot;success&quot;</span>,
-                <span class="nl">matcher:</span> {
-                    <span class="nl">success:</span> <span class="kc">true</span>
-                }
-            },
-            {
-                <span class="nl">state:</span> <span class="s2">&quot;retry&quot;</span>,
-                <span class="nl">matcher:</span> {
-                    <span class="nl">errorType:</span> <span class="s2">&quot;NotFound&quot;</span>
-                }
-            }
-        ]
-    }
-)
-<span class="kd">operation</span><span class="nc"> HeadBucket</span> {
-    <span class="nl">input:</span> <span class="vc">HeadBucketInput</span>,
-    <span class="nl">output:</span> <span class="vc">HeadBucketOutput</span>,
-    <span class="nl">errors:</span> [<span class="vc">NotFound</span>]
-}
+<span class="nd">@waitable</span>(<span class="w"></span>
+<span class="w">    </span><span class="nl">BucketExists:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">documentation:</span><span class="w"> </span><span class="s2">&quot;Wait until a bucket exists&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">acceptors:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">            </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">state:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="nl">matcher:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                    </span><span class="nl">success:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="w">                </span>}<span class="w"></span>
+<span class="w">            </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">            </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">state:</span><span class="w"> </span><span class="s2">&quot;retry&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="nl">matcher:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                    </span><span class="nl">errorType:</span><span class="w"> </span><span class="s2">&quot;NotFound&quot;</span><span class="w"></span>
+<span class="w">                </span>}<span class="w"></span>
+<span class="w">            </span>}<span class="w"></span>
+<span class="w">        </span>]<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> HeadBucket</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">HeadBucketInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">HeadBucketOutput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">errors:</span><span class="w"> </span>[<span class="vc">NotFound</span>]<span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p>Applying the steps defined in <a class="reference internal" href="#waiter-workflow">Waiter workflow</a> to the above example,
@@ -239,7 +236,7 @@ needlessly only to exceed <code class="docutils literal notranslate"><span class
 provided <code class="docutils literal notranslate"><span class="pre">maxWaitTime</span></code> of 300 (5 minutes), and assuming that requests
 complete in 0 seconds (for example purposes only), delays might be computed as
 follows:</p>
-<table border="1" class="docutils">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="25%" />
 <col width="25%" />
@@ -354,7 +351,7 @@ using linear backoff.</p>
 <span id="id5"></span><h2><a href="#waiter-structure">Waiter structure</a></h2>
 <p>A <em>waiter</em> defines a set of acceptors that are used to check if a resource
 has entered into a desired state.</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
@@ -407,7 +404,7 @@ categorized and grouped.</td>
 </div>
 <div class="section" id="acceptor-structure">
 <span id="waiter-acceptor"></span><h2><a href="#acceptor-structure">Acceptor structure</a></h2>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
@@ -436,7 +433,7 @@ that matches the requirements needed for a state transition.</td>
 <div class="section" id="acceptorstate-enum">
 <span id="waiter-acceptor-state"></span><h2><a href="#acceptorstate-enum">AcceptorState enum</a></h2>
 <p>Acceptors cause a waiter to transition into one of the following states:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="80%" />
@@ -467,7 +464,7 @@ implicit if no accepter causes a state transition.</td>
 <p>A <em>matcher</em> defines how an acceptor determines if it matches the current
 state of a resource. A matcher is a union where exactly one of the following
 members MUST be set:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
@@ -524,7 +521,7 @@ errors that are not defined in the model.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">output</span></code> and <code class="docutils literal notranslate"><span class="pre">inputOutput</span></code> matchers test the result of a <a class="reference external" href="https://jmespath.org/">JMESPath</a>
 expression against an expected value. These matchers are structures that
 support the following members:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
 <col width="25%" />
@@ -559,7 +556,7 @@ be a valid <a class="reference internal" href="#pathcomparator-enum"><span class
 <p>The data model exposed to <a class="reference external" href="https://jmespath.org/">JMESPath</a> for input and output structures is
 converted from Smithy types to <a class="reference external" href="https://jmespath.org/specification.html#data-types">JMESPath types</a> using the following
 conversion table:</p>
-<table border="1" class="docutils">
+<table border="1" class="docutils align-default">
 <colgroup>
 <col width="50%" />
 <col width="50%" />
@@ -677,7 +674,7 @@ return type of a <a class="reference internal" href="#pathcomparator-enum"><span
 <p>Each <code class="docutils literal notranslate"><span class="pre">PathMatcher</span></code> structure contains a <code class="docutils literal notranslate"><span class="pre">comparator</span></code> that is used to
 check the result of a JMESPath expression against an expected value. A
 comparator can be set to any of the following values:</p>
-<table border="1" class="colwidths-given docutils">
+<table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="60%" />
@@ -726,78 +723,78 @@ a &quot;Thing&quot; has a <code class="docutils literal notranslate"><span class
 <code class="docutils literal notranslate"><span class="pre">success</span></code> state. To address this and prevent needlessly waiting on a
 success state that can never happen, a <code class="docutils literal notranslate"><span class="pre">failure</span></code> state transition is
 triggered if the <code class="docutils literal notranslate"><span class="pre">status</span></code> property equals <code class="docutils literal notranslate"><span class="pre">failed</span></code>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> smithy.waiters#waitable</span>
+<span class="kd">use</span><span class="nc"> smithy.waiters#waitable</span><span class="w"></span>
 
-<span class="nd">@waitable</span>(
-    <span class="nl">ThingExists:</span> {
-        <span class="nl">description:</span> <span class="s2">&quot;Waits until a thing has been created&quot;</span>,
-        <span class="nl">acceptors:</span> [
-            <span class="c">// Fail-fast if the thing transitions to a &quot;failed&quot; state.</span>
-            {
-                <span class="nl">state:</span> <span class="s2">&quot;failure&quot;</span>,
-                <span class="nl">matcher:</span> {
-                    <span class="nl">output:</span> {
-                        <span class="nl">path:</span> <span class="s2">&quot;status&quot;</span>,
-                        <span class="nl">comparator:</span> <span class="s2">&quot;stringEquals&quot;</span>,
-                        <span class="nl">expected:</span> <span class="s2">&quot;failed&quot;</span>
-                    }
-                }
-            },
-            <span class="c">// Succeed when the thing enters into a &quot;success&quot; state.</span>
-            {
-                <span class="nl">state:</span> <span class="s2">&quot;success&quot;</span>,
-                <span class="nl">matcher:</span> {
-                    <span class="nl">output:</span> {
-                        <span class="nl">path:</span> <span class="s2">&quot;status&quot;</span>,
-                        <span class="nl">comparator:</span> <span class="s2">&quot;stringEquals&quot;</span>,
-                        <span class="nl">expected:</span> <span class="s2">&quot;success&quot;</span>
-                    }
-                }
-            }
-        ]
-    }
-)
-<span class="kd">operation</span><span class="nc"> GetThing</span> {
-    <span class="nl">input:</span> <span class="vc">GetThingInput</span>,
-    <span class="nl">output:</span> <span class="vc">GetThingOutput</span>,
-}
+<span class="nd">@waitable</span>(<span class="w"></span>
+<span class="w">    </span><span class="nl">ThingExists:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">description:</span><span class="w"> </span><span class="s2">&quot;Waits until a thing has been created&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">acceptors:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">            </span><span class="c">// Fail-fast if the thing transitions to a &quot;failed&quot; state.</span><span class="w"></span>
+<span class="w">            </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">state:</span><span class="w"> </span><span class="s2">&quot;failure&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="nl">matcher:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                    </span><span class="nl">output:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                        </span><span class="nl">path:</span><span class="w"> </span><span class="s2">&quot;status&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                        </span><span class="nl">comparator:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                        </span><span class="nl">expected:</span><span class="w"> </span><span class="s2">&quot;failed&quot;</span><span class="w"></span>
+<span class="w">                    </span>}<span class="w"></span>
+<span class="w">                </span>}<span class="w"></span>
+<span class="w">            </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="c">// Succeed when the thing enters into a &quot;success&quot; state.</span><span class="w"></span>
+<span class="w">            </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">state:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="nl">matcher:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                    </span><span class="nl">output:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                        </span><span class="nl">path:</span><span class="w"> </span><span class="s2">&quot;status&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                        </span><span class="nl">comparator:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                        </span><span class="nl">expected:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="w"></span>
+<span class="w">                    </span>}<span class="w"></span>
+<span class="w">                </span>}<span class="w"></span>
+<span class="w">            </span>}<span class="w"></span>
+<span class="w">        </span>]<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> GetThing</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">GetThingInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetThingOutput</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">structure</span><span class="nc"> GetThingInput</span> {
-    <span class="nd">@required</span>
-    <span class="nl">name:</span> <span class="vc">String</span>,
-}
+<span class="kd">structure</span><span class="nc"> GetThingInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nl">name:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">structure</span><span class="nc"> GetThingOutput</span> {
-    <span class="nl">status:</span> <span class="vc">String</span>
-}
+<span class="kd">structure</span><span class="nc"> GetThingOutput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">status:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p>Both input and output data can be queried using the <code class="docutils literal notranslate"><span class="pre">inputOutput</span></code> matcher.
 The following example waiter completes successfully when the number of
 provided groups on input matches the number of provided groups on output:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use</span><span class="nc"> smithy.waiters#waitable</span>
+<span class="kd">use</span><span class="nc"> smithy.waiters#waitable</span><span class="w"></span>
 
-<span class="nd">@waitable</span>(
-    <span class="nl">GroupExists:</span> {
-        <span class="nl">acceptors:</span> [
-            {
-                <span class="nl">inputOutput:</span> {
-                    <span class="nl">path:</span> <span class="s2">&quot;length(input.groups) == length(output.groups)&quot;</span>,
-                    <span class="nl">expected:</span> <span class="s2">&quot;true&quot;</span>,
-                    <span class="nl">comparator:</span> <span class="s2">&quot;booleanEquals&quot;</span>
-                }
-            }
-        ]
-    }
-)
-<span class="kd">operation</span><span class="nc"> ListGroups</span> {
-    <span class="nl">input:</span> <span class="vc">ListGroupsInput</span>,
-    <span class="nl">output:</span> <span class="vc">ListGroupsOutput</span>,
-}
+<span class="nd">@waitable</span>(<span class="w"></span>
+<span class="w">    </span><span class="nl">GroupExists:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">acceptors:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">            </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">inputOutput:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                    </span><span class="nl">path:</span><span class="w"> </span><span class="s2">&quot;length(input.groups) == length(output.groups)&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                    </span><span class="nl">expected:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                    </span><span class="nl">comparator:</span><span class="w"> </span><span class="s2">&quot;booleanEquals&quot;</span><span class="w"></span>
+<span class="w">                </span>}<span class="w"></span>
+<span class="w">            </span>}<span class="w"></span>
+<span class="w">        </span>]<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> ListGroups</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">ListGroupsInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">ListGroupsOutput</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div>
@@ -822,21 +819,19 @@ name of the resource where possible. For example, if a &quot;Snapshot&quot; reso
 can enter a &quot;deleted&quot; state, then the waiter name should be
 <code class="docutils literal notranslate"><span class="pre">SnapshotDeleted</span></code> and not <code class="docutils literal notranslate"><span class="pre">SnapshotRemoved</span></code>.</p>
 <dl class="docutils">
-<dt>Good</dt>
-<dd><ul class="first last simple">
+<dt>Good</dt><dd><ul class="simple">
 <li>ObjectExists</li>
 <li>ConversionTaskDeleted</li>
 </ul>
 </dd>
-<dt>Bad</dt>
-<dd><p class="first">The following examples are bad because they are named after the completion
+<dt>Bad</dt><dd><p>The following examples are bad because they are named after the completion
 of an operation rather than the state of the resource:</p>
 <ul class="simple">
 <li>RunInstanceComplete</li>
 <li>TerminateInstanceComplete</li>
 </ul>
 <p>More appropriate names would be:</p>
-<ul class="last simple">
+<ul class="simple">
 <li>InstanceRunning</li>
 <li>InstanceTerminated</li>
 </ul>
@@ -864,34 +859,34 @@ process described in <a class="reference internal" href="#waiter-retries"><span 
 <a class="reference internal" href="#waiter-matcher"><span class="std std-ref">matcher</span></a> that transitions to a state of &quot;failure&quot;.
 This is already the default behavior. For example, the following acceptor
 is unnecessary:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
-    <span class="nl">acceptors:</span> [
-        {
-            <span class="nl">state:</span> <span class="s2">&quot;failure&quot;</span>,
-            <span class="nl">matcher:</span> {
-                <span class="nl">errorType:</span> <span class="s2">&quot;ValidationError&quot;</span>
-            }
-        },
-        <span class="c">// other acceptors...</span>
-    ]
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">acceptors:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">        </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">state:</span><span class="w"> </span><span class="s2">&quot;failure&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nl">matcher:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">errorType:</span><span class="w"> </span><span class="s2">&quot;ValidationError&quot;</span><span class="w"></span>
+<span class="w">            </span>}<span class="w"></span>
+<span class="w">        </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="c">// other acceptors...</span><span class="w"></span>
+<span class="w">    </span>]<span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p>Because a successful request that does not match any acceptor by default
 transitions to the <a class="reference internal" href="#waiter-acceptor-state"><span class="std std-ref">retry state</span></a>, there is no
 need to model matchers with a state of retry unless the matcher is for
 specific errors. For example, the following matcher is unnecessary:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
-    <span class="nl">acceptors:</span> [
-        {
-            <span class="nl">state:</span> <span class="s2">&quot;retry&quot;</span>,
-            <span class="nl">matcher:</span> {
-                <span class="nl">success:</span> <span class="kc">true</span>
-            }
-        },
-        <span class="c">// other acceptors...</span>
-    ]
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">acceptors:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">        </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">state:</span><span class="w"> </span><span class="s2">&quot;retry&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nl">matcher:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">success:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="w">            </span>}<span class="w"></span>
+<span class="w">        </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="c">// other acceptors...</span><span class="w"></span>
+<span class="w">    </span>]<span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div>
@@ -937,38 +932,38 @@ the intermediate state transition &quot;Stopping&quot; to fail-fast. Instead, a 
 transition should be defined that matches on the terminal &quot;Stopped&quot; state
 because the only way to transition from &quot;Stopped&quot; to running is by invoking
 the <code class="docutils literal notranslate"><span class="pre">StartResource</span></code> API operation.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@waitable</span>(
-    <span class="nl">ResourceRunning:</span> {
-        <span class="nl">description:</span> <span class="s2">&quot;Waits for the resource to be running&quot;</span>,
-        <span class="nl">acceptors:</span> [
-            {
-                <span class="nl">state:</span> <span class="s2">&quot;failure&quot;</span>,
-                <span class="nl">matcher:</span> {
-                    <span class="nl">output:</span> {
-                        <span class="nl">path:</span> <span class="s2">&quot;State&quot;</span>,
-                        <span class="nl">expected:</span> <span class="s2">&quot;Stopped&quot;</span>,
-                        <span class="nl">comparator:</span> <span class="s2">&quot;stringEquals&quot;</span>
-                    }
-                }
-            },
-            {
-                <span class="nl">state:</span> <span class="s2">&quot;success&quot;</span>,
-                <span class="nl">matcher:</span> {
-                    <span class="nl">output:</span> {
-                        <span class="nl">path:</span> <span class="s2">&quot;State&quot;</span>,
-                        <span class="nl">expected:</span> <span class="s2">&quot;Running&quot;</span>,
-                        <span class="nl">comparator:</span> <span class="s2">&quot;stringEquals&quot;</span>
-                    }
-                }
-            },
-            <span class="c">// other acceptors...</span>
-        ]
-    }
-)
-<span class="kd">operation</span><span class="nc"> GetResource</span> {
-    <span class="nl">input:</span> <span class="vc">GetResourceInput</span>,
-    <span class="nl">output:</span> <span class="vc">GetResourceOutput</span>,
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@waitable</span>(<span class="w"></span>
+<span class="w">    </span><span class="nl">ResourceRunning:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">description:</span><span class="w"> </span><span class="s2">&quot;Waits for the resource to be running&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">acceptors:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">            </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">state:</span><span class="w"> </span><span class="s2">&quot;failure&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="nl">matcher:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                    </span><span class="nl">output:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                        </span><span class="nl">path:</span><span class="w"> </span><span class="s2">&quot;State&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                        </span><span class="nl">expected:</span><span class="w"> </span><span class="s2">&quot;Stopped&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                        </span><span class="nl">comparator:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span><span class="w"></span>
+<span class="w">                    </span>}<span class="w"></span>
+<span class="w">                </span>}<span class="w"></span>
+<span class="w">            </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">            </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">state:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="nl">matcher:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                    </span><span class="nl">output:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                        </span><span class="nl">path:</span><span class="w"> </span><span class="s2">&quot;State&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                        </span><span class="nl">expected:</span><span class="w"> </span><span class="s2">&quot;Running&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                        </span><span class="nl">comparator:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span><span class="w"></span>
+<span class="w">                    </span>}<span class="w"></span>
+<span class="w">                </span>}<span class="w"></span>
+<span class="w">            </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="c">// other acceptors...</span><span class="w"></span>
+<span class="w">        </span>]<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> GetResource</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">GetResourceInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetResourceOutput</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div>
