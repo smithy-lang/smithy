@@ -378,7 +378,8 @@ Greedy matching can be used to capture the whole URI to a label, which results
 in every request for a particular HTTP method being captured. For example, this
 can be modeled with a pattern of ``/{label+}``.
 
-Segments in the middle of a URI can be captured using greedy labels. Given a
+Segments in the middle of a URI can be captured using greedy labels. Greedy
+labels match greedily: they will match the longest possible string. Given a
 pattern of ``/prefix/{label+}/suffix`` and an endpoint of ``https://yourhost``:
 
 .. list-table::
@@ -403,6 +404,10 @@ pattern of ``/prefix/{label+}/suffix`` and an endpoint of ``https://yourhost``:
     * - ``http://yourhost/foo/bar/suffix``
       - No
       - Does not match the literal "/prefix".
+    * - ``http://yourhost/prefix/foo/suffix/bar/suffix``
+      - Yes
+      - Matches literal "/prefix", captures "foo/suffix/bar" in greedy
+        ``label``, and matches literal "/suffix".
 
 
 Pattern Validation and Conflict Avoidance
