@@ -817,3 +817,13 @@ structure httpChecksumProperty {
     },
 ])
 string HttpChecksumLocation
+
+/// Specializes a structure for use only as the input of a single operation.
+@trait(selector: "structure", conflicts: [output, error])
+@tags(["diff.error.const"])
+structure input {}
+
+/// Specializes a structure for use only as the output of a single operation.
+@trait(selector: "structure", conflicts: [input, error])
+@tags(["diff.error.const"])
+structure output {}

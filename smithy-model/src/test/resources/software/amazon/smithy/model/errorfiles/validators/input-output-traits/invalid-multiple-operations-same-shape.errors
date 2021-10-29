@@ -1,0 +1,4 @@
+[ERROR] smithy.example#GetFoo2: The input of this operation should target a shape that starts with the operation's name, 'GetFoo2', but the targeted shape is `smithy.example#GetFooInput` | OperationInputOutput
+[ERROR] smithy.example#GetFoo2: The output of this operation should target a shape that starts with the operation's name, 'GetFoo2', but the targeted shape is `smithy.example#GetFooOutput` | OperationInputOutput
+[ERROR] smithy.example#GetFooInput: This shape is marked with the @input trait but is used illegally by multiple operations: `smithy.example#GetFoo`, `smithy.example#GetFoo2` | OperationInputOutput
+[ERROR] smithy.example#GetFooOutput: This shape is marked with the @output trait but is used illegally by multiple operations: `smithy.example#GetFoo`, `smithy.example#GetFoo2` | OperationInputOutput

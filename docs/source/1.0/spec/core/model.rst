@@ -1271,6 +1271,7 @@ the conflicting shapes.
             output: GetSomethingOutput,
         }
 
+        @output
         structure GetSomethingOutput {
             widget1: Widget,
             fooWidget: foo.example#Widget,
@@ -1310,6 +1311,9 @@ the conflicting shapes.
                         "fooWidget": {
                             "target": "foo.example#Widget"
                         }
+                    },
+                    "traits": {
+                        "smithy.api#output" true
                     }
                 },
                 "smithy.example#Widget": {
@@ -1349,14 +1353,16 @@ An operation supports the following members:
       - ``string``
       - The optional input ``structure`` of the operation. The value MUST be
         a valid :ref:`shape ID <shape-id>` that targets a
-        :ref:`structure <structure>` shape. The targeted shape MUST NOT be
-        marked with the :ref:`error-trait`.
+        :ref:`structure <structure>` shape. The targeted shape SHOULD be
+        marked with the :ref:`input-trait` and MUST NOT be marked with the
+        :ref:`error-trait`.
     * - output
       - ``string``
       - The optional output ``structure`` of the operation. The value MUST
         be a valid :ref:`shape ID <shape-id>` that targets a
-        :ref:`structure <structure>` shape. The targeted shape MUST NOT
-        be marked with the :ref:`error-trait`.
+        :ref:`structure <structure>` shape. The targeted shape SHOULD be
+        marked with the :ref:`output-trait` and MUST NOT be marked with the
+        :ref:`error-trait`.
     * - errors
       - [``string``]
       - Defines the error ``structure``\s that an operation can return using

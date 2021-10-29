@@ -315,6 +315,7 @@ Let's define the operation used to "read" a ``City``.
             errors: [NoSuchResource]
         }
 
+        @input
         structure GetCityInput {
             // "cityId" provides the identifier for the resource and
             // has to be marked as required.
@@ -322,6 +323,7 @@ Let's define the operation used to "read" a ``City``.
             cityId: CityId
         }
 
+        @output
         structure GetCityOutput {
             // "required" is used on output to indicate if the service
             // will always provide a value for the member.
@@ -376,6 +378,9 @@ Let's define the operation used to "read" a ``City``.
                                 "smithy.api#required": true
                             }
                         }
+                    },
+                    "traits": {
+                        "smithy.api#input": true
                     }
                 },
                 "example.weather#GetCityOutput": {
@@ -393,6 +398,9 @@ Let's define the operation used to "read" a ``City``.
                                 "smithy.api#required": true
                             }
                         }
+                    },
+                    "traits": {
+                        "smithy.api#output": true
                     }
                 },
                 "example.weather#CityCoordinates": {
@@ -443,11 +451,13 @@ And define the operation used to "read" a ``Forecast``.
 
         // "cityId" provides the only identifier for the resource since
         // a Forecast doesn't have its own.
+        @input
         structure GetForecastInput {
             @required
             cityId: CityId,
         }
 
+        @output
         structure GetForecastOutput {
             chanceOfRain: Float
         }
@@ -478,14 +488,20 @@ And define the operation used to "read" a ``Forecast``.
                                 "smithy.api#required": true
                             }
                         }
+                    },
+                    "traits": {
+                        "smithy.api#input": true
                     }
                 },
                 "example.weather#GetForecastOutput": {
                     "type": "structure",
                     "members": {
                         "chanceOfRain": {
-                            "target": "smithy.api#Float"
+                            "target": "smithy.api#Float",
                         }
+                    },
+                    "traits": {
+                        "smithy.api#output": true
                     }
                 }
             }
@@ -533,11 +549,13 @@ cities, so there's no way we could provide a ``City`` identifier.
             output: ListCitiesOutput
         }
 
+        @input
         structure ListCitiesInput {
             nextToken: String,
             pageSize: Integer
         }
 
+        @output
         structure ListCitiesOutput {
             nextToken: String,
 
@@ -605,6 +623,9 @@ cities, so there's no way we could provide a ``City`` identifier.
                         "pageSize": {
                             "target": "smithy.api#Integer"
                         }
+                    },
+                    "traits": {
+                        "smithy.api#input": true
                     }
                 },
                 "example.weather#ListCitiesOutput": {
@@ -619,6 +640,9 @@ cities, so there's no way we could provide a ``City`` identifier.
                                 "smithy.api#required": true
                             }
                         }
+                    },
+                    "traits": {
+                        "smithy.api#output": true
                     }
                 },
                 "example.weather#CitySummaries": {
@@ -694,9 +718,14 @@ service.
 
         @readonly
         operation GetCurrentTime {
+            input: GetCurrentTimeInput,
             output: GetCurrentTimeOutput
         }
 
+        @input
+        structure GetCurrentTimeInput {}
+
+        @output
         structure GetCurrentTimeOutput {
             @required
             time: Timestamp
@@ -723,6 +752,9 @@ service.
                 },
                 "example.weather#GetCurrentTime": {
                     "type": "operation",
+                    "input": {
+                        "target": "example.weather#GetCurrentTimeInput"
+                    },
                     "output": {
                         "target": "example.weather#GetCurrentTimeOutput"
                     },
@@ -730,6 +762,12 @@ service.
                         "smithy.api#readonly": true
                     }
                 },
+                "example.weather#GetCurrentTimeInput": {
+                    "type": "structure",
+                    "traits": {
+                        "smithy.api#input": true
+                    }
+                }
                 "example.weather#GetCurrentTimeOutput": {
                     "type": "structure",
                     "members": {
@@ -739,6 +777,9 @@ service.
                                 "smithy.api#required": true
                             }
                         }
+                    },
+                    "traits": {
+                        "smithy.api#output": true
                     }
                 }
             }
@@ -891,6 +932,7 @@ Finally, the complete ``weather.smithy`` model should look like:
             errors: [NoSuchResource]
         }
 
+        @input
         structure GetCityInput {
             // "cityId" provides the identifier for the resource and
             // has to be marked as required.
@@ -898,6 +940,7 @@ Finally, the complete ``weather.smithy`` model should look like:
             cityId: CityId
         }
 
+        @output
         structure GetCityOutput {
             // "required" is used on output to indicate if the service
             // will always provide a value for the member.
@@ -934,11 +977,13 @@ Finally, the complete ``weather.smithy`` model should look like:
             output: ListCitiesOutput
         }
 
+        @input
         structure ListCitiesInput {
             nextToken: String,
             pageSize: Integer
         }
 
+        @output
         structure ListCitiesOutput {
             nextToken: String,
 
@@ -963,9 +1008,14 @@ Finally, the complete ``weather.smithy`` model should look like:
 
         @readonly
         operation GetCurrentTime {
+            input: GetCurrentTimeInput,
             output: GetCurrentTimeOutput
         }
 
+        @input
+        structure GetCurrentTimeInput {}
+
+        @output
         structure GetCurrentTimeOutput {
             @required
             time: Timestamp
@@ -979,11 +1029,13 @@ Finally, the complete ``weather.smithy`` model should look like:
 
         // "cityId" provides the only identifier for the resource since
         // a Forecast doesn't have its own.
+        @input
         structure GetForecastInput {
             @required
             cityId: CityId,
         }
 
+        @output
         structure GetForecastOutput {
             chanceOfRain: Float
         }
@@ -1123,6 +1175,9 @@ Finally, the complete ``weather.smithy`` model should look like:
                                 "smithy.api#required": true
                             }
                         }
+                    },
+                    "traits": {
+                        "smithy.api#input": true
                     }
                 },
                 "example.weather#GetCityOutput": {
@@ -1140,15 +1195,27 @@ Finally, the complete ``weather.smithy`` model should look like:
                                 "smithy.api#required": true
                             }
                         }
+                    },
+                    "traits": {
+                        "smithy.api#output": true
                     }
                 },
                 "example.weather#GetCurrentTime": {
                     "type": "operation",
+                    "input": {
+                        "target": "example.weather#GetCurrentTimeInput"
+                    },
                     "output": {
                         "target": "example.weather#GetCurrentTimeOutput"
                     },
                     "traits": {
                         "smithy.api#readonly": true
+                    }
+                },
+                "example.weather#GetCurrentTimeInput": {
+                    "type": "structure",
+                    "traits": {
+                        "smithy.api#input": true
                     }
                 },
                 "example.weather#GetCurrentTimeOutput": {
@@ -1160,6 +1227,9 @@ Finally, the complete ``weather.smithy`` model should look like:
                                 "smithy.api#required": true
                             }
                         }
+                    },
+                    "traits": {
+                        "smithy.api#output": true
                     }
                 },
                 "example.weather#GetForecast": {
@@ -1183,6 +1253,9 @@ Finally, the complete ``weather.smithy`` model should look like:
                                 "smithy.api#required": true
                             }
                         }
+                    },
+                    "traits": {
+                        "smithy.api#input": true
                     }
                 },
                 "example.weather#GetForecastOutput": {
@@ -1191,6 +1264,9 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "chanceOfRain": {
                             "target": "smithy.api#Float"
                         }
+                    },
+                    "traits": {
+                        "smithy.api#output": true
                     }
                 },
                 "example.weather#ListCities": {
@@ -1217,6 +1293,9 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "pageSize": {
                             "target": "smithy.api#Integer"
                         }
+                    },
+                    "traits": {
+                        "smithy.api#input": true
                     }
                 },
                 "example.weather#ListCitiesOutput": {
@@ -1231,6 +1310,9 @@ Finally, the complete ``weather.smithy`` model should look like:
                         "nextToken": {
                             "target": "smithy.api#String"
                         }
+                    },
+                    "traits": {
+                        "smithy.api#output": true
                     }
                 },
                 "example.weather#NoSuchResource": {

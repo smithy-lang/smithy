@@ -66,6 +66,7 @@ The following example defines an operation that uses a custom endpoint:
             output: GetStatusOutput
         }
 
+        @input
         structure GetStatusInput {
             @required
             @hostLabel
@@ -102,6 +103,9 @@ The following example defines an operation that uses a custom endpoint:
                                 "smithy.api#hostLabel": {}
                             }
                         }
+                    },
+                    "traits": {
+                        "smithy.api#input": true
                     }
                 }
             }
@@ -132,6 +136,7 @@ Given the following operation,
             output: GetStatusOutput
         }
 
+        @input
         structure GetStatusInput {
             @required
             @hostLabel
@@ -168,6 +173,9 @@ Given the following operation,
                                 "smithy.api#hostLabel": {}
                             }
                         }
+                    },
+                    "traits": {
+                        "smithy.api#input": true
                     }
                 }
             }

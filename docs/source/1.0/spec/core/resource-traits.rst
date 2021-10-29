@@ -308,6 +308,7 @@ match for the name of the resource identifier.
             errors: [NoSuchResource]
         }
 
+        @input
         structure GetFileInput {
             @required
             directory: String,

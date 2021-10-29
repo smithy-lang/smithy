@@ -1,0 +1,2 @@
+[ERROR] smithy.example#BadStructure$i: This member illegally references a structure marked with the @input trait: smithy.example#GetFooInput | OperationInputOutput
+[ERROR] smithy.example#BadStructure$o: This member illegally references a structure marked with the @output trait: smithy.example#GetFooOutput | OperationInputOutput
