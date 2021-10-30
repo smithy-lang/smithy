@@ -66,6 +66,7 @@ The following example defines an operation that uses HTTP bindings:
             input: PutObjectInput
         }
 
+        @input
         structure PutObjectInput {
             // Sent in the URI label named "key".
             @required
@@ -643,6 +644,7 @@ The following example defines an operation that send an HTTP label named
             output: GetStatusOutput
         }
 
+        @input
         structure GetStatusInput {
             @required
             @httpLabel
@@ -726,9 +728,14 @@ data in a response:
         @readonly
         @http(method: "GET", uri: "/random-binary-data")
         operation GetRandomBinaryData {
-            output: GetRandomBinaryDataOutput,
+            input: GetRandomBinaryDataInput,
+            output: GetRandomBinaryDataOutput
         }
 
+        @input
+        structure GetRandomBinaryDataInput {}
+
+        @output
         structure GetRandomBinaryDataOutput {
             @required
             @httpHeader("Content-Type")
@@ -813,6 +820,7 @@ Given the following Smithy model:
             input: MyOperationInput
         }
 
+        @input
         structure MyOperationInput {
             @httpPrefixHeaders("X-Foo-")
             headers: StringMap
@@ -894,6 +902,7 @@ request:
             output: ListThingsOutput, // omitted for brevity
         }
 
+        @input
         structure ListThingsInput {
             @httpQuery("color")
             color: String,
@@ -991,6 +1000,7 @@ target input map as query string parameters in an HTTP request:
             output: ListThingsOutput, // omitted for brevity
         }
 
+        @input
         structure ListThingsInput {
             @httpQueryParams()
             myParams: MapOfStrings,
@@ -1030,6 +1040,7 @@ disregard the value set by ``httpQueryParams``. For example, given the following
             input: PutThingInput
         }
 
+        @input
         structure PutThingInput {
             @httpQuery
             @required
@@ -1234,6 +1245,7 @@ and HTTP bindings:
             input: PublishMessagesInput
         }
 
+        @input
         structure PublishMessagesInput {
             @httpPayload
             messages: MessageStream,
@@ -1246,53 +1258,6 @@ and HTTP bindings:
 
         structure Message {
             message: String,
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#PublishMessages": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#PublishMessagesInput"
-                    },
-                    "traits": {
-                        "smithy.api#http": {
-                            "uri": "/messages",
-                            "method": "POST"
-                        }
-                    }
-                },
-                "smithy.example#PublishMessagesInput": {
-                    "type": "structure",
-                    "members": {
-                        "messages": {
-                            "target": "smithy.example#MessageStream",
-                            "traits": {
-                                "smithy.api#httpPayload": {}
-                            }
-                        }
-                    }
-                },
-                "smithy.example#MessageStream": {
-                    "type": "union",
-                    "members": {
-                        "message": {
-                            "target": "smithy.example#Message"
-                        }
-                    }
-                },
-                "smithy.example#Message": {
-                    "type": "structure",
-                    "members": {
-                        "message": {
-                            "target": "smithy.api#String"
-                        }
-                    }
-                }
-            }
         }
 
 The following is **invalid** because the operation has the ``http`` trait
@@ -1308,6 +1273,7 @@ marked with the ``httpPayload`` trait:
         input: InvalidOperationInput
     }
 
+    @input
     structure InvalidOperationInput {
         invalid: MessageStream, // <-- Missing the @httpPayload trait
     }

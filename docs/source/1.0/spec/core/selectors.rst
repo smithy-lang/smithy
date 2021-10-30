@@ -753,6 +753,7 @@ in the closure of a service.
     @tags(["invalid"])
     operation OperationD {}
 
+    @input
     structure OperationAInput {
         badValue: BadEnum,
         goodValue: GoodEnum,

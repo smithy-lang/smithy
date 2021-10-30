@@ -533,60 +533,18 @@ that uses :ref:`HTTP binding traits <http-traits>`.
             }
         ])
         operation SayGoodbye {
+            input: SayGoodbyeInput,
             output: SayGoodbyeOutput
         }
 
+        @input
+        structure SayGoodbyeInput {}
+
+        @output
         structure SayGoodbyeOutput {
             @httpHeader("X-Farewell")
             farewell: String,
         }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#SayGoodbye": {
-                    "type": "operation",
-                    "output": {
-                        "target": "smithy.example#SayGoodbyeOutput"
-                    },
-                    "traits": {
-                        "smithy.api#http": {
-                            "method": "POST",
-                            "uri": "/",
-                            "code": 200
-                        },
-                        "smithy.test#httpResponseTests": [
-                            {
-                                "id": "say_goodbye",
-                                "protocol": "smithy.example#exampleProtocol",
-                                "headers": {
-                                    "Content-Length": "0",
-                                    "X-Farewell": "Bye"
-                                },
-                                "params": {
-                                    "farewell": "Bye"
-                                },
-                                "code": 200
-                            }
-                        ]
-                    }
-                },
-                "smithy.example#SayGoodbyeOutput": {
-                    "type": "structure",
-                    "members": {
-                        "farewell": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#httpHeader": "X-Farewell"
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
 
 HTTP error response example
 ===========================

@@ -139,7 +139,7 @@ in Java).
 
 
 .. smithy-trait:: smithy.api#input
-.. _input-trait::
+.. _input-trait:
 
 ---------------
 ``input`` trait
@@ -159,15 +159,17 @@ following constraints:
 
 1. They can only be referenced in the model as an operation's input.
 2. They cannot be used as the input of more than one operation.
-3. They MUST have a shape name that starts with the name of any operation
-   they are associated with.
+3. They SHOULD have a shape name that starts with the name of the
+   operation that targets it (if any). For example, if a shape is the input
+   of the ``GetSprocket`` operation, then the shape SHOULD be named
+   ``GetSprocketInput``.
 
 These constraints allow tooling to specialize operation input shapes in
 ways that would otherwise require complex model transformations.
 
 
 .. smithy-trait:: smithy.api#output
-.. _output-trait::
+.. _output-trait:
 
 ----------------
 ``output`` trait
@@ -187,8 +189,10 @@ following constraints:
 
 1. They can only be referenced in the model as an operation's output.
 2. They cannot be used as the output of more than one operation.
-3. They MUST have a shape name that starts with the name of any operation
-   they are associated with.
+3. They SHOULD have a shape name that starts with the name of the
+   operation that targets it (if any). For example, if a shape is the output
+   of the ``GetSprocket`` operation, then the shape SHOULD be named
+   ``GetSprocketOutput``.
 
 These constraints allow tooling to specialize operation output shapes in
 ways that would otherwise require complex model transformations.

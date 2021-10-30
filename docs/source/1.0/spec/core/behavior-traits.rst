@@ -50,6 +50,7 @@ member if and only if the member is not explicitly provided.
             input: AllocateWidgetInput
         }
 
+        @input
         structure AllocateWidgetInput {
             @idempotencyToken
             clientToken: String,
@@ -253,11 +254,13 @@ explicitly on the operation.
             output: GetFoosOutput
         }
 
+        @input
         structure GetFoosInput {
             maxResults: Integer,
             nextToken: String
         }
 
+        @output
         structure GetFoosOutput {
             nextToken: String,
 
@@ -267,63 +270,6 @@ explicitly on the operation.
 
         list StringList {
             member: String
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#GetFoos": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#GetFoosInput"
-                    },
-                    "output": {
-                        "target": "smithy.example#GetFoosOutput"
-                    },
-                    "traits": {
-                        "smithy.api#readonly": {},
-                        "smithy.api#paginated": {
-                            "inputToken": "nextToken",
-                            "outputToken": "nextToken",
-                            "pageSize": "maxResults",
-                            "items": "foos"
-                        }
-                    }
-                },
-                "smithy.example#GetFoosInput": {
-                    "type": "structure",
-                    "members": {
-                        "maxResults": {
-                            "target": "smithy.api#Integer"
-                        },
-                        "nextToken": {
-                            "target": "smithy.api#String"
-                        }
-                    }
-                },
-                "smithy.example#GetFoosOutput": {
-                    "type": "structure",
-                    "members": {
-                        "nextToken": {
-                            "target": "smithy.api#String"
-                        },
-                        "foos": {
-                            "target": "smithy.example#StringList",
-                            "traits": {
-                                "smithy.api#required": {}
-                            }
-                        }
-                    }
-                },
-                "smithy.example#StringList": {
-                    "type": "list",
-                    "member": {
-                        "target": "smithy.api#String"
-                    }
-                }
-            }
         }
 
 Attaching the ``paginated`` trait to a service provides default pagination
@@ -414,11 +360,13 @@ wrapper where the output token and items are referenced by paths.
             output: GetFoosOutput
         }
 
+        @input
         structure GetFoosInput {
             maxResults: Integer,
             nextToken: String
         }
 
+        @output
         structure GetFoosOutput {
             @required
             result: ResultWrapper
@@ -435,73 +383,6 @@ wrapper where the output token and items are referenced by paths.
             member: String
         }
 
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#GetFoos": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#GetFoosInput"
-                    },
-                    "output": {
-                        "target": "smithy.example#GetFoosOutput"
-                    },
-                    "traits": {
-                        "smithy.api#readonly": {},
-                        "smithy.api#paginated": {
-                            "inputToken": "nextToken",
-                            "outputToken": "result.nextToken",
-                            "pageSize": "maxResults",
-                            "items": "result.foos"
-                        }
-                    }
-                },
-                "smithy.example#GetFoosInput": {
-                    "type": "structure",
-                    "members": {
-                        "maxResults": {
-                            "target": "smithy.api#Integer"
-                        },
-                        "nextToken": {
-                            "target": "smithy.api#String"
-                        }
-                    }
-                },
-                "smithy.example#GetFoosOutput": {
-                    "type": "structure",
-                    "members": {
-                        "result": {
-                            "target": "smithy.example#ResultWrapper",
-                            "traits": {
-                                "smithy.api#required": {}
-                            }
-                        }
-                    }
-                },
-                "smithy.example#ResultWrapper": {
-                    "type": "structure",
-                    "members": {
-                        "nextToken": {
-                            "target": "smithy.api#String"
-                        },
-                        "foos": {
-                            "target": "smithy.example#StringList",
-                            "traits": {
-                                "smithy.api#required": {}
-                            }
-                        }
-                    }
-                },
-                "smithy.example#StringList": {
-                    "type": "list",
-                    "member": {
-                        "target": "smithy.api#String"
-                    }
-                }
-            }
-        }
 
 Pagination Behavior
 ===================

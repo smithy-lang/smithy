@@ -47,9 +47,14 @@ Validation
     .. code-tab:: smithy
 
         operation StreamingOperation {
+            input: StreamingOperationInput,
             output: StreamingOperationOutput,
         }
 
+        @input
+        structure StreamingOperationInput {}
+
+        @output
         structure StreamingOperationOutput {
             @required
             streamId: String
@@ -125,6 +130,7 @@ stream in its input by referencing a member that targets a union:
             input: PublishMessagesInput
         }
 
+        @input
         structure PublishMessagesInput {
             room: String,
             messages: PublishEvents,
@@ -201,9 +207,14 @@ stream in its output:
         namespace smithy.example
 
         operation SubscribeToMovements {
+            input: SubscribeToMovementsInput,
             output: SubscribeToMovementsOutput
         }
 
+        @input
+        structure SubscribeToMovementsInput {}
+
+        @output
         structure SubscribeToMovementsOutput {
             movements: MovementEvents,
         }
@@ -226,71 +237,6 @@ stream in its output:
         @error("client")
         @retryable(throttling: true)
         structure ThrottlingError {}
-
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#SubscribeToMovements": {
-                    "type": "operation",
-                    "output": {
-                        "target": "smithy.example#SubscribeToMovementsOutput"
-                    }
-                },
-                "smithy.example#SubscribeToMovementsOutput": {
-                    "type": "structure",
-                    "members": {
-                        "movements": {
-                            "target": "smithy.example#MovementEvents"
-                        }
-                    }
-                },
-                "smithy.example#MovementEvents": {
-                    "type": "union",
-                    "members": {
-                        "up": {
-                            "target": "smithy.example#Movement"
-                        },
-                        "down": {
-                            "target": "smithy.example#Movement"
-                        },
-                        "left": {
-                            "target": "smithy.example#Movement"
-                        },
-                        "right": {
-                            "target": "smithy.example#Movement"
-                        },
-                        "throttlingError": {
-                            "target": "smithy.example#ThrottlingError"
-                        }
-                    },
-                    "traits": {
-                        "smithy.api#streaming": {}
-                    }
-                },
-                "smithy.example#Movement": {
-                    "type": "structure",
-                    "members": {
-                        "velocity": {
-                            "target": "smithy.api#Float"
-                        }
-                    }
-                },
-                "smithy.example#ThrottlingError": {
-                    "type": "structure",
-                    "traits": {
-                        "smithy.api#documentation": "An example error emitted when the client is throttled and should terminate the event stream.",
-                        "smithy.api#error": "client",
-                        "smithy.api#retryable": {
-                            "throttling": true
-                        }
-                    }
-                }
-            }
-        }
-
 
 Modeled errors in event streams
 ===============================
@@ -342,6 +288,7 @@ service, followed by the events sent in the payload of the HTTP message.
             input: PublishMessagesInput
         }
 
+        @input
         structure PublishMessagesInput {
             @httpLabel
             @required
@@ -360,62 +307,6 @@ service, followed by the events sent in the payload of the HTTP message.
             message: String,
         }
 
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#PublishMessages": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#PublishMessagesInput"
-                    },
-                    "traits": {
-                        "smithy.api#http": {
-                            "uri": "/messages/{room}",
-                            "method": "POST"
-                        }
-                    }
-                },
-                "smithy.example#PublishMessagesInput": {
-                    "type": "structure",
-                    "members": {
-                        "room": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#httpLabel:": {},
-                                "smithy.api#required": {}
-                            }
-                        },
-                        "messages": {
-                            "target": "smithy.example#MessageStream",
-                            "traits": {
-                                "smithy.api#httpPayload": {}
-                            }
-                        }
-                    }
-                },
-                "smithy.example#MessageStream": {
-                    "type": "union",
-                    "members": {
-                        "message": {
-                            "target": "smithy.example#Message"
-                        }
-                    },
-                    "traits": {
-                        "smithy.api#streaming": {}
-                    }
-                },
-                "smithy.example#Message": {
-                    "type": "structure",
-                    "members": {
-                        "message": {
-                            "target": "smithy.api#String"
-                        }
-                    }
-                }
-            }
-        }
 
 .. _initial-response:
 
@@ -449,67 +340,20 @@ message.
             output: SubscribeToMessagesOutput
         }
 
+        @input
         structure SubscribeToMessagesInput {
             @httpLabel
             @required
             room: String
         }
 
+        @output
         structure SubscribeToMessagesOutput {
             @httpHeader("X-Connection-Lifetime")
             connectionLifetime: Integer,
 
             @httpPayload
             messages: MessageStream,
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#PublishMessages": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#PublishMessagesInput"
-                    },
-                    "traits": {
-                        "smithy.api#http": {
-                            "uri": "/messages/{room}",
-                            "method": "POST"
-                        }
-                    }
-                },
-                "smithy.example#SubscribeToMessagesInput": {
-                    "type": "structure",
-                    "members": {
-                        "room": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#httpLabel:": {},
-                                "smithy.api#required": {}
-                            }
-                        }
-                    }
-                },
-                "smithy.example#SubscribeToMessagesOutput": {
-                    "type": "structure",
-                    "members": {
-                        "connectionLifetime": {
-                            "target": "smithy.api#Integer",
-                            "traits": {
-                                "smithy.api#httpHeader:": "X-Connection-Lifetime"
-                            }
-                        },
-                        "messages": {
-                            "target": "smithy.example#MessageStream",
-                            "traits": {
-                                "smithy.api#httpPayload": {}
-                            }
-                        }
-                    }
-                }
-            }
         }
 
 Initial message client and server behavior
@@ -546,9 +390,14 @@ on the name of an event. For example, given the following event stream:
     namespace smithy.example
 
     operation SubscribeToEvents {
+        input: SubscribeToEventsInput,
         output: SubscribeToEventsOutput
     }
 
+    @input
+    structure SubscribeToEventsInput {}
+
+    @output
     structure SubscribeToEventsOutput {
         events: Events,
     }

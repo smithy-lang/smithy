@@ -30,6 +30,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.InputTrait;
 import software.amazon.smithy.model.traits.OutputTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
 
@@ -37,8 +38,16 @@ import software.amazon.smithy.model.validation.ValidationUtils;
  * Detects when a structure marked with the input trait or output
  * trait is used in other contexts than input or output or reused
  * by multiple operations.
+ *
+ * <p>{@code OperationInputOutputName} is emitted as a WARNING when the
+ * input or output shape name does not start with the name of the
+ * operation that targets it (if any). This event ID is intentionally
+ * different from {@code OperationInputOutput} to allow it to be suppressed
+ * separately from the ERROR events emitted from {@code OperationInputOutput}.
  */
 public final class OperationInputOutputValidator extends AbstractValidator {
+
+    private static final String OPERATION_INPUT_OUTPUT_NAME = "OperationInputOutputName";
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -94,9 +103,14 @@ public final class OperationInputOutputValidator extends AbstractValidator {
     }
 
     private ValidationEvent emitBadInputOutputName(Shape operation, String property, ShapeId target) {
-        return error(operation, String.format(
+        return ValidationEvent.builder()
+                .severity(Severity.WARNING)
+                .shape(operation)
+                .id(OPERATION_INPUT_OUTPUT_NAME)
+                .message(String.format(
                         "The %s of this operation should target a shape that starts with the operation's name, '%s', "
-                        + "but the targeted shape is `%s`", property, operation.getId().getName(), target));
+                        + "but the targeted shape is `%s`", property, operation.getId().getName(), target))
+                .build();
     }
 
     private ValidationEvent emitMultipleUses(Shape shape, String descriptor, Set<ShapeId> operations) {

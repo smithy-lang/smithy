@@ -332,12 +332,14 @@ topic using an :ref:`event stream <event-streams>`:
             output: SubscribeForEventsOutput
         }
 
+        @input
         structure SubscribeForEventsInput {
             @required
             @topicLabel
             id: String,
         }
 
+        @output
         structure SubscribeForEventsOutput {
             events: EventStream,
         }
@@ -349,62 +351,6 @@ topic using an :ref:`event stream <event-streams>`:
 
         structure Event {
             message: String,
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#SubscribeForEvents": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#SubscribeForEventsInput"
-                    },
-                    "traits": {
-                        "smithy.mqtt#subscribe": "events/{id}"
-                    }
-                },
-                "smithy.example#SubscribeForEventsInput": {
-                    "type": "structure",
-                    "members": {
-                        "id": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#required": {},
-                                "smithy.mqtt#topicLabel": {}
-                            }
-                        }
-                    }
-                },
-                "smithy.example#SubscribeForEventsOutput": {
-                    "type": "structure",
-                    "members": {
-                        "events": {
-                            "target": "smithy.example#EventStream"
-                        }
-                    }
-                },
-                "smithy.example#EventStream": {
-                    "type": "union",
-                    "members": {
-                        "message": {
-                            "target": "smithy.example#Event"
-                        }
-                    },
-                    "traits" {
-                        "smithy.api#streaming": {}
-                    }
-                },
-                "smithy.example#Event": {
-                    "type": "structure",
-                    "members": {
-                        "message": {
-                            "target": "smithy.api#String"
-                        }
-                    }
-                }
-            }
         }
 
 Subscribe validation

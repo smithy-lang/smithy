@@ -1268,8 +1268,12 @@ the conflicting shapes.
         }
 
         operation GetSomething {
-            output: GetSomethingOutput,
+            input: GetSomethingInput,
+            output: GetSomethingOutput
         }
+
+        @input
+        structure GetSomethingInput {}
 
         @output
         structure GetSomethingOutput {
@@ -1278,49 +1282,6 @@ the conflicting shapes.
         }
 
         structure Widget {}
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyService": {
-                    "type": "service",
-                    "version": "2017-02-11",
-                    "operations": [
-                        {
-                            "target": "smithy.example#GetSomething"
-                        }
-                    ],
-                    "rename": {
-                        "foo.example#Widget": "FooWidget"
-                    }
-                },
-                "smithy.example#GetSomething": {
-                    "type": "operation",
-                    "output": {
-                        "target": "smithy.example#GetSomethingOutput"
-                    }
-                },
-                "smithy.example#GetSomethingOutput": {
-                    "type": "structure",
-                    "members": {
-                        "widget1": {
-                            "target": "smithy.example#Widget"
-                        },
-                        "fooWidget": {
-                            "target": "foo.example#Widget"
-                        }
-                    },
-                    "traits": {
-                        "smithy.api#output" true
-                    }
-                },
-                "smithy.example#Widget": {
-                    "type": "structure"
-                }
-            }
-        }
 
 .. rubric:: Resources and operations can be bound once
 
@@ -1351,18 +1312,18 @@ An operation supports the following members:
       - Description
     * - input
       - ``string``
-      - The optional input ``structure`` of the operation. The value MUST be
-        a valid :ref:`shape ID <shape-id>` that targets a
-        :ref:`structure <structure>` shape. The targeted shape SHOULD be
-        marked with the :ref:`input-trait` and MUST NOT be marked with the
-        :ref:`error-trait`.
+      - The optional input ``structure`` of the operation. Every operation
+        SHOULD define a dedicated input structure shape marked with the
+        :ref:`input-trait`. The targeted shape MUST be a valid
+        :ref:`shape ID <shape-id>` that targets a :ref:`structure <structure>`
+        shape.
     * - output
       - ``string``
-      - The optional output ``structure`` of the operation. The value MUST
-        be a valid :ref:`shape ID <shape-id>` that targets a
-        :ref:`structure <structure>` shape. The targeted shape SHOULD be
-        marked with the :ref:`output-trait` and MUST NOT be marked with the
-        :ref:`error-trait`.
+      - The optional output ``structure`` of the operation. Every operation
+        SHOULD define a dedicated output structure shape marked with the
+        :ref:`output-trait`. The targeted shape MUST be a valid
+        :ref:`shape ID <shape-id>` that targets a :ref:`structure <structure>`
+        shape.
     * - errors
       - [``string``]
       - Defines the error ``structure``\s that an operation can return using
@@ -1374,42 +1335,21 @@ structure named ``Input``, returns an output structure named ``Output``, and
 can potentially return the ``NotFound`` or ``BadRequest``
 :ref:`error structures <error-trait>`.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    namespace smithy.example
 
-        namespace smithy.example
+    operation MyOperation {
+        input: MyOperationInput,
+        output: MyOperationOutput,
+        errors: [NotFound, BadRequest]
+    }
 
-        operation MyOperation {
-            input: Input,
-            output: Output,
-            errors: [NotFound, BadRequest]
-        }
+    @input
+    structure MyOperationInput {}
 
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyOperation": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#Input"
-                    },
-                    "output": {
-                        "target": "smithy.example#Output"
-                    },
-                    "errors": [
-                        {
-                            "target": "smithy.example#NotFound"
-                        },
-                        {
-                            "target": "smithy.example#BadRequest"
-                        }
-                    ]
-                }
-            }
-        }
+    @output
+    structure MyOperationOutput {}
 
 
 ..  _resource:
@@ -1765,67 +1705,16 @@ For example, given the following model,
             output: GetForecastOutput
         }
 
+        @input
         structure GetForecastInput {
             @required
             forecastId: ForecastId,
         }
 
+        @output
         structure GetForecastOutput {
             @required
             weather: WeatherData,
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#Forecast": {
-                    "type": "resource",
-                    "identifiers": {
-                        "forecastId": {
-                            "target": "smithy.example#ForecastId"
-                        }
-                    },
-                    "read": {
-                        "target": "smithy.example#GetForecast"
-                    }
-                },
-                "smithy.example#GetForecast": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#GetForecastInput"
-                    },
-                    "output": {
-                        "target": "smithy.example#GetForecastOutput"
-                    },
-                    "traits": {
-                        "smithy.api#readonly": {}
-                    }
-                },
-                "smithy.example#GetForecastInput": {
-                    "type": "structure",
-                    "members": {
-                        "forecastId": {
-                            "target": "smithy.example#ForecastId",
-                            "traits": {
-                                "smithy.api#required": {}
-                            }
-                        }
-                    }
-                },
-                "smithy.example#GetForecastOutput": {
-                    "type": "structure",
-                    "members": {
-                        "weather": {
-                            "target": "smithy.example#WeatherData",
-                            "traits": {
-                                "smithy.api#required": {}
-                            }
-                        }
-                    }
-                }
-            }
         }
 
 ``GetForecast`` forms a valid instance operation because the operation is
@@ -1855,50 +1744,10 @@ Given the following model,
             output: BatchPutForecastsOutput
         }
 
+        @input
         structure BatchPutForecastsInput {
             @required
             forecasts: BatchPutForecastList,
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#Forecast": {
-                    "type": "resource",
-                    "identifiers": {
-                        "forecastId": {
-                            "target": "smithy.example#ForecastId"
-                        }
-                    },
-                    "collectionOperations": [
-                        {
-                            "target": "smithy.example#BatchPutForecasts"
-                        }
-                    ]
-                },
-                "smithy.example#BatchPutForecasts": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#BatchPutForecastsInput"
-                    },
-                    "output": {
-                        "target": "smithy.example#BatchPutForecastsOutput"
-                    }
-                },
-                "smithy.example#BatchPutForecastsInput": {
-                    "type": "structure",
-                    "members": {
-                        "forecasts": {
-                            "target": "smithy.example#BatchPutForecastList",
-                            "traits": {
-                                "smithy.api#required": {}
-                            }
-                        }
-                    }
-                }
-            }
         }
 
 ``BatchPutForecasts`` forms a valid collection operation with implicit
@@ -1939,6 +1788,7 @@ For example, given the following,
         output: GetHistoricalForecastOutput
     }
 
+    @input
     structure GetHistoricalForecastInput {
         @required
         @resourceIdentifier("forecastId")
@@ -2009,6 +1859,7 @@ The following example defines the ``PutForecast`` operation.
         output: PutForecastOutput
     }
 
+    @input
     structure PutForecastInput {
         // The client provides the resource identifier.
         @required
@@ -2056,6 +1907,7 @@ The following example defines the ``CreateForecast`` operation.
         output: CreateForecastOutput
     }
 
+    @input
     structure CreateForecastInput {
         // No identifier is provided by the client, so the service is
         // responsible for providing the identifier of the resource.
@@ -2085,6 +1937,7 @@ For example:
         errors: [ResourceNotFound]
     }
 
+    @input
     structure GetForecastInput {
         @required
         forecastId: ForecastId,
@@ -2112,6 +1965,7 @@ For example:
         errors: [ResourceNotFound]
     }
 
+    @input
     structure UpdateForecastInput {
         @required
         forecastId: ForecastId,
@@ -2142,6 +1996,7 @@ For example:
         errors: [ResourceNotFound]
     }
 
+    @input
     structure DeleteForecastInput {
         @required
         forecastId: ForecastId,
@@ -2172,11 +2027,13 @@ For example:
         output: ListForecastsOutput
     }
 
+    @input
     structure ListForecastsInput {
         maxResults: Integer,
         nextToken: String
     }
 
+    @output
     structure ListForecastsOutput {
         nextToken: String,
         @required

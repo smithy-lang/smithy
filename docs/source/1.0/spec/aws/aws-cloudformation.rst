@@ -193,12 +193,14 @@ The following example defines a CloudFormation resource that excludes the
             output: GetFooResponse,
         }
 
+        @input
         structure GetFooRequest {
             @httpLabel
             @required
             fooId: String,
         }
 
+        @output
         structure GetFooResponse {
             fooId: String,
 
@@ -254,6 +256,7 @@ Given the following model without mutability traits applied,
             output: CreateFooResponse,
         }
 
+        @input
         structure CreateFooRequest {
             createProperty: ComplexProperty,
             mutableProperty: ComplexProperty,
@@ -261,6 +264,7 @@ Given the following model without mutability traits applied,
             createWriteProperty: ComplexProperty,
         }
 
+        @output
         structure CreateFooResponse {
             fooId: String,
         }
@@ -271,11 +275,13 @@ Given the following model without mutability traits applied,
             output: GetFooResponse,
         }
 
+        @input
         structure GetFooRequest {
             @required
             fooId: String,
         }
 
+        @output
         structure GetFooResponse {
             fooId: String,
             createProperty: ComplexProperty,
@@ -288,6 +294,7 @@ Given the following model without mutability traits applied,
             input: UpdateFooRequest,
         }
 
+        @input
         structure UpdateFooRequest {
             @required
             fooId: String,
@@ -412,11 +419,13 @@ and ``barProperty`` properties as fully mutable:
             output: CreateFooResponse,
         }
 
+        @input
         structure CreateFooRequest {
             @cfnMutability("full")
             tags: TagList,
         }
 
+        @output
         structure CreateFooResponse {
             fooId: String,
         }
@@ -478,11 +487,13 @@ The following example defines a CloudFormation resource that marks the
             output: GetFooResponse,
         }
 
+        @input
         structure GetFooRequest {
             @required
             fooId: String
         }
 
+        @output
         structure GetFooResponse {
             @cfnMutability("read")
             updatedAt: Timestamp,
@@ -519,11 +530,13 @@ derivable ``secret`` and ``password`` properties as write only:
             output: CreateFooResponse,
         }
 
+        @input
         structure CreateFooRequest {
             @cfnMutability("write")
             secret: String,
         }
 
+        @output
         structure CreateFooResponse {
             fooId: String,
         }
@@ -634,6 +647,7 @@ The following example defines a CloudFormation resource that has the
             input: GetFooRequest,
         }
 
+        @input
         structure GetFooRequest {
             @required
             fooId: String,
@@ -681,6 +695,7 @@ Given the following model,
             output: CreateFooResponse,
         }
 
+        @input
         structure CreateFooRequest {
             @cfnMutability("full")
             tags: TagList,
@@ -696,6 +711,7 @@ Given the following model,
             createWriteProperty: ComplexProperty,
         }
 
+        @output
         structure CreateFooResponse {
             fooId: String,
         }
@@ -707,6 +723,7 @@ Given the following model,
             output: GetFooResponse,
         }
 
+        @input
         structure GetFooRequest {
             @httpLabel
             @required
@@ -717,6 +734,7 @@ Given the following model,
             fooAlias: String,
         }
 
+        @output
         structure GetFooResponse {
             fooId: String,
 
@@ -739,6 +757,7 @@ Given the following model,
             input: UpdateFooRequest,
         }
 
+        @input
         structure UpdateFooRequest {
             @httpLabel
             @required

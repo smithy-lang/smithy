@@ -379,6 +379,7 @@ Conflicts with
 
     .. code-tab:: smithy
 
+        @input
         structure PutContentsInput {
             @required
             contents: String,

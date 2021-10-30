@@ -635,11 +635,13 @@ triggered if the ``status`` property equals ``failed``.
         output: GetThingOutput,
     }
 
+    @input
     structure GetThingInput {
         @required
         name: String,
     }
 
+    @output
     structure GetThingOutput {
         status: String
     }
