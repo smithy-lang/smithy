@@ -50,6 +50,20 @@ than what is trivially generated. Therefore, requiring users to write it out
 is effectively pointless boilerplate. In AWS models, for instance, over 98% of
 operation input/output structures are named by suffixing the operation name.
 
+#### Custom Suffixes
+
+A service team that wants to migrate to using inlined structures may have
+already been using a different set of suffixes, such as `Request` and
+`Response`. To remain consistent, they can use control statements to customize
+their suffixes on a per-file basis.
+
+`operationInputSuffix` controls the suffix for the input, and
+`operationOutputSuffix` controls the suffix for the output.
+
+Service teams that use these customizations SHOULD write linters to ensure that
+all of the operations in a given service conform to their expected naming
+convention.
+
 ### Examples
 
 ```
@@ -143,6 +157,24 @@ operation_errors =
     "errors" ws ":" ws "[" *(ws shape_id) ws "]"
 ```
 
+The following demonstrate customizing the suffixes.
+
+```
+$version: "2.0"
+$operationInputSuffix: "Request"
+$operationOutputSuffix: "Response"
+
+namespace com.example
+
+operation MyOperation {
+    // Generated name is: MyOperationRequest
+    input := {}
+
+    // Generated name is: MyOperationResponse
+    output := {}
+}
+```
+
 ## FAQ
 
 ### Can apply be used on inlined inputs/outputs?
@@ -194,14 +226,3 @@ identifiers. When defining a resource, you could use this syntax to define a
 structure that contains only the resource identifiers. This could be mixed in
 to other shapes in the model. This usage, while interesting, is out of scope
 for this document.
-
-### Can the suffix be customized?
-
-No. There’s not enough utility to justify it. The only case where it could be
-justified is in a migration so things can be kept consistent. If we were to
-allow customization, it would complicate parsing quite a bit. For instance, if
-we were to have metadata-based configuration, how would we handle the fact that
-metadata is global? An imported IDL file could have all its inlined structures
-accidentally renamed without intent. On the other side, if we implemented a way
-to only use the metadata from a single file, then users would have to add that
-configuration to every single file and hope they never miss one.
