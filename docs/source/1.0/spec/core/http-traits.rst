@@ -199,7 +199,6 @@ capture path segments.
 Labels MUST adhere to the following constraints:
 
 #. Labels MUST NOT appear in the query string.
-#. Labels MUST NOT appear in the fragment (e.g. "/foo#{bar}" is invalid).
 #. Each label MUST span an entire path segment (e.g., "/{foo}/bar" is valid,
    and "/{foo}bar" is invalid).
 
