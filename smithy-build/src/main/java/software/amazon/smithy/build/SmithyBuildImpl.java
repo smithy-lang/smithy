@@ -18,6 +18,7 @@ package software.amazon.smithy.build;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -38,6 +39,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import software.amazon.smithy.build.model.ProjectionConfig;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.build.model.TransformConfig;
@@ -304,9 +306,13 @@ final class SmithyBuildImpl {
         // Don't do another round of validation and transforms if there are no transforms.
         // This is the case on the source projection, for example.
         if (!projection.getTransforms().isEmpty()) {
+            LOGGER.fine(() -> String.format("Applying transforms to projection %s: %s", projectionName,
+                    projection.getTransforms().stream().map(TransformConfig::getName).collect(Collectors.toList())));
             projectedModel = applyProjectionTransforms(
                     baseModel, resolvedModel, projectionName, Collections.emptySet());
             modelResult = modelAssemblerSupplier.get().addModel(projectedModel).assemble();
+        } else {
+            LOGGER.fine(() -> String.format("No transforms to apply for projection %s", projectionName));
         }
 
         ProjectionResult.Builder resultBuilder = ProjectionResult.builder()
@@ -343,7 +349,8 @@ final class SmithyBuildImpl {
                     .settings(transformerBinding.left)
                     .build();
             currentModel = transformerBinding.right.transform(context);
-            currentModel = applyQueuedProjections(context, currentModel, visited);
+            Collection<String> queuedProjections = transformerBinding.right.getAdditionalProjections(context);
+            currentModel = applyQueuedProjections(queuedProjections, context, currentModel, visited);
         }
 
         return currentModel;
@@ -425,8 +432,12 @@ final class SmithyBuildImpl {
         return resolved;
     }
 
-    private Model applyQueuedProjections(TransformContext context, Model currentModel, Set<String> visited) {
-        for (String projectionTarget : context.getQueuedProjections()) {
+    private Model applyQueuedProjections(Collection<String> queuedProjections,
+                                         TransformContext context,
+                                         Model currentModel,
+                                         Set<String> visited) {
+        LOGGER.fine(() -> String.format("Applying queued projections: %s", queuedProjections));
+        for (String projectionTarget : queuedProjections) {
             Set<String> updatedVisited = new LinkedHashSet<>(visited);
             if (context.getProjectionName().equals(projectionTarget)) {
                 throw new SmithyBuildException("Cannot recursively apply the same projection: " + projectionTarget);

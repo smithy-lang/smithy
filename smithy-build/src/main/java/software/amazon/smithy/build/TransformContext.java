@@ -17,7 +17,6 @@ package software.amazon.smithy.build;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -46,7 +45,6 @@ public final class TransformContext implements ToSmithyBuilder<TransformContext>
     private final Set<Path> sources;
     private final String projectionName;
     private final ModelTransformer transformer;
-    private final List<String> queuedProjections = new ArrayList<>();
     private final List<ValidationEvent> originalModelValidationEvents;
 
     private TransformContext(Builder builder) {
@@ -75,7 +73,6 @@ public final class TransformContext implements ToSmithyBuilder<TransformContext>
                 .sources(sources)
                 .projectionName(projectionName)
                 .transformer(transformer)
-                .queuedProjections(queuedProjections)
                 .originalModelValidationEvents(originalModelValidationEvents);
     }
 
@@ -143,33 +140,6 @@ public final class TransformContext implements ToSmithyBuilder<TransformContext>
     }
 
     /**
-     * Gets the queue of projections that need to be applied.
-     *
-     * <p>This queue can be added to from transformers to invoke
-     * other projections. It's used by the apply transform, but is
-     * generic enough to be used by other transforms.
-     *
-     * @return Returns the queue of projections to apply.
-     */
-    public Collection<String> getQueuedProjections() {
-        return queuedProjections;
-    }
-
-    /**
-     * Adds a projection to the queue of projections to apply to the
-     * model.
-     *
-     * @param projection Projection to enqueue.
-     */
-    public void enqueueProjection(String projection) {
-        if (projection.equals(getProjectionName())) {
-            throw new SmithyBuildException("Cannot recursively apply the same projection: " + projection);
-        }
-
-        queuedProjections.add(projection);
-    }
-
-    /**
      * Gets an immutable list of {@link ValidationEvent}s that were
      * encountered when loading the source model.
      *
@@ -191,7 +161,6 @@ public final class TransformContext implements ToSmithyBuilder<TransformContext>
         private String projectionName = "source";
         private ModelTransformer transformer;
         private final List<ValidationEvent> originalModelValidationEvents = new ArrayList<>();
-        private final List<String> queuedProjections = new ArrayList<>();
 
         private Builder() {}
 
@@ -233,12 +202,6 @@ public final class TransformContext implements ToSmithyBuilder<TransformContext>
         public Builder originalModelValidationEvents(List<ValidationEvent> originalModelValidationEvents) {
             this.originalModelValidationEvents.clear();
             this.originalModelValidationEvents.addAll(originalModelValidationEvents);
-            return this;
-        }
-
-        public Builder queuedProjections(Collection<String> queuedProjections) {
-            this.queuedProjections.clear();
-            this.queuedProjections.addAll(queuedProjections);
             return this;
         }
     }
