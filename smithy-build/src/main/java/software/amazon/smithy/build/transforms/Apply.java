@@ -16,8 +16,11 @@
 package software.amazon.smithy.build.transforms;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.function.BiFunction;
 import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Applies transforms of other projections.
@@ -64,12 +67,21 @@ public final class Apply extends BackwardCompatHelper<Apply.Config> {
         return "projections";
     }
 
+    // Override this directly as apply will never transform the model,
+    // so there's no reason to even deserialize the configuration for this
     @Override
-    protected Model transformWithConfig(TransformContext context, Config config) {
-        for (String projection : config.getProjections()) {
-            context.enqueueProjection(projection);
-        }
-
+    public Model transform(TransformContext context) {
         return context.getModel();
     }
+
+    @Override
+    protected Model transformWithConfig(TransformContext context, Config config) {
+        throw new UnsupportedOperationException("transform(TransformContext) should be called directly.");
+    }
+
+    @Override
+    protected Optional<BiFunction<TransformContext, Config, List<String>>> getAdditionalProjectionsFunction() {
+        return Optional.of((context, config) -> ListUtils.copyOf(config.getProjections()));
+    }
+
 }
