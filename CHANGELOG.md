@@ -1,5 +1,15 @@
 # Smithy Changelog
 
+## 1.13.1 (2021-11-02)
+
+### Bug Fixes
+
+* Fixed a bug that caused the `apply` transform to not run its projections. ([#969](https://github.com/awslabs/smithy/pull/969))
+
+### Documentation
+
+* Clarified uri label and greedy label documentation. ([#965](https://github.com/awslabs/smithy/pull/965), [#968](https://github.com/awslabs/smithy/pull/968))
+
 ## 1.13.0 (2021-10-29)
 
 ### Features
