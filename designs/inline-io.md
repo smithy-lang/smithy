@@ -115,25 +115,19 @@ operation GetUser {
 
 ```
 operation_statement =
-    "operation" ws identifier ws "{" *operation_body ws "}"
+    "operation" ws identifier ws inlineable_properties
 
-operation_body =
-    operation_input / operation_output / operation_errors
+inlineable_properties =
+    "{" *(inlineable_property ws) ws "}"
 
-operation_input =
-    "input" ws (io_reference / inline_structure)
-
-operation_output =
-    "output" ws (io_reference / inline_structure)
-
-io_reference =
-    ":" ws shape_id ws
+inlineable_property =
+    node_object_kvp / inline_structure
 
 inline_structure =
-    ":=" ws trait_statements [identifier] [mixins ws] "{" shape_members "}"
+    node_object_key ws ":=" ws inline_structure_value
 
-operation_errors =
-    "errors" ws ":" ws "[" *(ws shape_id) ws "]"
+inline_structure_value =
+    trait_statements [mixins ws] shape_members
 ```
 
 The following demonstrate customizing the suffixes.
