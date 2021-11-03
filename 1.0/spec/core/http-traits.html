@@ -264,7 +264,6 @@ capture path segments.</p>
 <p>Labels MUST adhere to the following constraints:</p>
 <ol class="arabic simple">
 <li>Labels MUST NOT appear in the query string.</li>
-<li>Labels MUST NOT appear in the fragment (e.g. &quot;/foo#{bar}&quot; is invalid).</li>
 <li>Each label MUST span an entire path segment (e.g., &quot;/{foo}/bar&quot; is valid,
 and &quot;/{foo}bar&quot; is invalid).</li>
 </ol>
@@ -491,7 +490,8 @@ Greedy labels MUST be bound to a string shape.</p>
 <p>Greedy matching can be used to capture the whole URI to a label, which results
 in every request for a particular HTTP method being captured. For example, this
 can be modeled with a pattern of <code class="docutils literal notranslate"><span class="pre">/{label+}</span></code>.</p>
-<p>Segments in the middle of a URI can be captured using greedy labels. Given a
+<p>Segments in the middle of a URI can be captured using greedy labels. Greedy
+labels match greedily: they will match the longest possible string. Given a
 pattern of <code class="docutils literal notranslate"><span class="pre">/prefix/{label+}/suffix</span></code> and an endpoint of <code class="docutils literal notranslate"><span class="pre">https://yourhost</span></code>:</p>
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
@@ -524,6 +524,11 @@ matches literal &quot;/suffix&quot;.</td>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">http://yourhost/foo/bar/suffix</span></code></td>
 <td>No</td>
 <td>Does not match the literal &quot;/prefix&quot;.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">http://yourhost/prefix/foo/suffix/bar/suffix</span></code></td>
+<td>Yes</td>
+<td>Matches literal &quot;/prefix&quot;, captures &quot;foo/suffix/bar&quot; in greedy
+<code class="docutils literal notranslate"><span class="pre">label</span></code>, and matches literal &quot;/suffix&quot;.</td>
 </tr>
 </tbody>
 </table>
