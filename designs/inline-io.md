@@ -18,14 +18,15 @@ need.
 Operations will allow inlining input and output definitions, indicated by a
 walrus operator (`:=`). Inlined structures will deviate from normal
 structure definitions in two respects. Firstly, the structure keyword will be
-omitted. Additionally, providing a name for the inlined shape will be optional.
+omitted. Additionally, the names of the structures will be generated.
 
 ### Walrus Operator
 
 Rather than using the same standalone colon (`:`) that is used in other
 cases, a walrus operator will be used to indicate an inline definition. The
 reason for this is to visually distinguish it at the outset, as well as to make
-tooling a bit cleaner to write.
+parsers simpler because the walrus operator removes the need for arbitrary
+lookahead.
 
 This usage of the operator is analogous to how some programming languages use
 it. For instance, Python uses it to assign a name to the result of an
@@ -38,14 +39,14 @@ When used at the top level of a Smithy IDL file, the type keywords are
 necessary to indicate what type of shape you’re making. Since operation
 inputs and outputs may only be structures, this isn’t necessary.
 
-### Default Names
+### Generated Names
 
 Inlined structures will have names generated for them if they aren’t
-provided. For inputs, the default name will be the name of the operation with
-an Input suffix. For outputs, the default name will be the name of the
-operation with an Output suffix.
+provided. For inputs, the generated name will be the name of the operation with
+an `Input` suffix. For outputs, the default name will be the name of the
+operation with an `Output` suffix.
 
-The reason for providing a default name is that there’s rarely a better name
+The reason for generating a name is that there’s rarely a better name
 than what is trivially generated. Therefore, requiring users to write it out
 is effectively pointless boilerplate. In AWS models, for instance, over 98% of
 operation input/output structures are named by suffixing the operation name.
@@ -68,39 +69,19 @@ convention.
 
 ```
 operation GetUser {
-    // This uses the derived name: GetUserInput
     input := {
         userId: String
     }
 
-    // This uses an explicit name.
-    output := GetUserOutput {
+    output := {
         username: String
         userId: String
     }
 }
 
-// Inlined inputs/outputs with explicit names and traits. Only 20% of current
-// operation inputs / outputs use any traits, which mostly consists of
+// Inlined inputs/outputs with traits. Only 20% of current operation
+// inputs/outputs in AWS services use any traits, which mostly consists of
 // documentation.
-operation GetUser {
-    input :=
-        @references([{resource: User}])
-        GetUserRequest {
-            userId: String
-        }
-
-    output :=
-        @sensitive
-        @references([{resource: User}])
-        GetUserResponse {
-            username: String
-            userId: String
-        }
-}
-
-
-// Inlined input/outputs with implicit names and traits.
 operation GetUser {
     input :=
         /// Documentation is currently the most popular trait on IO shapes. That
@@ -122,10 +103,8 @@ operation GetUser {
 
 // Inlined inputs/outputs with mixins.
 operation GetUser {
-    // Inlined io with mixins and explicit name.
-    input := GetUserRequest with BaseUser {}
+    input := with BaseUser {}
 
-    // Inlined io with mixins and derived name.
     output := with BaseUser {
         username: String
     }
@@ -226,3 +205,13 @@ identifiers. When defining a resource, you could use this syntax to define a
 structure that contains only the resource identifiers. This could be mixed in
 to other shapes in the model. This usage, while interesting, is out of scope
 for this document.
+
+### Why can't explicit names be optionally provided?
+
+Allowing optional names would complicate the parser by requiring additional
+lookahead to disambiguate between a structure named with and the use of a
+with statement. With the ability to customize the generated suffix, the
+only reason to provide an overridden name is in the rare case where the
+structure isn't already using the operation name as a prefix. Since fewer
+than 2% of all AWS services deviate from this pattern, it's an acceptable
+tradeoff to require those cases to separately define their shapes.
