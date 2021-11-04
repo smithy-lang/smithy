@@ -45,7 +45,7 @@ public final class RequiredMapper implements CfnMapper {
         StructureShape resourceStructure = context.getResourceStructure();
         for (MemberShape member : resourceStructure.members()) {
             if (member.getMemberTrait(model, RequiredTrait.class).isPresent()) {
-                resourceSchema.addRequired(context.getPropertyPointer(member.getMemberName()));
+                resourceSchema.addRequired(context.getJsonSchemaConverter().toPropertyName(member));
             }
         }
     }

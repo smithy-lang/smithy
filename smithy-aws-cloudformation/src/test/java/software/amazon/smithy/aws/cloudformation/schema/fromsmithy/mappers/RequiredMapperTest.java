@@ -46,7 +46,7 @@ public class RequiredMapperTest {
                 .convertToNodes(model)
                 .get("Smithy::TestService::FooResource");
 
-        Assertions.assertEquals(ListUtils.of("/properties/FooRequiredProperty"),
+        Assertions.assertEquals(ListUtils.of("FooRequiredProperty"),
                 resourceNode.expectArrayMember("required")
                         .getElementsAs(StringNode::getValue));
     }
