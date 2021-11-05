@@ -1,25 +1,8 @@
-[WARNING] ns.foo#ValidOperation1: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
-[WARNING] ns.foo#ValidOperation2: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
-[WARNING] ns.foo#ValidOperation3: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
-[WARNING] ns.foo#ValidOperation4: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
-[WARNING] ns.foo#ValidOperation5: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
-[WARNING] ns.foo#ValidOperation6: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
-[WARNING] ns.foo#ValidOperation7: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
-[WARNING] ns.foo#InvalidOperation1: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
-[WARNING] ns.foo#InvalidOperation2: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
-[WARNING] ns.foo#InvalidOperation3: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
-[WARNING] ns.foo#InvalidOperation4: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
-[WARNING] ns.foo#InvalidOperation5: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
-[WARNING] ns.foo#TraitOnInput: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
-[WARNING] ns.foo#OperationWithConflictingHeader: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
-[WARNING] ns.foo#OperationWithConflictingPrefixHeaders: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
-[ERROR] ns.foo#InvalidOperation1: For operation `InvalidOperation1`, input member name `ChecksumAlgorithm` modeled with `requestAlgorithmMember` property  of httpChecksum trait must be an enum shape. | HttpChecksumTrait
-[ERROR] ns.foo#InvalidOperation2: For operation `InvalidOperation2`, input member name `ChecksumMode` modeled with `requestValidationModeMember` property  of httpChecksum trait must be an enum shape. | HttpChecksumTrait
-[ERROR] ns.foo#InvalidOperation3: For operation `InvalidOperation3`, the `httpChecksum` trait must model `responseAlgorithms` property with at least one algorithm to support response checksum behavior. | HttpChecksumTrait
-[ERROR] ns.foo#InvalidOperation4: The `httpChecksum` trait must define at least one of the `request` or `response` checksum behavior | HttpChecksumTrait
-[ERROR] ns.foo#InvalidOperation5: For operation `InvalidOperation5`, the `httpChecksum` trait must model `requestValidationModeMember` property to support response checksum behavior. | HttpChecksumTrait
-[ERROR] ns.foo#TraitOnInput: Trait `aws.protocols#httpChecksum` cannot be applied to `ns.foo#TraitOnInput`. This trait may only be applied to shapes that match the following selector: operation | TraitTarget
-[WARNING] ns.foo#OperationWithConflictingHeader: The `httpHeader` binding of `x-amz-checksum-id` on `InputWithConflictingHeader` starts with the prefix `x-amz-checksum-` used by the `httpChecksum` trait. | HttpChecksumTrait
-[WARNING] ns.foo#OperationWithConflictingHeader: The `httpHeader` binding of `x-amz-checksum-id` on `OutputWithConflictingHeader` starts with the prefix `x-amz-checksum-` used by the `httpChecksum` trait. | HttpChecksumTrait
-[DANGER] ns.foo#OperationWithConflictingPrefixHeaders: The `httpPrefixHeaders` binding of `InputWithConflictingPrefixHeaders` uses prefix `x-amz-checksum-` that conflicts prefix `x-amz-checksum-` used by the `httpChecksum` trait. | HttpChecksumTrait
-[DANGER] ns.foo#OperationWithConflictingPrefixHeaders: The `httpPrefixHeaders` binding of `OutputWithConflictingPrefixHeaders` uses prefix `x-amz-checksum-` that conflicts prefix `x-amz-checksum-` used by the `httpChecksum` trait. | HttpChecksumTrait
+[SUPPRESSED] smithy.example#NoBehavior: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
+[SUPPRESSED] smithy.example#NoInput: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
+[SUPPRESSED] smithy.example#NoModeForResponse: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
+[SUPPRESSED] smithy.example#NoOutputForResponse: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
+[ERROR] smithy.example#NoBehavior: The `httpChecksum` trait must define at least one of the `request` or `response` checksum behaviors. | HttpChecksumTrait
+[ERROR] smithy.example#NoInput: Trait `aws.protocols#httpChecksum` cannot be applied to `smithy.example#NoInput`. This trait may only be applied to shapes that match the following selector: operation :test(-[input]->) | TraitTarget
+[ERROR] smithy.example#NoModeForResponse: The `httpChecksum` trait must model the `requestValidationModeMember` property to support response checksum behavior. | HttpChecksumTrait
+[ERROR] smithy.example#NoOutputForResponse: The `httpChecksum` trait defines `response` checksum behavior but the operation does not have output. | HttpChecksumTrait

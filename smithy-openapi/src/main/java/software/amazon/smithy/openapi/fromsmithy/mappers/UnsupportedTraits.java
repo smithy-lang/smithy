@@ -36,7 +36,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public final class UnsupportedTraits implements OpenApiMapper {
     private static final Logger LOGGER = Logger.getLogger(UnsupportedTraits.class.getName());
-    private static final Set<String> TRAITS = SetUtils.of("endpoint", "hostLabel");
+    private static final Set<String> TRAITS = SetUtils.of("endpoint", "hostLabel", "aws.protocols#httpChecksum");
 
     @Override
     public byte getOrder() {

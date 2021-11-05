@@ -18,7 +18,6 @@ package software.amazon.smithy.aws.traits;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
@@ -33,16 +32,18 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Indicates that an operation supports checksum validation.
- * Defines the checksum behavior for operations HTTP Request and HTTP Response.
  */
 @SmithyUnstableApi
 public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBuilder<HttpChecksumTrait> {
     public static final ShapeId ID = ShapeId.from("aws.protocols#httpChecksum");
+    public static final String CHECKSUM_PREFIX = "x-amz-checksum-";
+    public static final List<String> CHECKSUM_ALGORITHMS = ListUtils.of("crc32c", "crc32", "sha1", "sha256");
+    public static final List<String> VALIDATION_MODES = ListUtils.of("ENABLED");
 
-    private static final String REQUEST_CHECKSUM_REQUIRED = "requestChecksumRequired";
-    private static final String REQUEST_ALGORITHM_MEMBER = "requestAlgorithmMember";
-    private static final String REQUEST_VALIDATION_MODE_MEMBER = "requestValidationModeMember";
-    private static final String RESPONSE_ALGORITHMS = "responseAlgorithms";
+    public static final String REQUEST_CHECKSUM_REQUIRED = "requestChecksumRequired";
+    public static final String REQUEST_ALGORITHM_MEMBER = "requestAlgorithmMember";
+    public static final String REQUEST_VALIDATION_MODE_MEMBER = "requestValidationModeMember";
+    public static final String RESPONSE_ALGORITHMS = "responseAlgorithms";
 
     private final boolean requestChecksumRequired;
     private final String requestAlgorithmMember;
@@ -116,12 +117,11 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
                 .withOptionalMember(REQUEST_VALIDATION_MODE_MEMBER, getRequestValidationModeMember().map(Node::from));
 
         if (isRequestChecksumRequired()) {
-            builder.withMember(REQUEST_CHECKSUM_REQUIRED, Node.from(isRequestChecksumRequired()));
+            builder.withMember(REQUEST_CHECKSUM_REQUIRED, Node.from(true));
         }
 
         if (!getResponseAlgorithms().isEmpty()) {
-            builder.withMember(RESPONSE_ALGORITHMS, getResponseAlgorithms().stream().map(Node::from)
-                    .collect(ArrayNode.collect()));
+            builder.withMember(RESPONSE_ALGORITHMS, Node.fromStrings(getResponseAlgorithms()));
         }
 
         return builder.build();
@@ -138,25 +138,19 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
             Builder builder = builder().sourceLocation(value);
             builder.requestChecksumRequired(objectNode.getBooleanMemberOrDefault(REQUEST_CHECKSUM_REQUIRED));
 
-            Optional<StringNode> requestAlgorithmNode = objectNode.getStringMember(REQUEST_ALGORITHM_MEMBER);
-            if (requestAlgorithmNode.isPresent()) {
-                builder.requestAlgorithmMember(requestAlgorithmNode.get().getValue());
-            }
+            objectNode.getStringMember(REQUEST_ALGORITHM_MEMBER)
+                    .map(StringNode::getValue)
+                    .ifPresent(builder::requestAlgorithmMember);
 
-            Optional<ArrayNode> responseAlgorithmNodes = objectNode.getArrayMember(RESPONSE_ALGORITHMS);
-            if (responseAlgorithmNodes.isPresent()) {
-                List<String> algorithms = responseAlgorithmNodes.get()
-                        .getElementsAs(StringNode::getValue);
-                for (String algorithm : algorithms) {
+            objectNode.getArrayMember(RESPONSE_ALGORITHMS).ifPresent(responseAlgorithmNodes -> {
+                for (String algorithm : responseAlgorithmNodes.getElementsAs(StringNode::getValue)) {
                     builder.addResponseAlgorithm(algorithm);
                 }
-            }
+            });
 
-            Optional<StringNode> requestValidationModeMemberNode = objectNode.getStringMember(
-                    REQUEST_VALIDATION_MODE_MEMBER);
-            if (requestValidationModeMemberNode.isPresent()) {
-                builder.requestValidationModeMember(requestValidationModeMemberNode.get().getValue());
-            }
+            objectNode.getStringMember(REQUEST_VALIDATION_MODE_MEMBER)
+                    .map(StringNode::getValue)
+                    .ifPresent(builder::requestValidationModeMember);
 
             return builder.build();
         }
@@ -167,7 +161,7 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
         private boolean requestChecksumRequired;
 
         private String requestValidationModeMember;
-        private List<String> responseAlgorithms = new ArrayList<>();
+        private final List<String> responseAlgorithms = new ArrayList<>();
 
         private Builder() {}
 
@@ -192,8 +186,8 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
         }
 
         public Builder responseAlgorithms(List<String> algorithms) {
-            clearResponseAlgorithms();
-            algorithms.forEach(this::addResponseAlgorithm);
+            this.responseAlgorithms.clear();
+            this.responseAlgorithms.addAll(algorithms);
             return this;
         }
 
