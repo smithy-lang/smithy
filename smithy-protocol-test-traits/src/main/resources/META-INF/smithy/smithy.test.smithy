@@ -331,7 +331,7 @@ structure HttpMalformedRequestTestCase {
 @private
 structure HttpMalformedRequestDefinition {
 
-    /// The expected serialized HTTP request method.
+    /// The HTTP request method.
     @required
     @length(min: 1)
     method: String,
@@ -358,7 +358,7 @@ structure HttpMalformedRequestDefinition {
     /// percent-encoded, then it MUST appear percent-encoded in this list.
     queryParams: StringList,
 
-    /// Defines a map HTTP headers to include in the request
+    /// Defines a map of HTTP headers to include in the request
     headers: StringMap,
 
     /// The HTTP message body to include in the request

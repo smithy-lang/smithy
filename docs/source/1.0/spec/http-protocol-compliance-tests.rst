@@ -30,6 +30,13 @@ are used to make assertions about client and server protocol implementations.
    Used to define how an HTTP response is serialized given a specific
    protocol, authentication scheme, and set of output or error parameters.
 
+Additionally, it defines one trait specifically for the behavior of server
+protocol implementations.
+
+:ref:`smithy.test#httpMalformedRequestTests <httpMalformedRequestTests-trait>`
+   Used to define how a server rejects a malformed HTTP request given a
+   specific protocol and HTTP message.
+
 Protocol implementation developers use these traits to ensure that their
 implementation is correct. This can be done through code generation of test
 cases or by dynamically loading test cases at runtime. For example, a Java
@@ -670,4 +677,281 @@ that uses :ref:`HTTP binding traits <http-traits>`.
         }
 
 
+.. smithy-trait:: smithy.test#httpMalformedRequestTests
+.. _httpMalformedRequestTests-trait:
+
+-------------------------
+httpMalformedRequestTests
+-------------------------
+
+Summary
+    The ``httpMalformedRequestTests`` trait is used to define how a malformed
+    HTTP request is rejected given a specific protocol and HTTP message.
+    Protocol implementations MUST assert that requests are rejected during
+    request processing.
+
+Trait selector
+    .. code-block:: none
+
+        operation
+Value type
+    ``list`` of ``HttpMalformedRequestTestCase`` structures
+
+The ``httpMalformedRequestTests`` trait is a list of
+``HttpMalformedRequestTestCase`` structures that support the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 25 65
+
+    * - Property
+      - Type
+      - Description
+    * - id
+      - ``string``
+      - **Required**. The identifier of the test case. This identifier can
+        be used by protocol test implementations to filter out unsupported
+        test cases by ID, to generate test case names, etc. The provided
+        ``id`` MUST match Smithy's :token:`smithy:identifier` ABNF. No two
+        ``httpMalformedRequestTests`` test cases can share the same ID.
+    * - protocol
+      - shape ID
+      - **Required**. A shape ID that targets a shape marked with the
+        :ref:`protocolDefinition-trait`. Because Smithy services can support
+        multiple protocols, each test MUST specify which protocol is under
+        test.
+    * - request
+      - :ref:`HttpMalformedRequestDefinition <HttpMalformedRequestDefinition-struct>`
+      - **Required**. A structure that describes the request.
+    * - response
+      - :ref:`HttpMalformedResponseDefinition <HttpMalformedResponseDefinition-struct>`
+      - **Required**. A structure that describes the required response.
+    * - documentation
+      - ``string``
+      - A description of the test and what is being asserted defined in
+        CommonMark_.
+    * - tags
+      - ``[string]``
+      - Attaches a list of tags that allow test cases to be categorized and
+        grouped.
+
+        Using tags to describe types of failures gives implementations control
+        of test execution across different suites of tests. For example, it
+        allows tests to be executed that exercise booleans being converted into
+        numerics, even if there are such tests written for values appearing in
+        paths, query strings, headers, and message bodies across different
+        protocols.
+    * - testParameters
+      - ``map<string, list<string>>``
+      - Optional parameters that are substituted into each member of
+        ``request``, ``response``, as well as the test's ``tags`` and
+        ``documentation``.
+
+        The lists of values for each key must be identical
+        in length. One test permutation is generated for each index the
+        parameter lists. For example, parameters with 5 values for each key
+        will generate 5 tests in total.
+
+        Parameter values are substituted using the conventions described by
+        the documentation for CodeWriter_. They are available as named
+        parameters, and implementations must support both the ``L`` and ``S``
+        formatters.
+
+        .. note::
+
+            If ``testParameters`` is not null or empty, then substitution
+            is performed on every string in ``request`` and ``response``
+            even when there is no substitution requested. This means that
+            explicit `$` characters must be represented as `$$` so as to not be
+            interpreted as substitution expressions by the code generator.
+
+.. _HttpMalformedRequestDefinition-struct:
+
+HttpMalformedRequestDefinition
+==============================
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 25 65
+
+    * - Property
+      - Type
+      - Description
+    * - method
+      - ``string``
+      - **Required**. The HTTP request method.
+    * - uri
+      - ``string``
+      - **Required**. The request-target of the HTTP request, not including
+        the query string (for example, "/foo/bar").
+    * - host
+      - ``string``
+      - The host or endpoint provided as input used to generate the HTTP
+        request (for example, "example.com").
+    * - queryParams
+      - ``list<string>``
+      - A list of the serialized query string parameters to include in the
+        request.
+
+        Each element in the list is a query string key value pair
+        that starts with the query string parameter name optionally
+        followed by "=", optionally followed by the query string
+        parameter value. For example, "foo=bar", "foo=", and "foo"
+        are all valid values.
+
+        .. note::
+
+            This kind of list is used instead of a map so that query string
+            parameter values for lists can be represented using repeated
+            key-value pairs.
+
+        The query string parameter name and the value MUST appear in the
+        format in which it is expected to be sent over the wire; if a key or
+        value needs to be percent-encoded, then it MUST appear
+        percent-encoded in this list.
+    * - headers
+      - ``map<string, string>``
+      - A map of HTTP headers to include in the request. Each key represents a
+        header field name and each value represents the expected header value.
+    * - body
+      - ``string``
+      - The HTTP message body to include in the request. Because the ``body``
+        parameter is a string, binary data MUST be represented in ``body`` by
+        base64 encoding the data (for example, use "Zm9vCg==" and not "foo").
+
+.. _HttpMalformedResponseDefinition-struct:
+
+
+HttpMalformedResponseDefinition
+===============================
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 25 65
+
+    * - Property
+      - Type
+      - Description
+    * - headers
+      - ``map<string, string>``
+      - A map of expected HTTP headers. Each key represents a header field
+        name and each value represents the expected header value. An HTTP
+        response is not in compliance with the protocol if any listed header
+        is missing from the serialized response or if the expected header
+        value differs from the serialized response value.
+
+        ``headers`` applies no constraints on additional headers.
+    * - code
+      - ``integer``
+      - **Required**. The expected HTTP response status code.
+    * - body
+      - :ref:`HttpMalformedResponseBodyDefinition <HttpMalformedResponseBodyDefinition-struct>`
+      - The expected response body.
+
+.. _HttpMalformedResponseBodyDefinition-struct:
+
+
+HttpMalformedResponseBodyDefinition
+-----------------------------------
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 25 65
+
+    * - Property
+      - Type
+      - Description
+    * - assertion
+      - :ref:`HttpMalformedResponseBodyAssertion <HttpMalformedResponseBodyAssertion-union>`
+      - **Required**. The assertion to be applied to the response body.
+    * - mediaType
+      - ``string``
+      - **Required**. The media type of the ``body``. This is used to help test
+        runners to parse and validate the expected data against generated data.
+        Binary media type formats require that the contents of ``body`` are
+        base64 encoded.
+
+.. _HttpMalformedResponseBodyAssertion-union:
+
+HttpMalformedResponseBodyAssertion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A union describing the assertion to run against the response body. As it is a
+union, exactly one member must be set.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 25 65
+
+    * - Property
+      - Type
+      - Description
+    * - contents
+      - ``string``
+      - Defines the expected serialized response body, which will be matched
+        exactly.
+    * - messageRegex
+      - ``string``
+      - A regex to evaluate against the ``message`` field in the response body.
+        For responses that may have some variance from platform to platform,
+        such as those that include messages from a parser.
+
+HTTP malformed request example
+==============================
+
+The following example defines a malformed request test for a JSON protocol
+that uses :ref:`HTTP binding traits <http-traits>`. In this example, the server
+is rejecting many different variants of invalid numerics, and uses
+``testParameters`` to test three different invalid values, and tags each test
+with a descriptive string that allows implementations to run, or skip,
+specific types of malformed values.
+
+.. code:: smithy
+
+    namespace smithy.example
+
+    use smithy.test#httpMalformedRequestTests
+    @http(method: "POST", uri: "/InvertNumber/{numberValue}")
+    @httpMalformedRequestTests([
+        {
+            id: "MalformedLongsInPathsRejected",
+            documentation: """
+            Malformed values in the path should be rejected""",
+            protocol: exampleProtocol,
+            request: {
+                method: "POST",
+                uri: "/InvertNumber/$value:L"
+            },
+            response: {
+                code: 400,
+                headers: {
+                    "errorType": "BadNumeric"
+                },
+                body: {
+                    assertion: {
+                        contents: """
+                        {"errorMessage": "Invalid value \"$value:L\""}"""
+                    },
+                    mediaType: "application/json"
+                }
+
+            },
+            testParameters : {
+                "value" : ["true", "1.001", "2ABC"],
+                "tag" : ["boolean_coercion", "float_truncation", "trailing_chars"]
+            },
+            tags: [ "$tag:L" ]
+        }
+    ])
+    operation InvertNumber {
+        input: InvertNumberInput
+    }
+
+    structure InvertNumberInput {
+        @httpLabel
+        @required
+        numberValue: Long
+    }
+
 .. _CommonMark: https://spec.commonmark.org/
+.. _CodeWriter: https://awslabs.github.io/smithy/javadoc/1.13.1/software/amazon/smithy/utils/CodeWriter.html
