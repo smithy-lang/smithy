@@ -41,10 +41,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
-import software.amazon.smithy.model.traits.HttpChecksumProperty;
-import software.amazon.smithy.model.traits.HttpChecksumProperty.Location;
 import software.amazon.smithy.model.traits.HttpChecksumRequiredTrait;
-import software.amazon.smithy.model.traits.HttpChecksumTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.Trait;
@@ -125,10 +122,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         bindingIndex.determineRequestContentType(operationShape, documentMediaType)
                 .ifPresent(c -> headers.addAll(ProtocolUtils.CONTENT_HEADERS));
 
-        if (operationShape.hasTrait(HttpChecksumTrait.class)) {
-            HttpChecksumTrait trait = operationShape.expectTrait(HttpChecksumTrait.class);
-            headers.addAll(getChecksumHeaders(trait.getRequestProperties()));
-        } else if (operationShape.hasTrait(HttpChecksumRequiredTrait.class)) {
+        if (operationShape.hasTrait(HttpChecksumRequiredTrait.class)) {
             headers.add("Content-Md5");
         }
         return headers;
@@ -144,20 +138,6 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             headers.addAll(ProtocolUtils.CONTENT_HEADERS);
         }
 
-        if (operationShape.hasTrait(HttpChecksumTrait.class)) {
-            HttpChecksumTrait trait = operationShape.expectTrait(HttpChecksumTrait.class);
-            headers.addAll(getChecksumHeaders(trait.getResponseProperties()));
-        }
-        return headers;
-    }
-
-    private Set<String> getChecksumHeaders(List<HttpChecksumProperty> httpChecksumProperties) {
-        Set<String> headers = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-        for (HttpChecksumProperty property : httpChecksumProperties) {
-            if (property.getLocation().equals(Location.HEADER)) {
-                headers.add(property.getName());
-            }
-        }
         return headers;
     }
 

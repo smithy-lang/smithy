@@ -218,12 +218,84 @@
                 "smithy.api#documentation": "Provides the value in the 'Code' distinguishing field and HTTP response code for an operation error."
             }
         },
+        "aws.protocols#httpChecksum": {
+            "type": "structure",
+            "members": {
+                "requestAlgorithmMember": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Defines a top-level operation input member that is used to configure request checksum behavior."
+                    }
+                },
+                "requestChecksumRequired": {
+                    "target": "smithy.api#Boolean",
+                    "traits": {
+                        "smithy.api#documentation": "Indicates an operation requires a checksum in its HTTP request."
+                    }
+                },
+                "requestValidationModeMember": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Defines a top-level operation input member used to opt-in to response checksum validation."
+                    }
+                },
+                "responseAlgorithms": {
+                    "target": "aws.protocols#ChecksumAlgorithmSet",
+                    "traits": {
+                        "smithy.api#documentation": "Defines the checksum algorithms clients should look for when performing HTTP response checksum validation."
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "operation :test(-[input]->)"
+                },
+                "smithy.api#documentation": "Indicates that an operation supports checksum validation.",
+                "smithy.api#unstable": {}
+            }
+        },
         "aws.protocols#StringList": {
             "type": "list",
             "member": {
                 "target": "smithy.api#String"
             },
             "traits": {
+                "smithy.api#private": {}
+            }
+        },
+        "aws.protocols#ChecksumAlgorithmSet": {
+            "type": "set",
+            "member": {
+                "target": "aws.protocols#ChecksumAlgorithm"
+            },
+            "traits": {
+                "smithy.api#length": {
+                    "min": 1
+                },
+                "smithy.api#private": {}
+            }
+        },
+        "aws.protocols#ChecksumAlgorithm": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": [
+                    {
+                        "value": "crc32c",
+                        "name": "CRC32C"
+                    },
+                    {
+                        "value": "crc32",
+                        "name": "CRC32"
+                    },
+                    {
+                        "value": "sha1",
+                        "name": "SHA1"
+                    },
+                    {
+                        "value": "sha256",
+                        "name": "SHA256"
+                    }
+                ],
                 "smithy.api#private": {}
             }
         }

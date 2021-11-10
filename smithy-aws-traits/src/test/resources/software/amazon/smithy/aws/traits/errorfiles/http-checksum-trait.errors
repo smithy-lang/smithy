@@ -1,7 +1,8 @@
-[WARNING] ns.foo#ValidOperation: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
-[WARNING] ns.foo#InvalidOperation: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
-[WARNING] ns.foo#InvalidOperation2: This shape applies a trait that is unstable: smithy.api#httpChecksum | UnstableTrait
-[ERROR] ns.foo#InvalidOperation: The checksum behavior for response with algorithm "crc32", location "trailer" and name "x-amz-checksum-crc32" is not supported. | HttpChecksumTrait
-[ERROR] ns.foo#InvalidOperation: Operations that support the `sigv4` trait MUST support the `header` checksum location on `request`, "InvalidOperation" does not for "crc32" algorithm. | HttpChecksumTrait
-[ERROR] ns.foo#InvalidOperation2: The checksum behavior for request with algorithm "crc32", location "header" and name "unknown" is not supported. | HttpChecksumTrait
-[ERROR] ns.foo#InvalidOperation2: The checksum behavior for response with algorithm "crc32", location "trailer" and name "x-amz-checksum-crc32" is not supported. | HttpChecksumTrait
+[SUPPRESSED] smithy.example#NoBehavior: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
+[SUPPRESSED] smithy.example#NoInput: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
+[SUPPRESSED] smithy.example#NoModeForResponse: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
+[SUPPRESSED] smithy.example#NoOutputForResponse: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
+[ERROR] smithy.example#NoBehavior: The `httpChecksum` trait must define at least one of the `request` or `response` checksum behaviors. | HttpChecksumTrait
+[ERROR] smithy.example#NoInput: Trait `aws.protocols#httpChecksum` cannot be applied to `smithy.example#NoInput`. This trait may only be applied to shapes that match the following selector: operation :test(-[input]->) | TraitTarget
+[ERROR] smithy.example#NoModeForResponse: The `httpChecksum` trait must model the `requestValidationModeMember` property to support response checksum behavior. | HttpChecksumTrait
+[ERROR] smithy.example#NoOutputForResponse: The `httpChecksum` trait defines `response` checksum behavior but the operation does not have output. | HttpChecksumTrait
