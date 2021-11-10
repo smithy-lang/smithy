@@ -1,5 +1,20 @@
 # Smithy Changelog
 
+## 1.14.0 (2021-11-10)
+
+### Features
+
+* Added the `@aws.protocols#httpChecksum` trait to describe checksumming behavior for operations. ([#972](https://github.com/awslabs/smithy/pull/972))
+
+### Bug Fixes
+
+* Fixed a bug that used a JSON pointer instead of names when generating CloudFormation Resource Schema
+  required properties. ([#971](https://github.com/awslabs/smithy/pull/971))
+
+### Documentation
+
+* Clarified parsing of members marked with the `@httpQueryParams` trait. ([#957](https://github.com/awslabs/smithy/pull/957))
+
 ## 1.13.1 (2021-11-02)
 
 ### Bug Fixes
