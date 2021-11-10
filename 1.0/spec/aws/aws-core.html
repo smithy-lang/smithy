@@ -71,37 +71,45 @@ AWS products like AWS CloudFormation and tools like the AWS SDKs.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#aws-api-service-trait" id="id8"><code class="docutils literal notranslate"><span class="pre">aws.api#service</span></code> trait</a><ul>
-<li><a class="reference internal" href="#sdkid" id="id9"><code class="docutils literal notranslate"><span class="pre">sdkId</span></code></a></li>
-<li><a class="reference internal" href="#cloudformationname" id="id10"><code class="docutils literal notranslate"><span class="pre">cloudFormationName</span></code></a></li>
-<li><a class="reference internal" href="#arnnamespace" id="id11"><code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code></a></li>
-<li><a class="reference internal" href="#cloudtraileventsource" id="id12"><code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code></a></li>
-<li><a class="reference internal" href="#endpointprefix" id="id13"><code class="docutils literal notranslate"><span class="pre">endpointPrefix</span></code></a></li>
+<li><a class="reference internal" href="#aws-api-service-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">aws.api#service</span></code> trait</a><ul>
+<li><a class="reference internal" href="#sdkid" id="id14"><code class="docutils literal notranslate"><span class="pre">sdkId</span></code></a></li>
+<li><a class="reference internal" href="#cloudformationname" id="id15"><code class="docutils literal notranslate"><span class="pre">cloudFormationName</span></code></a></li>
+<li><a class="reference internal" href="#arnnamespace" id="id16"><code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code></a></li>
+<li><a class="reference internal" href="#cloudtraileventsource" id="id17"><code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code></a></li>
+<li><a class="reference internal" href="#endpointprefix" id="id18"><code class="docutils literal notranslate"><span class="pre">endpointPrefix</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#aws-api-arn-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait</a><ul>
-<li><a class="reference internal" href="#format-of-an-arn" id="id15">Format of an ARN</a></li>
-<li><a class="reference internal" href="#relative-arn-templates" id="id16">Relative ARN templates</a></li>
-<li><a class="reference internal" href="#using-an-arn-as-a-resource-identifier" id="id17">Using an ARN as a resource identifier</a></li>
+<li><a class="reference internal" href="#aws-api-arn-trait" id="id19"><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait</a><ul>
+<li><a class="reference internal" href="#format-of-an-arn" id="id20">Format of an ARN</a></li>
+<li><a class="reference internal" href="#relative-arn-templates" id="id21">Relative ARN templates</a></li>
+<li><a class="reference internal" href="#using-an-arn-as-a-resource-identifier" id="id22">Using an ARN as a resource identifier</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#aws-api-arnreference-trait" id="id18"><code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-api-data-trait" id="id19"><code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait</a><ul>
-<li><a class="reference internal" href="#data-classifications" id="id20">Data Classifications</a></li>
+<li><a class="reference internal" href="#aws-api-arnreference-trait" id="id23"><code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-data-trait" id="id24"><code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait</a><ul>
+<li><a class="reference internal" href="#data-classifications" id="id25">Data Classifications</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#aws-api-controlplane-trait" id="id21"><code class="docutils literal notranslate"><span class="pre">aws.api#controlPlane</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-api-dataplane-trait" id="id22"><code class="docutils literal notranslate"><span class="pre">aws.api#dataPlane</span></code> trait</a></li>
-<li><a class="reference internal" href="#client-endpoint-discovery" id="id23">Client Endpoint Discovery</a><ul>
-<li><a class="reference internal" href="#aws-api-clientendpointdiscovery-trait" id="id24"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscovery</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-api-clientdiscoveredendpoint-trait" id="id25"><code class="docutils literal notranslate"><span class="pre">aws.api#clientDiscoveredEndpoint</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-api-clientendpointdiscoveryid-trait" id="id26"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscoveryId</span></code> trait</a></li>
-<li><a class="reference internal" href="#example-model" id="id27">Example Model</a></li>
-<li><a class="reference internal" href="#client-behavior" id="id28">Client Behavior</a></li>
+<li><a class="reference internal" href="#aws-api-controlplane-trait" id="id26"><code class="docutils literal notranslate"><span class="pre">aws.api#controlPlane</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-dataplane-trait" id="id27"><code class="docutils literal notranslate"><span class="pre">aws.api#dataPlane</span></code> trait</a></li>
+<li><a class="reference internal" href="#client-endpoint-discovery" id="id28">Client Endpoint Discovery</a><ul>
+<li><a class="reference internal" href="#aws-api-clientendpointdiscovery-trait" id="id29"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscovery</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-clientdiscoveredendpoint-trait" id="id30"><code class="docutils literal notranslate"><span class="pre">aws.api#clientDiscoveredEndpoint</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-clientendpointdiscoveryid-trait" id="id31"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscoveryId</span></code> trait</a></li>
+<li><a class="reference internal" href="#example-model" id="id32">Example Model</a></li>
+<li><a class="reference internal" href="#client-behavior" id="id33">Client Behavior</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#appendix" id="id29">Appendix</a><ul>
-<li><a class="reference internal" href="#appendix-a-example-sdk-service-ids" id="id30">Appendix A: Example SDK service IDs</a></li>
+<li><a class="reference internal" href="#aws-protocols-httpchecksum-trait" id="id34"><code class="docutils literal notranslate"><span class="pre">aws.protocols#httpChecksum</span></code> trait</a><ul>
+<li><a class="reference internal" href="#aws-protocols-httpchecksum-trait-behavior" id="id35">Client behavior</a></li>
+<li><a class="reference internal" href="#service-behavior" id="id36">Service behavior</a></li>
+<li><a class="reference internal" href="#resolving-checksum-name" id="id37">Resolving checksum name</a></li>
+<li><a class="reference internal" href="#resolving-checksum-location" id="id38">Resolving checksum location</a></li>
+<li><a class="reference internal" href="#behavior-with-httpchecksumrequired" id="id39">Behavior with <a class="reference internal" href="../core/behavior-traits.html#httpchecksumrequired-trait"><span class="std std-ref">httpChecksumRequired</span></a></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#appendix" id="id40">Appendix</a><ul>
+<li><a class="reference internal" href="#appendix-a-example-sdk-service-ids" id="id41">Appendix A: Example SDK service IDs</a></li>
 </ul>
 </li>
 </ul>
@@ -1215,6 +1223,293 @@ context.</p>
 </div>
 </div>
 </div>
+<div class="section" id="aws-protocols-httpchecksum-trait">
+<span id="aws-protocols-httpchecksum-trait"></span><span id="id8"></span><h2><a href="#aws-protocols-httpchecksum-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#httpChecksum</span></code> trait</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>Indicates that an operation's HTTP request or response supports checksum
+validation.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait is a structure that contains the following members:</p>
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>requestAlgorithmMember</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Defines a top-level operation input member that is used to configure
+request checksum behavior. The input member MUST target a string shape
+marked with the <a class="reference internal" href="../core/constraint-traits.html#enum-trait"><span class="std std-ref">enum trait</span></a>. Each value in the enum represents a
+supported checksum algorithm. Algorithms MUST be one of the following
+supported values: &quot;crc32c&quot;, &quot;crc32c&quot;, &quot;sha1&quot;, or &quot;sha256&quot;.</td>
+</tr>
+<tr class="row-odd"><td>requestChecksumRequired</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Indicates an operation requires a checksum in its HTTP request. By
+default, the checksum used for a service is an MD5 checksum passed
+in the Content-MD5 header. When the input member represented by the
+<code class="docutils literal notranslate"><span class="pre">requestAlgorithmMember</span></code> property is set, the default behavior is
+disabled.</td>
+</tr>
+<tr class="row-even"><td>requestValidationModeMember</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Defines a top-level operation input member used to opt-in to
+best-effort validation of a checksum returned in the HTTP response of
+the operation. The input member MUST target a string shape marked with
+the <a class="reference internal" href="../core/constraint-traits.html#enum-trait"><span class="std std-ref">enum trait</span></a> that contains the value &quot;ENABLED&quot;.</td>
+</tr>
+<tr class="row-odd"><td>responseAlgorithms</td>
+<td><code class="docutils literal notranslate"><span class="pre">set&lt;string&gt;</span></code></td>
+<td>Defines the checksum algorithms clients SHOULD look for when validating
+checksums returned in the HTTP response. Each algorithm must be one of
+the following supported values: &quot;crc32c&quot;, &quot;crc32&quot;, &quot;sha1&quot;, or &quot;sha256&quot;.</td>
+</tr>
+</tbody>
+</table>
+<p>The <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait MUST define at least one of the request checksumming
+behavior, by setting the <code class="docutils literal notranslate"><span class="pre">requestAlgorithmMember</span></code> or
+<code class="docutils literal notranslate"><span class="pre">requestChecksumRequired</span></code> property, or the response checksumming behavior, by
+setting the <code class="docutils literal notranslate"><span class="pre">requestValidationModeMember</span></code> property.</p>
+<p>The following is an example of the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait that defines required
+request checksum behavior with support for the &quot;crc32c&quot;, &quot;crc32c&quot;, &quot;sha1&quot;, and
+&quot;sha256&quot; algorithms <em>and</em> response checksum behavior with support for the
+&quot;crc32c&quot;, &quot;crc32c&quot;, &quot;sha1&quot;, and &quot;sha256&quot; algorithms, enabled by the
+<code class="docutils literal notranslate"><span class="pre">validationMode</span></code> member.</p>
+<p>Users of the <code class="docutils literal notranslate"><span class="pre">PutSomething</span></code> operation will opt in to request checksums by
+selecting an algorithm in the <code class="docutils literal notranslate"><span class="pre">checksumAlgorithm</span></code> input property.</p>
+<p>Users of the <code class="docutils literal notranslate"><span class="pre">PutSomething</span></code> operation will opt in to response checksums by
+setting the <code class="docutils literal notranslate"><span class="pre">validationMode</span></code> input property to &quot;ENABLED&quot;.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@httpChecksum</span>(<span class="w"></span>
+<span class="w">    </span><span class="nl">requestChecksumRequired:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">requestAlgorithmMember:</span><span class="w"> </span><span class="s2">&quot;checksumAlgorithm&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">requestValidationModeMember:</span><span class="w"> </span><span class="s2">&quot;validationMode&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">responseAlgorithms:</span><span class="w"> </span>[<span class="s2">&quot;crc32c&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;crc32&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;sha1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;sha256&quot;</span>]<span class="w"></span>
+)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> PutSomething</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">PutSomethingInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">PutSomethingOutput</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure</span><span class="nc"> PutSomethingInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@httpHeader</span>(<span class="s2">&quot;x-amz-request-algorithm&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">checksumAlgorithm:</span><span class="w"> </span><span class="vc">ChecksumAlgorithm</span><span class="p">,</span><span class="w"></span>
+
+<span class="w">    </span><span class="nd">@httpHeader</span>(<span class="s2">&quot;x-amz-response-validation-mode&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">validationMode:</span><span class="w"> </span><span class="vc">ValidationMode</span><span class="p">,</span><span class="w"></span>
+
+<span class="w">    </span><span class="nd">@httpPayload</span><span class="w"></span>
+<span class="w">    </span><span class="nl">content:</span><span class="w"> </span><span class="vc">Blob</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nd">@enum</span>([<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">value:</span><span class="w"> </span><span class="s2">&quot;crc32c&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;CRC32C&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">value:</span><span class="w"> </span><span class="s2">&quot;crc32&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;CRC32&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">value:</span><span class="w"> </span><span class="s2">&quot;sha1&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;SHA1&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">value:</span><span class="w"> </span><span class="s2">&quot;sha256&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;SHA256&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+])<span class="w"></span>
+<span class="kd">string</span><span class="nc"> ChecksumAlgorithm</span><span class="w"></span>
+
+<span class="nd">@enum</span>([<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">value:</span><span class="w"> </span><span class="s2">&quot;ENABLED&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;ENABLED&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+])<span class="w"></span>
+<span class="kd">string</span><span class="nc"> ValidationMode</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The following trait, which does not define request or response checksum
+behavior, will fail validation.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@httpChecksum</span>()<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> PutSomething</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">PutSomethingInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">PutSomethingOutput</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<div class="section" id="aws-protocols-httpchecksum-trait-behavior">
+<span id="id9"></span><h3><a href="#aws-protocols-httpchecksum-trait-behavior"><a href="#http-request-checksums">Client behavior</a></h3>
+<div class="section" id="http-request-checksums">
+<h4><a href="#http-request-checksums">HTTP request checksums</a></h4>
+<p>When a client calls an operation which has the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait where
+<code class="docutils literal notranslate"><span class="pre">requestChecksumRequired</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, the client MUST include a
+checksum in the HTTP request.</p>
+<p>When a client calls an operation which has the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait where
+<code class="docutils literal notranslate"><span class="pre">requestAlgorithmMember</span></code> is set, the client MUST look up the input member
+represented by <code class="docutils literal notranslate"><span class="pre">requestAlgorithmMember</span></code> property. The value of this member is
+the checksum algorithm that the client MUST use to compute the request payload
+checksum.</p>
+<p>The computed checksum MUST be supplied at a resolved location as per the
+<a class="reference internal" href="#aws-protocols-httpchecksum-trait-resolving-checksum-location"><span class="std std-ref">resolving checksum location</span></a>
+section. If the resolved location is <code class="docutils literal notranslate"><span class="pre">header</span></code>, the client MUST put the
+checksum into the HTTP request headers. If the resolved location is
+<code class="docutils literal notranslate"><span class="pre">trailer</span></code>, the client MUST put the checksum into the <a href="#id42"><span class="problematic" id="id43">`chunked trailer part`_</span></a>
+of the body. The header or trailer name to use with an algorithm is resolved as
+per the <a class="reference internal" href="#aws-protocols-httpchecksum-trait-resolving-checksum-name"><span class="std std-ref">resolving checksum name</span></a>
+section.</p>
+<p>If no <code class="docutils literal notranslate"><span class="pre">requestAlgorithmMember</span></code> property is set, the client MUST compute an
+MD5 checksum of the request payload and place it in the <code class="docutils literal notranslate"><span class="pre">Content-MD5</span></code> header.</p>
+<p>If the HTTP header corresponding to a checksum is set explicitly, the client
+MUST use the explicitly set header and skip computing the payload checksum.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">See <a class="reference internal" href="#aws-protocols-httpchecksum-trait-header-conflict-behavior"><span class="std std-ref">client behavior</span></a>
+for more details.</p>
+</div>
+</div>
+<div class="section" id="http-response-checksums">
+<h4><a href="#http-response-checksums">HTTP response checksums</a></h4>
+<p>When a client receives a response for an operation which has the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code>
+trait where the <code class="docutils literal notranslate"><span class="pre">requestValidationModeMember</span></code> property is set, the client
+MUST look up the input member represented by the property's value. If the input
+member is set to <code class="docutils literal notranslate"><span class="pre">ENABLED</span></code>, the client MUST perform best-effort validation of
+checksum values returned in the HTTP response.</p>
+<p>A client MUST use the list of supported algorithms modeled in the
+<code class="docutils literal notranslate"><span class="pre">responseAlgorithms</span></code> property to look up the checksum(s) for which validation
+MUST be performed. The client MUST look for the HTTP header in the response as
+per the <a class="reference internal" href="#aws-protocols-httpchecksum-trait-resolving-checksum-name"><span class="std std-ref">resolving checksum name</span></a>
+section.</p>
+<p>A client MUST raise an error if the response checksum to validate does not
+match computed checksum of the response payload for the same checksum algorithm.</p>
+<p>If a checksum is provided in a response that is not listed in the
+<code class="docutils literal notranslate"><span class="pre">responseAlgorithms</span></code> property, the client MUST ignore the value and MUST NOT
+attempt to validate it.</p>
+<p>A client MUST provide a mechanism for customers to identify whether checksum
+validation was performed on a response and which checksum algorithm was
+validated.</p>
+</div>
+</div>
+<div class="section" id="service-behavior">
+<h3><a href="#service-behavior"><a href="#id10">Service behavior</a></h3>
+<div class="section" id="id10">
+<h4><a href="#id10">HTTP request checksums</a></h4>
+<p>When a service receives a request for an operation which has the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code>
+trait where either the <code class="docutils literal notranslate"><span class="pre">requestAlgorithmMember</span></code> or <code class="docutils literal notranslate"><span class="pre">requestChecksumRequired</span></code>
+property are set, the service MUST validate an HTTP request checksum.</p>
+<p>When a service receives a request where the <code class="docutils literal notranslate"><span class="pre">requestAlgorithmMember</span></code> is set,
+the service MUST look up the input member represented by the checksum
+<code class="docutils literal notranslate"><span class="pre">requestAlgorithmMember</span></code> property. The value of this member is the checksum
+algorithm that the service MUST use to compute a checksum of the request payload.</p>
+<p>The computed checksum MUST be validated against the checksum supplied at a
+resolved location as per the <a class="reference internal" href="#aws-protocols-httpchecksum-trait-resolving-checksum-location"><span class="std std-ref">resolving checksum location</span></a> section. The
+header or trailer name to use with an algorithm is resolved as per the
+<a class="reference internal" href="#aws-protocols-httpchecksum-trait-resolving-checksum-name"><span class="std std-ref">resolving checksum name</span></a>
+section.</p>
+<p>If no <code class="docutils literal notranslate"><span class="pre">requestAlgorithmMember</span></code> is set, the service MUST compute an MD5
+checksum of the request payload and validate it against the <code class="docutils literal notranslate"><span class="pre">Content-MD5</span></code>
+header.</p>
+<p>When using the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait, services MUST always accept checksum
+values in HTTP headers. For operations with streaming payload input, services
+MUST additionally accept checksum values sent in the <a href="#id44"><span class="problematic" id="id45">`chunked trailer part`_</span></a> of
+the request body. Service MUST only send response checksums in HTTP headers.</p>
+</div>
+<div class="section" id="id11">
+<h4><a href="#id11">HTTP response checksums</a></h4>
+<p>When a service sends a response for an operation which has the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code>
+trait where the <code class="docutils literal notranslate"><span class="pre">requestValidationModeMember</span></code> property is set, the service
+MUST look up the input member represented by the property's value. If the input
+member is set to <code class="docutils literal notranslate"><span class="pre">ENABLED</span></code>, the service MUST provide checksum(s) for the
+response payload.</p>
+<p>A service MUST provide a checksum for at least one algorithm defined in the
+<code class="docutils literal notranslate"><span class="pre">responseAlgorithms</span></code> property. The service MUST place the computed checksum(s)
+in the HTTP header of the response as per the <a class="reference internal" href="#aws-protocols-httpchecksum-trait-resolving-checksum-name"><span class="std std-ref">resolving checksum name</span></a> section.</p>
+<p>A service MAY provide checksums for algorithms which are not defined in the
+<code class="docutils literal notranslate"><span class="pre">responseAlgorithms</span></code> property.</p>
+</div>
+</div>
+<div class="section" id="resolving-checksum-name">
+<span id="aws-protocols-httpchecksum-trait-resolving-checksum-name"></span><h3><a href="#resolving-checksum-name">Resolving checksum name</a></h3>
+<p>The checksum name MUST be used as both header name and trailer name. A checksum
+name MUST conform to the pattern <code class="docutils literal notranslate"><span class="pre">x-amz-checksum-*</span></code>, where <cite>*</cite> is the defined
+algorithm name. For example, the checksum name for the <code class="docutils literal notranslate"><span class="pre">sha256</span></code> algorithm is
+<code class="docutils literal notranslate"><span class="pre">x-amz-checksum-sha256</span></code>.</p>
+<p id="aws-protocols-httpchecksum-trait-header-conflict-behavior">A member with the <a class="reference internal" href="../core/http-traits.html#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a> MAY conflict with a <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code>
+header name, allowing a checksum to be supplied directly. A member with the
+<a class="reference internal" href="../core/http-traits.html#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders trait</span></a> SHOULD NOT conflict with the <code class="docutils literal notranslate"><span class="pre">x-amz-checksum-*</span></code>
+prefix.</p>
+</div>
+<div class="section" id="resolving-checksum-location">
+<span id="aws-protocols-httpchecksum-trait-resolving-checksum-location"></span><h3><a href="#resolving-checksum-location">Resolving checksum location</a></h3>
+<p>Valid values for resolved location are:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Header</span></code> - Indicates the checksum is placed in an HTTP header.</li>
+<li><code class="docutils literal notranslate"><span class="pre">Trailer</span></code> - Indicates the checksum is placed in the <a href="#id46"><span class="problematic" id="id47">`chunked trailer part`_</span></a> of the body.</li>
+</ul>
+<p>For an HTTP request, clients resolve the location based on the signing method
+used for the API request. The following table describes possible scenarios:</p>
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="30%" />
+<col width="40%" />
+<col width="30%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Payload type</th>
+<th class="head">Signing Method used</th>
+<th class="head">Resolved Location</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Normal Payload</td>
+<td><a class="reference external" href="https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html">Header-based auth</a></td>
+<td>Header</td>
+</tr>
+<tr class="row-odd"><td>Normal Payload</td>
+<td><a class="reference internal" href="aws-auth.html#aws-auth-unsignedpayload-trait"><span class="std std-ref">Unsigned payload auth</span></a></td>
+<td>Header</td>
+</tr>
+<tr class="row-even"><td>Streaming Payload</td>
+<td><a class="reference external" href="https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html">Header-based auth</a></td>
+<td>Header</td>
+</tr>
+<tr class="row-odd"><td>Streaming Payload</td>
+<td><a class="reference external" href="https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-streaming.html">Streaming-signing auth</a></td>
+<td>Trailer</td>
+</tr>
+<tr class="row-even"><td>Streaming Payload</td>
+<td><a class="reference internal" href="aws-auth.html#aws-auth-unsignedpayload-trait"><span class="std std-ref">Unsigned payload auth</span></a></td>
+<td>Trailer</td>
+</tr>
+</tbody>
+</table>
+<p>For an HTTP response, clients only support validating checksums sent in an
+HTTP header. Thus, the resolved location is always <code class="docutils literal notranslate"><span class="pre">Header</span></code>.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">See <a class="reference internal" href="#aws-protocols-httpchecksum-trait-behavior"><span class="std std-ref">Client behavior</span></a> for more details.</p>
+</div>
+</div>
+<div class="section" id="behavior-with-httpchecksumrequired">
+<span id="aws-protocols-httpchecksum-trait-with-checksum-required"></span><h3><a href="#behavior-with-httpchecksumrequired">Behavior with <a class="reference internal" href="../core/behavior-traits.html#httpchecksumrequired-trait"><span class="std std-ref">httpChecksumRequired</span></a></a></h3>
+<p>Behavior defined by the <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait's <code class="docutils literal notranslate"><span class="pre">requestChecksumRequired</span></code>
+property supersedes the <a class="reference internal" href="../core/behavior-traits.html#httpchecksumrequired-trait"><span class="std std-ref">httpChecksumRequired</span></a>
+trait. Setting only the <code class="docutils literal notranslate"><span class="pre">requestChecksumRequired</span></code> property of the
+<code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait is equivalent to applying the <code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code>
+trait.</p>
+</div>
+</div>
 <div class="section" id="appendix">
 <h2><a href="#appendix">Appendix</a></h2>
 <div class="section" id="appendix-a-example-sdk-service-ids">
@@ -1609,6 +1904,22 @@ existing AWS services.</p>
 <li><a class="reference internal" href="#caching">Caching</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aws-protocols-httpchecksum-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#httpChecksum</span></code> trait</a><ul>
+<li><a class="reference internal" href="#aws-protocols-httpchecksum-trait-behavior">Client behavior</a><ul>
+<li><a class="reference internal" href="#http-request-checksums">HTTP request checksums</a></li>
+<li><a class="reference internal" href="#http-response-checksums">HTTP response checksums</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#service-behavior">Service behavior</a><ul>
+<li><a class="reference internal" href="#id10">HTTP request checksums</a></li>
+<li><a class="reference internal" href="#id11">HTTP response checksums</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#resolving-checksum-name">Resolving checksum name</a></li>
+<li><a class="reference internal" href="#resolving-checksum-location">Resolving checksum location</a></li>
+<li><a class="reference internal" href="#behavior-with-httpchecksumrequired">Behavior with <span class="xref std std-ref">httpChecksumRequired</span></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#appendix">Appendix</a><ul>

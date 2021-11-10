@@ -120,8 +120,8 @@ request URI and labels which are used to insert named components into the
 request URI.
 
 The resolved absolute URI of an operation is formed by combining the URI of
-the operation with the endpoint of the service. (that is, the host and any 
-base URL of where the service is deployed). For example, given a service 
+the operation with the endpoint of the service. (that is, the host and any
+base URL of where the service is deployed). For example, given a service
 endpoint of ``https://example.com/v1`` and an operation pattern of
 ``/myresource``, the resolved absolute URI of the operation is
 ``https://example.com/v1/myresource``.
@@ -1067,6 +1067,49 @@ An example HTTP request would be serialized as:
     POST /things?thingId=realId&otherTag=value
     Host: <server>
 
+When deserializing HTTP request query string parameters into members with the
+``httpQueryParams`` trait, servers MUST treat all values as strings and produce
+empty string values for keys which do not have values specified. For example,
+given the following model:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @http(method: "POST", uri: "/things")
+        operation PostThing {
+            input: PostThingInput
+        }
+
+        structure PostThingInput {
+            @httpQueryParams
+            tags: MapOfStrings
+        }
+
+        map MapOfStrings {
+            key: String,
+            value: String
+        }
+
+
+And the following HTTP request:
+
+::
+
+    POST /things?thingId=realId&otherTag=true&anotherTag&lastTag=
+
+A server should deserialize the following input structure:
+
+.. code-block:: json
+
+    {
+        "tags": {
+            "thingId": "realId",
+            "otherTag": "true",
+            "anotherTag": "",
+            "lastTag": ""
+        }
+    }
 
 .. smithy-trait:: smithy.api#httpResponseCode
 .. _httpResponseCode-trait:

@@ -1111,6 +1111,43 @@ disregard the value set by <code class="docutils literal notranslate"><span clas
 Host: &lt;server&gt;
 </pre></div>
 </div>
+<p>When deserializing HTTP request query string parameters into members with the
+<code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait, servers MUST treat all values as strings and produce
+empty string values for keys which do not have values specified. For example,
+given the following model:</p>
+<div class="sphinx-tabs docutils container">
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-9-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-9-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-9-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-9-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/things&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> PostThing</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">PostThingInput</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure</span><span class="nc"> PostThingInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@httpQueryParams</span><span class="w"></span>
+<span class="w">    </span><span class="nl">tags:</span><span class="w"> </span><span class="vc">MapOfStrings</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">map</span><span class="nc"> MapOfStrings</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">key:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">value:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div></div>
+<p>And the following HTTP request:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>POST /things?thingId=realId&amp;otherTag=true&amp;anotherTag&amp;lastTag=
+</pre></div>
+</div>
+<p>A server should deserialize the following input structure:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;thingId&quot;</span><span class="p">:</span> <span class="s2">&quot;realId&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;otherTag&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;anotherTag&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;lastTag&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="httpresponsecode-trait">
 <span id="smithy-api-httpresponsecode-trait"></span><span id="id10"></span><h2><a href="#httpresponsecode-trait"><span class="section-number">11.9. </span><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait</a></h2>
@@ -1261,7 +1298,7 @@ output member that targets a shape marked with the <a class="reference internal"
 <p>The following example defines an operation that uses an input event stream
 and HTTP bindings:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-9-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-9-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-9-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-9-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-9-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-9-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-10-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-10-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-10-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-10-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-10-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-10-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
 <span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/messages&quot;</span>)<span class="w"></span>
 <span class="kd">operation</span><span class="nc"> PublishMessages</span><span class="w"> </span>{<span class="w"></span>
@@ -1283,7 +1320,7 @@ and HTTP bindings:</p>
 }<span class="w"></span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-9-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-9-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-10-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-10-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
