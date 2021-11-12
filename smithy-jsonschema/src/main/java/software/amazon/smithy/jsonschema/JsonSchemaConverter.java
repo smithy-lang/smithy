@@ -81,7 +81,9 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
         }
 
         LOGGER.fine("Creating JSON ref strategy");
-        refStrategy = RefStrategy.createDefaultStrategy(model, config, propertyNamingStrategy);
+        Model refModel = config.isEnableOutOfServiceReferences()
+                ? this.model : scopeModelToService(model, config.getService());
+        refStrategy = RefStrategy.createDefaultStrategy(refModel, config, propertyNamingStrategy);
 
         // Combine custom mappers with the discovered mappers and sort them.
         realizedMappers = new ArrayList<>(mappers);
@@ -92,7 +94,7 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
                 .map(Object::getClass)
                 .map(Class::getCanonicalName)
                 .collect(Collectors.joining(", ")));
-        visitor = new JsonSchemaShapeVisitor(model, this, realizedMappers);
+        visitor = new JsonSchemaShapeVisitor(this.model, this, realizedMappers);
 
         // Compute the number of segments in the root definition section.
         rootDefinitionPointer = config.getDefinitionPointer();
@@ -124,6 +126,14 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
         model = transformer.scrubTraitDefinitions(model);
 
         return model;
+    }
+
+    private static Model scopeModelToService(Model model, ShapeId serviceId) {
+        if (serviceId == null) {
+            return model;
+        }
+        Set<Shape> connected = new Walker(model).walkShapes(model.expectShape(serviceId));
+        return ModelTransformer.create().filterShapes(model, connected::contains);
     }
 
     private static int countSegments(String pointer) {

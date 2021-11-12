@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
@@ -111,6 +112,39 @@ public class JsonSchemaConverterTest {
 
         assertThat(document1.getDefinitions().keySet(), containsInAnyOrder("#/definitions/ReferencedA"));
         assertThat(document2.getDefinitions().keySet(), containsInAnyOrder("#/definitions/ReferencedB"));
+    }
+
+    @Test
+    public void canConvertShapesThatHaveConflictsOutsideOfClosure() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("multiple-closures-with-conflicting-shapes.json"))
+                .assemble()
+                .unwrap();
+        JsonSchemaConfig config1 = new JsonSchemaConfig();
+        config1.setService(ShapeId.from("com.foo#ServiceA"));
+        SchemaDocument document1 = JsonSchemaConverter.builder()
+                .model(model)
+                .rootShape(ShapeId.from("com.foo#ServiceA"))
+                .config(config1)
+                .build()
+                .convert();
+
+        JsonSchemaConfig config2 = new JsonSchemaConfig();
+        config2.setService(ShapeId.from("com.bar#ServiceB"));
+        SchemaDocument document2 = JsonSchemaConverter.builder()
+                .model(model)
+                .rootShape(ShapeId.from("com.bar#ServiceB"))
+                .config(config2)
+                .build()
+                .convert();
+
+        Schema string1Def = document1.getDefinitions().get("#/definitions/ConflictString");
+        assertNotNull(string1Def);
+        assertThat(string1Def.getEnumValues().get(), containsInAnyOrder("y", "z"));
+
+        Schema string2Def = document2.getDefinitions().get("#/definitions/ConflictString");
+        assertNotNull(string2Def);
+        assertThat(string2Def.getEnumValues().get(), containsInAnyOrder("a", "b"));
     }
 
     @Test

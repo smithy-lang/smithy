@@ -109,6 +109,7 @@ public class JsonSchemaConfig {
     private final NodeMapper nodeMapper = new NodeMapper();
     private ShapeId service;
     private boolean supportNonNumericFloats = false;
+    private boolean enableOutOfServiceReferences = false;
 
     public JsonSchemaConfig() {
         nodeMapper.setWhenMissingSetter(NodeMapper.WhenMissing.INGORE);
@@ -365,5 +366,22 @@ public class JsonSchemaConfig {
      */
     public void setSupportNonNumericFloats(boolean supportNonNumericFloats) {
         this.supportNonNumericFloats = supportNonNumericFloats;
+    }
+
+    public boolean isEnableOutOfServiceReferences() {
+        return enableOutOfServiceReferences;
+    }
+
+    /**
+     * Set to true to enable references to shapes outside the service closure.
+     *
+     * Setting this to true means that all the shapes in the model must not conflict, whereas
+     * leaving it at the default, false, means that only the shapes connected to the configured
+     * service via {@link #setService(ShapeId)} must not conflict.
+     *
+     * @param enableOutOfServiceReferences true if out-of-service references should be allowed. default: false
+     */
+    public void setEnableOutOfServiceReferences(boolean enableOutOfServiceReferences) {
+        this.enableOutOfServiceReferences = enableOutOfServiceReferences;
     }
 }

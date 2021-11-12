@@ -76,6 +76,10 @@ public final class CfnConfig extends JsonSchemaConfig {
         // https://github.com/aws-cloudformation/cloudformation-cli/blob/master/src/rpdk/core/data/schema/provider.definition.schema.v1.json#L210
         // https://github.com/aws-cloudformation/cloudformation-cli/blob/master/src/rpdk/core/data/schema/provider.definition.schema.v1.json#L166
         super.setUnionStrategy(UnionStrategy.ONE_OF);
+
+        // @cfnResource's additionalSchemas property references shapes that aren't in the service closure
+        // so conversions must be able to reference those shapes
+        super.setEnableOutOfServiceReferences(true);
     }
 
     @Override
