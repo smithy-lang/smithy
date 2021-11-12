@@ -189,6 +189,12 @@
                         "smithy.api#httpQuery": "version",
                         "smithy.api#required": {}
                     }
+                },
+                "connectionType": {
+                    "target": "smithy.example#ConnectionType",
+                    "traits": {
+                        "smithy.api#httpHeader": "x-amz-connection-type"
+                    }
                 }
             }
         },
@@ -201,6 +207,21 @@
                         "smithy.api#httpHeader": "requestId"
                     }
                 }
+            }
+        },
+        "smithy.example#ConnectionType": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": [
+                    {
+                        "value": "a",
+                        "name": "A"
+                    },
+                    {
+                        "value": "c",
+                        "name": "C"
+                    }
+                ]
             }
         }
     }

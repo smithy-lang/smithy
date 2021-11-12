@@ -28,6 +28,13 @@
               "nullable": true
             },
             "required": true
+          },
+          {
+            "name": "x-amz-connection-type",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/ConnectionType"
+            }
           }
         ],
         "responses": {
@@ -128,6 +135,13 @@
               "nullable": true
             },
             "required": true
+          },
+          {
+            "name": "x-amz-connection-type",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/ConnectionType"
+            }
           }
         ],
         "responses": {
@@ -201,5 +215,15 @@
       }
     }
   },
-  "components": { }
+  "components": {
+    "schemas": {
+      "ConnectionType": {
+        "type": "string",
+        "enum": [
+          "a",
+          "c"
+        ]
+      }
+    }
+  }
 }
