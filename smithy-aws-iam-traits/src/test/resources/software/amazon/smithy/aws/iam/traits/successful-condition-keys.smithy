@@ -20,6 +20,7 @@ resource Resource1 {
   resources: [Resource2]
 }
 
+@aws.iam#iamResource(name: "ResourceTwo")
 resource Resource2 {
   identifiers: {
     id1: ArnString,
