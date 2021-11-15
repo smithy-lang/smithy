@@ -1,5 +1,16 @@
 # Smithy Changelog
 
+## 1.14.1 (2021-11-15)
+
+### Features
+
+* Updated the `@aws.protocols#httpChecksum` trait to use uppercase algorithm names. ([#982](https://github.com/awslabs/smithy/pull/982))
+
+### Bug Fixes
+
+* Fixed an issue where JSON Schema conversion wouldn't remove out-of-service references before deconflicting. ([#978](https://github.com/awslabs/smithy/pull/978))
+* Fixed IAM condition key inference not using the `@aws.iam#iamResource` trait. ([#981](https://github.com/awslabs/smithy/pull/981))
+
 ## 1.14.0 (2021-11-10)
 
 ### Features
