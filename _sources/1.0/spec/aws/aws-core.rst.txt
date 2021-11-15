@@ -1249,7 +1249,7 @@ The ``httpChecksum`` trait is a structure that contains the following members:
         request checksum behavior. The input member MUST target a string shape
         marked with the :ref:`enum-trait`. Each value in the enum represents a
         supported checksum algorithm. Algorithms MUST be one of the following
-        supported values: "crc32c", "crc32c", "sha1", or "sha256".
+        supported values: "CRC32C", "CRC32", "SHA1", or "SHA256".
     * - requestChecksumRequired
       - ``boolean``
       - Indicates an operation requires a checksum in its HTTP request. By
@@ -1267,7 +1267,7 @@ The ``httpChecksum`` trait is a structure that contains the following members:
       - ``set<string>``
       - Defines the checksum algorithms clients SHOULD look for when validating
         checksums returned in the HTTP response. Each algorithm must be one of
-        the following supported values: "crc32c", "crc32", "sha1", or "sha256".
+        the following supported values: "CRC32C", "CRC32", "SHA1", or "SHA256".
 
 The ``httpChecksum`` trait MUST define at least one of the request checksumming
 behavior, by setting the ``requestAlgorithmMember`` or
@@ -1275,9 +1275,9 @@ behavior, by setting the ``requestAlgorithmMember`` or
 setting the ``requestValidationModeMember`` property.
 
 The following is an example of the ``httpChecksum`` trait that defines required
-request checksum behavior with support for the "crc32c", "crc32c", "sha1", and
-"sha256" algorithms *and* response checksum behavior with support for the
-"crc32c", "crc32c", "sha1", and "sha256" algorithms, enabled by the
+request checksum behavior with support for the "CRC32C", "CRC32", "SHA1", and
+"SHA256" algorithms *and* response checksum behavior with support for the
+"CRC32C", "CRC32", "SHA1", and "SHA256" algorithms, enabled by the
 ``validationMode`` member.
 
 Users of the ``PutSomething`` operation will opt in to request checksums by
@@ -1292,7 +1292,7 @@ setting the ``validationMode`` input property to "ENABLED".
         requestChecksumRequired: true,
         requestAlgorithmMember: "checksumAlgorithm",
         requestValidationModeMember: "validationMode",
-        responseAlgorithms: ["crc32c", "crc32", "sha1", "sha256"]
+        responseAlgorithms: ["CRC32C", "CRC32", "SHA1", "SHA256"]
     )
     operation PutSomething {
         input: PutSomethingInput,
@@ -1312,19 +1312,19 @@ setting the ``validationMode`` input property to "ENABLED".
 
     @enum([
         {
-            value: "crc32c",
+            value: "CRC32C",
             name: "CRC32C"
         },
         {
-            value: "crc32",
+            value: "CRC32",
             name: "CRC32"
         },
         {
-            value: "sha1",
+            value: "SHA1",
             name: "SHA1"
         },
         {
-            value: "sha256",
+            value: "SHA256",
             name: "SHA256"
         }
     ])
@@ -1413,7 +1413,6 @@ A client MUST provide a mechanism for customers to identify whether checksum
 validation was performed on a response and which checksum algorithm was
 validated.
 
-.. _chunked trailer part: https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-streaming.html
 
 Service behavior
 ================
@@ -1471,8 +1470,8 @@ Resolving checksum name
 
 The checksum name MUST be used as both header name and trailer name. A checksum
 name MUST conform to the pattern ``x-amz-checksum-*``, where `*` is the defined
-algorithm name. For example, the checksum name for the ``sha256`` algorithm is
-``x-amz-checksum-sha256``.
+algorithm name in lower case. For example, the checksum name for the ``SHA256``
+algorithm is ``x-amz-checksum-sha256``.
 
 .. _aws.protocols#httpChecksum-trait_header-conflict-behavior:
 
@@ -1525,7 +1524,7 @@ HTTP header. Thus, the resolved location is always ``Header``.
 
 .. _Header-based auth: https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html
 .. _Streaming-signing auth: https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-streaming.html
-.. _chunked trailer part: https://tools.ietf.org/html/rfc7230#section-4.1.2
+.. _chunked trailer part: https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-streaming.html
 
 
 .. _aws.protocols#httpChecksum-trait_with-checksum-required:

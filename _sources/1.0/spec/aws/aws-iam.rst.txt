@@ -602,80 +602,36 @@ trait.
 
 Given the following model,
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    namespace smithy.example
 
-        namespace smithy.example
+    use aws.api#service
+    use aws.iam#defineConditionKeys
+    use aws.iam#conditionKeys
+    use aws.iam#iamResource
 
-        use aws.api#service
-        use aws.iam#defineConditionKeys
-        use aws.iam#conditionKeys
+    @service(sdkId: "My Value", arnNamespace: "myservice")
+    @defineConditionKeys("otherservice:Bar": { type: "String" })
+    service MyService {
+        version: "2017-02-11",
+        resources: [MyResource],
+    }
 
-        @service(sdkId: "My Value", arnNamespace: "myservice")
-        @defineConditionKeys("otherservice:Bar": { type: "String" })
-        service MyService {
-            version: "2017-02-11",
-            resources: [MyResource],
-        }
+    @conditionKeys(["otherservice:Bar"])
+    resource MyResource {
+        identifiers: {foo: String},
+        operations: [MyOperation],
+        resources: [MyInnerResource],
+    }
 
-        @conditionKeys(["otherservice:Bar"])
-        resource MyResource {
-            identifiers: {foo: String},
-            operations: [MyOperation],
-            resources: [MyInnerResource],
-        }
+    @iamResource(name: "InnerResource")
+    resource MyInnerResource {
+        identifiers: {yum: String}
+    }
 
-        resource MyInnerResource {
-            identifiers: {yum: String}
-        }
-
-        @conditionKeys(["aws:region"])
-        operation MyOperation {}
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyService": {
-                    "type": "service",
-                    "version": "2017-02-11",
-                    "resources": [
-                        {
-                            "target": "smithy.example#MyResource"
-                        }
-                    ],
-                    "traits": {
-                        "aws.api#service": {
-                            "sdkId": "My Value",
-                            "arnNamespace": "myservice"
-                        },
-                        "aws.iam#defineConditionKeys": {
-                            "otherservice:Bar": {
-                                "type": "String"
-                            }
-                        }
-                    }
-                },
-                "smithy.example#MyResource": {
-                    "type": "resource",
-                    "identifiers": {
-                        "yum": {
-                            "target": "smithy.api#String"
-                        }
-                    }
-                },
-                "smithy.example#MyOperation": {
-                    "type": "operation",
-                    "traits": {
-                        "aws.iam#conditionKeys": [
-                            "aws:region"
-                        ]
-                    }
-                }
-            }
-        }
+    @conditionKeys(["aws:region"])
+    operation MyOperation {}
 
 The computed condition keys for the service are:
 
@@ -689,11 +645,11 @@ The computed condition keys for the service are:
       -
           * ``myservice:MyResourceFoo``
           * ``otherservice:Bar``
-    * - ``MyInnerResource``
+    * - ``InnerResource``
       -
           * ``myservice:MyResourceFoo``
           * ``otherservice:Bar``
-          * ``myservice:MyInnerResourceYum``
+          * ``myservice:InnerResourceYum``
     * - ``MyOperation``
       -
           * ``aws:region``
