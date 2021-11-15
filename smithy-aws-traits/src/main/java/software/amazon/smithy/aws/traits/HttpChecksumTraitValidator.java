@@ -19,6 +19,7 @@ import static java.lang.String.format;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -187,7 +188,8 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
                             events.add(danger(operation, format("The `httpPrefixHeaders` binding of `%s` uses"
                                             + " the prefix `%s` that conflicts with the prefix `%s` used by the"
                                             + " `httpChecksum` trait.",
-                                    member.getId().getName(), headerPrefix, HttpChecksumTrait.CHECKSUM_PREFIX)));
+                                    member.getId().getName(), headerPrefix.toLowerCase(Locale.US),
+                                    HttpChecksumTrait.CHECKSUM_PREFIX)));
                         }
                     });
 
@@ -200,7 +202,8 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
                         if (headerName.startsWith(HttpChecksumTrait.CHECKSUM_PREFIX)) {
                             events.add(warning(operation, format("The `httpHeader` binding of `%s` on `%s`"
                                             + " starts with the prefix `%s` used by the `httpChecksum` trait.",
-                                    headerName, member.getId().getName(), HttpChecksumTrait.CHECKSUM_PREFIX)));
+                                    headerName.toLowerCase(Locale.US), member.getId().getName(),
+                                    HttpChecksumTrait.CHECKSUM_PREFIX)));
                         }
                     });
         }

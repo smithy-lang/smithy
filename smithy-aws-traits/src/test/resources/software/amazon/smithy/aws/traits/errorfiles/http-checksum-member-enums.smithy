@@ -5,7 +5,7 @@ use aws.protocols#httpChecksum
 @httpChecksum(
     requestAlgorithmMember: "requestAlgorithm",
     requestValidationModeMember: "validationMode",
-    responseAlgorithms: ["crc32c"]
+    responseAlgorithms: ["CRC32C"]
 )
 @suppress(["UnstableTrait"])
 operation ValidEnums {
@@ -24,7 +24,7 @@ structure ValidEnumsOutput {}
 @httpChecksum(
     requestAlgorithmMember: "requestAlgorithm",
     requestValidationModeMember: "validationMode",
-    responseAlgorithms: ["crc32c"]
+    responseAlgorithms: ["CRC32C"]
 )
 @suppress(["UnstableTrait"])
 operation InvalidEnums {
@@ -42,7 +42,7 @@ structure InvalidEnumsOutput {}
 @httpChecksum(
     requestAlgorithmMember: "requestAlgorithm",
     requestValidationModeMember: "validationMode",
-    responseAlgorithms: ["crc32c"]
+    responseAlgorithms: ["CRC32C"]
 )
 @suppress(["UnstableTrait"])
 operation NoEnums {
@@ -60,7 +60,7 @@ structure NoEnumsOutput {}
 @httpChecksum(
     requestAlgorithmMember: "requestAlgorithm",
     requestValidationModeMember: "validationMode",
-    responseAlgorithms: ["crc32c"]
+    responseAlgorithms: ["CRC32C"]
 )
 @suppress(["UnstableTrait"])
 operation NoMember {
@@ -74,19 +74,19 @@ structure NoMemberOutput {}
 
 @enum([
     {
-        value: "crc32c",
+        value: "CRC32C",
         name: "CRC32C"
     },
     {
-        value: "crc32",
+        value: "CRC32",
         name: "CRC32"
     },
     {
-        value: "sha1",
+        value: "SHA1",
         name: "SHA1"
     },
     {
-        value: "sha256",
+        value: "SHA256",
         name: "SHA256"
     }
 ])
@@ -103,7 +103,7 @@ string ValidationMode
 
 @enum([
     {
-        value: "sha2",
+        value: "SHA2",
         name: "SHA2"
     }
 ])

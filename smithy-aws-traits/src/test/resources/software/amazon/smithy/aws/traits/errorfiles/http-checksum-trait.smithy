@@ -17,7 +17,7 @@ structure NoBehaviorInput {}
 operation NoInput {}
 
 @httpChecksum(
-    responseAlgorithms: ["crc32c"]
+    responseAlgorithms: ["CRC32C"]
 )
 @suppress(["UnstableTrait"])
 operation NoModeForResponse {
@@ -33,7 +33,7 @@ structure NoModeForResponseOutput {}
 @httpChecksum(
     requestAlgorithmMember: "requestAlgorithm",
     requestValidationModeMember: "validationMode",
-    responseAlgorithms: ["crc32c"]
+    responseAlgorithms: ["CRC32C"]
 )
 @suppress(["UnstableTrait"])
 operation NoOutputForResponse {
@@ -48,19 +48,19 @@ structure NoOutputForResponseInput {
 
 @enum([
     {
-        value: "crc32c",
+        value: "CRC32C",
         name: "CRC32C"
     },
     {
-        value: "crc32",
+        value: "CRC32",
         name: "CRC32"
     },
     {
-        value: "sha1",
+        value: "SHA1",
         name: "SHA1"
     },
     {
-        value: "sha256",
+        value: "SHA256",
         name: "SHA256"
     }
 ])

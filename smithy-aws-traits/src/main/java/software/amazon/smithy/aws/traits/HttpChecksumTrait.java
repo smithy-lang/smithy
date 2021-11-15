@@ -17,6 +17,7 @@ package software.amazon.smithy.aws.traits;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -37,7 +38,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBuilder<HttpChecksumTrait> {
     public static final ShapeId ID = ShapeId.from("aws.protocols#httpChecksum");
     public static final String CHECKSUM_PREFIX = "x-amz-checksum-";
-    public static final List<String> CHECKSUM_ALGORITHMS = ListUtils.of("crc32c", "crc32", "sha1", "sha256");
+    public static final List<String> CHECKSUM_ALGORITHMS = ListUtils.of("CRC32C", "CRC32", "SHA1", "SHA256");
     public static final List<String> VALIDATION_MODES = ListUtils.of("ENABLED");
 
     public static final String REQUEST_CHECKSUM_REQUIRED = "requestChecksumRequired";
@@ -107,6 +108,16 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
      */
     public Optional<String> getRequestValidationModeMember() {
         return Optional.ofNullable(requestValidationModeMember);
+    }
+
+    /**
+     * Gets the normalized location name for a checksum algorithm.
+     *
+     * @param checksumAlgorithm The algorithm to get a location name of.
+     * @return The normalized location name.
+     */
+    public static String getChecksumLocationName(String checksumAlgorithm) {
+        return CHECKSUM_PREFIX + checksumAlgorithm.toLowerCase(Locale.US);
     }
 
     @Override

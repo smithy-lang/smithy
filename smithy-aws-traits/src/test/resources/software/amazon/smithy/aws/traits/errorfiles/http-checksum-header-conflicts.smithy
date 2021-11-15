@@ -5,7 +5,7 @@ use aws.protocols#httpChecksum
 @httpChecksum(
     requestAlgorithmMember: "requestAlgorithm",
     requestValidationModeMember: "validationMode",
-    responseAlgorithms: ["crc32c"]
+    responseAlgorithms: ["CRC32C"]
 )
 @http(method: "GET", uri: "/headerconflict")
 @readonly
@@ -19,7 +19,7 @@ operation HeaderConflicts {
 @httpChecksum(
     requestAlgorithmMember: "requestAlgorithm",
     requestValidationModeMember: "validationMode",
-    responseAlgorithms: ["crc32c"]
+    responseAlgorithms: ["CRC32C"]
 )
 @http(method: "GET", uri: "/headersconflict")
 @readonly
@@ -33,7 +33,7 @@ operation HeadersConflicts {
 @httpChecksum(
     requestAlgorithmMember: "requestAlgorithm",
     requestValidationModeMember: "validationMode",
-    responseAlgorithms: ["crc32c"]
+    responseAlgorithms: ["CRC32C"]
 )
 @http(method: "GET", uri: "/noconflict")
 @readonly
@@ -57,7 +57,7 @@ structure HeaderConflictsInput {
 }
 
 structure HeaderConflictsOutput {
-    @httpHeader("x-amz-checksum-crc32")
+    @httpHeader("x-amz-checksum-CRC32")
     warningConflictHeader: String,
 }
 
@@ -102,7 +102,7 @@ structure NoConflictsOutput {
 @error("client")
 @httpError(400)
 structure HeaderConflictError {
-    @httpHeader("x-amz-checksum-crc32")
+    @httpHeader("x-amz-checksum-CRC32")
     warningConflictHeader: String,
 }
 
@@ -125,19 +125,19 @@ structure NoConflictError {
 
 @enum([
     {
-        value: "crc32c",
+        value: "CRC32C",
         name: "CRC32C"
     },
     {
-        value: "crc32",
+        value: "CRC32",
         name: "CRC32"
     },
     {
-        value: "sha1",
+        value: "SHA1",
         name: "SHA1"
     },
     {
-        value: "sha256",
+        value: "SHA256",
         name: "SHA256"
     }
 ])
