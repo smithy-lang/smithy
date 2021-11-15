@@ -1413,7 +1413,6 @@ A client MUST provide a mechanism for customers to identify whether checksum
 validation was performed on a response and which checksum algorithm was
 validated.
 
-.. _chunked trailer part: https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-streaming.html
 
 Service behavior
 ================
@@ -1525,7 +1524,7 @@ HTTP header. Thus, the resolved location is always ``Header``.
 
 .. _Header-based auth: https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html
 .. _Streaming-signing auth: https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-streaming.html
-.. _chunked trailer part: https://tools.ietf.org/html/rfc7230#section-4.1.2
+.. _chunked trailer part: https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-streaming.html
 
 
 .. _aws.protocols#httpChecksum-trait_with-checksum-required:
