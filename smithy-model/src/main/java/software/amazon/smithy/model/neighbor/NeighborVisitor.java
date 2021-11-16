@@ -153,8 +153,8 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
     @Override
     public List<Relationship> operationShape(OperationShape shape) {
         List<Relationship> result = new ArrayList<>();
-        shape.getInput().ifPresent(id -> result.add(relationship(shape, RelationshipType.INPUT, id)));
-        shape.getOutput().ifPresent(id -> result.add(relationship(shape, RelationshipType.OUTPUT, id)));
+        result.add(relationship(shape, RelationshipType.INPUT, shape.getInputShape()));
+        result.add(relationship(shape, RelationshipType.OUTPUT, shape.getOutputShape()));
         for (ShapeId errorId : shape.getErrors()) {
             result.add(relationship(shape, RelationshipType.ERROR, errorId));
         }

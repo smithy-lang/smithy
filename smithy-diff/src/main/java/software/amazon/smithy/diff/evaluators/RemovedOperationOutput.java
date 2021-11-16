@@ -15,25 +15,19 @@
 
 package software.amazon.smithy.diff.evaluators;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import software.amazon.smithy.diff.Differences;
-import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 /**
- * Emits an ERROR when the output shape is removed from an operation.
+ * This validator is now deprecated because operations always default
+ * to smithy.api#Unit when they have no input or output.
  */
+@Deprecated
 public final class RemovedOperationOutput extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
-        return differences.changedShapes(OperationShape.class)
-                .filter(change -> change.getOldShape().getOutput().isPresent()
-                                  && !change.getNewShape().getOutput().isPresent())
-                .map(change -> error(change.getNewShape(), String.format(
-                        "Output shape, `%s`, was removed from the `%s` operation",
-                        change.getOldShape().getOutput().get(),
-                        change.getShapeId())))
-                .collect(Collectors.toList());
+        return Collections.emptyList();
     }
 }

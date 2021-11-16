@@ -165,11 +165,8 @@ public final class PathFinder {
             return Optional.empty();
         }
 
-        Optional<ShapeId> structId = rel == RelationshipType.INPUT ? operation.getInput() : operation.getOutput();
-        StructureShape struct = structId
-                .flatMap(model::getShape)
-                .flatMap(Shape::asStructureShape)
-                .orElse(null);
+        ShapeId structId = rel == RelationshipType.INPUT ? operation.getInputShape() : operation.getOutputShape();
+        StructureShape struct = model.getShape(structId).flatMap(Shape::asStructureShape).orElse(null);
 
         if (struct == null) {
             return Optional.empty();

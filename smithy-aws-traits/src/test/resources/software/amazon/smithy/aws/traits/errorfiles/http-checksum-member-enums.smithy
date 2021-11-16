@@ -14,11 +14,13 @@ operation ValidEnums {
 
 }
 
+@input
 structure ValidEnumsInput {
     requestAlgorithm: ChecksumAlgorithm,
     validationMode: ValidationMode,
 }
 
+@output
 structure ValidEnumsOutput {}
 
 @httpChecksum(
@@ -32,11 +34,13 @@ operation InvalidEnums {
     output: InvalidEnumsOutput,
 }
 
+@input
 structure InvalidEnumsInput {
     requestAlgorithm: BadChecksumAlgorithm,
     validationMode: BadValidationMode,
 }
 
+@output
 structure InvalidEnumsOutput {}
 
 @httpChecksum(
@@ -50,11 +54,13 @@ operation NoEnums {
     output: NoEnumsOutput,
 }
 
+@input
 structure NoEnumsInput {
     requestAlgorithm: String,
     validationMode: String,
 }
 
+@output
 structure NoEnumsOutput {}
 
 @httpChecksum(
@@ -68,8 +74,10 @@ operation NoMember {
     output: NoMemberOutput,
 }
 
+@input
 structure NoMemberInput {}
 
+@output
 structure NoMemberOutput {}
 
 @enum([

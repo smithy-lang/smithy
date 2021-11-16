@@ -10,7 +10,7 @@
         "operationId": "Get",
         "responses": {
           "200": {
-            "description": "Get response"
+            "description": "Get 200 response"
           }
         }
       },
@@ -18,7 +18,7 @@
         "operationId": "Put",
         "responses": {
           "200": {
-            "description": "Put response"
+            "description": "Put 200 response"
           }
         }
       },
@@ -26,7 +26,7 @@
         "operationId": "Post",
         "responses": {
           "200": {
-            "description": "Post response"
+            "description": "Post 200 response"
           }
         }
       },
@@ -34,7 +34,7 @@
         "operationId": "Delete",
         "responses": {
           "200": {
-            "description": "Delete response"
+            "description": "Delete 200 response"
           }
         }
       },
@@ -42,7 +42,7 @@
         "operationId": "Options",
         "responses": {
           "200": {
-            "description": "Options response"
+            "description": "Options 200 response"
           }
         }
       },
@@ -50,7 +50,7 @@
         "operationId": "Head",
         "responses": {
           "200": {
-            "description": "Head response"
+            "description": "Head 200 response"
           }
         }
       },
@@ -58,7 +58,7 @@
         "operationId": "Patch",
         "responses": {
           "200": {
-            "description": "Patch response"
+            "description": "Patch 200 response"
           }
         }
       },
@@ -66,7 +66,7 @@
         "operationId": "Trace",
         "responses": {
           "200": {
-            "description": "Trace response"
+            "description": "Trace 200 response"
           }
         }
       }

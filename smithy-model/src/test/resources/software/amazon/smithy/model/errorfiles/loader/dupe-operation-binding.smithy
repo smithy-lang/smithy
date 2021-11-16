@@ -5,4 +5,5 @@ operation GetFoo {
     input: GetFooInput,
 }
 
+@input
 structure GetFooInput {}

@@ -168,6 +168,7 @@ For example, given the following:
 
 .. code-block:: smithy
 
+    @input
     structure QueryStructuresInput {
         foo: String,
 
@@ -206,6 +207,7 @@ For example, given the following:
 
 .. code-block:: smithy
 
+    @input
     structure QueryListsInput {
         ListArg: StringList,
         ComplexListArg: GreetingList,
@@ -270,6 +272,7 @@ For example, given the following:
 
 .. code-block:: smithy
 
+    @input
     structure QueryMapsInput {
         MapArg: StringMap,
 

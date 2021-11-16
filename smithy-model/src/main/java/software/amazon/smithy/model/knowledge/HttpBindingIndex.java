@@ -387,15 +387,11 @@ public final class HttpBindingIndex implements KnowledgeIndex {
     }
 
     private List<HttpBinding> computeRequestBindings(OperationIndex opIndex, OperationShape shape) {
-        return opIndex.getInput(shape.getId())
-                .map(input -> createStructureBindings(input, true))
-                .orElseGet(Collections::emptyList);
+        return createStructureBindings(opIndex.expectInputShape(shape.getId()), true);
     }
 
     private List<HttpBinding> computeResponseBindings(OperationIndex opIndex, OperationShape shape) {
-        return opIndex.getOutput(shape.getId())
-                .map(output -> createStructureBindings(output, false))
-                .orElseGet(Collections::emptyList);
+        return createStructureBindings(opIndex.expectOutputShape(shape.getId()), false);
     }
 
     private List<HttpBinding> createStructureBindings(StructureShape struct, boolean isRequest) {

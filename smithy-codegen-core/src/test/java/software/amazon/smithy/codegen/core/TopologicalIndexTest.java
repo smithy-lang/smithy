@@ -19,7 +19,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.FunctionalUtils;
+import software.amazon.smithy.model.traits.UnitTypeTrait;
 
 public class TopologicalIndexTest {
 
@@ -114,9 +114,10 @@ public class TopologicalIndexTest {
                 .unwrap();
         TopologicalIndex index = TopologicalIndex.of(recursive);
 
-        // The topological index must capture all shapes in the index not in the prelude.
+        // The topological index must capture all shapes in the index not in the prelude,
+        // but include the Unit shape.
         Set<Shape> nonPrelude = recursive.shapes()
-                .filter(FunctionalUtils.not(Prelude::isPreludeShape))
+                .filter(shape -> shape.getId().equals(UnitTypeTrait.UNIT) || !Prelude.isPreludeShape(shape))
                 .collect(Collectors.toSet());
         Set<Shape> topologicalShapes = new HashSet<>(index.getOrderedShapes());
         topologicalShapes.addAll(index.getRecursiveShapes());
@@ -128,6 +129,7 @@ public class TopologicalIndexTest {
                 .map(ShapeId::toString)
                 .collect(Collectors.toList());
         assertThat(orderedIds, contains(
+                "smithy.api#Unit",
                 "smithy.example#MyString",
                 "smithy.example#NonRecursive$foo",
                 "smithy.example#NonRecursive",

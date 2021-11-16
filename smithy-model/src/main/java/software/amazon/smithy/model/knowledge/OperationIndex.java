@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -31,6 +33,9 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.model.traits.InputTrait;
+import software.amazon.smithy.model.traits.OutputTrait;
+import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.utils.ListUtils;
 
 /**
@@ -38,7 +43,8 @@ import software.amazon.smithy.utils.ListUtils;
  * structures.
  *
  * <p>This index performs no validation that the input, output, and
- * errors actually reference valid structures.
+ * errors actually reference valid structures. Such operation inputs,
+ * outputs, and errors may be discarded as if they do not exist.
  */
 public final class OperationIndex implements KnowledgeIndex {
     private final Map<ShapeId, StructureShape> inputs = new HashMap<>();
@@ -47,12 +53,8 @@ public final class OperationIndex implements KnowledgeIndex {
 
     public OperationIndex(Model model) {
         for (OperationShape operation : model.getOperationShapes()) {
-            operation.getInput()
-                    .flatMap(id -> getStructure(model, id))
-                    .ifPresent(shape -> inputs.put(operation.getId(), shape));
-            operation.getOutput()
-                    .flatMap(id -> getStructure(model, id))
-                    .ifPresent(shape -> outputs.put(operation.getId(), shape));
+            getStructure(model, operation.getInputShape()).ifPresent(shape -> inputs.put(operation.getId(), shape));
+            getStructure(model, operation.getOutputShape()).ifPresent(shape -> outputs.put(operation.getId(), shape));
             addErrorsFromShape(model, operation.getId(), operation.getErrors());
         }
 
@@ -74,13 +76,53 @@ public final class OperationIndex implements KnowledgeIndex {
     }
 
     /**
+     * Gets the optional input structure of an operation, and returns an
+     * empty optional if the input targets {@code smithy.api#Unit}.
+     *
+     * <p>This method is only here for backward compatibility. Instead,
+     * use {@link #getInputShape(ToShapeId)} and
+     * {@link #expectInputShape(ToShapeId)}.
+     *
+     * @param operation Operation to get the input structure of.
+     * @return Returns the optional operation input structure.
+     * @deprecated Use {@link #getInputShape(ToShapeId)} instead.
+     */
+    @Deprecated
+    public Optional<StructureShape> getInput(ToShapeId operation) {
+        return getInputShape(operation).filter(shape -> !shape.getId().equals(UnitTypeTrait.UNIT));
+    }
+
+    /**
      * Gets the optional input structure of an operation.
+     *
+     * <p>Operations in the model always have input. This operation will
+     * only return an empty optional if the given operation shape cannot
+     * be found in the model or if it is not an operation shape.
      *
      * @param operation Operation to get the input structure of.
      * @return Returns the optional operation input structure.
      */
-    public Optional<StructureShape> getInput(ToShapeId operation) {
+    public Optional<StructureShape> getInputShape(ToShapeId operation) {
         return Optional.ofNullable(inputs.get(operation.toShapeId()));
+    }
+
+    /**
+     * Gets the input shape of an operation, and returns Smithy's Unit type
+     * trait if the operation has no meaningful input.
+     *
+     * <p>In general, this method should be used instead of
+     * {@link #getInputShape(ToShapeId)} when getting the input of operations
+     * that are known to exist.
+     *
+     * @param operation Operation to get the input of.
+     * @return Returns the input shape of the operation.
+     * @throws ExpectationNotMetException if the operation shape cannot be found.
+     */
+    public StructureShape expectInputShape(ToShapeId operation) {
+        return getInputShape(operation).orElseThrow(() -> new ExpectationNotMetException(
+                "Cannot get the input of `" + operation.toShapeId() + "` because "
+                + "it is not an operation shape in the model.",
+                SourceLocation.NONE));
     }
 
     /**
@@ -94,19 +136,23 @@ public final class OperationIndex implements KnowledgeIndex {
      * @return Returns the map of members, or an empty map.
      */
     public Map<String, MemberShape> getInputMembers(ToShapeId operation) {
-        return getInput(operation)
+        return getInputShape(operation)
                 .map(input -> input.getAllMembers())
                 .orElse(Collections.emptyMap());
     }
 
     /**
      * Returns true if the given structure is used as input by any
-     * operation in the model.
+     * operation in the model or is marked with the input trait.
      *
      * @param structureId Structure to check.
      * @return Returns true if the structure is used as input.
      */
     public boolean isInputStructure(ToShapeId structureId) {
+        if (structureId instanceof Shape && ((Shape) structureId).hasTrait(InputTrait.class)) {
+            return true;
+        }
+
         ShapeId id = structureId.toShapeId();
 
         for (StructureShape shape : inputs.values()) {
@@ -119,13 +165,53 @@ public final class OperationIndex implements KnowledgeIndex {
     }
 
     /**
+     * Gets the optional output structure of an operation, and returns an
+     * empty optional if the output targets {@code smithy.api#Unit}.
+     *
+     * <p>This method is only here for backward compatibility. Instead,
+     * use {@link #getOutputShape(ToShapeId)} and
+     * {@link #expectOutputShape(ToShapeId)}.
+     *
+     * @param operation Operation to get the output structure of.
+     * @return Returns the optional operation output structure.
+     * @deprecated Use {@link #getOutputShape(ToShapeId)} instead.
+     */
+    @Deprecated
+    public Optional<StructureShape> getOutput(ToShapeId operation) {
+        return getOutputShape(operation).filter(shape -> !shape.getId().equals(UnitTypeTrait.UNIT));
+    }
+
+    /**
      * Gets the optional output structure of an operation.
+     *
+     * <p>Operations in the model always have output. This operation will
+     * only return an empty optional if the given operation shape cannot
+     * be found in the model or if it is not an operation shape.
      *
      * @param operation Operation to get the output structure of.
      * @return Returns the optional operation output structure.
      */
-    public Optional<StructureShape> getOutput(ToShapeId operation) {
+    public Optional<StructureShape> getOutputShape(ToShapeId operation) {
         return Optional.ofNullable(outputs.get(operation.toShapeId()));
+    }
+
+    /**
+     * Gets the output shape of an operation, and returns Smithy's unit type
+     * trait if the operation has no meaningful output.
+     *
+     * <p>In general, this method should be used instead of
+     * {@link #getOutputShape(ToShapeId)} when getting the output of operations
+     * that are known to exist.
+     *
+     * @param operation Operation to get the output of.
+     * @return Returns the output shape of the operation.
+     * @throws ExpectationNotMetException if the operation shape cannot be found.
+     */
+    public StructureShape expectOutputShape(ToShapeId operation) {
+        return getOutputShape(operation).orElseThrow(() -> new ExpectationNotMetException(
+                "Cannot get the output of `" + operation.toShapeId() + "` because "
+                + "it is not an operation shape in the model.",
+                SourceLocation.NONE));
     }
 
     /**
@@ -139,19 +225,23 @@ public final class OperationIndex implements KnowledgeIndex {
      * @return Returns the map of members, or an empty map.
      */
     public Map<String, MemberShape> getOutputMembers(ToShapeId operation) {
-        return getOutput(operation)
+        return getOutputShape(operation)
                 .map(output -> output.getAllMembers())
                 .orElse(Collections.emptyMap());
     }
 
     /**
      * Returns true if the given structure is used as output by any
-     * operation in the model.
+     * operation in the model or is marked with the output trait.
      *
      * @param structureId Structure to check.
      * @return Returns true if the structure is used as output.
      */
     public boolean isOutputStructure(ToShapeId structureId) {
+        if (structureId instanceof Shape && ((Shape) structureId).hasTrait(OutputTrait.class)) {
+            return true;
+        }
+
         ShapeId id = structureId.toShapeId();
 
         for (StructureShape shape : outputs.values()) {

@@ -138,6 +138,65 @@ in Java).
         }
 
 
+.. smithy-trait:: smithy.api#input
+.. _input-trait:
+
+---------------
+``input`` trait
+---------------
+
+Summary
+    Specializes a structure for use only as the input of a single operation.
+Trait selector
+    ``structure``
+Value type
+    Annotation trait.
+Conflicts with
+    :ref:`output-trait`, :ref:`error-trait`
+
+Structure shapes marked with the ``@input`` trait MUST adhere to the
+following constraints:
+
+1. They can only be referenced in the model as an operation's input.
+2. They cannot be used as the input of more than one operation.
+3. They SHOULD have a shape name that starts with the name of the
+   operation that targets it (if any). For example, the input shape of the
+   ``GetSprocket`` operation SHOULD be named ``GetSprocketInput``,
+   ``GetSprocketRequest``, or something similar.
+
+These constraints allow tooling to specialize operation input shapes in
+ways that would otherwise require complex model transformations.
+
+
+.. smithy-trait:: smithy.api#output
+.. _output-trait:
+
+----------------
+``output`` trait
+----------------
+
+Summary
+    Specializes a structure for use only as the output of a single operation.
+Trait selector
+    ``structure``
+Value type
+    Annotation trait.
+Conflicts with
+    :ref:`input-trait`, :ref:`error-trait`
+
+Structure shapes marked with the ``@output`` trait MUST adhere to the
+following constraints:
+
+1. They can only be referenced in the model as an operation's output.
+2. They cannot be used as the output of more than one operation.
+3. They SHOULD have a shape name that starts with the name of the
+   operation that targets it (if any). For example, the output shape of the
+   ``GetSprocket`` operation SHOULD be named ``GetSprocketOutput``.
+
+These constraints allow tooling to specialize operation output shapes in
+ways that would otherwise require complex model transformations.
+
+
 .. smithy-trait:: smithy.api#sparse
 .. _sparse-trait:
 

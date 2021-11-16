@@ -53,59 +53,24 @@ The ``endpoint`` trait is a structure that contains the following members:
 
 The following example defines an operation that uses a custom endpoint:
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    namespace smithy.example
 
-        namespace smithy.example
+    @readonly
+    @endpoint(hostPrefix: "{foo}.data.")
+    operation GetStatus {
+        input: GetStatusInput,
+        output: GetStatusOutput
+    }
 
-        @readonly
-        @endpoint(hostPrefix: "{foo}.data.")
-        operation GetStatus {
-            input: GetStatusInput,
-            output: GetStatusOutput
-        }
+    @input
+    structure GetStatusInput {
+        @required
+        @hostLabel
+        foo: String
+    }
 
-        structure GetStatusInput {
-            @required
-            @hostLabel
-            foo: String
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#GetStatus": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#GetStatusInput"
-                    },
-                    "output": {
-                        "target": "smithy.example#GetStatusOutput"
-                    },
-                    "traits": {
-                        "smithy.api#readonly": {},
-                        "smithy.api#endpoint": {
-                            "hostPrefix": "{foo}.data."
-                        }
-                    }
-                },
-                "smithy.example#GetStatusInput": {
-                    "type": "structure",
-                    "members": {
-                        "foo": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#required": {},
-                                "smithy.api#hostLabel": {}
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
 .. _endpoint-Labels:
 
@@ -121,57 +86,21 @@ be marked as :ref:`required <required-trait>`, the input member MUST have the
 
 Given the following operation,
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    @readonly
+    @endpoint(hostPrefix: "{foo}.data.")
+    operation GetStatus {
+        input: GetStatusInput,
+        output: GetStatusOutput
+    }
 
-        @readonly
-        @endpoint(hostPrefix: "{foo}.data.")
-        operation GetStatus {
-            input: GetStatusInput,
-            output: GetStatusOutput
-        }
-
-        structure GetStatusInput {
-            @required
-            @hostLabel
-            foo: String
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#GetStatus": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#GetStatusInput"
-                    },
-                    "output": {
-                        "target": "smithy.example#GetStatusOutput"
-                    },
-                    "traits": {
-                        "smithy.api#readonly": {},
-                        "smithy.api#endpoint": {
-                            "hostPrefix": "{foo}.data."
-                        }
-                    }
-                },
-                "smithy.example#GetStatusInput": {
-                    "type": "structure",
-                    "members": {
-                        "foo": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#required": {},
-                                "smithy.api#hostLabel": {}
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    @input
+    structure GetStatusInput {
+        @required
+        @hostLabel
+        foo: String
+    }
 
 and the following value provided for ``GetStatusInput``,
 

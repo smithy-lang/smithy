@@ -38,6 +38,16 @@ use smithy.test#httpResponseTests
     },
 ])
 operation OperationWithOptionalInputOutput {
-    input: SimpleStruct,
-    output: SimpleStruct,
+    input: OperationWithOptionalInputOutputInput,
+    output: OperationWithOptionalInputOutputOutput,
+}
+
+@input
+structure OperationWithOptionalInputOutputInput {
+    Value: String
+}
+
+@output
+structure OperationWithOptionalInputOutputOutput {
+    Value: String
 }

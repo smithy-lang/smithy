@@ -16,10 +16,15 @@ use smithy.waiters#waitable
     }
 )
 operation A {
+    input: AInput,
     output: AOutput,
     errors: [OhNo],
 }
 
+@input
+structure AInput {}
+
+@output
 structure AOutput {
     foo: String,
 }

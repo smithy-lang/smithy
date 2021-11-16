@@ -148,70 +148,27 @@ Value type
 
 Consider the following *abridged* model of S3's ``GetBucketLocation`` operation:
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    use aws.customizations#s3UnwrappedXmlOutput
 
-        use aws.customizations#s3UnwrappedXmlOutput
+    @http(uri: "/GetBucketLocation", method: "GET")
+    @s3UnwrappedXmlOutput
+    operation GetBucketLocation {
+        input: GetBucketLocationInput,
+        output: GetBucketLocationOutput
+    }
 
-        @enum([
-            { value: "us-west-2", name: "us_west_2" }
-        ])
-        string BucketLocationConstraint
+    @output
+    @xmlName("LocationConstraint")
+    structure GetBucketLocationOutput {
+        LocationConstraint: BucketLocationConstraint
+    }
 
-        @xmlName("LocationConstraint")
-        structure GetBucketLocationOutput {
-            LocationConstraint: BucketLocationConstraint,
-        }
-
-        @http(uri: "/GetBucketLocation", method: "GET")
-        @s3UnwrappedXmlOutput
-        operation GetBucketLocation {
-            output: GetBucketLocationOutput,
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#BucketLocationConstraint": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.api#enum": [
-                            {
-                                "value": "us-west-2",
-                                "name": "us_west_2"
-                            }
-                        ]
-                    }
-                },
-                "smithy.example#GetBucketLocationOutput": {
-                    "type": "structure",
-                    "members": {
-                        "LocationConstraint": {
-                            "target": "smithy.example#BucketLocationConstraint"
-                        }
-                    },
-                    "traits": {
-                        "smithy.api#xmlName": "LocationConstraint"
-                    }
-                },
-                "smithy.example#GetBucketLocation": {
-                    "type": "operation",
-                    "output": {
-                        "target": "smithy.example#GetBucketLocationOutput"
-                    },
-                    "traits": {
-                        "smithy.api#http": {
-                            "uri": "/GetBucketLocation",
-                            "method": "GET"
-                        },
-                        "aws.customizations#s3UnwrappedXmlOutput": {}
-                    }
-                }
-            }
-        }
+    @enum([
+        { value: "us-west-2", name: "us_west_2" }
+    ])
+    string BucketLocationConstraint
 
 Since this operation is modeled with ``@s3UnwrappedXmlOutput``,
 an Amazon S3 client should expect the response from S3 to be unwrapped as shown below:

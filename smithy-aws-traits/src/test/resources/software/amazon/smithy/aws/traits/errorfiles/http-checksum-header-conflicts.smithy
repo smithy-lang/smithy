@@ -45,6 +45,7 @@ operation NoConflicts {
 
 }
 
+@input
 structure HeaderConflictsInput {
     @httpHeader("x-amz-checksum-crc32")
     warningConflictHeader: String,
@@ -56,11 +57,13 @@ structure HeaderConflictsInput {
     validationMode: ValidationMode,
 }
 
+@output
 structure HeaderConflictsOutput {
     @httpHeader("x-amz-checksum-CRC32")
     warningConflictHeader: String,
 }
 
+@input
 structure HeadersConflictsInput {
     @httpPrefixHeaders("x-amz-checksum-")
     dangerConflictHeaders: StringMap,
@@ -72,11 +75,13 @@ structure HeadersConflictsInput {
     validationMode: ValidationMode,
 }
 
+@output
 structure HeadersConflictsOutput {
     @httpPrefixHeaders("x-amz-checksum-")
     dangerConflictHeaders: StringMap,
 }
 
+@input
 structure NoConflictsInput {
     @httpHeader("x-safe-header")
     noConflictHeader: String,
@@ -91,6 +96,7 @@ structure NoConflictsInput {
     validationMode: ValidationMode,
 }
 
+@output
 structure NoConflictsOutput {
     @httpHeader("x-safe-header")
     noConflictHeader: String,

@@ -70,10 +70,8 @@ public final class HttpPayloadValidator extends AbstractValidator {
             OperationShape shape
     ) {
         List<ValidationEvent> events = new ArrayList<>();
-        opIndex.getInput(shape.getId()).flatMap(struct -> validatePayload(shape.getId(), struct, bindings, true))
-                        .ifPresent(events::add);
-        opIndex.getOutput(shape.getId()).flatMap(struct -> validatePayload(shape.getId(), struct, bindings, false))
-                        .ifPresent(events::add);
+        validatePayload(shape.getId(), opIndex.expectInputShape(shape), bindings, true).ifPresent(events::add);
+        validatePayload(shape.getId(), opIndex.expectOutputShape(shape), bindings, false).ifPresent(events::add);
         return events;
     }
 

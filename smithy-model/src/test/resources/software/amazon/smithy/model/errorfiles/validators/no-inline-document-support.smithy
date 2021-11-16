@@ -16,12 +16,17 @@ service FooService {
 }
 
 operation Foo {
-    input: FooInput
+    input: FooInput,
+    output: FooOutput
 }
 
+@input
 structure FooInput {
     doc: InlineDocument,
 }
+
+@output
+structure FooOutput {}
 
 document InlineDocument
 

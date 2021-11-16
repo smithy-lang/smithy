@@ -289,35 +289,34 @@ provided must correspond to the name of an identifier for said resource. The
 trait is not required when the name of the input structure member is an exact
 match for the name of the resource identifier.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    resource File {
+        identifiers: {
+            directory: "String",
+            fileName: "String",
+        },
+        read: GetFile,
+    }
 
-        resource File {
-            identifiers: {
-                directory: "String",
-                fileName: "String",
-            },
-            read: GetFile,
-        }
+    @readonly
+    operation GetFile {
+        input: GetFileInput,
+        output: GetFileOutput,
+        errors: [NoSuchResource]
+    }
 
-        @readonly
-        operation GetFile {
-            input: GetFileInput,
-            output: GetFileOutput,
-            errors: [NoSuchResource]
-        }
+    @input
+    structure GetFileInput {
+        @required
+        directory: String,
 
-        structure GetFileInput {
-            @required
-            directory: String,
-
-            // resourceIdentifier is used because the input member name
-            // does not match the resource identifier name
-            @resourceIdentifier("fileName")
-            @required
-            name: String,
-        }
+        // resourceIdentifier is used because the input member name
+        // does not match the resource identifier name
+        @resourceIdentifier("fileName")
+        @required
+        name: String,
+    }
 
 
 .. _CreateTable: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_CreateTable.html

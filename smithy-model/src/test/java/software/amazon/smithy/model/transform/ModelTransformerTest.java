@@ -30,6 +30,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.ReadonlyTrait;
+import software.amazon.smithy.model.traits.UnitTypeTrait;
 
 public class ModelTransformerTest {
 
@@ -41,10 +42,10 @@ public class ModelTransformerTest {
         ShapeId operation = ShapeId.from("ns.foo#MyOperation");
 
         assertThat(result.expectShape(operation), Matchers.not(Optional.empty()));
-        assertThat(result.expectShape(operation).asOperationShape().flatMap(OperationShape::getInput),
-                          Matchers.is(Optional.empty()));
-        assertThat(result.expectShape(operation).asOperationShape().flatMap(OperationShape::getOutput),
-                          Matchers.is(Optional.empty()));
+        assertThat(result.expectShape(operation).asOperationShape().map(OperationShape::getInputShape),
+                   Matchers.equalTo(Optional.of(UnitTypeTrait.UNIT)));
+        assertThat(result.expectShape(operation).asOperationShape().map(OperationShape::getOutputShape),
+                   Matchers.equalTo(Optional.of(UnitTypeTrait.UNIT)));
         assertThat(result.expectShape(operation).asOperationShape().map(OperationShape::getErrors),
                           Matchers.equalTo(Optional.of(Collections.emptyList())));
     }

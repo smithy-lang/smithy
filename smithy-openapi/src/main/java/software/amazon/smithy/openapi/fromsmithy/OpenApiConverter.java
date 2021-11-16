@@ -618,19 +618,7 @@ public final class OpenApiConverter {
             OpenApiMapper plugin
     ) {
         Map<String, ResponseObject> newResponses = new LinkedHashMap<>();
-
-        // OpenAPI requires at least one response, so track the "original"
-        // responses vs new/mutated responses.
-        Map<String, ResponseObject> originalResponses = operation.getResponses();
-        if (operation.getResponses().isEmpty()) {
-            String code = context.getOpenApiProtocol().getOperationResponseStatusCode(context, shape);
-            String contextName = context.getService().getContextualName(shape);
-            originalResponses = MapUtils.of(code, ResponseObject.builder()
-                    .description(contextName + " response")
-                    .build());
-        }
-
-        for (Map.Entry<String, ResponseObject> entry : originalResponses.entrySet()) {
+        for (Map.Entry<String, ResponseObject> entry : operation.getResponses().entrySet()) {
             String status = entry.getKey();
             ResponseObject responseObject = plugin.updateResponse(
                     context, shape, status, methodName, path, entry.getValue());

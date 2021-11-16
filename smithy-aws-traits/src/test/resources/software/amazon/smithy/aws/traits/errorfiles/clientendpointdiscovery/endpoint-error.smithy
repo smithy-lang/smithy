@@ -40,6 +40,7 @@ operation DescribeEndpoints {
     output: DescribeEndpointsOutput,
 }
 
+@input
 structure DescribeEndpointsInput {
     Operation: String,
     Identifiers: Identifiers,
@@ -50,6 +51,7 @@ map Identifiers {
     value: String,
 }
 
+@output
 structure DescribeEndpointsOutput {
     Endpoints: Endpoints,
 }
@@ -69,20 +71,33 @@ operation GetObject {
     output: GetObjectOutput,
 }
 
+@input
 structure GetObjectInput {
     @required
     Id: String,
 }
 
+@output
 structure GetObjectOutput {
     Object: Blob,
 }
 
 @clientDiscoveredEndpoint(required: true)
 operation GetObjectWithEndpointError {
-    input: GetObjectInput,
-    output: GetObjectOutput,
+    input: GetObjectWithEndpointErrorInput,
+    output: GetObjectWithEndpointErrorOutput,
     errors: [InvalidEndpointError],
+}
+
+@input
+structure GetObjectWithEndpointErrorInput {
+    @required
+    Id: String,
+}
+
+@output
+structure GetObjectWithEndpointErrorOutput {
+    Object: Blob,
 }
 
 @error("client")

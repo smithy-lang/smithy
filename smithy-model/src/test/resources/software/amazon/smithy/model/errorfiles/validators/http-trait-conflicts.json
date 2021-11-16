@@ -14,6 +14,9 @@
                         "smithy.api#httpHeader": "x-amz-foo"
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         }
     }

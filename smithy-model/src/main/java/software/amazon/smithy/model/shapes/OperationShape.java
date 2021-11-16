@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.knowledge.OperationIndex;
+import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -37,8 +38,8 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
     private OperationShape(Builder builder) {
         super(builder, false);
         errors = ListUtils.copyOf(builder.errors);
-        input = builder.input;
-        output = builder.output;
+        input = Objects.requireNonNull(builder.input);
+        output = Objects.requireNonNull(builder.output);
     }
 
     public static Builder builder() {
@@ -66,19 +67,53 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
     /**
      * <p>Gets the optional shape ID of the input of the operation.</p>
      *
+     * <p>For backward compatibility, if the input targets {@code smithy.api#Unit},
+     * then an empty optional is returned.
+     *
      * @return Returns the optional shape ID.
+     * @deprecated Use {@link #getInputShape()}
      */
+    @Deprecated
     public Optional<ShapeId> getInput() {
-        return Optional.ofNullable(input);
+        return input.equals(UnitTypeTrait.UNIT) ? Optional.empty() : Optional.of(input);
     }
 
     /**
      * <p>Gets the optional shape ID of the output of the operation.</p>
      *
+     * <p>For backward compatibility, if the output targets {@code smithy.api#Unit},
+     * then an empty optional is returned.
+     *
      * @return Returns the optional shape ID.
+     * @deprecated Use {@link #getOutputShape()}
      */
+    @Deprecated
     public Optional<ShapeId> getOutput() {
-        return Optional.ofNullable(output);
+        return output.equals(UnitTypeTrait.UNIT) ? Optional.empty() : Optional.of(output);
+    }
+
+    /**
+     * Gets the input of the operation.
+     *
+     * <p>All operations have input, and they default to target
+     * {@code smithy.api#Unit}.
+     *
+     * @return Returns the non-nullable input.
+     */
+    public ShapeId getInputShape() {
+        return input;
+    }
+
+    /**
+     * Gets the output of the operation.
+     *
+     * <p>All operations have output, and they default to target
+     * {@code smithy.api#Unit}.
+     *
+     * @return Returns the non-nullable output.
+     */
+    public ShapeId getOutputShape() {
+        return output;
     }
 
     /**
@@ -125,8 +160,8 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
             return false;
         } else {
             OperationShape otherShape = (OperationShape) other;
-            return Objects.equals(input, otherShape.input)
-                   && Objects.equals(output, otherShape.output)
+            return input.equals(otherShape.input)
+                   && output.equals(otherShape.output)
                    && errors.equals(otherShape.errors);
         }
     }
@@ -135,8 +170,8 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
      * Builder used to create a {@link OperationShape}.
      */
     public static final class Builder extends AbstractShapeBuilder<Builder, OperationShape> {
-        private ShapeId input;
-        private ShapeId output;
+        private ShapeId input = UnitTypeTrait.UNIT;
+        private ShapeId output = UnitTypeTrait.UNIT;
         private final List<ShapeId> errors = new ArrayList<>();
 
         @Override
@@ -148,11 +183,10 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
          * Sets the input shape ID of the operation.
          *
          * @param inputShape Shape ID that MUST reference a structure.
-         *  Set to null to clear.
          * @return Returns the builder.
          */
         public Builder input(ToShapeId inputShape) {
-            input = inputShape == null ? null : inputShape.toShapeId();
+            input = inputShape == null ? UnitTypeTrait.UNIT : inputShape.toShapeId();
             return this;
         }
 
@@ -160,11 +194,10 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
          * Sets the output shape ID of the operation.
          *
          * @param outputShape Shape ID that MUST reference a structure.
-         *  Set to null to clear.
          * @return Returns the builder.
          */
         public Builder output(ToShapeId outputShape) {
-            output = outputShape == null ? null : outputShape.toShapeId();
+            output = outputShape == null ? UnitTypeTrait.UNIT : outputShape.toShapeId();
             return this;
         }
 

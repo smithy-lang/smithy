@@ -89,10 +89,10 @@ operation MalformedAcceptWithBody {
 @suppress(["UnstableTrait"])
 @http(method: "POST", uri: "/MalformedAcceptWithPayload")
 operation MalformedAcceptWithPayload {
-    output: MalformedAcceptWithPayloadInput
+    output: MalformedAcceptWithPayloadOutput
 }
 
-structure MalformedAcceptWithPayloadInput {
+structure MalformedAcceptWithPayloadOutput {
     @httpPayload
     payload: JpegBlob
 }

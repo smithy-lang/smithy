@@ -1,0 +1,2 @@
+[ERROR] smithy.example#BadStructure$i: Members cannot target structures marked with the @input trait: smithy.example#GetFooInput | OperationInputOutputMisuse
+[ERROR] smithy.example#BadStructure$o: Members cannot target structures marked with the @output trait: smithy.example#GetFooOutput | OperationInputOutputMisuse

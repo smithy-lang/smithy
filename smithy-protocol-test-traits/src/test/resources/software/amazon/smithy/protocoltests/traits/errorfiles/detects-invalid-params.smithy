@@ -19,9 +19,14 @@ structure testProtocol {}
     }
 ])
 operation SayGoodbye {
+    input: SayGoodbyeInput,
     output: SayGoodbyeOutput
 }
 
+@input
+structure SayGoodbyeInput {}
+
+@output
 structure SayGoodbyeOutput {}
 
 @httpResponseTests([
@@ -52,9 +57,14 @@ structure MyError {
     }
 ])
 operation SayHello {
-    input: SayHelloInput
+    input: SayHelloInput,
+    output: SayHelloOutput
 }
 
+@input
 structure SayHelloInput {
     badType: Boolean
 }
+
+@output
+structure SayHelloOutput {}

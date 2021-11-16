@@ -15,6 +15,9 @@
             "input": {
                 "target": "ns.foo#SayHelloInput"
             },
+            "output": {
+                "target": "ns.foo#SayHelloOutput"
+            },
             "traits": {
                 "smithy.api#http": {
                     "method": "POST",
@@ -31,6 +34,15 @@
                         "smithy.api#httpHeader": "Not valid!"
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#SayHelloOutput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#output": {}
             }
         }
     }

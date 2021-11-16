@@ -15,17 +15,17 @@
 
 package software.amazon.smithy.mqtt.traits.validators;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.OperationIndex;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.mqtt.traits.SubscribeTrait;
 import software.amazon.smithy.mqtt.traits.TopicLabelTrait;
-import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
@@ -39,19 +39,22 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 public final class MqttSubscribeInputValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.shapes(OperationShape.class)
-                .filter(shape -> shape.hasTrait(SubscribeTrait.class))
-                .flatMap(shape -> validateOperation(model, shape))
-                .collect(Collectors.toList());
+        OperationIndex operationIndex = OperationIndex.of(model);
+        List<ValidationEvent> events = new ArrayList<>();
+        for (OperationShape shape : model.getOperationShapesWithTrait(SubscribeTrait.class)) {
+            validateOperation(shape, operationIndex.expectInputShape(shape), events);
+        }
+        return events;
     }
 
-    private Stream<ValidationEvent> validateOperation(Model model, OperationShape operation) {
-        return OptionalUtils.stream(operation.getInput().flatMap(model::getShape).flatMap(Shape::asStructureShape))
-                .flatMap(input -> input.getAllMembers().values().stream()
-                        .filter(member -> !member.hasTrait(TopicLabelTrait.class))
-                        .map(member -> error(member, String.format(
-                                "All input members of an operation marked with the `smithy.mqtt#subscribe` trait "
-                                + "must be marked with the `smithy.mqtt#topicLabel` trait, and this member is used "
-                                + "as part of the input of the `%s` operation.", operation.getId()))));
+    private void validateOperation(OperationShape operation, StructureShape input, List<ValidationEvent> events) {
+        for (MemberShape member : input.getAllMembers().values()) {
+            if (!member.hasTrait(TopicLabelTrait.class)) {
+                events.add(error(member, String.format(
+                        "All input members of an operation marked with the `smithy.mqtt#subscribe` trait "
+                        + "must be marked with the `smithy.mqtt#topicLabel` trait, and this member is used "
+                        + "as part of the input of the `%s` operation.", operation.getId())));
+            }
+        }
     }
 }

@@ -375,17 +375,16 @@ Value type
 Conflicts with
    :ref:`required-trait`
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    @input
+    structure PutContentsInput {
+        @required
+        contents: String,
 
-        structure PutContentsInput {
-            @required
-            contents: String,
-
-            @recommended(reason: "Validation will reject contents if they are invalid.")
-            validateContents: Boolean,
-        }
+        @recommended(reason: "Validation will reject contents if they are invalid.")
+        validateContents: Boolean,
+    }
 
 
 .. smithy-trait:: smithy.api#sensitive

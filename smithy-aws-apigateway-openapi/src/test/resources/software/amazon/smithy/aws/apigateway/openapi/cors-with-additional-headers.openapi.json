@@ -119,7 +119,7 @@
         ],
         "responses": {
           "204": {
-            "description": "DeletePayload response",
+            "description": "DeletePayload 204 response",
             "headers": {
               "Access-Control-Allow-Origin": {
                 "schema": {
@@ -144,7 +144,7 @@
             "default": {
               "statusCode": "200",
               "responseParameters": {
-                "method.response.header.Access-Control-Expose-Headers": "'X-Amzn-Errortype,X-Amzn-Requestid,X-Service-Output-Metadata'",
+                "method.response.header.Access-Control-Expose-Headers": "'Content-Length,Content-Type,X-Amzn-Errortype,X-Amzn-Requestid,X-Service-Output-Metadata'",
                 "method.response.header.Access-Control-Allow-Origin": "'https://www.example.com'"
               }
             }
@@ -320,7 +320,7 @@
         ],
         "responses": {
           "201": {
-            "description": "PutPayload response",
+            "description": "PutPayload 201 response",
             "headers": {
               "Access-Control-Allow-Origin": {
                 "schema": {
@@ -345,7 +345,7 @@
             "default": {
               "statusCode": "200",
               "responseParameters": {
-                "method.response.header.Access-Control-Expose-Headers": "'X-Amzn-Errortype,X-Amzn-Requestid,X-Service-Output-Metadata'",
+                "method.response.header.Access-Control-Expose-Headers": "'Content-Length,Content-Type,X-Amzn-Errortype,X-Amzn-Requestid,X-Service-Output-Metadata'",
                 "method.response.header.Access-Control-Allow-Origin": "'https://www.example.com'"
               }
             }

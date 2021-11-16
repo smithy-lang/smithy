@@ -24,6 +24,7 @@ import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.EnumTrait;
@@ -85,9 +86,7 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
 
         // TraitTarget validation will raise an error if there's no operation input.
-        operation.getInput().ifPresent(inputId -> {
-            StructureShape input = model.expectShape(inputId, StructureShape.class);
-
+        model.getShape(operation.getInputShape()).flatMap(Shape::asStructureShape).ifPresent(input -> {
             if (isRequestChecksumConfiguration) {
                 events.addAll(validateRequestChecksumConfiguration(model, trait, operation, input));
             }
@@ -219,13 +218,9 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
 
         // Check for header binding conflicts with the output shape.
-        if (operation.getOutput().isPresent()) {
-            StructureShape outputShape = model.expectShape(operation.getOutput().get(), StructureShape.class);
+        model.getShape(operation.getOutputShape()).flatMap(Shape::asStructureShape).ifPresent(outputShape -> {
             events.addAll(validateHeaderConflicts(operation, outputShape));
-        } else {
-            events.add(error(operation, trait, "The `httpChecksum` trait defines `response` checksum behavior but the"
-                    + " operation does not have output."));
-        }
+        });
 
         // Validate requestValidationModeMember is set properly for response behavior.
         if (!trait.getRequestValidationModeMember().isPresent()) {

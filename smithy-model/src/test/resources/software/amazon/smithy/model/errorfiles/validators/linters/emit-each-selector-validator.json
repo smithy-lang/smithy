@@ -96,6 +96,9 @@
                 "otherMemberName": {
                     "target": "ns.foo#Integer"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#OperationAOutput": {
@@ -104,6 +107,9 @@
                 "b": {
                     "target": "ns.foo#Map"
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#OperationErrorA": {
@@ -122,6 +128,9 @@
             "type": "operation",
             "input": {
                 "target": "ns.foo#OperationBInput"
+            },
+            "traits": {
+                "smithy.api#suppress": ["OperationMissingOutput"]
             }
         },
         "ns.foo#OperationBInput": {
@@ -133,6 +142,9 @@
                         "smithy.api#required": {}
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#UtcTimestamp": {

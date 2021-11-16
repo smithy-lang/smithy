@@ -1,5 +1,13 @@
 {
   "smithy": "1.0",
+  "metadata": {
+    "suppressions": [
+      {"id": "OperationMissingInput", "namespace": "*"},
+      {"id": "OperationMissingOutput", "namespace": "*"},
+      {"id": "OperationMissingInputTrait", "namespace": "*"},
+      {"id": "OperationMissingOutputTrait", "namespace": "*"}
+    ]
+  },
   "shapes": {
     "ns.foo#Blob": {
       "type": "blob"

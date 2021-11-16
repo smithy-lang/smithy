@@ -46,7 +46,10 @@ resource SubResource {
     },
 }
 
-operation EmptyOperation {}
+operation EmptyOperation {
+    input: Unit,
+    output: Unit,
+}
 
 operation MyOperation {
     input: InputOutput,
@@ -59,11 +62,13 @@ operation MyOperation {
 @readonly
 operation ReadonlyResourceOperation {
     input: ResourceOperationInput,
+    output: Unit,
 }
 
 @idempotent
 operation ResourceOperation {
     input: ResourceOperationInput,
+    output: Unit,
 }
 
 @error("client")

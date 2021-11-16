@@ -7,26 +7,32 @@
         "ns.foo#StreamingOperation": {
             "type": "operation",
             "input": {
-                "target": "ns.foo#StreamingInput"
+                "target": "ns.foo#StreamingOperationInput"
             },
             "output": {
-                "target": "ns.foo#StreamingOutput"
+                "target": "ns.foo#StreamingOperationOutput"
             }
         },
-        "ns.foo#StreamingInput": {
+        "ns.foo#StreamingOperationInput": {
             "type": "structure",
             "members": {
                 "Body": {
                     "target": "ns.foo#StreamingBlob"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
-        "ns.foo#StreamingOutput": {
+        "ns.foo#StreamingOperationOutput": {
             "type": "structure",
             "members": {
                 "Body": {
                     "target": "ns.foo#StreamingBlob"
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#StreamingBlob": {
@@ -37,11 +43,20 @@
         },
         "ns.foo#InvalidStreamingOperation": {
             "type": "operation",
+            "input": {
+                "target": "ns.foo#InvalidStreamingOperationInput"
+            },
             "output": {
-                "target": "ns.foo#InvalidStreamingOutput"
+                "target": "ns.foo#InvalidStreamingOperationOutput"
             }
         },
-        "ns.foo#InvalidStreamingOutput": {
+        "ns.foo#InvalidStreamingOperationInput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#InvalidStreamingOperationOutput": {
             "type": "structure",
             "members": {
                 "StreamingBlob1": {
@@ -50,13 +65,24 @@
                 "StreamingBlob2": {
                     "target": "ns.foo#StreamingBlob"
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#InvalidNestedStream": {
             "type": "structure",
             "members": {
                 "NestedStream": {
-                    "target": "ns.foo#StreamingInput"
+                    "target": "ns.foo#NestedStreamContainer"
+                }
+            }
+        },
+        "ns.foo#NestedStreamContainer": {
+            "type": "structure",
+            "members": {
+                "nested": {
+                    "target": "ns.foo#StreamingBlob"
                 }
             }
         }

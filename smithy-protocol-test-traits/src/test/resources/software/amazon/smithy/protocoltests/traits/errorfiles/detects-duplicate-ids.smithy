@@ -21,8 +21,14 @@ structure testProtocol {}
     }
 ])
 operation SayGoodbye {
+    input: SayGoodbyeInput,
     output: SayGoodbyeOutput
 }
+
+@input
+structure SayGoodbyeInput {}
+
+@output
 structure SayGoodbyeOutput {}
 
 @httpResponseTests([
@@ -56,9 +62,15 @@ structure MyError {}
     },
 ])
 operation SayHello {
-    input: SayHelloInput
+    input: SayHelloInput,
+    output: SayHelloOutput
 }
+
+@input
 structure SayHelloInput {}
+
+@output
+structure SayHelloOutput {}
 
 @http(method: "POST", uri: "/")
 @httpRequestTests([
@@ -76,7 +88,12 @@ structure SayHelloInput {}
     }
 ])
 operation SayHello2 {
-    input: SayHelloInput2
+    input: SayHello2Input,
+    output: SayHello2Output
 }
 
-structure SayHelloInput2 {}
+@input
+structure SayHello2Input {}
+
+@output
+structure SayHello2Output {}

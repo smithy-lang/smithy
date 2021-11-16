@@ -1,5 +1,0 @@
-[DANGER] ns.foo#Map: This shape should have documentation | MissingDocumentation
-[DANGER] ns.foo#MyService: This shape should have documentation | MissingDocumentation
-[DANGER] ns.foo#SomeList: This shape should have documentation | MissingDocumentation
-[DANGER] ns.foo#Structure$baz: This shape should have documentation | MissingDocumentation
-[DANGER] ns.foo#Structure: This shape should have documentation | MissingDocumentation

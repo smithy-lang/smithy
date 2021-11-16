@@ -107,6 +107,24 @@
                         }
                     }
                 }
+            },
+            "input": {
+                "target": "ns.foo#OperationInput"
+            },
+            "output": {
+                "target": "ns.foo#OperationOutput"
+            }
+        },
+        "ns.foo#OperationInput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#OperationOutput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#output": {}
             }
         }
     }

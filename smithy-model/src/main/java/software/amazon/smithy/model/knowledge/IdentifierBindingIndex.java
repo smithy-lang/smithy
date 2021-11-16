@@ -24,7 +24,6 @@ import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
-import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
@@ -100,8 +99,7 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
         bindingTypes.put(resource.getId(), new HashMap<>());
         resource.getAllOperations().forEach(operationId -> {
             // Ignore broken models in this index.
-            Map<String, String> computedBindings = model.getShape(operationId).flatMap(Shape::asOperationShape)
-                    .flatMap(operationIndex::getInput)
+            Map<String, String> computedBindings = operationIndex.getInputShape(operationId)
                     .map(inputShape -> computeBindings(resource, inputShape))
                     .orElseGet(HashMap::new);
             bindings.get(resource.getId()).put(operationId, computedBindings);

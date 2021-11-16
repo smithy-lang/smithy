@@ -50,17 +50,21 @@ public final class CleanOperationStructures implements ModelTransformerPlugin {
     }
 
     private OperationShape transformInput(Collection<Shape> removed, OperationShape operation) {
-        return operation.getInput()
-                .filter(id -> removed.stream().anyMatch(s -> s.getId().equals(id)))
-                .map(shape -> operation.toBuilder().input(null).build())
-                .orElse(operation);
+        for (Shape remove : removed) {
+            if (remove.getId().equals(operation.getInputShape())) {
+                return operation.toBuilder().input(null).build();
+            }
+        }
+        return operation;
     }
 
     private OperationShape transformOutput(Collection<Shape> removed, OperationShape operation) {
-        return operation.getOutput()
-                .filter(id -> removed.stream().anyMatch(s -> s.getId().equals(id)))
-                .map(shape -> operation.toBuilder().output(null).build())
-                .orElse(operation);
+        for (Shape remove : removed) {
+            if (remove.getId().equals(operation.getOutputShape())) {
+                return operation.toBuilder().output(null).build();
+            }
+        }
+        return operation;
     }
 
     private OperationShape transformErrors(Collection<Shape> removed, OperationShape operation) {
