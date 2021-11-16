@@ -264,126 +264,57 @@ HTTP request example
 The following example defines a protocol compliance test for a JSON protocol
 that uses :ref:`HTTP binding traits <http-traits>`.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    namespace smithy.example
 
-        namespace smithy.example
+    use smithy.test#httpRequestTests
 
-        use smithy.test#httpRequestTests
-
-        @endpoint(hostPrefix: "{hostLabel}.prefix.")
-        @http(method: "POST", uri: "/")
-        @httpRequestTests([
-            {
-                id: "say_hello",
-                protocol: exampleProtocol,
-                params: {
-                    "hostLabel": "foo",
-                    "greeting": "Hi",
-                    "name": "Teddy",
-                    "query": "Hello there"
-                },
-                method: "POST",
-                host: "example.com",
-                resolvedHost: "foo.prefix.example.com",
-                uri: "/",
-                queryParams: [
-                    "Hi=Hello%20there"
-                ],
-                headers: {
-                    "X-Greeting": "Hi",
-                },
-                body: "{\"name\": \"Teddy\"}",
-                bodyMediaType: "application/json"
-            }
-        ])
-        operation SayHello {
-            input: SayHelloInput
-        }
-
-        structure SayHelloInput {
-            @required
-            @hostLabel
-            hostLabel: String,
-
-            @httpHeader("X-Greeting")
-            greeting: String,
-
-            @httpQuery("Hi")
-            query: String,
-
-            name: String
-        }
-
-    .. code-tab:: json
-
+    @endpoint(hostPrefix: "{hostLabel}.prefix.")
+    @http(method: "POST", uri: "/")
+    @httpRequestTests([
         {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#SayHello": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#SayHelloInput"
-                    },
-                    "traits": {
-                        "smithy.api#endpoint": {
-                            "hostPrefix": "{hostLabel}.prefix."
-                        },
-                        "smithy.api#http": {
-                            "method": "POST",
-                            "uri": "/",
-                            "code": 200
-                        },
-                        "smithy.test#httpRequestTests": [
-                            {
-                                "id": "say_hello",
-                                "protocol": "smithy.example#exampleProtocol",
-                                "method": "POST",
-                                "host": "example.com",
-                                "resolvedHost": "foo.prefix.example.com",
-                                "uri": "/",
-                                "headers": {
-                                    "X-Greeting": "Hi"
-                                },
-                                "queryParams": [
-                                    "Hi=Hello%20there"
-                                ],
-                                "body": "{\"name\": \"Teddy\"}",
-                                "bodyMediaType": "application/json"
-                                "params": {
-                                    "hostLabel": "foo",
-                                    "greeting": "Hi",
-                                    "name": "Teddy",
-                                    "query": "Hello there"
-                                }
-                            }
-                        ]
-                    }
-                },
-                "smithy.example#SayHelloInput": {
-                    "type": "structure",
-                    "members": {
-                        "hostLabel": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#required": {},
-                                "smithy.api#hostLabel": {}
-                            }
-                        },
-                        "greeting": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#httpHeader": "X-Greeting"
-                            }
-                        },
-                        "name": {
-                            "target": "smithy.api#String"
-                        }
-                    }
-                }
-            }
+            id: "say_hello",
+            protocol: exampleProtocol,
+            params: {
+                "hostLabel": "foo",
+                "greeting": "Hi",
+                "name": "Teddy",
+                "query": "Hello there"
+            },
+            method: "POST",
+            host: "example.com",
+            resolvedHost: "foo.prefix.example.com",
+            uri: "/",
+            queryParams: [
+                "Hi=Hello%20there"
+            ],
+            headers: {
+                "X-Greeting": "Hi",
+            },
+            body: "{\"name\": \"Teddy\"}",
+            bodyMediaType: "application/json"
         }
+    ])
+    operation SayHello {
+        input: SayHelloInput,
+        output: Unit
+    }
+
+    @input
+    structure SayHelloInput {
+        @required
+        @hostLabel
+        hostLabel: String,
+
+        @httpHeader("X-Greeting")
+        greeting: String,
+
+        @httpQuery("Hi")
+        query: String,
+
+        name: String
+    }
 
 
 .. smithy-trait:: smithy.test#httpResponseTests
@@ -518,81 +449,38 @@ HTTP response example
 The following example defines a protocol compliance test for a JSON protocol
 that uses :ref:`HTTP binding traits <http-traits>`.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    namespace smithy.example
 
-        namespace smithy.example
+    use smithy.test#httpResponseTests
 
-        use smithy.test#httpResponseTests
-
-        @http(method: "POST", uri: "/")
-        @httpResponseTests([
-            {
-                id: "say_goodbye",
-                protocol: exampleProtocol,
-                params: {farewell: "Bye"},
-                code: 200,
-                headers: {
-                    "X-Farewell": "Bye",
-                    "Content-Length": "0"
-                }
-            }
-        ])
-        operation SayGoodbye {
-            output: SayGoodbyeOutput
-        }
-
-        structure SayGoodbyeOutput {
-            @httpHeader("X-Farewell")
-            farewell: String,
-        }
-
-    .. code-tab:: json
-
+    @http(method: "POST", uri: "/")
+    @httpResponseTests([
         {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#SayGoodbye": {
-                    "type": "operation",
-                    "output": {
-                        "target": "smithy.example#SayGoodbyeOutput"
-                    },
-                    "traits": {
-                        "smithy.api#http": {
-                            "method": "POST",
-                            "uri": "/",
-                            "code": 200
-                        },
-                        "smithy.test#httpResponseTests": [
-                            {
-                                "id": "say_goodbye",
-                                "protocol": "smithy.example#exampleProtocol",
-                                "headers": {
-                                    "Content-Length": "0",
-                                    "X-Farewell": "Bye"
-                                },
-                                "params": {
-                                    "farewell": "Bye"
-                                },
-                                "code": 200
-                            }
-                        ]
-                    }
-                },
-                "smithy.example#SayGoodbyeOutput": {
-                    "type": "structure",
-                    "members": {
-                        "farewell": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#httpHeader": "X-Farewell"
-                            }
-                        }
-                    }
-                }
+            id: "say_goodbye",
+            protocol: exampleProtocol,
+            params: {farewell: "Bye"},
+            code: 200,
+            headers: {
+                "X-Farewell": "Bye",
+                "Content-Length": "0"
             }
         }
+    ])
+    operation SayGoodbye {
+        input: SayGoodbyeInput,
+        output: SayGoodbyeOutput
+    }
+
+    @input
+    structure SayGoodbyeInput {}
+
+    @output
+    structure SayGoodbyeOutput {
+        @httpHeader("X-Farewell")
+        farewell: String,
+    }
 
 
 HTTP error response example

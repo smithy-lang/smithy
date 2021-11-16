@@ -87,68 +87,29 @@ MQTT topic.
 The following example defines a publish operation with two labels, ``{first}``
 and ``{second}``, in the MQTT topic template:
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    use smithy.mqtt#publish
+    use smithy.mqtt#topicLabel
 
-        use smithy.mqtt#publish
-        use smithy.mqtt#topicLabel
+    @publish("{first}/{second}")
+    operation ExampleOperation {
+        input: ExampleOperationInput,
+        output: Unit
+    }
 
-        @publish("{first}/{second}")
-        operation ExampleOperation {
-            input: ExampleOperationInput
-        }
+    @input
+    structure ExampleOperationInput {
+        @required
+        @topicLabel
+        first: String,
 
-        structure ExampleOperationInput {
-            @required
-            @topicLabel
-            first: String,
+        @required
+        @topicLabel
+        second: String,
 
-            @required
-            @topicLabel
-            second: String,
-
-            message: String,
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#ExampleOperation": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#ExampleOperationInput"
-                    },
-                    "traits": {
-                        "smithy.mqtt#publish": "{first}/{second}"
-                    }
-                },
-                "smithy.example#ExampleOperationInput": {
-                    "type": "structure",
-                    "members": {
-                        "first": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#required": {},
-                                "smithy.mqtt#topicLabel": {}
-                            }
-                        },
-                        "second": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#required": {},
-                                "smithy.mqtt#topicLabel": {}
-                            }
-                        },
-                        "message": {
-                            "target": "smithy.api#String"
-                        }
-                    }
-                }
-            }
-        }
+        message: String,
+    }
 
 MQTT topic templates MUST adhere to the following constraints:
 
@@ -181,9 +142,9 @@ Trait summary
 Trait selector
     .. code-block:: none
 
-        operation:not(-[output]->)
+        operation:not(-[output]-> * > member)
 
-    *An operation that does not define output*
+    *An operation whose output has no members*
 Trait value
     ``string`` value that is a valid
     :ref:`MQTT topic template <mqtt-topic-templates>`. The provided topic
@@ -200,63 +161,28 @@ come together to form the protocol-specific payload of the PUBLISH message.
 The following example defines an operation that publishes messages to the
 ``foo/{bar}`` topic:
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    namespace smithy.example
 
-        namespace smithy.example
+    use smithy.mqtt#publish
+    use smithy.mqtt#topicLabel
 
-        use smithy.mqtt#publish
-        use smithy.mqtt#topicLabel
+    @publish("foo/{bar}")
+    operation PostFoo {
+        input: PostFooInput,
+        output: Unit
+    }
 
-        @publish("foo/{bar}")
-        operation PostFoo {
-            input: PostFooInput
-        }
+    @input
+    structure PostFooInput {
+        @required
+        @topicLabel
+        bar: String,
 
-        structure PostFooInput {
-            @required
-            @topicLabel
-            bar: String,
-
-            someValue: String,
-            anotherValue: Boolean,
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#PostFoo": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#PostFooInput"
-                    },
-                    "traits": {
-                        "smithy.mqtt#publish": "foo/{bar}"
-                    }
-                },
-                "smithy.example#PostFooInput": {
-                    "type": "structure",
-                    "members": {
-                        "bar": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#required": {},
-                                "smithy.mqtt#topicLabel": {}
-                            }
-                        },
-                        "message": {
-                            "target": "smithy.api#String"
-                        },
-                        "anotherValue": {
-                            "target": "smithy.api#Boolean"
-                        }
-                    }
-                }
-            }
-        }
+        someValue: String,
+        anotherValue: Boolean,
+    }
 
 The "bar" member of the above ``PostFoo`` operation is marked with the
 :ref:`smithy.mqtt#topicLabel-trait`, indicating that the member provides a
@@ -268,7 +194,7 @@ that is sent in the payload of the message.
 Publish validation
 ==================
 
-* Publish operations MUST NOT define output.
+* Publish operations MUST NOT have output with members.
 * Publish operations MUST NOT utilize input event streams.
 * Publish operations SHOULD NOT define errors.
 * Publish MQTT topics MUST NOT conflict with other publish MQTT topics or
@@ -319,93 +245,38 @@ from topics.
 The following example operation subscribes to the ``events/{id}``
 topic using an :ref:`event stream <event-streams>`:
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    use smithy.mqtt#subscribe
+    use smithy.mqtt#topicLabel
 
-        use smithy.mqtt#subscribe
-        use smithy.mqtt#topicLabel
+    @subscribe("events/{id}")
+    operation SubscribeForEvents {
+        input: SubscribeForEventsInput,
+        output: SubscribeForEventsOutput
+    }
 
-        @subscribe("events/{id}")
-        operation SubscribeForEvents {
-            input: SubscribeForEventsInput,
-            output: SubscribeForEventsOutput
-        }
+    @input
+    structure SubscribeForEventsInput {
+        @required
+        @topicLabel
+        id: String,
+    }
 
-        structure SubscribeForEventsInput {
-            @required
-            @topicLabel
-            id: String,
-        }
+    @output
+    structure SubscribeForEventsOutput {
+        events: EventStream,
+    }
 
-        structure SubscribeForEventsOutput {
-            events: EventStream,
-        }
+    @streaming
+    union EventStream {
+        message: Event,
+    }
 
-        @streaming
-        union EventStream {
-            message: Event,
-        }
+    structure Event {
+        message: String,
+    }
 
-        structure Event {
-            message: String,
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#SubscribeForEvents": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#SubscribeForEventsInput"
-                    },
-                    "traits": {
-                        "smithy.mqtt#subscribe": "events/{id}"
-                    }
-                },
-                "smithy.example#SubscribeForEventsInput": {
-                    "type": "structure",
-                    "members": {
-                        "id": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#required": {},
-                                "smithy.mqtt#topicLabel": {}
-                            }
-                        }
-                    }
-                },
-                "smithy.example#SubscribeForEventsOutput": {
-                    "type": "structure",
-                    "members": {
-                        "events": {
-                            "target": "smithy.example#EventStream"
-                        }
-                    }
-                },
-                "smithy.example#EventStream": {
-                    "type": "union",
-                    "members": {
-                        "message": {
-                            "target": "smithy.example#Event"
-                        }
-                    },
-                    "traits" {
-                        "smithy.api#streaming": {}
-                    }
-                },
-                "smithy.example#Event": {
-                    "type": "structure",
-                    "members": {
-                        "message": {
-                            "target": "smithy.api#String"
-                        }
-                    }
-                }
-            }
-        }
 
 Subscribe validation
 ====================
@@ -534,7 +405,7 @@ MQTT protocol bindings.
     @protocolDefinition
     structure mqttJson {}
 
-    @trait(selector: "operation:not(-[output]->)",
+    @trait(selector: "operation:not(-[output]-> * > member)",
            conflicts: ["smithy.mqtt#subscribe"])
     @tags(["diff.error.const"])
     // Matches one or more characters that are not "#" or "+".

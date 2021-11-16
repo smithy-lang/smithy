@@ -101,9 +101,11 @@ structure testProtocol {}
     }
 ])
 operation SayHello {
-    input: SayHelloInput
+    input: SayHelloInput,
+    output: SayHelloOutput
 }
 
+@input
 structure SayHelloInput {
     @httpPayload
     body: String,
@@ -111,3 +113,6 @@ structure SayHelloInput {
     @httpHeader("X-OmitMe")
     header: String,
 }
+
+@output
+structure SayHelloOutput {}

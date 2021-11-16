@@ -1,4 +1,3 @@
-[ERROR] ns.foo#Invalid1: paginated operations require an input | PaginatedTrait
 [ERROR] ns.foo#Invalid2: paginated trait `inputToken` targets a member `nextToken` that does not exist | PaginatedTrait
 [ERROR] ns.foo#Invalid2: paginated trait `outputToken` targets a member `nextToken` that does not exist | PaginatedTrait
 [ERROR] ns.foo#Invalid3: paginated trait `inputToken` member `InputNotString` targets a integer shape, but must target one of the following: [`map`, `string`] | PaginatedTrait
@@ -8,11 +7,14 @@
 [ERROR] ns.foo#Invalid4: paginated trait `outputToken` member `nextToken` must not be required | PaginatedTrait
 [WARNING] ns.foo#Invalid4: paginated trait `pageSize` member `pageSize` should not be required | PaginatedTrait
 [ERROR] ns.foo#Invalid5: paginated trait `pageSize` member `Invalid5Input` targets a string shape, but must target one of the following: [`integer`] | PaginatedTrait
-[ERROR] ns.foo#Invalid6: paginated trait `items` member `Invalid6Input` targets a string shape, but must target one of the following: [`list`, `map`] | PaginatedTrait
+[ERROR] ns.foo#Invalid6: paginated trait `items` member `Invalid6Output` targets a string shape, but must target one of the following: [`list`, `map`] | PaginatedTrait
 [ERROR] ns.foo#Invalid7: paginated trait `items` targets a member `items` that does not exist | PaginatedTrait
 [ERROR] ns.foo#Invalid7: paginated trait `outputToken` targets a member `missing` that does not exist | PaginatedTrait
-[ERROR] ns.foo#InvalidNoOutput: paginated operations require an output | PaginatedTrait
 [ERROR] ns.foo#Invalid8: When bound within the `ns.foo#Service` service, paginated trait `inputToken` is not configured | PaginatedTrait
 [ERROR] ns.foo#Invalid8: When bound within the `ns.foo#Service` service, paginated trait `outputToken` is not configured | PaginatedTrait
 [ERROR] ns.foo#InvalidNestedInput: paginated trait `inputToken` does not allow path values | PaginatedTrait
 [ERROR] ns.foo#InvalidNestedInput: paginated trait `pageSize` does not allow path values | PaginatedTrait
+[ERROR] ns.foo#Invalid1: paginated trait `inputToken` targets a member `nextToken` that does not exist | PaginatedTrait
+[ERROR] ns.foo#Invalid1: paginated trait `pageSize` targets a member `pageSize` that does not exist | PaginatedTrait
+[ERROR] ns.foo#InvalidNoOutput: paginated trait `items` targets a member `items` that does not exist | PaginatedTrait
+[ERROR] ns.foo#InvalidNoOutput: paginated trait `outputToken` targets a member `nextToken` that does not exist | PaginatedTrait

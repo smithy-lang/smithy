@@ -34,7 +34,7 @@ public final class HttpRequestTestsInputValidator extends ProtocolTestCaseValida
 
     @Override
     StructureShape getStructure(Shape shape, OperationIndex operationIndex) {
-        return operationIndex.getInput(shape).orElse(null);
+        return operationIndex.expectInputShape(shape);
     }
 
     @Override

@@ -47,29 +47,17 @@ public final class ExamplesTraitValidator extends AbstractValidator {
         List<ExamplesTrait.Example> examples = trait.getExamples();
 
         for (ExamplesTrait.Example example : examples) {
-            if (shape.getInput().isPresent()) {
-                model.getShape(shape.getInput().get()).ifPresent(input -> {
-                    NodeValidationVisitor validator = createVisitor(
-                            "input", example.getInput(), model, shape, example);
-                    events.addAll(input.accept(validator));
-                });
-            } else if (!example.getInput().isEmpty()) {
-                events.add(error(shape, trait, String.format(
-                        "Input parameters provided for operation with no input structure members: `%s`",
-                        example.getTitle())));
-            }
+            model.getShape(shape.getInputShape()).ifPresent(input -> {
+                NodeValidationVisitor validator = createVisitor(
+                        "input", example.getInput(), model, shape, example);
+                events.addAll(input.accept(validator));
+            });
 
-            if (shape.getOutput().isPresent()) {
-                model.getShape(shape.getOutput().get()).ifPresent(output -> {
-                    NodeValidationVisitor validator = createVisitor(
-                            "output", example.getOutput(), model, shape, example);
-                    events.addAll(output.accept(validator));
-                });
-            } else if (!example.getOutput().isEmpty()) {
-                events.add(error(shape, trait, String.format(
-                        "Output parameters provided for operation with no output structure members: `%s`",
-                        example.getTitle())));
-            }
+            model.getShape(shape.getOutputShape()).ifPresent(output -> {
+                NodeValidationVisitor validator = createVisitor(
+                        "output", example.getOutput(), model, shape, example);
+                events.addAll(output.accept(validator));
+            });
 
             if (example.getError().isPresent()) {
                 ExamplesTrait.ErrorExample errorExample = example.getError().get();

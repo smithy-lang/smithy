@@ -216,8 +216,8 @@ public final class ModelSerializer {
         @Override
         public Node operationShape(OperationShape shape) {
             return withTraits(shape, createTypedNode(shape)
-                    .withOptionalMember("input", shape.getInput().map(this::serializeReference))
-                    .withOptionalMember("output", shape.getOutput().map(this::serializeReference))
+                    .withMember("input", serializeReference(shape.getInputShape()))
+                    .withMember("output", serializeReference(shape.getOutputShape()))
                     .withOptionalMember("errors", createOptionalIdList(shape.getErrors())))
                     .build();
         }

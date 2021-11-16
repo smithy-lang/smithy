@@ -1,1 +1,1 @@
-[ERROR] ns.foo#DescribeEndpointsOutput: Endpoint discovery operation output may only contain an `Endpoints` member, but found: Addresses | ClientEndpointDiscovery
+[ERROR] ns.foo#DescribeEndpoints: Endpoint discovery operation output must only contain an `Endpoints` member, but found: [Addresses] | ClientEndpointDiscovery

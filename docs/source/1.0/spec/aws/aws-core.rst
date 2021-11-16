@@ -973,193 +973,69 @@ The following model illustrates an API that uses a ``DescribeEndpoints``
 operation to perform endpoint discovery for a ``GetObject`` operation
 using an ``clientEndpointDiscoveryId``.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    @aws.api#clientEndpointDiscovery(
+        operation: DescribeEndpoints,
+        error: InvalidEndpointError,
+    )
+    service FooService {
+      version: "2019-09-10",
+      operations: [DescribeEndpoints, GetObject]
+    }
 
-        @aws.api#clientEndpointDiscovery(
-            operation: DescribeEndpoints,
-            error: InvalidEndpointError,
-        )
-        service FooService {
-          version: "2019-09-10",
-          operations: [DescribeEndpoints, GetObject]
-        }
+    operation DescribeEndpoints {
+        input: DescribeEndpointsInput,
+        output: DescribeEndpointsOutput,
+        errors: [InvalidEndpointError]
+    }
 
-        operation DescribeEndpoints {
-            input: DescribeEndpointsInput,
-            output: DescribeEndpointsOutput,
-            errors: [InvalidEndpointError]
-        }
+    @error("client")
+    @httpError(421)
+    structure InvalidEndpointError {}
 
-        @error("client")
-        @httpError(421)
-        structure InvalidEndpointError {}
+    @input
+    structure DescribeEndpointsInput {
+      Operation: String,
+      Identifiers: Identifiers,
+    }
 
-        structure DescribeEndpointsInput {
-          Operation: String,
-          Identifiers: Identifiers,
-        }
+    map Identifiers {
+      key: String,
+      value: String
+    }
 
-        map Identifiers {
-          key: String,
-          value: String
-        }
+    @output
+    structure DescribeEndpointsOutput {
+      Endpoints: Endpoints,
+    }
 
-        structure DescribeEndpointsOutput {
-          Endpoints: Endpoints,
-        }
+    list Endpoints {
+      member: Endpoint
+    }
 
-        list Endpoints {
-          member: Endpoint
-        }
+    structure Endpoint {
+      Address: String,
+      CachePeriodInMinutes: Long,
+    }
 
-        structure Endpoint {
-          Address: String,
-          CachePeriodInMinutes: Long,
-        }
+    @aws.api#clientDiscoveredEndpoint(required: true)
+    operation GetObject {
+        input: GetObjectInput,
+        output: GetObjectOutput
+    }
 
-        @aws.api#clientDiscoveredEndpoint(required: true)
-        operation GetObject {
-            input: GetObjectInput,
-            output: GetObjectOutput
-        }
+    @input
+    structure GetObjectInput {
+      @clientEndpointDiscoveryId
+      @required
+      Id: String,
+    }
 
-        structure GetObjectInput {
-          @clientEndpointDiscoveryId
-          @required
-          Id: String,
-        }
-
-        structure GetObjectOutput {
-          Object: Blob,
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "ns.foo#FooService": {
-                    "type": "service",
-                    "version": "2019-09-10",
-                    "operations": [
-                        {
-                            "target": "ns.foo#DescribeEndpoints"
-                        },
-                        {
-                            "target": "ns.foo#GetObject"
-                        }
-                    ],
-                    "traits": {
-                        "aws.api#clientEndpointDiscovery": {
-                            "operation": "ns.foo#DescribeEndpoints",
-                            "error": "InvalidEndpointError"
-                        }
-                    }
-                },
-                "ns.foo#DescribeEndpoints": {
-                    "type": "operation",
-                    "input": {
-                        "target": "ns.foo#DescribeEndpointsInput"
-                    },
-                    "output": {
-                        "target": "ns.foo#DescribeEndpointsOutput"
-                    }
-                },
-                "ns.foo#DescribeEndpointsInput": {
-                    "type": "structure",
-                    "members": {
-                        "Operation": {
-                            "target": "smithy.api#String"
-                        },
-                        "Identifiers": {
-                            "target": "ns.foo#Identifiers"
-                        }
-                    }
-                },
-                "ns.foo#Identifiers": {
-                    "type": "map",
-                    "key": {
-                        "target": "smithy.api#String"
-                    },
-                    "value": {
-                        "target": "smithy.api#String"
-                    }
-                },
-                "ns.foo#DescribeEndpointsOutput": {
-                    "type": "structure",
-                    "members": {
-                        "Endpoints": {
-                            "target": "ns.foo#Endpoints"
-                        }
-                    }
-                },
-                "ns.foo#Endpoints": {
-                    "type": "list",
-                    "member": {
-                        "target": "ns.foo#Endpoint"
-                    }
-                },
-                "ns.foo#Endpoint": {
-                    "type": "structure",
-                    "members": {
-                        "Address": {
-                            "target": "smithy.api#String"
-                        },
-                        "CachePeriodInMinutes": {
-                            "target": "smithy.api#Long"
-                        }
-                    }
-                },
-                "ns.foo#GetObject": {
-                    "type": "operation",
-                    "input": {
-                        "target": "ns.foo#GetObjectInput"
-                    },
-                    "output": {
-                        "target": "ns.foo#GetObjectOutput"
-                    },
-                    "errors": [
-                        {
-                            "target": "ns.foo#InvalidEndpointError"
-                        }
-                    ],
-                    "traits": {
-                        "aws.api#clientDiscoveredEndpoint": {
-                            "required": true
-                        }
-                    }
-                },
-                "ns.foo#GetObjectInput": {
-                    "type": "structure",
-                    "members": {
-                        "Id": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "aws.api#clientEndpointDiscoveryId": {},
-                                "smithy.api#required": {}
-                            }
-                        }
-                    }
-                },
-                "ns.foo#GetObjectOutput": {
-                    "type": "structure",
-                    "members": {
-                        "Object": {
-                            "target": "smithy.api#Blob"
-                        }
-                    }
-                },
-                "ns.foo#InvalidEndpointError": {
-                    "type": "structure",
-                    "traits": {
-                        "smithy.api#error": "client",
-                        "smithy.api#httpError": 421
-                    }
-                }
-            }
-        }
+    @output
+    structure GetObjectOutput {
+      Object: Blob,
+    }
 
 
 Client Behavior

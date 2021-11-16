@@ -85,6 +85,7 @@ structure LimitExceededException {
     code: ErrorCode,
 }
 
+@input
 structure PredictInput {
     @required
     MLModelId: EntityId,
@@ -107,6 +108,7 @@ structure PredictorNotMountedException {
     message: ErrorMessage,
 }
 
+@output
 structure PredictOutput {
     Prediction: Prediction,
 }

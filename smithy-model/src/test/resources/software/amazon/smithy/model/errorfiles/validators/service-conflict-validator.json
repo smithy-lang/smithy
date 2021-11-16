@@ -1,5 +1,11 @@
 {
     "smithy": "1.0",
+    "metadata": {
+        "suppressions": [
+            {"id":  "OperationMissingInput", "namespace": "*"},
+            {"id":  "OperationMissingOutput", "namespace": "*"}
+        ]
+    },
     "shapes": {
         "ns.foo#MyService": {
             "type": "service",
@@ -66,6 +72,9 @@
                 "structureConflict2": {"target": "another.ns#Baz"},
                 "unionConflict1": {"target": "ns.foo#Qux"},
                 "unionConflict2": {"target": "another.ns#Qux"}
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#ListA": {

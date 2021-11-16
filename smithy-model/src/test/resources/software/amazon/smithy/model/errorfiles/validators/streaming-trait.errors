@@ -1,2 +1,2 @@
-[ERROR] ns.foo#InvalidStreamingOutput: Only a single member of a structure can target a shape marked with the `streaming` trait, but it was found on the following members: `StreamingBlob1`, `StreamingBlob2` | ExclusiveStructureMemberTrait
-[ERROR] ns.foo#InvalidNestedStream$NestedStream: This shape has an invalid `MEMBER_TARGET` relationship to a structure, `ns.foo#StreamingInput`, that contains a stream | StreamingTrait
+[ERROR] ns.foo#InvalidStreamingOperationOutput: Only a single member of a structure can target a shape marked with the `streaming` trait, but it was found on the following members: `StreamingBlob1`, `StreamingBlob2` | ExclusiveStructureMemberTrait
+[ERROR] ns.foo#InvalidNestedStream$NestedStream: This shape has an invalid `MEMBER_TARGET` relationship to a structure, `ns.foo#NestedStreamContainer`, that contains a stream | StreamingTrait

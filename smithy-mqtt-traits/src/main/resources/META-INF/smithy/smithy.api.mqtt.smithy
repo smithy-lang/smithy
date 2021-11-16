@@ -6,7 +6,7 @@ namespace smithy.mqtt
 @protocolDefinition
 structure mqttJson {}
 
-@trait(selector: "operation:not(-[output]->)",
+@trait(selector: "operation :not(-[output]-> * > member)",
        conflicts: ["smithy.mqtt#subscribe"])
 @tags(["diff.error.const"])
 // Matches one or more characters that are not "#" or "+".

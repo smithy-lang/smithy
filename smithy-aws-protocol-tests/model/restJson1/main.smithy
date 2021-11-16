@@ -21,6 +21,7 @@ service RestJson {
         NoInputAndNoOutput,
         NoInputAndOutput,
         EmptyInputAndEmptyOutput,
+        UnitInputAndOutput,
 
         // @httpHeader tests
         InputAndOutputWithHeaders,
@@ -47,7 +48,7 @@ service RestJson {
 
         // @httpPrefixHeaders tests
         HttpPrefixHeaders,
-        HttpPrefixHeadersResponse,
+        HttpPrefixHeadersInResponse,
 
         // @httpPayload tests
         HttpPayloadTraits,
@@ -82,6 +83,7 @@ service RestJson {
 
         // Unions
         JsonUnions,
+        PostPlayerAction,
 
         // @endpoint and @hostLabel trait tests
         EndpointOperation,

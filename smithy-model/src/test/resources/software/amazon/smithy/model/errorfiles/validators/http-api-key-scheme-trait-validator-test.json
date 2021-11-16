@@ -30,10 +30,16 @@
             }
         },
         "ns.foo#AInput": {
-            "type": "structure"
+            "type": "structure",
+            "traits": {
+                "smithy.api#input": {}
+            }
         },
         "ns.foo#AOutput": {
-            "type": "structure"
+            "type": "structure",
+            "traits": {
+                "smithy.api#output": {}
+            }
         }
     }
 }

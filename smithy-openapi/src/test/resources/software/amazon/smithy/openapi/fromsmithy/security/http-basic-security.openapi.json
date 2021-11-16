@@ -10,7 +10,7 @@
         "operationId": "Operation1",
         "responses": {
           "200": {
-            "description": "Operation1 response"
+            "description": "Operation1 200 response"
           }
         }
       }

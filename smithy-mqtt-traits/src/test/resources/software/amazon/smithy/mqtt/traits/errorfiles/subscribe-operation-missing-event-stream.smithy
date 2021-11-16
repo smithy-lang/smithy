@@ -4,7 +4,9 @@ namespace smithy.example
 
 @smithy.mqtt#subscribe("events")
 operation Foo {
+    input: Unit,
     output: FooOutput
 }
 
+@output
 structure FooOutput {}

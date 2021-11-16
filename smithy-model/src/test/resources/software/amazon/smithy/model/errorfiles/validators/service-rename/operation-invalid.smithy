@@ -10,4 +10,13 @@ service MyService {
     }
 }
 
-operation SayHello {}
+operation SayHello {
+    input: SayHelloInput,
+    output: SayHelloOutput
+}
+
+@input
+structure SayHelloInput {}
+
+@output
+structure SayHelloOutput {}

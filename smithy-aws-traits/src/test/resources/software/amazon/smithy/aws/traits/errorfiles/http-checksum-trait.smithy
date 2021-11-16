@@ -6,15 +6,19 @@ use aws.protocols#httpChecksum
 @suppress(["UnstableTrait"])
 operation NoBehavior {
     input: NoBehaviorInput,
+    output: Unit
 }
 
+@input
 structure NoBehaviorInput {}
 
 @httpChecksum(
     requestChecksumRequired: true,
 )
-@suppress(["UnstableTrait"])
-operation NoInput {}
+@suppress(["UnstableTrait", "OperationMissingInput"])
+operation NoInput {
+    output: Unit
+}
 
 @httpChecksum(
     responseAlgorithms: ["CRC32C"]
@@ -23,11 +27,12 @@ operation NoInput {}
 operation NoModeForResponse {
     input: NoModeForResponseInput,
     output: NoModeForResponseOutput,
-
 }
 
+@input
 structure NoModeForResponseInput {}
 
+@output
 structure NoModeForResponseOutput {}
 
 @httpChecksum(
@@ -38,9 +43,10 @@ structure NoModeForResponseOutput {}
 @suppress(["UnstableTrait"])
 operation NoOutputForResponse {
     input: NoOutputForResponseInput,
-
+    output: Unit
 }
 
+@input
 structure NoOutputForResponseInput {
     requestAlgorithm: ChecksumAlgorithm,
     validationMode: ValidationMode,

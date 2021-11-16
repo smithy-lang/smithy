@@ -98,10 +98,10 @@ public final class CfnResourceIndex implements KnowledgeIndex {
                     // Use the read lifecycle's input to collect the additional identifiers
                     // and its output to collect readable properties.
                     resource.getRead().ifPresent(operationId -> {
-                        operationIndex.getInput(operationId).ifPresent(input -> {
+                        operationIndex.getInputShape(operationId).ifPresent(input -> {
                             addAdditionalIdentifiers(builder, computeResourceAdditionalIdentifiers(input));
                         });
-                        operationIndex.getOutput(operationId).ifPresent(output -> {
+                        operationIndex.getOutputShape(operationId).ifPresent(output -> {
                             updatePropertyMutabilities(builder, model, resourceId, operationId, output,
                                     SetUtils.of(Mutability.READ), this::addReadMutability);
                         });
@@ -109,7 +109,7 @@ public final class CfnResourceIndex implements KnowledgeIndex {
 
                     // Use the put lifecycle's input to collect put-able properties.
                     resource.getPut().ifPresent(operationId -> {
-                        operationIndex.getInput(operationId).ifPresent(input -> {
+                        operationIndex.getInputShape(operationId).ifPresent(input -> {
                             updatePropertyMutabilities(builder, model, resourceId, operationId, input,
                                     SetUtils.of(Mutability.CREATE, Mutability.WRITE), this::addPutMutability);
                         });
@@ -117,7 +117,7 @@ public final class CfnResourceIndex implements KnowledgeIndex {
 
                     // Use the create lifecycle's input to collect creatable properties.
                     resource.getCreate().ifPresent(operationId -> {
-                        operationIndex.getInput(operationId).ifPresent(input -> {
+                        operationIndex.getInputShape(operationId).ifPresent(input -> {
                             updatePropertyMutabilities(builder, model, resourceId, operationId, input,
                                     SetUtils.of(Mutability.CREATE), this::addCreateMutability);
                         });
@@ -125,7 +125,7 @@ public final class CfnResourceIndex implements KnowledgeIndex {
 
                     // Use the update lifecycle's input to collect writeable properties.
                     resource.getUpdate().ifPresent(operationId -> {
-                        operationIndex.getInput(operationId).ifPresent(input -> {
+                        operationIndex.getInputShape(operationId).ifPresent(input -> {
                             updatePropertyMutabilities(builder, model, resourceId, operationId, input,
                                     SetUtils.of(Mutability.WRITE), this::addWriteMutability);
                         });

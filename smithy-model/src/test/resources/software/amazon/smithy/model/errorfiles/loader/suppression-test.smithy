@@ -62,12 +62,17 @@ service MyService {
 
 operation GetFoo {
     input: GetFooInput,
+    output: GetFooOutput
 }
 
+@input
 structure GetFooInput {
     list1: List1,
     list2: List2,
 }
+
+@output
+structure GetFooOutput {}
 
 list List1 {
     member: String,

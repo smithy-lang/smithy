@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -33,12 +32,16 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidatorService;
-import software.amazon.smithy.utils.Pair;
 
 /**
  * Checks if a structure is used as both input and output and if the same
  * input or output structures are used across multiple operations.
+ *
+ * @deprecated This validator is superseded by the input and output traits
+ *     now built-in to Smithy. This validator remains for backward
+ *     compatibility, but is intentionally no longer documented.
  */
+@Deprecated
 public final class InputOutputStructureReuseValidator extends AbstractValidator {
 
     public static final class Provider extends ValidatorService.Provider {
@@ -50,8 +53,8 @@ public final class InputOutputStructureReuseValidator extends AbstractValidator 
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
-        Map<ShapeId, Set<ShapeId>> inputs = createStructureToOperation(model, OperationShape::getInput);
-        Map<ShapeId, Set<ShapeId>> outputs = createStructureToOperation(model, OperationShape::getOutput);
+        Map<ShapeId, Set<ShapeId>> inputs = createStructureToOperation(model, OperationShape::getInputShape);
+        Map<ShapeId, Set<ShapeId>> outputs = createStructureToOperation(model, OperationShape::getOutputShape);
 
         // Look for structures used as both input and output.
         Set<ShapeId> both = new HashSet<>(inputs.keySet());
@@ -85,15 +88,14 @@ public final class InputOutputStructureReuseValidator extends AbstractValidator 
      */
     private static Map<ShapeId, Set<ShapeId>> createStructureToOperation(
             Model model,
-            Function<OperationShape, Optional<ShapeId>> f
+            Function<OperationShape, ShapeId> f
     ) {
-        return model.shapes(OperationShape.class)
-                .flatMap(shape -> Pair.flatMapStream(shape, f))
-                .collect(Collectors.groupingBy(
-                        Pair::getRight,
-                        HashMap::new,
-                        Collectors.mapping(pair -> pair.getLeft().getId(), Collectors.toSet())
-                ));
+        Map<ShapeId, Set<ShapeId>> result = new HashMap<>();
+        for (OperationShape operation : model.getOperationShapes()) {
+            ShapeId struct = f.apply(operation);
+            result.computeIfAbsent(struct, id -> new HashSet<>()).add(operation.getId());
+        }
+        return result;
     }
 
     private ValidationEvent emitWhenBothInputAndOutput(

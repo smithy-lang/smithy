@@ -372,30 +372,6 @@ Default severity
     ``WARNING``
 
 
-.. _InputOutputStructureReuse:
-
-InputOutputStructureReuse
-=========================
-
-Detects when a structure is used as both input and output or if a structure
-is referenced as the input or output for multiple operations.
-
-Rationale
-    1. Using the same structure for both input and output can lead to
-       backward-compatibility problems in the future if the members or traits
-       used in input needs to diverge from those used in output. It is always
-       better to use structures that are exclusively used as input or exclusively
-       used as output.
-    2. Referencing the same input or output structure from multiple operations
-       can lead to backward-compatibility problems in the future if the
-       inputs or outputs of the operations ever need to diverge. By using the
-       same structure, you are unnecessarily tying the interfaces of these
-       operations together.
-
-Default severity
-    ``DANGER``
-
-
 .. _MissingPaginatedTrait:
 
 MissingPaginatedTrait

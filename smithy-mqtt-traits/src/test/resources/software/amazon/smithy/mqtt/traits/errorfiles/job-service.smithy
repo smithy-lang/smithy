@@ -1,3 +1,12 @@
+$version: "1.0"
+
+metadata suppressions = [
+    {id: "OperationMissingInput", namespace: "aws.iotjobs"},
+    {id: "OperationMissingInputTrait", namespace: "aws.iotjobs"},
+    {id: "OperationMissingOutput", namespace: "aws.iotjobs"},
+    {id: "OperationMissingOutputTrait", namespace: "aws.iotjobs"},
+]
+
 namespace aws.iotjobs
 
 use smithy.mqtt#mqttJson

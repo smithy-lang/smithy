@@ -1,9 +1,14 @@
 namespace smithy.example
 
 operation SubscribeToMovements {
+    input: SubscribeToMovementsInput,
     output: SubscribeToMovementsOutput
 }
 
+@input
+structure SubscribeToMovementsInput {}
+
+@output
 structure SubscribeToMovementsOutput {
     movements: MovementEvents,
 }

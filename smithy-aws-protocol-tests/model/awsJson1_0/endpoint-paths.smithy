@@ -20,5 +20,5 @@ use smithy.test#httpRequestTests
         appliesTo: "client"
     }
 ])
-
+@suppress(["OperationMissingInput", "OperationMissingOutput"])
 operation HostWithPathOperation {}

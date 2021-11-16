@@ -15,17 +15,19 @@ service InvalidExample {
 
 @http(method: "POST", uri: "/invalid-payload")
 operation InvalidBindingOperation {
-    input: InvalidBindingInput,
-    output: InvalidBindingOutput,
+    input: InvalidBindingOperationInput,
+    output: InvalidBindingOperationOutput,
     errors: [InvalidBindingError],
 }
 
-structure InvalidBindingInput {
+@input
+structure InvalidBindingOperationInput {
     @httpPayload
     listBinding: StringList,
 }
 
-structure InvalidBindingOutput {
+@output
+structure InvalidBindingOperationOutput {
     @httpPayload
     mapBinding: StringMap,
 }

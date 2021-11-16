@@ -38,9 +38,14 @@ structure testProtocol {}
     }
 ])
 operation SayHello {
-    input: SayHelloInput
+    input: SayHelloInput,
+    output: SayHelloOutput
 }
 
+@input
 structure SayHelloInput {
     type: Boolean
 }
+
+@output
+structure SayHelloOutput {}

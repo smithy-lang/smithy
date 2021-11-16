@@ -23,6 +23,7 @@ use smithy.test#httpRequestTests
     }
 ])
 @endpoint(hostPrefix: "foo.")
+@suppress(["OperationMissingInput", "OperationMissingOutput"])
 operation EndpointOperation {}
 
 
@@ -46,11 +47,13 @@ operation EndpointOperation {}
     }
 ])
 @endpoint(hostPrefix: "foo.{label}.")
+@suppress(["OperationMissingOutput"])
 operation EndpointWithHostLabelOperation {
-    input: HostLabelInput,
+    input: EndpointWithHostLabelOperationInput,
 }
 
-structure HostLabelInput {
+@input
+structure EndpointWithHostLabelOperationInput {
     @required
     @hostLabel
     label: String,

@@ -19,6 +19,7 @@ software.amazon.smithy.model.validation.validators.HttpUriConflictValidator
 software.amazon.smithy.model.validation.validators.LengthTraitValidator
 software.amazon.smithy.model.validation.validators.MediaTypeValidator
 software.amazon.smithy.model.validation.validators.NoInlineDocumentSupportValidator
+software.amazon.smithy.model.validation.validators.OperationValidator
 software.amazon.smithy.model.validation.validators.PaginatedTraitValidator
 software.amazon.smithy.model.validation.validators.PrivateAccessValidator
 software.amazon.smithy.model.validation.validators.RangeTraitValidator
@@ -38,6 +39,7 @@ software.amazon.smithy.model.validation.validators.TargetValidator
 software.amazon.smithy.model.validation.validators.TraitConflictValidator
 software.amazon.smithy.model.validation.validators.TraitTargetValidator
 software.amazon.smithy.model.validation.validators.TraitValueValidator
+software.amazon.smithy.model.validation.validators.UnitTypeValidator
 software.amazon.smithy.model.validation.validators.UnreferencedShapeValidator
 software.amazon.smithy.model.validation.validators.UnstableTraitValidator
 software.amazon.smithy.model.validation.validators.XmlNamespaceTraitValidator

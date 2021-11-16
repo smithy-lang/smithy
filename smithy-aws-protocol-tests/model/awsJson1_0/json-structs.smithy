@@ -136,11 +136,18 @@ apply SimpleScalarProperties @httpResponseTests([
 
 // This example serializes simple scalar types in the top level JSON document.
 operation SimpleScalarProperties {
-    input: SimpleScalarPropertiesInputOutput,
-    output: SimpleScalarPropertiesInputOutput
+    input: SimpleScalarPropertiesInput,
+    output: SimpleScalarPropertiesOutput
 }
 
-structure SimpleScalarPropertiesInputOutput {
+@input
+structure SimpleScalarPropertiesInput {
+    floatValue: Float,
+    doubleValue: Double,
+}
+
+@output
+structure SimpleScalarPropertiesOutput {
     floatValue: Float,
     doubleValue: Double,
 }

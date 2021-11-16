@@ -12,6 +12,7 @@ use smithy.test#httpResponseTests
 /// The example tests how requests and responses are serialized when there's
 /// no request or response payload because the operation has no input or output.
 /// While this should be rare, code generators must support this.
+@suppress(["OperationMissingInput", "OperationMissingOutput"])
 operation NoInputAndNoOutput {}
 
 apply NoInputAndNoOutput @httpRequestTests([
@@ -113,6 +114,7 @@ apply NoInputAndNoOutput @httpResponseTests([
 /// no request or response payload because the operation has no input and the
 /// output is empty. While this should be rare, code generators must support
 /// this.
+@suppress(["OperationMissingInput"])
 operation NoInputAndOutput {
     output: NoInputAndOutputOutput
 }
@@ -147,6 +149,7 @@ apply NoInputAndOutput @httpResponseTests([
     }
 ])
 
+@output
 structure NoInputAndOutputOutput {}
 
 /// The example tests how requests and responses are serialized when there's
@@ -155,7 +158,7 @@ structure NoInputAndOutputOutput {}
 /// be rare, code generators must support this.
 operation EmptyInputAndEmptyOutput {
     input: EmptyInputAndEmptyOutputInput,
-    output: EmptyInputAndEmptyOutputInput
+    output: EmptyInputAndEmptyOutputOutput
 }
 
 apply EmptyInputAndEmptyOutput @httpRequestTests([
@@ -188,4 +191,8 @@ apply EmptyInputAndEmptyOutput @httpResponseTests([
     },
 ])
 
+@input
 structure EmptyInputAndEmptyOutputInput {}
+
+@output
+structure EmptyInputAndEmptyOutputOutput {}

@@ -21,8 +21,10 @@ resource AdditionalSchemasConflictResource {
 
 operation CreateAdditionalSchemasConflictResource {
     input: CreateAdditionalSchemasConflictResourceRequest,
+    output: CreateAdditionalSchemasConflictResourceResponse
 }
 
+@input
 structure CreateAdditionalSchemasConflictResourceRequest {
     bar: String,
 }
@@ -30,3 +32,6 @@ structure CreateAdditionalSchemasConflictResourceRequest {
 structure AdditionalSchemasConflictProperties {
     bar: Boolean,
 }
+
+@output
+structure CreateAdditionalSchemasConflictResourceResponse {}

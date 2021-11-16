@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -65,6 +66,7 @@ final class ModelValidator {
 
     private final List<Validator> validators = new ArrayList<>();
     private final List<Suppression> suppressions = new ArrayList<>();
+    private final List<ValidationEvent> includeEvents = new ArrayList<>();
     private ValidatorFactory validatorFactory;
     private Consumer<ValidationEvent> eventListener;
 
@@ -140,6 +142,21 @@ final class ModelValidator {
     }
 
     /**
+     * Includes a set of events that were already encountered in the result.
+     *
+     * <p>The included events may be suppressed if they match any registered
+     * suppressions or suppressions loaded from the model.
+     *
+     * @param events Events to include.
+     * @return Returns the ModelValidator.
+     */
+    public ModelValidator includeEvents(List<ValidationEvent> events) {
+        this.includeEvents.clear();
+        this.includeEvents.addAll(events);
+        return this;
+    }
+
+    /**
      * Creates a reusable Model Validator that uses every registered validator,
      * suppression, and extracts validators and suppressions from each
      * provided model.
@@ -176,9 +193,10 @@ final class ModelValidator {
                 return coreEvents;
             }
 
-            List<ValidationEvent> result = modelValidators
-                    .parallelStream()
-                    .flatMap(validator -> validator.validate(model).stream())
+            Stream<ValidationEvent> eventStream = Stream.concat(
+                    includeEvents.stream(),
+                    modelValidators.parallelStream().flatMap(validator -> validator.validate(model).stream()));
+            List<ValidationEvent> result = eventStream
                     .filter(ModelValidator::filterPrelude)
                     .map(event -> suppressEvent(model, event, modelSuppressions))
                     // Emit events as they occur during validation.

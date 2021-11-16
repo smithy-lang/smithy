@@ -15,10 +15,15 @@ service InvalidExample {
 
 operation Operation1 {
     input: Operation1Input,
+    output: Operation1Output
 }
 
+@input
 structure Operation1Input {
     foo: InlineDocument,
 }
 
 document InlineDocument
+
+@output
+structure Operation1Output {}

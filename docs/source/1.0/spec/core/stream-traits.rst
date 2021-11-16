@@ -42,22 +42,25 @@ Validation
       only a single member of a structure can target a shape marked as
       ``streaming``.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    operation StreamingOperation {
+        input: StreamingOperationInput,
+        output: StreamingOperationOutput,
+    }
 
-        operation StreamingOperation {
-            output: StreamingOperationOutput,
-        }
+    @input
+    structure StreamingOperationInput {}
 
-        structure StreamingOperationOutput {
-            @required
-            streamId: String
-            output: StreamingBlob,
-        }
+    @output
+    structure StreamingOperationOutput {
+        @required
+        streamId: String
+        output: StreamingBlob,
+    }
 
-        @streaming
-        blob StreamingBlob
+    @streaming
+    blob StreamingBlob
 
 
 .. smithy-trait:: smithy.api#requiresLength
@@ -115,181 +118,73 @@ that is sent over the event stream.
 The following example defines an operation that uses an event
 stream in its input by referencing a member that targets a union:
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    namespace smithy.example
 
-        namespace smithy.example
+    operation PublishMessages {
+        input: PublishMessagesInput
+    }
 
-        operation PublishMessages {
-            input: PublishMessagesInput
-        }
+    @input
+    structure PublishMessagesInput {
+        room: String,
+        messages: PublishEvents,
+    }
 
-        structure PublishMessagesInput {
-            room: String,
-            messages: PublishEvents,
-        }
+    @streaming
+    union PublishEvents {
+        message: Message,
+        leave: LeaveEvent,
+    }
 
-        @streaming
-        union PublishEvents {
-            message: Message,
-            leave: LeaveEvent,
-        }
+    structure Message {
+        message: String,
+    }
 
-        structure Message {
-            message: String,
-        }
+    structure LeaveEvent {}
 
-        structure LeaveEvent {}
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#PublishMessages": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#PublishMessagesInput"
-                    }
-                },
-                "smithy.example#PublishMessagesInput": {
-                    "type": "structure",
-                    "members": {
-                        "room": {
-                            "target": "smithy.api#String"
-                        },
-                        "messages": {
-                            "target": "smithy.example#PublishEvents"
-                        }
-                    }
-                },
-                "smithy.example#PublishEvents": {
-                    "type": "union",
-                    "members": {
-                        "message": {
-                            "target": "smithy.example#Message"
-                        },
-                        "leave": {
-                            "target": "smithy.example#LeaveEvent"
-                        }
-                    },
-                    "traits": {
-                        "smithy.api#streaming": {}
-                    }
-                },
-                "smithy.example#Message": {
-                    "type": "structure",
-                    "members": {
-                        "message": {
-                            "target": "smithy.api#String"
-                        }
-                    }
-                }
-            }
-        }
 
 .. _output-eventstream:
 
 The following example defines an operation that uses an event
 stream in its output:
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    namespace smithy.example
 
-        namespace smithy.example
+    operation SubscribeToMovements {
+        input: SubscribeToMovementsInput,
+        output: SubscribeToMovementsOutput
+    }
 
-        operation SubscribeToMovements {
-            output: SubscribeToMovementsOutput
-        }
+    @input
+    structure SubscribeToMovementsInput {}
 
-        structure SubscribeToMovementsOutput {
-            movements: MovementEvents,
-        }
+    @output
+    structure SubscribeToMovementsOutput {
+        movements: MovementEvents,
+    }
 
-        @streaming
-        union MovementEvents {
-            up: Movement,
-            down: Movement,
-            left: Movement,
-            right: Movement,
-            throttlingError: ThrottlingError
-        }
+    @streaming
+    union MovementEvents {
+        up: Movement,
+        down: Movement,
+        left: Movement,
+        right: Movement,
+        throttlingError: ThrottlingError
+    }
 
-        structure Movement {
-            velocity: Float,
-        }
+    structure Movement {
+        velocity: Float,
+    }
 
-        /// An example error emitted when the client is throttled
-        /// and should terminate the event stream.
-        @error("client")
-        @retryable(throttling: true)
-        structure ThrottlingError {}
-
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#SubscribeToMovements": {
-                    "type": "operation",
-                    "output": {
-                        "target": "smithy.example#SubscribeToMovementsOutput"
-                    }
-                },
-                "smithy.example#SubscribeToMovementsOutput": {
-                    "type": "structure",
-                    "members": {
-                        "movements": {
-                            "target": "smithy.example#MovementEvents"
-                        }
-                    }
-                },
-                "smithy.example#MovementEvents": {
-                    "type": "union",
-                    "members": {
-                        "up": {
-                            "target": "smithy.example#Movement"
-                        },
-                        "down": {
-                            "target": "smithy.example#Movement"
-                        },
-                        "left": {
-                            "target": "smithy.example#Movement"
-                        },
-                        "right": {
-                            "target": "smithy.example#Movement"
-                        },
-                        "throttlingError": {
-                            "target": "smithy.example#ThrottlingError"
-                        }
-                    },
-                    "traits": {
-                        "smithy.api#streaming": {}
-                    }
-                },
-                "smithy.example#Movement": {
-                    "type": "structure",
-                    "members": {
-                        "velocity": {
-                            "target": "smithy.api#Float"
-                        }
-                    }
-                },
-                "smithy.example#ThrottlingError": {
-                    "type": "structure",
-                    "traits": {
-                        "smithy.api#documentation": "An example error emitted when the client is throttled and should terminate the event stream.",
-                        "smithy.api#error": "client",
-                        "smithy.api#retryable": {
-                            "throttling": true
-                        }
-                    }
-                }
-            }
-        }
+    /// An example error emitted when the client is throttled
+    /// and should terminate the event stream.
+    @error("client")
+    @retryable(throttling: true)
+    structure ThrottlingError {}
 
 
 Modeled errors in event streams
@@ -331,91 +226,34 @@ The following example defines an operation with an input event stream with
 an initial-request. The client will first send the initial-request to the
 service, followed by the events sent in the payload of the HTTP message.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    namespace smithy.example
 
-        namespace smithy.example
+    @http(method: "POST", uri: "/messages/{room}")
+    operation PublishMessages {
+        input: PublishMessagesInput
+    }
 
-        @http(method: "POST", uri: "/messages/{room}")
-        operation PublishMessages {
-            input: PublishMessagesInput
-        }
+    @input
+    structure PublishMessagesInput {
+        @httpLabel
+        @required
+        room: String,
 
-        structure PublishMessagesInput {
-            @httpLabel
-            @required
-            room: String,
+        @httpPayload
+        messages: MessageStream,
+    }
 
-            @httpPayload
-            messages: MessageStream,
-        }
+    @streaming
+    union MessageStream {
+        message: Message,
+    }
 
-        @streaming
-        union MessageStream {
-            message: Message,
-        }
+    structure Message {
+        message: String,
+    }
 
-        structure Message {
-            message: String,
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#PublishMessages": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#PublishMessagesInput"
-                    },
-                    "traits": {
-                        "smithy.api#http": {
-                            "uri": "/messages/{room}",
-                            "method": "POST"
-                        }
-                    }
-                },
-                "smithy.example#PublishMessagesInput": {
-                    "type": "structure",
-                    "members": {
-                        "room": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#httpLabel:": {},
-                                "smithy.api#required": {}
-                            }
-                        },
-                        "messages": {
-                            "target": "smithy.example#MessageStream",
-                            "traits": {
-                                "smithy.api#httpPayload": {}
-                            }
-                        }
-                    }
-                },
-                "smithy.example#MessageStream": {
-                    "type": "union",
-                    "members": {
-                        "message": {
-                            "target": "smithy.example#Message"
-                        }
-                    },
-                    "traits": {
-                        "smithy.api#streaming": {}
-                    }
-                },
-                "smithy.example#Message": {
-                    "type": "structure",
-                    "members": {
-                        "message": {
-                            "target": "smithy.api#String"
-                        }
-                    }
-                }
-            }
-        }
 
 .. _initial-response:
 
@@ -437,80 +275,32 @@ an initial-response. The client will first receive and process the
 initial-response, followed by the events sent in the payload of the HTTP
 message.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    namespace smithy.example
 
-        namespace smithy.example
+    @http(method: "GET", uri: "/messages/{room}")
+    operation SubscribeToMessages {
+        input: SubscribeToMessagesInput,
+        output: SubscribeToMessagesOutput
+    }
 
-        @http(method: "GET", uri: "/messages/{room}")
-        operation SubscribeToMessages {
-            input: SubscribeToMessagesInput,
-            output: SubscribeToMessagesOutput
-        }
+    @input
+    structure SubscribeToMessagesInput {
+        @httpLabel
+        @required
+        room: String
+    }
 
-        structure SubscribeToMessagesInput {
-            @httpLabel
-            @required
-            room: String
-        }
+    @output
+    structure SubscribeToMessagesOutput {
+        @httpHeader("X-Connection-Lifetime")
+        connectionLifetime: Integer,
 
-        structure SubscribeToMessagesOutput {
-            @httpHeader("X-Connection-Lifetime")
-            connectionLifetime: Integer,
+        @httpPayload
+        messages: MessageStream,
+    }
 
-            @httpPayload
-            messages: MessageStream,
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#PublishMessages": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#PublishMessagesInput"
-                    },
-                    "traits": {
-                        "smithy.api#http": {
-                            "uri": "/messages/{room}",
-                            "method": "POST"
-                        }
-                    }
-                },
-                "smithy.example#SubscribeToMessagesInput": {
-                    "type": "structure",
-                    "members": {
-                        "room": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#httpLabel:": {},
-                                "smithy.api#required": {}
-                            }
-                        }
-                    }
-                },
-                "smithy.example#SubscribeToMessagesOutput": {
-                    "type": "structure",
-                    "members": {
-                        "connectionLifetime": {
-                            "target": "smithy.api#Integer",
-                            "traits": {
-                                "smithy.api#httpHeader:": "X-Connection-Lifetime"
-                            }
-                        },
-                        "messages": {
-                            "target": "smithy.example#MessageStream",
-                            "traits": {
-                                "smithy.api#httpPayload": {}
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
 Initial message client and server behavior
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -546,9 +336,14 @@ on the name of an event. For example, given the following event stream:
     namespace smithy.example
 
     operation SubscribeToEvents {
+        input: SubscribeToEventsInput,
         output: SubscribeToEventsOutput
     }
 
+    @input
+    structure SubscribeToEventsInput {}
+
+    @output
     structure SubscribeToEventsOutput {
         events: Events,
     }

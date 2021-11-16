@@ -475,22 +475,13 @@ public final class SmithyIdlModelSerializer {
         @Override
         public Void operationShape(OperationShape shape) {
             serializeTraits(shape);
-            if (isEmptyOperation(shape)) {
-                codeWriter.write("operation $L {}", shape.getId().getName()).write("");
-                return null;
-            }
-
             codeWriter.openBlock("operation $L {", shape.getId().getName());
-            shape.getInput().ifPresent(shapeId -> codeWriter.write("input: $I,", shapeId));
-            shape.getOutput().ifPresent(shapeId -> codeWriter.write("output: $I,", shapeId));
+            codeWriter.write("input: $I,", shape.getInputShape());
+            codeWriter.write("output: $I,", shape.getOutputShape());
             codeWriter.writeOptionalIdList("errors", shape.getErrors());
             codeWriter.closeBlock("}");
             codeWriter.write("");
             return null;
-        }
-
-        private boolean isEmptyOperation(OperationShape shape) {
-            return !(shape.getInput().isPresent() || shape.getOutput().isPresent() || !shape.getErrors().isEmpty());
         }
     }
 

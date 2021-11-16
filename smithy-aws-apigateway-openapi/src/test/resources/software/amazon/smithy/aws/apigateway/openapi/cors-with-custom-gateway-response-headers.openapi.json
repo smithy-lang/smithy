@@ -10,7 +10,7 @@
         "operationId": "Foo",
         "responses": {
           "201": {
-            "description": "Foo response",
+            "description": "Foo 201 response",
             "headers": {
               "Access-Control-Allow-Origin": {
                 "schema": {
@@ -35,7 +35,7 @@
               "statusCode": "200",
               "responseParameters": {
                 "method.response.header.Access-Control-Allow-Origin": "'https://foo.com'",
-                "method.response.header.Access-Control-Expose-Headers": "'X-Amzn-Errortype,X-Amzn-Requestid'"
+                "method.response.header.Access-Control-Expose-Headers": "'Content-Length,Content-Type,X-Amzn-Errortype,X-Amzn-Requestid'"
               }
             }
           }

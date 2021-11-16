@@ -64,17 +64,10 @@ public final class HttpLabelTraitValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validateStructure(Model model, OperationShape operation, HttpTrait http) {
-        // If the operation has labels then it must also have input.
-        if (!operation.getInput().isPresent() && !http.getUri().getLabels().isEmpty()) {
-            return ListUtils.of(error(operation, http, String.format(
-                    "`http` trait uri contains labels (%s), but operation has no input.",
-                    ValidationUtils.tickedList(http.getUri().getLabels().stream()
-                                       .map(UriPattern.Segment::getContent).collect(Collectors.toSet())))));
-        }
-
         // Only continue validating if the input is a structure. Typing
         // validation of the input is handled elsewhere.
-        return operation.getInput().flatMap(model::getShape).flatMap(Shape::asStructureShape)
+        return model.getShape(operation.getInputShape())
+                .flatMap(Shape::asStructureShape)
                 .map(input -> validateBindings(model, operation, http, input))
                 .orElse(ListUtils.of());
     }
@@ -120,10 +113,10 @@ public final class HttpLabelTraitValidator extends AbstractValidator {
         }
 
         if (!labels.isEmpty()) {
-            events.add(error(input, String.format(
-                    "This structure is used as the input for the `%s` operation, but the following URI labels "
-                    + "found in the operation's `http` trait do not have a corresponding member marked with the "
-                    + "`httpLabel` trait: %s", operation.getId(), ValidationUtils.tickedList(labels))));
+            events.add(error(operation, String.format(
+                    "This operation uses `%s` as input, but the following URI labels found in the operation's "
+                    + "`http` trait do not have a corresponding member marked with the `httpLabel` trait: %s",
+                    input.getId(), ValidationUtils.tickedList(labels))));
         }
 
         return events;

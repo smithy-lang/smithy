@@ -1,5 +1,11 @@
 {
     "smithy": "1.0",
+    "metadata": {
+        "suppressions": [
+            {"id": "OperationMissingInput", "namespace": "*"},
+            {"id": "OperationMissingOutput", "namespace": "*"}
+        ]
+    },
     "shapes": {
         "ns.foo#Operation": {
             "type": "operation",
@@ -68,6 +74,9 @@
                 "baz": {
                     "target": "ns.foo#String"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#OperationOutput": {
@@ -79,6 +88,9 @@
                         "smithy.api#required": {}
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#Operation2": {

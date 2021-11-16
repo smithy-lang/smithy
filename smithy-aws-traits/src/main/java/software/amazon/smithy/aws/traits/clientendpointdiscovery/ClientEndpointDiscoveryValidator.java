@@ -151,20 +151,13 @@ public final class ClientEndpointDiscoveryValidator extends AbstractValidator {
             Model model, OperationIndex opIndex, OperationShape operation
     ) {
         List<ValidationEvent> events = new ArrayList<>();
-        opIndex.getInput(operation)
-                .map(input -> validateEndpointOperationInput(model, input, operation))
-                .ifPresent(events::addAll);
+        events.addAll(validateEndpointOperationInput(model, opIndex.expectInputShape(operation), operation));
+        StructureShape output = opIndex.expectOutputShape(operation);
 
-        Optional<StructureShape> output = opIndex.getOutput(operation);
-        if (!output.isPresent()) {
-            events.add(error(operation, "Endpoint discovery operations must have an output."));
-            return events;
-        }
-
-        Map<String, MemberShape> outputMembers = output.get().getAllMembers();
+        Map<String, MemberShape> outputMembers = output.getAllMembers();
         if (outputMembers.size() != 1 || !outputMembers.containsKey("Endpoints")) {
-            events.add(error(output.get(), String.format(
-                    "Endpoint discovery operation output may only contain an `Endpoints` member, but found: %s",
+            events.add(error(operation, String.format(
+                    "Endpoint discovery operation output must only contain an `Endpoints` member, but found: [%s]",
                     String.join(",", outputMembers.keySet())
             )));
         }

@@ -44,7 +44,8 @@ apply NoInputAndNoOutput @httpResponseTests([
 ///
 /// While this should be rare, code generators must support this.
 operation NoInputAndOutput {
-    input: NoInputAndOutputOutput
+    input: NoInputAndOutputInput,
+    output: NoInputAndOutputOutput
 }
 
 apply NoInputAndOutput @httpRequestTests([
@@ -71,6 +72,10 @@ apply NoInputAndOutput @httpResponseTests([
     }
 ])
 
+@input
+structure NoInputAndOutputInput {}
+
+@output
 structure NoInputAndOutputOutput {}
 
 /// The example tests how requests and responses are serialized when there's
