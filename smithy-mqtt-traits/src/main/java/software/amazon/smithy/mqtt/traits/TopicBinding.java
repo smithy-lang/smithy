@@ -133,9 +133,20 @@ public final class TopicBinding<T extends Trait> {
      * Gets the input shape related to this operation.
      *
      * @return Returns the optional input shape.
+     * @deprecated Use getInputShape instead.
      */
+    @Deprecated
     public Optional<StructureShape> getInput() {
         return Optional.ofNullable(input);
+    }
+
+    /**
+     * Gets the input shape related to this operation.
+     *
+     * @return Returns the optional input shape.
+     */
+    public StructureShape getInputShape() {
+        return input;
     }
 
     /**

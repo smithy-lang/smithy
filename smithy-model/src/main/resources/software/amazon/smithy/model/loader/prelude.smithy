@@ -51,6 +51,11 @@ double Double
 
 double PrimitiveDouble
 
+/// The single unit type shape, similar to Void and None in other
+/// languages, used to represent no meaningful value.
+@unitType
+structure Unit {}
+
 // ------ Prelude traits
 
 /// Makes a shape a trait.
@@ -770,3 +775,20 @@ list suppress {
 @unstable
 @trait(selector: "operation")
 structure httpChecksumRequired {}
+
+/// Specializes a structure for use only as the input of a single operation.
+@trait(selector: "structure", conflicts: [output, error])
+@tags(["diff.error.const"])
+structure input {}
+
+/// Specializes a structure for use only as the output of a single operation.
+@trait(selector: "structure", conflicts: [input, error])
+@tags(["diff.error.const"])
+structure output {}
+
+/// Specializes a structure as a unit type that has no meaningful value.
+/// This trait is private, which ensures that only a single Unit shape
+/// can be created, smithy.api#Unit.
+@trait(selector: "[id=smithy.api#Unit]")
+@internal
+structure unitType {}

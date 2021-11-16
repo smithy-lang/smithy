@@ -16,12 +16,17 @@ use aws.protocoltests.shared#FooEnum
 /// This operation uses unions for inputs and outputs.
 @idempotent
 operation JsonUnions {
-    input: UnionInputOutput,
-    output: UnionInputOutput,
+    input: JsonUnionsInput,
+    output: JsonUnionsOutput,
 }
 
-/// A shared structure that contains a single union member.
-structure UnionInputOutput {
+@input
+structure JsonUnionsInput {
+    contents: MyUnion
+}
+
+@output
+structure JsonUnionsOutput {
     contents: MyUnion
 }
 

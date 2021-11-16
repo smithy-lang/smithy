@@ -1,5 +1,5 @@
-[ERROR] ns.foo#A: `http` trait uri contains labels (`foo`), but operation has no input. | HttpLabelTrait
-[ERROR] ns.foo#BInput: This structure is used as the input for the `ns.foo#B` operation, but the following URI labels found in the operation's `http` trait do not have a corresponding member marked with the `httpLabel` trait: `d` | HttpLabelTrait
+[ERROR] ns.foo#A: This operation uses `smithy.api#Unit` as input, but the following URI labels found in the operation's `http` trait do not have a corresponding member marked with the `httpLabel` trait: `foo` | HttpLabelTrait
+[ERROR] ns.foo#B: This operation uses `ns.foo#BInput` as input, but the following URI labels found in the operation's `http` trait do not have a corresponding member marked with the `httpLabel` trait: `d` | HttpLabelTrait
 [ERROR] ns.foo#BadError: Trait `httpError` cannot be applied to `ns.foo#BadError`. This trait may only be applied to shapes that match the following selector: structure[trait|error] | TraitTarget
 [ERROR] ns.foo#BadErrorMultipleBindings$foo: Found conflicting traits on member shape: `httpHeader` conflicts with `httpPayload`, `httpPayload` conflicts with `httpHeader` | TraitConflict
 [ERROR] ns.foo#DInput$a: `httpHeader` binding of `x-foo` conflicts with the `httpPrefixHeaders` binding of `ns.foo#DInput$e` to `x-foo`. `httpHeader` bindings must not case-insensitively start with any `httpPrefixHeaders` bindings. | HttpPrefixHeadersTrait

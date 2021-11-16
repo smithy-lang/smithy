@@ -18,10 +18,17 @@ use smithy.test#httpResponseTests
 /// properly deserialize successful and error responses.
 @idempotent
 operation GreetingWithErrors {
+    input: GreetingWithErrorsInput,
     output: GreetingWithErrorsOutput,
     errors: [InvalidGreeting, ComplexError, FooError]
 }
 
+@input
+structure GreetingWithErrorsInput {
+    greeting: String,
+}
+
+@output
 structure GreetingWithErrorsOutput {
     greeting: String,
 }

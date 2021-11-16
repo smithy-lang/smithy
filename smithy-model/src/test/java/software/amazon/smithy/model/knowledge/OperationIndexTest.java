@@ -31,6 +31,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.UnitTypeTrait;
 
 public class OperationIndexTest {
 
@@ -50,11 +51,17 @@ public class OperationIndexTest {
     }
 
     @Test
-    public void indexesEmptyOperations() {
+    public void indexesUnitOperations() {
         OperationIndex opIndex = OperationIndex.of(model);
 
         assertThat(opIndex.getInput(ShapeId.from("ns.foo#A")), is(Optional.empty()));
+        assertThat(opIndex.getInputShape(ShapeId.from("ns.foo#A")).map(Shape::getId),
+                   equalTo(Optional.of(UnitTypeTrait.UNIT)));
+        assertThat(opIndex.expectInputShape(ShapeId.from("ns.foo#A")).getId(), equalTo(UnitTypeTrait.UNIT));
         assertThat(opIndex.getOutput(ShapeId.from("ns.foo#A")), is(Optional.empty()));
+        assertThat(opIndex.getOutputShape(ShapeId.from("ns.foo#A")).map(Shape::getId),
+                   equalTo(Optional.of(UnitTypeTrait.UNIT)));
+        assertThat(opIndex.expectOutputShape(ShapeId.from("ns.foo#A")).getId(), equalTo(UnitTypeTrait.UNIT));
         assertThat(opIndex.getErrors(ShapeId.from("ns.foo#A")), empty());
     }
 

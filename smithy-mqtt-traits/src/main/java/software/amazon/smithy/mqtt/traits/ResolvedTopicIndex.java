@@ -68,7 +68,7 @@ public final class ResolvedTopicIndex implements KnowledgeIndex {
                 createPublishBindings(operationIndex, operation, trait);
             } else if (operation.hasTrait(SubscribeTrait.class)) {
                 SubscribeTrait trait = operation.getTrait(SubscribeTrait.class).get();
-                StructureShape input = operationIndex.getInput(operation).orElse(null);
+                StructureShape input = operationIndex.expectInputShape(operation);
                 createSubscribeBinding(input, eventStreamIndex, operation, trait);
             }
         });
@@ -139,12 +139,8 @@ public final class ResolvedTopicIndex implements KnowledgeIndex {
             OperationShape operation,
             PublishTrait trait
     ) {
-        TopicBinding<PublishTrait> topicBinding = operationIndex.getInput(operation)
-                // Use the input to create a publish binding.
-                .map(input -> new TopicBinding<>(operation, trait, trait.getTopic(), input, input))
-                // The binding has no valid input.
-                .orElseGet(() -> new TopicBinding<>(operation, trait, trait.getTopic(), null, null));
-
+        StructureShape input = operationIndex.expectInputShape(operation);
+        TopicBinding<PublishTrait> topicBinding = new TopicBinding<>(operation, trait, trait.getTopic(), input, input);
         publishBindings.put(operation.getId(), topicBinding);
     }
 

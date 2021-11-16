@@ -247,6 +247,14 @@ enum AstModelLoader {
                 .source(node.getSourceLocation())
                 .addErrors(loadOptionalTargetList(modelFile, id, node, ERRORS));
 
+        if (!node.getMember("input").isPresent()) {
+            modelFile.events().add(LoaderUtils.createOperationMissingInput(id, node.getSourceLocation()));
+        }
+
+        if (!node.getMember("output").isPresent()) {
+            modelFile.events().add(LoaderUtils.createOperationMissingOutput(id, node.getSourceLocation()));
+        }
+
         loadOptionalTarget(modelFile, id, node, "input").ifPresent(builder::input);
         loadOptionalTarget(modelFile, id, node, "output").ifPresent(builder::output);
         modelFile.onShape(builder);

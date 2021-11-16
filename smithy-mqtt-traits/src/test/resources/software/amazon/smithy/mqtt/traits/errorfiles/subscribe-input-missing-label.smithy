@@ -13,16 +13,18 @@ operation Foo {
     output: FooOutput
 }
 
+@input
 structure FooInput {
-  @required
-  @topicLabel
-  foo: smithy.api#String,
+    @required
+    @topicLabel
+    foo: smithy.api#String,
 
-  baz: smithy.api#String, // Error, missing topicLabel.
+    baz: smithy.api#String, // Error, missing topicLabel.
 }
 
+@output
 structure FooOutput {
-  messages: EventStream,
+    messages: EventStream,
 }
 
 @streaming

@@ -13,12 +13,17 @@ service MyService {
 
 operation SayHello {
     input: SayHelloInput,
+    output: SayHelloOutput
 }
 
+@input
 structure SayHelloInput {
     foo: Foo,
-    baz: Baz,
+    baz: Baz
 }
+
+@output
+structure SayHelloOutput {}
 
 structure Foo {}
 

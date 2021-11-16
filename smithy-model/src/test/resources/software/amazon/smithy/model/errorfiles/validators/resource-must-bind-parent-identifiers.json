@@ -34,10 +34,22 @@
             "type": "operation",
             "input": {
                 "target": "ns.foo#InvokeBInput"
+            },
+            "output": {
+                "target": "ns.foo#InvokeBOutput"
             }
         },
         "ns.foo#InvokeBInput": {
-            "type": "structure"
+            "type": "structure",
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#InvokeBOutput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#output": {}
+            }
         }
     }
 }

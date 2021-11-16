@@ -41,7 +41,7 @@ apply NoInputAndNoOutput @httpRequestTests([
         headers: {
             "Accept": "application/json"
         },
-       appliesTo: "server",
+        appliesTo: "server",
     }
 ])
 
@@ -50,6 +50,54 @@ apply NoInputAndNoOutput @httpResponseTests([
        id: "RestJsonNoInputAndNoOutput",
        documentation: """
             When an operation does not define output, the service will respond
+            with an empty payload, and may optionally include the content-type
+            header.""",
+       protocol: restJson1,
+       code: 200,
+       body: ""
+   }
+])
+
+/// This test is similar to NoInputAndNoOutput, but uses explicit Unit types.
+@http(uri: "/UnitInputAndOutput", method: "POST")
+operation UnitInputAndOutput {
+    input: Unit,
+    output: Unit
+}
+
+apply UnitInputAndOutput @httpRequestTests([
+    {
+        id: "RestJsonUnitInputAndOutput",
+        documentation: """
+                A unit type input serializes no payload. When clients do not
+                need to serialize any data in the payload, they should omit
+                a payload altogether.""",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/UnitInputAndOutput",
+        body: ""
+    },
+    {
+        id: "RestJsonUnitInputAllowsAccept",
+        documentation: """
+                Servers should allow the accept header to be set to the
+                default content-type.""",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/UnitInputAndOutput",
+        body: "",
+        headers: {
+            "Accept": "application/json"
+        },
+        appliesTo: "server",
+    }
+])
+
+apply NoInputAndNoOutput @httpResponseTests([
+   {
+       id: "RestJsonUnitInputAndOutputNoOutput",
+       documentation: """
+            When an operation defines Unit output, the service will respond
             with an empty payload, and may optionally include the content-type
             header.""",
        protocol: restJson1,
@@ -122,6 +170,7 @@ apply NoInputAndOutput @httpResponseTests([
    }
 ])
 
+@output
 structure NoInputAndOutputOutput {}
 
 /// The example tests how requests and responses are serialized when there's
@@ -190,5 +239,8 @@ apply EmptyInputAndEmptyOutput @httpResponseTests([
     },
 ])
 
+@input
 structure EmptyInputAndEmptyOutputInput {}
+
+@output
 structure EmptyInputAndEmptyOutputOutput {}

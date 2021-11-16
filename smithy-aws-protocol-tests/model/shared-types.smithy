@@ -7,15 +7,48 @@
 
 $version: "1.0"
 
-metadata suppressions = [{
-    id: "DeprecatedTrait",
-    namespace: "*",
-    reason: """
-        Some of the AWS protocols make use of deprecated traits, and some are
-        themselves deprecated traits. As this package is intended to test those
-        protocols, the warnings should be suppressed.
-        """
-}]
+metadata suppressions = [
+    {
+        id: "DeprecatedTrait",
+        namespace: "*",
+        reason: """
+            Some of the AWS protocols make use of deprecated traits, and some are
+            themselves deprecated traits. As this package is intended to test those
+            protocols, the warnings should be suppressed."""
+    },
+    // TODO: The following suppressions are temporary until protocol tests are updated
+    // to use dedicated input and output shapes, the `@input` and `@output` traits,
+    // and suppressions as necessary. This will be easier to do when mixins are
+    // launched as part of Smithy IDL 2.0.
+    {
+        id: "OperationMissingInputTrait",
+        namespace: "*",
+        reason: """
+            This is a temporary solution until we rewrite these tests to define input, output,
+            and use the `@input` and `@output` traits."""
+    },
+    {
+        id: "OperationMissingOutputTrait",
+        namespace: "*",
+        reason: """
+            This is a temporary solution until we rewrite these tests to define input, output,
+            and use the `@input` and `@output` traits."""
+    },
+    {
+        id: "OperationMissingInput",
+        namespace: "*",
+        reason: """
+            This is a temporary solution until we rewrite these tests to define input, output,
+            and use the `@input` and `@output` traits."""
+    },
+    {
+        id: "OperationMissingOutput",
+        namespace: "*",
+        reason: """
+            This is a temporary solution until we rewrite these tests to define input, output,
+            and use the `@input` and `@output` traits."""
+    }
+]
 
 namespace aws.protocoltests.shared
 

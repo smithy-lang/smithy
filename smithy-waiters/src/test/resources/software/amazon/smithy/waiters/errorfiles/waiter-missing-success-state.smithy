@@ -16,8 +16,12 @@ use smithy.waiters#waitable
     }
 )
 operation A {
-    input: AInputOutput,
-    output: AInputOutput
+    input: AInput,
+    output: AOutput
 }
 
-structure AInputOutput {}
+@input
+structure AInput {}
+
+@output
+structure AOutput {}

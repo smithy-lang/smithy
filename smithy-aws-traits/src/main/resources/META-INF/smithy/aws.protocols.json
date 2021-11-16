@@ -248,7 +248,7 @@
             },
             "traits": {
                 "smithy.api#trait": {
-                    "selector": "operation :test(-[input]->)"
+                    "selector": "operation"
                 },
                 "smithy.api#documentation": "Indicates that an operation supports checksum validation.",
                 "smithy.api#unstable": {}

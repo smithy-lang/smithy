@@ -110,4 +110,42 @@ final class LoaderUtils {
         }
         return false;
     }
+
+    /**
+     * Helper method to create a validation event when input is not explicitly defined.
+     *
+     * @param id Shape ID of the operation.
+     * @param location Where the operation is defined.
+     * @return Returns the event.
+     */
+    static ValidationEvent createOperationMissingInput(ShapeId id, SourceLocation location) {
+        return ValidationEvent.builder()
+                .id("OperationMissingInput")
+                .severity(Severity.WARNING)
+                .shapeId(id)
+                .sourceLocation(location)
+                .message("This operation does not define input, so it defaults to smithy.api#Unit. Defining input "
+                         + "for an operation, even if you don't need it today, future-proofs the operation by "
+                         + "allowing input members to be added later.")
+                .build();
+    }
+
+    /**
+     * Helper method to create a validation event when output is not explicitly defined.
+     *
+     * @param id Shape ID of the operation.
+     * @param location Where the operation is defined.
+     * @return Returns the event.
+     */
+    static ValidationEvent createOperationMissingOutput(ShapeId id, SourceLocation location) {
+        return ValidationEvent.builder()
+                .id("OperationMissingOutput")
+                .severity(Severity.WARNING)
+                .shapeId(id)
+                .sourceLocation(location)
+                .message("This operation does not define output, so it defaults to smithy.api#Unit. Defining output "
+                         + "for an operation, even if you don't need it today, future-proofs the operation by "
+                         + "allowing output members to be added later.")
+                .build();
+    }
 }

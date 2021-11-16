@@ -620,12 +620,15 @@ public final class ModelAssembler {
 
     private ValidatedResult<Model> validate(Model model, TraitContainer traits, List<ValidationEvent> events) {
         validateTraits(model.getShapeIds(), traits, events);
-        events.forEach(validationEventListener);
 
         // If ERROR validation events occur while loading, then performing more
         // granular semantic validation will only obscure the root cause of errors.
         if (disableValidation || LoaderUtils.containsErrorEvents(events)) {
-            return new ValidatedResult<>(model, events);
+            // Only return and emit events for errors.
+            return new ValidatedResult<>(model, events.stream()
+                    .filter(event -> event.getSeverity() == Severity.ERROR)
+                    .peek(validationEventListener)
+                    .collect(Collectors.toList()));
         }
 
         // Validate the model based on the explicit validators and model metadata.
@@ -634,10 +637,10 @@ public final class ModelAssembler {
                 .validators(validators)
                 .validatorFactory(validatorFactory)
                 .eventListener(validationEventListener)
+                .includeEvents(events)
                 .createValidator()
                 .validate(model);
 
-        mergedEvents.addAll(events);
         return new ValidatedResult<>(model, mergedEvents);
     }
 

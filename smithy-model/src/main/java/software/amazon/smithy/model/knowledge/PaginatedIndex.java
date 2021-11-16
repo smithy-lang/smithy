@@ -75,12 +75,8 @@ public final class PaginatedIndex implements KnowledgeIndex {
             OperationShape operation,
             PaginatedTrait trait
     ) {
-        StructureShape input = opIndex.getInput(operation.getId()).orElse(null);
-        StructureShape output = opIndex.getOutput(operation.getId()).orElse(null);
-
-        if (input == null || output == null) {
-            return Optional.empty();
-        }
+        StructureShape input = opIndex.expectInputShape(operation.getId());
+        StructureShape output = opIndex.expectOutputShape(operation.getId());
 
         MemberShape inputToken = trait.getInputToken().flatMap(input::getMember).orElse(null);
         List<MemberShape> outputTokenPath = trait.getOutputToken()

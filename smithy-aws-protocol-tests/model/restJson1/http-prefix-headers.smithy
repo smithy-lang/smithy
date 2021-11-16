@@ -15,8 +15,8 @@ use aws.protocoltests.shared#StringMap
 @http(uri: "/HttpPrefixHeaders", method: "GET")
 @externalDocumentation("httpPrefixHeaders Trait": "https://awslabs.github.io/smithy/1.0/spec/http.html#httpprefixheaders-trait")
 operation HttpPrefixHeaders  {
-    input: HttpPrefixHeadersInputOutput,
-    output: HttpPrefixHeadersInputOutput
+    input: HttpPrefixHeadersInput,
+    output: HttpPrefixHeadersOutput
 }
 
 apply HttpPrefixHeaders @httpRequestTests([
@@ -78,7 +78,17 @@ apply HttpPrefixHeaders @httpResponseTests([
     },
 ])
 
-structure HttpPrefixHeadersInputOutput {
+@input
+structure HttpPrefixHeadersInput {
+    @httpHeader("X-Foo")
+    foo: String,
+
+    @httpPrefixHeaders("X-Foo-")
+    fooMap: StringMap,
+}
+
+@output
+structure HttpPrefixHeadersOutput {
     @httpHeader("X-Foo")
     foo: String,
 
@@ -89,11 +99,12 @@ structure HttpPrefixHeadersInputOutput {
 /// Clients that perform this test extract all headers from the response.
 @readonly
 @http(uri: "/HttpPrefixHeadersResponse", method: "GET")
-operation HttpPrefixHeadersResponse  {
-    output: HttpPrefixHeadersResponseOutput
+operation HttpPrefixHeadersInResponse  {
+    input: HttpPrefixHeadersInResponseInput,
+    output: HttpPrefixHeadersInResponseOutput
 }
 
-apply HttpPrefixHeadersResponse @httpResponseTests([
+apply HttpPrefixHeadersInResponse @httpResponseTests([
     {
         id: "HttpPrefixHeadersResponse",
         documentation: "(de)serializes all response headers",
@@ -112,7 +123,11 @@ apply HttpPrefixHeadersResponse @httpResponseTests([
     },
 ])
 
-structure HttpPrefixHeadersResponseOutput {
+@input
+structure HttpPrefixHeadersInResponseInput {}
+
+@output
+structure HttpPrefixHeadersInResponseOutput {
     @httpPrefixHeaders("")
     prefixHeaders: StringMap,
 }

@@ -144,6 +144,9 @@
                 "integer": {
                     "target": "ns.foo#Integer"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#ValidOutput": {
@@ -179,6 +182,9 @@
                 "another6": {
                     "target": "ns.foo#InvalidTraitReference"
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#ValidError": {

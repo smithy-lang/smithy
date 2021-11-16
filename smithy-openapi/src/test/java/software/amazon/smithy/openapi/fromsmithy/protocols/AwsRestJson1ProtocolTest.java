@@ -143,7 +143,9 @@ public class AwsRestJson1ProtocolTest {
                         ),
                         SetUtils.of(
                                 "X-Amzn-Requestid",
-                                "X-Amzn-Errortype"
+                                "X-Amzn-Errortype",
+                                "Content-Length",
+                                "Content-Type"
                         )
                 ),
                 Arguments.of(
@@ -187,7 +189,9 @@ public class AwsRestJson1ProtocolTest {
                         ),
                         SetUtils.of(
                                 "X-Amzn-Requestid",
-                                "X-Amzn-Errortype"
+                                "X-Amzn-Errortype",
+                                "Content-Length",
+                                "Content-Type"
                         )
                 ),
                 Arguments.of(

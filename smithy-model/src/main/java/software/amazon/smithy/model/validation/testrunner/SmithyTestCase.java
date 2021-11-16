@@ -115,6 +115,9 @@ public final class SmithyTestCase {
         List<ValidationEvent> extraEvents = actualEvents.stream()
                 .filter(actualEvent -> getExpectedEvents().stream()
                         .noneMatch(expectedEvent -> compareEvents(expectedEvent, actualEvent)))
+                // Exclude suppressed events from needing to be defined as acceptable validation
+                // events. However, these can still be defined as required events.
+                .filter(event -> event.getSeverity() != Severity.SUPPRESSED)
                 .collect(Collectors.toList());
 
         return new SmithyTestCase.Result(getModelLocation(), unmatchedEvents, extraEvents);

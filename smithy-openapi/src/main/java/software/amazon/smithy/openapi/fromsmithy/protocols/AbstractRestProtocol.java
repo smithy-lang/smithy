@@ -132,11 +132,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     public Set<String> getProtocolResponseHeaders(Context<T> context, OperationShape operationShape) {
         Set<String> headers = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
         headers.addAll(OpenApiProtocol.super.getProtocolResponseHeaders(context, operationShape));
-
-        // If the operation has any defined output or errors, it can return content-type.
-        if (operationShape.getOutput().isPresent() || !operationShape.getErrors().isEmpty()) {
-            headers.addAll(ProtocolUtils.CONTENT_HEADERS);
-        }
+        headers.addAll(ProtocolUtils.CONTENT_HEADERS);
 
         return headers;
     }
@@ -419,10 +415,9 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         Map<String, ResponseObject> result = new TreeMap<>();
         OperationIndex operationIndex = OperationIndex.of(context.getModel());
 
-        operationIndex.getOutput(operation).ifPresent(output -> {
-            updateResponsesMapWithResponseStatusAndObject(
-                    context, bindingIndex, eventStreamIndex, operation, output, result);
-        });
+        StructureShape output = operationIndex.expectOutputShape(operation);
+        updateResponsesMapWithResponseStatusAndObject(
+                context, bindingIndex, eventStreamIndex, operation, output, result);
 
         for (StructureShape error : operationIndex.getErrors(operation)) {
             updateResponsesMapWithResponseStatusAndObject(

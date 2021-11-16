@@ -19,10 +19,12 @@ use smithy.waiters#waitable
         ]
     }
 )
+@suppress(["OperationMissingInput"])
 operation A {
-    input: AInput
+    output: AOutput
 }
 
-structure AInput {
+@output
+structure AOutput {
     foo: String,
 }

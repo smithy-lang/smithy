@@ -39,9 +39,14 @@ service InvalidService {
     }
 )
 operation A {
+    input: AInput,
     output: AOutput,
 }
 
+@input
+structure AInput {}
+
+@output
 structure AOutput {
     foo: String,
 }
@@ -78,5 +83,14 @@ structure AOutput {
     }
 )
 operation B {
-    output: AOutput,
+    input: BInput,
+    output: BOutput,
+}
+
+@input
+structure BInput {}
+
+@output
+structure BOutput {
+    foo: String,
 }

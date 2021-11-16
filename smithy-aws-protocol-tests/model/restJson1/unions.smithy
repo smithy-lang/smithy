@@ -443,3 +443,73 @@ apply JsonUnions @httpResponseTests([
         }
     },
 ])
+
+
+/// This operation defines a union with a Unit member.
+@http(uri: "/PostPlayerInput", method: "POST")
+operation PostPlayerAction {
+    input: PostPlayerActionInput,
+    output: PostPlayerActionOutput
+}
+
+@input
+structure PostPlayerActionInput {
+    @required
+    action: PlayerAction
+}
+
+@output
+structure PostPlayerActionOutput {
+    @required
+    action: PlayerAction
+}
+
+union PlayerAction {
+    /// Quit the game.
+    quit: Unit
+}
+
+apply PostPlayerAction @httpRequestTests([
+    {
+        id: "RestJsonInputUnionWithUnitMember",
+        documentation: "Unit types in unions are serialized like normal structures in requests.",
+        protocol: restJson1,
+        method: "PUT",
+        "uri": "/MovePlayer",
+        body: """
+            {
+                "action": {
+                    "quit": {}
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            action: {
+                quit: {}
+            }
+        }
+    }
+])
+
+apply PostPlayerAction @httpResponseTests([
+    {
+        id: "RestJsonOutputUnionWithUnitMember",
+        documentation: "Unit types in unions are serialized like normal structures in responses.",
+        protocol: restJson1,
+        code: 200,
+        body: """
+            {
+                "action": {
+                    "quit": {}
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            action: {
+                quit: {}
+            }
+        }
+    }
+])

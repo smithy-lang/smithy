@@ -1,5 +1,13 @@
 {
     "smithy": "1.0",
+    "metadata": {
+        "suppressions": [
+            {"id": "OperationMissingInput", "namespace": "*"},
+            {"id": "OperationMissingOutput", "namespace": "*"},
+            {"id": "OperationMissingInputTrait", "namespace": "*"},
+            {"id": "OperationMissingOutputTrait", "namespace": "*"}
+        ]
+    },
     "shapes": {
         "ns.foo#Service": {
             "type": "service",
@@ -222,7 +230,7 @@
                 "target": "ns.foo#ValidInput"
             },
             "output": {
-                "target": "ns.foo#Invalid6Input"
+                "target": "ns.foo#Invalid6Output"
             },
             "traits": {
                 "smithy.api#readonly": {},
@@ -234,7 +242,7 @@
                 }
             }
         },
-        "ns.foo#Invalid6Input": {
+        "ns.foo#Invalid6Output": {
             "type": "structure",
             "members": {
                 "nextToken": {

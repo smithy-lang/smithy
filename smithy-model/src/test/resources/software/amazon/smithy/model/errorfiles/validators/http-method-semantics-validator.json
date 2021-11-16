@@ -1,5 +1,11 @@
 {
     "smithy": "1.0",
+    "metadata": {
+        "suppressions": [
+            {"id":  "OperationMissingInput", "namespace": "ns.foo"},
+            {"id":  "OperationMissingOutput", "namespace": "ns.foo"}
+        ]
+    },
     "shapes": {
         "ns.foo#A": {
             "type": "operation",
@@ -120,6 +126,9 @@
                         "smithy.api#httpPayload": {}
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#L": {
@@ -150,6 +159,9 @@
                         "smithy.api#required": {}
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#M": {
@@ -171,6 +183,9 @@
                 "payload": {
                     "target": "smithy.api#String"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#N": {
@@ -198,7 +213,10 @@
         },
         "ns.foo#OptionsInput": {
             "type": "structure",
-            "members": {}
+            "members": {},
+            "traits": {
+                "smithy.api#input": {}
+            }
         }
     }
 }
