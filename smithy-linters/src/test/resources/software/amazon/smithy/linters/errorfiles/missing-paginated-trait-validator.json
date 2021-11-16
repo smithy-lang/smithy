@@ -256,10 +256,6 @@
         }
     },
     "metadata": {
-        "suppressions": [
-            {"id": "OperationMissingInput", "namespace": "ns.foo"},
-            {"id": "OperationMissingOutput", "namespace": "ns.foo"}
-        ],
         "validators": [
             {
                 "name": "MissingPaginatedTrait"
