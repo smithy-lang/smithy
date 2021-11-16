@@ -47,6 +47,21 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         }
     },
     {
+        id: "RestJsonInputAndOutputWithQuotedStringHeaders",
+        documentation: "Tests requests with string list header bindings that require quoting",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        headers: {
+            "X-StringList": """
+            "b,c","\"def\"",a"""
+        },
+        body: "",
+        params: {
+            headerStringList: ["b,c", "\"def\"", "a"]
+        }
+    },
+    {
         id: "RestJsonInputAndOutputWithNumericHeaders",
         documentation: "Tests requests with numeric header bindings",
         protocol: restJson1,
@@ -97,7 +112,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         method: "POST",
         uri: "/InputAndOutputWithHeaders",
         headers: {
-            "X-TimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
+            "X-TimestampList": "\"Mon, 16 Dec 2019 23:48:18 GMT\", \"Mon, 16 Dec 2019 23:48:18 GMT\""
         },
         body: "",
         params: {
@@ -188,6 +203,19 @@ apply InputAndOutputWithHeaders @httpResponseTests([
         }
     },
     {
+        id: "RestJsonInputAndOutputWithQuotedStringHeaders",
+        documentation: "Tests responses with string list header bindings that require quoting",
+        protocol: restJson1,
+        code: 200,
+        headers: {
+            "X-StringList": """
+            "b,c","\"def\"",a"""
+        },
+        params: {
+            headerStringList: ["a", "b,c", "\"def\""]
+        }
+    },
+    {
         id: "RestJsonInputAndOutputWithNumericHeaders",
         documentation: "Tests responses with numeric header bindings",
         protocol: restJson1,
@@ -233,7 +261,7 @@ apply InputAndOutputWithHeaders @httpResponseTests([
         protocol: restJson1,
         code: 200,
         headers: {
-            "X-TimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
+            "X-TimestampList": "\"Mon, 16 Dec 2019 23:48:18 GMT\", \"Mon, 16 Dec 2019 23:48:18 GMT\""
         },
         params: {
             headerTimestampList: [1576540098, 1576540098]
