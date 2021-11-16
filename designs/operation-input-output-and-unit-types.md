@@ -180,11 +180,6 @@ structure GetFooOutput {}
 To encourage models to utilize the `@input` and `@output` traits, built-in
 validation will be added to Smithy.
 
-When an operation does not define input or output explicitly a WARNING
-validation event will be emitted with the ID `OperationMissingInput` or
-`OperationMissingOutput`. This can be avoided by explicitly assigning the input
-or output of an operation to a shape, including `smithy.api#Unit`.
-
 If an operation input targets a shape other than `smithy.api#Unit` that is
 not marked with the `@input` trait, a WARNING validation event is emitted with
 the ID `OperationMissingInputTrait`. A similar event with an ID of

@@ -549,15 +549,6 @@ final class IdlModelParser extends SimpleParser {
         ObjectNode node = IdlNodeParser.parseObjectNode(this, id.toString());
         LoaderUtils.checkForAdditionalProperties(node, id, OPERATION_PROPERTY_NAMES, modelFile.events());
         modelFile.onShape(builder);
-
-        if (!node.getMember("input").isPresent()) {
-            modelFile.events().add(LoaderUtils.createOperationMissingInput(id, location));
-        }
-
-        if (!node.getMember("output").isPresent()) {
-            modelFile.events().add(LoaderUtils.createOperationMissingOutput(id, location));
-        }
-
         optionalId(node, "input", builder::input);
         optionalId(node, "output", builder::output);
         optionalIdList(node, ERRORS_KEYS, builder::addError);

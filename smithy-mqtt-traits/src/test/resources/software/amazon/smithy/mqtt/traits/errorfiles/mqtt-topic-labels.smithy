@@ -2,7 +2,6 @@ namespace smithy.example
 
 // Missing input for {foo} property.
 @smithy.mqtt#publish("events1/{foo}")
-@suppress(["OperationMissingInput", "OperationMissingOutput"])
 operation Operation1 {}
 
 
@@ -51,7 +50,6 @@ structure Operation4Input {
 
 // No errors.
 @smithy.mqtt#publish("events5/{foo}")
-@suppress(["OperationMissingOutput"])
 operation Operation5 {
     input: Operation5Input
 }

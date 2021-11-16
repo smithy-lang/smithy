@@ -19,7 +19,6 @@ use smithy.waiters#waitable
         ]
     }
 )
-@suppress(["OperationMissingOutput"])
 operation A {
     input: AInput
 }

@@ -3,5 +3,4 @@
 namespace smithy.example
 
 @smithy.mqtt#subscribe("events")
-@suppress(["OperationMissingInput", "OperationMissingOutput"])
 operation Foo {}

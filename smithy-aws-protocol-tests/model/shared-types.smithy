@@ -33,20 +33,6 @@ metadata suppressions = [
         reason: """
             This is a temporary solution until we rewrite these tests to define input, output,
             and use the `@input` and `@output` traits."""
-    },
-    {
-        id: "OperationMissingInput",
-        namespace: "*",
-        reason: """
-            This is a temporary solution until we rewrite these tests to define input, output,
-            and use the `@input` and `@output` traits."""
-    },
-    {
-        id: "OperationMissingOutput",
-        namespace: "*",
-        reason: """
-            This is a temporary solution until we rewrite these tests to define input, output,
-            and use the `@input` and `@output` traits."""
     }
 ]
 
