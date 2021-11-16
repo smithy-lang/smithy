@@ -13,7 +13,6 @@ use smithy.waiters#waitable
         ]
     }
 )
-@suppress(["OperationMissingOutput"])
 operation StreamingInput {
     input: StreamingInputInput
 }
@@ -41,7 +40,6 @@ structure SuccessMessage {}
         ]
     }
 )
-@suppress(["OperationMissingInput"])
 operation StreamingOutput {
     output: StreamingOutputOutput
 }

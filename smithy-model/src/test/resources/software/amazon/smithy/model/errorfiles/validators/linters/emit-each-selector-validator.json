@@ -128,9 +128,6 @@
             "type": "operation",
             "input": {
                 "target": "ns.foo#OperationBInput"
-            },
-            "traits": {
-                "smithy.api#suppress": ["OperationMissingOutput"]
             }
         },
         "ns.foo#OperationBInput": {

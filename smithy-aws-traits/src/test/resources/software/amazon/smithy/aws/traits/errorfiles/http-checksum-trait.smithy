@@ -15,7 +15,7 @@ structure NoBehaviorInput {}
 @httpChecksum(
     requestChecksumRequired: true,
 )
-@suppress(["UnstableTrait", "OperationMissingInput"])
+@suppress(["UnstableTrait"])
 operation NoInput {
     output: Unit
 }
