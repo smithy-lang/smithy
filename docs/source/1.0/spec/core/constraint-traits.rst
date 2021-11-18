@@ -327,7 +327,7 @@ Given the following model,
 Summary
     Constrains a shape to minimum and maximum number of elements or size.
 Trait selector
-    ``:test(list, map, string, blob, member > :is(list, map, string, blob))``
+    ``:test(collection, map, string, blob, member > :is(collection, map, string, blob))``
 
     *Any list, map, string, or blob; or a member that targets one of these shapes*
 Value type
