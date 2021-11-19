@@ -1,10 +1,5 @@
 $version: "1.0"
 
-metadata suppressions = [
-    {id: "OperationMissingInputTrait", namespace: "smithy.example"},
-    {id: "OperationMissingOutputTrait", namespace: "smithy.example"}
-]
-
 namespace smithy.example
 
 // Conflicts with B, C

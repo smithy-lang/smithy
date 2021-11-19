@@ -1,11 +1,5 @@
 {
     "smithy": "1.0",
-    "metadata": {
-        "suppressions": [
-            {"id":  "OperationMissingInputTrait", "namespace": "ns.foo"},
-            {"id":  "OperationMissingOutputTrait", "namespace": "ns.foo"}
-        ]
-    },
     "shapes": {
         "ns.foo#ValidMultiEventInputOperation": {
             "type": "operation",
