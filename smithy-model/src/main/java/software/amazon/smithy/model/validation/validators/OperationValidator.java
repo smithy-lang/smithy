@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
-import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
 import software.amazon.smithy.model.neighbor.RelationshipType;
@@ -29,10 +28,8 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.InputTrait;
 import software.amazon.smithy.model.traits.OutputTrait;
-import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -44,10 +41,6 @@ import software.amazon.smithy.utils.ListUtils;
  * and {@code output} traits.
  *
  * <ul>
- *     <li>Emits an {@code OperationMissingInputTrait} WARNING when the input
- *     of an operation is not marked with the {@code input} trait.</li>
- *     <li>Emits an {@code OperationMissingOutputTrait} WARNING when the
- *     output of an operation is not marked with the {@code output} trait.</li>
  *     <li>Emits an {@code OperationInputOutputMisuse} ERROR when a structure
  *     marked with the {@code input} trait or {@code output} trait is used in
  *     other contexts than input or output, or reused by multiple operations.</li>
@@ -64,8 +57,6 @@ public final class OperationValidator extends AbstractValidator {
 
     private static final String OPERATION_INPUT_OUTPUT_MISUSE = "OperationInputOutputMisuse";
     private static final String OPERATION_INPUT_OUTPUT_NAME = "OperationInputOutputName";
-    private static final String OPERATION_MISSING_INPUT_TRAIT = "OperationMissingInputTrait";
-    private static final String OPERATION_MISSING_OUTPUT_TRAIT = "OperationMissingOutputTrait";
     private static final String OPERATION_NAME_AMBIGUITY = "OperationNameAmbiguity";
     private static final List<String> INPUT_SUFFIXES = ListUtils.of("Input", "Request");
     private static final List<String> OUTPUT_SUFFIXES = ListUtils.of("Output", "Response");
@@ -77,11 +68,7 @@ public final class OperationValidator extends AbstractValidator {
         validateInputOutput(model.getShapesWithTrait(InputTrait.class), reverseProvider, events, "input", "output");
         validateInputOutput(model.getShapesWithTrait(OutputTrait.class), reverseProvider, events, "output", "input");
 
-        OperationIndex index = OperationIndex.of(model);
         for (OperationShape operation : model.getOperationShapes()) {
-            StructureShape input = index.expectInputShape(operation);
-            StructureShape output = index.expectOutputShape(operation);
-            validateInputOutputSet(operation, input, output, events);
             validateOperationNameAmbiguity(model, operation, events);
         }
 
@@ -159,37 +146,6 @@ public final class OperationValidator extends AbstractValidator {
                         "The %s of this operation should target a shape that starts with the operation's name, '%s', "
                         + "but the targeted shape is `%s`", property, operation.getId().getName(), target))
                 .build();
-    }
-
-    private void validateInputOutputSet(
-            OperationShape operation,
-            StructureShape input,
-            StructureShape output,
-            List<ValidationEvent> events
-    ) {
-        if (!input.getId().equals(UnitTypeTrait.UNIT) && !input.hasTrait(InputTrait.class)) {
-            events.add(ValidationEvent.builder()
-                               .id(OPERATION_MISSING_INPUT_TRAIT)
-                               .severity(Severity.WARNING)
-                               .shape(input)
-                               .message(String.format(
-                                       "This structure is the input of `%s`, but it is not marked with the "
-                                       + "@input trait. The @input trait gives operations more flexibility to "
-                                       + "evolve their top-level input members in ways that would otherwise "
-                                       + "be backward incompatible.", operation.getId()))
-                               .build());
-        }
-
-        if (!output.getId().equals(UnitTypeTrait.UNIT) && !output.hasTrait(OutputTrait.class)) {
-            events.add(ValidationEvent.builder()
-                               .id(OPERATION_MISSING_OUTPUT_TRAIT)
-                               .severity(Severity.WARNING)
-                               .shape(output)
-                               .message(String.format(
-                                       "This structure is the output of `%s`, but it is not marked with "
-                                       + "the @output trait.", operation.getId()))
-                               .build());
-        }
     }
 
     private void validateOperationNameAmbiguity(Model model, OperationShape operation, List<ValidationEvent> events) {
