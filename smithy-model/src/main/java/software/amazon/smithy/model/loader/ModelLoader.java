@@ -64,18 +64,22 @@ final class ModelLoader {
             String filename,
             Supplier<InputStream> contentSupplier
     ) {
-        if (filename.endsWith(".json")) {
-            return loadParsedNode(traitFactory, Node.parse(contentSupplier.get(), filename));
-        } else if (filename.endsWith(".smithy")) {
-            String contents = IoUtils.toUtf8String(contentSupplier.get());
-            return new IdlModelParser(traitFactory, filename, contents).parse();
-        } else if (filename.endsWith(".jar")) {
-            return loadJar(traitFactory, properties, filename);
-        } else if (filename.equals(SourceLocation.NONE.getFilename())) {
-            // Assume it's JSON if there's a N/A filename.
-            return loadParsedNode(traitFactory, Node.parse(contentSupplier.get(), filename));
-        } else {
-            return null;
+        try (InputStream inputStream = contentSupplier.get()) {
+            if (filename.endsWith(".json")) {
+                return loadParsedNode(traitFactory, Node.parse(inputStream, filename));
+            } else if (filename.endsWith(".smithy")) {
+                String contents = IoUtils.toUtf8String(inputStream);
+                return new IdlModelParser(traitFactory, filename, contents).parse();
+            } else if (filename.endsWith(".jar")) {
+                return loadJar(traitFactory, properties, filename);
+            } else if (filename.equals(SourceLocation.NONE.getFilename())) {
+                // Assume it's JSON if there's a N/A filename.
+                return loadParsedNode(traitFactory, Node.parse(inputStream, filename));
+            } else {
+                return null;
+            }
+        } catch (IOException e) {
+            throw new ModelImportException("Error loading " + filename + ": " + e.getMessage(), e);
         }
     }
 
