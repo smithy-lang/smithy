@@ -6,7 +6,7 @@ metadata validators = [
         id: "Test",
         severity: "WARNING",
         configuration: {
-            selector: ":is([id=smithy.example#Foo], [id=smithy.example#Baz])"
+            selector: ":not([id='smithy.example#NoMatches'])"
         }
     }
 ]
@@ -17,7 +17,13 @@ namespace smithy.example
 string NoMatches
 
 @suppress(["NeverUsed", "Test"])
-structure Foo {}
+structure Foo {
+    @suppress(["NeverUsed", "Test"])
+    foo: String
+}
 
 @suppress(["NeverUsed"])
-structure Baz {}
+structure Baz {
+    @suppress(["NeverUsed"])
+    baz: String
+}

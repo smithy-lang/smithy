@@ -32,6 +32,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.SuppressTrait;
+import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.suppressions.Suppression;
@@ -217,15 +218,14 @@ public final class FilterSuppressions extends ConfigurableProjectionTransformer<
         }
 
         Model model = context.getModel();
-        Model.Builder builder = model.toBuilder();
         Set<String> removedValidators = getRemovedValidators(context, config);
         List<ValidationEvent> suppressedEvents = context.getOriginalModelValidationEvents().stream()
                 .filter(event -> event.getSeverity() == Severity.SUPPRESSED)
                 .filter(event -> !removedValidators.contains(event.getId()))
                 .collect(Collectors.toList());
-        filterSuppressionTraits(model, builder, config, suppressedEvents);
-        filterMetadata(model, builder, config, suppressedEvents, removedValidators);
-        return builder.build();
+        model = filterSuppressionTraits(model, config, suppressedEvents, context.getTransformer());
+        model = filterMetadata(model, config, suppressedEvents, removedValidators);
+        return model;
     }
 
     private Set<String> getRemovedValidators(TransformContext context, Config config) {
@@ -271,12 +271,14 @@ public final class FilterSuppressions extends ConfigurableProjectionTransformer<
         return metadataSuppressions;
     }
 
-    private void filterSuppressionTraits(
+    private Model filterSuppressionTraits(
             Model model,
-            Model.Builder builder,
             Config config,
-            List<ValidationEvent> suppressedEvents
+            List<ValidationEvent> suppressedEvents,
+            ModelTransformer transformer
     ) {
+
+        List<Shape> replacementShapes = new ArrayList<>();
         // First filter and '@suppress' traits that didn't suppress anything.
         for (Shape shape : model.getShapesWithTrait(SuppressTrait.class)) {
             SuppressTrait trait = shape.expectTrait(SuppressTrait.class);
@@ -293,17 +295,17 @@ public final class FilterSuppressions extends ConfigurableProjectionTransformer<
             }
 
             if (allowed.isEmpty()) {
-                builder.addShape(Shape.shapeToBuilder(shape).removeTrait(SuppressTrait.ID).build());
+                replacementShapes.add(Shape.shapeToBuilder(shape).removeTrait(SuppressTrait.ID).build());
             } else if (!allowed.equals(trait.getValues())) {
                 trait = trait.toBuilder().values(allowed).build();
-                builder.addShape(Shape.shapeToBuilder(shape).addTrait(trait).build());
+                replacementShapes.add(Shape.shapeToBuilder(shape).addTrait(trait).build());
             }
         }
+        return transformer.replaceShapes(model, replacementShapes);
     }
 
-    private void filterMetadata(
+    private Model filterMetadata(
             Model model,
-            Model.Builder builder,
             Config config,
             List<ValidationEvent> suppressedEvents,
             Set<String> removedValidators
@@ -311,7 +313,6 @@ public final class FilterSuppressions extends ConfigurableProjectionTransformer<
         // Next remove metadata suppressions that didn't suppress anything.
         ArrayNode suppressionsNode = model.getMetadata()
                 .getOrDefault("suppressions", Node.arrayNode()).expectArrayNode();
-        builder.removeMetadataProperty("suppressions");
         List<ObjectNode> updatedMetadataSuppressions = new ArrayList<>();
 
         for (Node suppressionNode : suppressionsNode) {
@@ -339,9 +340,16 @@ public final class FilterSuppressions extends ConfigurableProjectionTransformer<
             }
         }
 
-        if (!updatedMetadataSuppressions.isEmpty()) {
-            builder.putMetadataProperty("suppressions", Node.fromNodes(updatedMetadataSuppressions));
+        ArrayNode updatedMetadataSuppressionsNode = Node.fromNodes(updatedMetadataSuppressions);
+        if (suppressionsNode.equals(updatedMetadataSuppressionsNode)) {
+            return model;
         }
+        Model.Builder builder = model.toBuilder();
+        builder.removeMetadataProperty("suppressions");
+        if (!updatedMetadataSuppressions.isEmpty()) {
+            builder.putMetadataProperty("suppressions", updatedMetadataSuppressionsNode);
+        }
+        return builder.build();
     }
 
     private boolean isAllowed(String value, Collection<String> allowList, Collection<String> denyList) {
