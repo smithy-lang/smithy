@@ -175,27 +175,7 @@ structure GetFooInput {}
 structure GetFooOutput {}
 ```
 
-#### Additional built-in validation
-
-To encourage models to utilize the `@input` and `@output` traits, built-in
-validation will be added to Smithy.
-
-If an operation input targets a shape other than `smithy.api#Unit` that is
-not marked with the `@input` trait, a WARNING validation event is emitted with
-the ID `OperationMissingInputTrait`. A similar event with an ID of
-`OperationMissingOutputTrait` is emitted when an operation output targets a
-shape that is not `smithy.api#Unit` and is not marked with the `@output` trait.
-
-```
-operation GetFoo {
-    input: GetFooInput,  // <- OperationMissingInputTrait WARNING
-    output: GetFooOutput // <- OperationMissingOutputTrait WARNING
-}
-
-structure GetFooInput {}
-
-structure GetFooOutput {}
-```
+#### Validation updates
 
 The name of a shape targeted by the `@input` or `@output` trait SHOULD start
 with the name of the operation that references it (if any). If not, then a
@@ -217,6 +197,11 @@ structure GetFooInput {}
 @output
 structure Foo {} // <- this should be named GetFooOutput
 ```
+
+To encourage models to utilize the `@input` and `@output` traits, the
+`InputOutputStructureReuse` linter will be updated to ensure that every
+operation defines a dedicated input and output shape marked with the
+`@input` and `@output` traits.
 
 ### The `smithy.api#Unit` shape
 
