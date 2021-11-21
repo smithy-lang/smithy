@@ -62,6 +62,21 @@ public interface Trait extends FromSourceLocation, ToNode, ToShapeId {
     ShapeId toShapeId();
 
     /**
+     * Checks if this trait is persisted with the shape, or if it is an
+     * ephemeral, or transient shape, only meant to temporarily aid in
+     * some kind of model transformation.
+     *
+     * <p>Because ephemeral traits are not persisted with shapes, they also
+     * do not need to be defined in Smithy's semantic model before they can
+     * be used in the model.
+     *
+     * @return Returns true if the trait is not persisted on the shape.
+     */
+    default boolean isEphemeral() {
+        return false;
+    }
+
+    /**
      * Used in a stream flatMapStream to return a {@link Stream} with a
      * {@link Pair} of Shape and Trait if the trait is present on the
      * given shape.

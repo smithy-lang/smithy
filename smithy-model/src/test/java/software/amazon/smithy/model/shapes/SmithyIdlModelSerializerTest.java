@@ -22,9 +22,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.params.provider.EnumSource;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.NodePointer;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
+import software.amazon.smithy.model.traits.ephemeral.OriginalShapeIdTrait;
 import software.amazon.smithy.utils.IoUtils;
 
 public class SmithyIdlModelSerializerTest {
@@ -149,5 +152,23 @@ public class SmithyIdlModelSerializerTest {
         Map<Path, String> serialized = serializer.serialize(model);
 
         assertThat(serialized.get(Paths.get("com.foo.smithy")), not(containsString("version: \"\"")));
+    }
+
+    @Test
+    public void transientTraitsAreNotSerialized() {
+        ShapeId originalId = ShapeId.from("com.foo.nested#Str");
+        StringShape stringShape = StringShape.builder()
+                .id("com.foo#Str")
+                .addTrait(new OriginalShapeIdTrait(originalId))
+                .build();
+        Model model = Model.builder()
+                .addShape(stringShape)
+                .build();
+
+        SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder().build();
+        Map<Path, String> results = serializer.serialize(model);
+
+        assertThat(results.get(Paths.get("com.foo.smithy")),
+                   not(containsString(OriginalShapeIdTrait.ID.toString())));
     }
 }

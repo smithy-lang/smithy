@@ -33,6 +33,7 @@ import software.amazon.smithy.model.node.NodePointer;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
+import software.amazon.smithy.model.traits.ephemeral.OriginalShapeIdTrait;
 
 public class ModelSerializerTest {
     @Test
@@ -175,5 +176,26 @@ public class ModelSerializerTest {
                            .expectObjectNode()
                            .getStringMap(),
                    not(hasKey("version")));
+    }
+
+    @Test
+    public void transientTraitsAreNotSerialized() {
+        ShapeId originalId = ShapeId.from("com.foo.nested#Str");
+        StringShape stringShape = StringShape.builder()
+                .id("com.foo#Str")
+                .addTrait(new OriginalShapeIdTrait(originalId))
+                .build();
+        Model model = Model.builder()
+                .addShape(stringShape)
+                .build();
+
+        ModelSerializer serializer = ModelSerializer.builder().build();
+        ObjectNode result = serializer.serialize(model);
+
+        assertThat(NodePointer.parse("/shapes/com.foo#Str/traits")
+                           .getValue(result)
+                           .expectObjectNode()
+                           .getStringMap(),
+                   not(hasKey(OriginalShapeIdTrait.ID.toShapeId())));
     }
 }
