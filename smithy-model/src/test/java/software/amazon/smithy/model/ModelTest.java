@@ -45,6 +45,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.model.traits.ephemeral.OriginalShapeIdTrait;
 
 public class ModelTest {
 
@@ -233,6 +234,20 @@ public class ModelTest {
 
         assertThat(shapes, hasSize(1));
         assertThat(shapes, contains(string));
+    }
+
+    @Test
+    public void transientShapesCanBeQueriedLikeNormalTraits() {
+        ShapeId originalId = ShapeId.from("com.foo.nested#Str");
+        StringShape stringShape = StringShape.builder()
+                .id("com.foo#Str")
+                .addTrait(new OriginalShapeIdTrait(originalId))
+                .build();
+        Model model = Model.builder()
+                .addShape(stringShape)
+                .build();
+
+        assertThat(model.getShapesWithTrait(OriginalShapeIdTrait.class), contains(stringShape));
     }
 
     /**

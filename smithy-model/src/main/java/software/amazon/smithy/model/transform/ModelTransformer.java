@@ -39,6 +39,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.model.traits.ephemeral.OriginalShapeIdTrait;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.ListUtils;
 
@@ -490,5 +491,57 @@ public final class ModelTransformer {
      */
     public Model copyServiceErrorsToOperations(Model model, ServiceShape forService) {
         return new CopyServiceErrorsToOperationsTransform(forService).transform(this, model);
+    }
+
+    /**
+     * Updates the model so that every operation has a dedicated input shape marked
+     * with the {@code input} trait and output shape marked with the {@code output}
+     * trait, and the targeted shapes all have a consistent shape name of
+     * OperationName + {@code inputSuffix} / {@code outputSuffix} depending on the
+     * context.
+     *
+     * <p>If an operation's input already targets a shape marked with the {@code input}
+     * trait, then the operation and input shape is left as-is regardless of its name.
+     * If an operation's output already targets a shape marked with the {@code output}
+     * trait, then the operation and output shape is left as-is regardless of its name.
+     *
+     * <p>If the operation's input shape starts with the name of the operation and is
+     * only used throughout the model as the input of the operation, then it is updated
+     * to have the {@code input} trait, and the name remains unaltered.
+     *
+     * <p>If the operation's output shape starts with the name of the operation and is
+     * only used throughout the model as the output of the operation, then it is updated
+     * to have the {@code output} trait, and the name remains unaltered.
+     *
+     * <p>If the operation's input shape does not start with the operation's name or
+     * is used in other places throughout the model, a copy of the targeted input
+     * structure is created, the name of the shape becomes OperationName + {@code inputSuffix},
+     * and the {@code input} trait is added to the shape. The operation is then updated
+     * to target the created shape, and the original shape is left as-is in the model.
+     *
+     * <p>If the operation's output shape does not start with the operation's name or
+     * is used in other places throughout the model, a copy of the targeted output
+     * structure is created, the name of the shape becomes OperationName + {@code outputSuffix},
+     * and the {@code output} trait is added to the shape. The operation is then updated
+     * to target the created shape, and the original shape is left as-is in the model.
+     *
+     * <p>If a naming conflict occurs while attempting to create a new shape, then
+     * the default naming conflict resolver will attempt to name the shape
+     * OperationName + "Operation" + {@code inputSuffix} / {@code outputSuffix}
+     * depending on the context. If the name is <em>still</em> in conflict with other
+     * shapes in the model, then a {@link ModelTransformException} is thrown.
+     *
+     * <p>Any time a shape is renamed, the original shape ID of the shape is captured
+     * on the shape using the ephemeral {@link OriginalShapeIdTrait}. This might be
+     * useful for protocols that need to serialize input and output shape names.
+     *
+     * @param model Model to update.
+     * @param inputSuffix Suffix to append to dedicated input shapes (e.g., "Input").
+     * @param outputSuffix Suffix to append to dedicated input shapes (e.g., "Output").
+     * @return Returns the updated model.
+     * @throws ModelTransformException if an input or output shape name conflict occurs.
+     */
+    public Model createDedicatedInputAndOutput(Model model, String inputSuffix, String outputSuffix) {
+        return new CreateDedicatedInputAndOutput(inputSuffix, outputSuffix).transform(this, model);
     }
 }

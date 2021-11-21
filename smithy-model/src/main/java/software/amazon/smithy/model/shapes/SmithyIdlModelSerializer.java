@@ -64,7 +64,8 @@ public final class SmithyIdlModelSerializer {
     private SmithyIdlModelSerializer(Builder builder) {
         metadataFilter = builder.metadataFilter;
         shapeFilter = builder.shapeFilter.and(FunctionalUtils.not(Prelude::isPreludeShape));
-        traitFilter = builder.traitFilter;
+        // Never serialize ephemeral traits.
+        traitFilter = builder.traitFilter.and(FunctionalUtils.not(Trait::isEphemeral));
         basePath = builder.basePath;
         if (basePath != null) {
             Function<Shape, Path> shapePlacer = builder.shapePlacer;
