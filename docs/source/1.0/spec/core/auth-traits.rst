@@ -327,7 +327,7 @@ to services and operations:
 * ``ServiceWithAuthTrait`` is annotated with the ``auth`` trait and binds two
   operations:
 
-  * ``OperationC`` is not annoated with the ``auth`` trait and inherits all
+  * ``OperationC`` is not annotated with the ``auth`` trait and inherits all
     of the authentication schemes applied via the ``auth`` trait on the
     service.
 
