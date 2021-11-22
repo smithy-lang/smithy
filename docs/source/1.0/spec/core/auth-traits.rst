@@ -331,7 +331,7 @@ to services and operations:
     of the authentication schemes applied via the ``auth`` trait on the
     service.
 
-  * ``OperationD`` is annoated with the ``auth`` defines an explicit list of
+  * ``OperationD`` is annotated with the ``auth`` defines an explicit list of
     authentication schemes.
 
 .. tabs::
@@ -377,7 +377,7 @@ to services and operations:
         // supports are: httpBasicAuth, httpDigestAuth
         operation OperationC {}
 
-        // This operation not have the @auth trait and is bound to a service
+        // This operation has the @auth trait and is bound to a service
         // with the @auth trait. The effective set of authentication schemes it
         // supports are: httpBearerAuth
         @auth([httpBearerAuth])
