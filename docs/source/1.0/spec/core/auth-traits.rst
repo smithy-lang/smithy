@@ -318,7 +318,7 @@ to services and operations:
 * ``ServiceWithNoAuthTrait`` does not use the ``auth`` trait and binds two
   operations:
 
-  * ``OperationA`` is not annoated with the ``auth`` trait and inherits all
+  * ``OperationA`` is not annotated with the ``auth`` trait and inherits all
     of the authentication scheme applied to the service.
 
   * ``OperationB`` is annoated with the ``auth`` defines an explicit list of
