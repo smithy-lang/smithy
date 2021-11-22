@@ -321,8 +321,8 @@ to services and operations:
   * ``OperationA`` is not annotated with the ``auth`` trait and inherits all
     of the authentication scheme applied to the service.
 
-  * ``OperationB`` is annoated with the ``auth`` defines an explicit list of
-    authentication schemes.
+  * ``OperationB`` is annotated with the ``auth`` trait and defines an explicit 
+    list of authentication schemes.
 
 * ``ServiceWithAuthTrait`` is annotated with the ``auth`` trait and binds two
   operations:
@@ -331,8 +331,8 @@ to services and operations:
     of the authentication schemes applied via the ``auth`` trait on the
     service.
 
-  * ``OperationD`` is annotated with the ``auth`` defines an explicit list of
-    authentication schemes.
+  * ``OperationD`` is annotated with the ``auth`` trait and defines an explicit 
+    list of authentication schemes.
 
 .. tabs::
 
