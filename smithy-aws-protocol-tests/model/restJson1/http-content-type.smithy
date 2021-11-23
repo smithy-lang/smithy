@@ -128,7 +128,6 @@ apply TestPayloadStructure @httpRequestTests([
             "Content-Length"
         ],
         params: {
-            testId: "t-12345",
             payloadConfig: {
                 data: 25,
             }
@@ -146,7 +145,8 @@ apply TestPayloadStructure @httpRequestTests([
         body: "{}",
         bodyMediaType: "application/json",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "X-Amz-Test-Id": "t-12345"
         },
         requireHeaders: [
             "Content-Length"
