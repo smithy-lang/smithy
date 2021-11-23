@@ -305,19 +305,34 @@ Value type
     shape.
 
 Operations that are not annotated with the ``auth`` trait inherit the ``auth``
-trait of the service they are bound to, and if the operation is not annotated
-with the ``auth`` trait, then the operation is expected to support each of
-the :ref:`authentication scheme traits <authDefinition-trait>` applied to the
+trait of the service they are bound to. If the operation is not annotated with
+the ``auth`` trait, and the service it is bound to is also not annotated with
+the ``auth`` trait, then the operation is expected to support each of the
+:ref:`authentication scheme traits <authDefinition-trait>` applied to the
 service. Each entry in the ``auth`` trait is a shape ID that MUST refer to an
 authentication scheme trait applied to the service in which it is bound.
 
-The following example defines two operations:
+The following example defines all combinations in which ``auth`` can be applied
+to services and operations:
 
-* OperationA defines an explicit list of the authentication schemes it
-  supports using the ``auth`` trait.
-* OperationB is not annotated with the ``auth`` trait, so the schemes
-  supported by this operation inherit all of the authentication schemes
-  applied to the service.
+* ``ServiceWithNoAuthTrait`` does not use the ``auth`` trait and binds two
+  operations:
+
+  * ``OperationA`` is not annotated with the ``auth`` trait and inherits all
+    of the authentication scheme applied to the service.
+
+  * ``OperationB`` is annotated with the ``auth`` trait and defines an explicit 
+    list of authentication schemes.
+
+* ``ServiceWithAuthTrait`` is annotated with the ``auth`` trait and binds two
+  operations:
+
+  * ``OperationC`` is not annotated with the ``auth`` trait and inherits all
+    of the authentication schemes applied via the ``auth`` trait on the
+    service.
+
+  * ``OperationD`` is annotated with the ``auth`` trait and defines an explicit 
+    list of authentication schemes.
 
 .. tabs::
 
@@ -325,47 +340,58 @@ The following example defines two operations:
 
         @httpBasicAuth
         @httpDigestAuth
-        @auth([httpBasicAuth])
-        service AuthenticatedService {
-            version: "2017-02-11",
-            operations: [OperationA, OperationB]
+        @httpBearerAuth
+        service ServiceWithNoAuthTrait {
+            version: "2020-01-29",
+            operations: [
+                OperationA,
+                OperationB
+            ]
         }
 
-        // This operation is configured to only support httpDigestAuth.
-        // It is not expected to support httpBasicAuth.
-        @auth([httpDigestAuth])
+        // This operation does not have the @auth trait and is bound to a service
+        // without the @auth trait. The effective set of authentication schemes it
+        // supports are: httpBasicAuth, httpDigestAuth and httpBearerAuth
         operation OperationA {}
 
-        // This operation defines no auth trait, so it is expected to
-        // support the effective authentication schemes of the service:
-        // httpBasicAuth and httpDigestAuth.
+        // This operation does have the @auth trait and is bound to a service
+        // without the @auth trait. The effective set of authentication schemes it
+        // supports are: httpDigestAuth.
+        @auth([httpDigestAuth])
         operation OperationB {}
+
+        @httpBasicAuth
+        @httpDigestAuth
+        @httpBearerAuth
+        @auth([httpBasicAuth, httpDigestAuth])
+        service ServiceWithAuthTrait {
+            version: "2020-01-29",
+            operations: [
+                OperationC,
+                OperationD
+            ]
+        }
+
+        // This operation does not have the @auth trait and is bound to a service
+        // with the @auth trait. The effective set of authentication schemes it
+        // supports are: httpBasicAuth, httpDigestAuth
+        operation OperationC {}
+
+        // This operation has the @auth trait and is bound to a service
+        // with the @auth trait. The effective set of authentication schemes it
+        // supports are: httpBearerAuth
+        @auth([httpBearerAuth])
+        operation OperationD {}
 
     .. code-tab:: json
 
         {
             "smithy": "1.0",
             "shapes": {
-                "smithy.example#AuthenticatedService": {
-                    "type": "service",
-                    "version": "2017-02-11",
-                    "operations": [
-                        {
-                            "target": "smithy.example#OperationA"
-                        },
-                        {
-                            "target": "smithy.example#OperationB"
-                        }
-                    ],
-                    "traits": {
-                        "smithy.api#httpBasicAuth": {},
-                        "smithy.api#httpDigestAuth": {},
-                        "smithy.api#auth": [
-                            "smithy.api#httpBasicAuth"
-                        ]
-                    }
-                },
                 "smithy.example#OperationA": {
+                    "type": "operation"
+                },
+                "smithy.example#OperationB": {
                     "type": "operation",
                     "traits": {
                         "smithy.api#auth": [
@@ -373,8 +399,54 @@ The following example defines two operations:
                         ]
                     }
                 },
-                "smithy.example#OperationB": {
+                "smithy.example#OperationC": {
                     "type": "operation"
+                },
+                "smithy.example#OperationD": {
+                    "type": "operation",
+                    "traits": {
+                        "smithy.api#auth": [
+                            "smithy.api#httpBearerAuth"
+                        ]
+                    }
+                },
+                "smithy.example#ServiceWithAuthTrait": {
+                    "type": "service",
+                    "traits": {
+                        "smithy.api#auth": [
+                            "smithy.api#httpBasicAuth",
+                            "smithy.api#httpDigestAuth"
+                        ],
+                        "smithy.api#httpBasicAuth": {},
+                        "smithy.api#httpBearerAuth": {},
+                        "smithy.api#httpDigestAuth": {}
+                    },
+                    "version": "2020-01-29",
+                    "operations": [
+                        {
+                            "target": "smithy.example#OperationC"
+                        },
+                        {
+                            "target": "smithy.example#OperationD"
+                        }
+                    ]
+                },
+                "smithy.example#ServiceWithNoAuthTrait": {
+                    "type": "service",
+                    "traits": {
+                        "smithy.api#httpBasicAuth": {},
+                        "smithy.api#httpBearerAuth": {},
+                        "smithy.api#httpDigestAuth": {}
+                    },
+                    "version": "2020-01-29",
+                    "operations": [
+                        {
+                            "target": "smithy.example#OperationA"
+                        },
+                        {
+                            "target": "smithy.example#OperationB"
+                        }
+                    ]
                 }
             }
         }
