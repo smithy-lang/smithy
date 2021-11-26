@@ -36,7 +36,7 @@ public final class HttpBasicConverter implements SecuritySchemeConverter<HttpBas
     public SecurityScheme createSecurityScheme(Context<? extends Trait> context, HttpBasicAuthTrait trait) {
         return SecurityScheme.builder()
                 .type("http")
-                .scheme("Basic")
+                .scheme("basic")
                 .description("HTTP Basic authentication")
                 .build();
     }

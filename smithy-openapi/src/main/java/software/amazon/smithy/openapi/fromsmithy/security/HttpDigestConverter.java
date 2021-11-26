@@ -36,7 +36,7 @@ public final class HttpDigestConverter implements SecuritySchemeConverter<HttpDi
     public SecurityScheme createSecurityScheme(Context<? extends Trait> context, HttpDigestAuthTrait trait) {
         return SecurityScheme.builder()
                 .type("http")
-                .scheme("Digest")
+                .scheme("digest")
                 .description("HTTP Digest authentication")
                 .build();
     }

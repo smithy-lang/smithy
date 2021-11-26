@@ -36,7 +36,7 @@ public final class HttpBearerConverter implements SecuritySchemeConverter<HttpBe
     public SecurityScheme createSecurityScheme(Context<? extends Trait> context, HttpBearerAuthTrait trait) {
         return SecurityScheme.builder()
                 .type("http")
-                .scheme("Bearer")
+                .scheme("bearer")
                 .description("HTTP Bearer authentication")
                 .build();
     }

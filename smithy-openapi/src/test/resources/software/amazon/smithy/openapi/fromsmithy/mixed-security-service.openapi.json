@@ -65,7 +65,7 @@
       "smithy.api.httpBasicAuth": {
         "type": "http",
         "description": "HTTP Basic authentication",
-        "scheme": "Basic"
+        "scheme": "basic"
       },
       "aws.auth.sigv4": {
         "type": "apiKey",

@@ -20,7 +20,7 @@
     "securitySchemes": {
       "smithy.api.httpDigestAuth": {
         "type": "http",
-        "scheme": "Digest",
+        "scheme": "digest",
         "description": "HTTP Digest authentication"
       }
     }
