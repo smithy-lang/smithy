@@ -382,6 +382,8 @@ final class DefaultNodeSerializers {
                     return false;
                 } else if (value.isArrayNode() && value.expectArrayNode().isEmpty()) {
                     return false;
+                } else if (value.isBooleanNode() && !value.expectBooleanNode().getValue()) {
+                    return false;
                 }
             }
 
