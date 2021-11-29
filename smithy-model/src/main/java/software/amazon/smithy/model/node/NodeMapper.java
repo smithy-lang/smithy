@@ -289,7 +289,7 @@ public final class NodeMapper {
     }
 
     /**
-     * Gets whether or not empty arrays and empty objects are omitted from
+     * Gets whether or not false, empty arrays, and empty objects are omitted from
      * serialized POJOs.
      *
      * @return Returns true if empty arrays and POJOs returned from POJO getters are omitted.
@@ -299,9 +299,9 @@ public final class NodeMapper {
     }
 
     /**
-     * Gets whether or not empty arrays and objects are omitted from serialized POJOs.
+     * Gets whether or not false, empty arrays, and empty objects are omitted from serialized POJOs.
      *
-     * @param omitEmptyValues Set to true if empty arrays and objects returned from POJO getters are omitted.
+     * @param omitEmptyValues Set to true if false, empty arrays, and objects returned from POJO getters are omitted.
      */
     public void setOmitEmptyValues(boolean omitEmptyValues) {
         this.omitEmptyValues = omitEmptyValues;
