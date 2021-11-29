@@ -380,7 +380,7 @@ public class NodeMapperTest {
         mapper.setOmitEmptyValues(true);
         Node result = mapper.serialize(pojo);
 
-        assertThat(result, equalTo(Node.objectNode()));
+        assertThat(result, equalTo(Node.objectNode().withMember("true", true)));
     }
 
     public static final class PojoWithEmptyValues {
@@ -390,6 +390,14 @@ public class NodeMapperTest {
 
         public EmptyPojo getBaz() {
             return new EmptyPojo();
+        }
+
+        public boolean isFalse() {
+            return false;
+        }
+
+        public boolean isTrue() {
+            return true;
         }
     }
 
