@@ -63,7 +63,7 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.ValidatorFactory;
-import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -96,8 +96,8 @@ public final class Model implements ToSmithyBuilder<Model> {
     private int hash;
 
     private Model(Builder builder) {
-        shapeMap = MapUtils.copyOf(builder.shapeMap);
-        metadata = builder.metadata.isEmpty() ? MapUtils.of() : MapUtils.copyOf(builder.metadata);
+        shapeMap = builder.shapeMap.copy();
+        metadata = builder.metadata.copy();
     }
 
     /**
@@ -846,24 +846,24 @@ public final class Model implements ToSmithyBuilder<Model> {
      * Builder used to create a Model.
      */
     public static final class Builder implements SmithyBuilder<Model> {
-        private final Map<String, Node> metadata = new HashMap<>();
-        private final Map<ShapeId, Shape> shapeMap = new HashMap<>();
+        private final BuilderRef<Map<String, Node>> metadata = BuilderRef.forUnorderedMap();
+        private final BuilderRef<Map<ShapeId, Shape>> shapeMap = BuilderRef.forUnorderedMap();
 
         private Builder() {}
 
         public Builder metadata(Map<String, Node> metadata) {
             clearMetadata();
-            this.metadata.putAll(metadata);
+            this.metadata.get().putAll(metadata);
             return this;
         }
 
         public Builder putMetadataProperty(String key, Node value) {
-            metadata.put(Objects.requireNonNull(key), Objects.requireNonNull(value));
+            metadata.get().put(Objects.requireNonNull(key), Objects.requireNonNull(value));
             return this;
         }
 
         public Builder removeMetadataProperty(String key) {
-            metadata.remove(key);
+            metadata.get().remove(key);
             return this;
         }
 
@@ -887,10 +887,10 @@ public final class Model implements ToSmithyBuilder<Model> {
         public Builder addShape(Shape shape) {
             // Members must be added by their containing shapes.
             if (!shape.isMemberShape()) {
-                shapeMap.put(shape.getId(), shape);
+                shapeMap.get().put(shape.getId(), shape);
                 // Automatically add members of the shape.
                 for (MemberShape memberShape : shape.members()) {
-                    shapeMap.put(memberShape.getId(), memberShape);
+                    shapeMap.get().put(memberShape.getId(), memberShape);
                 }
             }
 
@@ -904,7 +904,7 @@ public final class Model implements ToSmithyBuilder<Model> {
          * @return Returns the builder.
          */
         public Builder addShapes(Model model) {
-            shapeMap.putAll(model.shapeMap);
+            shapeMap.get().putAll(model.shapeMap);
             return this;
         }
 
@@ -945,13 +945,13 @@ public final class Model implements ToSmithyBuilder<Model> {
          * @return Returns the builder.
          */
         public Builder removeShape(ShapeId shapeId) {
-            if (shapeMap.containsKey(shapeId)) {
-                Shape previous = shapeMap.get(shapeId);
-                shapeMap.remove(shapeId);
+            if (shapeMap.hasValue() && shapeMap.peek().containsKey(shapeId)) {
+                Shape previous = shapeMap.peek().get(shapeId);
+                shapeMap.get().remove(shapeId);
 
                 // Automatically remove any members contained in the shape.
                 for (MemberShape memberShape : previous.members()) {
-                    shapeMap.remove(memberShape.getId());
+                    shapeMap.get().remove(memberShape.getId());
                 }
             }
 

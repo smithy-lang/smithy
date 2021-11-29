@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.model.traits;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.SourceException;
@@ -23,7 +22,7 @@ import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -36,7 +35,7 @@ public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<En
 
     private EnumTrait(Builder builder) {
         super(ID, builder.sourceLocation);
-        this.definitions = ListUtils.copyOf(builder.definitions);
+        this.definitions = builder.definitions.copy();
         if (definitions.isEmpty()) {
             throw new SourceException("enum must have at least one entry", getSourceLocation());
         }
@@ -95,20 +94,20 @@ public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<En
      * Builder used to create the enum trait.
      */
     public static final class Builder extends AbstractTraitBuilder<EnumTrait, Builder> {
-        private final List<EnumDefinition> definitions = new ArrayList<>();
+        private final BuilderRef<List<EnumDefinition>> definitions = BuilderRef.forList();
 
         public Builder addEnum(EnumDefinition value) {
-            definitions.add(value);
+            definitions.get().add(value);
             return this;
         }
 
         public Builder removeEnum(String value) {
-            definitions.removeIf(def -> def.getValue().equals(value));
+            definitions.get().removeIf(def -> def.getValue().equals(value));
             return this;
         }
 
         public Builder removeEnumByName(String name) {
-            definitions.removeIf(def -> def.getName().filter(n -> n.equals(name)).isPresent());
+            definitions.get().removeIf(def -> def.getName().filter(n -> n.equals(name)).isPresent());
             return this;
         }
 

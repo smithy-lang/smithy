@@ -15,15 +15,12 @@
 
 package software.amazon.smithy.model.shapes;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.TreeMap;
-import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -38,8 +35,8 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
     private ServiceShape(Builder builder) {
         super(builder);
         version = builder.version;
-        rename = MapUtils.orderedCopyOf(builder.rename);
-        errors = ListUtils.copyOf(builder.errors);
+        rename = builder.rename.copy();
+        errors = builder.errors.copy();
     }
 
     public static Builder builder() {
@@ -134,8 +131,8 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
      */
     public static final class Builder extends EntityShape.Builder<Builder, ServiceShape> {
         private String version = "";
-        private final Map<ShapeId, String> rename = new TreeMap<>();
-        private final List<ShapeId> errors = new ArrayList<>();
+        private final BuilderRef<Map<ShapeId, String>> rename = BuilderRef.forOrderedMap();
+        private final BuilderRef<List<ShapeId>> errors = BuilderRef.forList();
 
         @Override
         public ServiceShape build() {
@@ -164,12 +161,12 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
         }
 
         public Builder putRename(ShapeId from, String to) {
-            this.rename.put(Objects.requireNonNull(from), Objects.requireNonNull(to));
+            this.rename.get().put(Objects.requireNonNull(from), Objects.requireNonNull(to));
             return this;
         }
 
         public Builder removeRename(ToShapeId from) {
-            rename.remove(from.toShapeId());
+            rename.get().remove(from.toShapeId());
             return this;
         }
 
@@ -194,7 +191,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
          * @return Returns the builder.
          */
         public Builder addError(ToShapeId errorShapeId) {
-            errors.add(errorShapeId.toShapeId());
+            errors.get().add(errorShapeId.toShapeId());
             return this;
         }
 
@@ -218,7 +215,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
          * @return Returns the builder.
          */
         public Builder addErrors(List<ShapeId> errorShapeIds) {
-            errors.addAll(Objects.requireNonNull(errorShapeIds));
+            errors.get().addAll(Objects.requireNonNull(errorShapeIds));
             return this;
         }
 
@@ -229,7 +226,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
          * @return Returns the builder.
          */
         public Builder removeError(ToShapeId errorShapeId) {
-            errors.remove(errorShapeId.toShapeId());
+            errors.get().remove(errorShapeId.toShapeId());
             return this;
         }
 

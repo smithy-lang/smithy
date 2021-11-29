@@ -15,10 +15,6 @@
 
 package software.amazon.smithy.model.loader;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -122,7 +118,8 @@ final class IdlNodeParser {
     static ObjectNode parseObjectNode(IdlModelParser parser, String parent) {
         parser.increaseNestingLevel();
         SourceLocation location = parser.currentLocation();
-        Map<StringNode, Node> entries = new LinkedHashMap<>();
+        ObjectNode.Builder builder = ObjectNode.builder()
+                .sourceLocation(location);
         parser.expect('{');
         parser.ws();
 
@@ -138,10 +135,10 @@ final class IdlNodeParser {
                 parser.ws();
                 Node value = parseNode(parser);
                 StringNode keyNode = new StringNode(key, keyLocation);
-                Node previous = entries.put(keyNode, value);
-                if (previous != null) {
+                if (builder.hasMember(key)) {
                     throw parser.syntax("Duplicate member of " + parent + ": '" + keyNode.getValue() + '\'');
                 }
+                builder.withMember(keyNode, value);
                 parser.ws();
                 if (parser.peek() == ',') {
                     parser.skip();
@@ -154,7 +151,7 @@ final class IdlNodeParser {
 
         parser.expect('}');
         parser.decreaseNestingLevel();
-        return new ObjectNode(entries, location);
+        return builder.build();
     }
 
     static String parseNodeObjectKey(IdlModelParser parser) {
@@ -168,7 +165,8 @@ final class IdlNodeParser {
     private static ArrayNode parseArrayNode(IdlModelParser parser) {
         parser.increaseNestingLevel();
         SourceLocation location = parser.currentLocation();
-        List<Node> items = new ArrayList<>();
+        ArrayNode.Builder builder = ArrayNode.builder()
+                .sourceLocation(location);
         parser.expect('[');
         parser.ws();
 
@@ -177,7 +175,7 @@ final class IdlNodeParser {
             if (c == ']') {
                 break;
             } else {
-                items.add(parseNode(parser));
+                builder.withValue(parseNode(parser));
                 parser.ws();
                 if (parser.peek() == ',') {
                     parser.skip();
@@ -190,6 +188,6 @@ final class IdlNodeParser {
 
         parser.expect(']');
         parser.decreaseNestingLevel();
-        return new ArrayNode(items, location);
+        return builder.build();
     }
 }

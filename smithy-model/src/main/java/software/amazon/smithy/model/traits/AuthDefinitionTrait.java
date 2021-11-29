@@ -15,13 +15,12 @@
 
 package software.amazon.smithy.model.traits;
 
-import java.util.ArrayList;
 import java.util.List;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -34,7 +33,7 @@ public final class AuthDefinitionTrait extends AbstractTrait implements ToSmithy
 
     public AuthDefinitionTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
-        traits = ListUtils.copyOf(builder.traits);
+        traits = builder.traits.copy();
     }
 
     /**
@@ -89,7 +88,7 @@ public final class AuthDefinitionTrait extends AbstractTrait implements ToSmithy
     }
 
     public static final class Builder extends AbstractTraitBuilder<AuthDefinitionTrait, Builder> {
-        private final List<ShapeId> traits = new ArrayList<>();
+        private final BuilderRef<List<ShapeId>> traits = BuilderRef.forList();
 
         @Override
         public AuthDefinitionTrait build() {
@@ -98,12 +97,12 @@ public final class AuthDefinitionTrait extends AbstractTrait implements ToSmithy
 
         public Builder traits(List<ShapeId> traits) {
             this.traits.clear();
-            this.traits.addAll(traits);
+            this.traits.get().addAll(traits);
             return this;
         }
 
         public Builder addTrait(ShapeId trait) {
-            traits.add(trait);
+            traits.get().add(trait);
             return this;
         }
     }

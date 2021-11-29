@@ -16,13 +16,11 @@
 package software.amazon.smithy.model.shapes;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
@@ -35,7 +33,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<?, ?>,
         implements SmithyBuilder<S>, FromSourceLocation {
 
     private ShapeId id;
-    private Map<ShapeId, Trait> traits;
+    private final BuilderRef<Map<ShapeId, Trait>> traits = BuilderRef.forUnorderedMap();
     private SourceLocation source = SourceLocation.none();
 
     AbstractShapeBuilder() {}
@@ -151,11 +149,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<?, ?>,
             throw new IllegalArgumentException("trait must not be null");
         }
 
-        if (traits == null) {
-            traits = new HashMap<>();
-        }
-
-        traits.put(trait.toShapeId(), trait);
+        traits.get().put(trait.toShapeId(), trait);
         return (B) this;
     }
 
@@ -180,8 +174,8 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<?, ?>,
      */
     @SuppressWarnings("unchecked")
     public final B removeTrait(ShapeId traitId) {
-        if (traits != null) {
-            traits.remove(traitId);
+        if (traits.hasValue()) {
+            traits.get().remove(traitId);
         }
         return (B) this;
     }
@@ -193,9 +187,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<?, ?>,
      */
     @SuppressWarnings("unchecked")
     public final B clearTraits() {
-        if (traits != null) {
-            traits.clear();
-        }
+        traits.clear();
         return (B) this;
     }
 
@@ -228,6 +220,6 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<?, ?>,
     }
 
     Map<ShapeId, Trait> copyTraits() {
-        return traits == null ? Collections.emptyMap() : MapUtils.copyOf(traits);
+        return traits.copy();
     }
 }

@@ -242,7 +242,7 @@ public abstract class Node implements FromSourceLocation, ToNode {
      * @return Returns the ObjectNode builder.
      */
     public static ObjectNode.Builder objectNodeBuilder() {
-        return new ObjectNode.Builder();
+        return ObjectNode.builder();
     }
 
     /**
