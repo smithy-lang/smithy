@@ -16,13 +16,12 @@
 package software.amazon.smithy.model.shapes;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Abstract classes shared by structure and union shapes.
@@ -41,7 +40,7 @@ abstract class NamedMembersShape extends Shape {
 
         // Copy the members to make them immutable and ensure that each
         // member has a valid ID that is prefixed with the shape ID.
-        members = MapUtils.orderedCopyOf(builder.members);
+        members = builder.members.copy();
 
         for (MemberShape member : members.values()) {
             if (!member.getId().toString().startsWith(getId().toString())) {
@@ -112,12 +111,12 @@ abstract class NamedMembersShape extends Shape {
     abstract static class Builder<B extends Builder<?, ?>, S extends NamedMembersShape>
             extends AbstractShapeBuilder<B, S> {
 
-        Map<String, MemberShape> members = new LinkedHashMap<>();
+        private final BuilderRef<Map<String, MemberShape>> members = BuilderRef.forOrderedMap();
 
         @Override
         public final B id(ShapeId shapeId) {
             // If there are already any members set, update their ids to point to the new parent id.
-            for (MemberShape member : members.values()) {
+            for (MemberShape member : members.peek().values()) {
                 addMember(member.toBuilder().id(shapeId.withMember(member.getMemberName())).build());
             }
             return super.id(shapeId);
@@ -158,7 +157,7 @@ abstract class NamedMembersShape extends Shape {
         @Override
         @SuppressWarnings("unchecked")
         public B addMember(MemberShape member) {
-            members.put(member.getMemberName(), member);
+            members.get().put(member.getMemberName(), member);
             return (B) this;
         }
 
@@ -203,7 +202,9 @@ abstract class NamedMembersShape extends Shape {
          */
         @SuppressWarnings("unchecked")
         public B removeMember(String member) {
-            members.remove(member);
+            if (members.hasValue()) {
+                members.get().remove(member);
+            }
             return (B) this;
         }
     }

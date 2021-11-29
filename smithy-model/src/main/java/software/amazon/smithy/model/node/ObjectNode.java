@@ -32,6 +32,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -59,8 +60,17 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
                 : Collections.unmodifiableMap(nodeMap);
     }
 
+    private ObjectNode(Builder builder) {
+        super(builder.sourceLocation);
+        this.nodeMap = builder.nodeMap.copy();
+    }
+
     public static ObjectNode fromStringMap(Map<String, String> map) {
         return map.entrySet().stream().collect(collectStringKeys(Map.Entry::getKey, e -> from(e.getValue())));
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     @Override
@@ -597,14 +607,14 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      * Builder used to efficiently create an ObjectNode.
      */
     public static final class Builder implements SmithyBuilder<ObjectNode> {
-        private final Map<StringNode, Node> nodeMap = new LinkedHashMap<>();
+        private final BuilderRef<Map<StringNode, Node>> nodeMap = BuilderRef.forOrderedMap();
         private SourceLocation sourceLocation = SourceLocation.NONE;
 
         Builder() {}
 
         @Override
         public ObjectNode build() {
-            return new ObjectNode(nodeMap, sourceLocation);
+            return new ObjectNode(this);
         }
 
         public Builder sourceLocation(SourceLocation sourceLocation) {
@@ -612,8 +622,19 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
             return this;
         }
 
+        public boolean hasMember(String key) {
+            if (nodeMap.hasValue()) {
+                for (StringNode k : nodeMap.peek().keySet()) {
+                    if (key.equals(k.getValue())) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         public <T extends ToNode> Builder withMember(StringNode key, T value) {
-            nodeMap.put(key, value.toNode());
+            nodeMap.get().put(key, value.toNode());
             return this;
         }
 
@@ -638,13 +659,13 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
         }
 
         public Builder withoutMember(String memberName) {
-            nodeMap.keySet().removeIf(key -> key.getValue().equals(memberName));
+            nodeMap.get().keySet().removeIf(key -> key.getValue().equals(memberName));
             return this;
         }
 
         public Builder merge(ObjectNode other) {
             for (Map.Entry<StringNode, Node> entry : other.getMembers().entrySet()) {
-                nodeMap.put(entry.getKey(), entry.getValue());
+                nodeMap.get().put(entry.getKey(), entry.getValue());
             }
             return this;
         }

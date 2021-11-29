@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.aws.traits;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -26,6 +25,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -56,7 +56,7 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
         this.requestChecksumRequired = builder.requestChecksumRequired;
         this.requestAlgorithmMember = builder.requestAlgorithmMember;
         this.requestValidationModeMember = builder.requestValidationModeMember;
-        this.responseAlgorithms = ListUtils.copyOf(builder.responseAlgorithms);
+        this.responseAlgorithms = builder.responseAlgorithms.copy();
     }
 
     public static Builder builder() {
@@ -172,7 +172,7 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
         private boolean requestChecksumRequired;
 
         private String requestValidationModeMember;
-        private final List<String> responseAlgorithms = new ArrayList<>();
+        private final BuilderRef<List<String>> responseAlgorithms = BuilderRef.forList();
 
         private Builder() {}
 
@@ -198,12 +198,12 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
 
         public Builder responseAlgorithms(List<String> algorithms) {
             this.responseAlgorithms.clear();
-            this.responseAlgorithms.addAll(algorithms);
+            this.responseAlgorithms.get().addAll(algorithms);
             return this;
         }
 
         public Builder addResponseAlgorithm(String algorithm) {
-            this.responseAlgorithms.add(algorithm);
+            this.responseAlgorithms.get().add(algorithm);
             return this;
         }
 

@@ -18,14 +18,11 @@ package software.amazon.smithy.model.shapes;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import software.amazon.smithy.utils.MapUtils;
-import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -44,14 +41,14 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
 
     private ResourceShape(Builder builder) {
         super(builder);
-        identifiers = MapUtils.orderedCopyOf(builder.identifiers);
+        identifiers = builder.identifiers.copy();
         put = builder.put;
         create = builder.create;
         read = builder.read;
         update = builder.update;
         delete = builder.delete;
         list = builder.list;
-        collectionOperations = SetUtils.orderedCopyOf(builder.collectionOperations);
+        collectionOperations = builder.collectionOperations.copy();
 
         // Compute all operations bound to the resource.
         allOperations.addAll(getOperations());
@@ -202,8 +199,8 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
      * Builder used to create a {@link ResourceShape}.
      */
     public static final class Builder extends EntityShape.Builder<Builder, ResourceShape> {
-        private final Map<String, ShapeId> identifiers = new LinkedHashMap<>();
-        private final Set<ShapeId> collectionOperations = new LinkedHashSet<>();
+        private final BuilderRef<Map<String, ShapeId>> identifiers = BuilderRef.forOrderedMap();
+        private final BuilderRef<Set<ShapeId>> collectionOperations = BuilderRef.forOrderedSet();
         private ShapeId put;
         private ShapeId create;
         private ShapeId read;
@@ -229,7 +226,7 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
          */
         public Builder identifiers(Map<String, ShapeId> identifiers) {
             this.identifiers.clear();
-            this.identifiers.putAll(identifiers);
+            this.identifiers.get().putAll(identifiers);
             return this;
         }
 
@@ -241,7 +238,7 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
          * @return Returns the builder.
          */
         public Builder addIdentifier(String name, ToShapeId identifier) {
-            identifiers.put(Objects.requireNonNull(name), identifier.toShapeId());
+            identifiers.get().put(Objects.requireNonNull(name), identifier.toShapeId());
             return this;
         }
 
@@ -281,12 +278,12 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
 
         public Builder collectionOperations(Collection<ShapeId> ids) {
             clearCollectionOperations();
-            collectionOperations.addAll(ids);
+            collectionOperations.get().addAll(ids);
             return this;
         }
 
         public Builder addCollectionOperation(ToShapeId id) {
-            collectionOperations.add(id.toShapeId());
+            collectionOperations.get().add(id.toShapeId());
             return this;
         }
 
@@ -295,7 +292,7 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
         }
 
         public Builder removeCollectionOperation(ToShapeId id) {
-            collectionOperations.remove(id.toShapeId());
+            collectionOperations.get().remove(id.toShapeId());
             return this;
         }
 

@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.knowledge.OperationIndex;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -36,7 +36,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
 
     private OperationShape(Builder builder) {
         super(builder, false);
-        errors = ListUtils.copyOf(builder.errors);
+        errors = builder.errors.copy();
         input = builder.input;
         output = builder.output;
     }
@@ -137,7 +137,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
     public static final class Builder extends AbstractShapeBuilder<Builder, OperationShape> {
         private ShapeId input;
         private ShapeId output;
-        private final List<ShapeId> errors = new ArrayList<>();
+        private final BuilderRef<List<ShapeId>> errors = BuilderRef.forList();
 
         @Override
         public ShapeType getShapeType() {
@@ -187,7 +187,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
          * @return Returns the builder.
          */
         public Builder addError(ToShapeId errorShapeId) {
-            errors.add(errorShapeId.toShapeId());
+            errors.get().add(errorShapeId.toShapeId());
             return this;
         }
 
@@ -209,7 +209,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
          * @return Returns the builder.
          */
         public Builder addErrors(Collection<ShapeId> errorShapeIds) {
-            errors.addAll(Objects.requireNonNull(errorShapeIds));
+            errors.get().addAll(Objects.requireNonNull(errorShapeIds));
             return this;
         }
 
@@ -220,7 +220,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
          * @return Returns the builder.
          */
         public Builder removeError(ToShapeId errorShapeId) {
-            errors.remove(errorShapeId.toShapeId());
+            errors.get().remove(errorShapeId.toShapeId());
             return this;
         }
 

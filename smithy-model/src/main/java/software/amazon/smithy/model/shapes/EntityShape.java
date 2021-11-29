@@ -16,9 +16,8 @@
 package software.amazon.smithy.model.shapes;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Set;
-import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.BuilderRef;
 
 /**
  * Abstract class representing service and resource shapes.
@@ -30,8 +29,8 @@ public abstract class EntityShape extends Shape {
 
     EntityShape(Builder<?, ?> builder) {
         super(builder, false);
-        resources = SetUtils.orderedCopyOf(builder.resources);
-        operations = SetUtils.orderedCopyOf(builder.operations);
+        resources = builder.resources.copy();
+        operations = builder.operations.copy();
     }
 
     /**
@@ -88,19 +87,19 @@ public abstract class EntityShape extends Shape {
     public abstract static class Builder<B extends Builder<?, ?>, S extends EntityShape>
             extends AbstractShapeBuilder<B, S> {
 
-        private final Set<ShapeId> resources = new LinkedHashSet<>();
-        private final Set<ShapeId> operations = new LinkedHashSet<>();
+        private final BuilderRef<Set<ShapeId>> resources = BuilderRef.forOrderedSet();
+        private final BuilderRef<Set<ShapeId>> operations = BuilderRef.forOrderedSet();
 
         @SuppressWarnings("unchecked")
         public B operations(Collection<ShapeId> ids) {
             clearOperations();
-            operations.addAll(ids);
+            operations.get().addAll(ids);
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
         public B addOperation(ToShapeId id) {
-            operations.add(id.toShapeId());
+            operations.get().add(id.toShapeId());
             return (B) this;
         }
 
@@ -110,7 +109,7 @@ public abstract class EntityShape extends Shape {
 
         @SuppressWarnings("unchecked")
         public B removeOperation(ToShapeId id) {
-            operations.remove(id.toShapeId());
+            operations.get().remove(id.toShapeId());
             return (B) this;
         }
 
@@ -123,13 +122,13 @@ public abstract class EntityShape extends Shape {
         @SuppressWarnings("unchecked")
         public B resources(Collection<ShapeId> ids) {
             clearResources();
-            resources.addAll(ids);
+            resources.get().addAll(ids);
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
         public B addResource(ToShapeId id) {
-            resources.add(id.toShapeId());
+            resources.get().add(id.toShapeId());
             return (B) this;
         }
 
@@ -139,7 +138,7 @@ public abstract class EntityShape extends Shape {
 
         @SuppressWarnings("unchecked")
         public B removeResource(ToShapeId id) {
-            resources.remove(id.toShapeId());
+            resources.get().remove(id.toShapeId());
             return (B) this;
         }
 

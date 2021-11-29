@@ -17,7 +17,6 @@ package software.amazon.smithy.model.traits;
 
 import static software.amazon.smithy.model.node.Node.loadArrayOfString;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -28,7 +27,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ToShapeId;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -62,7 +61,7 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
     public TraitDefinition(TraitDefinition.Builder builder) {
         super(ID, builder.sourceLocation);
         selector = builder.selector;
-        conflicts = ListUtils.copyOf(builder.conflicts);
+        conflicts = builder.conflicts.copy();
         structurallyExclusive = builder.structurallyExclusive;
     }
 
@@ -148,7 +147,7 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
      */
     public static final class Builder extends AbstractTraitBuilder<TraitDefinition, Builder> {
         private Selector selector = Selector.IDENTITY;
-        private final List<ShapeId> conflicts = new ArrayList<>();
+        private final BuilderRef<List<ShapeId>> conflicts = BuilderRef.forList();
         private StructurallyExclusive structurallyExclusive;
 
         private Builder() {}
@@ -165,12 +164,12 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
 
         public Builder addConflict(ShapeId id) {
             Objects.requireNonNull(id);
-            conflicts.add(id);
+            conflicts.get().add(id);
             return this;
         }
 
         public Builder removeConflict(ToShapeId id) {
-            conflicts.remove(id.toShapeId());
+            conflicts.get().remove(id.toShapeId());
             return this;
         }
 
