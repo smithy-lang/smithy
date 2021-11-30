@@ -31,10 +31,10 @@ public final class ChangedOperationInput extends AbstractDiffEvaluator {
         return differences.changedShapes(OperationShape.class)
                 .filter(change -> !change.getOldShape().getInputShape().equals(change.getNewShape().getInputShape()))
                 .map(change -> error(change.getNewShape(), String.format(
-                        "Input shape of `%s` changed from `%s` to `%s`",
+                        "Changed operation input of `%s` from `%s` to `%s`",
                         change.getShapeId(),
                         change.getOldShape().getInputShape(),
-                        change.getNewShape().getOutputShape())))
+                        change.getNewShape().getInputShape())))
                 .collect(Collectors.toList());
     }
 }

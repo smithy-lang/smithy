@@ -649,8 +649,8 @@ public final class ModelAssembler {
         for (Map.Entry<ShapeId, Map<ShapeId, Trait>> entry : resolvedTraits.traits().entrySet()) {
             ShapeId target = entry.getKey();
             for (Trait trait : entry.getValue().values()) {
-                // Find trait values that weren't defined, and ignore ephemeral traits.
-                if (!trait.isEphemeral() && !ids.contains(trait.toShapeId())) {
+                // Find trait values that weren't defined, and ignore synthetic traits.
+                if (!trait.isSynthetic() && !ids.contains(trait.toShapeId())) {
                     events.add(ValidationEvent.builder()
                             .id(Validator.MODEL_ERROR)
                             .severity(severity)

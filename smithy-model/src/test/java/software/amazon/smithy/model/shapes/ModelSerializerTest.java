@@ -33,7 +33,7 @@ import software.amazon.smithy.model.node.NodePointer;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
-import software.amazon.smithy.model.traits.ephemeral.OriginalShapeIdTrait;
+import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 
 public class ModelSerializerTest {
     @Test
