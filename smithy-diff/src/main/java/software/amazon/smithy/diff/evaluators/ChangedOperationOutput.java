@@ -31,7 +31,7 @@ public final class ChangedOperationOutput extends AbstractDiffEvaluator {
         return differences.changedShapes(OperationShape.class)
                 .filter(change -> !change.getOldShape().getOutputShape().equals(change.getNewShape().getOutputShape()))
                 .map(change -> error(change.getNewShape(), String.format(
-                        "Output shape of `%s` changed from `%s` to `%s`",
+                        "Changed operation output of `%s` from `%s` to `%s`",
                         change.getShapeId(),
                         change.getOldShape().getOutputShape(),
                         change.getNewShape().getOutputShape())))

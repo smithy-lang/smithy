@@ -209,13 +209,10 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                 String message;
                 String pretty = Node.prettyPrintJson(right.toNode());
                 if (path.isEmpty()) {
-                    String template = severity == Severity.DANGER || severity == Severity.ERROR
-                                      ? "It is a breaking change to add the `%s` trait. The added trait value is: %s"
-                                      : "The `%s` trait was added with the value: %s";
-                    message = String.format(template, trait, pretty);
+                    message = String.format("Added trait `%s` with value %s", trait, pretty);
                 } else {
-                    message = String.format("`%s` was added to the `%s` trait with a value of %s",
-                                            path, trait, pretty);
+                    message = String.format("Added trait contents to `%s` at path `%s` with value %s",
+                                            trait, path, pretty);
                 }
 
                 return Collections.singletonList(ValidationEvent.builder()
@@ -246,13 +243,10 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                 String pretty = Node.prettyPrintJson(left.toNode());
                 String message;
                 if (path.isEmpty()) {
-                    String template = severity == Severity.DANGER || severity == Severity.ERROR
-                            ? "It is a breaking change to remove the `%s` trait. The removed trait value was: %s"
-                            : "The `%s` trait was removed. The removed trait value was: %s";
-                    message = String.format(template, trait, pretty);
+                    message = String.format("Removed trait `%s`. Removed value: %s", trait, pretty);
                 } else {
-                    message = String.format("`%s` was removed from the `%s` trait. The removed value was: %s",
-                                            path, trait, pretty);
+                    message = String.format("Removed trait contents from `%s` at path `%s`. Removed value: %s",
+                                            trait, path, pretty);
                 }
 
                 return Collections.singletonList(ValidationEvent.builder()
@@ -283,14 +277,10 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                 String rightPretty = Node.prettyPrintJson(right.toNode());
                 String message;
                 if (path.isEmpty()) {
-                    String template = severity == Severity.DANGER || severity == Severity.ERROR
-                                      ? "It is a breaking change to change the value of the `%s` trait. The value "
-                                        + "changed from %s to %s"
-                                      : "The `%s` trait value changed from %s to %s";
-                    message = String.format(template, trait, leftPretty, rightPretty);
+                    message = String.format("Changed trait `%s` from %s to %s", trait, leftPretty, rightPretty);
                 } else {
-                    message = String.format("`%s` was changed on the `%s` trait from %s to %s",
-                                            path, trait, leftPretty, rightPretty);
+                    message = String.format("Changed trait contents of `%s` at path `%s` from %s to %s",
+                                            trait, path, leftPretty, rightPretty);
                 }
 
                 return Collections.singletonList(ValidationEvent.builder()

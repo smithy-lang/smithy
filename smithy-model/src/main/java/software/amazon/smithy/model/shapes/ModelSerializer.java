@@ -59,8 +59,8 @@ public final class ModelSerializer {
         } else {
             shapeFilter = builder.shapeFilter;
         }
-        // Never serialize ephemeral traits.
-        traitFilter = builder.traitFilter.and(FunctionalUtils.not(Trait::isEphemeral));
+        // Never serialize synthetic traits.
+        traitFilter = builder.traitFilter.and(FunctionalUtils.not(Trait::isSynthetic));
     }
 
     public ObjectNode serialize(Model model) {

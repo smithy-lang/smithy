@@ -28,7 +28,7 @@ import software.amazon.smithy.model.shapes.ModelSerializer;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.InputTrait;
 import software.amazon.smithy.model.traits.OutputTrait;
-import software.amazon.smithy.model.traits.ephemeral.OriginalShapeIdTrait;
+import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 
 public class CreateDedicatedInputAndOutputTest {
     private Model compareTransform(String prefix, Function<Model, Model> transform) {

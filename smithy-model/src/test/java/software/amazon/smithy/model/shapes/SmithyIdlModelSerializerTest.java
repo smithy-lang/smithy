@@ -20,14 +20,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.params.provider.EnumSource;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.node.NodePointer;
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
-import software.amazon.smithy.model.traits.ephemeral.OriginalShapeIdTrait;
+import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 import software.amazon.smithy.utils.IoUtils;
 
 public class SmithyIdlModelSerializerTest {
