@@ -15,9 +15,11 @@
 
 package software.amazon.smithy.model.traits;
 
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Specializes a structure as the input of a single operation.
@@ -31,6 +33,10 @@ public final class InputTrait extends AnnotationTrait {
 
     public InputTrait() {
         this(Node.objectNode());
+    }
+
+    public InputTrait(SourceLocation sourceLocation) {
+        this(new ObjectNode(MapUtils.of(), sourceLocation));
     }
 
     public static final class Provider extends AnnotationTrait.Provider<InputTrait> {

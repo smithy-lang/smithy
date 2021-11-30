@@ -18,6 +18,7 @@ package software.amazon.smithy.diff.evaluators;
 import java.util.List;
 import java.util.stream.Collectors;
 import software.amazon.smithy.diff.Differences;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.PrivateTrait;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -29,9 +30,14 @@ public final class RemovedShape extends AbstractDiffEvaluator {
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.removedShapes()
                 .filter(shape -> !shape.hasTrait(PrivateTrait.class))
-                .map(shape -> error(shape, String.format(
-                        "Shape `%s` of type `%s` was removed from the model: %s",
-                        shape.getId(), shape.getType(), shape)))
+                .filter(shape -> !isMemberOfRemovedShape(shape, differences))
+                .map(shape -> error(shape, String.format("Removed %s `%s`", shape.getType(), shape.getId())))
                 .collect(Collectors.toList());
+    }
+
+    private boolean isMemberOfRemovedShape(Shape shape, Differences differences) {
+        return shape.asMemberShape()
+                .filter(member -> !differences.getNewModel().getShapeIds().contains(member.getContainer()))
+                .isPresent();
     }
 }

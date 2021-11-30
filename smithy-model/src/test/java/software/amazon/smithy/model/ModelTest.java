@@ -45,7 +45,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.traits.TraitDefinition;
-import software.amazon.smithy.model.traits.ephemeral.OriginalShapeIdTrait;
+import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 
 public class ModelTest {
 
@@ -237,7 +237,7 @@ public class ModelTest {
     }
 
     @Test
-    public void transientShapesCanBeQueriedLikeNormalTraits() {
+    public void syntheticTraitsCanBeQueriedLikeNormalTraits() {
         ShapeId originalId = ShapeId.from("com.foo.nested#Str");
         StringShape stringShape = StringShape.builder()
                 .id("com.foo#Str")

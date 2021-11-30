@@ -18,6 +18,7 @@ package software.amazon.smithy.diff.evaluators;
 import java.util.List;
 import java.util.stream.Collectors;
 import software.amazon.smithy.diff.Differences;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 /**
@@ -27,9 +28,14 @@ public final class AddedShape extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.addedShapes()
-                .map(shape -> note(shape, String.format(
-                        "Shape `%s` of type `%s` was added to the model",
-                        shape.getId(), shape.getType())))
+                .filter(shape -> !isMemberOfAddedShape(shape, differences))
+                .map(shape -> note(shape, String.format("Added %s `%s`", shape.getType(), shape.getId())))
                 .collect(Collectors.toList());
+    }
+
+    private boolean isMemberOfAddedShape(Shape shape, Differences differences) {
+        return shape.asMemberShape()
+                .filter(member -> !differences.getOldModel().getShapeIds().contains(member.getContainer()))
+                .isPresent();
     }
 }

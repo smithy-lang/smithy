@@ -65,7 +65,7 @@ import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.traits.SuppressTrait;
-import software.amazon.smithy.model.traits.ephemeral.OriginalShapeIdTrait;
+import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -661,12 +661,12 @@ public class ModelAssemblerTest {
         assertThat(collectedEvents, equalTo(toEmit));
     }
 
-    // Ephemeral traits are used to add information to shapes that's not persisted on the
+    // Synthetic traits are used to add information to shapes that's not persisted on the
     // shape when serializing, and the trait might not be defined in the metamodel. This
-    // requires that validators ignore ephemeral traits, and that the model assembler doesn't
-    // fail if an unknown ephemeral trait is encountered.
+    // requires that validators ignore synthetic traits, and that the model assembler doesn't
+    // fail if an unknown synthetic trait is encountered.
     //
-    // This validator ensures that ephemeral traits don't trip up the assembler, and that
+    // This validator ensures that synthetic traits don't trip up the assembler, and that
     // built-in validators don't care that the trait isn't defined in the semantic model.
     // They only need to be defined in code.
     @Test

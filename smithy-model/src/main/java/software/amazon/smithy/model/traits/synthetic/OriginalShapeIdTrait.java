@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.model.traits.ephemeral;
+package software.amazon.smithy.model.traits.synthetic;
 
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
@@ -24,12 +24,12 @@ import software.amazon.smithy.model.traits.AbstractTrait;
  * Used to provide the original shape ID of a shape that is renamed
  * in the semantic model.
  *
- * <p>This is an ephemeral trait that is not defined in the semantic model,
+ * <p>This is a synthetic trait that is not defined in the semantic model,
  * nor is it persisted when the model is serialized.
  */
 public final class OriginalShapeIdTrait extends AbstractTrait {
 
-    public static final ShapeId ID = ShapeId.from("smithy.transient#originalShapeId");
+    public static final ShapeId ID = ShapeId.from("smithy.synthetic#originalShapeId");
 
     private final ShapeId originalId;
 
@@ -48,7 +48,7 @@ public final class OriginalShapeIdTrait extends AbstractTrait {
     }
 
     @Override
-    public boolean isEphemeral() {
+    public boolean isSynthetic() {
         return true;
     }
 

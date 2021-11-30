@@ -39,7 +39,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
-import software.amazon.smithy.model.traits.ephemeral.OriginalShapeIdTrait;
+import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.ListUtils;
 
@@ -501,9 +501,11 @@ public final class ModelTransformer {
      * context.
      *
      * <p>If an operation's input already targets a shape marked with the {@code input}
-     * trait, then the operation and input shape is left as-is regardless of its name.
-     * If an operation's output already targets a shape marked with the {@code output}
-     * trait, then the operation and output shape is left as-is regardless of its name.
+     * trait, then the existing input shape is used as input, though the shape will
+     * be renamed if it does not use the given {@code inputSuffix}. If an operation's
+     * output already targets a shape marked with the {@code output} trait, then the
+     * existing output shape is used as output, though the shape will be renamed if it
+     * does not use the given {@code outputSuffix}.
      *
      * <p>If the operation's input shape starts with the name of the operation and is
      * only used throughout the model as the input of the operation, then it is updated
@@ -532,7 +534,7 @@ public final class ModelTransformer {
      * shapes in the model, then a {@link ModelTransformException} is thrown.
      *
      * <p>Any time a shape is renamed, the original shape ID of the shape is captured
-     * on the shape using the ephemeral {@link OriginalShapeIdTrait}. This might be
+     * on the shape using the synthetic {@link OriginalShapeIdTrait}. This might be
      * useful for protocols that need to serialize input and output shape names.
      *
      * @param model Model to update.

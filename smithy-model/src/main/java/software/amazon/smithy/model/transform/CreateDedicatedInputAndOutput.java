@@ -17,6 +17,7 @@ package software.amazon.smithy.model.transform;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
@@ -32,12 +33,13 @@ import software.amazon.smithy.model.traits.InputTrait;
 import software.amazon.smithy.model.traits.OutputTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
-import software.amazon.smithy.model.traits.ephemeral.OriginalShapeIdTrait;
+import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 
 /**
  * @see ModelTransformer#createDedicatedInputAndOutput(Model, String, String)
  */
 final class CreateDedicatedInputAndOutput {
+    private static final Logger LOGGER = Logger.getLogger(CreateDedicatedInputAndOutput.class.getName());
     private final String inputSuffix;
     private final String outputSuffix;
 
@@ -61,21 +63,27 @@ final class CreateDedicatedInputAndOutput {
             if (!updatedInput.equals(input) || !updatedOutput.equals(output)) {
                 OperationShape.Builder builder = operation.toBuilder();
                 if (!updatedInput.equals(input)) {
+                    LOGGER.fine(() -> String.format("Updating operation input of %s from %s to %s",
+                                                    operation.getId(), input.getId(), updatedInput.getId()));
                     updates.add(updatedInput);
                     builder.input(updatedInput);
                     // If the ID changed and the original is no longer referenced, then remove it.
                     if (!input.getId().equals(updatedInput.getId())
                             && isSingularReference(reverse, input, RelationshipType.INPUT)) {
                         toRemove.add(input);
+                        LOGGER.info("Removing now unused input shape " + input.getId());
                     }
                 }
                 if (!updatedOutput.equals(output)) {
+                    LOGGER.fine(() -> String.format("Updating operation output of %s from %s to %s",
+                                                    operation.getId(), output.getId(), updatedOutput.getId()));
                     updates.add(updatedOutput);
                     builder.output(updatedOutput);
                     // If the ID changed and the original is no longer referenced, then remove it.
                     if (!output.getId().equals(updatedOutput.getId())
                             && isSingularReference(reverse, output, RelationshipType.OUTPUT)) {
                         toRemove.add(output);
+                        LOGGER.info("Removing now unused output shape " + output.getId());
                     }
                 }
                 updates.add(builder.build());
@@ -98,7 +106,8 @@ final class CreateDedicatedInputAndOutput {
         if (input.hasTrait(InputTrait.class)) {
             return renameShapeIfNeeded(model, input, operation, inputSuffix);
         } else if (isDedicatedHeuristic(operation, input, reverse, RelationshipType.INPUT)) {
-            InputTrait trait = new InputTrait();
+            LOGGER.fine(() -> "Attaching the @input trait to " + input.getId());
+            InputTrait trait = new InputTrait(input.getSourceLocation());
             return renameShapeIfNeeded(model, input.toBuilder().addTrait(trait).build(), operation, inputSuffix);
         } else {
             return createSyntheticShape(model, operation, inputSuffix, input, new InputTrait());
@@ -114,7 +123,8 @@ final class CreateDedicatedInputAndOutput {
         if (output.hasTrait(OutputTrait.class)) {
             return renameShapeIfNeeded(model, output, operation, outputSuffix);
         } else if (isDedicatedHeuristic(operation, output, reverse, RelationshipType.OUTPUT)) {
-            OutputTrait trait = new OutputTrait();
+            LOGGER.fine(() -> "Attaching the @output trait to " + output.getId());
+            OutputTrait trait = new OutputTrait(output.getSourceLocation());
             return renameShapeIfNeeded(model, output.toBuilder().addTrait(trait).build(), operation, outputSuffix);
         } else {
             return createSyntheticShape(model, operation, outputSuffix, output, new OutputTrait());
@@ -134,7 +144,9 @@ final class CreateDedicatedInputAndOutput {
             return struct;
         }
 
+        LOGGER.info(() -> "Renaming " + struct.getId() + " to " + expectedName);
         ShapeId newId = createSyntheticShapeId(model, operation, suffix);
+
         return struct.toBuilder()
                 .id(newId)
                 .addTrait(new OriginalShapeIdTrait(struct.getId()))
@@ -187,6 +199,7 @@ final class CreateDedicatedInputAndOutput {
                 ? StructureShape.builder()
                 : source.toBuilder();
 
+        builder.source(source.getSourceLocation());
         builder.id(newId);
         builder.addTrait(inputOutputTrait);
 
@@ -194,6 +207,7 @@ final class CreateDedicatedInputAndOutput {
             builder.addTrait(new OriginalShapeIdTrait(source.getId()));
         }
 
+        LOGGER.fine(() -> "Creating synthetic " + inputOutputTrait.toShapeId().getName() + " shape " + newId);
         return builder.build();
     }
 
@@ -226,6 +240,7 @@ final class CreateDedicatedInputAndOutput {
     private static ShapeId resolveConflict(ShapeId id, String suffix) {
         // Say GetFooRequest exists. This then returns GetFooOperationRequest.
         String updatedName = id.getName().replace(suffix, "Operation" + suffix);
+        LOGGER.info(() -> "Deconflicting synthetic ID from " + id + " to use name " + updatedName);
         return ShapeId.fromParts(id.getNamespace(), updatedName);
     }
 }
