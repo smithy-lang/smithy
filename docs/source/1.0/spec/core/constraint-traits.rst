@@ -329,7 +329,7 @@ Summary
 Trait selector
     ``:test(collection, map, string, blob, member > :is(collection, map, string, blob))``
 
-    *Any list, map, string, or blob; or a member that targets one of these shapes*
+    *Any list, set, map, string, or blob; or a member that targets one of these shapes*
 Value type
     ``structure``
 
@@ -358,6 +358,7 @@ the corresponding shape:
 Shape        Length constrains
 ===========  =====================================
 list         The number of members
+set          The number of members
 map          The number of key-value pairs
 string       The number of Unicode code points
 blob         The size of the blob in bytes
