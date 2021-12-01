@@ -117,7 +117,7 @@ specification from a Smithy model using a buildscript dependency:
 
     plugins {
         java
-        id("software.amazon.smithy").version("0.5.3")
+        id("software.amazon.smithy").version("0.6.0")
     }
 
     buildscript {
