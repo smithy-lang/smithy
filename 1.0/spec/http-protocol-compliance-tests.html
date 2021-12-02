@@ -86,6 +86,12 @@ implement a protocol specification.</p>
 <li><a class="reference internal" href="#http-error-response-example" id="id8">HTTP error response example</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#httpmalformedrequesttests" id="id9">httpMalformedRequestTests</a><ul>
+<li><a class="reference internal" href="#httpmalformedrequestdefinition" id="id10">HttpMalformedRequestDefinition</a></li>
+<li><a class="reference internal" href="#httpmalformedresponsedefinition" id="id11">HttpMalformedResponseDefinition</a></li>
+<li><a class="reference internal" href="#http-malformed-request-example" id="id12">HTTP malformed request example</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="section" id="overview">
@@ -97,6 +103,12 @@ are used to make assertions about client and server protocol implementations.</p
 protocol, authentication scheme, and set of input parameters.</dd>
 <dt><a class="reference internal" href="#httpresponsetests-trait"><span class="std std-ref">smithy.test#httpResponseTests</span></a></dt><dd>Used to define how an HTTP response is serialized given a specific
 protocol, authentication scheme, and set of output or error parameters.</dd>
+</dl>
+<p>Additionally, it defines one trait specifically for the behavior of server
+protocol implementations.</p>
+<dl class="docutils">
+<dt><a class="reference internal" href="#httpmalformedrequesttests-trait"><span class="std std-ref">smithy.test#httpMalformedRequestTests</span></a></dt><dd>Used to define how a server rejects a malformed HTTP request given a
+specific protocol and HTTP message.</dd>
 </dl>
 <p>Protocol implementation developers use these traits to ensure that their
 implementation is correct. This can be done through code generation of test
@@ -755,6 +767,315 @@ that uses <a class="reference internal" href="core/http-traits.html#http-traits"
 </div></div>
 </div>
 </div>
+<div class="section" id="httpmalformedrequesttests">
+<span id="httpmalformedrequesttests-trait"></span><span id="smithy-test-httpmalformedrequesttests-trait"></span><h2><a href="#httpmalformedrequesttests">httpMalformedRequestTests</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>The <code class="docutils literal notranslate"><span class="pre">httpMalformedRequestTests</span></code> trait is used to define how a malformed
+HTTP request is rejected given a specific protocol and HTTP message.
+Protocol implementations MUST assert that requests are rejected during
+request processing.</dd>
+<dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>operation
+</pre></div>
+</div>
+</dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">HttpMalformedRequestTestCase</span></code> structures</dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">httpMalformedRequestTests</span></code> trait is a list of
+<code class="docutils literal notranslate"><span class="pre">HttpMalformedRequestTestCase</span></code> structures that support the following members:</p>
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>id</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The identifier of the test case. This identifier can
+be used by protocol test implementations to filter out unsupported
+test cases by ID, to generate test case names, etc. The provided
+<code class="docutils literal notranslate"><span class="pre">id</span></code> MUST match Smithy's <a class="reference internal" href="core/model.html#grammar-token-smithy-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:identifier</span></code></a> ABNF. No two
+<code class="docutils literal notranslate"><span class="pre">httpMalformedRequestTests</span></code> test cases can share the same ID.</td>
+</tr>
+<tr class="row-odd"><td>protocol</td>
+<td>shape ID</td>
+<td><strong>Required</strong>. A shape ID that targets a shape marked with the
+<a class="reference internal" href="core/protocol-traits.html#protocoldefinition-trait"><span class="std std-ref">protocolDefinition trait</span></a>. Because Smithy services can support
+multiple protocols, each test MUST specify which protocol is under
+test.</td>
+</tr>
+<tr class="row-even"><td>request</td>
+<td><a class="reference internal" href="#httpmalformedrequestdefinition-struct"><span class="std std-ref">HttpMalformedRequestDefinition</span></a></td>
+<td><strong>Required</strong>. A structure that describes the request.</td>
+</tr>
+<tr class="row-odd"><td>response</td>
+<td><a class="reference internal" href="#httpmalformedresponsedefinition-struct"><span class="std std-ref">HttpMalformedResponseDefinition</span></a></td>
+<td><strong>Required</strong>. A structure that describes the required response.</td>
+</tr>
+<tr class="row-even"><td>documentation</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>A description of the test and what is being asserted defined in
+<a class="reference external" href="https://spec.commonmark.org/">CommonMark</a>.</td>
+</tr>
+<tr class="row-odd"><td>tags</td>
+<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
+<td><p class="first">Attaches a list of tags that allow test cases to be categorized and
+grouped.</p>
+<p class="last">Using tags to describe types of failures gives implementations control
+of test execution across different suites of tests. For example, it
+allows tests to be executed that exercise booleans being converted into
+numerics, even if there are such tests written for values appearing in
+paths, query strings, headers, and message bodies across different
+protocols.</p>
+</td>
+</tr>
+<tr class="row-even"><td>testParameters</td>
+<td><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">list&lt;string&gt;&gt;</span></code></td>
+<td><p class="first">Optional parameters that are substituted into each member of
+<code class="docutils literal notranslate"><span class="pre">request</span></code>, <code class="docutils literal notranslate"><span class="pre">response</span></code>, as well as the test's <code class="docutils literal notranslate"><span class="pre">tags</span></code> and
+<code class="docutils literal notranslate"><span class="pre">documentation</span></code>.</p>
+<p>The lists of values for each key must be identical
+in length. One test permutation is generated for each index the
+parameter lists. For example, parameters with 5 values for each key
+will generate 5 tests in total.</p>
+<p>Parameter values are substituted using the conventions described by
+the documentation for <a class="reference external" href="https://awslabs.github.io/smithy/javadoc/1.13.1/software/amazon/smithy/utils/CodeWriter.html">CodeWriter</a>. They are available as named
+parameters, and implementations must support both the <code class="docutils literal notranslate"><span class="pre">L</span></code> and <code class="docutils literal notranslate"><span class="pre">S</span></code>
+formatters.</p>
+<div class="last admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If <code class="docutils literal notranslate"><span class="pre">testParameters</span></code> is not null or empty, then substitution
+is performed on every string in <code class="docutils literal notranslate"><span class="pre">request</span></code> and <code class="docutils literal notranslate"><span class="pre">response</span></code>
+even when there is no substitution requested. This means that
+explicit <cite>$</cite> characters must be represented as <cite>$$</cite> so as to not be
+interpreted as substitution expressions by the code generator.</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="httpmalformedrequestdefinition">
+<span id="httpmalformedrequestdefinition-struct"></span><h3><a href="#httpmalformedrequestdefinition">HttpMalformedRequestDefinition</a></h3>
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>method</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The HTTP request method.</td>
+</tr>
+<tr class="row-odd"><td>uri</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The request-target of the HTTP request, not including
+the query string (for example, &quot;/foo/bar&quot;).</td>
+</tr>
+<tr class="row-even"><td>host</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>The host or endpoint provided as input used to generate the HTTP
+request (for example, &quot;example.com&quot;).</td>
+</tr>
+<tr class="row-odd"><td>queryParams</td>
+<td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></td>
+<td><p class="first">A list of the serialized query string parameters to include in the
+request.</p>
+<p>Each element in the list is a query string key value pair
+that starts with the query string parameter name optionally
+followed by &quot;=&quot;, optionally followed by the query string
+parameter value. For example, &quot;foo=bar&quot;, &quot;foo=&quot;, and &quot;foo&quot;
+are all valid values.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This kind of list is used instead of a map so that query string
+parameter values for lists can be represented using repeated
+key-value pairs.</p>
+</div>
+<p class="last">The query string parameter name and the value MUST appear in the
+format in which it is expected to be sent over the wire; if a key or
+value needs to be percent-encoded, then it MUST appear
+percent-encoded in this list.</p>
+</td>
+</tr>
+<tr class="row-even"><td>headers</td>
+<td><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">string&gt;</span></code></td>
+<td>A map of HTTP headers to include in the request. Each key represents a
+header field name and each value represents the expected header value.</td>
+</tr>
+<tr class="row-odd"><td>body</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>The HTTP message body to include in the request. Because the <code class="docutils literal notranslate"><span class="pre">body</span></code>
+parameter is a string, binary data MUST be represented in <code class="docutils literal notranslate"><span class="pre">body</span></code> by
+base64 encoding the data (for example, use &quot;Zm9vCg==&quot; and not &quot;foo&quot;).</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="httpmalformedresponsedefinition">
+<span id="httpmalformedresponsedefinition-struct"></span><h3><a href="#httpmalformedresponsedefinition">HttpMalformedResponseDefinition</a></h3>
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>headers</td>
+<td><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">string&gt;</span></code></td>
+<td><p class="first">A map of expected HTTP headers. Each key represents a header field
+name and each value represents the expected header value. An HTTP
+response is not in compliance with the protocol if any listed header
+is missing from the serialized response or if the expected header
+value differs from the serialized response value.</p>
+<p class="last"><code class="docutils literal notranslate"><span class="pre">headers</span></code> applies no constraints on additional headers.</p>
+</td>
+</tr>
+<tr class="row-odd"><td>code</td>
+<td><code class="docutils literal notranslate"><span class="pre">integer</span></code></td>
+<td><strong>Required</strong>. The expected HTTP response status code.</td>
+</tr>
+<tr class="row-even"><td>body</td>
+<td><a class="reference internal" href="#httpmalformedresponsebodydefinition-struct"><span class="std std-ref">HttpMalformedResponseBodyDefinition</span></a></td>
+<td>The expected response body.</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="httpmalformedresponsebodydefinition">
+<span id="httpmalformedresponsebodydefinition-struct"></span><h4><a href="#httpmalformedresponsebodydefinition">HttpMalformedResponseBodyDefinition</a></h4>
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>assertion</td>
+<td><a class="reference internal" href="#httpmalformedresponsebodyassertion-union"><span class="std std-ref">HttpMalformedResponseBodyAssertion</span></a></td>
+<td><strong>Required</strong>. The assertion to be applied to the response body.</td>
+</tr>
+<tr class="row-odd"><td>mediaType</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The media type of the <code class="docutils literal notranslate"><span class="pre">body</span></code>. This is used to help test
+runners to parse and validate the expected data against generated data.
+Binary media type formats require that the contents of <code class="docutils literal notranslate"><span class="pre">body</span></code> are
+base64 encoded.</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="httpmalformedresponsebodyassertion">
+<span id="httpmalformedresponsebodyassertion-union"></span><h5><a href="#httpmalformedresponsebodyassertion">HttpMalformedResponseBodyAssertion</a></h5>
+<p>A union describing the assertion to run against the response body. As it is a
+union, exactly one member must be set.</p>
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>contents</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Defines the expected serialized response body, which will be matched
+exactly.</td>
+</tr>
+<tr class="row-odd"><td>messageRegex</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>A regex to evaluate against the <code class="docutils literal notranslate"><span class="pre">message</span></code> field in the response body.
+For responses that may have some variance from platform to platform,
+such as those that include messages from a parser.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="http-malformed-request-example">
+<h3><a href="#http-malformed-request-example">HTTP malformed request example</a></h3>
+<p>The following example defines a malformed request test for a JSON protocol
+that uses <a class="reference internal" href="core/http-traits.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a>. In this example, the server
+is rejecting many different variants of invalid numerics, and uses
+<code class="docutils literal notranslate"><span class="pre">testParameters</span></code> to test three different invalid values, and tags each test
+with a descriptive string that allows implementations to run, or skip,
+specific types of malformed values.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+
+<span class="kd">use</span><span class="nc"> smithy.test#httpMalformedRequestTests</span><span class="w"></span>
+<span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/InvertNumber/{numberValue}&quot;</span>)<span class="w"></span>
+<span class="nd">@httpMalformedRequestTests</span>([<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s2">&quot;MalformedLongsInPathsRejected&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">documentation:</span><span class="w"> </span><span class="s1">&quot;&quot;&quot;</span>
+<span class="s1">        Malformed values in the path should be rejected&quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">protocol:</span><span class="w"> </span><span class="vc">exampleProtocol</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">request:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/InvertNumber/$value:L&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">response:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">code:</span><span class="w"> </span><span class="m">400</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nl">headers:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                </span><span class="s2">&quot;errorType&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;BadNumeric&quot;</span><span class="w"></span>
+<span class="w">            </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nl">body:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">assertion:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                    </span><span class="nl">contents:</span><span class="w"> </span><span class="s1">&quot;&quot;&quot;</span>
+<span class="s1">                    {&quot;errorMessage&quot;: &quot;Invalid value \&quot;$value:L\&quot;&quot;}&quot;&quot;&quot;</span><span class="w"></span>
+<span class="w">                </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="nl">mediaType:</span><span class="w"> </span><span class="s2">&quot;application/json&quot;</span><span class="w"></span>
+<span class="w">            </span>}<span class="w"></span>
+
+<span class="w">        </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="vc">testParameters</span><span class="w"> </span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;value&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;1.001&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;2ABC&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;tag&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;boolean_coercion&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;float_truncation&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;trailing_chars&quot;</span>]<span class="w"></span>
+<span class="w">        </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">tags:</span><span class="w"> </span>[<span class="w"> </span><span class="s2">&quot;$tag:L&quot;</span><span class="w"> </span>]<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+])<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> InvertNumber</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">InvertNumberInput</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure</span><span class="nc"> InvertNumberInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@httpLabel</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nl">numberValue:</span><span class="w"> </span><span class="vc">Long</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+</div>
 </div>
 
 
@@ -790,6 +1111,18 @@ that uses <a class="reference internal" href="core/http-traits.html#http-traits"
 <li><a class="reference internal" href="#httpresponsetests">httpResponseTests</a><ul>
 <li><a class="reference internal" href="#http-response-example">HTTP response example</a></li>
 <li><a class="reference internal" href="#http-error-response-example">HTTP error response example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#httpmalformedrequesttests">httpMalformedRequestTests</a><ul>
+<li><a class="reference internal" href="#httpmalformedrequestdefinition">HttpMalformedRequestDefinition</a></li>
+<li><a class="reference internal" href="#httpmalformedresponsedefinition">HttpMalformedResponseDefinition</a><ul>
+<li><a class="reference internal" href="#httpmalformedresponsebodydefinition">HttpMalformedResponseBodyDefinition</a><ul>
+<li><a class="reference internal" href="#httpmalformedresponsebodyassertion">HttpMalformedResponseBodyAssertion</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#http-malformed-request-example">HTTP malformed request example</a></li>
 </ul>
 </li>
 </ul>

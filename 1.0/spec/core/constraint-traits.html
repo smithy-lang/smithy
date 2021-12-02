@@ -391,8 +391,8 @@ syntactically correct absolute shape ID.</li>
 <span id="id3"></span><h2><a href="#length-trait"><span class="section-number">3.3. </span><code class="docutils literal notranslate"><span class="pre">length</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Constrains a shape to minimum and maximum number of elements or size.</dd>
-<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:test(list,</span> <span class="pre">map,</span> <span class="pre">string,</span> <span class="pre">blob,</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">:is(list,</span> <span class="pre">map,</span> <span class="pre">string,</span> <span class="pre">blob))</span></code></p>
-<p><em>Any list, map, string, or blob; or a member that targets one of these shapes</em></p>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:test(collection,</span> <span class="pre">map,</span> <span class="pre">string,</span> <span class="pre">blob,</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">:is(collection,</span> <span class="pre">map,</span> <span class="pre">string,</span> <span class="pre">blob))</span></code></p>
+<p><em>Any list, set, map, string, or blob; or a member that targets one of these shapes</em></p>
 </dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
 </dl>
@@ -437,13 +437,16 @@ the corresponding shape:</p>
 <tr class="row-even"><td>list</td>
 <td>The number of members</td>
 </tr>
-<tr class="row-odd"><td>map</td>
+<tr class="row-odd"><td>set</td>
+<td>The number of members</td>
+</tr>
+<tr class="row-even"><td>map</td>
 <td>The number of key-value pairs</td>
 </tr>
-<tr class="row-even"><td>string</td>
+<tr class="row-odd"><td>string</td>
 <td>The number of Unicode code points</td>
 </tr>
-<tr class="row-odd"><td>blob</td>
+<tr class="row-even"><td>blob</td>
 <td>The size of the blob in bytes</td>
 </tr>
 </tbody>
