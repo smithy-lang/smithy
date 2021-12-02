@@ -1,5 +1,26 @@
 # Smithy Changelog
 
+## 1.15.0 (2021-12-02)
+
+### Features
+* Added protocol tests for quoted strings in headers. ([#986](https://github.com/awslabs/smithy/pull/986))
+
+### Bug Fixes
+
+* Fixed `filterSuppressions` transform's handling of members. ([#989](https://github.com/awslabs/smithy/pull/989))
+* Fixed http-content-type protocol tests. ([#993](https://github.com/awslabs/smithy/pull/993))
+
+### Documentation
+
+* Fixed documentation regarding `@length` and `@auth` traits. ([#988](https://github.com/awslabs/smithy/pull/988), [#997](https://github.com/awslabs/smithy/pull/997))
+* Added documentation for `httpMalformedRequestTests`. ([#973](https://github.com/awslabs/smithy/pull/973))
+
+### Other
+
+* Upgraded to use version `0.6.0` of the [Smithy Gradle Plugin](https://github.com/awslabs/smithy-gradle-plugin). ([#996](https://github.com/awslabs/smithy/pull/996))
+* Reduced number of copies builders need to make when building up immutable objects. ([#995](https://github.com/awslabs/smithy/pull/995))
+* Ensured InputStreams in loader are closed. ([#991](https://github.com/awslabs/smithy/pull/991))
+
 ## 1.14.1 (2021-11-15)
 
 ### Features
