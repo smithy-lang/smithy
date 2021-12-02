@@ -25,14 +25,12 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.pattern.UriPattern;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
-import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Validates that httpLabel traits are applied correctly for operation inputs.
@@ -64,12 +62,8 @@ public final class HttpLabelTraitValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validateStructure(Model model, OperationShape operation, HttpTrait http) {
-        // Only continue validating if the input is a structure. Typing
-        // validation of the input is handled elsewhere.
-        return model.getShape(operation.getInputShape())
-                .flatMap(Shape::asStructureShape)
-                .map(input -> validateBindings(model, operation, http, input))
-                .orElse(ListUtils.of());
+        return validateBindings(model, operation, http,
+                                model.expectShape(operation.getInputShape(), StructureShape.class));
     }
 
     private List<ValidationEvent> validateBindings(
