@@ -143,7 +143,7 @@ public final class TopicBinding<T extends Trait> {
     /**
      * Gets the input shape related to this operation.
      *
-     * @return Returns the optional input shape.
+     * @return Returns the input shape.
      */
     public StructureShape getInputShape() {
         return input;

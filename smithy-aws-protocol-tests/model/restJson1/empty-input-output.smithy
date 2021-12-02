@@ -93,7 +93,7 @@ apply UnitInputAndOutput @httpRequestTests([
     }
 ])
 
-apply NoInputAndNoOutput @httpResponseTests([
+apply UnitInputAndOutput @httpResponseTests([
    {
        id: "RestJsonUnitInputAndOutputNoOutput",
        documentation: """
