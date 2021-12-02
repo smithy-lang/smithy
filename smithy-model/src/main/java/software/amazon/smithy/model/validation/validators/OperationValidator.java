@@ -47,7 +47,7 @@ import software.amazon.smithy.utils.ListUtils;
  *     <li>Emits an {@code OperationInputOutputName} WARNING when the input or
  *     output shape name does not start with the name of the operation that
  *     targets it (if any).</li>
- *     <li>Emits an {@code OperationNameAmbiguity} WARNING when a shape has
+ *     <li>Emits an {@code OperationNameAmbiguity} WARNING when a shape has a
  *     name that starts with the name of an operation and the name ends with
  *     Input, Output, Request, or Response but is not used as the input or
  *     output of an operation.</li>
