@@ -15,26 +15,26 @@ jobs:
       matrix:
         include:
           - project: smithy-aws-apigateway-openapi
-          - project: smithy-aws-apigateway-traits
-          - project: smithy-aws-cloudformation
-          - project: smithy-aws-cloudformation-traits
-          - project: smithy-aws-iam-traits
-          - project: smithy-aws-protocol-tests
+          # - project: smithy-aws-apigateway-traits
+          # - project: smithy-aws-cloudformation
+          # - project: smithy-aws-cloudformation-traits
+          # - project: smithy-aws-iam-traits
+          # - project: smithy-aws-protocol-tests
           - project: smithy-aws-traits
           - project: smithy-build
           - project: smithy-cli
-          - project: smithy-codegen-core
-          - project: smithy-diff
-          - project: smithy-jmespath
-          - project: smithy-jsonschema
-          - project: smithy-linters
-          - project: smithy-model
-          - project: smithy-mqtt-traits
-          - project: smithy-openapi
-          - project: smithy-protocol-test-traits
-          - project: smithy-utils
-          - project: smithy-validation-model
-          - project: smithy-waiters
+          # - project: smithy-codegen-core
+          # - project: smithy-diff
+          # - project: smithy-jmespath
+          # - project: smithy-jsonschema
+          # - project: smithy-linters
+          # - project: smithy-model
+          # - project: smithy-mqtt-traits
+          # - project: smithy-openapi
+          # - project: smithy-protocol-test-traits
+          # - project: smithy-utils
+          # - project: smithy-validation-model
+          # - project: smithy-waiters
     steps:
     - name: Checkout the code and submodules
       uses: actions/checkout@v2
