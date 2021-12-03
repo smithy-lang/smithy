@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.neighbor.Walker;
@@ -60,12 +59,14 @@ public final class ServiceValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.shapes(ServiceShape.class)
-                .flatMap(shape -> validateService(model, shape).stream())
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        for (ServiceShape shape : model.getServiceShapes()) {
+            validateService(model, shape, events);
+        }
+        return events;
     }
 
-    private List<ValidationEvent> validateService(Model model, ServiceShape service) {
+    private void validateService(Model model, ServiceShape service, List<ValidationEvent> events) {
         // Ensure that shapes bound to the service have unique shape names.
         Walker walker = new Walker(NeighborProviderIndex.of(model).getProvider());
         Map<ShapeId, Shape> serviceClosure = new HashMap<>();
@@ -84,7 +85,6 @@ public final class ServiceValidator extends AbstractValidator {
 
         // Determine the severity of each conflict.
         ConflictDetector detector = new ConflictDetector(model);
-        List<ValidationEvent> events = new ArrayList<>();
 
         // Figure out if each conflict can be ignored, and then emit events for
         // both sides of the conflict using the appropriate severity.
@@ -102,7 +102,6 @@ public final class ServiceValidator extends AbstractValidator {
                                 Severity severity = detector.detect(subject, other);
                                 if (severity != null) {
                                     events.add(conflictingNames(severity, service, subject, other));
-                                    events.add(conflictingNames(severity, service, other, subject));
                                 }
                             });
                         }
@@ -112,8 +111,6 @@ public final class ServiceValidator extends AbstractValidator {
         }
 
         events.addAll(validateRenames(service, serviceClosure));
-
-        return events;
     }
 
     private List<ValidationEvent> validateRenames(ServiceShape service, Map<ShapeId, Shape> closure) {
