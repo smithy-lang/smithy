@@ -119,10 +119,18 @@ final class CompositeModelFile implements ModelFile {
 
     @Override
     public List<ValidationEvent> events() {
-        List<ValidationEvent> events = new ArrayList<>(mergeEvents);
+        // Size the array using the known size of all events.
+        int size = mergeEvents.size();
+        for (ModelFile modelFile : modelFiles) {
+            size += modelFile.events().size();
+        }
+
+        List<ValidationEvent> events = new ArrayList<>(size);
+        events.addAll(mergeEvents);
         for (ModelFile modelFile : modelFiles) {
             events.addAll(modelFile.events());
         }
+
         return events;
     }
 }

@@ -15,12 +15,12 @@
 
 package software.amazon.smithy.model.validation.validators;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.UnreferencedShapes;
-import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -31,16 +31,17 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public final class UnreferencedShapeValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        long serviceShapes = model.shapes(ServiceShape.class).count();
-
         // Do not emit validation warnings if no services are present in the model.
-        if (serviceShapes == 0) {
+        if (model.getServiceShapes().isEmpty()) {
             return Collections.emptyList();
         }
 
-        return new UnreferencedShapes().compute(model).stream()
-                .map(shape -> note(shape, String.format(
-                        "The %s shape is not connected to from any service shape.", shape.getType())))
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        for (Shape shape : new UnreferencedShapes().compute(model)) {
+            events.add(note(shape, String.format(
+                    "The %s shape is not connected to from any service shape.", shape.getType())));
+        }
+
+        return events;
     }
 }
