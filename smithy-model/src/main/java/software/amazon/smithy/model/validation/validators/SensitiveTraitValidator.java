@@ -15,9 +15,8 @@
 
 package software.amazon.smithy.model.validation.validators;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -35,30 +34,27 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public final class SensitiveTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.shapes(MemberShape.class)
-                .filter(member -> member.hasTrait(SensitiveTrait.class))
-                .map(member -> {
-                    Shape target = model.getShape(member.getTarget()).orElse(null);
-                    if (target == null) {
-                        return null;
-                    } else if (target.hasTrait(SensitiveTrait.class)) {
-                        return warning(member, member.expectTrait(SensitiveTrait.class),
-                                       "Redundant `sensitive` trait found on member that targets a `sensitive` shape");
-                    } else if (isBadSensitiveTarget(target)) {
-                        return warning(member, member.expectTrait(SensitiveTrait.class),
-                                "Members marked with the `sensitive` trait should not target shapes that represent "
-                                + "concrete data types like structures, unions, or enums. A better approach is to "
-                                + "instead mark the targeted shape as sensitive and omit the `sensitive` trait from "
-                                + "the member. This helps to prevent modeling mistakes by ensuring every reference "
-                                + "to concrete data types that are inherently sensitive are always considered "
-                                + "sensitive. Concrete types that are conditionally sensitive should generally be "
-                                + "separated into two types: one to represent a sensitive type and one to represent "
-                                + "the normal type.");
-                    }
-                    return null;
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        for (MemberShape member : model.getMemberShapesWithTrait(SensitiveTrait.class)) {
+            SensitiveTrait trait = member.expectTrait(SensitiveTrait.class);
+            model.getShape(member.getTarget()).ifPresent(target -> {
+                if (target.hasTrait(SensitiveTrait.class)) {
+                    events.add(warning(member, trait, "Redundant `sensitive` trait found on member that targets a "
+                                                      + "`sensitive` shape"));
+                } else if (isBadSensitiveTarget(target)) {
+                    events.add(warning(member, trait,
+                                       "Members marked with the `sensitive` trait should not target shapes that "
+                                       + "represent concrete data types like structures, unions, or enums. A better "
+                                       + "approach is to instead mark the targeted shape as sensitive and omit the "
+                                       + "`sensitive` trait from the member. This helps to prevent modeling mistakes "
+                                       + "by ensuring every reference to concrete data types that are inherently "
+                                       + "sensitive are always considered sensitive. Concrete types that are "
+                                       + "conditionally sensitive should generally be separated into two types: one "
+                                       + "to represent a sensitive type and one to represent the normal type."));
+                }
+            });
+        }
+        return events;
     }
 
     private boolean isBadSensitiveTarget(Shape target) {

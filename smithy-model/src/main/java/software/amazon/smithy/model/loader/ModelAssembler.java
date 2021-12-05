@@ -37,6 +37,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.Node;
@@ -258,11 +259,10 @@ public final class ModelAssembler {
         Objects.requireNonNull(importPath, "The importPath provided to ModelAssembler#addImport was null");
 
         if (Files.isDirectory(importPath)) {
-            try {
-                Files.walk(importPath, FileVisitOption.FOLLOW_LINKS)
-                        .filter(p -> !p.equals(importPath))
-                        .filter(p -> Files.isDirectory(p) || Files.isRegularFile(p))
-                        .forEach(this::addImport);
+            try (Stream<Path> files = Files.walk(importPath, FileVisitOption.FOLLOW_LINKS)
+                    .filter(p -> !p.equals(importPath))
+                    .filter(p -> Files.isDirectory(p) || Files.isRegularFile(p))) {
+                files.forEach(this::addImport);
             } catch (IOException e) {
                 throw new ModelImportException("Error loading the contents of " + importPath, e);
             }
@@ -545,22 +545,19 @@ public final class ModelAssembler {
         }
 
         // Create "model files" for the prelude, manually added shapes, imports, etc.
-        List<ModelFile> modelFiles = createModelFiles();
+        CompositeModelFile composite = new CompositeModelFile(traitFactory, createModelFiles());
 
         try {
-            CompositeModelFile files = new CompositeModelFile(traitFactory, modelFiles);
-            TraitContainer traits = files.resolveShapes(files.shapeIds(), files::getShapeType);
+            TraitContainer traits = composite.resolveShapes(composite.shapeIds(), composite::getShapeType);
             Model model = Model.builder()
-                    .metadata(files.metadata())
-                    .addShapes(files.createShapes(traits))
+                    .metadata(composite.metadata())
+                    .addShapes(composite.createShapes(traits))
                     .build();
-            return validate(model, traits, files.events());
+            return validate(model, traits, composite.events());
         } catch (SourceException e) {
             List<ValidationEvent> events = new ArrayList<>();
             events.add(ValidationEvent.fromSourceException(e));
-            for (ModelFile modelFile : modelFiles) {
-                events.addAll(modelFile.events());
-            }
+            events.addAll(composite.events());
             return ValidatedResult.fromErrors(events);
         }
     }

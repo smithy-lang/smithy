@@ -15,13 +15,12 @@
 
 package software.amazon.smithy.model.neighbor;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.loader.Prelude;
-import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.utils.FunctionalUtils;
@@ -57,23 +56,27 @@ public final class UnreferencedShapes {
         Walker shapeWalker = new Walker(NeighborProviderIndex.of(model).getProvider());
 
         // Find all shapes connected to any service shape.
-        Set<Shape> connected = model.shapes(ServiceShape.class)
-                .flatMap(service -> shapeWalker.walkShapes(service).stream())
-                .collect(Collectors.toSet());
+        Set<Shape> connected = new HashSet<>();
+        for (Shape service : model.getServiceShapes()) {
+            connected.addAll(shapeWalker.walkShapes(service));
+        }
 
         // Don't remove shapes that are traits or connected to traits.
-        model.shapes()
-                .filter(shape -> shape.hasTrait(TraitDefinition.class))
-                .flatMap(shape -> shapeWalker.walkShapes(shape).stream())
-                .forEach(connected::add);
+        for (Shape trait : model.getShapesWithTrait(TraitDefinition.class)) {
+            connected.addAll(shapeWalker.walkShapes(trait));
+        }
 
         // Any shape that wasn't identified as connected to a service is considered unreferenced.
-        return model.shapes()
-                .filter(FunctionalUtils.not(Shape::isMemberShape))
-                .filter(FunctionalUtils.not(connected::contains))
-                // Retain prelude shapes
-                .filter(FunctionalUtils.not(Prelude::isPreludeShape))
-                .filter(keepFilter)
-                .collect(Collectors.toSet());
+        Set<Shape> result = new HashSet<>();
+        for (Shape shape : model.toSet()) {
+            if (!shape.isMemberShape()
+                    && !connected.contains(shape)
+                    && !Prelude.isPreludeShape(shape)
+                    && keepFilter.test(shape)) {
+                result.add(shape);
+            }
+        }
+
+        return result;
     }
 }
