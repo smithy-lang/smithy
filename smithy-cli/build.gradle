@@ -17,7 +17,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
     id "application"
-    id "org.beryx.runtime" version "1.12.5"
+    id "org.beryx.runtime" version "1.12.7"
 }
 
 description = "This module implements the Smithy command line interface."
@@ -25,7 +25,7 @@ description = "This module implements the Smithy command line interface."
 ext {
     displayName = "Smithy :: CLI"
     moduleName = "software.amazon.smithy.cli"
-    imageJreVersion = "16"
+    imageJreVersion = "17"
     correttoRoot = "https://corretto.aws/downloads/latest/amazon-corretto-${imageJreVersion}"
 }
 
