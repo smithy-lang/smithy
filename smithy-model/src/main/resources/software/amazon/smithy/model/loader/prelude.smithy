@@ -51,8 +51,6 @@ double Double
 
 double PrimitiveDouble
 
-/// The single unit type shape, similar to Void and None in other
-/// languages, used to represent no meaningful value.
 @unitType
 structure Unit {}
 

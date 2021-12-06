@@ -217,8 +217,6 @@ The `Unit` shape and `unitType` trait are modeled in the prelude as:
 ```
 namespace smithy.api
 
-/// The single unit type shape, similar to Void and None in other
-/// languages, used to represent no meaningful value.
 @unitType
 structure Unit {}
 
