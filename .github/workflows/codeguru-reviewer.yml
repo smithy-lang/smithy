@@ -30,19 +30,21 @@ jobs:
         cp -r smithy-*/build/classes/java/main/* class-files 
 
     - name: Assume IAM Role
+      continue-on-error: true
       uses: aws-actions/configure-aws-credentials@v1
       with:
         role-to-assume: arn:aws:iam::048169001733:role/GuruGitHubCICDRole
         aws-region: us-west-2
 
     - name: Run CodeGuru Reviewer
+      if: ${{ success() }}
       uses: aws-actions/codeguru-reviewer@v1.1
-      continue-on-error: false
       with:          
         s3_bucket: codeguru-reviewer-github-profiler-demo-048169001733-uw2
         build_path: ./class-files
 
     - name: Upload review result
+      if: ${{ success() }}
       uses: github/codeql-action/upload-sarif@v1
       with:
         sarif_file: codeguru-results.sarif.json
