@@ -234,6 +234,13 @@ project.afterEvaluate {
 allprojects {
     tasks.withType(Javadoc) {
         options.addStringOption('Xdoclint:-html', '-quiet')
+        // Fixed in JDK 12: https://bugs.openjdk.java.net/browse/JDK-8215291
+        // --no-module-directories does not exist in JDK 8 and is removed in 13
+        if (JavaVersion.current().isJava9()
+                || JavaVersion.current().isJava10()
+                || JavaVersion.current().isJava11()) {
+            options.addBooleanOption('-no-module-directories', true)
+        }
     }
 }
 
