@@ -21,7 +21,7 @@ jobs:
       with:
         role-to-assume: arn:aws:iam::048169001733:role/GuruGitHubCICDRole
         aws-region: us-west-2
-        
+
     - if: ${{ failure() }}
       name: You do not have permission to assume this Role.
       run: exit 0
@@ -34,14 +34,13 @@ jobs:
       with:
         java-version: 1.8
     - name: Compile
-      run: ./gradlew compileJava -x test
+      run: ./gradlew compileJava -x test      
     - name: Copy build artifacts
       run: |
         mkdir -p class-files
         cp -r smithy-*/build/classes/java/main/* class-files 
 
     - name: Run CodeGuru Reviewer
-      if: ${{ success() }}
       uses: aws-actions/codeguru-reviewer@v1.1
       with:          
         s3_bucket: codeguru-reviewer-github-profiler-demo-048169001733-uw2
