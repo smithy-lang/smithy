@@ -61,6 +61,8 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.DocumentationTrait;
+import software.amazon.smithy.model.traits.InputTrait;
+import software.amazon.smithy.model.traits.OutputTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.Severity;
@@ -616,10 +618,12 @@ final class IdlModelParser extends SimpleParser {
         parseProperties(id, propertyName -> {
             switch (propertyName) {
                 case "input":
-                    parseInlineableOperationMember(id, operationInputSuffix, builder::input);
+                    TraitEntry inputTrait = new TraitEntry(InputTrait.ID.toString(), Node.objectNode(), true);
+                    parseInlineableOperationMember(id, operationInputSuffix, builder::input, inputTrait);
                     break;
                 case "output":
-                    parseInlineableOperationMember(id, operationOutputSuffix, builder::output);
+                    TraitEntry outputTrait = new TraitEntry(OutputTrait.ID.toString(), Node.objectNode(), true);
+                    parseInlineableOperationMember(id, operationOutputSuffix, builder::output, outputTrait);
                     break;
                 case "errors":
                     parseIdList(builder::addError);
@@ -653,7 +657,12 @@ final class IdlModelParser extends SimpleParser {
         expect('}');
     }
 
-    private void parseInlineableOperationMember(ShapeId id, String suffix, Consumer<ShapeId> consumer) {
+    private void parseInlineableOperationMember(
+            ShapeId id,
+            String suffix,
+            Consumer<ShapeId> consumer,
+            TraitEntry defaultTrait
+    ) {
         if (peek() == '=') {
             if (!modelFile.getVersion().supportsInlineOperationIO()) {
                 throw syntax(id, "Inlined operation inputs and outputs can only be used with Smithy version 2 or "
@@ -662,15 +671,18 @@ final class IdlModelParser extends SimpleParser {
             expect('=');
             clearPendingDocs();
             ws();
-            consumer.accept(parseInlineStructure(id.getName() + suffix));
+            consumer.accept(parseInlineStructure(id.getName() + suffix, defaultTrait));
         } else {
             ws();
             modelFile.addForwardReference(ParserUtils.parseShapeId(this), consumer);
         }
     }
 
-    private ShapeId parseInlineStructure(String name) {
+    private ShapeId parseInlineStructure(String name, TraitEntry defaultTrait) {
         List<TraitEntry> traits = parseDocsAndTraits();
+        if (defaultTrait != null) {
+            traits.add(defaultTrait);
+        }
         ShapeId id = ShapeId.fromRelative(modelFile.namespace(), name);
         SourceLocation location = currentLocation();
         parseMixins(id);
