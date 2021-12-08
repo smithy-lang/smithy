@@ -11,10 +11,16 @@
             }
         },
         "com.example#OperationRequest": {
-            "type": "structure"
+            "type": "structure",
+            "traits": {
+                "smithy.api#input": {}
+            }
         },
         "com.example#OperationResponse": {
-            "type": "structure"
+            "type": "structure",
+            "traits": {
+                "smithy.api#output": {}
+            }
         }
     }
 }
