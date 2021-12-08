@@ -11,6 +11,11 @@ operation DerivedNames {
     }
 }
 
+operation DoesNotInlineWithoutIOTrait {
+    input: DoesNotInlineWithoutIOTraitInput
+    output: DoesNotInlineWithoutIOTraitOutput
+}
+
 operation EmptyShapes {
     input := {}
     output := {}
@@ -59,6 +64,10 @@ operation UsesTraitsAndMixins {
             id: String
         }
 }
+
+structure DoesNotInlineWithoutIOTraitInput {}
+
+structure DoesNotInlineWithoutIOTraitOutput {}
 
 @mixin
 structure NameBearer {
