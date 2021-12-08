@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +43,12 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.AnnotationTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.IdRefTrait;
+import software.amazon.smithy.model.traits.InputTrait;
+import software.amazon.smithy.model.traits.OutputTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.ListUtils;
@@ -165,16 +169,20 @@ public final class SmithyIdlModelSerializer {
                 continue;
             }
             OperationShape operation = shape.asOperationShape().get();
-            operation.getInput().ifPresent(shapeId -> {
-                if (shapes.contains(fullModel.expectShape(shapeId))) {
-                    inlineableShapes.add(shapeId);
+            if (!operation.getInputShape().equals(UnitTypeTrait.UNIT)) {
+                Shape inputShape = fullModel.expectShape(operation.getInputShape());
+                if (shapes.contains(inputShape) && inputShape.hasTrait(InputTrait.ID)
+                        && operation.getInputShape().getName().equals(operation.getId().getName() + "Input")) {
+                    inlineableShapes.add(operation.getInputShape());
                 }
-            });
-            operation.getOutput().ifPresent(shapeId -> {
-                if (shapes.contains(fullModel.expectShape(shapeId))) {
-                    inlineableShapes.add(shapeId);
+            }
+            if (!operation.getOutputShape().equals(UnitTypeTrait.UNIT)) {
+                Shape outputShape = fullModel.expectShape(operation.getOutputShape());
+                if (shapes.contains(outputShape) && outputShape.hasTrait(OutputTrait.ID)
+                        && operation.getOutputShape().getName().equals(operation.getId().getName() + "Output")) {
+                    inlineableShapes.add(operation.getOutputShape());
                 }
-            });
+            }
         }
         return inlineableShapes;
     }
@@ -603,10 +611,8 @@ public final class SmithyIdlModelSerializer {
             serializeTraits(shape);
             codeWriter.openBlock("operation $L {", shape.getId().getName());
             List<MemberShape> mixinMembers = new ArrayList<>();
-            mixinMembers.addAll(writeInlineableProperty(
-                    "input", shape.getInputShape(), shape.getId().getName() + "Input"));
-            mixinMembers.addAll(writeInlineableProperty(
-                    "output", shape.getOutputShape(), shape.getId().getName() + "Output"));
+            mixinMembers.addAll(writeInlineableProperty("input", shape.getInputShape(), InputTrait.ID));
+            mixinMembers.addAll(writeInlineableProperty("output", shape.getOutputShape(), OutputTrait.ID));
             codeWriter.writeOptionalIdList("errors", shape.getErrors());
             codeWriter.closeBlock("}");
             codeWriter.write("");
@@ -614,19 +620,24 @@ public final class SmithyIdlModelSerializer {
             return null;
         }
 
-        private Collection<MemberShape> writeInlineableProperty(String key, ShapeId shapeId, String defaultName) {
+        private Collection<MemberShape> writeInlineableProperty(String key, ShapeId shapeId, ShapeId defaultTrait) {
             if (!inlineableShapes.contains(shapeId)) {
                 codeWriter.write("$L: $I", key, shapeId);
                 return Collections.emptyList();
             }
 
             StructureShape structure = model.expectShape(shapeId, StructureShape.class);
-            if (structure.getAllTraits().isEmpty()) {
+            if (hasOnlyDefaultTrait(structure, defaultTrait)) {
                 codeWriter.writeInline("$L := ", key);
             } else {
                 codeWriter.write("$L := ", key);
                 codeWriter.indent();
-                serializeTraits(structure);
+                Map<ShapeId, Trait> traits = structure.getAllTraits();
+                if (defaultTrait != null) {
+                    traits = new HashMap<>(traits);
+                    traits.remove(defaultTrait);
+                }
+                serializeTraits(traits);
             }
 
             List<MemberShape> nonMixinMembers = new ArrayList<>();
@@ -642,11 +653,15 @@ public final class SmithyIdlModelSerializer {
             writeMixins(structure, !nonMixinMembers.isEmpty());
             writeShapeMembers(nonMixinMembers, true);
 
-            if (!structure.getAllTraits().isEmpty()) {
+            if (!hasOnlyDefaultTrait(structure, defaultTrait)) {
                 codeWriter.dedent();
             }
 
             return mixinMembers;
+        }
+
+        private boolean hasOnlyDefaultTrait(Shape shape, ShapeId defaultTrait) {
+            return shape.getAllTraits().size() == 1 && shape.hasTrait(defaultTrait);
         }
     }
 
