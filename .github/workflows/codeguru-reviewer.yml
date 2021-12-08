@@ -15,6 +15,17 @@ jobs:
   CodeGuruReviewerScan:
     runs-on: ubuntu-latest
     steps:
+    - name: Assume IAM Role
+      continue-on-error: true
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: arn:aws:iam::048169001733:role/GuruGitHubCICDRole
+        aws-region: us-west-2
+        
+    - if: ${{ failure() }}
+      name: You do not have permission to assume this Role.
+      run: exit 0
+
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
@@ -28,13 +39,6 @@ jobs:
       run: |
         mkdir -p class-files
         cp -r smithy-*/build/classes/java/main/* class-files 
-
-    - name: Assume IAM Role
-      continue-on-error: true
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        role-to-assume: arn:aws:iam::048169001733:role/GuruGitHubCICDRole
-        aws-region: us-west-2
 
     - name: Run CodeGuru Reviewer
       if: ${{ success() }}
