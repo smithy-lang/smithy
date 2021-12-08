@@ -1,5 +1,5 @@
 
-# Runs CodeGuru Reviewer on push and pull_request events,
+# Runs CodeGuru Reviewer on push events,
 # and uploads recommendations to the GitHub Security tab.
 # For information on the setup see:
 # https://github.com/aws-samples/aws-codeguru-reviewer-cicd-cdk-sample
