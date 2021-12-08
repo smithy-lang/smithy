@@ -16,32 +16,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Assume IAM Role
+      id: iam-role
       continue-on-error: true
       uses: aws-actions/configure-aws-credentials@v1
       with:
         role-to-assume: arn:aws:iam::048169001733:role/GuruGitHubCICDRole
         aws-region: us-west-2
 
+    - if: steps.iam-role.outcome != 'success'
+      name: You do not have permission to assume this Role. Check the AWS Console for more information.
+      run: exit 0
+
     - uses: actions/checkout@v2
-      if: ${{ success() }}
       with:
         fetch-depth: 0
     - name: Set up JDK 1.8
-      if: ${{ success() }}
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
     - name: Compile
-      if: ${{ success() }}
       run: ./gradlew compileJava -x test      
     - name: Copy build artifacts
-      if: ${{ success() }}
       run: |
         mkdir -p class-files
         cp -r smithy-*/build/classes/java/main/* class-files 
 
     - name: Run CodeGuru Reviewer
-      if: ${{ success() }}
+      id: guruscan
       continue-on-error: true
       uses: aws-actions/codeguru-reviewer@v1.1
       with:          
@@ -49,11 +50,7 @@ jobs:
         build_path: ./class-files
 
     - name: Upload review result
-      if: ${{ success() }}
+      if: steps.guruscan.outcome == 'success'
       uses: github/codeql-action/upload-sarif@v1
       with:
         sarif_file: codeguru-results.sarif.json
-
-    - if: ${{ failure() }}
-      name: You do not have permission to assume this Role. Check the AWS Console for more information.
-      run: exit 0
