@@ -36,8 +36,7 @@ jobs:
 
     - name: Compile
       if: steps.iam-role.outcome == 'success'
-      run: ./gradlew compileJava -x test
-
+      run: ./gradlew compileJava -x test      
     - name: Copy build artifacts
       if: steps.iam-role.outcome == 'success'
       run: |
@@ -58,9 +57,3 @@ jobs:
       uses: github/codeql-action/upload-sarif@v1
       with:
         sarif_file: codeguru-results.sarif.json
-
-    - if: steps.iam-role.outcome != 'success'
-      name: Error Handling
-      run: |
-        echo "Not able to run CodeGuru from the container."
-        exit 0
