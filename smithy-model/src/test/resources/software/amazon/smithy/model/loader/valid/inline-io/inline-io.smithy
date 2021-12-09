@@ -67,3 +67,8 @@ operation HasDocComments {
         /// Here too
         {}
 }
+
+operation DuplicateTrait {
+    input := @input {}
+    output := @output {}
+}
