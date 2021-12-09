@@ -34,7 +34,14 @@ ext {
 if (Os.isFamily(Os.FAMILY_WINDOWS)) {
     ext.set("imageOs", "win64")
 } else if (Os.isFamily(Os.FAMILY_MAC)) {
-    ext.set("imageOs", "osx-x86_64")
+    if (Os.isArch("aarch64")) {
+        ext.set("imageOs", "osx-aarch_64")
+    } else if (Os.isArch("x86_64")) {
+        ext.set("imageOs", "osx-x86_64")
+    } else {
+        println("No JDK for ${System.getProperty("os.arch")}")
+        ext.set("imageOs", "")
+    }
 } else if (Os.isFamily(Os.FAMILY_UNIX)) {
     if (Os.isArch("aarch")) {
         ext.set("imageOs", "linux-aarch_64")
@@ -82,6 +89,10 @@ runtime {
 
     targetPlatform("osx-x86_64") {
         jdkHome = jdkDownload("${correttoRoot}-x64-macos-jdk.tar.gz")
+    }
+
+    targetPlatform("osx-aarch_64") {
+        jdkHome = jdkDownload("${correttoRoot}-aarch64-macos-jdk.tar.gz")
     }
 
     targetPlatform("win64") {
