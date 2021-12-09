@@ -203,6 +203,29 @@
                 "smithy.api#documentation": "Here too",
                 "smithy.api#output": {}
             }
+        },
+        "com.example#DuplicateTrait": {
+            "type": "operation",
+            "input": {
+                "target": "com.example#DuplicateTraitInput"
+            },
+            "output": {
+                "target": "com.example#DuplicateTraitOutput"
+            }
+        },
+        "com.example#DuplicateTraitInput": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "com.example#DuplicateTraitOutput": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#output": {}
+            }
         }
     }
 }
