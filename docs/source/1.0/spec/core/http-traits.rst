@@ -404,6 +404,10 @@ pattern of ``/prefix/{label+}/suffix`` and an endpoint of ``https://yourhost``:
       - Yes
       - Matches literal "/prefix", captures "foo/suffix/bar" in greedy
         ``label``, and matches literal "/suffix".
+    * - ``http://yourhost/prefix/suffix``
+      - No
+      - Matches literal "/prefix", matches literal "/suffix", but does not
+        contain a segment to match ``label``.
 
 
 Pattern Validation and Conflict Avoidance
