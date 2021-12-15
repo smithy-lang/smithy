@@ -86,11 +86,6 @@ public abstract class NamedMembersShape extends Shape {
         validateMemberShapeIds();
     }
 
-    @Override
-    protected void validateMixins(Collection<ShapeId> mixins) {
-        // do nothing. Mixins are allowed on structures and unions.
-    }
-
     /**
      * Gets the members of the shape, including mixin members.
      *

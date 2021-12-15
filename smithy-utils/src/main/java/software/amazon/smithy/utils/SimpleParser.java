@@ -103,6 +103,12 @@ public class SimpleParser {
         return column;
     }
 
+    public final void rewind(int position, int line, int column) {
+        this.column = column;
+        this.line = line;
+        this.position = position;
+    }
+
     /**
      * Checks if the parser has reached the end of the expression.
      *
