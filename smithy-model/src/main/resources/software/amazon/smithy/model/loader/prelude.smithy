@@ -762,7 +762,7 @@ structure output {}
 structure unitType {}
 
 /// Makes a structure or union a mixin.
-@trait(selector: ":is(structure, union)")
+@trait(selector: ":not(member)")
 structure mixin {
     localTraits: LocalMixinTraitList
 }

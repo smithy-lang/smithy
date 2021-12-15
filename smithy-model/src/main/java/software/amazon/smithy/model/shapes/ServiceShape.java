@@ -15,11 +15,16 @@
 
 package software.amazon.smithy.model.shapes;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -29,14 +34,52 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class ServiceShape extends EntityShape implements ToSmithyBuilder<ServiceShape> {
 
     private final String version;
+    private final String introducedVersion;
     private final Map<ShapeId, String> rename;
+    private final Map<ShapeId, String> introducedRename;
     private final List<ShapeId> errors;
+    private final List<ShapeId> introducedErrors;
 
     private ServiceShape(Builder builder) {
         super(builder);
-        version = builder.version;
-        rename = builder.rename.copy();
-        errors = builder.errors.copy();
+
+        if (getMixins().isEmpty()) {
+            version = builder.version;
+            introducedVersion = version;
+            rename = builder.rename.copy();
+            introducedRename = rename;
+            errors = builder.errors.copy();
+            introducedErrors = errors;
+        } else {
+            String computedVersion = "";
+            Map<ShapeId, String> computedRename = new HashMap<>();
+            Set<ShapeId> computedErrors = new LinkedHashSet<>();
+
+            for (Shape shape : builder.getMixins().values()) {
+                if (shape.isServiceShape()) {
+                    ServiceShape mixin = shape.asServiceShape().get();
+                    if (!mixin.version.isEmpty()) {
+                        computedVersion = mixin.version;
+                    }
+                    computedRename.putAll(mixin.getRename());
+                    computedErrors.addAll(mixin.getErrors());
+                }
+            }
+
+            introducedVersion = builder.version;
+            introducedRename = builder.rename.copy();
+            introducedErrors = builder.errors.copy();
+
+            if (!introducedVersion.isEmpty()) {
+                computedVersion = introducedVersion;
+            }
+            computedRename.putAll(introducedRename);
+            computedErrors.addAll(introducedErrors);
+
+            version = computedVersion;
+            rename = Collections.unmodifiableMap(computedRename);
+            errors = Collections.unmodifiableList(new ArrayList<>(computedErrors));
+        }
     }
 
     public static Builder builder() {
@@ -46,11 +89,11 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
     @Override
     public Builder toBuilder() {
         return updateBuilder(builder())
-                .version(version)
-                .errors(errors)
-                .rename(rename)
-                .operations(getOperations())
-                .resources(getResources());
+                .version(introducedVersion)
+                .errors(introducedErrors)
+                .rename(introducedRename)
+                .operations(getIntroducedOperations())
+                .resources(getIntroducedResources());
     }
 
     @Override
@@ -86,10 +129,31 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
     }
 
     /**
+     * Gets the version of the service introduced by the shape and not
+     * inherited from mixins. An empty string is returned if the version
+     * is undefined.
+     *
+     * @return The introduced version of the service.
+     */
+    public String getIntroducedVersion() {
+        return introducedVersion;
+    }
+
+    /**
      * @return The rename map of the service.
      */
     public Map<ShapeId, String> getRename() {
         return rename;
+    }
+
+    /**
+     * Gets the rename map introduced by the shape and not inherited
+     * from mixins.
+     *
+     * @return The introduced rename map of the service.
+     */
+    public Map<ShapeId, String> getIntroducedRename() {
+        return introducedRename;
     }
 
     /**
@@ -104,6 +168,21 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
      */
     public List<ShapeId> getErrors() {
         return errors;
+    }
+
+    /**
+     * Gets the list of common errors introduced by the shape and not
+     * inherited from mixins. These errors can be encountered by every
+     * operation in the service.
+     *
+     * Each returned {@link ShapeId} must resolve to a
+     * {@link StructureShape} that is targeted by an error trait; however,
+     * this is only guaranteed after a model is validated.
+     *
+     * @return Returns the introduced service errors.
+     */
+    public List<ShapeId> getIntroducedErrors() {
+        return introducedErrors;
     }
 
     /**
@@ -236,6 +315,35 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
         public Builder clearErrors() {
             errors.clear();
             return this;
+        }
+
+        @Override
+        public Builder flattenMixins() {
+            String flatVersion = version;
+            Map<ShapeId, String> flatRename = new HashMap<>();
+            Set<ShapeId> flatErrors = new LinkedHashSet<>();
+
+            for (Shape shape : getMixins().values()) {
+                if (shape.isServiceShape()) {
+                    ServiceShape mixin = shape.asServiceShape().get();
+                    if (!mixin.version.isEmpty()) {
+                        flatVersion = mixin.version;
+                    }
+                    flatRename.putAll(mixin.getRename());
+                    flatErrors.addAll(mixin.getErrors());
+                }
+            }
+
+            if (!version.isEmpty()) {
+                flatVersion = version;
+            }
+            flatRename.putAll(rename.peek());
+            flatErrors.addAll(errors.peek());
+
+            version = flatVersion;
+            rename(flatRename);
+            errors(flatErrors);
+            return super.flattenMixins();
         }
     }
 }
