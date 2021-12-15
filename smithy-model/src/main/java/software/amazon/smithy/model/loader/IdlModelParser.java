@@ -66,7 +66,6 @@ import software.amazon.smithy.model.traits.OutputTrait;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SetUtils;
@@ -443,7 +442,6 @@ final class IdlModelParser extends SimpleParser {
         }
 
         addTraits(id, traits);
-        clearPendingDocs();
         ws();
     }
 
@@ -454,6 +452,10 @@ final class IdlModelParser extends SimpleParser {
 
     private void parseSimpleShape(ShapeId id, SourceLocation location, AbstractShapeBuilder builder) {
         modelFile.onShape(builder.source(location).id(id));
+        parseMixins(id);
+        // Pending docs get cleared by parseMixins. It can't be done here because the
+        // mixin parser needs to consume whitespace that may include doc comments for
+        // the next shape in the model.
     }
 
     // See parseMap for information on why members are parsed before the
@@ -461,15 +463,14 @@ final class IdlModelParser extends SimpleParser {
     private void parseCollection(ShapeId id, SourceLocation location, CollectionShape.Builder builder) {
         ws();
         builder.id(id).source(location);
+        parseMixins(id);
         parseMembers(id, SetUtils.of("member"));
         modelFile.onShape(builder.id(id));
+        clearPendingDocs();
     }
 
     private void parseMembers(ShapeId id, Set<String> requiredMembers) {
         Set<String> definedMembers = new HashSet<>();
-        Set<String> remaining = requiredMembers.isEmpty()
-                ? requiredMembers
-                : new HashSet<>(requiredMembers);
 
         ws();
         expect('{');
@@ -480,7 +481,7 @@ final class IdlModelParser extends SimpleParser {
                 break;
             }
 
-            parseMember(id, requiredMembers, definedMembers, remaining);
+            parseMember(id, requiredMembers, definedMembers);
 
             // Clears out any previously captured documentation
             // comments that may have been found when parsing the member.
@@ -493,15 +494,14 @@ final class IdlModelParser extends SimpleParser {
             expect('}');
         }
 
-        if (!remaining.isEmpty()) {
-            throw syntax(id, "Missing required members of shape `" + id + "`: ["
-                         + ValidationUtils.tickedList(remaining) + ']');
-        }
-
         expect('}');
     }
 
-    private void parseMember(ShapeId parent, Set<String> required, Set<String> defined, Set<String> remaining) {
+    private void parseMember(
+            ShapeId parent,
+            Set<String> allowed,
+            Set<String> defined
+    ) {
         // Parse optional member traits.
         List<TraitEntry> memberTraits = parseDocsAndTraits();
         SourceLocation memberLocation = currentLocation();
@@ -513,10 +513,9 @@ final class IdlModelParser extends SimpleParser {
         }
 
         defined.add(memberName);
-        remaining.remove(memberName);
 
         // Only enforce "allowedMembers" if it isn't empty.
-        if (!required.isEmpty() && !required.contains(memberName)) {
+        if (!allowed.isEmpty() && !allowed.contains(memberName)) {
             throw syntax(parent, "Unexpected member of " + parent + ": '" + memberName + '\'');
         }
 
@@ -545,8 +544,10 @@ final class IdlModelParser extends SimpleParser {
         // on a builder. This does not suffer the same error messages as
         // structures/unions because list/set/map have a fixed and required
         // set of members that must be provided.
+        parseMixins(id);
         parseMembers(id, SetUtils.of("key", "value"));
         modelFile.onShape(MapShape.builder().id(id).source(location));
+        clearPendingDocs();
     }
 
     private void parseStructuredShape(
@@ -566,9 +567,13 @@ final class IdlModelParser extends SimpleParser {
         // Parse optional "with" statements to add mixins, but only if it's supported by the version.
         parseMixins(id);
         parseMembers(id, Collections.emptySet());
+        clearPendingDocs();
     }
 
     private void parseMixins(ShapeId id) {
+        // This is fine for now, but if we ever add any other keywords that start with
+        // 'w' then we'll need to peek farther.
+        ws();
         if (peek() != 'w') {
             return;
         }
@@ -585,13 +590,39 @@ final class IdlModelParser extends SimpleParser {
 
         ws();
         do {
+            clearPendingDocs();
             String target = ParserUtils.parseShapeId(this);
             modelFile.addForwardReference(target, resolved -> modelFile.addPendingMixin(id, resolved));
             ws();
-        } while (peek() != '{');
+        } while (!peekEndWith());
+    }
+
+    private boolean peekEndWith() {
+        if (peek() == '{' || peek() == '@' || eof()) {
+            return true;
+        }
+
+        // We could make this more efficient with a prefix trie
+        for (String shapeType : SHAPE_TYPES) {
+            if (peekString(shapeType)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean peekString(String possibility) {
+        for (int i = 0; i < possibility.length(); i++) {
+            if (peek(i) != possibility.charAt(i)) {
+                return false;
+            }
+        }
+        return !ParserUtils.isValidIdentifierCharacter(peek(possibility.length()));
     }
 
     private void parseOperationStatement(ShapeId id, SourceLocation location) {
+        parseMixins(id);
         OperationShape.Builder builder = OperationShape.builder().id(id).source(location);
         parseProperties(id, propertyName -> {
             switch (propertyName) {
@@ -611,6 +642,7 @@ final class IdlModelParser extends SimpleParser {
             }
         });
         modelFile.onShape(builder);
+        clearPendingDocs();
     }
 
     private void parseProperties(ShapeId id, Consumer<String> valueParser) {
@@ -691,6 +723,7 @@ final class IdlModelParser extends SimpleParser {
 
     private void parseServiceStatement(ShapeId id, SourceLocation location) {
         ws();
+        parseMixins(id);
         ServiceShape.Builder builder = new ServiceShape.Builder().id(id).source(location);
         ObjectNode shapeNode = IdlNodeParser.parseObjectNode(this, id.toString());
         LoaderUtils.checkForAdditionalProperties(shapeNode, id, SERVICE_PROPERTY_NAMES, modelFile.events());
@@ -700,6 +733,7 @@ final class IdlModelParser extends SimpleParser {
         optionalIdList(shapeNode, RESOURCES_KEY, builder::addResource);
         optionalIdList(shapeNode, ERRORS_KEYS, builder::addError);
         AstModelLoader.loadServiceRenameIntoBuilder(builder, shapeNode);
+        clearPendingDocs();
     }
 
     private void optionalId(ObjectNode node, String name, Consumer<ShapeId> consumer) {
@@ -719,6 +753,7 @@ final class IdlModelParser extends SimpleParser {
 
     private void parseResourceStatement(ShapeId id, SourceLocation location) {
         ws();
+        parseMixins(id);
         ResourceShape.Builder builder = ResourceShape.builder().id(id).source(location);
         modelFile.onShape(builder);
         ObjectNode shapeNode = IdlNodeParser.parseObjectNode(this, id.toString());
@@ -742,6 +777,7 @@ final class IdlModelParser extends SimpleParser {
                 modelFile.addForwardReference(target.getValue(), targetId -> builder.addIdentifier(name, targetId));
             }
         });
+        clearPendingDocs();
     }
 
     // "//" *(not_newline)
