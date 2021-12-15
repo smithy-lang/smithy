@@ -15,7 +15,7 @@
 
 package software.amazon.smithy.model.shapes;
 
-import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
@@ -39,7 +39,7 @@ public final class MemberShape extends Shape implements ToSmithyBuilder<MemberSh
     }
 
     @Override
-    protected void validateMixins(Collection<ShapeId> mixins) {
+    protected void validateMixins(Map<ShapeId, Shape> mixins, Map<ShapeId, Trait> introducedTraits) {
         // This can only happen by manipulating the semantic model in code.
         if (mixins.size() > 1) {
             throw new SourceException("Members must not have more than one mixin: " + getId(), this);

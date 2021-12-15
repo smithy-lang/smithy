@@ -389,7 +389,9 @@ public final class SmithyIdlModelSerializer {
         @Override
         protected Void getDefault(Shape shape) {
             serializeTraits(shape);
-            codeWriter.write("$L $L", shape.getType(), shape.getId().getName()).write("");
+            codeWriter.writeInline("$L $L ", shape.getType(), shape.getId().getName());
+            writeMixins(shape, false);
+            codeWriter.write("").write("");
             return null;
         }
 
@@ -404,7 +406,7 @@ public final class SmithyIdlModelSerializer {
                 }
             }
 
-            serializeTraits(shape.getIntroducedTraits());
+            serializeTraits(shape);
             codeWriter.writeInline("$L $L ", shape.getType(), shape.getId().getName());
 
             writeMixins(shape, !nonMixinMembers.isEmpty());
@@ -459,7 +461,7 @@ public final class SmithyIdlModelSerializer {
         }
 
         private void serializeTraits(Shape shape) {
-            serializeTraits(shape.getAllTraits());
+            serializeTraits(shape.getIntroducedTraits());
         }
 
         private void serializeTraits(Map<ShapeId, Trait> traits, TraitFeature... traitFeatures) {
@@ -544,18 +546,20 @@ public final class SmithyIdlModelSerializer {
         @Override
         public Void serviceShape(ServiceShape shape) {
             serializeTraits(shape);
-            codeWriter.openBlock("service $L {", shape.getId().getName());
+            codeWriter.writeInline("service $L ", shape.getId().getName());
+            writeMixins(shape, false);
+            codeWriter.openBlock("{");
 
-            if (!StringUtils.isBlank(shape.getVersion())) {
-                codeWriter.write("version: $S", shape.getVersion());
+            if (!StringUtils.isBlank(shape.getIntroducedVersion())) {
+                codeWriter.write("version: $S", shape.getIntroducedVersion());
             }
 
-            codeWriter.writeOptionalIdList("operations", shape.getOperations());
-            codeWriter.writeOptionalIdList("resources", shape.getResources());
-            codeWriter.writeOptionalIdList("errors", shape.getErrors());
-            if (!shape.getRename().isEmpty()) {
+            codeWriter.writeOptionalIdList("operations", shape.getIntroducedOperations());
+            codeWriter.writeOptionalIdList("resources", shape.getIntroducedResources());
+            codeWriter.writeOptionalIdList("errors", shape.getIntroducedErrors());
+            if (!shape.getIntroducedRename().isEmpty()) {
                 codeWriter.openBlock("rename: {", "}", () -> {
-                    for (Map.Entry<ShapeId, String> entry : shape.getRename().entrySet()) {
+                    for (Map.Entry<ShapeId, String> entry : shape.getIntroducedRename().entrySet()) {
                         codeWriter.write("$S: $S", entry.getKey(), entry.getValue());
                     }
                 });
@@ -567,7 +571,9 @@ public final class SmithyIdlModelSerializer {
         @Override
         public Void resourceShape(ResourceShape shape) {
             serializeTraits(shape);
-            codeWriter.openBlock("resource $L {", shape.getId().getName());
+            codeWriter.writeInline("resource $L ", shape.getId().getName());
+            writeMixins(shape, false);
+            codeWriter.openBlock("{");
             if (!shape.getIdentifiers().isEmpty()) {
                 codeWriter.openBlock("identifiers: {");
                 shape.getIdentifiers().entrySet().stream()
@@ -583,9 +589,9 @@ public final class SmithyIdlModelSerializer {
             shape.getUpdate().ifPresent(shapeId -> codeWriter.write("update: $I", shapeId));
             shape.getDelete().ifPresent(shapeId -> codeWriter.write("delete: $I", shapeId));
             shape.getList().ifPresent(shapeId -> codeWriter.write("list: $I", shapeId));
-            codeWriter.writeOptionalIdList("operations", shape.getOperations());
+            codeWriter.writeOptionalIdList("operations", shape.getIntroducedOperations());
             codeWriter.writeOptionalIdList("collectionOperations", shape.getCollectionOperations());
-            codeWriter.writeOptionalIdList("resources", shape.getResources());
+            codeWriter.writeOptionalIdList("resources", shape.getIntroducedResources());
 
             codeWriter.closeBlock("}");
             codeWriter.write("");
@@ -595,11 +601,13 @@ public final class SmithyIdlModelSerializer {
         @Override
         public Void operationShape(OperationShape shape) {
             serializeTraits(shape);
-            codeWriter.openBlock("operation $L {", shape.getId().getName());
+            codeWriter.writeInline("operation $L ", shape.getId().getName());
+            writeMixins(shape, false);
+            codeWriter.openBlock("{");
             List<MemberShape> mixinMembers = new ArrayList<>();
             mixinMembers.addAll(writeInlineableProperty("input", shape.getInputShape(), InputTrait.ID));
             mixinMembers.addAll(writeInlineableProperty("output", shape.getOutputShape(), OutputTrait.ID));
-            codeWriter.writeOptionalIdList("errors", shape.getErrors());
+            codeWriter.writeOptionalIdList("errors", shape.getIntroducedErrors());
             codeWriter.closeBlock("}");
             codeWriter.write("");
             applyIntroducedTraits(mixinMembers);

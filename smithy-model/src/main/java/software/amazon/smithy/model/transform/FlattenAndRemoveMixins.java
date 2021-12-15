@@ -17,11 +17,8 @@ package software.amazon.smithy.model.transform;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.MixinTrait;
 
 /**
@@ -32,7 +29,7 @@ final class FlattenAndRemoveMixins {
         List<Shape> updatedShapes = new ArrayList<>();
         List<Shape> toRemove = new ArrayList<>();
 
-        Stream.concat(model.shapes(StructureShape.class), model.shapes(UnionShape.class)).forEach(shape -> {
+        model.shapes().forEach(shape -> {
             if (shape.hasTrait(MixinTrait.class)) {
                 toRemove.add(shape);
             } else if (!shape.getMixins().isEmpty()) {
