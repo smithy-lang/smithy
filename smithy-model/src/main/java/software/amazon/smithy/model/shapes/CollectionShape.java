@@ -20,7 +20,8 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
-import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.traits.Trait;
 
 /**
  * Abstract class representing Set and List shapes.
@@ -29,9 +30,9 @@ public abstract class CollectionShape extends Shape {
 
     private final MemberShape member;
 
-    CollectionShape(Builder builder) {
+    CollectionShape(Builder<?, ?> builder) {
         super(builder, false);
-        member = SmithyBuilder.requiredState("member", builder.member);
+        member = builder.member != null ? builder.member : getRequiredMixinMember(builder, "member");
         ShapeId expected = getId().withMember("member");
         if (!member.getId().equals(expected)) {
             throw new IllegalArgumentException(String.format(
@@ -129,6 +130,28 @@ public abstract class CollectionShape extends Shape {
         @Override
         public B addMember(MemberShape member) {
             return member(member);
+        }
+
+        @Override
+        public B flattenMixins() {
+            for (Shape mixin : getMixins().values()) {
+                SourceLocation location = getSourceLocation();
+                Collection<Trait> localTraits = Collections.emptyList();
+                MemberShape mixinMember = ((CollectionShape) mixin).getMember();
+                MemberShape existing = member;
+                if (existing != null) {
+                    localTraits = existing.getIntroducedTraits().values();
+                    location = existing.getSourceLocation();
+                }
+                member = MemberShape.builder()
+                        .id(getId().withMember(mixinMember.getMemberName()))
+                        .target(mixinMember.getTarget())
+                        .addTraits(mixinMember.getAllTraits().values())
+                        .addTraits(localTraits)
+                        .source(location)
+                        .build();
+            }
+            return super.flattenMixins();
         }
     }
 }

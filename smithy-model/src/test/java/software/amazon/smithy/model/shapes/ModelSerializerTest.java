@@ -24,8 +24,18 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
@@ -34,8 +44,25 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
+import software.amazon.smithy.utils.IoUtils;
 
 public class ModelSerializerTest {
+    @TestFactory
+    public Stream<DynamicTest> generateTests() throws IOException, URISyntaxException {
+        return Files.list(Paths.get(
+                        SmithyIdlModelSerializer.class.getResource("ast-serialization/cases").toURI()))
+                .map(path -> DynamicTest.dynamicTest(path.getFileName().toString(), () -> testRoundTrip(path)));
+    }
+
+    public void testRoundTrip(Path path) {
+        Model model = Model.assembler().addImport(path).assemble().unwrap();
+        ModelSerializer serializer = ModelSerializer.builder().build();
+        ObjectNode actual = serializer.serialize(model);
+        ObjectNode expected = Node.parse(IoUtils.readUtf8File(path)).expectObjectNode();
+
+        Node.assertEquals(actual, expected);
+    }
+
     @Test
     public void serializesModels() {
         Model model = Model.assembler()

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -59,6 +60,20 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
         getUpdate().ifPresent(allOperations::add);
         getDelete().ifPresent(allOperations::add);
         getList().ifPresent(allOperations::add);
+
+        if (hasTrait(MixinTrait.ID) && (!getIdentifiers().isEmpty()
+                || getPut().isPresent()
+                || getCreate().isPresent()
+                || getRead().isPresent()
+                || getUpdate().isPresent()
+                || getDelete().isPresent()
+                || getList().isPresent()
+                || !getOperations().isEmpty()
+                || !getResources().isEmpty())) {
+            throw new IllegalStateException(String.format(
+                    "Resource shapes with the mixin trait may not define any properties. Resource mixin shape `%s` "
+                            + "defines one or more properties.", getId()));
+        }
     }
 
     public static Builder builder() {

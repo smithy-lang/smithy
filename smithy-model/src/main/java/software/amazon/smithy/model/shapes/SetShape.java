@@ -120,7 +120,7 @@ public final class SetShape extends ListShape {
         }
 
         @Override
-        public Builder addTraits(Collection<Trait> traitsToAdd) {
+        public Builder addTraits(Collection<? extends Trait> traitsToAdd) {
             return (Builder) super.addTraits(traitsToAdd);
         }
 
