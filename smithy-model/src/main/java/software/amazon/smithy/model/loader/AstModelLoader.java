@@ -223,6 +223,10 @@ enum AstModelLoader {
         modelFile.onShape(builder);
     }
 
+    private void loadOptionalMember(FullyResolvedModelFile modelFile, ShapeId id, ObjectNode node, String member) {
+        node.getObjectMember(member).ifPresent(targetNode -> loadMember(modelFile, id, targetNode));
+    }
+
     private void loadCollection(
             ShapeId id,
             ObjectNode node,
@@ -231,16 +235,18 @@ enum AstModelLoader {
     ) {
         LoaderUtils.checkForAdditionalProperties(node, id, COLLECTION_PROPERTY_NAMES, modelFile.events());
         applyShapeTraits(id, node, modelFile);
-        loadMember(modelFile, id.withMember("member"), node.expectObjectMember("member"));
+        loadOptionalMember(modelFile, id.withMember("member"), node, "member");
         modelFile.onShape(builder.id(id).source(node.getSourceLocation()));
+        addMixins(id, node, modelFile);
     }
 
     private void loadMap(ShapeId id, ObjectNode node, FullyResolvedModelFile modelFile) {
         LoaderUtils.checkForAdditionalProperties(node, id, MAP_PROPERTY_NAMES, modelFile.events());
-        loadMember(modelFile, id.withMember("key"), node.expectObjectMember("key"));
-        loadMember(modelFile, id.withMember("value"), node.expectObjectMember("value"));
+        loadOptionalMember(modelFile, id.withMember("key"), node, "key");
+        loadOptionalMember(modelFile, id.withMember("value"), node, "value");
         applyShapeTraits(id, node, modelFile);
         modelFile.onShape(MapShape.builder().id(id).source(node.getSourceLocation()));
+        addMixins(id, node, modelFile);
     }
 
     private void loadOperation(ShapeId id, ObjectNode node, FullyResolvedModelFile modelFile) {
@@ -253,6 +259,7 @@ enum AstModelLoader {
         loadOptionalTarget(modelFile, id, node, "input").ifPresent(builder::input);
         loadOptionalTarget(modelFile, id, node, "output").ifPresent(builder::output);
         modelFile.onShape(builder);
+        addMixins(id, node, modelFile);
     }
 
     private void loadResource(ShapeId id, ObjectNode node, FullyResolvedModelFile modelFile) {
@@ -279,6 +286,7 @@ enum AstModelLoader {
         });
 
         modelFile.onShape(builder);
+        addMixins(id, node, modelFile);
     }
 
     private void loadService(ShapeId id, ObjectNode node, FullyResolvedModelFile modelFile) {
@@ -291,6 +299,7 @@ enum AstModelLoader {
         loadServiceRenameIntoBuilder(builder, node);
         builder.addErrors(loadOptionalTargetList(modelFile, id, node, ERRORS));
         modelFile.onShape(builder);
+        addMixins(id, node, modelFile);
     }
 
     static void loadServiceRenameIntoBuilder(ServiceShape.Builder builder, ObjectNode node) {
@@ -308,6 +317,7 @@ enum AstModelLoader {
         LoaderUtils.checkForAdditionalProperties(node, id, SIMPLE_PROPERTY_NAMES, modelFile.events());
         applyShapeTraits(id, node, modelFile);
         modelFile.onShape(builder.id(id).source(node.getSourceLocation()));
+        addMixins(id, node, modelFile);
     }
 
     private void loadStructure(ShapeId id, ObjectNode node, FullyResolvedModelFile modelFile) {
@@ -328,7 +338,10 @@ enum AstModelLoader {
         for (Map.Entry<String, Node> entry : memberObject.getStringMap().entrySet()) {
             loadMember(modelFile, id.withMember(entry.getKey()), entry.getValue().expectObjectNode());
         }
+        addMixins(id, node, modelFile);
+    }
 
+    private void addMixins(ShapeId id, ObjectNode node, FullyResolvedModelFile modelFile) {
         ArrayNode mixins = node.getArrayMember(MIXINS).orElse(Node.arrayNode());
         for (ObjectNode mixin : mixins.getElementsAs(ObjectNode.class)) {
             modelFile.addPendingMixin(id, loadReferenceBody(modelFile, id, mixin));

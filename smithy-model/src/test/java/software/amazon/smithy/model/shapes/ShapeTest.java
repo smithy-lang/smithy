@@ -252,12 +252,4 @@ public class ShapeTest {
                     .build();
         });
     }
-
-    @Test
-    public void membersCannotBeAddedToSomeShapes() {
-        Assertions.assertThrows(SourceException.class, () -> {
-            StringShape mixin = StringShape.builder().id("ns.foo#string").build();
-            StringShape.builder().id("ns.foo#bar").addMixin(mixin).build();
-        });
-    }
 }

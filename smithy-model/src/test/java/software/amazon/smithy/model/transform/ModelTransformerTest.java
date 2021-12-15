@@ -169,7 +169,10 @@ public class ModelTransformerTest {
             "loads-mixins",
             "mixins-with-members",
             "mixins-with-members-and-traits",
-            "mixins-with-mixin-local-traits"
+            "mixins-with-mixin-local-traits",
+            "operations",
+            "resources",
+            "services"
         };
     }
 }
