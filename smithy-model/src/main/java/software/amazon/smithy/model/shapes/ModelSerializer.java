@@ -206,12 +206,22 @@ public final class ModelSerializer {
         private final Set<MemberShape> mixinMemberTraits = new TreeSet<>();
 
         private ObjectNode.Builder createTypedBuilder(Shape shape) {
-            return Node.objectNodeBuilder()
+            ObjectNode.Builder builder = Node.objectNodeBuilder()
                     .withMember("type", Node.from(shape.getType().toString()));
+
+            if (!shape.getMixins().isEmpty()) {
+                List<Node> mixins = new ArrayList<>(shape.getMixins().size());
+                for (ShapeId mixin : shape.getMixins()) {
+                    mixins.add(serializeReference(mixin));
+                }
+                builder.withMember("mixins", Node.fromNodes(mixins));
+            }
+
+            return builder;
         }
 
         private ObjectNode.Builder serializeAllTraits(Shape shape, ObjectNode.Builder builder) {
-            return serializeTraits(builder, shape.getAllTraits().values());
+            return serializeTraits(builder, shape.getIntroducedTraits().values());
         }
 
         @Override
@@ -221,24 +231,34 @@ public final class ModelSerializer {
 
         @Override
         public Node listShape(ListShape shape) {
-            return serializeAllTraits(shape, createTypedBuilder(shape)
-                    .withMember("member", shape.getMember().accept(this)))
-                    .build();
+            return collectionShape(shape);
         }
 
         @Override
         public Node setShape(SetShape shape) {
-            return serializeAllTraits(shape, createTypedBuilder(shape)
-                    .withMember("member", shape.getMember().accept(this)))
-                    .build();
+            return collectionShape(shape);
+        }
+
+        public Node collectionShape(CollectionShape shape) {
+            ObjectNode.Builder result = createTypedBuilder(shape);
+            mixinMember(result, shape.getMember(), "member");
+            return serializeAllTraits(shape, result).build();
+        }
+
+        private void mixinMember(ObjectNode.Builder builder, MemberShape member, String key) {
+            if (member.getMixins().isEmpty()) {
+                builder.withMember(key, member.accept(this));
+            } else if (!member.getIntroducedTraits().isEmpty()) {
+                mixinMemberTraits.add(member);
+            }
         }
 
         @Override
         public Node mapShape(MapShape shape) {
-            return serializeAllTraits(shape, createTypedBuilder(shape)
-                    .withMember("key", shape.getKey().accept(this))
-                    .withMember("value", shape.getValue().accept(this)))
-                    .build();
+            ObjectNode.Builder result = createTypedBuilder(shape);
+            mixinMember(result, shape.getKey(), "key");
+            mixinMember(result, shape.getValue(), "value");
+            return serializeAllTraits(shape, result).build();
         }
 
         @Override
@@ -246,7 +266,7 @@ public final class ModelSerializer {
             return serializeAllTraits(shape, createTypedBuilder(shape)
                     .withMember("input", serializeReference(shape.getInputShape()))
                     .withMember("output", serializeReference(shape.getOutputShape()))
-                    .withOptionalMember("errors", createOptionalIdList(shape.getErrors())))
+                    .withOptionalMember("errors", createOptionalIdList(shape.getIntroducedErrors())))
                     .build();
         }
 
@@ -268,9 +288,9 @@ public final class ModelSerializer {
                     .withOptionalMember("update", shape.getUpdate().map(this::serializeReference))
                     .withOptionalMember("delete", shape.getDelete().map(this::serializeReference))
                     .withOptionalMember("list", shape.getList().map(this::serializeReference))
-                    .withOptionalMember("operations", createOptionalIdList(shape.getOperations()))
+                    .withOptionalMember("operations", createOptionalIdList(shape.getIntroducedOperations()))
                     .withOptionalMember("collectionOperations", createOptionalIdList(shape.getCollectionOperations()))
-                    .withOptionalMember("resources", createOptionalIdList(shape.getResources())))
+                    .withOptionalMember("resources", createOptionalIdList(shape.getIntroducedResources())))
                     .build();
         }
 
@@ -278,17 +298,17 @@ public final class ModelSerializer {
         public Node serviceShape(ServiceShape shape) {
             ObjectNode.Builder serviceBuilder = createTypedBuilder(shape);
 
-            if (!StringUtils.isBlank(shape.getVersion())) {
-                serviceBuilder.withMember("version", Node.from(shape.getVersion()));
+            if (!StringUtils.isBlank(shape.getIntroducedVersion())) {
+                serviceBuilder.withMember("version", Node.from(shape.getIntroducedVersion()));
             }
 
-            serviceBuilder.withOptionalMember("operations", createOptionalIdList(shape.getOperations()));
-            serviceBuilder.withOptionalMember("resources", createOptionalIdList(shape.getResources()));
-            serviceBuilder.withOptionalMember("errors", createOptionalIdList(shape.getErrors()));
+            serviceBuilder.withOptionalMember("operations", createOptionalIdList(shape.getIntroducedOperations()));
+            serviceBuilder.withOptionalMember("resources", createOptionalIdList(shape.getIntroducedResources()));
+            serviceBuilder.withOptionalMember("errors", createOptionalIdList(shape.getIntroducedErrors()));
 
-            if (!shape.getRename().isEmpty()) {
+            if (!shape.getIntroducedRename().isEmpty()) {
                 ObjectNode.Builder renameBuilder = Node.objectNodeBuilder();
-                for (Map.Entry<ShapeId, String> entry : shape.getRename().entrySet()) {
+                for (Map.Entry<ShapeId, String> entry : shape.getIntroducedRename().entrySet()) {
                     renameBuilder.withMember(entry.getKey().toString(), entry.getValue());
                 }
                 serviceBuilder.withMember("rename", renameBuilder.build());
@@ -323,22 +343,9 @@ public final class ModelSerializer {
         private ObjectNode createStructureAndUnion(Shape shape, Map<String, MemberShape> members) {
             ObjectNode.Builder result = createTypedBuilder(shape);
 
-            if (!shape.getMixins().isEmpty()) {
-                List<Node> mixins = new ArrayList<>(shape.getMixins().size());
-                for (ShapeId mixin : shape.getMixins()) {
-                    mixins.add(serializeReference(mixin));
-                }
-                result.withMember("mixins", Node.fromNodes(mixins));
-            }
-
             ObjectNode.Builder membersBuilder = ObjectNode.objectNodeBuilder();
             for (MemberShape member : members.values()) {
-                if (member.getMixins().isEmpty()) {
-                    membersBuilder.withMember(member.getMemberName(), member.accept(this));
-                } else if (!member.getIntroducedTraits().isEmpty()) {
-                    // There are traits that need to be added to inherited members.
-                    mixinMemberTraits.add(member);
-                }
+                mixinMember(membersBuilder, member, member.getMemberName());
             }
             result.withMember("members", membersBuilder.build());
 

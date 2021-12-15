@@ -16,11 +16,13 @@
 package software.amazon.smithy.model.shapes;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -33,8 +35,8 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
 
     private MapShape(Builder builder) {
         super(builder, false);
-        key = SmithyBuilder.requiredState("key", builder.key);
-        value = SmithyBuilder.requiredState("value", builder.value);
+        key = builder.key != null ? builder.key : getRequiredMixinMember(builder, "key");
+        value = builder.value != null ? builder.value : getRequiredMixinMember(builder, "value");
         validateMemberShapeIds();
     }
 
@@ -224,6 +226,38 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
             }
 
             return value(builder.build());
+        }
+
+        @Override
+        public Builder flattenMixins() {
+            for (Shape mixin : getMixins().values()) {
+                for (MemberShape member : mixin.members()) {
+                    SourceLocation location = getSourceLocation();
+                    Collection<Trait> localTraits = Collections.emptyList();
+
+                    MemberShape existing;
+                    if (member.getMemberName().equals("key")) {
+                        existing = key;
+                    } else {
+                        existing = value;
+                    }
+
+                    if (existing != null) {
+                        localTraits = existing.getIntroducedTraits().values();
+                        location = existing.getSourceLocation();
+                    }
+
+                    addMember(MemberShape.builder()
+                            .id(getId().withMember(member.getMemberName()))
+                            .target(member.getTarget())
+                            .addTraits(member.getAllTraits().values())
+                            .addTraits(localTraits)
+                            .source(location)
+                            .build());
+                }
+            }
+
+            return super.flattenMixins();
         }
     }
 }

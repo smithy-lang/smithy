@@ -28,6 +28,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ModelSerializer;
+import software.amazon.smithy.model.shapes.Shape;
 
 /**
  * Loads all of the ".smithy" files in idl/valid.

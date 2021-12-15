@@ -1,0 +1,57 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#ShapeToRename": {
+            "type": "string"
+        },
+        "smithy.example#MixinError": {
+            "type": "structure",
+            "members": {
+                "message": {
+                    "target": "smithy.example#ShapeToRename"
+                }
+            },
+            "traits": {
+                "smithy.api#error": "client"
+            }
+        },
+        "smithy.example#MixinOperation": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.api#Unit"
+            },
+            "output": {
+                "target": "smithy.api#Unit"
+            }
+        },
+        "smithy.example#MixinResource": {
+            "type": "resource"
+        },
+        "smithy.example#MixinService": {
+            "type": "service",
+            "version": "2021-12-31",
+            "errors": [{
+                "target": "smithy.example#MixinError"
+            }],
+            "rename": {
+                "smithy.example#ShapeToRename": "RenamedShape"
+            },
+            "operations": [{
+                "target": "smithy.example#MixinOperation"
+            }],
+            "resources": [{
+                "target": "smithy.example#MixinResource"
+            }],
+            "traits": {
+                "smithy.api#mixin": {},
+                "smithy.api#internal": {}
+            }
+        },
+        "smithy.example#MixedService": {
+            "type": "service",
+            "mixins": [{
+                "target": "smithy.example#MixinService"
+            }]
+        }
+    }
+}

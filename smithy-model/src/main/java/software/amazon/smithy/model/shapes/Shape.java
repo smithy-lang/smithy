@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
@@ -73,7 +74,7 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
             // Simple case when there are no mixins.
             traits = introducedTraits;
         } else {
-            validateMixins(mixins.keySet());
+            validateMixins(mixins, introducedTraits);
             // Compute mixin traits.
             Map<ShapeId, Trait> computedTraits = new HashMap<>();
             for (Shape shape : mixins.values()) {
@@ -86,10 +87,43 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
         }
     }
 
-    protected void validateMixins(Collection<ShapeId> mixins) {
-        // This method is overridden in subclasses that allow mixins (structure, union, member).
-        // This situation can only happen by manipulating the semantic model in code.
-        throw new SourceException("Mixins are not allowed on " + getId() + ", a " + getType(), this);
+    protected void validateMixins(Map<ShapeId, Shape> mixins, Map<ShapeId, Trait> introducedTraits) {
+        Set<String> invalid = new TreeSet<>();
+        for (Shape mixin : mixins.values()) {
+            if (mixin.getType() != getType()) {
+                invalid.add(mixin.getId().toString());
+            }
+        }
+        if (!invalid.isEmpty()) {
+            String invalidList = String.join("`, `", invalid);
+            throw new IllegalStateException(String.format(
+                    "Mixins may only be mixed into shapes of the same type. The following mixins were applied to the "
+                            + "%s shape `%s` which are not %1$s shapes: [`%s`]", getType(), getId(), invalidList));
+        }
+    }
+
+    protected MemberShape getRequiredMixinMember(
+            AbstractShapeBuilder<?, ?> builder,
+            String name
+    ) {
+        MemberShape mixedMember = null;
+        for (Shape shape : builder.getMixins().values()) {
+            for (MemberShape member : shape.members()) {
+                if (member.getMemberName().equals(name)) {
+                    mixedMember = MemberShape.builder()
+                            .id(getId().withMember(name))
+                            .target(member.getTarget())
+                            .source(getSourceLocation())
+                            .addMixin(member)
+                            .build();
+                    break;
+                }
+            }
+        }
+        if (mixedMember == null) {
+            throw new IllegalStateException(String.format("Missing required member of shape `%s`: %s", getId(), name));
+        }
+        return mixedMember;
     }
 
     /**

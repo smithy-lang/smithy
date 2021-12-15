@@ -1,7 +1,7 @@
 # Smithy Mixins
 
-This proposal defines _mixins_, a modeling mechanism that allows for structure
-and union definition reuse.
+This proposal defines _mixins_, a modeling mechanism that allows for shape
+definition reuse.
 
 > Note: mixins will be considered for Smithy IDL 1.1, which treats commas as
 > optional whitespace.
@@ -78,8 +78,8 @@ over time.
 ## Proposal
 
 This proposal introduces *mixins* to reduce the amount of repetition in
-structures and unions, reduce copy/paste errors, and provide the ability to
-define reusable partial structures and unions.
+shapes, reduce copy/paste errors, and provide the ability to define reusable
+partial shapes.
 
 
 ### Goals
@@ -98,8 +98,7 @@ define reusable partial structures and unions.
 
 ### Overview
 
-A mixin is a structure or union marked with the `@mixin` trait
-(`smithy.api#mixin`):
+A mixin is a shape marked with the `@mixin` trait(`smithy.api#mixin`):
 
 ```
 $version: "1.1"
@@ -114,11 +113,11 @@ structure CityResourceInput {
 }
 ```
 
-Adding a mixin to a structure or union shape causes the members and traits of
-a shape to be copied into the shape. Mixins can be added to a shape using
+Adding a mixin to a shape causes the members and traits of the other
+shape to be copied into the shape. Mixins can be added to a shape using
 `with` followed by any number of shape IDs. Each shape ID MUST target a
-shape marked with the `@mixin` trait. Structure shapes can only use structure
-mixins, and union shapes can only use union mixins.
+shape marked with the `@mixin` trait. Shapes can only use mixins that
+are of the same shape type.
 
 ```
 structure GetCityInput with CityResourceInput {
@@ -173,7 +172,7 @@ structure C {
 }
 ```
 
-Unions can be mixins and use mixins too.
+Other shape types can be mixins and use mixins too.
 
 ```
 @mixin
@@ -529,15 +528,22 @@ structure Invalid with
 
 ### Mixins in the IDL
 
-To support mixins, `structure_statement` and `union_statement` ABNF rules
+To support mixins, shape ABNF rules
 will be updated to contain an optional `mixins` production
-that comes after the shape name and before `{`. Each shape ID referenced in
+that comes after the shape name and before any `{`. Each shape ID referenced in
 the `mixins` production MUST target a shape of the same type as the
 shape being defined and MUST be marked with the `@mixin` trait.
 
 ```
+simple_shape_statement = simple_type_name ws identifier [ws mixins]
+list_statement = "list" ws identifier ws [mixins ws] shape_members
+set_statement = "set"  ws identifier ws [mixins ws] shape_members
+map_statement = "map"  ws identifier ws [mixins ws] shape_members
 structure_statement = "structure" ws identifier ws [mixins ws] structure_members
 union_statement = "union" ws identifier ws [mixins ws] union_members
+service_statement = "service" ws identifier ws [mixins ws] node_object
+operation_statement = "operation" ws identifier ws [mixins ws] node_object
+resource_statement = "resource" ws identifier ws [mixins ws] node_object
 mixins = "with" 1*(ws shape_id)
 ```
 
@@ -547,7 +553,7 @@ mixins = "with" 1*(ws shape_id)
 Mixins are defined in the JSON AST using the `mixins` property of structure and
 union shapes. The `mixins` property is a list of objects. To match every other
 shape target used in the AST, the object supports a single member named
-`target` which defines the absolute shape ID of a structure or union marked
+`target` which defines the absolute shape ID of a shape marked
 with the `smithy.api#mixin` trait.
 
 ```json
@@ -586,7 +592,7 @@ with the `smithy.api#mixin` trait.
 ### Mixins in selectors
 
 A new relationship is introduced to selectors called `mixin` that traverses from
-structure and union shapes to every mixin applied to them. The members of each
+shapes to every mixin applied to them. The members of each
 applied mixin are connected to the structure or union through a normal `member`
 relationship.
 
@@ -692,12 +698,90 @@ The members are ordered as follows:
 - `sizeFilter`
 
 
+### Mixins on shapes with non-member properties
+
+Some shapes don't have members, but do have other properties. Adding a mixin
+to such a shape causes the properties of the other shape to be merged into
+the shape. Scalar properties defined in the local shape are kept, and
+non-scalar properties are merged. When merging map properties, the values for
+local keys are kept. The ordering of merged lists / sets follows the
+same ordering as members.
+
+For example, in the following model:
+
+```
+operation OperationA {}
+
+@mixin
+service A {
+    version: "A"
+    operations: [OperationA]
+}
+
+operation OperationB {}
+
+@mixin
+service B with A {
+    version: "B"
+    rename: {
+        "smithy.example#OperationA": "OperA"
+        "smithy.example#OperationB": "OperB"
+    }
+    operations: [OperationB]
+}
+
+operation OperationC {}
+
+service C with B {
+    version: "C"
+    rename: {
+        "smithy.example#OperationA": "OpA"
+        "smithy.example#OperationC": "OpC"
+    }
+    operations: [OperationC]
+}
+```
+
+The `version` property of the local shape is kept and the `rename` and
+`operations` properties are merged. This is equivalent to the following:
+
+```
+operation OperationA {}
+
+operation OperationB {}
+
+operation OperationC {}
+
+service C {
+    version: "C"
+    rename: {
+        "smithy.example#OperationA": "OpA"
+        "smithy.example#OperationB": "OperB"
+        "smithy.example#OperationC": "OpC"
+    }
+    operations: [OperationA, OperationB, OperationC]
+}
+```
+
+### Resource mixins
+
+Resource shapes with the `@mixin` trait MAY NOT define any properties. This is
+because every property of a resource shape is intrinsically tied to its set of
+identifiers. Changing these identifiers would invalidate every other property
+of a given resource.
+
+### Operation mixins
+
+Operation shapes with the `@mixin` trait MAY NOT define an `input` or `output`
+shape other than `smithy.api#Unit`. This is because allowing input and output
+shapes to be shared goes against the goal of the `@input` and `@output` traits.
+
 ### `@mixin` trait
 
 The `@mixin` trait is a structured trait defined in the Smithy prelude as:
 
 ```
-@trait(selector: ":is(structure, union)")
+@trait(selector: ":not(member)")
 structure mixin {
     localTraits: LocalMixinTraitList
 }
