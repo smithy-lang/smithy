@@ -3,24 +3,28 @@
     "shapes": {
         "smithy.example#A": {
             "type": "structure",
+            "members": {},
             "traits": {
                 "smithy.api#mixin": {}
             }
         },
         "smithy.example#B": {
             "type": "structure",
+            "members": {},
             "mixins": [
                 {"target": "smithy.example#A"}
             ]
         },
         "smithy.example#C": {
             "type": "structure",
+            "members": {},
             "traits": {
                 "smithy.api#mixin": {}
             }
         },
         "smithy.example#D": {
             "type": "structure",
+            "members": {},
             "mixins": [
                 {"target": "smithy.example#C"}
             ],
@@ -30,6 +34,7 @@
         },
         "smithy.example#E": {
             "type": "structure",
+            "members": {},
             "traits": {
                 "smithy.api#mixin": {}
             },
@@ -39,6 +44,7 @@
         },
         "smithy.example#F": {
             "type": "structure",
+            "members": {},
             "mixins": [
                 {"target": "smithy.example#A"},
                 {"target": "smithy.example#E"}
@@ -246,42 +252,6 @@
             "type": "map",
             "mixins": [{
                 "target": "smithy.example#MixinMap"
-            }]
-        },
-        "smithy.example#MixinService": {
-            "type": "service",
-            "traits": {
-                "smithy.api#mixin": {}
-            }
-        },
-        "smithy.example#MixedService": {
-            "type": "service",
-            "mixins": [{
-                "target": "smithy.example#MixinService"
-            }]
-        },
-        "smithy.example#MixinResource": {
-            "type": "resource",
-            "traits": {
-                "smithy.api#mixin": {}
-            }
-        },
-        "smithy.example#MixedResource": {
-            "type": "resource",
-            "mixins": [{
-                "target": "smithy.example#MixinResource"
-            }]
-        },
-        "smithy.example#MixinOperation": {
-            "type": "operation",
-            "traits": {
-                "smithy.api#mixin": {}
-            }
-        },
-        "smithy.example#MixedOperation": {
-            "type": "operation",
-            "mixins": [{
-                "target": "smithy.example#MixinOperation"
             }]
         }
     }
