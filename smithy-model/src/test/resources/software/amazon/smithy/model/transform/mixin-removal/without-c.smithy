@@ -1,7 +1,7 @@
 // Removing "C" will update D such that D has no mixins, D no longer has
 // a2, a3, b, b2, or b3. D still has a because a trait was added to the
 // inherited a member of D to update the documentation to "D".
-$version: "1.1"
+$version: "2.0"
 
 namespace smithy.example
 

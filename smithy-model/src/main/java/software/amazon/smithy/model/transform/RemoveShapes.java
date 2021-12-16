@@ -35,10 +35,10 @@ import software.amazon.smithy.model.shapes.Shape;
  * containing shape rather than the member.
  */
 final class RemoveShapes {
-    private final Collection<Shape> toRemove;
+    private final Collection<? extends Shape> toRemove;
     private final List<ModelTransformerPlugin> plugins;
 
-    RemoveShapes(Collection<Shape> toRemove, List<ModelTransformerPlugin> plugins) {
+    RemoveShapes(Collection<? extends Shape> toRemove, List<ModelTransformerPlugin> plugins) {
         this.toRemove = toRemove;
         this.plugins = plugins;
     }

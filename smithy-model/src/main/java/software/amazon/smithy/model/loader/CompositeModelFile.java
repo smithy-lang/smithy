@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Logger;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -47,6 +48,16 @@ final class CompositeModelFile implements ModelFile {
     CompositeModelFile(TraitFactory traitFactory, List<ModelFile> modelFiles) {
         this.traitFactory = traitFactory;
         this.modelFiles = modelFiles;
+    }
+
+    @Override
+    public Version getVersion() {
+        return Version.UNKNOWN;
+    }
+
+    @Override
+    public String getFilename() {
+        return SourceLocation.none().getFilename();
     }
 
     @Override

@@ -45,6 +45,16 @@ final class ImmutablePreludeModelFile implements ModelFile {
     }
 
     @Override
+    public Version getVersion() {
+        return Version.VERSION_2_0;
+    }
+
+    @Override
+    public String getFilename() {
+        return Prelude.class.getResource("prelude.smithy").toString();
+    }
+
+    @Override
     public Set<ShapeId> shapeIds() {
         return prelude.getShapeIds();
     }

@@ -255,7 +255,9 @@ public interface TraitContainer {
      */
     final class VersionAwareTraitContainer implements TraitContainer {
         private final TraitContainer delegate;
-        private Version version = Version.UNKNOWN;
+
+        // If a model specifies no version, we by default assume it's for 1.0.
+        private Version version = Version.VERSION_1_0;
 
         VersionAwareTraitContainer(TraitContainer delegate) {
             this.delegate = delegate;

@@ -46,6 +46,7 @@ abstract class AbstractMutableModelFile implements ModelFile {
 
     protected TraitContainer.VersionAwareTraitContainer traitContainer;
 
+    private final String filename;
     private final Set<ShapeId> allShapeIds = new HashSet<>();
     private final Map<ShapeId, AbstractShapeBuilder<?, ?>> shapes = new LinkedHashMap<>();
     private final Map<ShapeId, Map<String, MemberShape.Builder>> members = new HashMap<>();
@@ -57,10 +58,21 @@ abstract class AbstractMutableModelFile implements ModelFile {
     /**
      * @param traitFactory Factory used to create traits when merging traits.
      */
-    AbstractMutableModelFile(TraitFactory traitFactory) {
+    AbstractMutableModelFile(String filename, TraitFactory traitFactory) {
+        this.filename = filename;
         this.traitFactory = Objects.requireNonNull(traitFactory, "traitFactory must not be null");
         TraitContainer traitStore = new TraitContainer.TraitHashMap(traitFactory, events);
         traitContainer = new TraitContainer.VersionAwareTraitContainer(traitStore);
+    }
+
+    @Override
+    public String getFilename() {
+        return filename;
+    }
+
+    @Override
+    public final Version getVersion() {
+        return traitContainer.getVersion();
     }
 
     /**
@@ -136,15 +148,6 @@ abstract class AbstractMutableModelFile implements ModelFile {
      */
     final void setVersion(Version version) {
         traitContainer.setVersion(version);
-    }
-
-    /**
-     * Gets the currently defined version.
-     *
-     * @return Returns the defined version.
-     */
-    final Version getVersion() {
-        return traitContainer.getVersion();
     }
 
     @Override
