@@ -89,7 +89,8 @@ enum AstModelLoader {
             TYPE, "version", "operations", "resources", "rename", ERRORS, TRAITS);
 
     ModelFile load(Version modelVersion, TraitFactory traitFactory, ObjectNode model) {
-        FullyResolvedModelFile modelFile = new FullyResolvedModelFile(traitFactory);
+        FullyResolvedModelFile modelFile = new FullyResolvedModelFile(model.getSourceLocation().getFilename(),
+                                                                      traitFactory);
         modelFile.setVersion(modelVersion);
         LoaderUtils.checkForAdditionalProperties(model, null, TOP_LEVEL_PROPERTIES, modelFile.events());
         loadMetadata(model, modelFile);

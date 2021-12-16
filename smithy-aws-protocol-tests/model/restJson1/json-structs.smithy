@@ -1,7 +1,7 @@
 // This file defines test cases that serialize synthesized JSON documents
 // in the payload of HTTP requests and responses.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restjson
 

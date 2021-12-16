@@ -1,5 +1,6 @@
 // This test ensures that eventHeader bindings emit an error.
 // Event headers are not serialized for MQTT messages.
+$version: "2.0"
 
 namespace smithy.example
 

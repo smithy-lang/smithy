@@ -14,8 +14,7 @@
             "in": "query",
             "schema": {
               "type": "number",
-              "format": "int32",
-              "nullable": true
+              "format": "int32"
             },
             "required": true
           },
@@ -24,8 +23,7 @@
             "in": "query",
             "schema": {
               "type": "number",
-              "format": "int32",
-              "nullable": true
+              "format": "int32"
             },
             "required": true
           },
@@ -121,8 +119,7 @@
             "in": "query",
             "schema": {
               "type": "number",
-              "format": "int32",
-              "nullable": true
+              "format": "int32"
             },
             "required": true
           },
@@ -131,8 +128,7 @@
             "in": "query",
             "schema": {
               "type": "number",
-              "format": "int32",
-              "nullable": true
+              "format": "int32"
             },
             "required": true
           },

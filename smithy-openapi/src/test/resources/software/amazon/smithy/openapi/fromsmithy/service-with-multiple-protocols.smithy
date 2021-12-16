@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace smithy.example
 
 @aws.protocols#awsJson1_1

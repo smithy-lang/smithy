@@ -18,7 +18,7 @@
 //
 // See: https://docs.aws.amazon.com/AWSEC2/latest/APIReference/errors-overview.html#api-error-response
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.ec2
 
