@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace smithy.example
 
 @http(method: GET, uri: "/") // <- Use "GET" not GET!

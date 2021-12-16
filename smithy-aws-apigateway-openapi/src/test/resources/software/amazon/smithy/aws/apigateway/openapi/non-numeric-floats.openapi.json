@@ -44,8 +44,7 @@
                                     "-Infinity"
                                 ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "doubleMember": {
                         "oneOf": [
@@ -61,8 +60,7 @@
                                     "-Infinity"
                                 ]
                             }
-                        ],
-                        "nullable": true
+                        ]
                     }
                 }
             }

@@ -1,3 +1,5 @@
+$version: "2"
+
 namespace ns.foo
 
 @deprecated

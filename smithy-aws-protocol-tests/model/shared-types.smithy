@@ -5,7 +5,7 @@
 // structures or other test-case specific shapes should be defined closer to
 // the test case and in its same file.
 
-$version: "1.0"
+$version: "2.0"
 
 metadata suppressions = [
     {
@@ -67,7 +67,7 @@ list DoubleList {
 }
 
 list BooleanList {
-    member: PrimitiveBoolean,
+    member: Boolean,
 }
 
 list TimestampList {

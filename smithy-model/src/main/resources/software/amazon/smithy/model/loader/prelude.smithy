@@ -1,8 +1,6 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace smithy.api
-
-// ------ Prelude shapes
 
 string String
 
@@ -16,45 +14,22 @@ timestamp Timestamp
 
 document Document
 
-@box
 boolean Boolean
 
-boolean PrimitiveBoolean
-
-@box
 byte Byte
 
-byte PrimitiveByte
-
-@box
 short Short
 
-short PrimitiveShort
-
-@box
 integer Integer
 
-integer PrimitiveInteger
-
-@box
 long Long
 
-long PrimitiveLong
-
-@box
 float Float
 
-float PrimitiveFloat
-
-@box
 double Double
-
-double PrimitiveDouble
 
 @unitType
 structure Unit {}
-
-// ------ Prelude traits
 
 /// Makes a shape a trait.
 @trait(selector: ":is(simpleType, list, map, set, structure, union)")
@@ -84,16 +59,6 @@ structure trait {
     }
 ])
 string StructurallyExclusive
-
-/// Indicates that a shape is boxed.
-///
-/// When a boxed shape is the target of a member, the member
-/// may or may not contain a value, and the member has no default value.
-@trait(selector: """
-    :test(boolean, byte, short, integer, long, float, double,
-          member > :test(boolean, byte, short, integer, long, float, double))""")
-@tags(["diff.error.const"])
-structure box {}
 
 /// Marks a shape or member as deprecated.
 @trait
@@ -140,7 +105,7 @@ structure protocolDefinition {
     traits: TraitShapeIdList,
 
     /// Set to true if inline documents are not supported by this protocol.
-    noInlineDocumentSupport: PrimitiveBoolean,
+    noInlineDocumentSupport: Boolean,
 }
 
 @private
@@ -204,6 +169,11 @@ structure httpApiKeyAuth {
     /// This can only be set if the "in" property is set to ``header``.
     scheme: NonEmptyString,
 }
+
+@trait(selector: "structure > member :not(> :test(union, structure > :test([trait|required])))",
+       conflicts: [required])
+@tags(["diff.error.remove"])
+structure default {}
 
 @private
 @enum([
@@ -453,7 +423,7 @@ structure EnumDefinition {
     tags: NonEmptyStringList,
 
     /// Whether the enum value should be considered deprecated.
-    deprecated: PrimitiveBoolean,
+    deprecated: Boolean,
 }
 
 /// The optional name or label of the enum constant value.
@@ -570,7 +540,7 @@ structure http {
     /// The HTTP status code of a successful response.
     ///
     /// Defaults to 200 if not provided.
-    code: PrimitiveInteger,
+    code: Integer,
 }
 
 /// Binds an operation input structure member to an HTTP label.
@@ -704,7 +674,7 @@ structure idRef {
 
     /// When set to `true`, the shape ID MUST target a shape that can be
     /// found in the model.
-    failWhenMissing: PrimitiveBoolean,
+    failWhenMissing: Boolean,
 
     /// Defines a custom error message to use when the shape ID cannot be
     /// found or does not match the selector.
@@ -810,4 +780,3 @@ list LocalMixinTraitList {
             must target a valid trait.""")
 @private
 string LocalMixinTrait
-

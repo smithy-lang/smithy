@@ -1,5 +1,5 @@
 // This should fail when also loaded with mixin-conflict-acceptable.smithy
-$version: "1.1"
+$version: "2.0"
 
 namespace smithy.example
 

@@ -1,7 +1,7 @@
 // This file defines test cases that test both the HTTP body
 // and content-type handling.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restjson
 

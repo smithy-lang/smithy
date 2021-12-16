@@ -1,7 +1,7 @@
 // This file defines test cases that test HTTP response code bindings.
 // See: https://awslabs.github.io/smithy/1.0/spec/core/http-traits.html#httpresponsecode-trait
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restxml
 

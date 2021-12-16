@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace smithy.example
 
 @length(min: 4, max: 8)
