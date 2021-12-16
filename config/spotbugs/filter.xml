@@ -122,4 +122,11 @@
         <Class name="software.amazon.smithy.cli.Arguments"/>
         <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
+
+    <!-- Spotbugs for some reason isn't seeing that Objects.requireNonNull prevents a null return.
+         this is used when dereferencing a WeakReference to the Model. -->
+    <Match>
+        <Class name="software.amazon.smithy.model.knowledge.NullableIndex"/>
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+    </Match>
 </FindBugsFilter>

@@ -2,7 +2,7 @@
 // See: https://awslabs.github.io/smithy/1.0/spec/http.html#httpquery-trait and
 // https://awslabs.github.io/smithy/1.0/spec/http.html#httpqueryparams-trait
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restjson
 

@@ -100,4 +100,13 @@ final class LoaderUtils {
         }
         return false;
     }
+
+    static ValidationEvent onDeprecatedIdlVersion(Version version, String filename) {
+        return ValidationEvent.builder()
+                .id(Validator.MODEL_ERROR)
+                .severity(Severity.WARNING)
+                .message("Smithy IDL " + version + " is deprecated. Please upgrade to Smithy IDL 2.0.")
+                .sourceLocation(new SourceLocation(filename, 1, 1))
+                .build();
+    }
 }

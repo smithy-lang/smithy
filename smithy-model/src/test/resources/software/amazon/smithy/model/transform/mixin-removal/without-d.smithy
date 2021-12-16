@@ -1,6 +1,6 @@
 // Removing "D" has no effect on other shapes, even shapes that are mixins
 // that D used. Those shapes aren't dependent on D.
-$version: "1.1"
+$version: "2.0"
 
 namespace smithy.example
 

@@ -134,19 +134,6 @@ public class OpenApiJsonSchemaMapperTest {
     }
 
     @Test
-    public void supportsBoxTrait() {
-        IntegerShape shape = IntegerShape.builder().id("a.b#C").addTrait(new BoxTrait()).build();
-        Model model = Model.builder().addShape(shape).build();
-        SchemaDocument document = JsonSchemaConverter.builder()
-                .addMapper(new OpenApiJsonSchemaMapper())
-                .model(model)
-                .build()
-                .convertShape(shape);
-
-        assertThat(document.getRootSchema().getExtension("nullable").get(), equalTo(Node.from(true)));
-    }
-
-    @Test
     public void supportsDeprecatedTrait() {
         IntegerShape shape = IntegerShape.builder().id("a.b#C").addTrait(DeprecatedTrait.builder().build()).build();
         Model model = Model.builder().addShape(shape).build();
