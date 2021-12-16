@@ -7,7 +7,7 @@
 // a language implementing these tests may choose to implement a
 // query body parser that understands query maps and/or lists.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.query
 

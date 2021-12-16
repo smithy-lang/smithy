@@ -1,6 +1,6 @@
 // This file defines test cases that serialize structures.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.json10
 
