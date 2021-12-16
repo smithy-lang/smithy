@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace smithy.example
 
 // Missing input for {foo} property.

@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -35,6 +36,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.SimpleShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -235,7 +237,7 @@ public final class ServiceValidator extends AbstractValidator {
             if (isShapeTypeConflictForbidden(a)
                     || isShapeTypeConflictForbidden(b)
                     || a.getType() != b.getType()
-                    || !a.getAllTraits().equals(b.getAllTraits())) {
+                    || !equivalentTraits(a.getAllTraits(), b.getAllTraits())) {
                 return Severity.ERROR;
             }
 
@@ -253,6 +255,24 @@ public final class ServiceValidator extends AbstractValidator {
 
             // The conflict occurred on a list or set.
             return Severity.WARNING;
+        }
+
+        // Check if the traits are equal, disregarding synthetic traits.
+        private boolean equivalentTraits(Map<ShapeId, Trait> left, Map<ShapeId, Trait> right) {
+            for (Map.Entry<ShapeId, Trait> entry : left.entrySet()) {
+                if (!entry.getValue().isSynthetic()) {
+                    if (!Objects.equals(entry.getValue(), right.get(entry.getKey()))) {
+                        return false;
+                    }
+                }
+            }
+            // Only thing to check here is if the right map has traits the left map doesn't.
+            for (Map.Entry<ShapeId, Trait> entry : right.entrySet()) {
+                if (!entry.getValue().isSynthetic() && !left.containsKey(entry.getKey())) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         private boolean isShapeTypeConflictForbidden(Shape shape) {

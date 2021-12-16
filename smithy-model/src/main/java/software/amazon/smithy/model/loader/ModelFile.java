@@ -37,6 +37,20 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 interface ModelFile {
 
     /**
+     * Get the filename of the model file.
+     *
+     * @return Returns the filename of the model file.
+     */
+    String getFilename();
+
+    /**
+     * Gets the Smithy version number used in the file.
+     *
+     * @return Returns the version number.
+     */
+    Version getVersion();
+
+    /**
      * Gets the shape IDs that are defined in this ModelFile.
      *
      * <p>This is called before any other method in the ModelFile.

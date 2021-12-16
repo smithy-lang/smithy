@@ -80,9 +80,9 @@ import software.amazon.smithy.utils.SetUtils;
  * attempt to change the type of a shape will throw an exception.
  */
 final class ReplaceShapes {
-    private final Collection<Shape> replacements;
+    private final Collection<? extends Shape> replacements;
 
-    ReplaceShapes(Collection<Shape> replacements) {
+    ReplaceShapes(Collection<? extends Shape> replacements) {
         this.replacements = Objects.requireNonNull(replacements);
     }
 
