@@ -47,9 +47,6 @@ enum Version {
             case "1.0":
             case "1":
                 return VERSION_1_0;
-            // TODO: remove all traces of "1.1" and replace with "2"
-            case "1.1":
-                return VERSION_1_1;
             case "2":
             case "2.0":
                 return VERSION_2_0;
@@ -69,7 +66,7 @@ enum Version {
      * @return Returns true if this version supports mixins.
      */
     boolean supportsMixins() {
-        return this == VERSION_1_1 || this == VERSION_2_0;
+        return this == VERSION_2_0;
     }
 
     /**
@@ -79,7 +76,7 @@ enum Version {
      * @return Returns true if this version of the IDL supports "!" sugar.
      */
     boolean supportsRequiredSugar() {
-        return this == VERSION_1_1 || this == VERSION_2_0;
+        return this == VERSION_2_0;
     }
 
     /**
@@ -88,7 +85,7 @@ enum Version {
      * @return Returns true if this version supports inlined operation IO shapes.
      */
     boolean supportsInlineOperationIO() {
-        return this == VERSION_1_1 || this == VERSION_2_0;
+        return this == VERSION_2_0;
     }
 
     /**
@@ -100,7 +97,7 @@ enum Version {
      * @throws ModelSyntaxException if the given trait cannot be used in this version.
      */
     void validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
-        if (traitId.equals(MixinTrait.ID) && (this != Version.VERSION_2_0 && this != VERSION_1_1)) {
+        if (traitId.equals(MixinTrait.ID) && (this != Version.VERSION_2_0)) {
             throw ModelSyntaxException.builder()
                     .message(String.format("Mixins can only be used in Smithy 2.0 or later. Attempted to apply "
                                            + "a @mixin trait to `%s` in a model file using version `%s`.",

@@ -3,7 +3,7 @@
 // configuration settings. See the following for a more comprehensive overview:
 // https://docs.aws.amazon.com/credref/latest/refdocs/overview.html
 
-$version: "1.0"
+$version: "2.0"
 
 metadata suppressions = [{
     id: "UnreferencedShape",

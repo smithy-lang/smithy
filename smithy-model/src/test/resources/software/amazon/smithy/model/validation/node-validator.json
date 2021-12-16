@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#Byte": {
             "type": "byte",
@@ -266,20 +266,16 @@
         "ns.foo#Structure3": {
             "type": "structure",
             "members": {
-                "optionalInt": {
-                    "target": "smithy.api#PrimitiveInteger"
-                },
-                "requiredInt": {
-                    "target": "smithy.api#PrimitiveInteger",
+                "defaultedInt": {
+                    "target": "smithy.api#Integer",
                     "traits": {
-                        "smithy.api#required": {}
+                        "smithy.api#default": {}
                     }
                 },
-                "requiredInt2": {
-                    "target": "smithy.api#PrimitiveInteger",
+                "requiredInt": {
+                    "target": "smithy.api#Integer",
                     "traits": {
-                        "smithy.api#required": {},
-                        "smithy.api#box": {}
+                        "smithy.api#required": {}
                     }
                 }
             }
