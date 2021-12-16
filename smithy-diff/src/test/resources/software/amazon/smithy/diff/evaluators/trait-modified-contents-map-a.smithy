@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace smithy.example
 
 @aTrait(foo: {baz: "a", bam: "b", boo: "c"})

@@ -279,13 +279,7 @@ public class NodeValidationVisitorTest {
                 {"ns.foo#Structure2", "{\"b\": \"12345678910\"}", null},
                 {"ns.foo#Structure2", "{\"b\": \"123\"}", new String[] {"b: String value provided for `ns.foo#Structure2$b` must be >= 10 characters, but the provided value is only 3 characters."}},
                 {"ns.foo#Structure2", "{\"c\": 11}", null},
-                {"ns.foo#Structure2", "{\"c\": 5}", new String[] {"c: Value provided for `ns.foo#Structure2$c` must be greater than or equal to 10, but found 5"}},
-
-                // Boxed members
-                {"ns.foo#Structure3", "{\"requiredInt\": 1, \"optionalInt\": 1, \"requiredInt2\": 2}", null},
-                {"ns.foo#Structure3", "{\"requiredInt\": 1, \"requiredInt2\": 2}", null},
-                {"ns.foo#Structure3", "{\"requiredInt2\": 2}", null},
-                {"ns.foo#Structure3", "{}", new String[] {"Missing required structure member `requiredInt2` for `ns.foo#Structure3`"}},
+                {"ns.foo#Structure2", "{\"c\": 5}", new String[] {"c: Value provided for `ns.foo#Structure2$c` must be greater than or equal to 10, but found 5"}}
         });
     }
 
@@ -335,7 +329,7 @@ public class NodeValidationVisitorTest {
         NodeValidationVisitor cases = NodeValidationVisitor.builder()
                 .value(Node.nullNode())
                 .model(MODEL)
-                .allowBoxedNull(true)
+                .allowOptionalNull(true)
                 .build();
         List<ValidationEvent> events = MODEL
                 .expectShape(ShapeId.from("smithy.api#String"))

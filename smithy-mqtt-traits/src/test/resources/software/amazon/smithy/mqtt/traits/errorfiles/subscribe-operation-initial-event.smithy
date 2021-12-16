@@ -1,4 +1,5 @@
 // Subscribe operations do not support initial events.
+$version: "2.0"
 
 namespace smithy.example
 

@@ -150,7 +150,8 @@ public class IdlModelLoaderTest {
     @Test
     public void warnsWhenInvalidSyntacticShapeIdIsFound() {
         ValidatedResult<Model> result = Model.assembler()
-                .addUnparsedModel("foo.smithy", "namespace smithy.example\n"
+                .addUnparsedModel("foo.smithy", "$version: \"2.0\"\n"
+                                                + "namespace smithy.example\n"
                                                 + "@tags([nonono])\n"
                                                 + "string Foo\n")
                 .assemble();

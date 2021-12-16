@@ -1,5 +1,5 @@
 // Cannot use name `foo.baz#String` because it conflicts with `smithy.api#String`
-$version: "1.0"
+$version: "2.0"
 
 namespace smithy.example
 

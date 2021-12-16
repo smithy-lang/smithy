@@ -44,8 +44,7 @@
           },
           "def": {
             "type": "number",
-            "format": "int32",
-            "nullable": true
+            "format": "int32"
           }
         }
       }
