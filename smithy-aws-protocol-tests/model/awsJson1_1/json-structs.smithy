@@ -2,7 +2,7 @@
 // will take over much of what is in kitchen-sink as it gets refactored
 // to not put everything into such a small number of tests.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.json
 

@@ -28,7 +28,6 @@ import software.amazon.smithy.jsonschema.JsonSchemaMapper;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
@@ -57,10 +56,6 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
         getResolvedExternalDocs(shape, config)
                 .map(ExternalDocumentation::toNode)
                 .ifPresent(docs -> builder.putExtension("externalDocs", docs));
-
-        if (shape.hasTrait(BoxTrait.class)) {
-            builder.putExtension("nullable", Node.from(true));
-        }
 
         if (shape.hasTrait(DeprecatedTrait.class)) {
             builder.putExtension("deprecated", Node.from(true));

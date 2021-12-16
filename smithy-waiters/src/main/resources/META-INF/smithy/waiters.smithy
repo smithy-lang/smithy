@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace smithy.waiters
 
 /// Indicates that an operation has various named "waiters" that can be used
@@ -37,14 +39,13 @@ structure Waiter {
     /// be marked as deprecated if it has been replaced by another waiter or
     /// if it is no longer needed (for example, if a resource changes from
     /// eventually consistent to strongly consistent).
-    deprecated: PrimitiveBoolean,
+    deprecated: Boolean,
 
     /// A list of tags associated with the waiter that allow waiters to be
     /// categorized and grouped.
     tags: NonEmptyStringList,
 }
 
-@box
 @range(min: 1)
 integer WaiterDelay
 

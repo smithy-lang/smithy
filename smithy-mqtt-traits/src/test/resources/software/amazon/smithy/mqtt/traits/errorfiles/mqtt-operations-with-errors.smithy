@@ -1,4 +1,5 @@
 // MQTT publish/subscribe operations should not have errors.
+$version: "2.0"
 
 namespace smithy.example
 

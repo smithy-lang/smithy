@@ -133,7 +133,7 @@ final class IdlModelParser extends SimpleParser {
     IdlModelParser(TraitFactory traitFactory, String filename, String model) {
         super(model, MAX_NESTING_LEVEL);
         this.filename = filename;
-        this.modelFile = new ForwardReferenceModelFile(traitFactory);
+        this.modelFile = new ForwardReferenceModelFile(filename, traitFactory);
     }
 
     ModelFile parse() {
