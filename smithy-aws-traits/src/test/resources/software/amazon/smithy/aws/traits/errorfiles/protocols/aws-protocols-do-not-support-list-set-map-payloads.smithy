@@ -1,5 +1,6 @@
 // AWS protocols do not currently support applying the http payload trait to
 // sets, lists, or maps.
+$version: "2.0"
 
 namespace smithy.example
 

@@ -47,10 +47,11 @@ final class ForwardReferenceModelFile extends AbstractMutableModelFile {
     private final Map<String, Pair<ShapeId, SourceLocation>> useShapes = new HashMap<>();
 
     /**
+     * @param filename Name of the file being parsed.
      * @param traitFactory Factory used to create traits when merging traits.
      */
-    ForwardReferenceModelFile(TraitFactory traitFactory) {
-        super(traitFactory);
+    ForwardReferenceModelFile(String filename, TraitFactory traitFactory) {
+        super(filename, traitFactory);
     }
 
     /**

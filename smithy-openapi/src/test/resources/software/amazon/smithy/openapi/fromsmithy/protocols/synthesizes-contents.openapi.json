@@ -82,8 +82,7 @@
                     },
                     "def": {
                         "type": "number",
-                        "format": "int32",
-                        "nullable": true
+                        "format": "int32"
                     }
                 }
             },
@@ -92,8 +91,7 @@
                 "properties": {
                     "def": {
                         "type": "number",
-                        "format": "int32",
-                        "nullable": true
+                        "format": "int32"
                     }
                 }
             },
@@ -105,8 +103,7 @@
                     },
                     "def": {
                         "type": "number",
-                        "format": "int32",
-                        "nullable": true
+                        "format": "int32"
                     }
                 }
             }
