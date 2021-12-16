@@ -1,7 +1,7 @@
 // This file defines test cases that test httpPrefix headers.
 // See: https://awslabs.github.io/smithy/1.0/spec/http.html#httpprefixheaders-trait
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restjson
 

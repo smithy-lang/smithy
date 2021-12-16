@@ -1,6 +1,6 @@
 // This file defines tests to ensure that implementations support endpoints with paths
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.ec2
 

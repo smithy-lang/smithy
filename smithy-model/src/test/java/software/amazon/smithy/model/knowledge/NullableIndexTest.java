@@ -115,14 +115,6 @@ public class NullableIndexTest {
                 {model, "smithy.api#BigInteger", true},
                 {model, "smithy.api#BigDecimal", true},
 
-                {model, "smithy.api#PrimitiveByte", false},
-                {model, "smithy.api#PrimitiveShort", false},
-                {model, "smithy.api#PrimitiveInteger", false},
-                {model, "smithy.api#PrimitiveLong", false},
-                {model, "smithy.api#PrimitiveFloat", false},
-                {model, "smithy.api#PrimitiveDouble", false},
-                {model, "smithy.api#PrimitiveBoolean", false},
-
                 // Dense lists are nullable but their members are not.
                 {model, denseList.getId().toString(), true},
                 {model, denseList.getMember().getId().toString(), false},

@@ -3,7 +3,7 @@
 //
 // TODO: does an operation with no input always send {}? What about no output?
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restjson
 

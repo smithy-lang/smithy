@@ -1,6 +1,6 @@
 // Finds operation names that imply they are the input/output of an
 // operation, but the operation uses a different input/output shape.
-$version: "1.0"
+$version: "2.0"
 
 namespace smithy.example
 

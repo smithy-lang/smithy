@@ -1,6 +1,6 @@
 // This file defines test cases that serialize maps in XML payloads.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.query
 
