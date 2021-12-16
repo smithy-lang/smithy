@@ -245,8 +245,34 @@ structure HttpRequestWithFloatLabelsInput {
     @httpLabel
     @required
     float: Float,
-    
+
     @httpLabel
     @required
     double: Double,
+}
+
+apply HttpRequestWithRegexLiteral @httpRequestTests([
+    {
+        id: "RestJsonToleratesRegexCharsInSegments",
+        documentation: "Path matching is not broken by regex expressions in literal segments",
+        protocol: restJson1,
+        method: "GET",
+        uri: "/ReDosLiteral/abc/(a+)+",
+        body: "",
+        params: {
+            str: "abc"
+        }
+    },
+])
+
+@readonly
+@http(method: "GET", uri: "/ReDosLiteral/{str}/(a+)+")
+operation HttpRequestWithRegexLiteral {
+    input: HttpRequestWithRegexLiteralInput
+}
+
+structure HttpRequestWithRegexLiteralInput {
+    @httpLabel
+    @required
+    str: String
 }
