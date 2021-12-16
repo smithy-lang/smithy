@@ -104,7 +104,7 @@ public final class ModelTransformer {
      * @param shapes Shapes to add or replace in the model.base.
      * @return Returns the transformed model.base.
      */
-    public Model replaceShapes(Model model, Collection<Shape> shapes) {
+    public Model replaceShapes(Model model, Collection<? extends Shape> shapes) {
         if (shapes.isEmpty()) {
             return model;
         }
@@ -120,7 +120,7 @@ public final class ModelTransformer {
      * @param shapes Shapes to add or replace in the model.base.
      * @return Returns the transformed model.base.
      */
-    public Model removeShapes(Model model, Collection<Shape> shapes) {
+    public Model removeShapes(Model model, Collection<? extends Shape> shapes) {
         if (shapes.isEmpty()) {
             return model;
         }
