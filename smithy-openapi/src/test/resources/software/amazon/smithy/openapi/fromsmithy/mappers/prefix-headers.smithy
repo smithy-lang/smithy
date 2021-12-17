@@ -24,9 +24,5 @@ structure Output {
 
 map Headers {
     key: String,
-    value: StringList,
-}
-
-list StringList {
-    member: String
+    value: String
 }

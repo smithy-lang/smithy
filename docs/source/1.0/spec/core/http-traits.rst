@@ -788,11 +788,10 @@ Trait selector
     .. code-block:: none
 
         structure > member
-        :test(> map > member[id|member=value] > :test(string, collection > member > string))
+        :test(> map > member[id|member=value] > string)
 
     The ``httpPrefixHeaders`` trait can be applied to ``structure`` members
-    that target a ``map`` of ``string``, or a ``map`` of ``list``/``set`` of
-    ``string``.
+    that target a ``map`` of ``string``.
 Value type
     ``string`` value that defines the prefix to prepend to each header field
     name stored in the targeted map member. For example, given a prefix value
