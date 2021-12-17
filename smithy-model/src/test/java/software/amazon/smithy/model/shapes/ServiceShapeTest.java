@@ -87,4 +87,23 @@ public class ServiceShapeTest {
 
         assertThat(shape, equalTo(shape2));
     }
+
+    @Test
+    public void hasShapes() {
+        ServiceShape shape = ServiceShape.builder()
+                .id("com.foo#Example")
+                .version("x")
+                .addShape("com.foo#Common1")
+                .addShape(ShapeId.from("com.foo#Common2"))
+                .build();
+
+        assertThat(shape, equalTo(shape));
+        assertThat(shape, equalTo(shape.toBuilder().build()));
+
+        ServiceShape shape2 = shape.toBuilder()
+                .shapes(Arrays.asList(ShapeId.from("com.foo#Common1"), ShapeId.from("com.foo#Common2")))
+                .build();
+
+        assertThat(shape, equalTo(shape2));
+    }
 }

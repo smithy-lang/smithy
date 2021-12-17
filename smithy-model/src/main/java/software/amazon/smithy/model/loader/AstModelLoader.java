@@ -84,7 +84,7 @@ enum AstModelLoader {
             TYPE, "create", "read", "update", "delete", "list", "put",
             "identifiers", "resources", "operations", "collectionOperations", TRAITS);
     private static final Set<String> SERVICE_PROPERTIES = SetUtils.of(
-            TYPE, "version", "operations", "resources", "rename", ERRORS, TRAITS);
+            TYPE, "version", "operations", "resources", "rename", ERRORS, SHAPES, TRAITS);
 
     ModelFile load(TraitFactory traitFactory, ObjectNode model) {
         FullyResolvedModelFile modelFile = new FullyResolvedModelFile(traitFactory);
@@ -286,6 +286,7 @@ enum AstModelLoader {
         builder.resources(loadOptionalTargetList(modelFile, id, node, "resources"));
         loadServiceRenameIntoBuilder(builder, node);
         builder.addErrors(loadOptionalTargetList(modelFile, id, node, ERRORS));
+        builder.addShapes(loadOptionalTargetList(modelFile, id, node, SHAPES));
         modelFile.onShape(builder);
     }
 

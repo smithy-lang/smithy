@@ -1,0 +1,6 @@
+[ERROR] ns.foo#InvalidService1: service shape has a `shape` relationship to an unresolved shape `ns.foo#NotFound` | Target
+[ERROR] ns.foo#InvalidService2: Services cannot directly bind service shapes through the `shapes` property, but found (service: `ns.foo#InvalidService1`) | Target
+[ERROR] ns.foo#InvalidService3: Services cannot directly bind resource shapes through the `shapes` property, but found (resource: `ns.foo#Resource`) | Target
+[ERROR] ns.foo#InvalidService4: Services cannot directly bind operation shapes through the `shapes` property, but found (operation: `ns.foo#CreateResource`) | Target
+[ERROR] ns.foo#InvalidService5: Services cannot directly bind member shapes through the `shapes` property, but found (member: `ns.foo#CreateResourceInput$name`) | Target
+[ERROR] ns.foo#InvalidService6: Found a SHAPE reference to trait definition `smithy.api#sensitive`. Trait definitions cannot be targeted by members or referenced by shapes in any other context other than applying them as traits. | Target

@@ -1,0 +1,26 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "MyService",
+        "version": "2020-07-02"
+    },
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "GetSomething",
+                "responses": {
+                    "200": {
+                        "description": "GetSomething 200 response"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "OtherStructure": {
+                "type": "object"
+            }
+        }
+    }
+}

@@ -1027,7 +1027,7 @@ public class SelectorTest {
     }
 
     @Test
-    public void canPathToErrorsOfStructure() {
+    public void canPathToErrorsOfService() {
         ServiceShape service = ServiceShape.builder()
                 .id("ns.foo#Svc")
                 .version("2017-01-17")
@@ -1043,5 +1043,23 @@ public class SelectorTest {
         Set<Shape> result = selector.select(model);
 
         assertThat(result, containsInAnyOrder(errorShape));
+    }
+
+    @Test
+    public void canPathToShapesOfService() {
+        ServiceShape service = ServiceShape.builder()
+                .id("ns.foo#Svc")
+                .version("2017-01-17")
+                .addShape("ns.foo#Common1")
+                .build();
+        StructureShape structure = StructureShape.builder()
+                .id("ns.foo#Common1")
+                .build();
+        Model model = Model.builder().addShapes(service, structure).build();
+
+        Selector selector = Selector.parse("service -[shape]-> structure");
+        Set<Shape> result = selector.select(model);
+
+        assertThat(result, containsInAnyOrder(structure));
     }
 }

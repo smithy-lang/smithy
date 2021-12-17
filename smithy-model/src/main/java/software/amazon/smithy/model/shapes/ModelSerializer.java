@@ -258,6 +258,7 @@ public final class ModelSerializer {
             serviceBuilder.withOptionalMember("operations", createOptionalIdList(shape.getOperations()));
             serviceBuilder.withOptionalMember("resources", createOptionalIdList(shape.getResources()));
             serviceBuilder.withOptionalMember("errors", createOptionalIdList(shape.getErrors()));
+            serviceBuilder.withOptionalMember("shapes", createOptionalIdList(shape.getShapes()));
 
             if (!shape.getRename().isEmpty()) {
                 ObjectNode.Builder renameBuilder = Node.objectNodeBuilder();

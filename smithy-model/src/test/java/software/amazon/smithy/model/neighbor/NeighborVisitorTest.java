@@ -231,6 +231,24 @@ public class NeighborVisitorTest {
     }
 
     @Test
+    public void shapesBoundToService() {
+        ServiceShape service = ServiceShape.builder()
+                .id("ns.foo#Svc")
+                .version("2017-01-17")
+                .addShape("ns.foo#Common1")
+                .build();
+        StructureShape structure = StructureShape.builder()
+                .id("ns.foo#Common1")
+                .build();
+        Model model = Model.builder().addShapes(service, structure).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
+        List<Relationship> relationships = service.accept(neighborVisitor);
+
+        assertThat(relationships, contains(
+                Relationship.create(service, RelationshipType.SHAPE, structure)));
+    }
+
+    @Test
     public void resourceShape() {
         ServiceShape parent = ServiceShape.builder()
                 .id("ns.foo#Svc")

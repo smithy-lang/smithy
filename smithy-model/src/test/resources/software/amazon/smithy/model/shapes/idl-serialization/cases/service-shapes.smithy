@@ -14,6 +14,9 @@ service MyService {
     resources: [
         MyResource,
     ],
+    shapes: [
+        SimpleString,
+    ],
 }
 
 resource EmptyResource {
@@ -79,3 +82,5 @@ structure InputOutput {}
 structure ResourceOperationInput {
     id: String,
 }
+
+string SimpleString

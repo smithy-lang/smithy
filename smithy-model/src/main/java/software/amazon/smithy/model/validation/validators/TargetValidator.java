@@ -50,6 +50,8 @@ public final class TargetValidator extends AbstractValidator {
     private static final int MAX_EDIT_DISTANCE_FOR_SUGGESTIONS = 2;
     private static final Set<ShapeType> INVALID_MEMBER_TARGETS = SetUtils.of(
             ShapeType.SERVICE, ShapeType.RESOURCE, ShapeType.OPERATION, ShapeType.MEMBER);
+    private static final Set<ShapeType> INVALID_SERVICE_SHAPE_TARGETS = SetUtils.of(
+            ShapeType.SERVICE, ShapeType.RESOURCE, ShapeType.OPERATION, ShapeType.MEMBER);
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -97,6 +99,14 @@ public final class TargetValidator extends AbstractValidator {
             case OPERATION:
                 if (target.getType() != ShapeType.OPERATION) {
                     return Optional.of(badType(shape, target, relType, ShapeType.OPERATION));
+                }
+                return Optional.empty();
+            case SHAPE:
+                // Service shape relationships cannot target members, services, operations, or resource shapes.
+                if (INVALID_SERVICE_SHAPE_TARGETS.contains(target.getType())) {
+                    return Optional.of(error(shape, format(
+                            "Services cannot directly bind %s shapes through the `shapes` property, but found %s",
+                            target.getType(), target)));
                 }
                 return Optional.empty();
             case INPUT:

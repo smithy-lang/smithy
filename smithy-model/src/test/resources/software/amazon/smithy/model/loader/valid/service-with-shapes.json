@@ -1,0 +1,24 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "ns.foo#Common1": {
+            "type": "structure",
+            "members": {}
+        },
+        "ns.foo#Common2": {
+            "type": "string"
+        },
+        "ns.foo#ShapedService": {
+            "type": "service",
+            "version": "2020-07-02",
+            "shapes": [
+                {
+                    "target": "ns.foo#Common1"
+                },
+                {
+                    "target": "ns.foo#Common2"
+                }
+            ]
+        }
+    }
+}

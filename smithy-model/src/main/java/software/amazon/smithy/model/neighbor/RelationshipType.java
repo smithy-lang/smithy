@@ -47,6 +47,13 @@ public enum RelationshipType {
     OPERATION("operation", RelationshipDirection.DIRECTED),
 
     /**
+     * Relationships that exist between a service and the shapes bound
+     * directly to it. They reference shapes that are not service, operation,
+     * resource, members, or shapes that are traits.
+     */
+    SHAPE("shape", RelationshipDirection.DIRECTED),
+
+    /**
      * A collection operation relationship exists between a resource and the
      * operations bound to the resource in the "collectionOperations", "create",
      * and "list" properties.

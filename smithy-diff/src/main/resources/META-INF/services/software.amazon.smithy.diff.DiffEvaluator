@@ -1,6 +1,7 @@
 software.amazon.smithy.diff.evaluators.AddedEntityBinding
 software.amazon.smithy.diff.evaluators.AddedMetadata
 software.amazon.smithy.diff.evaluators.AddedOperationError
+software.amazon.smithy.diff.evaluators.AddedServiceBoundShape
 software.amazon.smithy.diff.evaluators.AddedServiceError
 software.amazon.smithy.diff.evaluators.AddedShape
 software.amazon.smithy.diff.evaluators.AddedTraitDefinition
@@ -19,6 +20,7 @@ software.amazon.smithy.diff.evaluators.RemovedAuthenticationScheme
 software.amazon.smithy.diff.evaluators.RemovedEntityBinding
 software.amazon.smithy.diff.evaluators.RemovedMetadata
 software.amazon.smithy.diff.evaluators.RemovedOperationError
+software.amazon.smithy.diff.evaluators.RemovedServiceBoundShape
 software.amazon.smithy.diff.evaluators.RemovedServiceError
 software.amazon.smithy.diff.evaluators.RemovedShape
 software.amazon.smithy.diff.evaluators.RemovedTraitDefinition

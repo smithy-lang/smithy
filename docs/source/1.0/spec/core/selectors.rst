@@ -1161,6 +1161,9 @@ The table below lists the labeled directed relationships from each shape.
     * - service
       - error
       - Each error structure referenced by the service (if present).
+    * - service
+      - shape
+      - Each shape directly bound to the service.
     * - resource
       - identifier
       - The identifier referenced by the resource (if specified).

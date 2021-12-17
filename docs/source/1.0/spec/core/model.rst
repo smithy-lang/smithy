@@ -1098,6 +1098,12 @@ The service shape supports the following properties:
         closure of the service can return. Each provided shape ID MUST target
         a :ref:`structure <structure>` shape that is marked with the
         :ref:`error-trait`.
+    * - shapes
+      - [``string``]
+      - Defines a list of shapes bound directly to the service. Each provided
+        shape ID MUST NOT target a :ref:`service <service>`, :ref:`resource
+        <resource>`, :ref:`operation <operation>`, :ref:`member <member>`, or
+        :ref:`trait shape <trait-shapes>`.
     * - rename
       - map of :ref:`shape ID <shape-id>` to ``string``
       - Disambiguates shape name conflicts in the
@@ -1184,6 +1190,41 @@ that are common to every operation in the service:
             }
         }
 
+The following example defines a service shape that binds a set of shapes
+directly it:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        namespace smithy.example
+
+        service MyService {
+            version: "2017-02-11",
+            shapes: [SomeShape]
+        }
+
+        structure SomeShape {}
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#MyService": {
+                    "type": "service",
+                    "version": "2017-02-11",
+                    "shapes": [
+                        {
+                            "target": "smithy.example#SomeShape"
+                        }
+                    ]
+                },
+                "smithy.example#SomeShape": {
+                    "type": "structure"
+                }
+            }
+        }
 
 
 .. _service-operations:

@@ -31,12 +31,14 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
     private final String version;
     private final Map<ShapeId, String> rename;
     private final List<ShapeId> errors;
+    private final List<ShapeId> shapes;
 
     private ServiceShape(Builder builder) {
         super(builder);
         version = builder.version;
         rename = builder.rename.copy();
         errors = builder.errors.copy();
+        shapes = builder.shapes.copy();
     }
 
     public static Builder builder() {
@@ -50,6 +52,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
                 .version(version)
                 .errors(errors)
                 .rename(rename)
+                .shapes(shapes)
                 .operations(getOperations())
                 .resources(getResources());
     }
@@ -73,7 +76,8 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
         ServiceShape o = (ServiceShape) other;
         return version.equals(o.version)
                && rename.equals(o.rename)
-               && errors.equals(o.errors);
+               && errors.equals(o.errors)
+               && shapes.equals(o.shapes);
     }
 
     @Override
@@ -113,6 +117,15 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
     }
 
     /**
+     * <p>Gets a list of the shapes that are directly bound to the service.</p>
+     *
+     * @return Returns the shapes.
+     */
+    public List<ShapeId> getShapes() {
+        return shapes;
+    }
+
+    /**
      * Gets the contextual name of a shape within the closure.
      *
      * <p>If there is a rename property entry for the given shape ID, then
@@ -138,6 +151,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
         private String version = "";
         private final BuilderRef<Map<ShapeId, String>> rename = BuilderRef.forOrderedMap();
         private final BuilderRef<List<ShapeId>> errors = BuilderRef.forList();
+        private final BuilderRef<List<ShapeId>> shapes = BuilderRef.forList();
 
         @Override
         public ServiceShape build() {
@@ -241,6 +255,71 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
          */
         public Builder clearErrors() {
             errors.clear();
+            return this;
+        }
+
+        /**
+         * Sets and replaces the shapes bound to the service.
+         *
+         * @param boundShapeIds Shape IDs to set.
+         * @return Returns the builder.
+         */
+        public Builder shapes(Collection<ShapeId> boundShapeIds) {
+            shapes.clear();
+            boundShapeIds.forEach(this::addShape);
+            return this;
+        }
+
+        /**
+         * Adds a shape directly bound to the service.
+         *
+         * @param boundShapeId Shape ID to bind.
+         * @return Returns the builder.
+         */
+        public Builder addShape(ToShapeId boundShapeId) {
+            shapes.get().add(boundShapeId.toShapeId());
+            return this;
+        }
+
+        /**
+         * Adds a shape directly bound to the service.
+         *
+         * @param boundShapeId Shape ID to bind.
+         * @return Returns the builder.
+         * @throws ShapeIdSyntaxException if the shape ID is invalid.
+         */
+        public Builder addShape(String boundShapeId) {
+            return addShape(ShapeId.from(boundShapeId));
+        }
+
+        /**
+         * Adds shapes directly bound to the service.
+         *
+         * @param boundShapeIds Shape IDs to bind.
+         * @return Returns the builder.
+         */
+        public Builder addShapes(List<ShapeId> boundShapeIds) {
+            shapes.get().addAll(Objects.requireNonNull(boundShapeIds));
+            return this;
+        }
+
+        /**
+         * Removes a bound shape by Shape ID.
+         *
+         * @param boundShapeId Shape ID to remove.
+         * @return Returns the builder.
+         */
+        public Builder removeShape(ToShapeId boundShapeId) {
+            shapes.get().remove(boundShapeId.toShapeId());
+            return this;
+        }
+
+        /**
+         * Removes all directly bound shapes.
+         * @return Returns the builder.
+         */
+        public Builder clearShapes() {
+            shapes.clear();
             return this;
         }
     }

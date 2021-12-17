@@ -28,6 +28,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeVisitor;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
@@ -83,6 +84,11 @@ public final class RemoveUnusedComponents implements OpenApiMapper {
 
         // Remove all found "$ref" pointers from the set, leaving only unreferenced.
         pointers.removeAll(findAllRefs(openapi.toNode().expectObjectNode()));
+
+        // Remove all schemas that were explicitly bound to the service.
+        for (ShapeId shapeId : context.getService().getShapes()) {
+            pointers.remove(context.getPointer(shapeId));
+        }
 
         if (pointers.isEmpty()) {
             return openapi;
