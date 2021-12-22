@@ -464,14 +464,14 @@ use smithy.test#httpResponseTests
         id: "serializes_structure_members_with_locationname_traits",
         protocol: awsJson1_1,
         documentation: "Serializes structure members with locationName traits",
-        body: "{\"StructWithLocationName\":{\"RenamedMember\":\"some-value\"}}",
+        body: "{\"StructWithJsonName\":{\"Value\":\"some-value\"}}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/x-amz-json-1.1"},
         requireHeaders: [
             "Content-Length"
         ],
         params: {
-            StructWithLocationName: {
+            StructWithJsonName: {
                 Value: "some-value",
             },
         },
@@ -951,7 +951,7 @@ structure KitchenSink {
     RecursiveStruct: KitchenSink,
     SimpleStruct: SimpleStruct,
     String: String,
-    StructWithLocationName: StructWithLocationName,
+    StructWithJsonName: StructWithJsonName,
     Timestamp: Timestamp,
     @timestampFormat("epoch-seconds")
     UnixTimestamp: Timestamp,

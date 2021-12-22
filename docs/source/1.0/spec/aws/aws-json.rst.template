@@ -18,10 +18,6 @@ that affect serialization:
     * - :ref:`hostLabel <hostLabel-trait>`
       - Binds a top-level operation input structure member to a label in
         the hostPrefix of an endpoint trait.
-    * - :ref:`jsonName <jsonName-trait>`
-      - By default, the JSON property names used in serialized structures are
-        the same as a structure member name. The ``jsonName`` trait changes
-        the JSON property name to a custom value.
     * - :ref:`timestampFormat <timestampFormat-trait>`
       - Defines a custom timestamp serialization format.
 

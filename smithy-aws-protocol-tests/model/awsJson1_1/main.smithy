@@ -45,8 +45,8 @@ structure SimpleStruct {
     Value: String,
 }
 
-structure StructWithLocationName {
-    @jsonName("RenamedMember")
+structure StructWithJsonName {
+    @jsonName("RenamedMember") // Even if this trait it present, it does not affect serialization for this protocol
     Value: String,
 }
 
