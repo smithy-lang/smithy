@@ -76,9 +76,7 @@ public final class MapUtils {
      * @throws NullPointerException if the key or the value is {@code null}
      */
     public static <K, V> Map<K, V> of(K k1, V v1) {
-        Map<K, V> result = new HashMap<>(1);
-        result.put(k1, v1);
-        return Collections.unmodifiableMap(result);
+        return Collections.singletonMap(k1, v1);
     }
 
     /**
@@ -399,11 +397,17 @@ public final class MapUtils {
     @SafeVarargs
     @SuppressWarnings("varargs")
     public static <K, V> Map<K, V> ofEntries(Map.Entry<? extends K, ? extends V>... entries) {
-        Map<K, V> result = new HashMap<>(entries.length);
-        for (Map.Entry<? extends K, ? extends V> entry : entries) {
-            result.put(entry.getKey(), entry.getValue());
+        if (entries.length == 0) {
+            return MapUtils.of();
+        } else if (entries.length == 1) {
+            return MapUtils.of(entries[0].getKey(), entries[0].getValue());
+        } else {
+            Map<K, V> result = new HashMap<>(entries.length);
+            for (Map.Entry<? extends K, ? extends V> entry : entries) {
+                result.put(entry.getKey(), entry.getValue());
+            }
+            return Collections.unmodifiableMap(result);
         }
-        return Collections.unmodifiableMap(result);
     }
 
     /**
