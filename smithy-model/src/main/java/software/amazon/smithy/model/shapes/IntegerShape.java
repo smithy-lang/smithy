@@ -46,6 +46,11 @@ public final class IntegerShape extends NumberShape implements ToSmithyBuilder<I
         return Optional.of(this);
     }
 
+    @Override
+    public ShapeType getType() {
+        return ShapeType.INTEGER;
+    }
+
     /**
      * Builder used to create a {@link IntegerShape}.
      */

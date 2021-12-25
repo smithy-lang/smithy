@@ -70,6 +70,11 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
         return Optional.of(this);
     }
 
+    @Override
+    public ShapeType getType() {
+        return ShapeType.MAP;
+    }
+
     /**
      * Get the value member shape of the map.
      *

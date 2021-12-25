@@ -64,6 +64,11 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
         return Optional.of(this);
     }
 
+    @Override
+    public ShapeType getType() {
+        return ShapeType.OPERATION;
+    }
+
     /**
      * <p>Gets the optional shape ID of the input of the operation.</p>
      *

@@ -46,6 +46,11 @@ public final class ByteShape extends NumberShape implements ToSmithyBuilder<Byte
         return Optional.of(this);
     }
 
+    @Override
+    public ShapeType getType() {
+        return ShapeType.BYTE;
+    }
+
     /**
      * Builder used to create a {@link ByteShape}.
      */

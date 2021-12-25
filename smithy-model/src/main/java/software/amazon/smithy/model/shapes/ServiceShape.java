@@ -76,6 +76,11 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
                && errors.equals(o.errors);
     }
 
+    @Override
+    public ShapeType getType() {
+        return ShapeType.SERVICE;
+    }
+
     /**
      * Get the version of the service. An empty string is returned
      * if the version is undefined.
