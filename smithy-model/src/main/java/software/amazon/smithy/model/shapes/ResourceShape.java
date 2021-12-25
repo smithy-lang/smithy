@@ -96,6 +96,11 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
         return Collections.unmodifiableSet(allOperations);
     }
 
+    @Override
+    public ShapeType getType() {
+        return ShapeType.RESOURCE;
+    }
+
     /**
      * Gets the operations bound through the "collectionOperations" property.
      *

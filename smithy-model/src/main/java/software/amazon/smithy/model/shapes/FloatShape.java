@@ -46,6 +46,11 @@ public final class FloatShape extends NumberShape implements ToSmithyBuilder<Flo
         return Optional.of(this);
     }
 
+    @Override
+    public ShapeType getType() {
+        return ShapeType.FLOAT;
+    }
+
     /**
      * Builder used to create a {@link FloatShape}.
      */

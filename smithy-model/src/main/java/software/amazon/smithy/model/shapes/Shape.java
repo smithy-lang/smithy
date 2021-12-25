@@ -46,7 +46,6 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
     private final ShapeId id;
     private final Map<ShapeId, Trait> traits;
     private final transient SourceLocation source;
-    private final transient ShapeType type;
 
     /**
      * This class is package-private, which means that all subclasses of this
@@ -58,7 +57,6 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
      */
     @SuppressWarnings("unchecked")
     Shape(AbstractShapeBuilder builder, boolean expectMemberSegments) {
-        type = builder.getShapeType();
         source = builder.getSourceLocation();
         id = SmithyBuilder.requiredState("id", builder.getId());
         traits = builder.copyTraits();
@@ -103,9 +101,7 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
      *
      * @return Returns the type;
      */
-    public final ShapeType getType() {
-        return type;
-    }
+    public abstract ShapeType getType();
 
     /**
      * Dispatches the shape to the appropriate {@link ShapeVisitor} method.

@@ -46,6 +46,11 @@ public final class UnionShape extends NamedMembersShape implements ToSmithyBuild
         return Optional.of(this);
     }
 
+    @Override
+    public ShapeType getType() {
+        return ShapeType.UNION;
+    }
+
     /**
      * Builder used to create a {@link UnionShape}.
      */

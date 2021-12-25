@@ -46,6 +46,11 @@ public final class SetShape extends CollectionShape implements ToSmithyBuilder<S
         return Optional.of(this);
     }
 
+    @Override
+    public ShapeType getType() {
+        return ShapeType.SET;
+    }
+
     /**
      * Builder used to create a {@link SetShape}.
      */

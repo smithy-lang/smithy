@@ -46,6 +46,11 @@ public final class ShortShape extends NumberShape implements ToSmithyBuilder<Sho
         return Optional.of(this);
     }
 
+    @Override
+    public ShapeType getType() {
+        return ShapeType.SHORT;
+    }
+
     /**
      * Builder used to create a {@link ShortShape}.
      */

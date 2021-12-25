@@ -46,6 +46,11 @@ public final class BooleanShape extends SimpleShape implements ToSmithyBuilder<B
         return Optional.of(this);
     }
 
+    @Override
+    public ShapeType getType() {
+        return ShapeType.BOOLEAN;
+    }
+
     /**
      * Builder used to create a {@link BooleanShape}.
      */

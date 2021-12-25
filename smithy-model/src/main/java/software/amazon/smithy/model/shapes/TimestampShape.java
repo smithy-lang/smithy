@@ -45,6 +45,11 @@ public final class TimestampShape extends SimpleShape implements ToSmithyBuilder
         return Optional.of(this);
     }
 
+    @Override
+    public ShapeType getType() {
+        return ShapeType.TIMESTAMP;
+    }
+
     /**
      * Builder used to create a {@link TimestampShape}.
      */
