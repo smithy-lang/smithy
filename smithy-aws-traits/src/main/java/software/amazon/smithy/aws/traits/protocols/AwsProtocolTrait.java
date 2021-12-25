@@ -125,6 +125,7 @@ public abstract class AwsProtocolTrait extends AbstractTrait {
          */
         @SuppressWarnings("unchecked")
         public B fromNode(Node node) {
+            sourceLocation(node.getSourceLocation());
             ObjectNode objectNode = node.expectObjectNode();
             objectNode.getArrayMember(HTTP)
                     .map(values -> Node.loadArrayOfString(HTTP, values))

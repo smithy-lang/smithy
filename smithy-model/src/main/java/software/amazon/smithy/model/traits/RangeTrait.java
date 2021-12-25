@@ -115,7 +115,9 @@ public final class RangeTrait extends AbstractTrait implements ToSmithyBuilder<R
                     .map(node -> new BigDecimal(node.expectNumberNode().getValue().toString())).orElse(null);
             BigDecimal maxValue = objectNode.getMember("max")
                     .map(node -> new BigDecimal(node.expectNumberNode().getValue().toString())).orElse(null);
-            return builder().sourceLocation(value).min(minValue).max(maxValue).build();
+            RangeTrait result = builder().sourceLocation(value).min(minValue).max(maxValue).build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 }

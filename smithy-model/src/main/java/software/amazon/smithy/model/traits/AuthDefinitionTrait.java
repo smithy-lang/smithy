@@ -83,7 +83,9 @@ public final class AuthDefinitionTrait extends AbstractTrait implements ToSmithy
                     builder.addTrait(ShapeId.from(string));
                 }
             });
-            return builder.build();
+            AuthDefinitionTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 

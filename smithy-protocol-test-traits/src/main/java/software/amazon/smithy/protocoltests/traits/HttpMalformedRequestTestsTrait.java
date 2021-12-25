@@ -54,7 +54,10 @@ public final class HttpMalformedRequestTestsTrait extends AbstractTrait {
             ArrayNode values = value.expectArrayNode();
             List<ParameterizedHttpMalformedRequestTestCase> testCases =
                     values.getElementsAs(ParameterizedHttpMalformedRequestTestCase::fromNode);
-            return new HttpMalformedRequestTestsTrait(value.getSourceLocation(), testCases);
+            HttpMalformedRequestTestsTrait result = new HttpMalformedRequestTestsTrait(value.getSourceLocation(),
+                                                                                       testCases);
+            result.setNodeCache(value);
+            return result;
         }
     }
 

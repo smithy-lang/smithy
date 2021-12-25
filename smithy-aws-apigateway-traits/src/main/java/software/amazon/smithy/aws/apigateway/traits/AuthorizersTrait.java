@@ -67,7 +67,9 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
                 AuthorizerDefinition authorizer = mapper.deserialize(node, AuthorizerDefinition.class);
                 builder.putAuthorizer(key.getValue(), authorizer);
             });
-            return builder.build();
+            AuthorizersTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 

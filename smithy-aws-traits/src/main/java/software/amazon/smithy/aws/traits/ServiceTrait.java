@@ -16,6 +16,7 @@
 package software.amazon.smithy.aws.traits;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.SourceException;
@@ -79,7 +80,9 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
             objectNode.getStringMember("endpointPrefix")
                     .map(StringNode::getValue)
                     .ifPresent(builder::endpointPrefix);
-            return builder.build(target);
+            ServiceTrait result = builder.build(target);
+            result.setNodeCache(value);
+            return result;
         }
     }
 
@@ -177,6 +180,30 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
                 .withMember("cloudTrailEventSource", Node.from(getCloudTrailEventSource()))
                 .withMember("endpointPrefix", Node.from(getEndpointPrefix()))
                 .build();
+    }
+
+    // Due to the defaulting of this trait, equals has to be overridden
+    // so that inconsequential differences in toNode do not effect equality.
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof ServiceTrait)) {
+            return false;
+        } else if (other == this) {
+            return true;
+        } else {
+            ServiceTrait os = (ServiceTrait) other;
+            return sdkId.equals(os.sdkId)
+                    && arnNamespace.equals(os.arnNamespace)
+                    && cloudFormationName.equals(os.cloudFormationName)
+                    && cloudTrailEventSource.equals(os.cloudTrailEventSource)
+                    && endpointPrefix.equals(os.endpointPrefix);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(toShapeId(), sdkId, arnNamespace, cloudFormationName,
+                            cloudTrailEventSource, endpointPrefix);
     }
 
     /** Builder for {@link ServiceTrait}. */

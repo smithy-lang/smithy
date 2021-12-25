@@ -51,7 +51,9 @@ public final class DeprecatedTrait extends AbstractTrait implements ToSmithyBuil
             String messageValue = objectNode.getMember("message")
                     .map(v -> v.expectStringNode().getValue()).orElse(null);
             builder.since(sinceValue).message(messageValue);
-            return builder.build();
+            DeprecatedTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 

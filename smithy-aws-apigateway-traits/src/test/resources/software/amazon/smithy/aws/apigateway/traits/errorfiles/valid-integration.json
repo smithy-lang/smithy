@@ -73,7 +73,6 @@
             "type": "operation",
             "traits": {
                 "aws.apigateway#mockIntegration": {
-                    "type": "aws",
                     "requestTemplates": {
                         "application/json": "#set ($root=$input.path('$')) { \"stage\": \"$root.name\", \"user-id\": \"$root.key\" }",
                         "application/xml": "#set ($root=$input.path('$')) <stage>$root.name</stage> "

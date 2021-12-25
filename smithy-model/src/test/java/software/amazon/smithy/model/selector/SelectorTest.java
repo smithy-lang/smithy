@@ -745,10 +745,8 @@ public class SelectorTest {
     public void projectionsCanMatchThemselvesThroughIntersection() {
         // Any enum with tags should match it's own tags.
         Set<String> shapes1 = ids(traitModel, "[@trait|enum|(values): @{tags|(values)}=@{tags|(values)}]");
-        Set<String> shapes2 = ids(traitModel, "[@trait|enum|(values): @{tags}?=true]");
 
-        assertThat(shapes1, not(empty()));
-        assertThat(shapes2, equalTo(shapes1));
+        assertThat(shapes1, containsInAnyOrder("smithy.example#EnumString", "smithy.example#DocumentedString1"));
     }
 
     @Test

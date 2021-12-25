@@ -244,7 +244,9 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
             builder.items(members.getStringMemberOrDefault("items", null));
             builder.inputToken(members.getStringMemberOrDefault("inputToken", null));
             builder.outputToken(members.getStringMemberOrDefault("outputToken", null));
-            return builder.build();
+            PaginatedTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 }

@@ -52,7 +52,9 @@ public final class AwsQueryErrorTrait extends AbstractTrait implements ToSmithyB
             ObjectNode objectNode = value.expectObjectNode();
             builder.code(objectNode.expectStringMember("code").getValue());
             builder.httpResponseCode(objectNode.expectNumberMember("httpResponseCode").getValue().intValue());
-            return builder.build();
+            AwsQueryErrorTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 

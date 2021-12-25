@@ -122,7 +122,9 @@ public final class ExternalDocumentationTrait extends AbstractTrait
             value.expectObjectNode().getMembers().forEach((k, v) -> {
                 builder.addUrl(k.expectStringNode().getValue(), v.expectStringNode().getValue());
             });
-            return builder.build();
+            ExternalDocumentationTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 }

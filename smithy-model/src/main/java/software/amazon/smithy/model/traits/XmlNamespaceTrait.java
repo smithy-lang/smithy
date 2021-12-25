@@ -110,7 +110,9 @@ public final class XmlNamespaceTrait extends AbstractTrait implements ToSmithyBu
             ObjectNode node = value.expectObjectNode();
             builder.uri(node.expectStringMember(URI).getValue());
             node.getStringMember(PREFIX).map(StringNode::getValue).ifPresent(builder::prefix);
-            return builder.build();
+            XmlNamespaceTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 }

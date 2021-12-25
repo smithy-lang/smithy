@@ -141,7 +141,9 @@ public final class IdRefTrait extends AbstractTrait implements ToSmithyBuilder<I
             objectNode.getStringMember(ERROR_MESSAGE)
                     .map(StringNode::getValue)
                     .ifPresent(builder::errorMessage);
-            return builder.build();
+            IdRefTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 }

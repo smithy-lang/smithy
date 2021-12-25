@@ -142,6 +142,26 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
         return builder.build();
     }
 
+    // Avoid potential equality issues related to inconsequential toNode differences.
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof TraitDefinition)) {
+            return false;
+        } else if (other == this) {
+            return true;
+        } else {
+            TraitDefinition od = (TraitDefinition) other;
+            return selector.equals(od.selector)
+                    && conflicts.equals(od.conflicts)
+                    && Objects.equals(structurallyExclusive, od.structurallyExclusive);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(toShapeId(), selector, conflicts, structurallyExclusive);
+    }
+
     /**
      * Builder to create a TraitDefinition.
      */
@@ -216,7 +236,9 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
                     .ifPresent(values -> loadArrayOfString(TraitDefinition.CONFLICTS_KEY, values)
                             .forEach(builder::addConflict));
 
-            return builder.build();
+            TraitDefinition result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 }

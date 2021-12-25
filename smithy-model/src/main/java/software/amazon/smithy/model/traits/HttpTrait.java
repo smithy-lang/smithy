@@ -43,7 +43,7 @@ public final class HttpTrait extends AbstractTrait implements ToSmithyBuilder<Ht
 
     public static final class Provider extends AbstractTrait.Provider {
         public Provider() {
-                super(ID);
+            super(ID);
         }
 
         @Override
@@ -56,7 +56,9 @@ public final class HttpTrait extends AbstractTrait implements ToSmithyBuilder<Ht
                                  .map(NumberNode::getValue)
                                  .map(Number::intValue)
                                  .orElse(200));
-            return builder.build();
+            HttpTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 
@@ -90,6 +92,26 @@ public final class HttpTrait extends AbstractTrait implements ToSmithyBuilder<Ht
     @Override
     public HttpTrait.Builder toBuilder() {
         return new Builder().sourceLocation(getSourceLocation()).method(method).uri(uri).code(code);
+    }
+
+    // Avoid inconsequential equality differences based on defaulting code to 200.
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof HttpTrait)) {
+            return false;
+        } else if (other == this) {
+            return true;
+        } else {
+            HttpTrait trait = (HttpTrait) other;
+            return method.equals(trait.method)
+                    && uri.equals(trait.uri)
+                    && code == trait.code;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(toShapeId(), method, uri, code);
     }
 
     /**

@@ -72,7 +72,9 @@ public final class IamResourceTrait extends AbstractTrait
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            return new NodeMapper().deserialize(value, IamResourceTrait.class);
+            IamResourceTrait result = new NodeMapper().deserialize(value, IamResourceTrait.class);
+            result.setNodeCache(value);
+            return result;
         }
     }
 
