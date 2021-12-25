@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.traits;
 
+import java.util.Objects;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -64,6 +65,24 @@ public final class RetryableTrait extends AbstractTrait implements ToSmithyBuild
         return nodeBuilder.build();
     }
 
+    // Avoid equality issues if, for example, throttling is set explicitly to false.
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof RetryableTrait)) {
+            return false;
+        } else if (other == this) {
+            return true;
+        } else {
+            RetryableTrait ot = (RetryableTrait) other;
+            return throttling == ot.throttling;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(toShapeId(), throttling);
+    }
+
     public static final class Provider implements TraitService {
         @Override
         public ShapeId getShapeId() {
@@ -74,7 +93,9 @@ public final class RetryableTrait extends AbstractTrait implements ToSmithyBuild
         public RetryableTrait createTrait(ShapeId target, Node value) {
             ObjectNode node = value.expectObjectNode();
             Builder builder = builder().sourceLocation(value.getSourceLocation());
-            return builder.throttling(node.getBooleanMemberOrDefault(THROTTLING)).build();
+            RetryableTrait result = builder.throttling(node.getBooleanMemberOrDefault(THROTTLING)).build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 

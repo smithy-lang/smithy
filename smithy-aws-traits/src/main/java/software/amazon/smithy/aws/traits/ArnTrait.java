@@ -18,6 +18,7 @@ package software.amazon.smithy.aws.traits;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.SourceException;
@@ -76,7 +77,9 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
             builder.absolute(objectNode.getBooleanMemberOrDefault(ABSOLUTE));
             builder.noRegion(objectNode.getBooleanMemberOrDefault(NO_REGION));
             builder.noAccount(objectNode.getBooleanMemberOrDefault(NO_ACCOUNT));
-            return builder.build();
+            ArnTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 
@@ -149,6 +152,28 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
                 .noRegion(isNoRegion())
                 .noAccount(isNoAccount())
                 .template(getTemplate());
+    }
+
+    // Due to the defaulting of this trait, equals has to be overridden
+    // so that inconsequential differences in toNode do not effect equality.
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof ArnTrait)) {
+            return false;
+        } else if (other == this) {
+            return true;
+        } else {
+            ArnTrait oa = (ArnTrait) other;
+            return template.equals(oa.template)
+                    && absolute == oa.absolute
+                    && noAccount == oa.noAccount
+                    && noRegion == oa.noRegion;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(toShapeId(), template, absolute, noAccount, noRegion);
     }
 
     /** Builder for {@link ArnTrait}. */

@@ -68,7 +68,10 @@ public abstract class StringTrait extends AbstractTrait {
 
         @Override
         public T createTrait(ShapeId id, Node value) {
-            return traitFactory.apply(value.expectStringNode().getValue(), value.getSourceLocation());
+            T result = traitFactory.apply(value.expectStringNode().getValue(), value.getSourceLocation());
+            // Reuse the node instead of creating a new one.
+            result.setNodeCache(value);
+            return result;
         }
     }
 }

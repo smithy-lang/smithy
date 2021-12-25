@@ -134,7 +134,9 @@ public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<En
             for (ObjectNode definition : value.expectArrayNode().getElementsAs(ObjectNode.class)) {
                 builder.addEnum(EnumDefinition.fromNode(definition));
             }
-            return builder.build();
+            EnumTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 }

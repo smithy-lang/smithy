@@ -88,7 +88,9 @@ public final class SigV4Trait extends AbstractTrait implements ToSmithyBuilder<S
             Builder builder = builder().sourceLocation(value);
             ObjectNode objectNode = value.expectObjectNode();
             builder.name(objectNode.expectStringMember(NAME).getValue());
-            return builder.build();
+            SigV4Trait result = builder.build();
+            result.setNodeCache(objectNode);
+            return result;
         }
     }
 }

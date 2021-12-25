@@ -85,6 +85,24 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
         return builder;
     }
 
+    // Ignore inconsequential toNode differences.
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof ReferencesTrait)) {
+            return false;
+        } else if (other == this) {
+            return true;
+        } else {
+            ReferencesTrait trait = (ReferencesTrait) other;
+            return references.equals(trait.references);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(toShapeId(), references);
+    }
+
     /**
      * @return Returns a builder used to create a references trait.
      */
@@ -265,7 +283,9 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
             for (ObjectNode member : refs.getElementsAs(ObjectNode.class)) {
                 builder.addReference(referenceFromNode(member));
             }
-            return builder.build();
+            ReferencesTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
 
         private static Reference referenceFromNode(ObjectNode referenceProperties) {

@@ -113,7 +113,9 @@ public final class HttpApiKeyAuthTrait extends AbstractTrait implements ToSmithy
             builder.scheme(objectNode.getStringMemberOrDefault("scheme", null));
             builder.name(objectNode.expectStringMember("name").getValue());
             builder.in(Location.from(objectNode.expectStringMember("in").expectOneOf("header", "query")));
-            return builder.build();
+            HttpApiKeyAuthTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 

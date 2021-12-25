@@ -31,7 +31,6 @@
                         "integration.request.querystring.provider": "method.request.querystring.vendor"
                     },
                     "cacheNamespace": "cache namespace",
-                    "cacheKeyParameters": [],
                     "passThroughBehavior": "never",
                     "payloadFormatVersion": "1.0",
                     "responses": {

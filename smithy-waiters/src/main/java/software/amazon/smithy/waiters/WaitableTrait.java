@@ -111,7 +111,9 @@ public final class WaitableTrait extends AbstractTrait implements ToSmithyBuilde
             for (Map.Entry<String, Node> entry : node.getStringMap().entrySet()) {
                 builder.put(entry.getKey(), Waiter.fromNode(entry.getValue()));
             }
-            return builder.build();
+            WaitableTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 }

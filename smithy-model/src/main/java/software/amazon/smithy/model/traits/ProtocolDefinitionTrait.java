@@ -105,7 +105,9 @@ public final class ProtocolDefinitionTrait extends AbstractTrait implements ToSm
                 }
             });
             builder.noInlineDocumentSupport(objectNode.getBooleanMemberOrDefault(NO_INLINE_DOCUMENT_SUPPORT));
-            return builder.build();
+            ProtocolDefinitionTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 

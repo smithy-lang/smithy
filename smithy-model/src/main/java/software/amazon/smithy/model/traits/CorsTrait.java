@@ -96,6 +96,27 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
                         .map(Node::fromStrings));
     }
 
+    // Avoid inconsequential equality issues due to empty vs not empty sets.
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof CorsTrait)) {
+            return false;
+        } else if (other == this) {
+            return true;
+        } else {
+            CorsTrait trait = (CorsTrait) other;
+            return origin.equals(trait.origin)
+                    && maxAge == trait.maxAge
+                    && additionalAllowedHeaders.equals(trait.additionalAllowedHeaders)
+                    && additionalExposedHeaders.equals(trait.additionalExposedHeaders);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(toShapeId(), origin, maxAge, additionalAllowedHeaders, additionalExposedHeaders);
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -158,7 +179,9 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
             node.getArrayMember(EXPOSED_HEADERS_MEMBER_ID)
                     .map(Provider::stringSetFromNode)
                     .ifPresent(builder::additionalExposedHeaders);
-            return builder.build();
+            CorsTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
 
         private static Set<String> stringSetFromNode(ArrayNode node) {

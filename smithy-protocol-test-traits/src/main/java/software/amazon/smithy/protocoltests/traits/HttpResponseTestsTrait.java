@@ -51,7 +51,9 @@ public final class HttpResponseTestsTrait extends AbstractTrait {
         public Trait createTrait(ShapeId target, Node value) {
             ArrayNode values = value.expectArrayNode();
             List<HttpResponseTestCase> testCases = values.getElementsAs(HttpResponseTestCase::fromNode);
-            return new HttpResponseTestsTrait(value.getSourceLocation(), testCases);
+            HttpResponseTestsTrait result = new HttpResponseTestsTrait(value.getSourceLocation(), testCases);
+            result.setNodeCache(value);
+            return result;
         }
     }
 

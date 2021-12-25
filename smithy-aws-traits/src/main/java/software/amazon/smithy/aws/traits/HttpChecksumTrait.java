@@ -163,7 +163,9 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
                     .map(StringNode::getValue)
                     .ifPresent(builder::requestValidationModeMember);
 
-            return builder.build();
+            HttpChecksumTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 

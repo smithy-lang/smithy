@@ -82,7 +82,9 @@ public final class AuthTrait extends AbstractTrait {
             for (StringNode node : value.expectArrayNode().getElementsAs(StringNode.class)) {
                 values.add(node.expectShapeId());
             }
-            return new AuthTrait(values, value.getSourceLocation());
+            AuthTrait trait = new AuthTrait(values, value.getSourceLocation());
+            trait.setNodeCache(value);
+            return trait;
         }
     }
 

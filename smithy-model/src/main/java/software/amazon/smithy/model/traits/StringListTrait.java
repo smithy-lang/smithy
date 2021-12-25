@@ -161,7 +161,9 @@ public abstract class StringListTrait extends AbstractTrait {
         @Override
         public T createTrait(ShapeId id, Node value) {
             List<String> values = Node.loadArrayOfString(id.toString(), value);
-            return traitFactory.apply(values, value.getSourceLocation());
+            T result = traitFactory.apply(values, value.getSourceLocation());
+            result.setNodeCache(value);
+            return result;
         }
     }
 }

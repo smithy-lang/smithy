@@ -89,7 +89,9 @@ public final class RecommendedTrait extends AbstractTrait implements ToSmithyBui
             String reason = objectNode.getStringMember("reason")
                     .map(StringNode::getValue)
                     .orElse(null);
-            return builder().sourceLocation(value).reason(reason).build();
+            RecommendedTrait result = builder().sourceLocation(value).reason(reason).build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 }

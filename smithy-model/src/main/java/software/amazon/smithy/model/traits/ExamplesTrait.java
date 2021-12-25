@@ -293,7 +293,9 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
                     .map(Node::expectObjectNode)
                     .map(Provider::exampleFromNode)
                     .forEach(builder::addExample);
-            return builder.build();
+            ExamplesTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
 
         private static Example exampleFromNode(ObjectNode node) {

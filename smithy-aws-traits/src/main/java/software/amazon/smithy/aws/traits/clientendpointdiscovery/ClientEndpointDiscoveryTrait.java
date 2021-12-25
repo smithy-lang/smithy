@@ -151,7 +151,9 @@ public final class ClientEndpointDiscoveryTrait extends AbstractTrait
                     .sourceLocation(value)
                     .operation(objectNode.expectStringMember(OPERATION).expectShapeId());
             objectNode.getStringMember(ERROR).ifPresent(error -> builder.error(error.expectShapeId()));
-            return builder.build();
+            ClientEndpointDiscoveryTrait result = builder.build();
+            result.setNodeCache(objectNode);
+            return result;
         }
     }
 }

@@ -59,7 +59,9 @@ public final class DefineConditionKeysTrait extends AbstractTrait implements ToS
                         entry.getValue().expectObjectNode());
                 builder.putConditionKey(entry.getKey().getValue(), definition);
             }
-            return builder.build();
+            DefineConditionKeysTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 
