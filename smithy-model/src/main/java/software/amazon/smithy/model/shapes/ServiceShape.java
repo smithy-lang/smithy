@@ -34,22 +34,16 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class ServiceShape extends EntityShape implements ToSmithyBuilder<ServiceShape> {
 
     private final String version;
-    private final String introducedVersion;
     private final Map<ShapeId, String> rename;
-    private final Map<ShapeId, String> introducedRename;
     private final List<ShapeId> errors;
-    private final List<ShapeId> introducedErrors;
 
     private ServiceShape(Builder builder) {
         super(builder);
 
         if (getMixins().isEmpty()) {
             version = builder.version;
-            introducedVersion = version;
             rename = builder.rename.copy();
-            introducedRename = rename;
             errors = builder.errors.copy();
-            introducedErrors = errors;
         } else {
             String computedVersion = "";
             Map<ShapeId, String> computedRename = new HashMap<>();
@@ -66,15 +60,11 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
                 }
             }
 
-            introducedVersion = builder.version;
-            introducedRename = builder.rename.copy();
-            introducedErrors = builder.errors.copy();
-
-            if (!introducedVersion.isEmpty()) {
-                computedVersion = introducedVersion;
+            if (!builder.version.isEmpty()) {
+                computedVersion = builder.version;
             }
-            computedRename.putAll(introducedRename);
-            computedErrors.addAll(introducedErrors);
+            computedRename.putAll(builder.rename.peek());
+            computedErrors.addAll(builder.errors.peek());
 
             version = computedVersion;
             rename = Collections.unmodifiableMap(computedRename);
@@ -89,11 +79,11 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
     @Override
     public Builder toBuilder() {
         return updateBuilder(builder())
-                .version(introducedVersion)
-                .errors(introducedErrors)
-                .rename(introducedRename)
-                .operations(getIntroducedOperations())
-                .resources(getIntroducedResources());
+                .version(version)
+                .errors(errors)
+                .rename(rename)
+                .operations(getOperations())
+                .resources(getResources());
     }
 
     @Override
@@ -134,31 +124,10 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
     }
 
     /**
-     * Gets the version of the service introduced by the shape and not
-     * inherited from mixins. An empty string is returned if the version
-     * is undefined.
-     *
-     * @return The introduced version of the service.
-     */
-    public String getIntroducedVersion() {
-        return introducedVersion;
-    }
-
-    /**
      * @return The rename map of the service.
      */
     public Map<ShapeId, String> getRename() {
         return rename;
-    }
-
-    /**
-     * Gets the rename map introduced by the shape and not inherited
-     * from mixins.
-     *
-     * @return The introduced rename map of the service.
-     */
-    public Map<ShapeId, String> getIntroducedRename() {
-        return introducedRename;
     }
 
     /**
@@ -173,21 +142,6 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
      */
     public List<ShapeId> getErrors() {
         return errors;
-    }
-
-    /**
-     * Gets the list of common errors introduced by the shape and not
-     * inherited from mixins. These errors can be encountered by every
-     * operation in the service.
-     *
-     * Each returned {@link ShapeId} must resolve to a
-     * {@link StructureShape} that is targeted by an error trait; however,
-     * this is only guaranteed after a model is validated.
-     *
-     * @return Returns the introduced service errors.
-     */
-    public List<ShapeId> getIntroducedErrors() {
-        return introducedErrors;
     }
 
     /**
