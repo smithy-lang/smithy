@@ -349,13 +349,12 @@ can be referred to outside of `smithy.example`.
 The members and traits applied to members of a mixin are copied onto the target
 shape. It is sometimes necessary to provide a more specific trait value for a
 copied member or to add traits only to a specific copy of a member. Traits can
-be applied to these members in the JSON AST using the `apply` type and in the
-Smithy IDL using `apply` statements.
+be added on to these members as normal. Additionally, Traits can  be applied to
+these members in the JSON AST using the `apply` type and in the Smithy IDL using
+`apply` statements.
 
-> Note: using the `apply` type and `apply` statements on members that are
-copied from mixin members _do not_ merge the applied trait value with the
-traits applied to the original mixin member. Applying traits to copied mixin
-members completely supersedes any traits applied to mixin members.
+> Note: just like with traits on the shape itself, the local trait values
+supersede trait values from mixins.
 
 
 #### Applying traits in the JSON AST
@@ -403,6 +402,45 @@ applied to `MyStruct`. The `mixinMember` member of `MyMixin` has a
 }
 ```
 
+Traits can also be applied to copies of mixin members as if they were local
+members.
+
+```json
+{
+    "smithy": "1.1",
+    "shapes": {
+        "smithy.example#MyMixin": {
+            "type": "structure",
+            "members": {
+                "mixinMember": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Generic docs"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MyStruct": {
+            "type": "structure",
+            "members": {
+               "mixinMember": {
+                  "target": "smithy.api#String",
+                  "traits": {
+                     "smithy.api#documentation": "Specific docs"
+                  }
+               }
+           },
+            "mixins": [
+                {"target": "smithy.example#MyMixin"}
+            ]
+        }
+    }
+}
+```
+
 #### Applying traits in the IDL
 
 The previous example can be defined in the Smithy IDL using an
@@ -426,6 +464,24 @@ structure MyMixin {
 
 structure MyStruct with MyMixin {}
 apply MyStruct$mixinMember @documentation("Specific docs")
+```
+
+Or, alternatively:
+
+```smithy
+$version: "1.1"
+namespace smithy.example
+
+@mixin
+structure MyMixin {
+    /// Generic docs
+    mixinMember: String
+}
+
+structure MyStruct with MyMixin {
+    /// Specific docs
+    mixinMember: String
+}
 ```
 
 
@@ -487,7 +543,8 @@ structure CycleB with CycleA {}
 ### Mixin members MUST NOT conflict
 
 The list of mixins applied to a structure or union MUST NOT attempt to define
-members that use the same member name. The following model is invalid:
+members that use the same member name with different targets. The following model
+is invalid:
 
 ```
 @mixin
@@ -497,7 +554,7 @@ structure A1 {
 
 @mixin
 structure A2 {
-    a: String
+    a: Integer
 }
 
 structure Invalid with
@@ -517,10 +574,32 @@ structure A1 {
 
 @mixin
 structure A2 {
-    A: String
+    A: Integer
 }
 
 structure Invalid with
+    A1
+    A2 {}
+```
+
+A shape MAY use a member name that has already defined, but if it does it MUST
+target the same shape. This can be done to apply additional traits to the
+member.
+
+```
+@mixin
+structure A1 {
+    @private
+    a: String
+}
+
+@mixin
+structure A2 {
+    @required
+    a: String
+}
+
+structure Valid with
     A1
     A2 {}
 ```
