@@ -228,7 +228,7 @@ abstract class AbstractMutableModelFile implements ModelFile {
             for (ShapeId mixin : mixins) {
                 Shape mixinShape = shapeMap.get(mixin);
                 for (MemberShape member : mixinShape.members()) {
-                    if (builderMembers.containsKey(member.getMemberName())) {
+                    if (memberConflicts(builderMembers, member)) {
                         // Members cannot be redefined.
                         MemberShape.Builder conflict = builderMembers.get(member.getMemberName());
                         events.add(ValidationEvent.builder()
@@ -258,6 +258,15 @@ abstract class AbstractMutableModelFile implements ModelFile {
             }
             buildShape(builder, resolvedTraits).ifPresent(result -> shapeMap.put(result.getId(), result));
         });
+    }
+
+    private boolean memberConflicts(Map<String, MemberShape.Builder> builderMembers, MemberShape mixinMember) {
+        if (!builderMembers.containsKey(mixinMember.getMemberName())) {
+            return false;
+        }
+
+        MemberShape localMember = builderMembers.get(mixinMember.getMemberName()).build();
+        return !localMember.getTarget().equals(mixinMember.getTarget());
     }
 
     private <S extends Shape, B extends AbstractShapeBuilder<? extends B, S>> Optional<S> buildShape(
