@@ -172,7 +172,8 @@ public class ModelTransformerTest {
             "mixins-with-mixin-local-traits",
             "operations",
             "resources",
-            "services"
+            "services",
+            "idl-mixins-redefine-member"
         };
     }
 }
