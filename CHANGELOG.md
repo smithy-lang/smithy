@@ -1,5 +1,37 @@
 # Smithy Changelog
 
+## 1.16.0 (2022-01-03)
+
+### Features
+* Added `smithy.api#Unit` and `@input` and `@output` traits. ([#980](https://github.com/awslabs/smithy/pull/980),
+  [#1005](https://github.com/awslabs/smithy/pull/1005))
+* Removed support for collection values for `@httpPrefixHeaders`. ([#1022](https://github.com/awslabs/smithy/pull/1022))
+* Added a protocol test for handling path segments that contain regex expressions. 
+  ([#1018](https://github.com/awslabs/smithy/pull/1018))
+
+### Bug Fixes
+* Removed `jsonName` from the `awsJson` protocol tests and documentation.
+  ([#1026](https://github.com/awslabs/smithy/pull/1026))
+* Reverted changes to timestamp list header serialization protocol tests.
+  ([#1023](https://github.com/awslabs/smithy/pull/1023))
+* Fixed links in the search results of Smithy's javadocs.
+  ([#1009](https://github.com/awslabs/smithy/pull/1009))
+* Fixed duplication of validation events for conflicting names.
+  ([#999](https://github.com/awslabs/smithy/pull/999))
+
+### Documentation
+* Added links to Kotlin and Swift generators.
+  ([#1020](https://github.com/awslabs/smithy/pull/1020))
+* Clarified matching of URIs where greedy labels have no matching segment.
+  ([#1013](https://github.com/awslabs/smithy/pull/1013))
+
+### Other
+* Added minor optimizations. ([#1028](https://github.com/awslabs/smithy/pull/1028), 
+  [#1027](https://github.com/awslabs/smithy/pull/1027),
+  [#1004](https://github.com/awslabs/smithy/pull/1004))
+* Added Apple silicon target for smithy-cli. ([#1012](https://github.com/awslabs/smithy/pull/1012))
+* Updated smithy-cli to use JDK 17. ([#1003](https://github.com/awslabs/smithy/pull/1003))
+
 ## 1.15.0 (2021-12-02)
 
 ### Features
