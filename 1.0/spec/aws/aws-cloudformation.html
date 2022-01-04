@@ -211,8 +211,7 @@ generated CloudFormation resource definitions.</dd>
 a CloudFormation resource.</p>
 <p>The following example defines a CloudFormation resource that excludes the
 <code class="docutils literal notranslate"><span class="pre">responseCode</span></code> property:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-2-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-2-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-2-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
 <span class="kd">use</span><span class="nc"> aws.cloudformation#cfnExcludeProperty</span><span class="w"></span>
 <span class="kd">use</span><span class="nc"> aws.cloudformation#cfnResource</span><span class="w"></span>
@@ -232,12 +231,14 @@ a CloudFormation resource.</p>
 <span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetFooResponse</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> GetFooRequest</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@httpLabel</span><span class="w"></span>
 <span class="w">    </span><span class="nd">@required</span><span class="w"></span>
 <span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@output</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> GetFooResponse</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
@@ -247,7 +248,6 @@ a CloudFormation resource.</p>
 }<span class="w"></span>
 </pre></div>
 </div>
-</div></div>
 </div>
 <div class="section" id="property-mutability">
 <span id="aws-cloudformation-mutability-derivation"></span><h2><a href="#property-mutability">Property mutability</a></h2>
@@ -267,8 +267,7 @@ returned by a <code class="docutils literal notranslate"><span class="pre">read<
 resource creation and cannot be returned in a <code class="docutils literal notranslate"><span class="pre">read</span></code> or <code class="docutils literal notranslate"><span class="pre">list</span></code> request.</li>
 </ul>
 <p>Given the following model without mutability traits applied,</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-3-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-3-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-3-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
 <span class="kd">use</span><span class="nc"> aws.cloudformation#cfnResource</span><span class="w"></span>
 
@@ -287,6 +286,7 @@ resource creation and cannot be returned in a <code class="docutils literal notr
 <span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">CreateFooResponse</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> CreateFooRequest</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">createProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nl">mutableProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
@@ -294,6 +294,7 @@ resource creation and cannot be returned in a <code class="docutils literal notr
 <span class="w">    </span><span class="nl">createWriteProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@output</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> CreateFooResponse</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
@@ -304,11 +305,13 @@ resource creation and cannot be returned in a <code class="docutils literal notr
 <span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetFooResponse</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> GetFooRequest</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@required</span><span class="w"></span>
 <span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@output</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> GetFooResponse</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nl">createProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
@@ -321,6 +324,7 @@ resource creation and cannot be returned in a <code class="docutils literal notr
 <span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">UpdateFooRequest</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> UpdateFooRequest</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@required</span><span class="w"></span>
 <span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
@@ -334,7 +338,6 @@ resource creation and cannot be returned in a <code class="docutils literal notr
 }<span class="w"></span>
 </pre></div>
 </div>
-</div></div>
 <p>The computed resource property mutabilities are:</p>
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
@@ -455,8 +458,7 @@ equivalent to <a class="reference external" href="https://docs.aws.amazon.com/cl
 </table>
 <p>The following example defines a CloudFormation resource that marks the <code class="docutils literal notranslate"><span class="pre">tags</span></code>
 and <code class="docutils literal notranslate"><span class="pre">barProperty</span></code> properties as fully mutable:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-4-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-4-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-4-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
 <span class="kd">use</span><span class="nc"> aws.cloudformation#cfnMutability</span><span class="w"></span>
 <span class="kd">use</span><span class="nc"> aws.cloudformation#cfnResource</span><span class="w"></span>
@@ -474,11 +476,13 @@ and <code class="docutils literal notranslate"><span class="pre">barProperty</sp
 <span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">CreateFooResponse</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> CreateFooRequest</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@cfnMutability</span>(<span class="s2">&quot;full&quot;</span>)<span class="w"></span>
 <span class="w">    </span><span class="nl">tags:</span><span class="w"> </span><span class="vc">TagList</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@output</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> CreateFooResponse</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
@@ -489,11 +493,9 @@ and <code class="docutils literal notranslate"><span class="pre">barProperty</sp
 }<span class="w"></span>
 </pre></div>
 </div>
-</div></div>
 <p>The following example defines a CloudFormation resource that marks the
 <code class="docutils literal notranslate"><span class="pre">immutableSetting</span></code> property as create and read only:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-5-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-5-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-5-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-5-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
 <span class="kd">use</span><span class="nc"> aws.cloudformation#cfnMutability</span><span class="w"></span>
 <span class="kd">use</span><span class="nc"> aws.cloudformation#cfnResource</span><span class="w"></span>
@@ -511,11 +513,9 @@ and <code class="docutils literal notranslate"><span class="pre">barProperty</sp
 }<span class="w"></span>
 </pre></div>
 </div>
-</div></div>
 <p>The following example defines a CloudFormation resource that marks the
 <code class="docutils literal notranslate"><span class="pre">updatedAt</span></code> and <code class="docutils literal notranslate"><span class="pre">createdAt</span></code> properties as read only:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-6-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-6-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-6-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
 <span class="kd">use</span><span class="nc"> aws.cloudformation#cfnMutability</span><span class="w"></span>
 <span class="kd">use</span><span class="nc"> aws.cloudformation#cfnResource</span><span class="w"></span>
@@ -534,11 +534,13 @@ and <code class="docutils literal notranslate"><span class="pre">barProperty</sp
 <span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetFooResponse</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> GetFooRequest</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@required</span><span class="w"></span>
 <span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@output</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> GetFooResponse</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@cfnMutability</span>(<span class="s2">&quot;read&quot;</span>)<span class="w"></span>
 <span class="w">    </span><span class="nl">updatedAt:</span><span class="w"> </span><span class="vc">Timestamp</span><span class="p">,</span><span class="w"></span>
@@ -550,11 +552,9 @@ and <code class="docutils literal notranslate"><span class="pre">barProperty</sp
 }<span class="w"></span>
 </pre></div>
 </div>
-</div></div>
 <p>The following example defines a CloudFormation resource that marks the
 derivable <code class="docutils literal notranslate"><span class="pre">secret</span></code> and <code class="docutils literal notranslate"><span class="pre">password</span></code> properties as write only:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-7-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-7-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-7-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
 <span class="kd">use</span><span class="nc"> aws.cloudformation#cfnMutability</span><span class="w"></span>
 <span class="kd">use</span><span class="nc"> aws.cloudformation#cfnResource</span><span class="w"></span>
@@ -572,11 +572,13 @@ derivable <code class="docutils literal notranslate"><span class="pre">secret</s
 <span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">CreateFooResponse</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> CreateFooRequest</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@cfnMutability</span>(<span class="s2">&quot;write&quot;</span>)<span class="w"></span>
 <span class="w">    </span><span class="nl">secret:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@output</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> CreateFooResponse</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
@@ -587,7 +589,6 @@ derivable <code class="docutils literal notranslate"><span class="pre">secret</s
 }<span class="w"></span>
 </pre></div>
 </div>
-</div></div>
 </div>
 <div class="section" id="aws-cloudformation-cfnname-trait">
 <span id="aws-cloudformation-cfnname-trait"></span><span id="id7"></span><h2><a href="#aws-cloudformation-cfnname-trait"><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnName</span></code> trait</a></h2>
@@ -600,8 +601,7 @@ structure member name used in the model.</dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
 </dl>
 <p>Given the following structure definition:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-8-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-8-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-8-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
 <span class="kd">use</span><span class="nc"> aws.cloudformation#cfnName</span><span class="w"></span>
 
@@ -613,7 +613,6 @@ structure member name used in the model.</dd>
 }<span class="w"></span>
 </pre></div>
 </div>
-</div></div>
 <p>the following property names are derived from it:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;bar&quot;</span>
 <span class="s2">&quot;Tags&quot;</span>
@@ -641,8 +640,7 @@ customer provided alias in addition to its unique ID.)</p>
 input to an operation bound to the <code class="docutils literal notranslate"><span class="pre">read</span></code> lifecycle of a resource.</p>
 <p>The following example defines a CloudFormation resource that has the
 <code class="docutils literal notranslate"><span class="pre">fooAlias</span></code> property as an additional identifier:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-9-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-9-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-9-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-9-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
 <span class="kd">use</span><span class="nc"> aws.cloudformation#cfnAdditionalIdentifier</span><span class="w"></span>
 <span class="kd">use</span><span class="nc"> aws.cloudformation#cfnResource</span><span class="w"></span>
@@ -660,6 +658,7 @@ input to an operation bound to the <code class="docutils literal notranslate"><s
 <span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">GetFooRequest</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> GetFooRequest</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@required</span><span class="w"></span>
 <span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
@@ -669,7 +668,6 @@ input to an operation bound to the <code class="docutils literal notranslate"><s
 }<span class="w"></span>
 </pre></div>
 </div>
-</div></div>
 </div>
 <div class="section" id="example-model">
 <h2><a href="#example-model">Example model</a></h2>
@@ -678,8 +676,7 @@ input to an operation bound to the <code class="docutils literal notranslate"><s
 model utilizes all of these traits to express how a complex Smithy resource
 can be annotated for CloudFormation resource generation.</p>
 <p>Given the following model,</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-10-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-10-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-10-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-10-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
 <span class="kd">use</span><span class="nc"> aws.cloudformation#cfnAdditionalIdentifier</span><span class="w"></span>
 <span class="kd">use</span><span class="nc"> aws.cloudformation#cfnExcludeProperty</span><span class="w"></span>
@@ -702,6 +699,7 @@ can be annotated for CloudFormation resource generation.</p>
 <span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">CreateFooResponse</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> CreateFooRequest</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@cfnMutability</span>(<span class="s2">&quot;full&quot;</span>)<span class="w"></span>
 <span class="w">    </span><span class="nl">tags:</span><span class="w"> </span><span class="vc">TagList</span><span class="p">,</span><span class="w"></span>
@@ -717,6 +715,7 @@ can be annotated for CloudFormation resource generation.</p>
 <span class="w">    </span><span class="nl">createWriteProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@output</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> CreateFooResponse</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
@@ -728,6 +727,7 @@ can be annotated for CloudFormation resource generation.</p>
 <span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetFooResponse</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> GetFooRequest</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@httpLabel</span><span class="w"></span>
 <span class="w">    </span><span class="nd">@required</span><span class="w"></span>
@@ -738,6 +738,7 @@ can be annotated for CloudFormation resource generation.</p>
 <span class="w">    </span><span class="nl">fooAlias:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@output</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> GetFooResponse</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
@@ -760,6 +761,7 @@ can be annotated for CloudFormation resource generation.</p>
 <span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">UpdateFooRequest</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> UpdateFooRequest</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@httpLabel</span><span class="w"></span>
 <span class="w">    </span><span class="nd">@required</span><span class="w"></span>
@@ -796,7 +798,6 @@ can be annotated for CloudFormation resource generation.</p>
 }<span class="w"></span>
 </pre></div>
 </div>
-</div></div>
 <p>The following CloudFormation resource information is computed:</p>
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>

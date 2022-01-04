@@ -489,9 +489,8 @@ completes successfully.</td>
 <td>Matches on both the input and output of an operation using a <a class="reference external" href="https://jmespath.org/">JMESPath</a>
 expression. Input parameters are available through the top-level
 <code class="docutils literal notranslate"><span class="pre">input</span></code> field, and output data is available through the top-level
-<code class="docutils literal notranslate"><span class="pre">output</span></code> field. This matcher MUST NOT be used on operations that
-do not define input or output. This matcher is checked only if an
-operation completes successfully.</td>
+<code class="docutils literal notranslate"><span class="pre">output</span></code> field. This matcher is checked only if an operation
+completes successfully.</td>
 </tr>
 <tr class="row-even"><td>success</td>
 <td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
@@ -761,11 +760,13 @@ triggered if the <code class="docutils literal notranslate"><span class="pre">st
 <span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetThingOutput</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> GetThingInput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@required</span><span class="w"></span>
 <span class="w">    </span><span class="nl">name:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@output</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> GetThingOutput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">status:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
 }<span class="w"></span>

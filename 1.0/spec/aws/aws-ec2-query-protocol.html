@@ -436,7 +436,8 @@ with a &quot;.&quot; separator and the member name appended to the container's k
 See <a class="reference internal" href="#aws-protocols-ec2queryname-query-key-naming"><span class="std std-ref">Query key resolution</span></a>
 for how to serialize a property using a custom name. Members with null values are not serialized.</p>
 <p>For example, given the following:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> Ec2QueryStructuresInput</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> Ec2QueryStructuresInput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">foo:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
 <span class="w">    </span><span class="nd">@ec2QueryName</span>(<span class="s2">&quot;A&quot;</span>)<span class="w"></span>
@@ -474,7 +475,8 @@ for how to serialize a property using a custom name. Members with null values ar
 a &quot;.&quot; separator and a &quot;1&quot; indexed incrementing counter appended to the
 container's key.</p>
 <p>For example, given the following:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> Ec2QueryListsInput</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> Ec2QueryListsInput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">ListArg:</span><span class="w"> </span><span class="vc">StringList</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nl">ComplexListArg:</span><span class="w"> </span><span class="vc">GreetingList</span><span class="p">,</span><span class="w"></span>
 

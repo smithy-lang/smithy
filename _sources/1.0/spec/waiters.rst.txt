@@ -413,9 +413,8 @@ members MUST be set:
       - Matches on both the input and output of an operation using a JMESPath_
         expression. Input parameters are available through the top-level
         ``input`` field, and output data is available through the top-level
-        ``output`` field. This matcher MUST NOT be used on operations that
-        do not define input or output. This matcher is checked only if an
-        operation completes successfully.
+        ``output`` field. This matcher is checked only if an operation
+        completes successfully.
     * - success
       - ``boolean``
       - When set to ``true``, matches when an operation returns a successful
@@ -635,11 +634,13 @@ triggered if the ``status`` property equals ``failed``.
         output: GetThingOutput,
     }
 
+    @input
     structure GetThingInput {
         @required
         name: String,
     }
 
+    @output
     structure GetThingOutput {
         status: String
     }

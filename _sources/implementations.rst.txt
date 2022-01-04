@@ -148,6 +148,14 @@ of polish or that they work for all use cases.
       - Kotlin
       - 0.x
       - Rust client code generation for Smithy.
+    * - `Kotlin client codegen <https://github.com/awslabs/smithy-kotlin>`_
+      - Kotlin
+      - 0.x
+      - Kotlin client code generation for Smithy.
+    * - `Swift client codegen <https://github.com/awslabs/smithy-swift>`_
+      - Kotlin
+      - 0.x
+      - Swift client code generation for Smithy.
 
 
 ----------------

@@ -42,18 +42,17 @@ provided request token to identify and discard duplicate requests.
 Client implementations MAY automatically provide a value for a request token
 member if and only if the member is not explicitly provided.
 
-.. tabs::
+.. code-block::
 
-    .. code-tab:: smithy
+    operation AllocateWidget {
+        input: AllocateWidgetInput
+    }
 
-        operation AllocateWidget {
-            input: AllocateWidgetInput
-        }
-
-        structure AllocateWidgetInput {
-            @idempotencyToken
-            clientToken: String,
-        }
+    @input
+    structure AllocateWidgetInput {
+        @idempotencyToken
+        clientToken: String,
+    }
 
 
 .. smithy-trait:: smithy.api#idempotent
@@ -74,15 +73,13 @@ Value type
 Conflicts with
     :ref:`readonly-trait`
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
-
-        @idempotent
-        operation DeleteSomething {
-            input: DeleteSomethingInput,
-            output: DeleteSomethingOutput
-        }
+    @idempotent
+    operation DeleteSomething {
+        input: DeleteSomethingInput,
+        output: DeleteSomethingOutput
+    }
 
 .. note::
 
@@ -106,15 +103,13 @@ Value type
 Conflicts with
     :ref:`idempotent-trait`
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
-
-        @readonly
-        operation GetSomething {
-            input: GetSomethingInput,
-            output: GetSomethingOutput
-        }
+    @readonly
+    operation GetSomething {
+        input: GetSomethingInput,
+        output: GetSomethingOutput
+    }
 
 
 .. smithy-trait:: smithy.api#retryable
@@ -146,19 +141,17 @@ The retryable trait is a structure that contains the following members:
       - ``boolean``
       - Indicates that the error is a retryable throttling error.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    @error("server")
+    @retryable
+    @httpError(503)
+    structure ServiceUnavailableError {}
 
-        @error("server")
-        @retryable
-        @httpError(503)
-        structure ServiceUnavailableError {}
-
-        @error("client")
-        @retryable(throttling: true)
-        @httpError(429)
-        structure ThrottlingError {}
+    @error("client")
+    @retryable(throttling: true)
+    @httpError(429)
+    structure ThrottlingError {}
 
 
 .. _pagination:
@@ -239,92 +232,35 @@ The ``paginated`` trait is a structure that contains the following members:
 The following example defines a paginated operation that sets each value
 explicitly on the operation.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    namespace smithy.example
 
-        namespace smithy.example
+    @readonly
+    @paginated(inputToken: "nextToken", outputToken: "nextToken",
+               pageSize: "maxResults", items: "foos")
+    operation GetFoos {
+        input: GetFoosInput,
+        output: GetFoosOutput
+    }
 
-        @readonly
-        @paginated(inputToken: "nextToken", outputToken: "nextToken",
-                   pageSize: "maxResults", items: "foos")
-        operation GetFoos {
-            input: GetFoosInput,
-            output: GetFoosOutput
-        }
+    @input
+    structure GetFoosInput {
+        maxResults: Integer,
+        nextToken: String
+    }
 
-        structure GetFoosInput {
-            maxResults: Integer,
-            nextToken: String
-        }
+    @output
+    structure GetFoosOutput {
+        nextToken: String,
 
-        structure GetFoosOutput {
-            nextToken: String,
+        @required
+        foos: StringList,
+    }
 
-            @required
-            foos: StringList,
-        }
-
-        list StringList {
-            member: String
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#GetFoos": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#GetFoosInput"
-                    },
-                    "output": {
-                        "target": "smithy.example#GetFoosOutput"
-                    },
-                    "traits": {
-                        "smithy.api#readonly": {},
-                        "smithy.api#paginated": {
-                            "inputToken": "nextToken",
-                            "outputToken": "nextToken",
-                            "pageSize": "maxResults",
-                            "items": "foos"
-                        }
-                    }
-                },
-                "smithy.example#GetFoosInput": {
-                    "type": "structure",
-                    "members": {
-                        "maxResults": {
-                            "target": "smithy.api#Integer"
-                        },
-                        "nextToken": {
-                            "target": "smithy.api#String"
-                        }
-                    }
-                },
-                "smithy.example#GetFoosOutput": {
-                    "type": "structure",
-                    "members": {
-                        "nextToken": {
-                            "target": "smithy.api#String"
-                        },
-                        "foos": {
-                            "target": "smithy.example#StringList",
-                            "traits": {
-                                "smithy.api#required": {}
-                            }
-                        }
-                    }
-                },
-                "smithy.example#StringList": {
-                    "type": "list",
-                    "member": {
-                        "target": "smithy.api#String"
-                    }
-                }
-            }
-        }
+    list StringList {
+        member: String
+    }
 
 Attaching the ``paginated`` trait to a service provides default pagination
 configuration settings to all operations bound within the closure of the
@@ -400,108 +336,41 @@ following ABNF.
 The following example defines a paginated operation which uses a result
 wrapper where the output token and items are referenced by paths.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    namespace smithy.example
 
-        namespace smithy.example
+    @readonly
+    @paginated(inputToken: "nextToken", outputToken: "result.nextToken",
+               pageSize: "maxResults", items: "result.foos")
+    operation GetFoos {
+        input: GetFoosInput,
+        output: GetFoosOutput
+    }
 
-        @readonly
-        @paginated(inputToken: "nextToken", outputToken: "result.nextToken",
-                   pageSize: "maxResults", items: "result.foos")
-        operation GetFoos {
-            input: GetFoosInput,
-            output: GetFoosOutput
-        }
+    @input
+    structure GetFoosInput {
+        maxResults: Integer,
+        nextToken: String
+    }
 
-        structure GetFoosInput {
-            maxResults: Integer,
-            nextToken: String
-        }
+    @output
+    structure GetFoosOutput {
+        @required
+        result: ResultWrapper
+    }
 
-        structure GetFoosOutput {
-            @required
-            result: ResultWrapper
-        }
+    structure ResultWrapper {
+        nextToken: String,
 
-        structure ResultWrapper {
-            nextToken: String,
+        @required
+        foos: StringList,
+    }
 
-            @required
-            foos: StringList,
-        }
+    list StringList {
+        member: String
+    }
 
-        list StringList {
-            member: String
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#GetFoos": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#GetFoosInput"
-                    },
-                    "output": {
-                        "target": "smithy.example#GetFoosOutput"
-                    },
-                    "traits": {
-                        "smithy.api#readonly": {},
-                        "smithy.api#paginated": {
-                            "inputToken": "nextToken",
-                            "outputToken": "result.nextToken",
-                            "pageSize": "maxResults",
-                            "items": "result.foos"
-                        }
-                    }
-                },
-                "smithy.example#GetFoosInput": {
-                    "type": "structure",
-                    "members": {
-                        "maxResults": {
-                            "target": "smithy.api#Integer"
-                        },
-                        "nextToken": {
-                            "target": "smithy.api#String"
-                        }
-                    }
-                },
-                "smithy.example#GetFoosOutput": {
-                    "type": "structure",
-                    "members": {
-                        "result": {
-                            "target": "smithy.example#ResultWrapper",
-                            "traits": {
-                                "smithy.api#required": {}
-                            }
-                        }
-                    }
-                },
-                "smithy.example#ResultWrapper": {
-                    "type": "structure",
-                    "members": {
-                        "nextToken": {
-                            "target": "smithy.api#String"
-                        },
-                        "foos": {
-                            "target": "smithy.example#StringList",
-                            "traits": {
-                                "smithy.api#required": {}
-                            }
-                        }
-                    }
-                },
-                "smithy.example#StringList": {
-                    "type": "list",
-                    "member": {
-                        "target": "smithy.api#String"
-                    }
-                }
-            }
-        }
 
 Pagination Behavior
 ===================

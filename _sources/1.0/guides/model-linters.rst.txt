@@ -377,8 +377,8 @@ Default severity
 InputOutputStructureReuse
 =========================
 
-Detects when a structure is used as both input and output or if a structure
-is referenced as the input or output for multiple operations.
+Validates that every operation defines a dedicated input and output shape
+marked with the :ref:`input-trait` and :ref:`output-trait`.
 
 Rationale
     1. Using the same structure for both input and output can lead to

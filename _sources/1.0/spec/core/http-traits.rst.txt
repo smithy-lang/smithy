@@ -54,43 +54,42 @@ The ``http`` trait is a structure that supports the following members:
 
 The following example defines an operation that uses HTTP bindings:
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    namespace smithy.example
 
-        namespace smithy.example
+    @idempotent
+    @http(method: "PUT", uri: "/{bucketName}/{key}", code: 200)
+    operation PutObject {
+        input: PutObjectInput
+    }
 
-        @idempotent
-        @http(method: "PUT", uri: "/{bucketName}/{key}", code: 200)
-        operation PutObject {
-            input: PutObjectInput
-        }
+    @input
+    structure PutObjectInput {
+        // Sent in the URI label named "key".
+        @required
+        @httpLabel
+        key: ObjectKey,
 
-        structure PutObjectInput {
-            // Sent in the URI label named "key".
-            @required
-            @httpLabel
-            key: ObjectKey,
+        // Sent in the URI label named "bucketName".
+        @required
+        @httpLabel
+        bucketName: String,
 
-            // Sent in the URI label named "bucketName".
-            @required
-            @httpLabel
-            bucketName: String,
+        // Sent in the X-Foo header
+        @httpHeader("X-Foo")
+        foo: String,
 
-            // Sent in the X-Foo header
-            @httpHeader("X-Foo")
-            foo: String,
+        // Sent in the query string as paramName
+        @httpQuery("paramName")
+        someValue: String,
 
-            // Sent in the query string as paramName
-            @httpQuery("paramName")
-            someValue: String,
+        // Sent in the body
+        data: MyBlob,
 
-            // Sent in the body
-            data: MyBlob,
-
-            // Sent in the body
-            additional: String,
-        }
+        // Sent in the body
+        additional: String,
+    }
 
 
 .. _http-method:
@@ -137,15 +136,13 @@ constraints:
 #. MUST NOT case-sensitively conflict with other ``http`` / ``uri``
    properties.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
-
-        @readonly
-        @http(method: "GET", uri: "/foo/{baz}")
-        operation GetService {
-            output: GetServiceOutput
-        }
+    @readonly
+    @http(method: "GET", uri: "/foo/{baz}")
+    operation GetService {
+        output: GetServiceOutput
+    }
 
 
 Literal character sequences
@@ -407,6 +404,10 @@ pattern of ``/prefix/{label+}/suffix`` and an endpoint of ``https://yourhost``:
       - Yes
       - Matches literal "/prefix", captures "foo/suffix/bar" in greedy
         ``label``, and matches literal "/suffix".
+    * - ``http://yourhost/prefix/suffix``
+      - No
+      - Matches literal "/prefix", matches literal "/suffix", but does not
+        contain a segment to match ``label``.
 
 
 Pattern Validation and Conflict Avoidance
@@ -483,13 +484,11 @@ Value type
 
 The following example defines an error with an HTTP status code of ``404``.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
-
-        @error("client")
-        @httpError(404)
-        structure MyError {}
+    @error("client")
+    @httpError(404)
+    structure MyError {}
 
 .. rubric:: Default HTTP status codes
 
@@ -634,24 +633,23 @@ Conflicts with
 The following example defines an operation that send an HTTP label named
 ``foo`` as part of the URI of an HTTP request:
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    namespace smithy.example
 
-        namespace smithy.example
+    @readonly
+    @http(method: "GET", uri: "/{foo}")
+    operation GetStatus {
+        input: GetStatusInput,
+        output: GetStatusOutput
+    }
 
-        @readonly
-        @http(method: "GET", uri: "/{foo}")
-        operation GetStatus {
-            input: GetStatusInput,
-            output: GetStatusOutput
-        }
-
-        structure GetStatusInput {
-            @required
-            @httpLabel
-            foo: String
-        }
+    @input
+    structure GetStatusInput {
+        @required
+        @httpLabel
+        foo: String
+    }
 
 .. rubric:: Relationship to :ref:`http-trait`
 
@@ -721,26 +719,29 @@ Structurally exclusive
 The following example defines an operation that returns a ``blob`` of binary
 data in a response:
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    namespace smithy.example
 
-        namespace smithy.example
+    @readonly
+    @http(method: "GET", uri: "/random-binary-data")
+    operation GetRandomBinaryData {
+        input: GetRandomBinaryDataInput,
+        output: GetRandomBinaryDataOutput
+    }
 
-        @readonly
-        @http(method: "GET", uri: "/random-binary-data")
-        operation GetRandomBinaryData {
-            output: GetRandomBinaryDataOutput,
-        }
+    @input
+    structure GetRandomBinaryDataInput {}
 
-        structure GetRandomBinaryDataOutput {
-            @required
-            @httpHeader("Content-Type")
-            contentType: String,
+    @output
+    structure GetRandomBinaryDataOutput {
+        @required
+        @httpHeader("Content-Type")
+        contentType: String,
 
-            @httpPayload
-            content: Blob,
-        }
+        @httpPayload
+        content: Blob,
+    }
 
 .. _http-protocol-document-payloads:
 
@@ -787,11 +788,10 @@ Trait selector
     .. code-block:: none
 
         structure > member
-        :test(> map > member[id|member=value] > :test(string, collection > member > string))
+        :test(> map > member[id|member=value] > string)
 
     The ``httpPrefixHeaders`` trait can be applied to ``structure`` members
-    that target a ``map`` of ``string``, or a ``map`` of ``list``/``set`` of
-    ``string``.
+    that target a ``map`` of ``string``.
 Value type
     ``string`` value that defines the prefix to prepend to each header field
     name stored in the targeted map member. For example, given a prefix value
@@ -807,25 +807,24 @@ Structurally exclusive
 Given the following Smithy model:
 
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    @readonly
+    @http(method: "GET", uri: "/myOperation")
+    operation MyOperation {
+        input: MyOperationInput
+    }
 
-        @readonly
-        @http(method: "GET", uri: "/myOperation")
-        operation MyOperation {
-            input: MyOperationInput
-        }
+    @input
+    structure MyOperationInput {
+        @httpPrefixHeaders("X-Foo-")
+        headers: StringMap
+    }
 
-        structure MyOperationInput {
-            @httpPrefixHeaders("X-Foo-")
-            headers: StringMap
-        }
-
-        map StringMap {
-            key: String,
-            value: String
-        }
+    map StringMap {
+        key: String,
+        value: String
+    }
 
 And given the following input to ``MyOperation``:
 
@@ -887,27 +886,26 @@ The following example defines an operation that optionally sends the
 ``color``, ``shape``, and ``size`` query string parameters in an HTTP
 request:
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    @readonly
+    @http(method: "GET", uri: "/things")
+    operation ListThings {
+        input: ListThingsInput,
+        output: ListThingsOutput, // omitted for brevity
+    }
 
-        @readonly
-        @http(method: "GET", uri: "/things")
-        operation ListThings {
-            input: ListThingsInput,
-            output: ListThingsOutput, // omitted for brevity
-        }
+    @input
+    structure ListThingsInput {
+        @httpQuery("color")
+        color: String,
 
-        structure ListThingsInput {
-            @httpQuery("color")
-            color: String,
+        @httpQuery("shape")
+        shape: String,
 
-            @httpQuery("shape")
-            shape: String,
-
-            @httpQuery("size")
-            size: Integer,
-        }
+        @httpQuery("size")
+        size: Integer,
+    }
 
 .. rubric:: Serialization rules
 
@@ -984,26 +982,25 @@ Structurally exclusive
 The following example defines an operation that optionally sends the
 target input map as query string parameters in an HTTP request:
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    @readonly
+    @http(method: "GET", uri: "/things")
+    operation ListThings {
+        input: ListThingsInput,
+        output: ListThingsOutput, // omitted for brevity
+    }
 
-        @readonly
-        @http(method: "GET", uri: "/things")
-        operation ListThings {
-            input: ListThingsInput,
-            output: ListThingsOutput, // omitted for brevity
-        }
+    @input
+    structure ListThingsInput {
+        @httpQueryParams()
+        myParams: MapOfStrings,
+    }
 
-        structure ListThingsInput {
-            @httpQueryParams()
-            myParams: MapOfStrings,
-        }
-
-        map MapOfStrings {
-            key: String,
-            value: String
-        }
+    map MapOfStrings {
+        key: String,
+        value: String
+    }
 
 .. rubric:: ``httpQueryParams`` is only used on input
 
@@ -1025,28 +1022,27 @@ If a member with the ``httpQueryParams`` trait and a member with the :ref:`httpQ
 conflict, clients MUST use the value set by the member with the :ref:`httpQuery-trait` and
 disregard the value set by ``httpQueryParams``. For example, given the following model:
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    @http(method: "POST", uri: "/things")
+    operation PutThing {
+        input: PutThingInput
+    }
 
-        @http(method: "POST", uri: "/things")
-        operation PutThing {
-            input: PutThingInput
-        }
+    @input
+    structure PutThingInput {
+        @httpQuery
+        @required
+        thingId: String,
 
-        structure PutThingInput {
-            @httpQuery
-            @required
-            thingId: String,
+        @httpQueryParams
+        tags: MapOfStrings
+    }
 
-            @httpQueryParams
-            tags: MapOfStrings
-        }
-
-        map MapOfStrings {
-            key: String,
-            value: String
-        }
+    map MapOfStrings {
+        key: String,
+        value: String
+    }
 
 And given the following input to ``PutThing``:
 
@@ -1270,77 +1266,29 @@ output member that targets a shape marked with the :ref:`streaming-trait`.
 The following example defines an operation that uses an input event stream
 and HTTP bindings:
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    namespace smithy.example
 
-        namespace smithy.example
+    @http(method: "POST", uri: "/messages")
+    operation PublishMessages {
+        input: PublishMessagesInput
+    }
 
-        @http(method: "POST", uri: "/messages")
-        operation PublishMessages {
-            input: PublishMessagesInput
-        }
+    @input
+    structure PublishMessagesInput {
+        @httpPayload
+        messages: MessageStream,
+    }
 
-        structure PublishMessagesInput {
-            @httpPayload
-            messages: MessageStream,
-        }
+    @streaming
+    union MessageStream {
+        message: Message,
+    }
 
-        @streaming
-        union MessageStream {
-            message: Message,
-        }
-
-        structure Message {
-            message: String,
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#PublishMessages": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#PublishMessagesInput"
-                    },
-                    "traits": {
-                        "smithy.api#http": {
-                            "uri": "/messages",
-                            "method": "POST"
-                        }
-                    }
-                },
-                "smithy.example#PublishMessagesInput": {
-                    "type": "structure",
-                    "members": {
-                        "messages": {
-                            "target": "smithy.example#MessageStream",
-                            "traits": {
-                                "smithy.api#httpPayload": {}
-                            }
-                        }
-                    }
-                },
-                "smithy.example#MessageStream": {
-                    "type": "union",
-                    "members": {
-                        "message": {
-                            "target": "smithy.example#Message"
-                        }
-                    }
-                },
-                "smithy.example#Message": {
-                    "type": "structure",
-                    "members": {
-                        "message": {
-                            "target": "smithy.api#String"
-                        }
-                    }
-                }
-            }
-        }
+    structure Message {
+        message: String,
+    }
 
 The following is **invalid** because the operation has the ``http`` trait
 and an input member is marked with the ``streaming`` trait but not
@@ -1355,6 +1303,7 @@ marked with the ``httpPayload`` trait:
         input: InvalidOperationInput
     }
 
+    @input
     structure InvalidOperationInput {
         invalid: MessageStream, // <-- Missing the @httpPayload trait
     }

@@ -71,9 +71,11 @@ the type of a shape.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#box-trait" id="id4"><code class="docutils literal notranslate"><span class="pre">box</span></code> trait</a></li>
-<li><a class="reference internal" href="#error-trait" id="id5"><code class="docutils literal notranslate"><span class="pre">error</span></code> trait</a></li>
-<li><a class="reference internal" href="#sparse-trait" id="id6"><code class="docutils literal notranslate"><span class="pre">sparse</span></code> trait</a></li>
+<li><a class="reference internal" href="#box-trait" id="id6"><code class="docutils literal notranslate"><span class="pre">box</span></code> trait</a></li>
+<li><a class="reference internal" href="#error-trait" id="id7"><code class="docutils literal notranslate"><span class="pre">error</span></code> trait</a></li>
+<li><a class="reference internal" href="#input-trait" id="id8"><code class="docutils literal notranslate"><span class="pre">input</span></code> trait</a></li>
+<li><a class="reference internal" href="#output-trait" id="id9"><code class="docutils literal notranslate"><span class="pre">output</span></code> trait</a></li>
+<li><a class="reference internal" href="#sparse-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">sparse</span></code> trait</a></li>
 </ul>
 </div>
 <div class="section" id="box-trait">
@@ -176,8 +178,49 @@ in Java).</p>
 </div>
 </div></div>
 </div>
+<div class="section" id="input-trait">
+<span id="smithy-api-input-trait"></span><span id="id3"></span><h2><a href="#input-trait"><span class="section-number">5.3. </span><code class="docutils literal notranslate"><span class="pre">input</span></code> trait</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>Specializes a structure for use only as the input of a single operation.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+<dt>Value type</dt><dd>Annotation trait.</dd>
+<dt>Conflicts with</dt><dd><a class="reference internal" href="#output-trait"><span class="std std-ref">output trait</span></a>, <a class="reference internal" href="#error-trait"><span class="std std-ref">error trait</span></a></dd>
+</dl>
+<p>Structure shapes marked with the <code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> trait MUST adhere to the
+following constraints:</p>
+<ol class="arabic simple">
+<li>They can only be referenced in the model as an operation's input.</li>
+<li>They cannot be used as the input of more than one operation.</li>
+<li>They SHOULD have a shape name that starts with the name of the
+operation that targets it (if any). For example, the input shape of the
+<code class="docutils literal notranslate"><span class="pre">GetSprocket</span></code> operation SHOULD be named <code class="docutils literal notranslate"><span class="pre">GetSprocketInput</span></code>,
+<code class="docutils literal notranslate"><span class="pre">GetSprocketRequest</span></code>, or something similar.</li>
+</ol>
+<p>These constraints allow tooling to specialize operation input shapes in
+ways that would otherwise require complex model transformations.</p>
+</div>
+<div class="section" id="output-trait">
+<span id="smithy-api-output-trait"></span><span id="id4"></span><h2><a href="#output-trait"><span class="section-number">5.4. </span><code class="docutils literal notranslate"><span class="pre">output</span></code> trait</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>Specializes a structure for use only as the output of a single operation.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+<dt>Value type</dt><dd>Annotation trait.</dd>
+<dt>Conflicts with</dt><dd><a class="reference internal" href="#input-trait"><span class="std std-ref">input trait</span></a>, <a class="reference internal" href="#error-trait"><span class="std std-ref">error trait</span></a></dd>
+</dl>
+<p>Structure shapes marked with the <code class="docutils literal notranslate"><span class="pre">&#64;output</span></code> trait MUST adhere to the
+following constraints:</p>
+<ol class="arabic simple">
+<li>They can only be referenced in the model as an operation's output.</li>
+<li>They cannot be used as the output of more than one operation.</li>
+<li>They SHOULD have a shape name that starts with the name of the
+operation that targets it (if any). For example, the output shape of the
+<code class="docutils literal notranslate"><span class="pre">GetSprocket</span></code> operation SHOULD be named <code class="docutils literal notranslate"><span class="pre">GetSprocketOutput</span></code>.</li>
+</ol>
+<p>These constraints allow tooling to specialize operation output shapes in
+ways that would otherwise require complex model transformations.</p>
+</div>
 <div class="section" id="sparse-trait">
-<span id="smithy-api-sparse-trait"></span><span id="id3"></span><h2><a href="#sparse-trait"><span class="section-number">5.3. </span><code class="docutils literal notranslate"><span class="pre">sparse</span></code> trait</a></h2>
+<span id="smithy-api-sparse-trait"></span><span id="id5"></span><h2><a href="#sparse-trait"><span class="section-number">5.5. </span><code class="docutils literal notranslate"><span class="pre">sparse</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that lists and maps MAY contain <code class="docutils literal notranslate"><span class="pre">null</span></code> values. The <code class="docutils literal notranslate"><span class="pre">sparse</span></code>
 trait has no effect on map keys; map keys are never allowed to be <code class="docutils literal notranslate"><span class="pre">null</span></code>.</dd>
@@ -267,7 +310,9 @@ trait has no effect on map keys; map keys are never allowed to be <code class="d
 <li><a class="reference internal" href="#">5. Type refinement traits</a><ul>
 <li><a class="reference internal" href="#box-trait">5.1. <code class="docutils literal notranslate"><span class="pre">box</span></code> trait</a></li>
 <li><a class="reference internal" href="#error-trait">5.2. <code class="docutils literal notranslate"><span class="pre">error</span></code> trait</a></li>
-<li><a class="reference internal" href="#sparse-trait">5.3. <code class="docutils literal notranslate"><span class="pre">sparse</span></code> trait</a></li>
+<li><a class="reference internal" href="#input-trait">5.3. <code class="docutils literal notranslate"><span class="pre">input</span></code> trait</a></li>
+<li><a class="reference internal" href="#output-trait">5.4. <code class="docutils literal notranslate"><span class="pre">output</span></code> trait</a></li>
+<li><a class="reference internal" href="#sparse-trait">5.5. <code class="docutils literal notranslate"><span class="pre">sparse</span></code> trait</a></li>
 </ul>
 </li>
 </ul>

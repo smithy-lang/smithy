@@ -349,8 +349,7 @@ member are implemented by both client and server implementations.</p>
 <h3><a href="#http-request-example">HTTP request example</a></h3>
 <p>The following example defines a protocol compliance test for a JSON protocol
 that uses <a class="reference internal" href="core/http-traits.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a>.</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
 <span class="kd">use</span><span class="nc"> smithy.test#httpRequestTests</span><span class="w"></span>
 
@@ -381,9 +380,11 @@ that uses <a class="reference internal" href="core/http-traits.html#http-traits"
 <span class="w">    </span>}<span class="w"></span>
 ])<span class="w"></span>
 <span class="kd">operation</span><span class="nc"> SayHello</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">SayHelloInput</span><span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">SayHelloInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">Unit</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> SayHelloInput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@required</span><span class="w"></span>
 <span class="w">    </span><span class="nd">@hostLabel</span><span class="w"></span>
@@ -399,75 +400,6 @@ that uses <a class="reference internal" href="core/http-traits.html#http-traits"
 }<span class="w"></span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-0-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-0-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;smithy.example#SayHello&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#SayHelloInput&quot;</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;smithy.api#endpoint&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;hostPrefix&quot;</span><span class="p">:</span> <span class="s2">&quot;{hostLabel}.prefix.&quot;</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;smithy.api#http&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">200</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;smithy.test#httpRequestTests&quot;</span><span class="p">:</span> <span class="p">[</span>
-                    <span class="p">{</span>
-                        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;say_hello&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;protocol&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#exampleProtocol&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;host&quot;</span><span class="p">:</span> <span class="s2">&quot;example.com&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;resolvedHost&quot;</span><span class="p">:</span> <span class="s2">&quot;foo.prefix.example.com&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;headers&quot;</span><span class="p">:</span> <span class="p">{</span>
-                            <span class="nt">&quot;X-Greeting&quot;</span><span class="p">:</span> <span class="s2">&quot;Hi&quot;</span>
-                        <span class="p">},</span>
-                        <span class="nt">&quot;queryParams&quot;</span><span class="p">:</span> <span class="p">[</span>
-                            <span class="s2">&quot;Hi=Hello%20there&quot;</span>
-                        <span class="p">],</span>
-                        <span class="nt">&quot;body&quot;</span><span class="p">:</span> <span class="s2">&quot;{\&quot;name\&quot;: \&quot;Teddy\&quot;}&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;bodyMediaType&quot;</span><span class="p">:</span> <span class="nt">&quot;application/json&quot;</span>
-                        <span class="nt">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
-                            <span class="nt">&quot;hostLabel&quot;</span><span class="p">:</span> <span class="s2">&quot;foo&quot;</span><span class="p">,</span>
-                            <span class="nt">&quot;greeting&quot;</span><span class="p">:</span> <span class="s2">&quot;Hi&quot;</span><span class="p">,</span>
-                            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Teddy&quot;</span><span class="p">,</span>
-                            <span class="nt">&quot;query&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello there&quot;</span>
-                        <span class="p">}</span>
-                    <span class="p">}</span>
-                <span class="p">]</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#SayHelloInput&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;hostLabel&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{},</span>
-                        <span class="nt">&quot;smithy.api#hostLabel&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">}</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;greeting&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;smithy.api#httpHeader&quot;</span><span class="p">:</span> <span class="s2">&quot;X-Greeting&quot;</span>
-                    <span class="p">}</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div></div>
 </div>
 </div>
 <div class="section" id="httpresponsetests">
@@ -614,8 +546,7 @@ member are implemented by both client and server implementations.</p>
 <h3><a href="#http-response-example">HTTP response example</a></h3>
 <p>The following example defines a protocol compliance test for a JSON protocol
 that uses <a class="reference internal" href="core/http-traits.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a>.</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-1-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
 <span class="kd">use</span><span class="nc"> smithy.test#httpResponseTests</span><span class="w"></span>
 
@@ -633,61 +564,20 @@ that uses <a class="reference internal" href="core/http-traits.html#http-traits"
 <span class="w">    </span>}<span class="w"></span>
 ])<span class="w"></span>
 <span class="kd">operation</span><span class="nc"> SayGoodbye</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">SayGoodbyeInput</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">SayGoodbyeOutput</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> SayGoodbyeInput</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="nd">@output</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> SayGoodbyeOutput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@httpHeader</span>(<span class="s2">&quot;X-Farewell&quot;</span>)<span class="w"></span>
 <span class="w">    </span><span class="nl">farewell:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-1-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-1-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;smithy.example#SayGoodbye&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#SayGoodbyeOutput&quot;</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;smithy.api#http&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">200</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;smithy.test#httpResponseTests&quot;</span><span class="p">:</span> <span class="p">[</span>
-                    <span class="p">{</span>
-                        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;say_goodbye&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;protocol&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#exampleProtocol&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;headers&quot;</span><span class="p">:</span> <span class="p">{</span>
-                            <span class="nt">&quot;Content-Length&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
-                            <span class="nt">&quot;X-Farewell&quot;</span><span class="p">:</span> <span class="s2">&quot;Bye&quot;</span>
-                        <span class="p">},</span>
-                        <span class="nt">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
-                            <span class="nt">&quot;farewell&quot;</span><span class="p">:</span> <span class="s2">&quot;Bye&quot;</span>
-                        <span class="p">},</span>
-                        <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">200</span>
-                    <span class="p">}</span>
-                <span class="p">]</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#SayGoodbyeOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;farewell&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;smithy.api#httpHeader&quot;</span><span class="p">:</span> <span class="s2">&quot;X-Farewell&quot;</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div></div>
 </div>
 <div class="section" id="http-error-response-example">
 <h3><a href="#http-error-response-example">HTTP error response example</a></h3>
@@ -698,7 +588,7 @@ trait associated with an operation can be properly deserialized.</p>
 <p>The following example defines a protocol compliance test for a JSON protocol
 that uses <a class="reference internal" href="core/http-traits.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a>.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-2-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-2-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-2-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-2-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
 <span class="kd">use</span><span class="nc"> smithy.test#httpResponseTests</span><span class="w"></span>
 
@@ -723,7 +613,7 @@ that uses <a class="reference internal" href="core/http-traits.html#http-traits"
 }<span class="w"></span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-2-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-2-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-0-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-0-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#InvalidGreeting&quot;</span><span class="p">:</span> <span class="p">{</span>

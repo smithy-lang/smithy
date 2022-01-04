@@ -422,8 +422,8 @@ or cannot be made required backward compatibly.</dd>
 </dd>
 <dt>Conflicts with</dt><dd><a class="reference internal" href="constraint-traits.html#required-trait"><span class="std std-ref">required trait</span></a></dd>
 </dl>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-6-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-6-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-6-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> PutContentsInput</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> PutContentsInput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@required</span><span class="w"></span>
 <span class="w">    </span><span class="nl">contents:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
@@ -432,7 +432,6 @@ or cannot be made required backward compatibly.</dd>
 }<span class="w"></span>
 </pre></div>
 </div>
-</div></div>
 </div>
 <div class="section" id="sensitive-trait">
 <span id="smithy-api-sensitive-trait"></span><span id="id8"></span><h2><a href="#sensitive-trait"><span class="section-number">4.7. </span><code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait</a></h2>
@@ -448,7 +447,7 @@ and MUST be handled with care.</dd>
 output. Application of this trait SHOULD NOT affect wire logging
 (i.e., logging of all data transmitted to and from servers or clients).</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-7-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-7-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-7-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@sensitive</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-6-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-6-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-6-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@sensitive</span><span class="w"></span>
 <span class="kd">string</span><span class="nc"> MyString</span><span class="w"></span>
 </pre></div>
 </div>
@@ -475,7 +474,7 @@ shapes in the model.</dd>
 particular consumer of a model. The string values that can be provided to the
 tags trait are arbitrary and up to the model author.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-8-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-8-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-8-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@tags</span>([<span class="s2">&quot;experimental&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;public&quot;</span>])<span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-7-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-7-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-7-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@tags</span>([<span class="s2">&quot;experimental&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;public&quot;</span>])<span class="w"></span>
 <span class="kd">string</span><span class="nc"> SomeStructure</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
@@ -493,7 +492,7 @@ provide a user friendly name for services and resources.</dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
 </dl>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-9-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-9-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-9-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-9-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> acme.example</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-8-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-8-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-8-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> acme.example</span><span class="w"></span>
 
 <span class="nd">@title</span>(<span class="s2">&quot;ACME Simple Image Service&quot;</span>)<span class="w"></span>
 <span class="kd">service</span><span class="nc"> MySimpleImageService</span><span class="w"> </span>{<span class="w"></span>
@@ -514,7 +513,7 @@ when code generated from unstable features are used.</dd>
 <dt>Value type</dt><dd>Annotation trait</dd>
 </dl>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-10-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-10-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-10-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-10-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@unstable</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-9-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-9-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-9-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-9-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@unstable</span><span class="w"></span>
 <span class="kd">string</span><span class="nc"> MyString</span><span class="w"></span>
 </pre></div>
 </div>

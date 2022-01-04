@@ -17,7 +17,6 @@
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/tabs.js"></script>
     <script type="text/javascript" src="../../_static/smithy.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -149,15 +148,16 @@ are substituted into the topic template at runtime to resolve the actual
 MQTT topic.</p>
 <p>The following example defines a publish operation with two labels, <code class="docutils literal notranslate"><span class="pre">{first}</span></code>
 and <code class="docutils literal notranslate"><span class="pre">{second}</span></code>, in the MQTT topic template:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> smithy.mqtt#publish</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> smithy.mqtt#publish</span><span class="w"></span>
 <span class="kd">use</span><span class="nc"> smithy.mqtt#topicLabel</span><span class="w"></span>
 
 <span class="nd">@publish</span>(<span class="s2">&quot;{first}/{second}&quot;</span>)<span class="w"></span>
 <span class="kd">operation</span><span class="nc"> ExampleOperation</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">ExampleOperationInput</span><span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">ExampleOperationInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">Unit</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> ExampleOperationInput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@required</span><span class="w"></span>
 <span class="w">    </span><span class="nd">@topicLabel</span><span class="w"></span>
@@ -171,45 +171,6 @@ and <code class="docutils literal notranslate"><span class="pre">{second}</span>
 }<span class="w"></span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-0-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-0-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;smithy.example#ExampleOperation&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#ExampleOperationInput&quot;</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;smithy.mqtt#publish&quot;</span><span class="p">:</span> <span class="s2">&quot;{first}/{second}&quot;</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#ExampleOperationInput&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;first&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{},</span>
-                        <span class="nt">&quot;smithy.mqtt#topicLabel&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">}</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;second&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{},</span>
-                        <span class="nt">&quot;smithy.mqtt#topicLabel&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">}</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div></div>
 <p>MQTT topic templates MUST adhere to the following constraints:</p>
 <ul class="simple">
 <li>The topic template MUST adhere to the constraints defined in
@@ -233,10 +194,10 @@ in the topic template.</li>
 <span id="smithy-mqtt-publish-trait"></span><span id="id2"></span><h2><a href="#smithy-mqtt-publish-trait"><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#publish</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Trait summary</dt><dd>Binds an operation to send a PUBLISH control packet via the MQTT protocol.</dd>
-<dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>operation:not(-[output]-&gt;)
+<dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>operation:not(-[output]-&gt; * &gt; member)
 </pre></div>
 </div>
-<p><em>An operation that does not define output</em></p>
+<p><em>An operation whose output has no members</em></p>
 </dd>
 <dt>Trait value</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code> value that is a valid
 <a class="reference internal" href="#mqtt-topic-templates"><span class="std std-ref">MQTT topic template</span></a>. The provided topic
@@ -250,17 +211,18 @@ member name.</dd>
 come together to form the protocol-specific payload of the PUBLISH message.</p>
 <p>The following example defines an operation that publishes messages to the
 <code class="docutils literal notranslate"><span class="pre">foo/{bar}</span></code> topic:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-1-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
 <span class="kd">use</span><span class="nc"> smithy.mqtt#publish</span><span class="w"></span>
 <span class="kd">use</span><span class="nc"> smithy.mqtt#topicLabel</span><span class="w"></span>
 
 <span class="nd">@publish</span>(<span class="s2">&quot;foo/{bar}&quot;</span>)<span class="w"></span>
 <span class="kd">operation</span><span class="nc"> PostFoo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">PostFooInput</span><span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">PostFooInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">Unit</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> PostFooInput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@required</span><span class="w"></span>
 <span class="w">    </span><span class="nd">@topicLabel</span><span class="w"></span>
@@ -271,41 +233,6 @@ come together to form the protocol-specific payload of the PUBLISH message.</p>
 }<span class="w"></span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-1-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-1-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;smithy.example#PostFoo&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PostFooInput&quot;</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;smithy.mqtt#publish&quot;</span><span class="p">:</span> <span class="s2">&quot;foo/{bar}&quot;</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#PostFooInput&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;bar&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{},</span>
-                        <span class="nt">&quot;smithy.mqtt#topicLabel&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">}</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;anotherValue&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Boolean&quot;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div></div>
 <p>The &quot;bar&quot; member of the above <code class="docutils literal notranslate"><span class="pre">PostFoo</span></code> operation is marked with the
 <a class="reference internal" href="#smithy-mqtt-topiclabel-trait"><span class="std std-ref">smithy.mqtt#topicLabel trait</span></a>, indicating that the member provides a
 value for the &quot;{bar}&quot; label of the MQTT topic template. The &quot;message&quot; and
@@ -314,7 +241,7 @@ that is sent in the payload of the message.</p>
 <div class="section" id="publish-validation">
 <h3><a href="#publish-validation">Publish validation</a></h3>
 <ul class="simple">
-<li>Publish operations MUST NOT define output.</li>
+<li>Publish operations MUST NOT have output with members.</li>
 <li>Publish operations MUST NOT utilize input event streams.</li>
 <li>Publish operations SHOULD NOT define errors.</li>
 <li>Publish MQTT topics MUST NOT conflict with other publish MQTT topics or
@@ -355,8 +282,7 @@ payload to be sent as the payload of a message.</p>
 </div>
 <p>The following example operation subscribes to the <code class="docutils literal notranslate"><span class="pre">events/{id}</span></code>
 topic using an <a class="reference internal" href="core/stream-traits.html#event-streams"><span class="std std-ref">event stream</span></a>:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-2-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-2-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-2-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-2-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> smithy.mqtt#subscribe</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> smithy.mqtt#subscribe</span><span class="w"></span>
 <span class="kd">use</span><span class="nc"> smithy.mqtt#topicLabel</span><span class="w"></span>
 
 <span class="nd">@subscribe</span>(<span class="s2">&quot;events/{id}&quot;</span>)<span class="w"></span>
@@ -365,12 +291,14 @@ topic using an <a class="reference internal" href="core/stream-traits.html#event
 <span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">SubscribeForEventsOutput</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> SubscribeForEventsInput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@required</span><span class="w"></span>
 <span class="w">    </span><span class="nd">@topicLabel</span><span class="w"></span>
 <span class="w">    </span><span class="nl">id:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@output</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> SubscribeForEventsOutput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">events:</span><span class="w"> </span><span class="vc">EventStream</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
@@ -385,62 +313,6 @@ topic using an <a class="reference internal" href="core/stream-traits.html#event
 }<span class="w"></span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-2-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-2-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;smithy.example#SubscribeForEvents&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#SubscribeForEventsInput&quot;</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;smithy.mqtt#subscribe&quot;</span><span class="p">:</span> <span class="s2">&quot;events/{id}&quot;</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#SubscribeForEventsInput&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{},</span>
-                        <span class="nt">&quot;smithy.mqtt#topicLabel&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#SubscribeForEventsOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;events&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#EventStream&quot;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#EventStream&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;union&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Event&quot;</span>
-                <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="s2">&quot;traits&quot;</span> <span class="p">{</span>
-                <span class="nt">&quot;smithy.api#streaming&quot;</span><span class="p">:</span> <span class="p">{}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#Event&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div></div>
 <div class="section" id="subscribe-validation">
 <h3><a href="#subscribe-validation">Subscribe validation</a></h3>
 <ul class="simple">
@@ -566,7 +438,7 @@ MQTT protocol bindings.</p>
 <span class="nd">@protocolDefinition</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> mqttJson</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="nd">@trait</span>(<span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;operation:not(-[output]-&gt;)&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="nd">@trait</span>(<span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;operation:not(-[output]-&gt; * &gt; member)&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">       </span><span class="nl">conflicts:</span><span class="w"> </span>[<span class="s2">&quot;smithy.mqtt#subscribe&quot;</span>])<span class="w"></span>
 <span class="nd">@tags</span>([<span class="s2">&quot;diff.error.const&quot;</span>])<span class="w"></span>
 <span class="c">// Matches one or more characters that are not &quot;#&quot; or &quot;+&quot;.</span><span class="w"></span>

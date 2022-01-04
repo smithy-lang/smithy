@@ -17,7 +17,6 @@
     <script src="../../../../_static/jquery.js"></script>
     <script src="../../../../_static/underscore.js"></script>
     <script src="../../../../_static/doctools.js"></script>
-    <script src="../../../../_static/tabs.js"></script>
     <script type="text/javascript" src="../../../../_static/smithy.js"></script>
     <link rel="shortcut icon" href="../../../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -240,69 +239,27 @@ resolved to &quot;virtual&quot; to enable this setting.</p>
 <dt>Value type</dt><dd>Annotation trait</dd>
 </dl>
 <p>Consider the following <em>abridged</em> model of S3's <code class="docutils literal notranslate"><span class="pre">GetBucketLocation</span></code> operation:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.customizations#s3UnwrappedXmlOutput</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.customizations#s3UnwrappedXmlOutput</span><span class="w"></span>
+
+<span class="nd">@http</span>(<span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/GetBucketLocation&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span>)<span class="w"></span>
+<span class="nd">@s3UnwrappedXmlOutput</span><span class="w"></span>
+<span class="kd">operation</span><span class="nc"> GetBucketLocation</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">GetBucketLocationInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetBucketLocationOutput</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nd">@output</span><span class="w"></span>
+<span class="nd">@xmlName</span>(<span class="s2">&quot;LocationConstraint&quot;</span>)<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> GetBucketLocationOutput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">LocationConstraint:</span><span class="w"> </span><span class="vc">BucketLocationConstraint</span><span class="w"></span>
+}<span class="w"></span>
 
 <span class="nd">@enum</span>([<span class="w"></span>
 <span class="w">    </span>{<span class="w"> </span><span class="nl">value:</span><span class="w"> </span><span class="s2">&quot;us-west-2&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;us_west_2&quot;</span><span class="w"> </span>}<span class="w"></span>
 ])<span class="w"></span>
 <span class="kd">string</span><span class="nc"> BucketLocationConstraint</span><span class="w"></span>
-
-<span class="nd">@xmlName</span>(<span class="s2">&quot;LocationConstraint&quot;</span>)<span class="w"></span>
-<span class="kd">structure</span><span class="nc"> GetBucketLocationOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">LocationConstraint:</span><span class="w"> </span><span class="vc">BucketLocationConstraint</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
-
-<span class="nd">@http</span>(<span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/GetBucketLocation&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span>)<span class="w"></span>
-<span class="nd">@s3UnwrappedXmlOutput</span><span class="w"></span>
-<span class="kd">operation</span><span class="nc"> GetBucketLocation</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetBucketLocationOutput</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-0-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-0-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;smithy.example#BucketLocationConstraint&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;smithy.api#enum&quot;</span><span class="p">:</span> <span class="p">[</span>
-                    <span class="p">{</span>
-                        <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;us-west-2&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;us_west_2&quot;</span>
-                    <span class="p">}</span>
-                <span class="p">]</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#GetBucketLocationOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;LocationConstraint&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#BucketLocationConstraint&quot;</span>
-                <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;smithy.api#xmlName&quot;</span><span class="p">:</span> <span class="s2">&quot;LocationConstraint&quot;</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#GetBucketLocation&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#GetBucketLocationOutput&quot;</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;smithy.api#http&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/GetBucketLocation&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;GET&quot;</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;aws.customizations#s3UnwrappedXmlOutput&quot;</span><span class="p">:</span> <span class="p">{}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div></div>
 <p>Since this operation is modeled with <code class="docutils literal notranslate"><span class="pre">&#64;s3UnwrappedXmlOutput</span></code>,
 an Amazon S3 client should expect the response from S3 to be unwrapped as shown below:</p>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;LocationConstraint</span> <span class="na">xmlns=</span><span class="s">&quot;http://s3.amazonaws.com/doc/2006-03-01/&quot;</span><span class="nt">&gt;</span>us-west-2<span class="nt">&lt;/LocationConstraint&gt;</span>

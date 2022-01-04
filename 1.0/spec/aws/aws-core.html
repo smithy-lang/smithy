@@ -989,8 +989,7 @@ operation input should be used to discover an endpoint for the service.</dd>
 <p>The following model illustrates an API that uses a <code class="docutils literal notranslate"><span class="pre">DescribeEndpoints</span></code>
 operation to perform endpoint discovery for a <code class="docutils literal notranslate"><span class="pre">GetObject</span></code> operation
 using an <code class="docutils literal notranslate"><span class="pre">clientEndpointDiscoveryId</span></code>.</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-9-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-9-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-9-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-9-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-9-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-9-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@aws.api#clientEndpointDiscovery</span>(<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@aws.api#clientEndpointDiscovery</span>(<span class="w"></span>
 <span class="w">    </span><span class="nl">operation:</span><span class="w"> </span><span class="vc">DescribeEndpoints</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nl">error:</span><span class="w"> </span><span class="vc">InvalidEndpointError</span><span class="p">,</span><span class="w"></span>
 )<span class="w"></span>
@@ -1009,6 +1008,7 @@ using an <code class="docutils literal notranslate"><span class="pre">clientEndp
 <span class="nd">@httpError</span>(<span class="m">421</span>)<span class="w"></span>
 <span class="kd">structure</span><span class="nc"> InvalidEndpointError</span><span class="w"> </span>{}<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> DescribeEndpointsInput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">  </span><span class="nl">Operation:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nl">Identifiers:</span><span class="w"> </span><span class="vc">Identifiers</span><span class="p">,</span><span class="w"></span>
@@ -1019,6 +1019,7 @@ using an <code class="docutils literal notranslate"><span class="pre">clientEndp
 <span class="w">  </span><span class="nl">value:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@output</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> DescribeEndpointsOutput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">  </span><span class="nl">Endpoints:</span><span class="w"> </span><span class="vc">Endpoints</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
@@ -1038,143 +1039,19 @@ using an <code class="docutils literal notranslate"><span class="pre">clientEndp
 <span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetObjectOutput</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> GetObjectInput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">  </span><span class="nd">@clientEndpointDiscoveryId</span><span class="w"></span>
 <span class="w">  </span><span class="nd">@required</span><span class="w"></span>
 <span class="w">  </span><span class="nl">Id:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@output</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> GetObjectOutput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">  </span><span class="nl">Object:</span><span class="w"> </span><span class="vc">Blob</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-9-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-9-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;ns.foo#FooService&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2019-09-10&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;operations&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#DescribeEndpoints&quot;</span>
-                <span class="p">},</span>
-                <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#GetObject&quot;</span>
-                <span class="p">}</span>
-            <span class="p">],</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;aws.api#clientEndpointDiscovery&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;operation&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#DescribeEndpoints&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;InvalidEndpointError&quot;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;ns.foo#DescribeEndpoints&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#DescribeEndpointsInput&quot;</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#DescribeEndpointsOutput&quot;</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;ns.foo#DescribeEndpointsInput&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;Operation&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;Identifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#Identifiers&quot;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;ns.foo#Identifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;map&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;key&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;ns.foo#DescribeEndpointsOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;Endpoints&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#Endpoints&quot;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;ns.foo#Endpoints&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;member&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#Endpoint&quot;</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;ns.foo#Endpoint&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;Address&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;CachePeriodInMinutes&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Long&quot;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;ns.foo#GetObject&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#GetObjectInput&quot;</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#GetObjectOutput&quot;</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;errors&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#InvalidEndpointError&quot;</span>
-                <span class="p">}</span>
-            <span class="p">],</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;aws.api#clientDiscoveredEndpoint&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;required&quot;</span><span class="p">:</span> <span class="kc">true</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;ns.foo#GetObjectInput&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;Id&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;aws.api#clientEndpointDiscoveryId&quot;</span><span class="p">:</span> <span class="p">{},</span>
-                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;ns.foo#GetObjectOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;Object&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Blob&quot;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;ns.foo#InvalidEndpointError&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;smithy.api#error&quot;</span><span class="p">:</span> <span class="s2">&quot;client&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;smithy.api#httpError&quot;</span><span class="p">:</span> <span class="mi">421</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div></div>
 </div>
 <div class="section" id="client-behavior">
 <h3><a href="#client-behavior">Client Behavior</a></h3>

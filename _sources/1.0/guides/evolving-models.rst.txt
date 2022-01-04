@@ -30,14 +30,15 @@ Updating operations
 
 The following changes to operation shapes are backward-compatible:
 
-#. Changing an operation from no input to referencing a structure that contains
-   all optional members.
-#. Changing an operation from no output to referencing a structure.
 #. Adding a new error shape if the error shape is only encountered under new
    conditions that previously released clients/tools will not encounter.
 
 The following changes are not backward-compatible:
 
+#. Changing the shape targeted by the input or output of an operation. For
+   example, it is not backward compatible to change an operation's input or
+   output from targeting `smithy.api#Unit` to then later target a different
+   shape.
 #. Removing or renaming a resource or operation.
 #. Removing an operation from a service or resource.
 #. Removing a resource from a service.
@@ -56,10 +57,8 @@ Updating structures
 The following changes to structure shapes are backward-compatible:
 
 #. Adding new optional members to a structure.
-#. Changing a structure member from :ref:`required-trait` to optional.
-   The required trait SHOULD only be used for validation purposes; code
-   generators SHOULD NOT consider whether or not a structure member is
-   required when generating data structures.
+#. Removing the :ref:`required-trait` from a structure member marked with
+   the :ref:`input-trait`.
 
 The following changes to a structure are not backward-compatible:
 

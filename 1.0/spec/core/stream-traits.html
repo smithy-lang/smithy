@@ -115,11 +115,15 @@ only a single member of a structure can target a shape marked as
 </ul>
 </dd>
 </dl>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation</span><span class="nc"> StreamingOperation</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation</span><span class="nc"> StreamingOperation</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">StreamingOperationInput</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">StreamingOperationOutput</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> StreamingOperationInput</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="nd">@output</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> StreamingOperationOutput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@required</span><span class="w"></span>
 <span class="w">    </span><span class="nl">streamId:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
@@ -130,7 +134,6 @@ only a single member of a structure can target a shape marked as
 <span class="kd">blob</span><span class="nc"> StreamingBlob</span><span class="w"></span>
 </pre></div>
 </div>
-</div></div>
 </div>
 <div class="section" id="requireslength-trait">
 <span id="smithy-api-requireslength-trait"></span><span id="id2"></span><h2><a href="#requireslength-trait"><span class="section-number">10.2. </span><code class="docutils literal notranslate"><span class="pre">requiresLength</span></code> trait</a></h2>
@@ -148,7 +151,7 @@ where to store data based on the size of the stream.</p>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
 </dl>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@streaming</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@streaming</span><span class="w"></span>
 <span class="nd">@requiresLength</span><span class="w"></span>
 <span class="kd">blob</span><span class="nc"> FiniteStreamingBlob</span><span class="w"></span>
 </pre></div>
@@ -170,13 +173,13 @@ member names of the union define the name that is used to identify each event
 that is sent over the event stream.</p>
 <p id="input-eventstream">The following example defines an operation that uses an event
 stream in its input by referencing a member that targets a union:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-2-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-2-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-2-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-2-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
 <span class="kd">operation</span><span class="nc"> PublishMessages</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">PublishMessagesInput</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> PublishMessagesInput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">room:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nl">messages:</span><span class="w"> </span><span class="vc">PublishEvents</span><span class="p">,</span><span class="w"></span>
@@ -195,62 +198,19 @@ stream in its input by referencing a member that targets a union:</p>
 <span class="kd">structure</span><span class="nc"> LeaveEvent</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-2-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-2-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;smithy.example#PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PublishMessagesInput&quot;</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#PublishMessagesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;room&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PublishEvents&quot;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#PublishEvents&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;union&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Message&quot;</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;leave&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#LeaveEvent&quot;</span>
-                <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;smithy.api#streaming&quot;</span><span class="p">:</span> <span class="p">{}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#Message&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div></div>
 <p id="output-eventstream">The following example defines an operation that uses an event
 stream in its output:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-3-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-3-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-3-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-3-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
 <span class="kd">operation</span><span class="nc"> SubscribeToMovements</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">SubscribeToMovementsInput</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">SubscribeToMovementsOutput</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> SubscribeToMovementsInput</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="nd">@output</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> SubscribeToMovementsOutput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">movements:</span><span class="w"> </span><span class="vc">MovementEvents</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
@@ -275,69 +235,6 @@ stream in its output:</p>
 <span class="kd">structure</span><span class="nc"> ThrottlingError</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-3-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-3-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;smithy.example#SubscribeToMovements&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#SubscribeToMovementsOutput&quot;</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#SubscribeToMovementsOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;movements&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#MovementEvents&quot;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#MovementEvents&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;union&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;up&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Movement&quot;</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;down&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Movement&quot;</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;left&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Movement&quot;</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;right&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Movement&quot;</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;throttlingError&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#ThrottlingError&quot;</span>
-                <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;smithy.api#streaming&quot;</span><span class="p">:</span> <span class="p">{}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#Movement&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;velocity&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Float&quot;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#ThrottlingError&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;smithy.api#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;An example error emitted when the client is throttled and should terminate the event stream.&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;smithy.api#error&quot;</span><span class="p">:</span> <span class="s2">&quot;client&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;smithy.api#retryable&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;throttling&quot;</span><span class="p">:</span> <span class="kc">true</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div></div>
 <div class="section" id="modeled-errors-in-event-streams">
 <h3><a href="#modeled-errors-in-event-streams"><span class="section-number">10.3.1. </span>Modeled errors in event streams</a></h3>
 <p>Event streams MAY target shapes marked with the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>. These
@@ -364,14 +261,14 @@ sent however is necessary for the protocol.</p>
 <p>The following example defines an operation with an input event stream with
 an initial-request. The client will first send the initial-request to the
 service, followed by the events sent in the payload of the HTTP message.</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-4-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-4-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-4-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-4-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
 <span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/messages/{room}&quot;</span>)<span class="w"></span>
 <span class="kd">operation</span><span class="nc"> PublishMessages</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">PublishMessagesInput</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> PublishMessagesInput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@httpLabel</span><span class="w"></span>
 <span class="w">    </span><span class="nd">@required</span><span class="w"></span>
@@ -391,63 +288,6 @@ service, followed by the events sent in the payload of the HTTP message.</p>
 }<span class="w"></span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-4-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-4-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;smithy.example#PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PublishMessagesInput&quot;</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;smithy.api#http&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/messages/{room}&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;POST&quot;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#PublishMessagesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;room&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;smithy.api#httpLabel:&quot;</span><span class="p">:</span> <span class="p">{},</span>
-                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">}</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#MessageStream&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;smithy.api#httpPayload&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#MessageStream&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;union&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Message&quot;</span>
-                <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;smithy.api#streaming&quot;</span><span class="p">:</span> <span class="p">{}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#Message&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div></div>
 </div>
 <div class="section" id="initial-response">
 <span id="id6"></span><h4><a href="#initial-response"><span class="section-number">10.3.2.2. </span>Initial-response</a></h4>
@@ -463,8 +303,7 @@ however is necessary for the protocol.</p>
 an initial-response. The client will first receive and process the
 initial-response, followed by the events sent in the payload of the HTTP
 message.</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-5-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-5-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-5-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-5-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-5-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-5-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
 <span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/messages/{room}&quot;</span>)<span class="w"></span>
 <span class="kd">operation</span><span class="nc"> SubscribeToMessages</span><span class="w"> </span>{<span class="w"></span>
@@ -472,12 +311,14 @@ message.</p>
 <span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">SubscribeToMessagesOutput</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> SubscribeToMessagesInput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@httpLabel</span><span class="w"></span>
 <span class="w">    </span><span class="nd">@required</span><span class="w"></span>
 <span class="w">    </span><span class="nl">room:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@output</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> SubscribeToMessagesOutput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@httpHeader</span>(<span class="s2">&quot;X-Connection-Lifetime&quot;</span>)<span class="w"></span>
 <span class="w">    </span><span class="nl">connectionLifetime:</span><span class="w"> </span><span class="vc">Integer</span><span class="p">,</span><span class="w"></span>
@@ -487,55 +328,6 @@ message.</p>
 }<span class="w"></span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-5-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-5-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;smithy.example#PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PublishMessagesInput&quot;</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;smithy.api#http&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/messages/{room}&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;POST&quot;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#SubscribeToMessagesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;room&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;smithy.api#httpLabel:&quot;</span><span class="p">:</span> <span class="p">{},</span>
-                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#SubscribeToMessagesOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;connectionLifetime&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Integer&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;smithy.api#httpHeader:&quot;</span><span class="p">:</span> <span class="s2">&quot;X-Connection-Lifetime&quot;</span>
-                    <span class="p">}</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#MessageStream&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;smithy.api#httpPayload&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div></div>
 </div>
 <div class="section" id="initial-message-client-and-server-behavior">
 <h4><a href="#initial-message-client-and-server-behavior"><span class="section-number">10.3.2.3. </span>Initial message client and server behavior</a></h4>
@@ -562,9 +354,14 @@ on the name of an event. For example, given the following event stream:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
 <span class="kd">operation</span><span class="nc"> SubscribeToEvents</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">SubscribeToEventsInput</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">SubscribeToEventsOutput</span><span class="w"></span>
 }<span class="w"></span>
 
+<span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> SubscribeToEventsInput</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="nd">@output</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> SubscribeToEventsOutput</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">events:</span><span class="w"> </span><span class="vc">Events</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
@@ -600,7 +397,7 @@ protocol-specific document.</p>
 <p>The following example serializes the &quot;a&quot; and &quot;b&quot; members as event
 headers and the &quot;c&quot; member as the payload.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-6-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-6-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-6-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-6-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> ExampleEvent</span><span class="w"> </span>{<span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-1-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> ExampleEvent</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@eventHeader</span><span class="w"></span>
 <span class="w">    </span><span class="nl">a:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
@@ -612,7 +409,7 @@ headers and the &quot;c&quot; member as the payload.</p>
 }<span class="w"></span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-6-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-6-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-1-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-1-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#ExampleEvent&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -647,14 +444,14 @@ headers and the &quot;c&quot; member as the payload.</p>
 of the event using a protocol-specific document. For example, when using a JSON
 based protocol, the event payload is serialized as a JSON object:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-7-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-7-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-7-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-7-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> ExampleEvent</span><span class="w"> </span>{<span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-2-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-2-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-2-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-2-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> ExampleEvent</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">a:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nl">b:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nl">c:</span><span class="w"> </span><span class="vc">Blob</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-7-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-7-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-2-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-2-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#ExampleEvent&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -701,7 +498,7 @@ as to if and how event stream headers are serialized.</p>
 </div>
 <p>The following example defines multiple event headers:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-8-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-8-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-8-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-8-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> ExampleEvent</span><span class="w"> </span>{<span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-3-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-3-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-3-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-3-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> ExampleEvent</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@eventHeader</span><span class="w"></span>
 <span class="w">    </span><span class="nl">a:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
@@ -710,7 +507,7 @@ as to if and how event stream headers are serialized.</p>
 }<span class="w"></span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-8-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-8-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-3-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-3-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#ExampleEvent&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -765,7 +562,7 @@ then all other members of the structure MUST be marked with the
 <p>The following example defines an event header and sends a blob as the payload
 of an event:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-9-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-9-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-9-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-9-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-9-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-9-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> ExampleEvent</span><span class="w"> </span>{<span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-4-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-4-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-4-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-4-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> ExampleEvent</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@eventPayload</span><span class="w"></span>
 <span class="w">    </span><span class="nl">a:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
@@ -774,7 +571,7 @@ of an event:</p>
 }<span class="w"></span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-9-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-9-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-4-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-4-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#ExampleEvent&quot;</span><span class="p">:</span> <span class="p">{</span>

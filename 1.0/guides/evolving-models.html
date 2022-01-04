@@ -96,14 +96,15 @@ customers.</p>
 <h2><a href="#updating-operations">Updating operations</a></h2>
 <p>The following changes to operation shapes are backward-compatible:</p>
 <ol class="arabic simple">
-<li>Changing an operation from no input to referencing a structure that contains
-all optional members.</li>
-<li>Changing an operation from no output to referencing a structure.</li>
 <li>Adding a new error shape if the error shape is only encountered under new
 conditions that previously released clients/tools will not encounter.</li>
 </ol>
 <p>The following changes are not backward-compatible:</p>
 <ol class="arabic simple">
+<li>Changing the shape targeted by the input or output of an operation. For
+example, it is not backward compatible to change an operation's input or
+output from targeting <cite>smithy.api#Unit</cite> to then later target a different
+shape.</li>
 <li>Removing or renaming a resource or operation.</li>
 <li>Removing an operation from a service or resource.</li>
 <li>Removing a resource from a service.</li>
@@ -121,10 +122,8 @@ that was previously relied upon by tooling.</li>
 <p>The following changes to structure shapes are backward-compatible:</p>
 <ol class="arabic simple">
 <li>Adding new optional members to a structure.</li>
-<li>Changing a structure member from <a class="reference internal" href="../spec/core/constraint-traits.html#required-trait"><span class="std std-ref">required trait</span></a> to optional.
-The required trait SHOULD only be used for validation purposes; code
-generators SHOULD NOT consider whether or not a structure member is
-required when generating data structures.</li>
+<li>Removing the <a class="reference internal" href="../spec/core/constraint-traits.html#required-trait"><span class="std std-ref">required trait</span></a> from a structure member marked with
+the <a class="reference internal" href="../spec/core/type-refinement-traits.html#input-trait"><span class="std std-ref">input trait</span></a>.</li>
 </ol>
 <p>The following changes to a structure are not backward-compatible:</p>
 <ol class="arabic simple">
