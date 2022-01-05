@@ -13,7 +13,11 @@
                 },
                 {
                     "target": "example.rest#CreateFoo"
+                },
+                {
+                    "target": "example.rest#Ping"
                 }
+
             ],
             "traits": {
                 "aws.protocols#restJson1": {}
@@ -222,6 +226,21 @@
             }
 
         },
+        "example.rest#Ping": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.api#Unit"
+            },
+            "output": {
+                "target": "smithy.api#Unit"
+            },
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/ping",
+                    "method": "POST"
+                }
+            }
+        },
         "example.rest#Blob": {
             "type": "blob"
         },
@@ -327,6 +346,9 @@
                 },
                 "b": {
                     "target": "example.rest#String"
+                },
+                "c": {
+                    "target": "smithy.api#Unit"
                 }
             }
         }

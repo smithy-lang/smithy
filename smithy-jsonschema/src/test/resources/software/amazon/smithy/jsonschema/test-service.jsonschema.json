@@ -114,7 +114,6 @@
       "oneOf": [
         {
           "type": "object",
-          "title": "a",
           "required": [
             "a"
           ],
@@ -122,11 +121,11 @@
             "a": {
               "type": "string"
             }
-          }
+          },
+          "title": "a"
         },
         {
           "type": "object",
-          "title": "b",
           "required": [
             "b"
           ],
@@ -134,9 +133,25 @@
             "b": {
               "type": "string"
             }
-          }
+          },
+          "title": "b"
+        },
+        {
+          "type": "object",
+          "required": [
+            "c"
+          ],
+          "properties": {
+            "c": {
+              "$ref": "#/definitions/Unit"
+            }
+          },
+          "title": "c"
         }
       ]
+    },
+    "Unit": {
+      "type": "object"
     }
   }
 }

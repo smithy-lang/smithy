@@ -173,6 +173,16 @@
           }
         }
       }
+    },
+    "/ping": {
+      "post": {
+        "operationId": "Ping",
+        "responses": {
+          "200": {
+            "description": "Ping 200 response"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -310,8 +320,23 @@
             "required": [
               "b"
             ]
+          },
+          {
+            "type": "object",
+            "title": "c",
+            "properties": {
+              "c": {
+                "$ref": "#/components/schemas/Unit"
+              }
+            },
+            "required": [
+              "c"
+            ]
           }
         ]
+      },
+      "Unit": {
+        "type": "object"
       }
     }
   }
