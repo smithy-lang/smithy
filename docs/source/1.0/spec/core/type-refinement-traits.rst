@@ -133,7 +133,8 @@ in Java).
         @retryable
         @httpError(429)
         structure ThrottlingError {
-            message: String!
+            @required
+            message: String
         }
 
 
