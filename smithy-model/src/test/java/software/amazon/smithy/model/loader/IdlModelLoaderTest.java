@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.not;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -237,5 +238,17 @@ public class IdlModelLoaderTest {
         // Spot check for a specific "use" shape.
         assertThat(model.expectShape(ShapeId.from("smithy.example#MyService"), ServiceShape.class).getRename(),
                    equalTo(MapUtils.of(ShapeId.from("foo.example#Widget"), "FooWidget")));
+    }
+
+    @Test
+    public void loadsServicesWithNonconflictingUnitTypes() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("valid/__shared.json"))
+                .addImport(getClass().getResource("valid/service-with-nonconflicting-unit.smithy"))
+                .assemble()
+                .unwrap();
+
+        // Make sure we can find our Unit type
+        assertThat(model.expectShape(ShapeId.from("smithy.example#Unit")), Matchers.notNullValue());
     }
 }

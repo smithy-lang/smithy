@@ -76,9 +76,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
      * then an empty optional is returned.
      *
      * @return Returns the optional shape ID.
-     * @deprecated Use {@link #getInputShape()}
      */
-    @Deprecated
     public Optional<ShapeId> getInput() {
         return input.equals(UnitTypeTrait.UNIT) ? Optional.empty() : Optional.of(input);
     }
@@ -90,9 +88,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
      * then an empty optional is returned.
      *
      * @return Returns the optional shape ID.
-     * @deprecated Use {@link #getOutputShape()}
      */
-    @Deprecated
     public Optional<ShapeId> getOutput() {
         return output.equals(UnitTypeTrait.UNIT) ? Optional.empty() : Optional.of(output);
     }

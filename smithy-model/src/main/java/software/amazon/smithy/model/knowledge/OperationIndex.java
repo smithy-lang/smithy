@@ -79,15 +79,9 @@ public final class OperationIndex implements KnowledgeIndex {
      * Gets the optional input structure of an operation, and returns an
      * empty optional if the input targets {@code smithy.api#Unit}.
      *
-     * <p>This method is only here for backward compatibility. Instead,
-     * use {@link #getInputShape(ToShapeId)} and
-     * {@link #expectInputShape(ToShapeId)}.
-     *
      * @param operation Operation to get the input structure of.
      * @return Returns the optional operation input structure.
-     * @deprecated Use {@link #getInputShape(ToShapeId)} instead.
      */
-    @Deprecated
     public Optional<StructureShape> getInput(ToShapeId operation) {
         return getInputShape(operation).filter(shape -> !shape.getId().equals(UnitTypeTrait.UNIT));
     }
@@ -168,15 +162,9 @@ public final class OperationIndex implements KnowledgeIndex {
      * Gets the optional output structure of an operation, and returns an
      * empty optional if the output targets {@code smithy.api#Unit}.
      *
-     * <p>This method is only here for backward compatibility. Instead,
-     * use {@link #getOutputShape(ToShapeId)} and
-     * {@link #expectOutputShape(ToShapeId)}.
-     *
      * @param operation Operation to get the output structure of.
      * @return Returns the optional operation output structure.
-     * @deprecated Use {@link #getOutputShape(ToShapeId)} instead.
      */
-    @Deprecated
     public Optional<StructureShape> getOutput(ToShapeId operation) {
         return getOutputShape(operation).filter(shape -> !shape.getId().equals(UnitTypeTrait.UNIT));
     }
