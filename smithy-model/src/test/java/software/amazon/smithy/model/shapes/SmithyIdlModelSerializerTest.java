@@ -3,6 +3,7 @@ package software.amazon.smithy.model.shapes;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
@@ -166,23 +167,5 @@ public class SmithyIdlModelSerializerTest {
 
         assertThat(results.get(Paths.get("com.foo.smithy")),
                    not(containsString(OriginalShapeIdTrait.ID.toString())));
-    }
-
-    @Test
-    public void serializesRequiredTraitsUsingSugar() {
-        ShapeId stringId = ShapeId.from("smithy.api#String");
-        StructureShape struct = StructureShape.builder()
-                .id("smithy.example#Struct")
-                .addMember("req", stringId, builder -> builder.addTrait(new RequiredTrait()))
-                .addMember("opt", stringId)
-                .build();
-        Model model = Model.builder().addShape(struct).build();
-        SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder().build();
-
-        Map<Path, String> serialized = serializer.serialize(model);
-        String output = serialized.values().iterator().next();
-
-        assertThat(output, not(containsString("@required")));
-        assertThat(output, containsString("String!"));
     }
 }
