@@ -217,11 +217,21 @@ The following example defines several references:
             ])
         structure ForecastInformation {
             someId: SomeShapeIdentifier
-            forecastId: ForecastId!
-            meteorologistId: MeteorologistId!
-            otherData: SomeOtherShape!
-            bucketName: BucketName!
-            objectKey: ObjectKey!
+
+            @required
+            forecastId: ForecastId
+
+            @required
+            meteorologistId: MeteorologistId
+
+            @required
+            otherData: SomeOtherShape
+
+            @required
+            bucketName: BucketName
+
+            @required
+            objectKey: ObjectKey
         }
 
 .. rubric:: References on string shapes
@@ -298,12 +308,14 @@ match for the name of the resource identifier.
 
     @input
     structure GetFileInput {
-        directory: String!
+        @required
+        directory: String
 
         // resourceIdentifier is used because the input member name
         // does not match the resource identifier name
         @resourceIdentifier("fileName")
-        name: String!
+        @required
+        name: String
     }
 
 

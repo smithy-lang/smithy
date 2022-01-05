@@ -38,9 +38,8 @@ Smithy models SHOULD resemble the following example:
     /// More descriptive documentation if needed...
     structure MyStructure {
         /// Documentation about the member.
-        ///
-        /// Structure members should use "!" instead of the `@required` trait.
-        foo: String!
+        @required
+        foo: String
     }
 
     // Example of creating custom traits.
