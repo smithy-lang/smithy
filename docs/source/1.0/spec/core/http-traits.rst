@@ -67,12 +67,14 @@ The following example defines an operation that uses HTTP bindings:
     @input
     structure PutObjectInput {
         // Sent in the URI label named "key".
+        @required
         @httpLabel
-        key: ObjectKey!
+        key: ObjectKey
 
         // Sent in the URI label named "bucketName".
+        @required
         @httpLabel
-        bucketName: String!
+        bucketName: String
 
         // Sent in the X-Foo header
         @httpHeader("X-Foo")
@@ -644,8 +646,9 @@ The following example defines an operation that send an HTTP label named
 
     @input
     structure GetStatusInput {
+        @required
         @httpLabel
-        foo: String!
+        foo: String
     }
 
 .. rubric:: Relationship to :ref:`http-trait`
@@ -732,8 +735,9 @@ data in a response:
 
     @output
     structure GetRandomBinaryDataOutput {
+        @required
         @httpHeader("Content-Type")
-        contentType: String!
+        contentType: String
 
         @httpPayload
         content: Blob
@@ -1028,7 +1032,8 @@ disregard the value set by ``httpQueryParams``. For example, given the following
     @input
     structure PutThingInput {
         @httpQuery
-        thingId: String!
+        @required
+        thingId: String,
 
         @httpQueryParams
         tags: MapOfStrings

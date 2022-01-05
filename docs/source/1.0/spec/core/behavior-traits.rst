@@ -253,7 +253,9 @@ explicitly on the operation.
     @output
     structure GetFoosOutput {
         nextToken: String
-        foos: StringList!
+
+        @required
+        foos: StringList
     }
 
     list StringList {
@@ -354,12 +356,15 @@ wrapper where the output token and items are referenced by paths.
 
     @output
     structure GetFoosOutput {
-        result: ResultWrapper!
+        @required
+        result: ResultWrapper
     }
 
     structure ResultWrapper {
-        nextToken: String
-        foos: StringList!
+        nextToken: String,
+
+        @required
+        foos: StringList,
     }
 
     list StringList {
