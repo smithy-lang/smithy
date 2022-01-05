@@ -224,27 +224,35 @@ Let's define the operation used to "read" a ``City``.
     structure GetCityInput {
         // "cityId" provides the identifier for the resource and
         // has to be marked as required.
-        cityId: CityId!
+        @required
+        cityId: CityId
     }
 
     @output
     structure GetCityOutput {
-        // Required is used on output to indicate if the service
+        // "required" is used on output to indicate if the service
         // will always provide a value for the member.
-        name: String!
-        coordinates: CityCoordinates!
+        @required
+        name: String
+
+        @required
+        coordinates: CityCoordinates
     }
 
     structure CityCoordinates {
-        latitude: Float!
-        longitude: Float!
+        @required
+        latitude: Float
+
+        @required
+        longitude: Float
     }
 
     // "error" is a trait that is used to specialize
     // a structure as an error.
     @error("client")
     structure NoSuchResource {
-        resourceType: String!
+        @required
+        resourceType: String
     }
 
 And define the operation used to "read" a ``Forecast``.
@@ -261,7 +269,8 @@ And define the operation used to "read" a ``Forecast``.
     // a Forecast doesn't have its own.
     @input
     structure GetForecastInput {
-        cityId: CityId!
+        @required
+        cityId: CityId
     }
 
     @output
@@ -321,7 +330,9 @@ cities, so there's no way we could provide a ``City`` identifier.
     @output
     structure ListCitiesOutput {
         nextToken: String
-        items: CitySummaries!
+
+        @required
+        items: CitySummaries
     }
 
     // CitySummaries is a list of CitySummary structures.
@@ -332,8 +343,11 @@ cities, so there's no way we could provide a ``City`` identifier.
     // CitySummary contains a reference to a City.
     @references([{resource: City}])
     structure CitySummary {
-        cityId: CityId!
-        name: String!
+        @required
+        cityId: CityId
+
+        @required
+        name: String
     }
 
 The ``ListCities`` operation is :ref:`paginated <paginated-trait>`, meaning
@@ -390,7 +404,8 @@ service.
 
     @output
     structure GetCurrentTimeOutput {
-        time: Timestamp!
+        @required
+        time: Timestamp
     }
 
 
@@ -548,28 +563,36 @@ Finally, the complete ``weather.smithy`` model should look like:
         structure GetCityInput {
             // "cityId" provides the identifier for the resource and
             // has to be marked as required.
-            cityId: CityId!
+            @required
+            cityId: CityId
         }
 
         @output
         structure GetCityOutput {
-            // Required is used on output to indicate if the service
+            // "required" is used on output to indicate if the service
             // will always provide a value for the member.
-            name: String!
-            coordinates: CityCoordinates!
+            @required
+            name: String
+
+            @required
+            coordinates: CityCoordinates
         }
 
         // This structure is nested within GetCityOutput.
         structure CityCoordinates {
-            latitude: Float!
-            longitude: Float!
+            @required
+            latitude: Float
+
+            @required
+            longitude: Float
         }
 
         // "error" is a trait that is used to specialize
         // a structure as an error.
         @error("client")
         structure NoSuchResource {
-            resourceType: String!
+            @required
+            resourceType: String
         }
 
         // The paginated trait indicates that the operation may
@@ -590,7 +613,9 @@ Finally, the complete ``weather.smithy`` model should look like:
         @output
         structure ListCitiesOutput {
             nextToken: String
-            items: CitySummaries!
+
+            @required
+            items: CitySummaries
         }
 
         // CitySummaries is a list of CitySummary structures.
@@ -601,8 +626,11 @@ Finally, the complete ``weather.smithy`` model should look like:
         // CitySummary contains a reference to a City.
         @references([{resource: City}])
         structure CitySummary {
-            cityId: CityId!
-            name: String!
+            @required
+            cityId: CityId
+
+            @required
+            name: String
         }
 
         @readonly
@@ -616,7 +644,8 @@ Finally, the complete ``weather.smithy`` model should look like:
 
         @output
         structure GetCurrentTimeOutput {
-            time: Timestamp!
+            @required
+            time: Timestamp
         }
 
         @readonly
@@ -629,7 +658,8 @@ Finally, the complete ``weather.smithy`` model should look like:
         // a Forecast doesn't have its own.
         @input
         structure GetForecastInput {
-            cityId: CityId!
+            @required
+            cityId: CityId
         }
 
         @output
