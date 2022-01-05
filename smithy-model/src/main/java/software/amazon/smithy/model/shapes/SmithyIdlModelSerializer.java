@@ -45,7 +45,6 @@ import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.model.traits.InputTrait;
 import software.amazon.smithy.model.traits.OutputTrait;
-import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
@@ -71,9 +70,6 @@ public final class SmithyIdlModelSerializer {
      * Trait serialization features.
      */
     private enum TraitFeature {
-        /** Omit required traits (e.g., when using "!" on members instead). */
-        OMIT_REQUIRED,
-
         /** Inline documentation traits with other traits as opposed to using /// syntax. */
         NO_SPECIAL_DOCS_SYNTAX;
 
@@ -371,7 +367,6 @@ public final class SmithyIdlModelSerializer {
      * Serializes shapes in the IDL format.
      */
     private static final class ShapeSerializer extends ShapeVisitor.Default<Void> {
-        private static final Predicate<Trait> OMIT_REQUIRED = trait -> !trait.toShapeId().equals(RequiredTrait.ID);
         private final SmithyCodeWriter codeWriter;
         private final NodeSerializer nodeSerializer;
         private final Predicate<Trait> traitFilter;
@@ -400,10 +395,6 @@ public final class SmithyIdlModelSerializer {
         }
 
         private void shapeWithMembers(Shape shape, List<MemberShape> members) {
-            shapeWithMembers(shape, members, false);
-        }
-
-        private void shapeWithMembers(Shape shape, List<MemberShape> members, boolean structureMember) {
             List<MemberShape> nonMixinMembers = new ArrayList<>();
             List<MemberShape> mixinMembers = new ArrayList<>();
             for (MemberShape member : members) {
@@ -418,7 +409,7 @@ public final class SmithyIdlModelSerializer {
             codeWriter.writeInline("$L $L ", shape.getType(), shape.getId().getName());
 
             writeMixins(shape, !nonMixinMembers.isEmpty());
-            writeShapeMembers(nonMixinMembers, structureMember);
+            writeShapeMembers(nonMixinMembers);
             codeWriter.write("");
             applyIntroducedTraits(mixinMembers);
         }
@@ -438,18 +429,15 @@ public final class SmithyIdlModelSerializer {
             }
         }
 
-        private void writeShapeMembers(Collection<MemberShape> members, boolean isStructure) {
+        private void writeShapeMembers(Collection<MemberShape> members) {
             if (members.isEmpty()) {
                 // When the are no members to write, put "{}" on the same line.
                 codeWriter.writeInline("{}").write("");
             } else {
                 codeWriter.openBlock("{", "}", () -> {
                     for (MemberShape member : members) {
-                        // Omit required traits and instead use "!" syntax.
-                        serializeTraits(member.getAllTraits(), TraitFeature.OMIT_REQUIRED);
-                        // Suffix with "!" if it's a required structure member.
-                        String requiredSuffix = isStructure && member.isRequired() ? "!" : "";
-                        codeWriter.write("$L: $I$L", member.getMemberName(), member.getTarget(), requiredSuffix);
+                        serializeTraits(member.getAllTraits());
+                        codeWriter.write("$L: $I", member.getMemberName(), member.getTarget());
                     }
                 });
             }
@@ -477,7 +465,6 @@ public final class SmithyIdlModelSerializer {
 
         private void serializeTraits(Map<ShapeId, Trait> traits, TraitFeature... traitFeatures) {
             boolean noSpecialDocsSyntax = TraitFeature.NO_SPECIAL_DOCS_SYNTAX.hasFeature(traitFeatures);
-            boolean omitRequired = TraitFeature.OMIT_REQUIRED.hasFeature(traitFeatures);
 
             // The documentation trait always needs to be serialized first since it uses special syntax.
             if (!noSpecialDocsSyntax && traits.containsKey(DocumentationTrait.ID)) {
@@ -489,7 +476,6 @@ public final class SmithyIdlModelSerializer {
 
             traits.values().stream()
                     .filter(trait -> noSpecialDocsSyntax || !(trait instanceof DocumentationTrait))
-                    .filter(trait -> !(omitRequired && trait.toShapeId().equals(RequiredTrait.ID)))
                     .filter(traitFilter)
                     .sorted(Comparator.comparing(Trait::toShapeId))
                     .forEach(this::serializeTrait);
@@ -546,7 +532,7 @@ public final class SmithyIdlModelSerializer {
 
         @Override
         public Void structureShape(StructureShape shape) {
-            shapeWithMembers(shape, new ArrayList<>(shape.getAllMembers().values()), true);
+            shapeWithMembers(shape, new ArrayList<>(shape.getAllMembers().values()));
             return null;
         }
 
@@ -652,7 +638,7 @@ public final class SmithyIdlModelSerializer {
             }
 
             writeMixins(structure, !nonMixinMembers.isEmpty());
-            writeShapeMembers(nonMixinMembers, true);
+            writeShapeMembers(nonMixinMembers);
 
             if (!hasOnlyDefaultTrait(structure, defaultTrait)) {
                 codeWriter.dedent();
