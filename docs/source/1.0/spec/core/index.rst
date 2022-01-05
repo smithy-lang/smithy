@@ -43,7 +43,8 @@ alongside Smithy IDL examples where appropriate. For example:
         use smithy.other.namespace#MyString
 
         structure MyStructure {
-            foo: MyString!
+            @required
+            foo: MyString
         }
 
     .. code-tab:: json

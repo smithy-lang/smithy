@@ -34,10 +34,8 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.DynamicTrait;
-import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.StringTrait;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.Severity;
@@ -240,20 +238,5 @@ public class IdlModelLoaderTest {
         // Spot check for a specific "use" shape.
         assertThat(model.expectShape(ShapeId.from("smithy.example#MyService"), ServiceShape.class).getRename(),
                    equalTo(MapUtils.of(ShapeId.from("foo.example#Widget"), "FooWidget")));
-    }
-
-    @Test
-    public void addsLocationToRequiredSugarTraits() {
-        Model model = Model.assembler()
-                .addImport(getClass().getResource("required-sugar-test.smithy"))
-                .assemble()
-                .unwrap();
-
-        StructureShape shape = model.expectShape(ShapeId.from("smithy.example#MyStruct"), StructureShape.class);
-        MemberShape member = shape.getMember("foo").get();
-        RequiredTrait trait = member.expectTrait(RequiredTrait.class);
-
-        assertThat(trait.getSourceLocation().getLine(), equalTo(5));
-        assertThat(trait.getSourceLocation().getColumn(), equalTo(16));
     }
 }
