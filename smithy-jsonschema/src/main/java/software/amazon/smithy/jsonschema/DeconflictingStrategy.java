@@ -17,6 +17,7 @@ package software.amazon.smithy.jsonschema;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.Model;
@@ -49,12 +50,12 @@ final class DeconflictingStrategy implements RefStrategy {
     private final Map<ShapeId, String> pointers = new HashMap<>();
     private final Map<String, ShapeId> reversePointers = new HashMap<>();
 
-    DeconflictingStrategy(Model model, RefStrategy delegate) {
+    DeconflictingStrategy(Model model, RefStrategy delegate, Predicate<Shape> shapePredicate) {
         this.delegate = delegate;
 
         // Pre-compute a map of all converted shape refs. Sort the shapes
         // to make the result deterministic.
-        model.shapes().filter(FunctionalUtils.not(this::isIgnoredShape)).sorted().forEach(shape -> {
+        model.shapes().filter(shapePredicate.and(FunctionalUtils.not(this::isIgnoredShape))).sorted().forEach(shape -> {
             String pointer = delegate.toPointer(shape.getId());
             if (!reversePointers.containsKey(pointer)) {
                 pointers.put(shape.getId(), pointer);

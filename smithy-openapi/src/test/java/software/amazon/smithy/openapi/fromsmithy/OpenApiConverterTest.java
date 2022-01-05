@@ -514,4 +514,20 @@ public class OpenApiConverterTest {
 
         Node.assertEquals(result, expectedNode);
     }
+
+    @Test
+    public void convertsUnitsThatDoNotConflict() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("nonconflicting-unit.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example.rest#RestService"));
+        Node result = OpenApiConverter.create().config(config).convertToNode(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("nonconflicting-unit.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
 }

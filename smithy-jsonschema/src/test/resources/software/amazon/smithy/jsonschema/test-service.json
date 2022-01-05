@@ -237,6 +237,9 @@
                 },
                 "b": {
                     "target": "smithy.api#String"
+                },
+                "c": {
+                    "target": "smithy.api#Unit"
                 }
             }
         }

@@ -33,6 +33,8 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.Pair;
@@ -63,6 +65,9 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
     private final String rootDefinitionPointer;
     private final int rootDefinitionSegments;
 
+    /** A workaround for including definitions for Unit; it's only included in the schema if a union targets it. */
+    private final boolean unitTargetedByUnion;
+
     private JsonSchemaConverter(Builder builder) {
         mappers.addAll(builder.mappers);
         config = SmithyBuilder.requiredState("config", builder.config);
@@ -83,7 +88,12 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
         LOGGER.fine("Creating JSON ref strategy");
         Model refModel = config.isEnableOutOfServiceReferences()
                 ? this.model : scopeModelToService(model, config.getService());
-        refStrategy = RefStrategy.createDefaultStrategy(refModel, config, propertyNamingStrategy);
+
+        unitTargetedByUnion = refModel.shapes(UnionShape.class)
+                .anyMatch(u -> u.members().stream().anyMatch(m -> m.getTarget().equals(UnitTypeTrait.UNIT)));
+
+        refStrategy = RefStrategy.createDefaultStrategy(refModel, config, propertyNamingStrategy,
+                new FilterPreludeUnit(unitTargetedByUnion));
 
         // Combine custom mappers with the discovered mappers and sort them.
         realizedMappers = new ArrayList<>(mappers);
@@ -250,7 +260,7 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
                 // Don't convert unsupported shapes.
                 .filter(FunctionalUtils.not(this::isUnsupportedShapeType))
                 // Ignore prelude shapes.
-                .filter(FunctionalUtils.not(Prelude::isPreludeShape))
+                .filter(s -> s.getId().equals(UnitTypeTrait.UNIT) && unitTargetedByUnion || !Prelude.isPreludeShape(s))
                 // Do not generate inlined shapes in the definitions map.
                 .filter(FunctionalUtils.not(refStrategy::isInlined))
                 // Create a pair of pointer and shape.
@@ -409,6 +419,19 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
             mappers.clear();
             mappers.addAll(jsonSchemaMappers);
             return this;
+        }
+    }
+
+    static final class FilterPreludeUnit implements Predicate<Shape> {
+        private final boolean includePreludeUnit;
+
+        FilterPreludeUnit(boolean includePreludeUnit) {
+            this.includePreludeUnit = includePreludeUnit;
+        }
+
+        @Override
+        public boolean test(Shape shape) {
+            return includePreludeUnit || !shape.getId().equals(UnitTypeTrait.UNIT);
         }
     }
 }
