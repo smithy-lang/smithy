@@ -124,7 +124,8 @@ support configuration settings.
     @protocolDefinition
     @trait(selector: "service")
     structure configurableExample {
-        version: String!
+        @required
+        version: String
     }
 
     @configurableExample(version: "1.0")

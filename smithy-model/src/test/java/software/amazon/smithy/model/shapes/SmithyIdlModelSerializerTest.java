@@ -182,6 +182,7 @@ public class SmithyIdlModelSerializerTest {
         assertThat(serialized.get(Paths.get("smithy.api.smithy")), containsString("namespace smithy.api"));
     }
 
+    @Test
     public void serializesRequiredTraitsUsingSugar() {
         ShapeId stringId = ShapeId.from("smithy.api#String");
         StructureShape struct = StructureShape.builder()

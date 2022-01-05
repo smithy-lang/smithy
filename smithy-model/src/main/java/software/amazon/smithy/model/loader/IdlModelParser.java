@@ -63,7 +63,6 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.InputTrait;
 import software.amazon.smithy.model.traits.OutputTrait;
-import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -385,10 +384,10 @@ final class IdlModelParser extends SimpleParser {
                 parseOperationStatement(id, location);
                 break;
             case "structure":
-                parseStructuredShape(id, location, StructureShape.builder(), true);
+                parseStructuredShape(id, location, StructureShape.builder());
                 break;
             case "union":
-                parseStructuredShape(id, location, UnionShape.builder(), false);
+                parseStructuredShape(id, location, UnionShape.builder());
                 break;
             case "list":
                 parseCollection(id, location, ListShape.builder());
@@ -462,11 +461,11 @@ final class IdlModelParser extends SimpleParser {
     private void parseCollection(ShapeId id, SourceLocation location, CollectionShape.Builder builder) {
         ws();
         builder.id(id).source(location);
-        parseMembers(id, SetUtils.of("member"), false);
+        parseMembers(id, SetUtils.of("member"));
         modelFile.onShape(builder.id(id));
     }
 
-    private void parseMembers(ShapeId id, Set<String> requiredMembers, boolean structureMember) {
+    private void parseMembers(ShapeId id, Set<String> requiredMembers) {
         Set<String> definedMembers = new HashSet<>();
         Set<String> remaining = requiredMembers.isEmpty()
                 ? requiredMembers
@@ -481,7 +480,7 @@ final class IdlModelParser extends SimpleParser {
                 break;
             }
 
-            parseMember(id, requiredMembers, definedMembers, remaining, structureMember);
+            parseMember(id, requiredMembers, definedMembers, remaining);
 
             // Clears out any previously captured documentation
             // comments that may have been found when parsing the member.
@@ -502,13 +501,7 @@ final class IdlModelParser extends SimpleParser {
         expect('}');
     }
 
-    private void parseMember(
-            ShapeId parent,
-            Set<String> required,
-            Set<String> defined,
-            Set<String> remaining,
-            boolean structureMember
-    ) {
+    private void parseMember(ShapeId parent, Set<String> required, Set<String> defined, Set<String> remaining) {
         // Parse optional member traits.
         List<TraitEntry> memberTraits = parseDocsAndTraits();
         SourceLocation memberLocation = currentLocation();
@@ -539,20 +532,6 @@ final class IdlModelParser extends SimpleParser {
         ShapeId memberId = parent.withMember(memberName);
         MemberShape.Builder memberBuilder = MemberShape.builder().id(memberId).source(memberLocation);
         String target = ParserUtils.parseShapeId(this);
-
-        if (structureMember && peek() == '!') {
-            if (!modelFile.getVersion().supportsRequiredSugar()) {
-                throw syntax(memberId, String.format(
-                        "The '!' suffix can only be used on structure members when using Smithy 2.0 or later, but "
-                        + "you're using version `%s`. Make `$version: \"2\"` the first line of this file.",
-                        modelFile.getVersion()));
-            }
-            // Create a synthetic Node to specify the location.
-            Node requiredTrait = new ObjectNode(Collections.emptyMap(), currentLocation());
-            expect('!');
-            memberTraits.add(new TraitEntry(RequiredTrait.ID.toString(), requiredTrait, true));
-        }
-
         modelFile.onShape(memberBuilder);
         modelFile.addForwardReference(target, memberBuilder::target);
         addTraits(memberId, memberTraits);
@@ -566,15 +545,14 @@ final class IdlModelParser extends SimpleParser {
         // on a builder. This does not suffer the same error messages as
         // structures/unions because list/set/map have a fixed and required
         // set of members that must be provided.
-        parseMembers(id, SetUtils.of("key", "value"), false);
+        parseMembers(id, SetUtils.of("key", "value"));
         modelFile.onShape(MapShape.builder().id(id).source(location));
     }
 
     private void parseStructuredShape(
             ShapeId id,
             SourceLocation location,
-            AbstractShapeBuilder<?, ?> builder,
-            boolean structureMember
+            AbstractShapeBuilder<?, ?> builder
     ) {
         // Register the structure/union with the loader before parsing members.
         // This will detect shape conflicts with other types (like an operation)
@@ -587,7 +565,7 @@ final class IdlModelParser extends SimpleParser {
 
         // Parse optional "with" statements to add mixins, but only if it's supported by the version.
         parseMixins(id);
-        parseMembers(id, Collections.emptySet(), structureMember);
+        parseMembers(id, Collections.emptySet());
     }
 
     private void parseMixins(ShapeId id) {
@@ -689,6 +667,8 @@ final class IdlModelParser extends SimpleParser {
         StructureShape.Builder builder = StructureShape.builder().id(id).source(location);
 
         modelFile.onShape(builder);
+        parseMembers(id, Collections.emptySet());
+        addTraits(id, traits);
         clearPendingDocs();
         ws();
         return id;
