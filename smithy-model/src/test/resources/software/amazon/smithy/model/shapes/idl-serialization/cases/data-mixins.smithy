@@ -2,7 +2,7 @@ $version: "2.0"
 
 namespace smithy.example
 
-list MixedList with MixinList {}
+list MixedList with [MixinList] {}
 
 @internal
 @mixin
@@ -10,7 +10,7 @@ list MixinList {
     member: String
 }
 
-set MixedSet with MixinSet {}
+set MixedSet with [MixinSet] {}
 
 @internal
 @mixin
@@ -18,7 +18,7 @@ set MixinSet {
     member: String
 }
 
-map MixedMap with MixinMap {}
+map MixedMap with [MixinMap] {}
 
 @internal
 @mixin
@@ -27,31 +27,31 @@ map MixinMap {
     value: String
 }
 
-bigDecimal MixedBigDecimal with MixinBigDecimal
+bigDecimal MixedBigDecimal with [MixinBigDecimal]
 
-bigInteger MixedBigInt with MixinBigInt
+bigInteger MixedBigInt with [MixinBigInt]
 
-blob MixedBlob with MixinBlob
+blob MixedBlob with [MixinBlob]
 
-boolean MixedBoolean with MixinBoolean
+boolean MixedBoolean with [MixinBoolean]
 
-byte MixedByte with MixinByte
+byte MixedByte with [MixinByte]
 
-document MixedDocument with MixinDocument
+document MixedDocument with [MixinDocument]
 
-double MixedDouble with MixinDouble
+double MixedDouble with [MixinDouble]
 
-float MixedFloat with MixinFloat
+float MixedFloat with [MixinFloat]
 
-integer MixedInteger with MixinInteger
+integer MixedInteger with [MixinInteger]
 
-long MixedLong with MixinLong
+long MixedLong with [MixinLong]
 
-short MixedShort with MixinShort
+short MixedShort with [MixinShort]
 
-string MixedString with MixinString
+string MixedString with [MixinString]
 
-timestamp MixedTimestamp with MixinTimestamp
+timestamp MixedTimestamp with [MixinTimestamp]
 
 @internal
 @mixin
