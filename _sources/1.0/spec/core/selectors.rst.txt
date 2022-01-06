@@ -1209,9 +1209,21 @@ The table below lists the labeled directed relationships from each shape.
     * - operation
       - input
       - The input structure of the operation (if present).
+
+        .. note::
+
+            :ref:`smithy.api#Unit <unit-type>` is considered "not present"
+            for this relationship, and will not be yielded.
+
     * - operation
       - output
       - The output structure of the operation (if present).
+
+        .. note::
+
+            :ref:`smithy.api#Unit <unit-type>` is considered "not present"
+            for this relationship, and will not be yielded.
+
     * - operation
       - error
       - Each error structure referenced by the operation (if present).

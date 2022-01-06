@@ -1366,6 +1366,16 @@ closure of a service. This constraint allows services to discern between
 operations and resources using only their shape name rather than a
 fully-qualified path from the service to the shape.
 
+.. rubric:: Undeclared operation inputs and outputs are not a
+            part of the service closure
+
+:ref:`smithy.api#Unit <unit-type>` is the shape that is implicitly targeted by
+operation inputs and outputs when they are not explicitly declared. This does
+not, however, add ``smithy.api#Unit`` to the service's closure, and does not
+require renaming to avoid conflicts with other shapes named ``Unit``. Unions in
+the service closure with members targeting ``smithy.api#Unit``, however, will
+cause ``smithy.api#Unit`` to be a part of the service closure.
+
 
 ..  _operation:
 

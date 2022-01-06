@@ -1335,6 +1335,14 @@ the conflicting shapes.</p>
 closure of a service. This constraint allows services to discern between
 operations and resources using only their shape name rather than a
 fully-qualified path from the service to the shape.</p>
+<p class="rubric">Undeclared operation inputs and outputs are not a
+part of the service closure</p>
+<p><a class="reference internal" href="#unit-type"><span class="std std-ref">smithy.api#Unit</span></a> is the shape that is implicitly targeted by
+operation inputs and outputs when they are not explicitly declared. This does
+not, however, add <code class="docutils literal notranslate"><span class="pre">smithy.api#Unit</span></code> to the service's closure, and does not
+require renaming to avoid conflicts with other shapes named <code class="docutils literal notranslate"><span class="pre">Unit</span></code>. Unions in
+the service closure with members targeting <code class="docutils literal notranslate"><span class="pre">smithy.api#Unit</span></code>, however, will
+cause <code class="docutils literal notranslate"><span class="pre">smithy.api#Unit</span></code> to be a part of the service closure.</p>
 </div>
 </div>
 <div class="section" id="operation">
