@@ -19,6 +19,6 @@ structure Mixin {
     greeting: String
 }
 
-structure Output with Mixin {
+structure Output with [Mixin] {
     language: String
 }

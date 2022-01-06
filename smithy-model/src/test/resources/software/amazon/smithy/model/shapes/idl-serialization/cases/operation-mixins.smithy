@@ -2,7 +2,7 @@ $version: "2.0"
 
 namespace smithy.example
 
-operation ConcreteOperation with InternalMixin {
+operation ConcreteOperation with [InternalMixin] {
     input: Unit
     output: Unit
     errors: [

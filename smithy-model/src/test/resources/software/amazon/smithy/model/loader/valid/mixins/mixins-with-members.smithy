@@ -8,7 +8,7 @@ structure A {
 }
 
 @mixin
-structure B with A {
+structure B with [A] {
     b: String
 }
 
@@ -18,15 +18,15 @@ structure C {
 }
 
 @mixin
-structure D with C {
+structure D with [C] {
     d: String
 }
 
 @mixin
-structure E with D {
+structure E with [D] {
     e: String
 }
 
-structure F with B, E {
+structure F with [B, E] {
     f: String
 }

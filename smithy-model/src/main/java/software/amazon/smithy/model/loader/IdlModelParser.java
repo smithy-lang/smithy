@@ -589,36 +589,16 @@ final class IdlModelParser extends SimpleParser {
         }
 
         ws();
+        expect('[');
+        ws();
+
         do {
             clearPendingDocs();
             String target = ParserUtils.parseShapeId(this);
             modelFile.addForwardReference(target, resolved -> modelFile.addPendingMixin(id, resolved));
             ws();
-        } while (!peekEndWith());
-    }
-
-    private boolean peekEndWith() {
-        if (peek() == '{' || peek() == '@' || eof()) {
-            return true;
-        }
-
-        // We could make this more efficient with a prefix trie
-        for (String shapeType : SHAPE_TYPES) {
-            if (peekString(shapeType)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private boolean peekString(String possibility) {
-        for (int i = 0; i < possibility.length(); i++) {
-            if (peek(i) != possibility.charAt(i)) {
-                return false;
-            }
-        }
-        return !ParserUtils.isValidIdentifierCharacter(peek(possibility.length()));
+        } while (peek() != ']');
+        expect(']');
     }
 
     private void parseOperationStatement(ShapeId id, SourceLocation location) {
@@ -724,6 +704,7 @@ final class IdlModelParser extends SimpleParser {
     private void parseServiceStatement(ShapeId id, SourceLocation location) {
         ws();
         parseMixins(id);
+        ws();
         ServiceShape.Builder builder = new ServiceShape.Builder().id(id).source(location);
         ObjectNode shapeNode = IdlNodeParser.parseObjectNode(this, id.toString());
         LoaderUtils.checkForAdditionalProperties(shapeNode, id, SERVICE_PROPERTY_NAMES, modelFile.events());
@@ -754,6 +735,7 @@ final class IdlModelParser extends SimpleParser {
     private void parseResourceStatement(ShapeId id, SourceLocation location) {
         ws();
         parseMixins(id);
+        ws();
         ResourceShape.Builder builder = ResourceShape.builder().id(id).source(location);
         modelFile.onShape(builder);
         ObjectNode shapeNode = IdlNodeParser.parseObjectNode(this, id.toString());
