@@ -3,7 +3,7 @@ $version: "2.0"
 namespace smithy.example
 
 @private
-service MixedService with MixinService {
+service MixedService with [MixinService] {
     version: "2022-01-01"
     operations: [
         MixedServiceOperation
@@ -50,7 +50,7 @@ operation MixinOperation {
 }
 
 @private
-operation MixedOperation with MixinOperation {
+operation MixedOperation with [MixinOperation] {
     errors: [MixedError]
 }
 
@@ -84,6 +84,6 @@ string MixinRename
 string MixinString
 
 @private
-string MixedString with MixinString
+string MixedString with [MixinString]
 
 string OverriddenRename

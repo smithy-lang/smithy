@@ -120,7 +120,7 @@ shape marked with the `@mixin` trait. Shapes can only use mixins that
 are of the same shape type.
 
 ```
-structure GetCityInput with CityResourceInput {
+structure GetCityInput with [CityResourceInput] {
     foo: String
 }
 ```
@@ -128,10 +128,10 @@ structure GetCityInput with CityResourceInput {
 Multiple mixins can be applied:
 
 ```
-structure GetAnotherCityInput with
+structure GetAnotherCityInput with [
     CityResourceInput
     SomeOtherMixin
-{
+]{
     foo: String
 }
 ```
@@ -145,11 +145,11 @@ structure MixinA {
 }
 
 @mixin
-structure MixinB with MixinA {
+structure MixinB with [MixinA] {
     b: String
 }
 
-structure C with MixinB {
+structure C with [MixinB] {
     c: String
 }
 ```
@@ -181,7 +181,7 @@ union UserActions {
     unsubscribe: UnsubscribeAction,
 }
 
-union AdminActions with UserAction {
+union AdminActions with [UserAction] {
     banUser: BanUserAction,
     promoteToAdmin: PromoteToAdminAction
 }
@@ -204,7 +204,7 @@ structure UserInfo {
     userId: String
 }
 
-structure UserSummary with UserInfo {}
+structure UserSummary with [UserInfo] {}
 ```
 
 Is equivalent to the following flattened structure because it inherits the
@@ -230,7 +230,7 @@ structure UserInfo {
 
 /// Specific documentation
 @tags(["replaced-tags"])
-structure UserSummary with UserInfo {}
+structure UserSummary with [UserInfo] {}
 ```
 
 Is equivalent to the following flattened structure because it inherits the
@@ -268,13 +268,11 @@ structure StructB {}
 /// C
 @threeTrait
 @mixin
-structure StructC with
-    StructA
-    StructB {}
+structure StructC with [StructA StructB] {}
 
 /// D
 @fourTrait
-structure StructD with StructC {}
+structure StructD with [StructC] {}
 ```
 
 Is equivalent to the following flattened structure:
@@ -325,7 +323,7 @@ structure PrivateMixin {
     foo: String
 }
 
-structure PublicShape with PrivateMixin {}
+structure PublicShape with [PrivateMixin] {}
 ```
 
 `PublicShape` is equivalent to the following flattened structure:
@@ -462,7 +460,7 @@ structure MyMixin {
     mixinMember: String
 }
 
-structure MyStruct with MyMixin {}
+structure MyStruct with [MyMixin] {}
 apply MyStruct$mixinMember @documentation("Specific docs")
 ```
 
@@ -478,7 +476,7 @@ structure MyMixin {
     mixinMember: String
 }
 
-structure MyStruct with MyMixin {
+structure MyStruct with [MyMixin] {
     /// Specific docs
     mixinMember: String
 }
@@ -533,10 +531,10 @@ Mixins MUST NOT introduce circular references. The following model is invalid:
 
 ```
 @mixin
-structure CycleA with CycleB {}
+structure CycleA with [CycleB] {}
 
 @mixin
-structure CycleB with CycleA {}
+structure CycleB with [CycleA] {}
 ```
 
 
@@ -557,9 +555,7 @@ structure A2 {
     a: Integer
 }
 
-structure Invalid with
-    A1
-    A2 {}
+structure Invalid with [A1 A2] {}
 ```
 
 The following model is also invalid, but not specifically because of mixins.
@@ -577,9 +573,7 @@ structure A2 {
     A: Integer
 }
 
-structure Invalid with
-    A1
-    A2 {}
+structure Invalid with [A1 A2] {}
 ```
 
 A shape MAY use a member name that has already defined, but if it does it MUST
@@ -599,9 +593,7 @@ structure A2 {
     a: String
 }
 
-structure Valid with
-    A1
-    A2 {}
+structure Valid with [A1 A2] {}
 ```
 
 
@@ -623,7 +615,7 @@ union_statement = "union" ws identifier ws [mixins ws] union_members
 service_statement = "service" ws identifier ws [mixins ws] node_object
 operation_statement = "operation" ws identifier ws [mixins ws] node_object
 resource_statement = "resource" ws identifier ws [mixins ws] node_object
-mixins = "with" 1*(ws shape_id)
+mixins = "with" ws "[" 1*(ws shape_id) ws "]"
 ```
 
 
@@ -684,7 +676,7 @@ structure PaginatedInput {
     pageSize: Integer
 }
 
-structure ListSomethingInput with PaginatedInput {
+structure ListSomethingInput with [PaginatedInput] {
     nameFilter: String
 }
 ```
@@ -761,10 +753,10 @@ structure PaginatedInput {
     pageSize: Integer
 }
 
-structure ListSomethingInput with
+structure ListSomethingInput with [
     PaginatedInput
     FilteredByName
-{
+]{
     sizeFilter: Integer
 }
 ```
@@ -800,7 +792,7 @@ service A {
 operation OperationB {}
 
 @mixin
-service B with A {
+service B with [A] {
     version: "B"
     rename: {
         "smithy.example#OperationA": "OperA"
@@ -811,7 +803,7 @@ service B with A {
 
 operation OperationC {}
 
-service C with B {
+service C with [B] {
     version: "C"
     rename: {
         "smithy.example#OperationA": "OpA"
@@ -981,7 +973,7 @@ mixin UserActions {
     subscribe: SubscribeAction,
 }
 
-union AdminActions with UserAction {}
+union AdminActions with [UserAction] {}
 ```
 
 The `required` trait on `UserActions$subscribe` is valid, but it makes it so
@@ -1024,7 +1016,7 @@ structure FooMixin {
     otherMember: String
 }
 
-structure ApplicationOfFooMixin with FooMixin {
+structure ApplicationOfFooMixin with [FooMixin] {
     // Remove the required trait from this member.
     @override([omitTraits: [required]])
     someMember: String
@@ -1048,7 +1040,7 @@ structure FooMixinOptional {
 }
 
 @mixin
-structure FooMixinRequired with FooMixinOptional {}
+structure FooMixinRequired with [FooMixinOptional] {}
 apply FooMixinRequired$someMember @required
 ```
 
