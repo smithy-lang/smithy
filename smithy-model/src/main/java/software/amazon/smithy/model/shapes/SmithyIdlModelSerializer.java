@@ -393,7 +393,7 @@ public final class SmithyIdlModelSerializer {
         protected Void getDefault(Shape shape) {
             serializeTraits(shape);
             codeWriter.writeInline("$L $L ", shape.getType(), shape.getId().getName());
-            writeMixins(shape, false);
+            writeMixins(shape);
             codeWriter.write("").write("");
             return null;
         }
@@ -412,24 +412,22 @@ public final class SmithyIdlModelSerializer {
             serializeTraits(shape);
             codeWriter.writeInline("$L $L ", shape.getType(), shape.getId().getName());
 
-            writeMixins(shape, !nonMixinMembers.isEmpty());
+            writeMixins(shape);
             writeShapeMembers(nonMixinMembers);
             codeWriter.write("");
             applyIntroducedTraits(mixinMembers);
         }
 
-        private void writeMixins(Shape shape, boolean hasNonMixinMembers) {
+        private void writeMixins(Shape shape) {
             if (shape.getMixins().size() == 1) {
-                codeWriter.writeInline("with $I ", shape.getMixins().iterator().next());
+                codeWriter.writeInline("with [$I] ", shape.getMixins().iterator().next());
             } else if (shape.getMixins().size() > 1) {
-                codeWriter.writeInline("with");
+                codeWriter.write("with [").indent();
                 for (ShapeId id : shape.getMixins()) {
                     // Trailing spaces are trimmed.
-                    codeWriter.writeInline("\n    $I ", id);
+                    codeWriter.write("$I", id);
                 }
-                if (hasNonMixinMembers) {
-                    codeWriter.write("");
-                }
+                codeWriter.dedent().writeInline("] ");
             }
         }
 
@@ -550,7 +548,7 @@ public final class SmithyIdlModelSerializer {
         public Void serviceShape(ServiceShape shape) {
             serializeTraits(shape);
             codeWriter.writeInline("service $L ", shape.getId().getName());
-            writeMixins(shape, false);
+            writeMixins(shape);
             codeWriter.openBlock("{");
 
             ServiceShape preMixinShape = preMixinIndex.getPreMixinShape(shape).asServiceShape().get();
@@ -577,7 +575,7 @@ public final class SmithyIdlModelSerializer {
         public Void resourceShape(ResourceShape shape) {
             serializeTraits(shape);
             codeWriter.writeInline("resource $L ", shape.getId().getName());
-            writeMixins(shape, false);
+            writeMixins(shape);
             codeWriter.openBlock("{");
             if (!shape.getIdentifiers().isEmpty()) {
                 codeWriter.openBlock("identifiers: {");
@@ -608,7 +606,7 @@ public final class SmithyIdlModelSerializer {
             OperationShape preMixinShape = preMixinIndex.getPreMixinShape(shape).asOperationShape().get();
             serializeTraits(shape);
             codeWriter.writeInline("operation $L ", shape.getId().getName());
-            writeMixins(shape, false);
+            writeMixins(shape);
             codeWriter.openBlock("{");
             List<MemberShape> mixinMembers = new ArrayList<>();
             mixinMembers.addAll(writeInlineableProperty("input", shape.getInputShape(), InputTrait.ID));
@@ -650,7 +648,7 @@ public final class SmithyIdlModelSerializer {
                 }
             }
 
-            writeMixins(structure, !nonMixinMembers.isEmpty());
+            writeMixins(structure);
             writeShapeMembers(nonMixinMembers);
 
             if (!hasOnlyDefaultTrait(structure, defaultTrait)) {
