@@ -2,7 +2,7 @@ $version: "2.0"
 
 namespace smithy.example
 
-service MixedService with MixinService {
+service MixedService with [MixinService] {
     version: "2022-01-01"
     operations: [
         MixedOperation

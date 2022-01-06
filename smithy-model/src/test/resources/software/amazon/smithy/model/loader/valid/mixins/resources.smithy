@@ -6,4 +6,4 @@ namespace smithy.example
 @internal
 resource MixinResource {}
 
-resource MixedResource with MixinResource {}
+resource MixedResource with [MixinResource] {}
