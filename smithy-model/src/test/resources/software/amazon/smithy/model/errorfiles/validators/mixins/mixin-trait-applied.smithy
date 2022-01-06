@@ -6,7 +6,7 @@ namespace smithy.example
 structure mixinTrait {}
 
 // This is fine, and it makes this shape a trait!
-structure usesMixinTrait with mixinTrait {}
+structure usesMixinTrait with [mixinTrait] {}
 
 @usesMixinTrait
 structure FineUseOfTrait {}

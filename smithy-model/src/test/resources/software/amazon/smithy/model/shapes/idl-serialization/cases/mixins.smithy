@@ -13,7 +13,7 @@ structure A {
 /// B
 @deprecated
 @mixin
-structure B with A {
+structure B with [A] {
     /// B.b
     b: String
 }
@@ -33,7 +33,7 @@ structure C {
     web: "http://example.com"
 )
 @mixin
-structure D with C {
+structure D with [C] {
     /// D.d
     d: String
 }
@@ -46,17 +46,17 @@ apply D$c {
 /// E
 @mixin
 @since("X")
-structure E with D {
+structure E with [D] {
     /// E.e
     e: String
 }
 
 /// F
 @internal
-structure F with
+structure F with [
     B
     E
-{
+] {
     /// F.f
     f: String
 }
@@ -68,10 +68,11 @@ apply F$a {
 
 apply F$e @sensitive
 
-structure G with
+structure G with [
     B
-    E {}
+    E
+] {}
 
-structure H with B {}
+structure H with [B] {}
 
 structure I {}
