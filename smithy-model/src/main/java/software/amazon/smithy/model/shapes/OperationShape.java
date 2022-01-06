@@ -36,6 +36,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
     private final ShapeId input;
     private final ShapeId output;
     private final List<ShapeId> errors;
+    private final List<ShapeId> introducedErrors;
 
     private OperationShape(Builder builder) {
         super(builder, false);
@@ -45,6 +46,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
 
         if (getMixins().isEmpty()) {
             errors = builder.errors.copy();
+            introducedErrors = errors;
         } else {
             // Compute mixin properties of the operation. Input / output are
             // forbidden in operation mixins, so we don't bother with them
@@ -53,7 +55,8 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
             for (Shape shape : builder.getMixins().values()) {
                 shape.asOperationShape().ifPresent(mixin -> computedErrors.addAll(mixin.getErrors()));
             }
-            computedErrors.addAll(builder.errors.peek());
+            introducedErrors = builder.errors.copy();
+            computedErrors.addAll(introducedErrors);
             errors = Collections.unmodifiableList(new ArrayList<>(computedErrors));
         }
 
@@ -75,7 +78,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
         return updateBuilder(builder())
                 .input(input)
                 .output(output)
-                .errors(errors);
+                .errors(getIntroducedErrors());
     }
 
     @Override
@@ -161,6 +164,16 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
      */
     public List<ShapeId> getErrors() {
         return errors;
+    }
+
+    /**
+     * Gets the errors introduced by the shape and not inherited
+     * from mixins.
+     *
+     * @return Returns the introduced errors.
+     */
+    public List<ShapeId> getIntroducedErrors() {
+        return introducedErrors;
     }
 
     /**
