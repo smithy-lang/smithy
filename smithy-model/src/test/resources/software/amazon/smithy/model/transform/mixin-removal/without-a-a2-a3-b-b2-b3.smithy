@@ -7,6 +7,6 @@ structure C {
     c: String
 }
 
-structure D with C {
+structure D with [C] {
     d: String
 }
