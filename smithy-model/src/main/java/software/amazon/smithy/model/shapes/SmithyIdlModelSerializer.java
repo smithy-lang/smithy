@@ -33,7 +33,6 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.knowledge.PreMixinIndex;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
@@ -373,7 +372,6 @@ public final class SmithyIdlModelSerializer {
         private final Predicate<Trait> traitFilter;
         private final Model model;
         private final Set<ShapeId> inlineableShapes;
-        private final PreMixinIndex preMixinIndex;
 
         ShapeSerializer(
                 SmithyCodeWriter codeWriter,
@@ -387,7 +385,6 @@ public final class SmithyIdlModelSerializer {
             this.traitFilter = traitFilter;
             this.model = model;
             this.inlineableShapes = inlineableShapes;
-            this.preMixinIndex = PreMixinIndex.of(model);
         }
 
         @Override
@@ -552,18 +549,16 @@ public final class SmithyIdlModelSerializer {
             writeMixins(shape);
             codeWriter.openBlock("{");
 
-            ServiceShape preMixinShape = preMixinIndex.getPreMixinShape(shape).asServiceShape().get();
-
-            if (!StringUtils.isBlank(preMixinShape.getVersion())) {
-                codeWriter.write("version: $S", preMixinShape.getVersion());
+            if (!StringUtils.isBlank(shape.getIntroducedVersion())) {
+                codeWriter.write("version: $S", shape.getIntroducedVersion());
             }
 
-            codeWriter.writeOptionalIdList("operations", preMixinShape.getOperations());
-            codeWriter.writeOptionalIdList("resources", preMixinShape.getResources());
-            codeWriter.writeOptionalIdList("errors", preMixinShape.getErrors());
-            if (!preMixinShape.getRename().isEmpty()) {
+            codeWriter.writeOptionalIdList("operations", shape.getIntroducedOperations());
+            codeWriter.writeOptionalIdList("resources", shape.getIntroducedResources());
+            codeWriter.writeOptionalIdList("errors", shape.getIntroducedErrors());
+            if (!shape.getIntroducedRename().isEmpty()) {
                 codeWriter.openBlock("rename: {", "}", () -> {
-                    for (Map.Entry<ShapeId, String> entry : preMixinShape.getRename().entrySet()) {
+                    for (Map.Entry<ShapeId, String> entry : shape.getIntroducedRename().entrySet()) {
                         codeWriter.write("$S: $S", entry.getKey(), entry.getValue());
                     }
                 });
@@ -593,9 +588,9 @@ public final class SmithyIdlModelSerializer {
             shape.getUpdate().ifPresent(shapeId -> codeWriter.write("update: $I", shapeId));
             shape.getDelete().ifPresent(shapeId -> codeWriter.write("delete: $I", shapeId));
             shape.getList().ifPresent(shapeId -> codeWriter.write("list: $I", shapeId));
-            codeWriter.writeOptionalIdList("operations", shape.getOperations());
+            codeWriter.writeOptionalIdList("operations", shape.getIntroducedOperations());
             codeWriter.writeOptionalIdList("collectionOperations", shape.getCollectionOperations());
-            codeWriter.writeOptionalIdList("resources", shape.getResources());
+            codeWriter.writeOptionalIdList("resources", shape.getIntroducedResources());
 
             codeWriter.closeBlock("}");
             codeWriter.write("");
@@ -604,7 +599,6 @@ public final class SmithyIdlModelSerializer {
 
         @Override
         public Void operationShape(OperationShape shape) {
-            OperationShape preMixinShape = preMixinIndex.getPreMixinShape(shape).asOperationShape().get();
             serializeTraits(shape);
             codeWriter.writeInline("operation $L ", shape.getId().getName());
             writeMixins(shape);
@@ -612,7 +606,7 @@ public final class SmithyIdlModelSerializer {
             List<MemberShape> mixinMembers = new ArrayList<>();
             mixinMembers.addAll(writeInlineableProperty("input", shape.getInputShape(), InputTrait.ID));
             mixinMembers.addAll(writeInlineableProperty("output", shape.getOutputShape(), OutputTrait.ID));
-            codeWriter.writeOptionalIdList("errors", preMixinShape.getErrors());
+            codeWriter.writeOptionalIdList("errors", shape.getIntroducedErrors());
             codeWriter.closeBlock("}");
             codeWriter.write("");
             applyIntroducedTraits(mixinMembers);
