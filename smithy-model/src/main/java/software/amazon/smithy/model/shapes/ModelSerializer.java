@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.knowledge.PreMixinIndex;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
@@ -67,7 +66,7 @@ public final class ModelSerializer {
     }
 
     public ObjectNode serialize(Model model) {
-        ShapeSerializer shapeSerializer = new ShapeSerializer(model);
+        ShapeSerializer shapeSerializer = new ShapeSerializer();
 
         ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .withMember("smithy", Node.from(Model.MODEL_VERSION))
@@ -205,11 +204,6 @@ public final class ModelSerializer {
     private final class ShapeSerializer extends ShapeVisitor.Default<Node> {
 
         private final Set<MemberShape> mixinMemberTraits = new TreeSet<>();
-        private final PreMixinIndex preMixinIndex;
-
-        private ShapeSerializer(Model model) {
-            preMixinIndex = PreMixinIndex.of(model);
-        }
 
         private ObjectNode.Builder createTypedBuilder(Shape shape) {
             ObjectNode.Builder builder = Node.objectNodeBuilder()
@@ -260,11 +254,10 @@ public final class ModelSerializer {
 
         @Override
         public Node operationShape(OperationShape shape) {
-            OperationShape preMixinShape = preMixinIndex.getPreMixinShape(shape).asOperationShape().get();
             return serializeAllTraits(shape, createTypedBuilder(shape)
                     .withMember("input", serializeReference(shape.getInputShape()))
                     .withMember("output", serializeReference(shape.getOutputShape()))
-                    .withOptionalMember("errors", createOptionalIdList(preMixinShape.getErrors())))
+                    .withOptionalMember("errors", createOptionalIdList(shape.getIntroducedErrors())))
                     .build();
         }
 
@@ -286,9 +279,9 @@ public final class ModelSerializer {
                     .withOptionalMember("update", shape.getUpdate().map(this::serializeReference))
                     .withOptionalMember("delete", shape.getDelete().map(this::serializeReference))
                     .withOptionalMember("list", shape.getList().map(this::serializeReference))
-                    .withOptionalMember("operations", createOptionalIdList(shape.getOperations()))
+                    .withOptionalMember("operations", createOptionalIdList(shape.getIntroducedOperations()))
                     .withOptionalMember("collectionOperations", createOptionalIdList(shape.getCollectionOperations()))
-                    .withOptionalMember("resources", createOptionalIdList(shape.getResources())))
+                    .withOptionalMember("resources", createOptionalIdList(shape.getIntroducedResources())))
                     .build();
         }
 
@@ -296,19 +289,17 @@ public final class ModelSerializer {
         public Node serviceShape(ServiceShape shape) {
             ObjectNode.Builder serviceBuilder = createTypedBuilder(shape);
 
-            ServiceShape preMixinShape = preMixinIndex.getPreMixinShape(shape).asServiceShape().get();
-
-            if (!StringUtils.isBlank(preMixinShape.getVersion())) {
-                serviceBuilder.withMember("version", Node.from(preMixinShape.getVersion()));
+            if (!StringUtils.isBlank(shape.getIntroducedVersion())) {
+                serviceBuilder.withMember("version", Node.from(shape.getIntroducedVersion()));
             }
 
-            serviceBuilder.withOptionalMember("operations", createOptionalIdList(preMixinShape.getOperations()));
-            serviceBuilder.withOptionalMember("resources", createOptionalIdList(preMixinShape.getResources()));
-            serviceBuilder.withOptionalMember("errors", createOptionalIdList(preMixinShape.getErrors()));
+            serviceBuilder.withOptionalMember("operations", createOptionalIdList(shape.getIntroducedOperations()));
+            serviceBuilder.withOptionalMember("resources", createOptionalIdList(shape.getIntroducedResources()));
+            serviceBuilder.withOptionalMember("errors", createOptionalIdList(shape.getIntroducedErrors()));
 
-            if (!preMixinShape.getRename().isEmpty()) {
+            if (!shape.getIntroducedRename().isEmpty()) {
                 ObjectNode.Builder renameBuilder = Node.objectNodeBuilder();
-                for (Map.Entry<ShapeId, String> entry : preMixinShape.getRename().entrySet()) {
+                for (Map.Entry<ShapeId, String> entry : shape.getIntroducedRename().entrySet()) {
                     renameBuilder.withMember(entry.getKey().toString(), entry.getValue());
                 }
                 serviceBuilder.withMember("rename", renameBuilder.build());
