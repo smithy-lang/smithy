@@ -8,8 +8,8 @@ structure A {}
 @mixin
 structure B {}
 
-structure C with
+structure C with [
    A ,,,
 
 
-   ,    B ,,, ,     {}
+   ,    B ,,, ,    ] {}
