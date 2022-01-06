@@ -53,8 +53,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         method: "POST",
         uri: "/InputAndOutputWithHeaders",
         headers: {
-            "X-StringList": """
-            "b,c","\"def\"",a"""
+            "X-StringList": "\"b,c\", \"\\\"def\\\"\", a"
         },
         body: "",
         params: {
