@@ -5,97 +5,97 @@ namespace smithy.example
 @mixin
 structure A {}
 
-structure B with A {}
+structure B with [A] {}
 
 @mixin
 structure C {}
 
 @mixin
-structure D with C {}
+structure D with [C] {}
 
 @mixin
-structure E with D {}
+structure E with [D] {}
 
-structure F with A, E {}
+structure F with [A, E] {}
 
 @mixin
 blob MixinBlob
 
-blob MixedBlob with MixinBlob
+blob MixedBlob with [MixinBlob]
 
 @mixin
 boolean MixinBoolean
 
-boolean MixedBoolean with MixinBoolean
+boolean MixedBoolean with [MixinBoolean]
 
 @mixin
 string MixinString
 
-string MixedString with MixinString
+string MixedString with [MixinString]
 
 @mixin
 byte MixinByte
 
-byte MixedByte with MixinByte
+byte MixedByte with [MixinByte]
 
 @mixin
 short MixinShort
 
-short MixedShort with MixinShort
+short MixedShort with [MixinShort]
 
 @mixin
 integer MixinInteger
 
-integer MixedInteger with MixinInteger
+integer MixedInteger with [MixinInteger]
 
 @mixin
 long MixinLong
 
-long MixedLong with MixinLong
+long MixedLong with [MixinLong]
 
 @mixin
 float MixinFloat
 
-float MixedFloat with MixinFloat
+float MixedFloat with [MixinFloat]
 
 @mixin
 double MixinDouble
 
-double MixedDouble with MixinDouble
+double MixedDouble with [MixinDouble]
 
 @mixin
 bigInteger MixinBigInt
 
-bigInteger MixedBigInt with MixinBigInt
+bigInteger MixedBigInt with [MixinBigInt]
 
 @mixin
 bigDecimal MixinBigDecimal
 
-bigDecimal MixedBigDecimal with MixinBigDecimal
+bigDecimal MixedBigDecimal with [MixinBigDecimal]
 
 @mixin
 timestamp MixinTimestamp
 
-timestamp MixedTimestamp with MixinTimestamp
+timestamp MixedTimestamp with [MixinTimestamp]
 
 @mixin
 document MixinDocument
 
-document MixedDocument with MixinDocument
+document MixedDocument with [MixinDocument]
 
 @mixin
 list MixinList {
     member: String
 }
 
-list MixedList with MixinList {}
+list MixedList with [MixinList] {}
 
 @mixin
 set MixinSet {
     member: String
 }
 
-set MixedSet with MixinSet {}
+set MixedSet with [MixinSet] {}
 
 @mixin
 map MixinMap {
@@ -103,19 +103,19 @@ map MixinMap {
     value: String
 }
 
-map MixedMap with MixinMap {}
+map MixedMap with [MixinMap] {}
 
 @mixin
 service MixinService {}
 
-service MixedService with MixinService {}
+service MixedService with [MixinService] {}
 
 @mixin
 resource MixinResource {}
 
-resource MixedResource with MixinResource {}
+resource MixedResource with [MixinResource] {}
 
 @mixin
 operation MixinOperation {}
 
-operation MixedOperation with MixinOperation {}
+operation MixedOperation with [MixinOperation] {}

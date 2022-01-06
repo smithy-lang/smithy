@@ -14,6 +14,6 @@ operation InternalMixin {
     errors: [MixinError]
 }
 
-operation ConcreteOperation with InternalMixin {
+operation ConcreteOperation with [InternalMixin] {
     errors: [ConcreteError]
 }
