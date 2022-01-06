@@ -30,11 +30,11 @@ structure NameBearer {
 }
 
 operation UsesMixins {
-    input := with NameBearer {
+    input := with [NameBearer] {
         id: String
     }
 
-    output := with NameBearer {
+    output := with [NameBearer] {
         id: String
     }
 }
@@ -42,13 +42,13 @@ operation UsesMixins {
 operation UsesTraitsAndMixins {
     input :=
         @sensitive
-        with NameBearer {
+        with [NameBearer] {
             id: String
         }
 
     output :=
         @sensitive
-        with NameBearer {
+        with [NameBearer] {
             id: String
         }
 }

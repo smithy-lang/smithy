@@ -13,7 +13,7 @@ structure A {
 /// B
 @deprecated
 @mixin
-structure B with A {
+structure B with [A] {
     /// B.b
     b: String
 }
@@ -29,7 +29,7 @@ structure C {
 /// D
 @mixin
 @externalDocumentation(web: "http://example.com")
-structure D with C {
+structure D with [C] {
     /// D.d
     d: String
 }
@@ -41,14 +41,14 @@ apply D$c @documentation("I've changed")
 /// E
 @since("X")
 @mixin
-structure E with D {
+structure E with [D] {
     /// E.e
     e: String
 }
 
 /// F
 @internal
-structure F with B, E {
+structure F with [B, E] {
     /// F.f
     f: String
 }
