@@ -1,5 +1,14 @@
 # Smithy Changelog
 
+## 1.16.1 (2022-01-06)
+
+### Features
+* Make `smithy.api#Unit` easier to adopt by excluding direct relationships between it and operation inputs and outputs.
+  ([#1034](https://github.com/awslabs/smithy/pull/1034))
+
+### Bug Fixes
+* Fixed character escaping in a restJson1 protocol test. ([#1035](https://github.com/awslabs/smithy/pull/1035))
+
 ## 1.16.0 (2022-01-03)
 
 ### Features
