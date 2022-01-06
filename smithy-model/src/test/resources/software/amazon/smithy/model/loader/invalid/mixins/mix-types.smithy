@@ -7,4 +7,4 @@ union Bar {
     first: String
 }
 
-structure Foo with Bar {}
+structure Foo with [Bar] {}

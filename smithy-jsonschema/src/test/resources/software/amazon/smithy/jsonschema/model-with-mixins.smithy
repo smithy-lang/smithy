@@ -7,6 +7,6 @@ structure Mixin {
     foo: String
 }
 
-structure UsesMixin with Mixin {
+structure UsesMixin with [Mixin] {
     baz: String
 }
