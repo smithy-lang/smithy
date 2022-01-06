@@ -1,0 +1,2 @@
+[WARNING] smithy.example#AdditionalSchemasNotBoundResource: This shape applies a trait that is unstable: aws.cloudformation#cfnResource | UnstableTrait
+[ERROR] smithy.example#AdditionalSchemasNotBoundResource: The `smithy.example#AdditionalSchemasNotBoundProperties` structure listed as an `additionalSchema` in the `cfnResource` trait on this resource must be bound to the `smithy.example#AdditionalSchemasNotBound` service that binds this resource. | CfnResourceTrait

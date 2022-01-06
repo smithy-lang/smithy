@@ -1,3 +1,2 @@
 [ERROR] smithy.example#AdditionalSchemasConflictResource: The `bar` property of the generated `AdditionalSchemasConflictResource` CloudFormation resource targets multiple shapes: [smithy.api#Boolean, smithy.api#String]. Reusing member names that target different shapes can cause confusion for users of the API. This target discrepancy must either be resolved in the model or one of the members must be excluded from the conversion. | CfnResourceProperty
-[NOTE] smithy.example#AdditionalSchemasConflictProperties: The structure shape is not connected to from any service shape. | UnreferencedShape
 [WARNING] smithy.example#AdditionalSchemasConflictResource: This shape applies a trait that is unstable: aws.cloudformation#cfnResource | UnstableTrait

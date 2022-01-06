@@ -10,9 +10,8 @@ use aws.cloudformation#cfnMutability
 
 service TestService {
     version: "2012-11-05",
-    resources: [
-        Queue,
-    ]
+    resources: [Queue],
+    shapes: [GetQueueUrlResult, AttributeStructure],
 }
 
 /// Definition of Smithy::TestService::Queue Resource Type

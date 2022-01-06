@@ -7,9 +7,8 @@ use aws.cloudformation#cfnMutability
 
 service TestService {
     version: "2020-07-02",
-    resources: [
-        Foo,
-    ],
+    resources: [Foo],
+    shapes: [FooProperties],
 }
 
 /// Definition of Example::TestService::Foo Resource Type

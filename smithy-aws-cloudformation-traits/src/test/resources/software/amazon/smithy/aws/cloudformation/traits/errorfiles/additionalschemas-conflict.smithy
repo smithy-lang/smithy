@@ -6,9 +6,8 @@ use aws.cloudformation#cfnResource
 
 service AdditionalSchemasConflict {
     version: "2020-07-02",
-    resources: [
-        AdditionalSchemasConflictResource,
-    ],
+    resources: [AdditionalSchemasConflictResource],
+    shapes: [AdditionalSchemasConflictProperties],
 }
 
 @cfnResource(additionalSchemas: [AdditionalSchemasConflictProperties])

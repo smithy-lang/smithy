@@ -7,9 +7,8 @@ use aws.cloudformation#cfnExcludeProperty
 
 service AdditionalSchemasDeconflicted {
     version: "2020-07-02",
-    resources: [
-        AdditionalSchemasDeconflictedResource,
-    ],
+    resources: [AdditionalSchemasDeconflictedResource],
+    shapes: [AdditionalSchemasDeconflictedProperties],
 }
 
 @cfnResource(additionalSchemas: [AdditionalSchemasDeconflictedProperties])

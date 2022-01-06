@@ -5,7 +5,8 @@ use aws.cloudformation#cfnResource
 
 service TestService {
     version: "2020-07-02",
-    resources: [Read]
+    resources: [Read],
+    shapes: [FooProperties],
 }
 
 @cfnResource(additionalSchemas: [FooProperties])
