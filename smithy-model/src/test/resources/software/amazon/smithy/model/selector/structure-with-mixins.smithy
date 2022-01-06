@@ -6,9 +6,9 @@ namespace smithy.example
 structure Mixin1 {}
 
 @mixin
-structure Mixin2 with Mixin1 {}
+structure Mixin2 with [Mixin1] {}
 
-structure Concrete with Mixin2 {}
+structure Concrete with [Mixin2] {}
 
 structure NoMixins {}
 

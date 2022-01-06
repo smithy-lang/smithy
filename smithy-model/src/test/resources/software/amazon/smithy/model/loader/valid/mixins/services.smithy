@@ -25,4 +25,4 @@ service MixinService {
     resources: [MixinResource]
 }
 
-service MixedService with MixinService {}
+service MixedService with [MixinService] {}
