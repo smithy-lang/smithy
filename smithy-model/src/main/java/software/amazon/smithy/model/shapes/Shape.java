@@ -98,9 +98,11 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
         }
         if (!invalid.isEmpty()) {
             String invalidList = String.join("`, `", invalid);
-            throw new IllegalStateException(String.format(
+            throw new SourceException(String.format(
                     "Mixins may only be mixed into shapes of the same type. The following mixins were applied to the "
-                            + "%s shape `%s` which are not %1$s shapes: [`%s`]", getType(), getId(), invalidList));
+                            + "%s shape `%s` which are not %1$s shapes: [`%s`]", getType(), getId(), invalidList),
+                    source
+            );
         }
     }
 
@@ -108,6 +110,7 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
             AbstractShapeBuilder<?, ?> builder,
             String name
     ) {
+        // Get the most recently introduced mixin member with the given name.
         MemberShape mixedMember = null;
         for (Shape shape : builder.getMixins().values()) {
             for (MemberShape member : shape.members()) {
@@ -123,7 +126,10 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
             }
         }
         if (mixedMember == null) {
-            throw new IllegalStateException(String.format("Missing required member of shape `%s`: %s", getId(), name));
+            throw new SourceException(
+                    String.format("Missing required member of shape `%s`: %s", getId(), name),
+                    builder.getSourceLocation()
+            );
         }
         return mixedMember;
     }

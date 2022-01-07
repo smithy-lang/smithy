@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
@@ -61,11 +62,11 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
         }
 
         if (hasTrait(MixinTrait.ID) && (!input.equals(UnitTypeTrait.UNIT) || !output.equals(UnitTypeTrait.UNIT))) {
-            throw new IllegalStateException(String.format(
+            throw new SourceException(String.format(
                     "Operation shapes with the mixin trait MUST target `%s` for their input and output. Operation "
                             + "mixin shape `%s` defines one or both of these properties.",
                     UnitTypeTrait.UNIT, getId()
-            ));
+            ), builder.getSourceLocation());
         }
     }
 
