@@ -354,12 +354,13 @@ Example:
 
 
 .. _StutteredShapeName:
+.. _RepeatedShapeName:
 
-StutteredShapeName
+RepeatedShapeName
 ==================
 
-Validators that :ref:`structure` member names and :ref:`union` member
-names do not stutter their shape names.
+Validates that :ref:`structure` member names and :ref:`union` member
+names do not repeat their container shape names.
 
 As an example, if a structure named "Table" contained a member named
 "TableName", then this validator would emit a WARNING event.
