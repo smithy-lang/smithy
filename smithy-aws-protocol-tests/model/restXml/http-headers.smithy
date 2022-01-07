@@ -97,7 +97,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         method: "POST",
         uri: "/InputAndOutputWithHeaders",
         headers: {
-            "X-TimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
+            "X-TimestampList": "\"Mon, 16 Dec 2019 23:48:18 GMT\", \"Mon, 16 Dec 2019 23:48:18 GMT\""
         },
         body: "",
         params: {
