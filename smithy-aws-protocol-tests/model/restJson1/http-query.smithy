@@ -139,6 +139,10 @@ apply AllQueryStringTypes @httpRequestTests([
         params: {
             queryFloat: "NaN",
             queryDouble: "NaN",
+            queryParamsMapOfStringList: {
+                "Float": ["NaN"],
+                "Double": ["NaN"],
+            }
         }
     },
     {
@@ -155,6 +159,10 @@ apply AllQueryStringTypes @httpRequestTests([
         params: {
             queryFloat: "Infinity",
             queryDouble: "Infinity",
+            queryParamsMapOfStringList: {
+                "Float": ["Infinity"],
+                "Double": ["Infinity"],
+            }
         }
     },
     {
@@ -171,6 +179,10 @@ apply AllQueryStringTypes @httpRequestTests([
         params: {
             queryFloat: "-Infinity",
             queryDouble: "-Infinity",
+            queryParamsMapOfStringList: {
+                "Float": ["-Infinity"],
+                "Double": ["-Infinity"],
+            }
         }
     },
 ])
