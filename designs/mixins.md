@@ -131,7 +131,7 @@ Multiple mixins can be applied:
 structure GetAnotherCityInput with [
     CityResourceInput
     SomeOtherMixin
-]{
+] {
     foo: String
 }
 ```
@@ -268,7 +268,7 @@ structure StructB {}
 /// C
 @threeTrait
 @mixin
-structure StructC with [StructA StructB] {}
+structure StructC with [StructA, StructB] {}
 
 /// D
 @fourTrait
@@ -347,12 +347,11 @@ can be referred to outside of `smithy.example`.
 The members and traits applied to members of a mixin are copied onto the target
 shape. It is sometimes necessary to provide a more specific trait value for a
 copied member or to add traits only to a specific copy of a member. Traits can
-be added on to these members as normal. Additionally, Traits can  be applied to
-these members in the JSON AST using the `apply` type and in the Smithy IDL using
-`apply` statements.
+be added on to these members like any other member. Additionally, Traits can be
+applied to  these members in the JSON AST using the `apply` type and in the
+Smithy IDL using `apply` statements.
 
-> Note: just like with traits on the shape itself, the local trait values
-supersede trait values from mixins.
+> Note: Traits applied to shapes supersede any traits inherited from mixins.
 
 
 #### Applying traits in the JSON AST
@@ -464,7 +463,7 @@ structure MyStruct with [MyMixin] {}
 apply MyStruct$mixinMember @documentation("Specific docs")
 ```
 
-Or, alternatively:
+Alternatively, the member can be redefined if it targets the same shape:
 
 ```smithy
 $version: "1.1"
@@ -555,7 +554,7 @@ structure A2 {
     a: Integer
 }
 
-structure Invalid with [A1 A2] {}
+structure Invalid with [A1, A2] {}
 ```
 
 The following model is also invalid, but not specifically because of mixins.
@@ -573,12 +572,12 @@ structure A2 {
     A: Integer
 }
 
-structure Invalid with [A1 A2] {}
+structure Invalid with [A1, A2] {}
 ```
 
-A shape MAY use a member name that has already defined, but if it does it MUST
-target the same shape. This can be done to apply additional traits to the
-member.
+Members that are mixed into shapes MAY be redefined if and only if each
+redefined member targets the same shape. Traits applied to redefined members
+supersede any traits inherited from mixins.
 
 ```
 @mixin
@@ -593,7 +592,7 @@ structure A2 {
     a: String
 }
 
-structure Valid with [A1 A2] {}
+structure Valid with [A1, A2] {}
 ```
 
 
@@ -601,15 +600,15 @@ structure Valid with [A1 A2] {}
 
 To support mixins, shape ABNF rules
 will be updated to contain an optional `mixins` production
-that comes after the shape name and before any `{`. Each shape ID referenced in
+that comes after the shape name. Each shape ID referenced in
 the `mixins` production MUST target a shape of the same type as the
 shape being defined and MUST be marked with the `@mixin` trait.
 
 ```
 simple_shape_statement = simple_type_name ws identifier [ws mixins]
 list_statement = "list" ws identifier ws [mixins ws] shape_members
-set_statement = "set"  ws identifier ws [mixins ws] shape_members
-map_statement = "map"  ws identifier ws [mixins ws] shape_members
+set_statement = "set" ws identifier ws [mixins ws] shape_members
+map_statement = "map" ws identifier ws [mixins ws] shape_members
 structure_statement = "structure" ws identifier ws [mixins ws] structure_members
 union_statement = "union" ws identifier ws [mixins ws] union_members
 service_statement = "service" ws identifier ws [mixins ws] node_object
@@ -756,7 +755,7 @@ structure PaginatedInput {
 structure ListSomethingInput with [
     PaginatedInput
     FilteredByName
-]{
+] {
     sizeFilter: Integer
 }
 ```
@@ -772,13 +771,19 @@ The members are ordered as follows:
 ### Mixins on shapes with non-member properties
 
 Some shapes don't have members, but do have other properties. Adding a mixin
-to such a shape causes the properties of the other shape to be merged into
-the shape. Scalar properties defined in the local shape are kept, and
-non-scalar properties are merged. When merging map properties, the values for
-local keys are kept. The ordering of merged lists / sets follows the
-same ordering as members.
+to such a shape merges the properties of each mixin into the local shape. Only
+certain properties may be defined in the mixin shapes. See the sections below
+for which properties are permitted for each shape type.
 
-For example, in the following model:
+Scalar properties defined in the local shape are kept, and non-scalar
+properties are merged. When merging map properties, the values for local keys
+are kept. The ordering of merged lists / sets follows the same ordering as
+members.
+
+#### Service mixins
+
+Service shapes with the `@mixin` trait may define any property. For example,
+in the following model:
 
 ```
 operation OperationA {}
@@ -834,18 +839,49 @@ service C {
 }
 ```
 
-### Resource mixins
+#### Resource mixins
 
 Resource shapes with the `@mixin` trait MAY NOT define any properties. This is
 because every property of a resource shape is intrinsically tied to its set of
 identifiers. Changing these identifiers would invalidate every other property
 of a given resource.
 
-### Operation mixins
+Example:
+
+```
+@mixin
+@internal
+resource MixinResource {}
+
+resource MixedResource with [MixinResource] {}
+```
+
+#### Operation mixins
 
 Operation shapes with the `@mixin` trait MAY NOT define an `input` or `output`
 shape other than `smithy.api#Unit`. This is because allowing input and output
 shapes to be shared goes against the goal of the `@input` and `@output` traits.
+
+Operation shapes with the `@mixin` trait MAY define the errors shape.
+
+Example:
+
+```
+@mixin
+operation MixinOperation {
+    errors: [MixinError]
+}
+
+operation MixedOperation with [MixinOperation] {
+    error: [MixedError]
+}
+
+@error("client")
+structure MixinError {}
+
+@error("client")
+structure MixedError {}
+```
 
 ### `@mixin` trait
 
