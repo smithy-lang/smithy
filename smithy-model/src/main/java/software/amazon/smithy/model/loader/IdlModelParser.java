@@ -453,7 +453,7 @@ final class IdlModelParser extends SimpleParser {
     private void parseSimpleShape(ShapeId id, SourceLocation location, AbstractShapeBuilder builder) {
         modelFile.onShape(builder.source(location).id(id));
         parseMixins(id);
-        // Pending docs get cleared by parseMixins. It can't be done here because the
+        // Pending docs get cleared by parseMixins. It isn't done here because the
         // mixin parser needs to consume whitespace that may include doc comments for
         // the next shape in the model.
     }
@@ -497,11 +497,7 @@ final class IdlModelParser extends SimpleParser {
         expect('}');
     }
 
-    private void parseMember(
-            ShapeId parent,
-            Set<String> allowed,
-            Set<String> defined
-    ) {
+    private void parseMember(ShapeId parent, Set<String> allowed, Set<String> defined) {
         // Parse optional member traits.
         List<TraitEntry> memberTraits = parseDocsAndTraits();
         SourceLocation memberLocation = currentLocation();
@@ -573,7 +569,7 @@ final class IdlModelParser extends SimpleParser {
     private void parseMixins(ShapeId id) {
         // This is fine for now, but if we ever add any other keywords that start with
         // 'w' then we'll need to peek farther.
-        ws();
+        sp();
         if (peek() != 'w') {
             return;
         }
@@ -593,12 +589,12 @@ final class IdlModelParser extends SimpleParser {
         ws();
 
         do {
-            clearPendingDocs();
             String target = ParserUtils.parseShapeId(this);
             modelFile.addForwardReference(target, resolved -> modelFile.addPendingMixin(id, resolved));
             ws();
         } while (peek() != ']');
         expect(']');
+        clearPendingDocs();
     }
 
     private void parseOperationStatement(ShapeId id, SourceLocation location) {
