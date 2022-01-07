@@ -228,45 +228,46 @@ abstract class AbstractMutableModelFile implements ModelFile {
             for (ShapeId mixin : mixins) {
                 Shape mixinShape = shapeMap.get(mixin);
                 for (MemberShape member : mixinShape.members()) {
-                    if (memberConflicts(builderMembers, member)) {
-                        // Members cannot be redefined.
-                        MemberShape.Builder conflict = builderMembers.get(member.getMemberName());
-                        events.add(ValidationEvent.builder()
-                                .severity(Severity.ERROR)
-                                .id(Validator.MODEL_ERROR)
-                                .shapeId(conflict.getId())
-                                .sourceLocation(conflict.getSourceLocation())
-                                .message("Member conflicts with an inherited mixin member: " + member.getId())
-                                .build());
-                    } else {
-                        // Build local member copies before adding mixins if traits
-                        // were introduced to inherited mixin members.
-                        ShapeId targetId = builder.getId().withMember(member.getMemberName());
-                        Map<ShapeId, Trait> introducedTraits = traitContainer.getTraitsForShape(targetId);
-                        if (!introducedTraits.isEmpty()) {
-                            builder.addMember(MemberShape.builder()
-                                    .id(targetId)
-                                    .target(member.getTarget())
-                                    .source(member.getSourceLocation())
-                                    .addTraits(introducedTraits.values())
-                                    .addMixin(member)
+                    ShapeId targetId = builder.getId().withMember(member.getMemberName());
+                    Map<ShapeId, Trait> introducedTraits = traitContainer.getTraitsForShape(targetId);
+
+                    MemberShape introducedMember = null;
+                    if (builderMembers.containsKey(member.getMemberName())) {
+                        introducedMember = builderMembers.get(member.getMemberName())
+                                .addMixin(member)
+                                .build();
+
+                        if (!introducedMember.getTarget().equals(member.getTarget())) {
+                            // Members cannot be redefined if their targets conflict.
+                            MemberShape.Builder conflict = builderMembers.get(member.getMemberName());
+                            events.add(ValidationEvent.builder()
+                                    .severity(Severity.ERROR)
+                                    .id(Validator.MODEL_ERROR)
+                                    .shapeId(conflict.getId())
+                                    .sourceLocation(conflict.getSourceLocation())
+                                    .message("Member conflicts with an inherited mixin member: " + member.getId())
                                     .build());
                         }
+                    } else if (!introducedTraits.isEmpty()) {
+                        // Build local member copies before adding mixins if traits
+                        // were introduced to inherited mixin members.
+                        introducedMember = MemberShape.builder()
+                                .id(targetId)
+                                .target(member.getTarget())
+                                .source(member.getSourceLocation())
+                                .addTraits(introducedTraits.values())
+                                .addMixin(member)
+                                .build();
+                    }
+
+                    if (introducedMember != null) {
+                        builder.addMember(introducedMember);
                     }
                 }
                 builder.addMixin(mixinShape);
             }
             buildShape(builder, resolvedTraits).ifPresent(result -> shapeMap.put(result.getId(), result));
         });
-    }
-
-    private boolean memberConflicts(Map<String, MemberShape.Builder> builderMembers, MemberShape mixinMember) {
-        if (!builderMembers.containsKey(mixinMember.getMemberName())) {
-            return false;
-        }
-
-        MemberShape localMember = builderMembers.get(mixinMember.getMemberName()).build();
-        return !localMember.getTarget().equals(mixinMember.getTarget());
     }
 
     private <S extends Shape, B extends AbstractShapeBuilder<? extends B, S>> Optional<S> buildShape(
