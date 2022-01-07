@@ -776,4 +776,49 @@ public class CodeWriterTest {
 
         assertThat(writer.toString(), equalTo("inline addition\n"));
     }
+
+    @Test
+    public void canUnwriteMatchingStrings() {
+        CodeWriter writer = new CodeWriter().insertTrailingNewline(false);
+        writer.writeInline("Hello there");
+        writer.unwrite(" there");
+
+        assertThat(writer.toString(), equalTo("Hello"));
+    }
+
+    @Test
+    public void unwriteDoesNothingWhenNoMatch() {
+        CodeWriter writer = new CodeWriter().insertTrailingNewline(false);
+        writer.writeInline("Hello there");
+        writer.unwrite(" nope");
+
+        assertThat(writer.toString(), equalTo("Hello there"));
+    }
+
+    @Test
+    public void canUnwriteWhenSubstringTooLong() {
+        CodeWriter writer = new CodeWriter().insertTrailingNewline(false);
+        writer.writeInline("");
+        writer.unwrite("nope");
+
+        assertThat(writer.toString(), equalTo(""));
+    }
+
+    @Test
+    public void canUnwriteWithTemplates() {
+        CodeWriter writer = new CodeWriter().insertTrailingNewline(false);
+        writer.writeInline("Hi.Hello");
+        writer.unwrite("$L", "Hello");
+
+        assertThat(writer.toString(), equalTo("Hi."));
+    }
+
+    @Test
+    public void canUnwriteWithTemplatesThatExpandToNothing() {
+        CodeWriter writer = new CodeWriter().insertTrailingNewline(false);
+        writer.writeInline("Hi.Hello");
+        writer.unwrite("$L", "");
+
+        assertThat(writer.toString(), equalTo("Hi.Hello"));
+    }
 }
