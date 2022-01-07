@@ -17,8 +17,8 @@ package software.amazon.smithy.model.shapes;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.TreeSet;
 import software.amazon.smithy.utils.BuilderRef;
 
 /**
@@ -40,8 +40,8 @@ public abstract class EntityShape extends Shape {
             operations = builder.operations.copy();
             introducedOperations = operations;
         } else {
-            Set<ShapeId> computedResources = new TreeSet<>();
-            Set<ShapeId> computedOperations = new TreeSet<>();
+            Set<ShapeId> computedResources = new LinkedHashSet<>();
+            Set<ShapeId> computedOperations = new LinkedHashSet<>();
 
             for (Shape shape : builder.getMixins().values()) {
                 // validateMixins should have already assured that this is an EntityShape.
@@ -202,8 +202,8 @@ public abstract class EntityShape extends Shape {
 
         @Override
         public B flattenMixins() {
-            Set<ShapeId> flatResources = new TreeSet<>();
-            Set<ShapeId> flatOperations = new TreeSet<>();
+            Set<ShapeId> flatResources = new LinkedHashSet<>();
+            Set<ShapeId> flatOperations = new LinkedHashSet<>();
 
             for (Shape shape : getMixins().values()) {
                 EntityShape mixin = (EntityShape) shape;
