@@ -47,7 +47,7 @@
     "metadata": {
         "validators": [
             {
-                "name": "StutteredShapeName"
+                "name": "RepeatedShapeName"
             }
         ]
     }
