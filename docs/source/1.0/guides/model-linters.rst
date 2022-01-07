@@ -357,10 +357,10 @@ Example:
 .. _RepeatedShapeName:
 
 RepeatedShapeName
-==================
+=================
 
 Validates that :ref:`structure` member names and :ref:`union` member
-names do not repeat their container shape names.
+names do not case-insensitively repeat their container shape names.
 
 As an example, if a structure named "Table" contained a member named
 "TableName", then this validator would emit a WARNING event.
@@ -371,6 +371,19 @@ Rationale
 
 Default severity
     ``WARNING``
+
+Configuration
+    .. list-table::
+       :header-rows: 1
+       :widths: 20 20 60
+
+       * - Property
+         - Type
+         - Description
+       * - exactMatch
+         - ``boolean``
+         - If set to true, the validator will only warn if the member name
+           is case-insensitively identical to the containing shape's name.
 
 
 .. _InputOutputStructureReuse:
