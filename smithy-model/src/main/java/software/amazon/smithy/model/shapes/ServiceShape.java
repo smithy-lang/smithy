@@ -18,7 +18,7 @@ package software.amazon.smithy.model.shapes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +52,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
             introducedErrors = errors;
         } else {
             String computedVersion = "";
-            Map<ShapeId, String> computedRename = new HashMap<>();
+            Map<ShapeId, String> computedRename = new LinkedHashMap<>();
             Set<ShapeId> computedErrors = new LinkedHashSet<>();
 
             for (Shape shape : builder.getMixins().values()) {
@@ -325,7 +325,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
         @Override
         public Builder flattenMixins() {
             String flatVersion = version;
-            Map<ShapeId, String> flatRename = new HashMap<>();
+            Map<ShapeId, String> flatRename = new LinkedHashMap<>();
             Set<ShapeId> flatErrors = new LinkedHashSet<>();
 
             for (Shape shape : getMixins().values()) {
