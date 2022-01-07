@@ -1264,6 +1264,49 @@ public class CodeWriter {
     }
 
     /**
+     * Remove the most recent text written to the CodeWriter if and only
+     * if the last written text is exactly equal to the given expanded
+     * content string.
+     *
+     * <p>This can be useful, for example, for use cases like removing
+     * trailing commas from lists of values.
+     *
+     * <p>For example, the following will remove ", there." from the
+     * end of the CodeWriter:
+     *
+     * <pre>{@code
+     * CodeWriter writer = new CodeWriter();
+     * writer.writeInline("Hello, there.");
+     * writer.unwrite(", there.");
+     * assert(writer.toString().equals("Hello\n"));
+     * }</pre>
+     *
+     * <p>However, the following call to unwrite will do nothing because
+     * the last text written to the CodeWriter does not match:
+     *
+     * <pre>{@code
+     * CodeWriter writer = new CodeWriter();
+     * writer.writeInline("Hello.");
+     * writer.unwrite("there.");
+     * assert(writer.toString().equals("Hello.\n"));
+     * }</pre>
+     *
+     * @param content Content to write.
+     * @param args String arguments to use for formatting.
+     * @return Returns the CodeWriter.
+     */
+    public final CodeWriter unwrite(Object content, Object... args) {
+        String value = format(content, args);
+        int currentLength = currentState.builder.length();
+
+        if (currentState.builder.lastIndexOf(value) == currentLength - value.length()) {
+            currentState.builder.setLength(currentLength - value.length());
+        }
+
+        return this;
+    }
+
+    /**
      * Allows calling out to arbitrary code for things like looping or
      * conditional writes without breaking method chaining.
      *
