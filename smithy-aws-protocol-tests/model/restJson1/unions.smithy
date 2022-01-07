@@ -446,7 +446,7 @@ apply JsonUnions @httpResponseTests([
 
 
 /// This operation defines a union with a Unit member.
-@http(uri: "/PostPlayerInput", method: "POST")
+@http(uri: "/PostPlayerAction", method: "POST")
 operation PostPlayerAction {
     input: PostPlayerActionInput,
     output: PostPlayerActionOutput
@@ -474,8 +474,8 @@ apply PostPlayerAction @httpRequestTests([
         id: "RestJsonInputUnionWithUnitMember",
         documentation: "Unit types in unions are serialized like normal structures in requests.",
         protocol: restJson1,
-        method: "PUT",
-        "uri": "/MovePlayer",
+        method: "POST",
+        uri: "/PostPlayerAction",
         body: """
             {
                 "action": {
