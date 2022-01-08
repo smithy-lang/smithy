@@ -60,9 +60,13 @@ public abstract class AbstractValidator implements Validator {
         return createEvent(Severity.NOTE, shape, location, message);
     }
 
-    private ValidationEvent createEvent(Severity severity, Shape shape, FromSourceLocation location, String message) {
-        return createEvent(ValidationEvent.builder().severity(severity).message(message)
-                                   .shapeId(shape.getId()).sourceLocation(location.getSourceLocation()));
+    protected final ValidationEvent createEvent(Severity severity, Shape shape, String message) {
+        return createEvent(severity, shape, shape.getSourceLocation(), message);
+    }
+
+    protected final ValidationEvent createEvent(Severity severity, Shape shape, FromSourceLocation loc, String msg) {
+        return createEvent(ValidationEvent.builder().severity(severity).message(msg)
+                                   .shapeId(shape.getId()).sourceLocation(loc.getSourceLocation()));
     }
 
     private ValidationEvent createEvent(ValidationEvent.Builder builder) {
