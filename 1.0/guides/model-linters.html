@@ -75,7 +75,7 @@
 <li><a class="reference internal" href="#camelcase" id="id12">CamelCase</a></li>
 <li><a class="reference internal" href="#reservedwords" id="id13">ReservedWords</a></li>
 <li><a class="reference internal" href="#standardoperationverb" id="id14">StandardOperationVerb</a></li>
-<li><a class="reference internal" href="#stutteredshapename" id="id15">StutteredShapeName</a></li>
+<li><a class="reference internal" href="#repeatedshapename" id="id15">RepeatedShapeName</a></li>
 <li><a class="reference internal" href="#inputoutputstructurereuse" id="id16">InputOutputStructureReuse</a></li>
 <li><a class="reference internal" href="#missingpaginatedtrait" id="id17">MissingPaginatedTrait</a></li>
 <li><a class="reference internal" href="#shouldhaveusedtimestamp" id="id18">ShouldHaveUsedTimestamp</a></li>
@@ -95,8 +95,8 @@ can be used to apply additional validation to Smithy models.</p>
 to a <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code> file:</p>
 <div class="sphinx-tabs docutils container">
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-S290bGlu" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-S290bGlu" name="S290bGlu" role="tab" tabindex="0">Kotlin</button></div><div aria-labelledby="tab-0-S290bGlu" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-S290bGlu" name="S290bGlu" role="tabpanel" tabindex="0"><div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span> <span class="p">{</span>
-    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.16.1&quot;</span><span class="p">)</span>
-    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.16.1&quot;</span><span class="p">)</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.16.2&quot;</span><span class="p">)</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.16.2&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -458,16 +458,37 @@ be provided.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="stutteredshapename">
-<span id="id5"></span><h3><a href="#stutteredshapename">StutteredShapeName</a></h3>
-<p>Validators that <a class="reference internal" href="../spec/core/model.html#structure"><span class="std std-ref">Structure</span></a> member names and <a class="reference internal" href="../spec/core/model.html#union"><span class="std std-ref">Union</span></a> member
-names do not stutter their shape names.</p>
+<div class="section" id="repeatedshapename">
+<span id="stutteredshapename"></span><span id="id5"></span><h3><a href="#repeatedshapename">RepeatedShapeName</a></h3>
+<p>Validates that <a class="reference internal" href="../spec/core/model.html#structure"><span class="std std-ref">Structure</span></a> member names and <a class="reference internal" href="../spec/core/model.html#union"><span class="std std-ref">Union</span></a> member
+names do not case-insensitively repeat their container shape names.</p>
 <p>As an example, if a structure named &quot;Table&quot; contained a member named
 &quot;TableName&quot;, then this validator would emit a WARNING event.</p>
 <dl class="docutils">
 <dt>Rationale</dt><dd>Repeating a shape name in the members of identifier of the shape is
 redundant.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">WARNING</span></code></dd>
+<dt>Configuration</dt><dd><table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>exactMatch</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>If set to true, the validator will only warn if the member name
+is case-insensitively identical to the containing shape's name.</td>
+</tr>
+</tbody>
+</table>
+</dd>
 </dl>
 </div>
 <div class="section" id="inputoutputstructurereuse">
@@ -817,7 +838,7 @@ using the following Smithy model:</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#standardoperationverb">StandardOperationVerb</a></li>
-<li><a class="reference internal" href="#stutteredshapename">StutteredShapeName</a></li>
+<li><a class="reference internal" href="#repeatedshapename">RepeatedShapeName</a></li>
 <li><a class="reference internal" href="#inputoutputstructurereuse">InputOutputStructureReuse</a></li>
 <li><a class="reference internal" href="#missingpaginatedtrait">MissingPaginatedTrait</a></li>
 <li><a class="reference internal" href="#shouldhaveusedtimestamp">ShouldHaveUsedTimestamp</a></li>

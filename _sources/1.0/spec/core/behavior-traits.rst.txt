@@ -381,23 +381,17 @@ Pagination Behavior
 
 #. Only one list or map per operation can be paginated.
 
-#. Paginated responses MUST NOT return the same item of a paginated result
-   set more than once (i.e., a paginated result set is a disjoint union of the
-   subsets partitioned by the referenced ``pageSize`` input member and the SLA
-   defined by the service).
+#. Paginated responses SHOULD NOT return the same item of a paginated result
+   set more than once.
 
-#. If a paginated request returns data in a sorted order that is not an
-   immutable strict total ordering of items, then the paginated request MUST
-   provide a temporally static view of the underlying data that does not
-   modify the order topology during pagination. For example, a game’s
-   leaderboard of top-scoring players cannot have players move from position
-   #10 to position #12 during pagination, the last player on page N has to
-   have a higher score than the first player on page N+1, no players that
-   exist when pagination begins are to be skipped, and players MUST NOT be
-   repeated due to moves in the underlying data.
+#. Services SHOULD NOT return items in a paginated result set that have been
+   deleted during the pagination process, but before reaching the relevant
+   page.
 
-#. If pagination is ordered and newly created resources are returned, then
-   newly created resources MUST appear in order on the appropriate page.
+#. Services MAY include newly created items in a paginated result set on a
+   not yet seen page. If pagination is ordered and newly created items are
+   returned, then newly created items MUST appear in order on the appropriate
+   page.
 
 
 Client behavior
@@ -407,7 +401,9 @@ Smithy clients SHOULD provide abstractions that can be used to automatically
 iterate over paginated responses. The following steps describe the process a
 client MUST follow when iterating over paginated API calls:
 
-#. Send the initial request to a paginated operation.
+#. Send the initial request to a paginated operation. This request MAY
+   include input parameters that are used to influence the starting point
+   at which pagination occurs.
 
 #. If the received response does not contain a continuation token in the
    referenced ``outputToken`` member, then there are no more results to
