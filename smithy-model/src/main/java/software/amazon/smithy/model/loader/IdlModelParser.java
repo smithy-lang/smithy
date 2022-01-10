@@ -453,15 +453,11 @@ final class IdlModelParser extends SimpleParser {
     private void parseSimpleShape(ShapeId id, SourceLocation location, AbstractShapeBuilder builder) {
         modelFile.onShape(builder.source(location).id(id));
         parseMixins(id);
-        // Pending docs get cleared by parseMixins. It isn't done here because the
-        // mixin parser needs to consume whitespace that may include doc comments for
-        // the next shape in the model.
     }
 
     // See parseMap for information on why members are parsed before the
     // list/set is registered with the ModelFile.
     private void parseCollection(ShapeId id, SourceLocation location, CollectionShape.Builder builder) {
-        ws();
         builder.id(id).source(location);
         parseMixins(id);
         parseMembers(id, SetUtils.of("member"));
@@ -558,8 +554,6 @@ final class IdlModelParser extends SimpleParser {
         // "Member `foo.baz#Foo$Baz` cannot be added to software.amazon.smithy.model.shapes.OperationShape$Builder"
         modelFile.onShape(builder.id(id).source(location));
 
-        ws();
-
         // Parse optional "with" statements to add mixins, but only if it's supported by the version.
         parseMixins(id);
         parseMembers(id, Collections.emptySet());
@@ -567,8 +561,6 @@ final class IdlModelParser extends SimpleParser {
     }
 
     private void parseMixins(ShapeId id) {
-        // This is fine for now, but if we ever add any other keywords that start with
-        // 'w' then we'll need to peek farther.
         sp();
         if (peek() != 'w') {
             return;
@@ -698,7 +690,6 @@ final class IdlModelParser extends SimpleParser {
     }
 
     private void parseServiceStatement(ShapeId id, SourceLocation location) {
-        ws();
         parseMixins(id);
         ws();
         ServiceShape.Builder builder = new ServiceShape.Builder().id(id).source(location);
@@ -729,7 +720,6 @@ final class IdlModelParser extends SimpleParser {
     }
 
     private void parseResourceStatement(ShapeId id, SourceLocation location) {
-        ws();
         parseMixins(id);
         ws();
         ResourceShape.Builder builder = ResourceShape.builder().id(id).source(location);
