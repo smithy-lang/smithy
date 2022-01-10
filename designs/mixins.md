@@ -606,14 +606,14 @@ shape being defined and MUST be marked with the `@mixin` trait.
 
 ```
 simple_shape_statement = simple_type_name ws identifier [mixins]
-list_statement = "list" ws identifier [mixins ws] shape_members
-set_statement = "set" ws identifier [mixins ws] shape_members
-map_statement = "map" ws identifier [mixins ws] shape_members
-structure_statement = "structure" ws identifier [mixins ws] structure_members
-union_statement = "union" ws identifier [mixins ws] union_members
-service_statement = "service" ws identifier [mixins ws] node_object
-operation_statement = "operation" ws identifier [mixins ws] node_object
-resource_statement = "resource" ws identifier [mixins ws] node_object
+list_statement = "list" ws identifier [mixins] ws shape_members
+set_statement = "set" ws identifier [mixins] ws shape_members
+map_statement = "map" ws identifier [mixins] ws shape_members
+structure_statement = "structure" ws identifier [mixins] ws structure_members
+union_statement = "union" ws identifier [mixins] ws union_members
+service_statement = "service" ws identifier [mixins] ws node_object
+operation_statement = "operation" ws identifier [mixins] ws node_object
+resource_statement = "resource" ws identifier [mixins] ws node_object
 mixins = sp "with" ws "[" 1*(ws shape_id) ws "]"
 ```
 

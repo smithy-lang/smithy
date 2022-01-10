@@ -49,7 +49,7 @@ public class ListShapeTest {
 
     @Test
     public void requiresMember() {
-        Assertions.assertThrows(IllegalStateException.class, () -> {
+        Assertions.assertThrows(SourceException.class, () -> {
             ListShape.builder().id("ns.foo#bar").build();
         });
     }
