@@ -1,5 +1,20 @@
 # Smithy Changelog
 
+## 1.16.2 (2022-01-10)
+
+### Features
+* Renamed `StutteredShapeName` validator to `RepeatingShapeName` and added an `exactMatch` configuration to let it more
+  precisely prevent problematic models. ([#1041](https://github.com/awslabs/smithy/pull/1041))
+* Reduced the severity of `HttpBindingsMissing` events for services that do not use protocols that support the `@http`
+  trait. ([#1044](https://github.com/awslabs/smithy/pull/1044))
+* Added `unwrite()` to `CodeWriter`. ([#1038](https://github.com/awslabs/smithy/pull/1038))
+
+### Bug Fixes
+* Fixed the `RestJsonInputUnionWithUnitMember` protocol test. ([#1042](https://github.com/awslabs/smithy/pull/1042))
+
+### Documentation
+* Updated the documentation for pagination. ([#1043](https://github.com/awslabs/smithy/pull/1043))
+
 ## 1.16.1 (2022-01-06)
 
 ### Features
