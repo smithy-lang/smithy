@@ -1,0 +1,1 @@
+[WARNING] smithy.example#PatchFoo: This update style operation has top-level input members marked with the @default trait. It will be impossible to tell if the member was omitted or explicitly provided. Affected members: [description] | DefaultValueInUpdate
