@@ -201,12 +201,12 @@ The ``paginated`` trait is a structure that contains the following members:
     * - outputToken
       - ``string``
       - The path to the operation output member that contains an optional
-        continuation token. When this value is present in operation output,
-        it indicates that there are more results to retrieve. To get the next
-        page of results, the client passes the received output continuation
-        token to the input continuation token of the next request. This
-        output member MUST NOT be marked as ``required`` and SHOULD target a
-        string shape. It can, but SHOULD NOT target a map shape.
+        continuation token. When this value is present and not empty in
+        operation output, it indicates that there are more results to retrieve.
+        To get the next page of results, the client passes the received output
+        continuation token to the input continuation token of the next request.
+        This output member MUST NOT be marked as ``required`` and SHOULD target
+        a string shape. It can, but SHOULD NOT target a map shape.
 
         When contained within a service, a paginated operation MUST either
         configure ``outputToken`` on the operation itself or inherit it from
@@ -406,8 +406,9 @@ client MUST follow when iterating over paginated API calls:
    at which pagination occurs.
 
 #. If the received response does not contain a continuation token in the
-   referenced ``outputToken`` member, then there are no more results to
-   retrieve and the process is complete.
+   referenced ``outputToken`` member (either the member is not set or is set to
+   an empty value), then there are no more results to retrieve and the process
+   is complete.
 
 #. If there is a continuation token in the referenced ``outputToken`` member
    of the response, then the client sends a subsequent request using the same
