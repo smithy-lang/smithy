@@ -210,6 +210,15 @@
                 },
                 "smithy.api#documentation": "Configures endpoint discovery for the service."
             }
+        },
+        "aws.api#clientOptional": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "structure > member"
+                },
+                "smithy.api#documentation": "Indicates that a structure member SHOULD be unconditionally generated as optional in clients regardless of if the member is required or has a default value. This trait allows documentation generators to indicate that a member is required by the service, even if it is not reflected in generated client code."
+            }
         }
     }
 }
