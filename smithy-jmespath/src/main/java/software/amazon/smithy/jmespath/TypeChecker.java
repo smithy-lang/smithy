@@ -217,17 +217,10 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
     @Override
     public LiteralExpression visitAnd(AndExpression expression) {
         LiteralExpression leftResult = expression.getLeft().accept(this);
-
         // Visit right side regardless of the evaluation of the left side to validate the result.
-        TypeChecker checker = new TypeChecker(leftResult, problems);
-        LiteralExpression rightResult = expression.getRight().accept(checker);
-
-        // Return a proper result based on the evaluation.
-        if (leftResult.isTruthy() && rightResult.isTruthy()) {
-            return rightResult;
-        } else {
-            return NULL;
-        }
+        LiteralExpression rightResult = expression.getRight().accept(this);
+        // If LHS is falsey, return LHS. Otherwise, return RHS.
+        return leftResult.isTruthy() ? rightResult : leftResult;
     }
 
     @Override
