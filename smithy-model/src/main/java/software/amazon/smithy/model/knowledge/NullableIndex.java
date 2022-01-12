@@ -50,13 +50,20 @@ public class NullableIndex implements KnowledgeIndex {
         Model m = Objects.requireNonNull(model.get());
         Shape s = m.expectShape(shape.toShapeId());
         MemberShape member = s.asMemberShape().orElse(null);
-
         // Non-members should always be considered optional.
-        if (member == null) {
-            return true;
-        }
+        return member == null || isMemberOptional(member);
+    }
 
+    /**
+     * Checks if a member is optional.
+     *
+     * @param member Member to check.
+     * @return Returns true if the member is optional.
+     */
+    public boolean isMemberOptional(MemberShape member) {
+        Model m = Objects.requireNonNull(model.get());
         Shape container = m.expectShape(member.getContainer());
+
         switch (container.getType()) {
             case STRUCTURE:
                 // Structure members are nullable by default; non-null when marked as @default / @required.
