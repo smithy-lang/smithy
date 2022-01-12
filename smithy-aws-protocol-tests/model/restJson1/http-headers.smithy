@@ -207,11 +207,10 @@ apply InputAndOutputWithHeaders @httpResponseTests([
         protocol: restJson1,
         code: 200,
         headers: {
-            "X-StringList": """
-            "b,c","\"def\"",a"""
+            "X-StringList": "\"b,c\", \"\\\"def\\\"\", a"
         },
         params: {
-            headerStringList: ["a", "b,c", "\"def\""]
+            headerStringList: ["b,c", "\"def\"", "a"]
         }
     },
     {
