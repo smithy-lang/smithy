@@ -785,8 +785,7 @@ structure input {}
 structure output {}
 
 /// Specializes a structure as a unit type that has no meaningful value.
-/// This trait is private, which ensures that only a single Unit shape
-/// can be created, smithy.api#Unit.
+/// This trait can only be applied to smithy.api#Unit, which ensures that
+/// only a single Unit shape can be created.
 @trait(selector: "[id=smithy.api#Unit]")
-@internal
 structure unitType {}

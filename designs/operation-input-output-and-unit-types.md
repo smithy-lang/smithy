@@ -209,8 +209,8 @@ A [unit](https://en.wikipedia.org/wiki/Unit_type) shape will be added to the
 Smithy prelude to represent a shape that has no meaningful value. There will
 be a single `Unit` shape in Smithy, modeled as a structure with the internal
 `@unitType` trait attached to differentiate it from other structures. The
-`@internal` trait on the `@unitType` trait ensures that no other unit
-structures can be defined.
+selector of the `@unitType` trait ensures that no other unit structures can be
+defined.
 
 The `Unit` shape and `unitType` trait are modeled in the prelude as:
 
@@ -221,10 +221,9 @@ namespace smithy.api
 structure Unit {}
 
 /// Specializes a structure as a unit type that has no meaningful value.
-/// This trait is private, which ensures that only a single Unit shape
-/// can be created, smithy.api#Unit.
+/// This trait can only be applied to smithy.api#Unit, which ensures that
+/// only a single Unit shape can be created.
 @trait(selector: "[id=smithy.api#Unit]")
-@internal
 structure unitType {}
 ```
 
