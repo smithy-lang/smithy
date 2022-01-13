@@ -1111,8 +1111,8 @@ Operation shape
 ---------------
 
 An operation shape is defined using an :token:`smithy:operation_statement` and the
-provided :token:`smithy:node_object` supports the same properties defined in the
-:ref:`operation specification <operation>`.
+provided :token:`smithy:inlineable_properties` supports the same properties defined
+in the :ref:`operation specification <operation>`.
 
 The following example defines an operation shape that accepts an input
 structure named ``Input``, returns an output structure named ``Output``, and
@@ -1155,6 +1155,109 @@ can potentially return the ``Unavailable`` or ``BadRequest``
                 }
             }
         }
+
+
+.. _idl-inline-input-output:
+
+Inline input / output shapes
+++++++++++++++++++++++++++++
+
+In addition to targeting an existing shape id when defining an operation's
+input or output property, an inline structure definition may also be used.
+
+A structure defined this way automatically has the :ref:`input-trait` for
+inputs and the :ref:`output-trait` for outputs.
+
+A structure defined this way is given an a generated shape name. For inputs,
+the generated name will be the name of the operation shape with the suffix
+``Input`` added. For outputs, the generated name will be the name of the
+operation shape with the ``Output`` suffix added.
+
+For example, the following model:
+
+.. code-block:: smithy
+
+    operation GetUser {
+        // The shape name generated will be GetUserInput
+        input := {
+            userId: String
+        }
+
+        // The shape name generated will be GetUserOutput
+        output := {
+            username: String
+            userId: String
+        }
+    }
+
+Is equivalent to:
+
+.. code-block:: smithy
+
+    operation GetUser {
+        input: GetUserInput
+        output: GetUserOutput
+    }
+
+    @input
+    structure GetUserInput {
+        userId: String
+    }
+
+    @output
+    structure GetUserOutput {
+        username: String
+        userId: String
+    }
+
+Traits and mixins can be applied:
+
+.. code-block:: smithy
+
+    @mixin
+    structure BaseUser {
+        userId: String
+    }
+
+    operation GetUser {
+        input := @references([{resource: User}]) {
+            userId: String
+        }
+
+        output := with [BaseUser] {
+            username: String
+        }
+    }
+
+    operation PutUser {
+        input :=
+            @references([{resource: User}])
+            with [BaseUser] {}
+    }
+
+The suffixes for the generated names can be customized using the
+``operationInputSuffix`` and ``operationOutputSuffix`` control statements.
+
+.. code-block:: smithy
+
+    $version: "2.0"
+    $operationInputSuffix: "Request"
+    $operationInputSuffix: "Response"
+
+    namespace smithy.example
+
+    operation GetUser {
+        // The shape name generated will be GetUserRequest
+        input := {
+            userId: String
+        }
+
+        // The shape name generated will be GetUserResponse
+        output := {
+            username: String
+            userId: String
+        }
+    }
 
 
 .. _idl-resource:
