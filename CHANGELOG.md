@@ -1,5 +1,13 @@
 # Smithy Changelog
 
+## 1.16.3 (2022-01-13)
+
+### Bug Fixes
+* Removed @internal from the @unitType trait. ([#1054](https://github.com/awslabs/smithy/pull/1054))
+* Fixed JMESPath and-expression evaluation to correctly provide the result of the
+  left expression when it is falsey. [#1053](https://github.com/awslabs/smithy/pull/1053)
+* Fixed quoted string headers restJson1 response protocol test. [#1049](https://github.com/awslabs/smithy/pull/1049)
+
 ## 1.16.2 (2022-01-10)
 
 ### Features
