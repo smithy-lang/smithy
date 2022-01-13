@@ -187,13 +187,17 @@ The Smithy IDL is defined by the following ABNF:
                            :/ "bigDecimal" / "timestamp"
     shape_members          :"{" `ws` *(`shape_member_kvp` `ws`) "}"
     shape_member_kvp       :`trait_statements` `identifier` `ws` ":" `ws` `shape_id`
+    inlineable_properties  :"{" *(`inlineable_property` `ws`) `ws` "}"
+    inlineable_property    :`node_object_kvp` / `inline_structure`
+    inline_structure       :`node_object_key` `ws` ":=" `ws` `inline_structure_value`
+    inline_structure_value :`trait_statements` [`mixins` ws] shape_members
     list_statement :"list" `ws` `identifier` `ws` `shape_members`
     set_statement :"set" `ws` `identifier` `ws` `shape_members`
     map_statement :"map" `ws` `identifier` `ws` `shape_members`
     structure_statement     :"structure" `ws` `identifier` `ws` `shape_members`
     union_statement :"union" `ws` `identifier` `ws` `shape_members`
     service_statement :"service" `ws` `identifier` `ws` `node_object`
-    operation_statement :"operation" `ws` `identifier` `ws` `node_object`
+    operation_statement :"operation" `ws` `identifier` `ws` `inlineable_properties`
     resource_statement :"resource" `ws` `identifier` `ws` `node_object`
 
 .. rubric:: Traits
