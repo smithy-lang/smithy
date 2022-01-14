@@ -170,7 +170,7 @@ final class Parser {
             case AND: // Example: a && b
                 return new AndExpression(left, expression(token.type.lbp), token.line, token.column);
             case PIPE: // Example: a | b
-                return new Subexpression(left, expression(token.type.lbp), token.line, token.column);
+                return new Subexpression(left, expression(token.type.lbp), token.line, token.column, true);
             case FILTER: // Example: a[?foo == bar]
                 return parseFilter(left);
             case LBRACKET:
