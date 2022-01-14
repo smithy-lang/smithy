@@ -348,7 +348,7 @@ The members and traits applied to members of a mixin are copied onto the target
 shape. It is sometimes necessary to provide a more specific trait value for a
 copied member or to add traits only to a specific copy of a member. Traits can
 be added on to these members like any other member. Additionally, Traits can be
-applied to  these members in the JSON AST using the `apply` type and in the
+applied to these members in the JSON AST using the `apply` type and in the
 Smithy IDL using `apply` statements.
 
 > Note: Traits applied to shapes supersede any traits inherited from mixins.

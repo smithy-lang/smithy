@@ -1229,20 +1229,20 @@ The table below lists the labeled directed relationships from each shape.
       - Each error structure referenced by the operation (if present).
     * - list
       - member
-      - The :ref:`member` of the list. Note that this is not the shape targeted
-        by the member.
+      - The :ref:`member` of the list, including if it was inherited from a
+        mixin. Note that this is not the shape targeted by the member.
     * - map
       - member
-      - The key and value members of the map. Note that these are not the
-        shapes targeted by the member.
+      - The key and value members of the map, including those inherited from
+        mixins. Note that these are not the shapes targeted by the member.
     * - structure
       - member
-      - Each structure member. Note that these are not the shapes targeted by
-        the members.
+      - Each structure member, including members from mixins. Note that these
+        are not the shapes targeted by the members.
     * - union
       - member
-      - Each union member. Note that these are not the shapes targeted by
-        the members.
+      - Each union member, including members from mixins. Note that these are
+        not the shapes targeted by the members.
     * - member
       -
       - The shape targeted by the member. Note that member targets have no
@@ -1253,6 +1253,14 @@ The table below lists the labeled directed relationships from each shape.
         defines the trait. This kind of relationship is only traversed if the
         ``trait`` relationship is explicitly stated as a desired directed
         neighbor relationship type.
+    * - ``*``
+      - mixin
+      - Every mixin applied to the shape.
+
+        .. note::
+
+            A normal ``member`` relationship exists from a given shape to all
+            its inherited mixin members.
 
 .. important::
 

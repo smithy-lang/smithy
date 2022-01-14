@@ -274,4 +274,52 @@ The following example defines a :ref:`map <map>` shape that MAY contain
             }
         }
 
+.. _mixin-trait:
+
+---------------
+``mixin`` trait
+---------------
+
+Summary
+    Indicates that the targeted shape is a mixin.
+Trait selector
+    ``:not(member)``
+Value type
+    ``structure``
+
+The mixin trait is a structure that contains the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Property
+      - Type
+      - Description
+    * - ``localTraits``
+      - [:ref:`shape-id`]
+      - A list of shape IDs which MUST reference valid traits that are applied
+        directly to the mixin. The traits in the list are not copied onto
+        shapes that use the mixin. This only affects traits applied to the
+        mixin container shape and has no impact on the members contained within
+        a mixin.
+
+        .. note::
+
+            The ``mixin`` trait is considered implicitly present in the this
+            property and so does not need to be explicitly added.
+
+See the :ref:`Smithy spec <mixins>` for details on how mixins work.
+
+.. code-block:: smithy
+
+    structure BaseUser {
+        id: String
+    }
+
+    structure UserDetails with [BaseUser] {
+        alias: String
+        email: String
+    }
+
 .. _Option type: https://doc.rust-lang.org/std/option/enum.Option.html
