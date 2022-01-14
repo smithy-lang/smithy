@@ -2,9 +2,9 @@ name: ci
 
 on:
   push:
-    branches: [main]
+    branches: [main, idl-2.0]
   pull_request:
-    branches: [main]
+    branches: [main, idl-2.0]
 
 jobs:
   build:
