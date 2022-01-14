@@ -180,7 +180,8 @@ The Smithy IDL is defined by the following ABNF:
                                  :/ `service_statement`
                                  :/ `operation_statement`
                                  :/ `resource_statement`
-    simple_shape_statement :`simple_type_name` `ws` `identifier`
+    mixins                 :`sp` "with" `ws` "[" 1*(`ws` `shape_id`) `ws` "]"
+    simple_shape_statement :`simple_type_name` `ws` `identifier` [`mixins`]
     simple_type_name       :"blob" / "boolean" / "document" / "string"
                            :/ "byte" / "short" / "integer" / "long"
                            :/ "float" / "double" / "bigInteger"
@@ -191,14 +192,14 @@ The Smithy IDL is defined by the following ABNF:
     inlineable_property    :`node_object_kvp` / `inline_structure`
     inline_structure       :`node_object_key` `ws` ":=" `ws` `inline_structure_value`
     inline_structure_value :`trait_statements` [`mixins` ws] shape_members
-    list_statement :"list" `ws` `identifier` `ws` `shape_members`
-    set_statement :"set" `ws` `identifier` `ws` `shape_members`
-    map_statement :"map" `ws` `identifier` `ws` `shape_members`
-    structure_statement     :"structure" `ws` `identifier` `ws` `shape_members`
-    union_statement :"union" `ws` `identifier` `ws` `shape_members`
-    service_statement :"service" `ws` `identifier` `ws` `node_object`
-    operation_statement :"operation" `ws` `identifier` `ws` `inlineable_properties`
-    resource_statement :"resource" `ws` `identifier` `ws` `node_object`
+    list_statement :"list" `ws` `identifier` [`mixins`] `ws` `shape_members`
+    set_statement :"set" `ws` `identifier` [`mixins`] `ws` `shape_members`
+    map_statement :"map" `ws` `identifier` [`mixins`] `ws` `shape_members`
+    structure_statement     :"structure" `ws` `identifier` [`mixins`] `ws` `shape_members`
+    union_statement :"union" `ws` `identifier` [`mixins`] `ws` `shape_members`
+    service_statement :"service" `ws` `identifier` [`mixins`] `ws` `node_object`
+    operation_statement :"operation" `ws` `identifier` [`mixins`] `ws` `inlineable_properties`
+    resource_statement :"resource" `ws` `identifier` [`mixins`] `ws` `node_object`
 
 .. rubric:: Traits
 
@@ -1303,6 +1304,34 @@ and defines a :ref:`read <read-lifecycle>` operation:
                 }
             }
         }
+
+
+.. _idl-mixins:
+
+Mixins
+------
+
+:ref:`Mixins <mixins>` can be added to a shape using the optional
+:token:`smithy:mixins` statement as part of the shape type's statement.
+For example:
+
+.. code-block:: smithy
+
+    @mixin
+    structure BaseUser {
+        userId: String
+    }
+
+    structure UserDetails with [BaseUser] {
+        username: String
+    }
+
+    @mixin
+    @sensitive
+    string SensitiveString
+
+    @pattern("[a-zA-Z\.]*")
+    string SensitiveText with SensitiveString
 
 
 .. _documentation-comment:
