@@ -638,6 +638,50 @@ The following example defines an operation, its input, output, and errors:
     }
 
 
+.. ast-mixins:
+
+------
+Mixins
+------
+
+All shapes in the ``shapes`` map can contain a ``mixins`` property that
+defines the :ref:`mixins` that are added to the shape. ``mixins`` is an
+array of :ref:`shape references <ast-shape-reference>` that target shapes
+with the :ref:`mixin trait <mixin-trait>`.
+
+.. code-block:: json
+
+    {
+        "smithy": "2.0",
+        "shapes": {
+            "smithy.example#BaseUser": {
+                "type": "structure",
+                "members": {
+                    "userId": {
+                        "target": "smithy.api#String"
+                    }
+                },
+                "traits": {
+                    "smithy.api#mixin": {}
+                }
+            },
+            "smithy.example#UserDetails": {
+                "type": "structure",
+                "members": {
+                    "username": {
+                        "target": "smithy.api#String"
+                    }
+                },
+                "mixins": [
+                    {
+                        "target": "smithy.example#BaseUser"
+                    }
+                ]
+            }
+        }
+    }
+
+
 .. _ast-apply:
 
 --------------
