@@ -68,7 +68,6 @@ public final class CfnConfig extends JsonSchemaConfig {
         // https://github.com/aws-cloudformation/cloudformation-cli/blob/master/src/rpdk/core/data/schema/provider.definition.schema.v1.json#L166-L177
         super.setMapStrategy(MapStrategy.PATTERN_PROPERTIES);
 
-        //
         // CloudFormation Resource Schemas MUST use the oneOf schema property for
         // unions. Invoke the parent class's method directly since we override it
         // to lock this functionality.
@@ -76,10 +75,6 @@ public final class CfnConfig extends JsonSchemaConfig {
         // https://github.com/aws-cloudformation/cloudformation-cli/blob/master/src/rpdk/core/data/schema/provider.definition.schema.v1.json#L210
         // https://github.com/aws-cloudformation/cloudformation-cli/blob/master/src/rpdk/core/data/schema/provider.definition.schema.v1.json#L166
         super.setUnionStrategy(UnionStrategy.ONE_OF);
-
-        // @cfnResource's additionalSchemas property references shapes that aren't in the service closure
-        // so conversions must be able to reference those shapes
-        super.setEnableOutOfServiceReferences(true);
     }
 
     @Override

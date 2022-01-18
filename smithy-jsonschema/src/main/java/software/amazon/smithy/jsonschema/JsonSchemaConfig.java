@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -95,6 +96,8 @@ public class JsonSchemaConfig {
             return stringValue;
         }
     }
+
+    private static final Logger LOGGER = Logger.getLogger(JsonSchemaConfig.class.getName());
 
     private boolean alphanumericOnlyRefs;
     private boolean useJsonName;
@@ -368,7 +371,12 @@ public class JsonSchemaConfig {
         this.supportNonNumericFloats = supportNonNumericFloats;
     }
 
+    @Deprecated
     public boolean isEnableOutOfServiceReferences() {
+        if (enableOutOfServiceReferences) {
+            LOGGER.warning("Deprecated JSON Schema setting `enableOutOfServiceReferences` enabled. "
+                    + "Bind shapes directly to the service instead.");
+        }
         return enableOutOfServiceReferences;
     }
 
@@ -381,6 +389,7 @@ public class JsonSchemaConfig {
      *
      * @param enableOutOfServiceReferences true if out-of-service references should be allowed. default: false
      */
+    @Deprecated
     public void setEnableOutOfServiceReferences(boolean enableOutOfServiceReferences) {
         this.enableOutOfServiceReferences = enableOutOfServiceReferences;
     }
