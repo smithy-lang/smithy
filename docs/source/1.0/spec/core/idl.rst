@@ -188,10 +188,6 @@ The Smithy IDL is defined by the following ABNF:
                            :/ "bigDecimal" / "timestamp"
     shape_members          :"{" `ws` *(`shape_member_kvp` `ws`) "}"
     shape_member_kvp       :`trait_statements` `identifier` `ws` ":" `ws` `shape_id`
-    inlineable_properties  :"{" *(`inlineable_property` `ws`) `ws` "}"
-    inlineable_property    :`node_object_kvp` / `inline_structure`
-    inline_structure       :`node_object_key` `ws` ":=" `ws` `inline_structure_value`
-    inline_structure_value :`trait_statements` [`mixins` ws] shape_members
     list_statement :"list" `ws` `identifier` [`mixins`] `ws` `shape_members`
     set_statement :"set" `ws` `identifier` [`mixins`] `ws` `shape_members`
     map_statement :"map" `ws` `identifier` [`mixins`] `ws` `shape_members`
@@ -199,6 +195,10 @@ The Smithy IDL is defined by the following ABNF:
     union_statement :"union" `ws` `identifier` [`mixins`] `ws` `shape_members`
     service_statement :"service" `ws` `identifier` [`mixins`] `ws` `node_object`
     operation_statement :"operation" `ws` `identifier` [`mixins`] `ws` `inlineable_properties`
+    inlineable_properties  :"{" *(`inlineable_property` `ws`) `ws` "}"
+    inlineable_property    :`node_object_kvp` / `inline_structure`
+    inline_structure       :`node_object_key` `ws` ":=" `ws` `inline_structure_value`
+    inline_structure_value :`trait_statements` [`mixins` ws] shape_members
     resource_statement :"resource" `ws` `identifier` [`mixins`] `ws` `node_object`
 
 .. rubric:: Traits
@@ -255,11 +255,30 @@ The :token:`control section <smithy:control_section>` of a model contains
 :token:`control statements <smithy:control_statement>` that apply parser directives
 to a *specific IDL file*. Because control statements influence parsing, they
 MUST appear at the beginning of a file before any other statements and have
-no effect on the :ref:`semantic model <semantic-model>`
+no effect on the :ref:`semantic model <semantic-model>` The following control
+statements are currently supported:
 
-The :ref:`version <smithy-version>` statement is currently the only control
-statement defined in the Smithy IDL. Implementations MUST ignore unknown
-control statements.
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Name
+      - Type
+      - Description
+    * - version
+      - string
+      - Defines the :ref:`version <smithy-version>` of the Smithy IDL used in
+        the model file.
+    * - operationInputSuffix
+      - string
+      - Defines the suffix used when generating names for
+        :ref:`inline operation input <idl-inline-input-output>`.
+    * - operationOutputSuffix
+      - string
+      - Defines the suffix used when generating names for
+        :ref:`inline operation output <idl-inline-input-output>`.
+
+Implementations MUST ignore unknown control statements.
 
 
 .. _smithy-version:
@@ -1163,28 +1182,28 @@ can potentially return the ``Unavailable`` or ``BadRequest``
 Inline input / output shapes
 ++++++++++++++++++++++++++++
 
-In addition to targeting an existing shape id when defining an operation's
-input or output property, an inline structure definition may also be used.
+The input and output properties of operations can be defined using a more
+succinct, inline syntax.
 
-A structure defined this way automatically has the :ref:`input-trait` for
-inputs and the :ref:`output-trait` for outputs.
+A structure defined using inline syntax is automatically marked with the
+:ref:`input-trait` for inputs and the :ref:`output-trait` for outputs.
 
-A structure defined this way is given an a generated shape name. For inputs,
-the generated name will be the name of the operation shape with the suffix
-``Input`` added. For outputs, the generated name will be the name of the
-operation shape with the ``Output`` suffix added.
+A structure defined using inline syntax is given a generated shape name. For
+inputs, the generated name is the name of the operation shape with the suffix
+``Input`` added. For outputs, the generated name is the name of the operation
+shape with the ``Output`` suffix added.
 
 For example, the following model:
 
 .. code-block:: smithy
 
     operation GetUser {
-        // The shape name generated will be GetUserInput
+        // The generated shape name is GetUserInput
         input := {
             userId: String
         }
 
-        // The shape name generated will be GetUserOutput
+        // The generated shape name is GetUserOutput
         output := {
             username: String
             userId: String
@@ -1211,7 +1230,7 @@ Is equivalent to:
         userId: String
     }
 
-Traits and mixins can be applied:
+Traits and mixins can be applied to the inline structure:
 
 .. code-block:: smithy
 
@@ -1248,12 +1267,12 @@ The suffixes for the generated names can be customized using the
     namespace smithy.example
 
     operation GetUser {
-        // The shape name generated will be GetUserRequest
+        // The generated shape name is GetUserRequest
         input := {
             userId: String
         }
 
-        // The shape name generated will be GetUserResponse
+        // The generated shape name is GetUserResponse
         output := {
             username: String
             userId: String
@@ -1312,7 +1331,8 @@ Mixins
 ------
 
 :ref:`Mixins <mixins>` can be added to a shape using the optional
-:token:`smithy:mixins` statement as part of the shape type's statement.
+:token:`smithy:mixins` clause of a shape definition.
+
 For example:
 
 .. code-block:: smithy
@@ -1330,8 +1350,8 @@ For example:
     @sensitive
     string SensitiveString
 
-    @pattern("[a-zA-Z\.]*")
-    string SensitiveText with SensitiveString
+    @pattern("^[a-zA-Z\.]*$")
+    string SensitiveText with [SensitiveString]
 
 
 .. _documentation-comment:

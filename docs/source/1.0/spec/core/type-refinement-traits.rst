@@ -306,13 +306,12 @@ The mixin trait is a structure that contains the following members:
 
         .. note::
 
-            The ``mixin`` trait is considered implicitly present in the this
-            property and so does not need to be explicitly added.
-
-See the :ref:`Smithy spec <mixins>` for details on how mixins work.
+            The ``mixin`` trait is considered implicitly present in this
+            property and does not need to be explicitly added.
 
 .. code-block:: smithy
 
+    @mixin
     structure BaseUser {
         id: String
     }
@@ -321,5 +320,9 @@ See the :ref:`Smithy spec <mixins>` for details on how mixins work.
         alias: String
         email: String
     }
+
+.. seealso::
+
+    The :ref:`Smithy spec <mixins>` for details on how mixins work.
 
 .. _Option type: https://doc.rust-lang.org/std/option/enum.Option.html

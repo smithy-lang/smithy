@@ -647,7 +647,7 @@ Mixins
 All shapes in the ``shapes`` map can contain a ``mixins`` property that
 defines the :ref:`mixins` that are added to the shape. ``mixins`` is an
 array of :ref:`shape references <ast-shape-reference>` that target shapes
-with the :ref:`mixin trait <mixin-trait>`.
+marked with the :ref:`mixin trait <mixin-trait>`.
 
 .. code-block:: json
 
