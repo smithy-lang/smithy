@@ -273,7 +273,7 @@ public final class ExpressionSerializer {
             // Without this check, [::1].a would be reserialized into [::-1][*]."a",
             // which is equivalent, but convoluted.
             if (!(expression.getLeft() instanceof SliceExpression)) {
-                // Flatten expressions, when parsed, inherently create a project. Unroll
+                // Flatten expressions, when parsed, inherently create a projection. Unroll
                 // that here.
                 if (!(expression.getLeft() instanceof FlattenExpression)) {
                     builder.append("[*]");
