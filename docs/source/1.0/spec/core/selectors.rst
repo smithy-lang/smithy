@@ -1237,12 +1237,12 @@ The table below lists the labeled directed relationships from each shape.
         mixins. Note that these are not the shapes targeted by the member.
     * - structure
       - member
-      - Each structure member, including members from mixins. Note that these
-        are not the shapes targeted by the members.
+      - Each structure member, including members inherited from mixins. Note
+        that these are not the shapes targeted by the members.
     * - union
       - member
-      - Each union member, including members from mixins. Note that these are
-        not the shapes targeted by the members.
+      - Each union member, including members inherited from mixins. Note that
+        these are not the shapes targeted by the members.
     * - member
       -
       - The shape targeted by the member. Note that member targets have no
