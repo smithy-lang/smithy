@@ -2704,11 +2704,11 @@ shape.
 .. code-block:: smithy
 
     @mixin
-    structure UserIdentifiers {
+    structure UserIdentifiersMixin {
         id: String
     }
 
-    structure UserDetails with [UserIdentifiers] {
+    structure UserDetails with [UserIdentifiersMixin] {
         alias: String
     }
 
@@ -2717,19 +2717,19 @@ Multiple mixins can be applied:
 .. code-block:: smithy
 
     @mixin
-    structure UserIdentifiers {
+    structure UserIdentifiersMixin {
         id: String
     }
 
     @mixin
-    structure AccessDetails {
+    structure AccessDetailsMixin {
         firstAccess: Timestamp
         lastAccess: Timestamp
     }
 
     structure UserDetails with [
-        UserIdentifiers
-        AccessDetails
+        UserIdentifiersMixin
+        AccessDetailsMixin
     ] {
         alias: String
     }
@@ -2778,10 +2778,10 @@ shape, but not to a blob shape.
 
     @mixin
     @pattern("[a-zA-Z0-1]*")
-    string AlphaNumeric
+    string AlphaNumericMixin
 
     @length(min: 8, max: 32)
-    string Username with [AlphaNumeric]
+    string Username with [AlphaNumericMixin]
 
 
 Traits and mixins
@@ -2798,11 +2798,11 @@ For example, the definition of ``UserSummary`` in the following model:
     /// Generic mixin documentation.
     @tags(["a"])
     @mixin
-    structure UserInfo {
+    structure UserInfoMixin {
         userId: String
     }
 
-    structure UserSummary with [UserInfo] {}
+    structure UserSummary with [UserInfoMixin] {}
 
 Is equivalent to the following flattened structure because it inherits the
 traits of ``UserInfo``:
@@ -2822,13 +2822,13 @@ The definition of ``UserSummary`` in the following model:
     /// Generic mixin documentation.
     @tags(["a"])
     @mixin
-    structure UserInfo {
+    structure UserInfoMixin {
         userId: String
     }
 
     /// Specific documentation
     @tags(["replaced-tags"])
-    structure UserSummary with [UserInfo] {}
+    structure UserSummary with [UserInfoMixin] {}
 
 Is equivalent to the following flattened structure because it inherits the
 traits of ``UserInfo`` and traits applied to ``UserSummary`` take precedence
@@ -2988,15 +2988,14 @@ Alternatively, the member can be redefined if it targets the same shape:
     }
 
 
-Mixins are not code generated
-=============================
+Mixins are an implementation detail of the model
+================================================
 
 Mixins are an implementation detail of models and are only intended to reduce
-duplication in Smithy shape definitions. Shapes marked with the
-:ref:`mixin-trait` MUST NOT be code generated. Mixins *do not* provide any kind
-of runtime polymorphism for types generated from Smithy models. Generating code
-from mixins removes the ability for modelers to introduce and even remove
-mixins over time as a model is refactored.
+duplication in Smithy shape definitions. Mixins do not provide any kind of
+runtime polymorphism for types generated from Smithy models. Smithy model
+transformations like code generation or converting to other model formats
+like OpenAPI SHOULD completely elide mixins by flattening the model.
 
 
 Mixins cannot be referenced other than as mixins to other shapes
@@ -3050,9 +3049,9 @@ Mixins MUST NOT introduce circular references. The following model is invalid:
 Mixin members MUST NOT conflict
 ===============================
 
-The list of mixins applied to a structure or union MUST NOT attempt to define
-members that use the same member name with different targets. The following
-model is invalid:
+The list of mixins applied to a shape MUST NOT attempt to define members that
+use the same member name with different targets. The following model is
+invalid:
 
 .. code-block:: smithy
 
@@ -3128,23 +3127,22 @@ are added to the ordered list.
 
 Given the following model:
 
-
 .. code-block:: smithy
 
     @mixin
-    structure FilteredByName {
+    structure FilteredByNameMixin {
         nameFilter: String
     }
 
     @mixin
-    structure PaginatedInput {
+    structure PaginatedInputMixin {
         nextToken: String
         pageSize: Integer
     }
 
     structure ListSomethingInput with [
-        PaginatedInput
-        FilteredByName
+        PaginatedInputMixin
+        FilteredByNameMixin
     ] {
         sizeFilter: Integer
     }
@@ -3209,8 +3207,7 @@ example, in the following model:
         operations: [OperationC]
     }
 
-The ``version`` property of the local shape is kept and the ``rename`` and
-``operations`` properties are merged. This is equivalent to the following:
+The flattened equivalent of ``C`` with no mixins is:
 
 .. code-block:: smithy
 
@@ -3256,35 +3253,30 @@ Operation shapes with the :ref:`mixin-trait` MAY NOT define an ``input`` or
 input and output shapes to be shared goes against the goal of the
 :ref:`input-trait` and :ref:`output-trait`.
 
-Operation shapes with the :ref:`mixin-trait` MAY define the errors shape.
+Operation shapes with the :ref:`mixin-trait` MAY define errors.
 
 .. code-block:: smithy
 
     @mixin
-    operation MixinOperation {
-        errors: [MixinError]
-    }
-
-    operation MixedOperation with [MixinOperation] {
-        error: [MixedError]
+    operation ValidatedOperation {
+        errors: [ValidationError]
     }
 
     @error("client")
-    structure MixinError {}
+    structure ValidationError {}
+
+    operation GetUsername with [ValidatedOperation] {
+        input := {
+            id: String
+        }
+        output := {
+            name: String
+        }
+        error: [NotFoundError]
+    }
 
     @error("client")
-    structure MixedError {}
-
-
-Mixins in conversion tooling
-============================
-
-When converting Smithy models to OpenAPI, JSON Schema, and other models that
-do not directly support the same mixin semantics as Smithy, tooling MUST
-remove all traces of mixins by flattening mixins into their target shapes.
-This removes the risk of consumers relying on mixins as normal types and still
-retains the flexibility modelers need in order to refactor mixins in and out
-of shapes.
+    structure NotFoundError {}
 
 
 .. _metadata:
