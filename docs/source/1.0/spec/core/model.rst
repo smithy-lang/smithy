@@ -2997,6 +2997,11 @@ runtime polymorphism for types generated from Smithy models. Smithy model
 transformations like code generation or converting to other model formats
 like OpenAPI SHOULD completely elide mixins by flattening the model.
 
+It is a backward compatible change to remove a mixin from a shape as long as
+equivalent traits and members of the mixin are applied directly to the shape.
+Such a change should have no impact on generated artifacts like code or
+OpenAPI models.
+
 
 Mixins cannot be referenced other than as mixins to other shapes
 ================================================================
