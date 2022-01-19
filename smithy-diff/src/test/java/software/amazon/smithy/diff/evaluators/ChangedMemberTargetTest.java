@@ -147,7 +147,7 @@ public class ChangedMemberTargetTest {
                    equalTo("The shape targeted by the member `foo.baz#List$member` changed from "
                            + "`foo.baz#String1` (string) to `foo.baz#String2` (string). The `smithy.api#enum` trait "
                            + "was found on the target, so the name of the targeted shape matters for codegen. "
-                           + "The targeted shape no longer has the the following traits: [smithy.api#enum]."));
+                           + "The targeted shape no longer has the following traits: [smithy.api#enum]."));
     }
 
     @Test

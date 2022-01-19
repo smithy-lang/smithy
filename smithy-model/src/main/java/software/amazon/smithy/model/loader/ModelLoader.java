@@ -51,7 +51,7 @@ final class ModelLoader {
      *
      * @param traitFactory Factory used to create traits.
      * @param properties Bag of loading properties.
-     * @param filename Filename Filename to assign to the model.
+     * @param filename Filename to assign to the model.
      * @param contentSupplier The supplier that provides an InputStream. The
      *   supplied {@code InputStream} is automatically closed when the loader
      *   has finished reading from it.

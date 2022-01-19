@@ -41,7 +41,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  *
  * <ul>
  *     <li>Operation input is required when a topic has labels.</li>
- *     <li>Topic labels must be be found in the input.</li>
+ *     <li>Topic labels must be found in the input.</li>
  *     <li>The input must not contain extraneous labels.</li>
  * </ul>
  */

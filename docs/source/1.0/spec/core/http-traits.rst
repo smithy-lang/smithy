@@ -795,8 +795,8 @@ Trait selector
 Value type
     ``string`` value that defines the prefix to prepend to each header field
     name stored in the targeted map member. For example, given a prefix value
-    of of "X-Amz-Meta-" and a map key entry of "Baz", the resulting header
-    field name serialized in the message is "X-Amz-Meta-Baz".
+    of "X-Amz-Meta-" and a map key entry of "Baz", the resulting header field
+    name serialized in the message is "X-Amz-Meta-Baz".
 Conflicts with
    :ref:`httpLabel-trait`, :ref:`httpQuery-trait`, :ref:`httpQueryParams-trait`,
    :ref:`httpHeader-trait`, :ref:`httpPayload-trait`,
@@ -1239,7 +1239,7 @@ parameters:
 
 1. If serializing the output of an operation, set the status code of the
    response to the ``code`` property of the :ref:`http-trait`.
-2. If serializing an error and the the :ref:`httpError-trait` is present,
+2. If serializing an error and the :ref:`httpError-trait` is present,
    set the status code of the response to its value. Otherwise, set the status
    code to 400 if the error trait is "client" or to 500 if the error trait is
    "server".

@@ -45,7 +45,7 @@ import software.amazon.smithy.model.traits.Trait;
  * <h2>@smithy.mqtt#publish topics</h2>
  *
  * Operations marked with {@code @smithy.mqtt#publish} resolve to a single topic that
- * is defined by topic topic property of the trait.
+ * is defined by topic property of the trait.
  *
  * <h2>subscribe topics</h2>
  *

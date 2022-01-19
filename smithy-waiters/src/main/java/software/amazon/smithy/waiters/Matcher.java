@@ -231,7 +231,7 @@ public abstract class Matcher<T> implements ToNode {
     }
 
     /**
-     * Represents an union union value.
+     * Represents an union value.
      */
     public static final class UnknownMember extends Matcher<Node> {
         private final String key;

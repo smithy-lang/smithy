@@ -176,7 +176,7 @@ import java.util.regex.Pattern;
  *
  * <h2>Opening and closing blocks</h2>
  *
- * <p>{@code CodeWriter} provides a short cut for opening code blocks that that
+ * <p>{@code CodeWriter} provides a short cut for opening code blocks that
  * have an opening an closing delimiter (for example, "{" and "}") and that
  * require indentation inside of the delimiters. Calling {@link #openBlock}
  * and providing the opening statement will write and format a line followed
@@ -264,7 +264,7 @@ import java.util.regex.Pattern;
  * <p>Trailing spaces can be automatically trimmed from each line by calling
  * {@link #trimTrailingSpaces}.
  *
- * <p>In the the following example:
+ * <p>In the following example:
  *
  * <pre>{@code
  * CodeWriter writer = new CodeWriter();

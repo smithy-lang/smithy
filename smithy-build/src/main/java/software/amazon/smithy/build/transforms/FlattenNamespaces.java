@@ -37,7 +37,7 @@ import software.amazon.smithy.utils.Pair;
  * shapes connected to a service into a single, target namespace. When
  * configuring the transformer, a service and target namespace must be
  * specified. Optionally, tags can be specified for including any additional
- * shapes that should be flattened into the the target namespace. Any shape
+ * shapes that should be flattened into the target namespace. Any shape
  * from outside the service closure that is included via the application of a
  * tag will not be included if it conflicts with a shape in the service closure.
  */

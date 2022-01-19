@@ -452,7 +452,7 @@
 * Added `smithy-jmespath`, a dependency-less, JMESPath parser with a rich AST that can be used in code generation, and
   performs static analysis of expressions. ([#621](https://github.com/awslabs/smithy/pull/621))
 * Added `smithy-waiters`, containing the `@waitable` trait. This provides information that clients can use to poll
-  until a desired state is reached, or it is determined that that state cannot be reached. ([#623](https://github.com/awslabs/smithy/pull/623))
+  until a desired state is reached, or it is determined that state cannot be reached. ([#623](https://github.com/awslabs/smithy/pull/623))
 * Added `smithy-aws-cloudformation-traits`, containing several (unstable) traits that indicate CloudFormation resources
   and the additional metadata about their properties. ([#579](https://github.com/awslabs/smithy/pull/579))
 * Added `smithy-aws-cloudformation`, containing the (unstable) "cloudformation" build tool that, given a model

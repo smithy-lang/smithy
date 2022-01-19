@@ -246,8 +246,8 @@ HTTP binding serialization
 
 The ``aws.protocols#restXml`` protocol supports all of the HTTP binding traits
 defined in the :ref:`HTTP protocol bindings <http-traits>` specification. The
-serialization formats and and behaviors described for each trait are supported
-as defined in the ``aws.protocols#restXml`` protocol.
+serialization formats and behaviors described for each trait are supported as
+defined in the ``aws.protocols#restXml`` protocol.
 
 
 .. |quoted shape name| replace:: ``aws.protocols#restXml``

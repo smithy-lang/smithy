@@ -100,7 +100,7 @@ runtime {
     }
 }
 
-// First, call validate with no args and create a class list to use use application class data sharing.
+// First, call validate with no args and create a class list to use application class data sharing.
 tasks.register("createClassList", Exec) {
     environment("SMITHY_OPTS", "-XX:DumpLoadedClassList=${project.buildDir}/image/smithy-cli-${imageOs}/lib/smithy.lst")
     commandLine("${project.buildDir}/image/smithy-cli-${imageOs}/bin/smithy", "validate")

@@ -230,7 +230,7 @@ public class JsonSchemaConfig {
     }
 
     /**
-     * Disables OpenAPI features by their property name name (e.g., "allOf").
+     * Disables OpenAPI features by their property name (e.g., "allOf").
      *
      * @param disableFeatures Feature names to disable.
      */

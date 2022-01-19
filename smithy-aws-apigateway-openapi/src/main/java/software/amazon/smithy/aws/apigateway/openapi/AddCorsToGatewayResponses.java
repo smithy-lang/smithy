@@ -83,7 +83,7 @@ final class AddCorsToGatewayResponses implements ApiGatewayMapper {
                 .map(node -> node.expectObjectNode(GATEWAY_RESPONSES_EXTENSION + " must be an object"))
                 .map(node -> updateGatewayResponses(context, corsTrait, node))
                 .orElse(updateGatewayResponses(context, corsTrait));
-        // Add the gateway responses the the `x-amazon-apigateway-gateway-responses` OpenAPI extension.
+        // Add the gateway responses the `x-amazon-apigateway-gateway-responses` OpenAPI extension.
         return openapi.toBuilder()
                 .putExtension(GATEWAY_RESPONSES_EXTENSION, extension)
                 .build();
