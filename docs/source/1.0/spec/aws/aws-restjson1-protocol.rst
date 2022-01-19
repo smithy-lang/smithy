@@ -296,8 +296,8 @@ HTTP binding serialization
 
 The ``aws.protocols#restJson1`` protocol supports all of the HTTP binding traits
 defined in the :ref:`HTTP protocol bindings <http-traits>` specification. The
-serialization formats and and behaviors described for each trait are supported
-as defined in the ``aws.protocols#restJson1`` protocol.
+serialization formats and behaviors described for each trait are supported as
+defined in the ``aws.protocols#restJson1`` protocol.
 
 
 .. |quoted shape name| replace:: ``aws.protocols#restJson1``

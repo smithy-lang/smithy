@@ -97,7 +97,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     }
 
     /**
-     * Changes the Node value the the visitor will evaluate.
+     * Changes the Node value the visitor will evaluate.
      *
      * @param value Value to set.
      */

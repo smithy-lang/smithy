@@ -55,7 +55,7 @@ public interface UseShapeWriterObserver<T extends CodegenWriter<T, ?>> {
      * <p>This method is invoked before the {@code writerConsumer} of
      * {@link CodegenWriterDelegator#useShapeWriter} is called. This method
      * is invoked within a pushed CodegenWriter state, so any state
-     * modifications made to the CodegenWriter will not persist after the the
+     * modifications made to the CodegenWriter will not persist after the
      * {@code writerConsumer} has completed (e.g., calls to methods like
      * {@link CodeWriter#indent} are not persisted).
      *

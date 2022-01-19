@@ -155,7 +155,7 @@ public final class ChangedMemberTarget extends AbstractDiffEvaluator {
                 .collect(Collectors.toCollection(TreeSet::new));
 
         if (!removedTraits.isEmpty()) {
-            joiner.add("The targeted shape no longer has the the following traits: " + removedTraits);
+            joiner.add("The targeted shape no longer has the following traits: " + removedTraits);
         }
 
         Set<ShapeId> addedTraits = targetChange.addedTraits()

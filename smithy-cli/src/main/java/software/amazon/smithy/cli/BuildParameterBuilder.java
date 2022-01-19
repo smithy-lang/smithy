@@ -425,7 +425,7 @@ public final class BuildParameterBuilder {
         public final String classpath;
 
         /**
-         * Smithy build discovery classpath string string.
+         * Smithy build discovery classpath string.
          *
          * <p>This is the classpath that is also specified in the arguments list and
          * is used for model discovery. The value is a colon (:) separate string.

@@ -570,7 +570,7 @@ templates.
     * - literal values
       - Literal values are created when descending into nested properties of
         an ``id``, ``service``, or projection attribute. A literal string is
-        expanded to the the contents of the string with no wrapping quotes.
+        expanded to the contents of the string with no wrapping quotes.
         A literal integer is expanded to the string representation of the
         number. [#comparison]_
     * - :ref:`node <node-attribute>`

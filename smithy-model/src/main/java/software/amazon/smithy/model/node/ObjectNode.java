@@ -368,7 +368,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      * @param name Name of the member to get.
      * @return Returns the node with the given member name.
      * @throws IllegalArgumentException when {@code memberName} is null.
-     * @throws ExpectationNotMetException when {@code memberName} is is not
+     * @throws ExpectationNotMetException when {@code memberName} is not
      *  present in the members map.
      */
     public Node expectMember(String name) {
@@ -382,7 +382,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      * @param name Name of the member to get.
      * @param errorMessage The error message to use if the expectation is not met.
      * @return Returns the node with the given member name.
-     * @throws ExpectationNotMetException when {@code memberName} is is not
+     * @throws ExpectationNotMetException when {@code memberName} is not
      *  present in the members map.
      */
     public Node expectMember(String name, String errorMessage) {
@@ -396,7 +396,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
      * @param name Name of the member to get.
      * @param errorMessage Error message supplier.
      * @return Returns the node with the given member name.
-     * @throws ExpectationNotMetException when {@code memberName} is is not
+     * @throws ExpectationNotMetException when {@code memberName} is not
      *  present in the members map.
      */
     public Node expectMember(String name, Supplier<String> errorMessage) {

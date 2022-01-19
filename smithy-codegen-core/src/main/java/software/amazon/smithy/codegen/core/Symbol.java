@@ -127,7 +127,7 @@ public final class Symbol extends TypedPropertiesBag
      * symbol's declaration in a file with the same name that is
      * returned from this method. Not all languages separate a symbol's
      * definition from its declaration. This method is useful for things
-     * like like C and C++ header files.
+     * like C and C++ header files.
      *
      * <p>This method returns an empty string if no value was provided
      * in the builder.

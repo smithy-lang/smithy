@@ -137,7 +137,7 @@ public final class Context<T extends Trait> {
     }
 
     /**
-     * Gets the the JSON pointer string to a specific shape.
+     * Gets the JSON pointer string to a specific shape.
      *
      * @param shapeId Shape ID to convert into a JSON pointer to a schema component.
      * @return Returns the JSON pointer to this shape as a schema component.

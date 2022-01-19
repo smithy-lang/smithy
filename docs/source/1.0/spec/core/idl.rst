@@ -1296,7 +1296,7 @@ Applying traits
 
 Trait values immediately preceding a shape definition are applied to the
 shape. The shape ID of a trait is *resolved* against :token:`smithy:use_statement`\s
-and the current namespace in exactly the same same way as
+and the current namespace in exactly the same way as
 :ref:`other shape IDs <relative-shape-id>`.
 
 The following example applies the :ref:`sensitive-trait` and

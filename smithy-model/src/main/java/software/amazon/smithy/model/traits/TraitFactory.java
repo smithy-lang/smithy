@@ -55,7 +55,7 @@ public interface TraitFactory {
 
     /**
      * Creates a TraitFactory that discovers TraitService providers using
-     * the the Thread context class loader.
+     * the Thread context class loader.
      *
      * @return Returns the created TraitFactory.
      */
