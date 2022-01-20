@@ -44,8 +44,9 @@ public final class RemovedServiceBoundShape extends AbstractDiffEvaluator {
         List<ValidationEvent> events = new ArrayList<>();
         for (ShapeId id : change.getOldShape().getShapes()) {
             if (!change.getNewShape().getShapes().contains(id)) {
-                events.add(warning(change.getNewShape(), String.format(
-                        "The `%s` shape was unbound from the `%s` service.",
+                events.add(danger(change.getNewShape(), String.format(
+                        "The `%s` shape was unbound from the `%s` service. It may no longer be in the service "
+                        + "closure if it hasn't been bound through another shape.",
                         id, change.getShapeId())));
             }
         }

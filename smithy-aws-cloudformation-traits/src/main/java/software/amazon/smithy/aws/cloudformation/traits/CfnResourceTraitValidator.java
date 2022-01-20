@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
-import software.amazon.smithy.model.selector.PathFinder;
-import software.amazon.smithy.model.selector.Selector;
+import software.amazon.smithy.model.neighbor.RelationshipDirection;
+import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -73,13 +73,15 @@ public final class CfnResourceTraitValidator  extends AbstractValidator {
             CfnResourceTrait trait
     ) {
         List<ValidationEvent> events = new ArrayList<>();
+        Set<ShapeId> serviceShapeIds = new Walker(model).walkShapeIds(service,
+                // Only follow directed relationships so we don't traverse back
+                // up to other service shapes that may be in the model.
+                rel -> rel.getRelationshipType().getDirection() == RelationshipDirection.DIRECTED);
 
         for (ShapeId additionalSchemaId : trait.getAdditionalSchemas()) {
-            Selector selector = Selector.parse("[id = " + additionalSchemaId + "]");
-
-            // Emit an event if we don't have a path to the additionalSchema from the
-            // service shape this resource is bound to.
-            if (PathFinder.create(model).search(service.getId(), selector).isEmpty()) {
+            // Emit an event if we can't walk to the additionalSchema from the service
+            // shape this resource is bound to.
+            if (!serviceShapeIds.contains(additionalSchemaId)) {
                 events.add(error(resource, trait.getSourceLocation(), String.format("The `%s` structure listed as "
                         + "an `additionalSchema` in the `cfnResource` trait on this resource must be bound to the "
                         + "`%s` service that binds this resource.", additionalSchemaId, service.getId())));
