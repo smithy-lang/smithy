@@ -282,9 +282,7 @@ JSON shape serialization
       - JSON object. Each member value provided for the structure is
         serialized as a JSON property where the property name is the same
         as the member name. The :ref:`jsonName-trait` can be used to serialize
-        a property using a custom name. A null value MAY be provided or
-        omitted for a :ref:`boxed <box-trait>` member with no observable
-        difference.
+        a property using a custom name.
     * - ``union``
       - JSON object. A union is serialized identically as a ``structure``
         shape, but only a single member can be set to a non-null value.
