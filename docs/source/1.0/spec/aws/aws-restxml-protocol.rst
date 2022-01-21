@@ -233,6 +233,13 @@ with the ``httpPayload`` trait:
       - ``application/xml``
 
 
+---------------------------
+Default value serialization
+---------------------------
+
+.. include:: aws-default-zero-value.rst.template
+
+
 -----------------------
 XML shape serialization
 -----------------------
