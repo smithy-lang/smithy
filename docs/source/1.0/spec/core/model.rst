@@ -786,22 +786,34 @@ by ``$``, followed by the member name. For example, the shape ID of the ``foo``
 member in the above example is ``smithy.example#MyStructure$foo``.
 
 
-.. _default-values:
+.. optionality:
 
-Default structure member values
--------------------------------
+Structure member optionality
+----------------------------
 
-The values provided for structure members are either always present and set to
-a default value when necessary or *boxed*, meaning a value is optionally present
-with no default value. Members are considered boxed if the member is marked with
-the :ref:`box-trait` or the shape targeted by the member is marked with the box
-trait. Members that target strings, timestamps, and aggregate shapes are always
-considered boxed and have no default values.
+Structure members can use the :ref:`required-trait` and :ref:`default-trait`
+to influence the member's optionality, which can have an impact on the code
+generated from the model.
 
-- The default value of a ``byte``, ``short``, ``integer``, ``long``,
-  ``float``, and ``double`` shape that is not boxed is zero.
-- The default value of a ``boolean`` shape that is not boxed is ``false``.
-- All other shapes are always considered boxed and have no default value.
+Code generated types for structures SHOULD use the
+:ref:`default <default-trait>` and :ref:`required <required-trait>` traits to
+provide member accessors that always return non-null values.
+
+- When the :ref:`default-trait` is present on a member, the corresponding
+  accessor SHOULD always return a non-null value by defaulting missing members
+  with their :ref:`zero values <default-values>`.
+- When the :ref:`required-trait` is present on a member, the corresponding
+  accessor SHOULD always return a non-null value.
+- Smithy implementations in languages like TypeScript that do not provide a kind
+  of constructor or builder to create structures may not be able to set default
+  values, precluding them from being able to treat required and default
+  members as non-null.
+- Because the :ref:`required-trait` can be backward-compatibly removed from
+  members of structures marked with the :ref:`input-trait` (that is, the input
+  of an operation), code generators MUST generate code that does not break if
+  the required trait is removed from these members. For example, this could
+  mean generating these shapes as a kind of builder pattern or using all
+  optional members.
 
 
 .. _union:
