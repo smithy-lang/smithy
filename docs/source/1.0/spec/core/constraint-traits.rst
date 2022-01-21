@@ -597,6 +597,7 @@ in a response.
 .. seealso::
 
    :ref:`recommended-trait`
+   :ref:`default-trait`
 
 
 .. smithy-trait:: smithy.api#uniqueItems
