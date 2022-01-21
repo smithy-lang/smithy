@@ -67,6 +67,150 @@ The :ref:`prelude <prelude>` contains predefined simple shapes that can be
 used in all Smithy models, including boxed and unboxed shapes.
 
 
+.. smithy-trait:: smithy.api#default
+
+.. _default-trait:
+
+-----------------
+``default`` trait
+-----------------
+
+Summary
+    Marks a structure member as having a default, zero value.
+Trait selector
+    ``structure > member :not(> :test(union, structure > :test([trait|required])))``
+
+    A member of a structure that does not target a union or structure.
+Value type
+    Annotation trait.
+
+The default trait can be applied to structure members to indicate that the targeted
+shape has a default, zero value.
+
+The following example defines a structure with a `@default` "title" member that
+has a default zero value:
+
+.. code-block:: smithy
+
+    structure Message {
+        @default
+        title: String // defaults to ""
+    }
+
+Default zero values
+===================
+
+The following table describes the default zero value of each kind of shape.
+Programming languages and code generators that cannot initialize structure
+members with the following default values SHOULD continue to represent those
+members as nullable as this is semantically equivalent to the default zero
+value.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Shape Type
+      - Zero Value
+      - Description
+    * - boolean
+      - ``false``
+      - Boolean false.
+    * - numbers
+      - ``0``
+      - Numeric zero.
+    * - string
+      - empty string
+      - Strings with the enum trait also have the same default value.
+    * - blob
+      - empty blob
+      - This includes blob shapes marked with the :ref:streaming-trait`.
+    * - timestamp
+      - Unix epoch
+      - Zero seconds since the epoch (for example, ``0`` or
+        ``1970-01-01T00:00:00Z``).
+    * - document
+      - ``null``
+      - A null document value.
+    * - list
+      - empty list
+      -
+    * - set
+      - empty set
+      -
+    * - map
+      - empty map
+      -
+    * - structure
+      - empty structure
+      - Structures only have a default zero value if none of the members of
+        the structure are marked with the :ref:`required-trait`.
+    * - union
+      - N/A
+      - Unions have no default value. A union MUST be set to one of its
+        variants for it to be valid, and unions have no default variant.
+
+
+Constraint validation
+=====================
+
+Constraint traits are not evaluated on structure members marked with the
+default trait when the value of the member is the default value.
+
+
+Guidance on code generation
+===========================
+
+Code generated types for structures SHOULD use the default and
+:ref:`required <required-trait>` traits to provide member accessors that always
+return non-null values.
+
+- When the default trait is present on a member, the corresponding accessor
+  SHOULD always return a non-null value by defaulting missing members with
+  their zero values.
+- When the :ref:`required-trait` is present on a member, the corresponding
+  accessor SHOULD always return a non-null value.
+- Smithy implementations in languages like TypeScript that do not provide a kind
+  of constructor or builder to create structures may not be able to set default
+  values, precluding them from being able to treat required and default
+  members as non-null.
+- Because the :ref:`required-trait` can be backward-compatibly removed from
+  members of structures marked with the :ref:`input-trait` (that is, the input
+  of an operation), code generators MUST generate code that does not break if
+  the required trait is removed from these members. For example, this could
+  mean generating these shapes as a kind of builder pattern or using all
+  optional members.
+
+
+Guidance on protocol design
+===========================
+
+Protocols MAY choose if and how the default trait impacts serialization and
+deserialization. However, protocol designers should consider the following
+best-practices:
+
+1. Serializing the default zero value of a member marked with the default
+   trait can lead to unintended information disclosure. For example, consider
+   a newly introduced structure member marked with the default trait that is
+   only exposed to customers of a service that are allowlisted into a private
+   beta. Serializing the zero values of these members could expose the feature
+   to customers that are not part of the private beta because they would see
+   the member serialized in messages they receive from the service.
+2. Protocol deserialization implementations SHOULD tolerate receiving a
+   serialized default zero value. This also accounts for older clients that
+   think a structure member is required, but the service has since transitioned
+   the member to use the default trait.
+3. Client implementations SHOULD tolerate structure members marked as
+   :ref:`required <required-trait>` that have no serialized value. For example,
+   if a service migrates a member from required to default, then older clients
+   SHOULD gracefully handle the zero value of the member being omitted on the
+   wire. In this case, rather than failing, a client SHOULD set the member
+   value to its default zero value. Failing to deserialize the structure is a
+   bad outcome because what the service perceived as a backward compatible
+   change (i.e., replacing the :ref:`required-trait` with the default trait)
+   could break previously generated clients.
+
+
 .. smithy-trait:: smithy.api#error
 .. _error-trait:
 
