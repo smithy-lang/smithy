@@ -11,62 +11,6 @@ the type of a shape.
     :backlinks: none
 
 
-.. smithy-trait:: smithy.api#box
-.. _box-trait:
-
--------------
-``box`` trait
--------------
-
-Summary
-    Indicates that a shape is boxed. When a structure :ref:`member <member>` is
-    marked with this trait or the shape targeted by a structure member is marked
-    with the ``box`` trait, the member may or may not contain a value, and the
-    member has no :ref:`default value <default-values>`.
-
-    Boolean, byte, short, integer, long, float, and double shapes are only
-    considered boxed if they are marked with the ``box`` trait. All other
-    shapes are always considered boxed.
-Trait selector
-    .. code-block:: none
-
-        :test(boolean, byte, short, integer, long, float, double,
-              member > :test(boolean, byte, short, integer, long, float, double))
-
-    *A boolean, byte, short, integer, long, float, double shape or a member that targets one of these shapes*
-Value type
-    Annotation trait.
-
-The ``box`` trait is primarily used to influence code generation. For example,
-in Java, this might mean the value provided as the member of an aggregate
-shape can be set to null. In a language like Rust, this might mean the value
-is wrapped in an `Option type`_.
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        @box
-        integer BoxedInteger
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#BoxedInteger": {
-                    "type": "integer",
-                    "traits": {
-                        "smithy.api#box": {}
-                    }
-                }
-            }
-        }
-
-The :ref:`prelude <prelude>` contains predefined simple shapes that can be
-used in all Smithy models, including boxed and unboxed shapes.
-
-
 .. smithy-trait:: smithy.api#default
 
 .. _default-trait:

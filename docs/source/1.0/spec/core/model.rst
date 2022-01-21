@@ -517,10 +517,8 @@ The following example defines a list with a string member from the
 .. rubric:: List member nullability
 
 Lists are considered *dense* by default, meaning they MAY NOT contain ``null``
-values. A list MAY be made *sparse* by applying the :ref:`sparse-trait`.
-The :ref:`box-trait` is not used to determine if a list is dense or sparse;
-a list with no ``@sparse`` trait is always considered dense. The following
-example defines a sparse list:
+values. A list MAY be made *sparse* by applying the :ref:`sparse-trait`. The
+following example defines a sparse list:
 
 .. tabs::
 
@@ -670,9 +668,7 @@ across programming languages often do not allow ``null`` keys in maps.
 
 Maps values are considered *dense* by default, meaning they MAY NOT contain
 ``null`` values. A map MAY be made *sparse* by applying the
-:ref:`sparse-trait`. The :ref:`box-trait` is not used to determine if a map
-is dense or sparse; a map with no ``@sparse`` trait is always considered
-dense. The following example defines a sparse map:
+:ref:`sparse-trait`. The following example defines a sparse map:
 
 .. tabs::
 
