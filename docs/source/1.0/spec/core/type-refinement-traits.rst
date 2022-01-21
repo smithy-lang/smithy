@@ -41,6 +41,8 @@ has a default zero value:
         title: String // defaults to ""
     }
 
+.. _default-values:
+
 Default zero values
 ===================
 
@@ -100,30 +102,6 @@ Constraint validation
 
 Constraint traits are not evaluated on structure members marked with the
 default trait when the value of the member is the default value.
-
-
-Guidance on code generation
-===========================
-
-Code generated types for structures SHOULD use the default and
-:ref:`required <required-trait>` traits to provide member accessors that always
-return non-null values.
-
-- When the default trait is present on a member, the corresponding accessor
-  SHOULD always return a non-null value by defaulting missing members with
-  their zero values.
-- When the :ref:`required-trait` is present on a member, the corresponding
-  accessor SHOULD always return a non-null value.
-- Smithy implementations in languages like TypeScript that do not provide a kind
-  of constructor or builder to create structures may not be able to set default
-  values, precluding them from being able to treat required and default
-  members as non-null.
-- Because the :ref:`required-trait` can be backward-compatibly removed from
-  members of structures marked with the :ref:`input-trait` (that is, the input
-  of an operation), code generators MUST generate code that does not break if
-  the required trait is removed from these members. For example, this could
-  mean generating these shapes as a kind of builder pattern or using all
-  optional members.
 
 
 Guidance on protocol design
