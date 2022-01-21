@@ -59,6 +59,13 @@ The |quoted shape name| protocol uses the following headers:
         service ``ns.example#MyService`` is ``MyService.MyOp``.
 
 
+---------------------------
+Default value serialization
+---------------------------
+
+.. include:: aws-default-zero-value.rst.template
+
+
 -------------------
 Shape serialization
 -------------------
