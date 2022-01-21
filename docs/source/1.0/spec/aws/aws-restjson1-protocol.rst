@@ -230,6 +230,13 @@ with the ``httpPayload`` trait:
       - ``application/json``
 
 
+---------------------------
+Default value serialization
+---------------------------
+
+.. include:: aws-default-zero-value.rst.template
+
+
 ------------------------
 JSON shape serialization
 ------------------------
