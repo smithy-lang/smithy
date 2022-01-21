@@ -57,15 +57,20 @@ Updating structures
 The following changes to structure shapes are backward-compatible:
 
 #. Adding new optional members to a structure.
-#. Removing the :ref:`required-trait` from a structure member marked with
-   the :ref:`input-trait`.
+#. Removing the :ref:`required-trait` from a structure member when the
+   structure is marked with the :ref:`input-trait`.
+#. Removing the :ref:`required-trait` from a structure member and replacing
+   it with the :ref:`default-trait`.
 
 The following changes to a structure are not backward-compatible:
 
 #. Renaming a member.
 #. Removing a member.
 #. Changing the shape targeted by a member.
-#. Adding the required trait to a member.
+#. Adding the :ref:`required-trait` to a member.
+#. Removing the :ref:`default-trait` from a member.
+#. Adding the :ref:`default-trait` to a member that was not previously marked
+   with the :ref:`required-trait`.
 
 
 Booleans and API evolution
