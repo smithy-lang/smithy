@@ -1095,6 +1095,51 @@ Clients SHOULD use an LRU cache implementation with an initial cache limit of
 Clients SHOULD scope the cache globally or to a specific client instance.
 
 
+.. smithy-trait:: aws.protocols#clientOptional
+
+.. _client-optional-trait:
+
+--------------------------------------
+``aws.protocols#clientOptional`` trait
+--------------------------------------
+
+Summary
+    Indicates that a structure member SHOULD be unconditionally generated as
+    optional, regardless of other traits.
+Trait selector
+    ``structure > member``
+
+    A member of a structure.
+Value type
+    Annotation trait.
+
+When a member is marked with this trait, it SHOULD always be generated as
+optional even if the member also has the :ref:`required-trait` or
+:ref:`default-trait`. This allows documentation generators to indicate that a
+member is required, even if it is not reflected in the generated code. For
+example:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+    namespace smithy.example
+
+    use aws.api#clientOptional
+
+    structure ProductData {
+        @clientOptional
+        @required
+        description: String
+    }
+
+When generating an AWS SDK client for this shape, the
+``ProductData$description`` member SHOULD be generated as an optional member
+rather than required.
+
+.. seealso::
+
+    :ref:`optionality`
+
 .. smithy-trait:: aws.protocols#httpChecksum
 .. _aws.protocols#httpChecksum-trait:
 
