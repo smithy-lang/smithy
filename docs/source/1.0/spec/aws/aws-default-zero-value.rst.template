@@ -1,0 +1,9 @@
+#. To avoid information disclosure, serializers SHOULD omit the default zero
+   value of structure members marked with the :ref:`default-trait`.
+#. Deserializers MUST tolerate receiving the default zero value of a structure
+   member marked with the :ref:`default-trait`.
+#. Client deserializers MUST fill in a default zero value for structure members
+   marked with the :ref:`required-trait` that have no serialized value, and the
+   targeted shape supports zero values. This prevents older clients from
+   failing to deserialize structures at runtime when the :ref:`required-trait`
+   is replaced with the :ref:`default-trait`.

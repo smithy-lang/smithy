@@ -781,7 +781,7 @@ by ``$``, followed by the member name. For example, the shape ID of the ``foo``
 member in the above example is ``smithy.example#MyStructure$foo``.
 
 
-.. optionality:
+.. _optionality:
 
 Structure member optionality
 ----------------------------
