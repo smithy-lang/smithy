@@ -1,3 +1,10 @@
+---------------------------
+Default value serialization
+---------------------------
+
+.. include:: aws-default-zero-value.rst.template
+
+
 ---------------------
 Request serialization
 ---------------------
