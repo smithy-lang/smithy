@@ -24,7 +24,8 @@ Summary
 Trait selector
     ``structure > member :not(> :test(union, structure > :test([trait|required])))``
 
-    A member of a structure that does not target a union or structure.
+    A member of a structure that does not target a union or a structure with
+    required members.
 Value type
     Annotation trait.
 
@@ -48,9 +49,8 @@ Default zero values
 
 The following table describes the default zero value of each kind of shape.
 Programming languages and code generators that cannot initialize structure
-members with the following default values SHOULD continue to represent those
-members as nullable as this is semantically equivalent to the default zero
-value.
+members with the following default values SHOULD represent those members as
+nullable as this is semantically equivalent to the default zero value.
 
 .. list-table::
     :header-rows: 1
@@ -67,10 +67,10 @@ value.
       - Numeric zero.
     * - string
       - empty string
-      - Strings with the enum trait also have the same default value.
+      - Strings with the :ref:`enum-trait` also have an empty string zero value.
     * - blob
       - empty blob
-      - This includes blob shapes marked with the :ref:streaming-trait`.
+      - This includes blob shapes marked with the :ref:`streaming-trait`.
     * - timestamp
       - Unix epoch
       - Zero seconds since the epoch (for example, ``0`` or

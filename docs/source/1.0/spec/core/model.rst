@@ -799,10 +799,8 @@ provide member accessors that always return non-null values.
   with their :ref:`zero values <default-values>`.
 - When the :ref:`required-trait` is present on a member, the corresponding
   accessor SHOULD always return a non-null value.
-- Smithy implementations in languages like TypeScript that do not provide a kind
-  of constructor or builder to create structures may not be able to set default
-  values, precluding them from being able to treat required and default
-  members as non-null.
+- An explicitly provided default zero value and a member that defaults to the
+  zero value are indistinguishable.
 - Because the :ref:`required-trait` can be backward-compatibly removed from
   members of structures marked with the :ref:`input-trait` (that is, the input
   of an operation), code generators MUST generate code that does not break if
