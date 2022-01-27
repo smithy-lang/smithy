@@ -1113,11 +1113,11 @@ Trait selector
 Value type
     Annotation trait.
 
-When a member is marked with this trait, it SHOULD always be generated as
-optional even if the member also has the :ref:`required-trait` or
-:ref:`default-trait`. This allows documentation generators to indicate that a
-member is required, even if it is not reflected in the generated code. For
-example:
+When a member is marked with this trait, non-authoritative tooling like clients
+SHOULD treat the member as optional even if the member also has the
+:ref:`required-trait` or :ref:`default-trait`. This allows documentation
+generators to indicate that a member is required, even if it is not reflected
+in the generated code. For example:
 
 .. code-block:: smithy
 
