@@ -85,8 +85,12 @@ import java.util.regex.Pattern;
  *     programming languages.</li>
  * </ul>
  *
- * <p>Custom formatters can be registered using {@link #putFormatter}. The identifier
- * given to a formatter must match the following ABNF:
+ * <p>Custom formatters can be registered using {@link #putFormatter}. Custom
+ * formatters can be used only within the state they were added. Because states
+ * inherit the formatters of parent states, adding a formatter to the root state
+ * of the CodeWriter allows the formatter to be used in any state.
+ *
+ * <p>The identifier given to a formatter must match the following ABNF:
  *
  * <pre>
  * %x21-23    ; ( '!' - '#' )
@@ -204,12 +208,12 @@ import java.util.regex.Pattern;
  * the text used to indent, a prefix to add before each line, newline character,
  * the number of times to indent, a map of context values, whether or not
  * whitespace is trimmed from the end of newlines, whether or not the automatic
- * insertion of newlines is disabled, and the character used to start code
- * expressions (defaults to {@code $}). State can be pushed onto the stack
- * using {@link #pushState} which copies the current state. Mutations can then
- * be made to the top-most state of the CodeWriter and do not affect previous
- * states. The previous transformation state of the CodeWriter can later be
- * restored using {@link #popState}.
+ * insertion of newlines is disabled, the character used to start code
+ * expressions (defaults to {@code $}), and formatters. State can be pushed onto
+ * the stack using {@link #pushState} which copies the current state. Mutations
+ * can then be made to the top-most state of the CodeWriter and do not affect
+ * previous states. The previous transformation state of the CodeWriter can later
+ * be restored using {@link #popState}.
  *
  * <p>The CodeWriter is stateful, and a prefix can be added before each line.
  * This is useful for doing things like create Javadoc strings:
@@ -245,7 +249,6 @@ import java.util.regex.Pattern;
  *
  * <ul>
  *     <li>The number of successive blank lines to trim.</li>
- *     <li>Code formatters registered through {@link #putFormatter}</li>
  *     <li>Whether or not a trailing newline is inserted or removed from
  *     the result of converting the {@code CodeWriter} to a string.</li>
  * </ul>
@@ -387,7 +390,6 @@ public class CodeWriter {
             'L', (s, i) -> formatLiteral(s),
             'S', (s, i) -> StringUtils.escapeJavaString(formatLiteral(s), i));
 
-    private final CodeFormatter formatter = new CodeFormatter();
     private final Deque<State> states = new ArrayDeque<>();
     private State currentState;
     private boolean trailingNewline = true;
@@ -412,7 +414,6 @@ public class CodeWriter {
         states.push(new State());
         currentState = states.getFirst();
         currentState.builder = new StringBuilder();
-        DEFAULT_FORMATTERS.forEach(formatter::putFormatter);
     }
 
     /**
@@ -425,6 +426,41 @@ public class CodeWriter {
      */
     public static CodeWriter createDefault() {
         return new CodeWriter().trimTrailingSpaces();
+    }
+
+    /**
+     * Copies settings from the given CodeWriter into this CodeWriter.
+     *
+     * <p>The settings of the {@code other} CodeWriter will overwrite
+     * both global and state-based settings of this CodeWriter. Formatters of
+     * the {@code other} CodeWriter will be merged with the formatters of this
+     * CodeWriter, and in the case of conflicts, the formatters of the
+     * {@code other} will take precedence.
+     *
+     * <p>Stateful settings of the {@code other} CodeWriter are copied into
+     * the <em>current</em> state of this CodeWriter. Only the settings of
+     * the top-most state is copied. Other states, and the contents of the
+     * top-most state are not copied.
+     *
+     * <pre>{@code
+     * CodeWriter a = new CodeWriter();
+     * a.setExpressionStart('#');
+     *
+     * CodeWriter b = new CodeWriter();
+     * b.copySettingsFrom(a);
+     *
+     * assert(b.getExpressionStart() == '#');
+     * }</pre>
+     *
+     * @param other CodeWriter to copy settings from.
+     */
+    public void copySettingsFrom(CodeWriter other) {
+        // Copy global settings.
+        trailingNewline = other.trailingNewline;
+        trimBlankLines = other.trimBlankLines;
+
+        // Copy the current state settings of other into the current state.
+        currentState.copyStateFrom(other.currentState);
     }
 
     /**
@@ -456,7 +492,8 @@ public class CodeWriter {
     }
 
     /**
-     * Adds a custom formatter expression to the {@code CodeWriter}.
+     * Adds a custom formatter expression to the current state of the
+     * {@code CodeWriter}.
      *
      * <p>The provided {@code identifier} string must match the following ABNF:
      *
@@ -468,11 +505,14 @@ public class CodeWriter {
      * </pre>
      *
      * @param identifier Formatter identifier to associate with this formatter.
-     * @param formatter Formatter function that formats the given object as a String.
+     * @param formatFunction Formatter function that formats the given object as a String.
+     *                       The formatter is give the value to format as an object
+     *                       (use .toString to access the string contents) and the
+     *                       current indentation string of the CodeWriter.
      * @return Returns the CodeWriter.
      */
-    public final CodeWriter putFormatter(char identifier, BiFunction<Object, String, String> formatter) {
-        this.formatter.putFormatter(identifier, formatter);
+    public final CodeWriter putFormatter(char identifier, BiFunction<Object, String, String> formatFunction) {
+        this.currentState.putFormatter(identifier, formatFunction);
         return this;
     }
 
@@ -850,6 +890,15 @@ public class CodeWriter {
     }
 
     /**
+     * Gets the character used to represent newlines in the current state.
+     *
+     * @return Returns the newline string.
+     */
+    public String getNewline() {
+        return currentState.newline;
+    }
+
+    /**
      * Sets the text used for indentation (defaults to four spaces).
      *
      * @param indentText Indentation text.
@@ -858,6 +907,15 @@ public class CodeWriter {
     public final CodeWriter setIndentText(String indentText) {
         currentState.indent(0, indentText);
         return this;
+    }
+
+    /**
+     * Gets the text used for indentation (defaults to four spaces).
+     *
+     * @return Returns the indentation string.
+     */
+    public final String getIndentText() {
+        return currentState.indentText;
     }
 
     /**
@@ -878,6 +936,15 @@ public class CodeWriter {
     public final CodeWriter trimTrailingSpaces(boolean trimTrailingSpaces) {
         currentState.trimTrailingSpaces = trimTrailingSpaces;
         return this;
+    }
+
+    /**
+     * Returns true if the trailing spaces in the current state are trimmed.
+     *
+     * @return Returns the trailing spaces setting of the current state.
+     */
+    public boolean getTrimTrailingSpaces() {
+        return currentState.trimTrailingSpaces;
     }
 
     /**
@@ -905,6 +972,18 @@ public class CodeWriter {
     }
 
     /**
+     * Returns the number of allowed consecutive newlines that are not
+     * trimmed by the CodeWriter when written to a string.
+     *
+     * @return Returns the number of allowed consecutive newlines. -1 means
+     *   that no newlines are trimmed. 0 allows no blank lines. 1 or more
+     *   allows for no more than N consecutive blank lines.
+     */
+    public int getTrimBlankLines() {
+        return trimBlankLines;
+    }
+
+    /**
      * Configures the CodeWriter to always append a newline at the end of
      * the text if one is not already present.
      *
@@ -922,13 +1001,23 @@ public class CodeWriter {
      *
      * <p>This setting is not captured as part of push/popState.
      *
-     * @param trailingNewline The newline behavior. True to add, false to strip.
+     * @param trailingNewline True if a newline is added.
      *
      * @return Returns the CodeWriter.
      */
     public final CodeWriter insertTrailingNewline(boolean trailingNewline) {
         this.trailingNewline = trailingNewline;
         return this;
+    }
+
+    /**
+     * Checks if the CodeWriter inserts a trailing newline (if necessary) when
+     * converted to a string.
+     *
+     * @return The newline behavior (true to insert a trailing newline).
+     */
+    public boolean getInsertTrailingNewline() {
+        return trailingNewline;
     }
 
     /**
@@ -941,6 +1030,16 @@ public class CodeWriter {
     public final CodeWriter setNewlinePrefix(String newlinePrefix) {
         currentState.newlinePrefix = newlinePrefix;
         return this;
+    }
+
+    /**
+     * Gets the prefix to prepend to every line after a new line is added
+     * (except for an inserted trailing newline).
+     *
+     * @return Returns the newline prefix string.
+     */
+    public String getNewlinePrefix() {
+        return currentState.newlinePrefix;
     }
 
     /**
@@ -961,6 +1060,15 @@ public class CodeWriter {
     public final CodeWriter indent(int levels) {
         currentState.indent(levels, null);
         return this;
+    }
+
+    /**
+     * Gets the indentation level of the current state.
+     *
+     * @return Returns the indentation level of the current state.
+     */
+    public int getIndentLevel() {
+        return currentState.indentation;
     }
 
     /**
@@ -1194,6 +1302,7 @@ public class CodeWriter {
      * @see #putFormatter
      */
     public final String format(Object content, Object... args) {
+        CodeFormatter formatter = currentState.getCodeFormatter();
         return formatter.format(currentState.expressionStart, content, currentState.indentText, this, args);
     }
 
@@ -1389,6 +1498,12 @@ public class CodeWriter {
         private String newline = "\n";
         private char expressionStart = '$';
 
+        /** The formatter of the parent state (null for the root state). */
+        private CodeFormatter parentFormatter;
+
+        /** The formatter of the current state (null until a formatter is added to the state). */
+        private CodeFormatter stateFormatter;
+
         private transient String sectionName;
 
         /**
@@ -1409,12 +1524,22 @@ public class CodeWriter {
         private Map<String, List<Consumer<Object>>> interceptors = MapUtils.of();
         private transient boolean copiedInterceptors = false;
 
-        State() {}
+        State() {
+            // A state created without copying from another needs a root formatter that
+            // has all of the default formatter functions registered.
+            stateFormatter = new CodeFormatter();
+            DEFAULT_FORMATTERS.forEach(stateFormatter::putFormatter);
+        }
 
-        private State(State copy) {
+        @SuppressWarnings("CopyConstructorMissesField")
+        State(State copy) {
+            copyStateFrom(copy);
+            this.builder = copy.builder;
+        }
+
+        private void copyStateFrom(State copy) {
             this.newline = copy.newline;
             this.expressionStart = copy.expressionStart;
-            this.builder = copy.builder;
             this.context = copy.context;
             this.indentText = copy.indentText;
             this.leadingIndentString = copy.leadingIndentString;
@@ -1423,11 +1548,26 @@ public class CodeWriter {
             this.trimTrailingSpaces = copy.trimTrailingSpaces;
             this.interceptors = copy.interceptors;
             this.disableNewline = copy.disableNewline;
+
+            // Copy the resolved formatter of "copy" as the parent formatter of this State.
+            this.parentFormatter = copy.getCodeFormatter();
         }
 
         @Override
         public String toString() {
             return builder == null ? "" : builder.toString();
+        }
+
+        private CodeFormatter getCodeFormatter() {
+            return stateFormatter != null ? stateFormatter : parentFormatter;
+        }
+
+        private void putFormatter(char identifier, BiFunction<Object, String, String> formatFunction) {
+            if (stateFormatter == null) {
+                stateFormatter = new CodeFormatter(parentFormatter);
+            }
+
+            stateFormatter.putFormatter(identifier, formatFunction);
         }
 
         private void mutateContext() {
