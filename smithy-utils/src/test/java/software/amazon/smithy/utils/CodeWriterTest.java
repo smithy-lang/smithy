@@ -821,4 +821,75 @@ public class CodeWriterTest {
 
         assertThat(writer.toString(), equalTo("Hi.Hello"));
     }
+
+    @Test
+    public void formattersOnRootStateWorkOnAllStates() {
+        CodeWriter writer = new CodeWriter();
+        writer.putFormatter('X', (value, indent) -> value.toString().toUpperCase(Locale.ENGLISH));
+        writer.writeInline("$X", "hi");
+
+        writer.pushState();
+        writer.writeInline(" $X", "there");
+        writer.popState();
+
+        assertThat(writer.toString(), equalTo("HI THERE\n"));
+    }
+
+    @Test
+    public void formattersArePerState() {
+        CodeWriter writer = new CodeWriter();
+        // X is uppercase in all states unless overridden.
+        writer.putFormatter('X', (value, indent) -> value.toString().toUpperCase(Locale.ENGLISH));
+        writer.writeInline("$X", "salutations");
+
+        writer.pushState();
+        // Make X lowercase in this state.
+        writer.putFormatter('X', (value, indent) -> value.toString().toLowerCase(Locale.ENGLISH));
+        // Add Y but only to this state.
+        writer.putFormatter('Y', (value, indent) -> value.toString());
+        writer.writeInline(" $X $Y", "AND", "gReEtInGs");
+        writer.popState();
+
+        // Ensure that X is restored to writing uppercase.
+        writer.writeInline("$X", ", friend");
+
+        assertThat(writer.toString(), equalTo("SALUTATIONS and gReEtInGs, FRIEND\n"));
+    }
+
+    @Test
+    public void canCopySettingsIntoWriter() {
+        CodeWriter a = new CodeWriter();
+        a.setNewline("\r\n");
+        a.setExpressionStart('#');
+        a.setIndentText("  ");
+        a.setNewlinePrefix(".");
+        a.trimTrailingSpaces(true);
+        a.trimBlankLines(2);
+        a.insertTrailingNewline(false);
+
+        CodeWriter b = new CodeWriter();
+        b.copySettingsFrom(a);
+        b.indent();
+
+        assertThat(b.getExpressionStart(), equalTo('#'));
+        assertThat(b.getNewline(), equalTo("\r\n"));
+        assertThat(b.getIndentText(), equalTo("  "));
+        assertThat(b.getNewlinePrefix(), equalTo("."));
+        assertThat(b.getTrimTrailingSpaces(), equalTo(true));
+        assertThat(b.getTrimBlankLines(), equalTo(2));
+        assertThat(b.getInsertTrailingNewline(), equalTo(false));
+        assertThat(b.getIndentLevel(), equalTo(1));
+        assertThat(a.getIndentLevel(), equalTo(0));
+    }
+
+    @Test
+    public void copyingSettingsDoesNotMutateOtherWriter() {
+        CodeWriter a = new CodeWriter();
+        CodeWriter b = new CodeWriter();
+        b.copySettingsFrom(a);
+        b.writeInline("Hello");
+
+        assertThat(b.toString(), equalTo("Hello\n"));
+        assertThat(a.toString(), equalTo("\n"));
+    }
 }

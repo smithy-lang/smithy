@@ -32,13 +32,43 @@ final class CodeFormatter {
             'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '[', ']', '^', '_', '`', '{', '|', '}', '~');
 
     private final Map<Character, BiFunction<Object, String, String>> formatters = new HashMap<>();
+    private final CodeFormatter parentFormatter;
 
-    void putFormatter(Character identifier, BiFunction<Object, String, String> formatter) {
+    CodeFormatter() {
+        this(null);
+    }
+
+    /**
+     * Create a CodeFormatter that also uses formatters of a parent CodeFormatter.
+     *
+     * @param parentFormatter Optional parent CodeFormatter to query when expanding formatters.
+     */
+    CodeFormatter(CodeFormatter parentFormatter) {
+        this.parentFormatter = parentFormatter;
+    }
+
+    void putFormatter(Character identifier, BiFunction<Object, String, String> formatFunction) {
         if (!VALID_FORMATTER_CHARS.contains(identifier)) {
             throw new IllegalArgumentException("Invalid formatter identifier: " + identifier);
         }
 
-        formatters.put(identifier, formatter);
+        formatters.put(identifier, formatFunction);
+    }
+
+    /**
+     * Gets a formatter function for a specific character.
+     *
+     * @param identifier Formatter identifier.
+     * @return Returns the found formatter, or null.
+     */
+    BiFunction<Object, String, String> getFormatter(char identifier) {
+        BiFunction<Object, String, String> result = formatters.get(identifier);
+
+        if (result == null && parentFormatter != null) {
+            result = parentFormatter.getFormatter(identifier);
+        }
+
+        return result;
     }
 
     String format(char expressionStart, Object content, String indent, CodeWriter writer, Object... args) {
@@ -211,12 +241,14 @@ final class CodeFormatter {
     }
 
     private String applyFormatter(State state, char formatter, Object argument, int startingBraceColumn) {
-        if (!formatters.containsKey(formatter)) {
+        BiFunction<Object, String, String> formatFunction = getFormatter(formatter);
+
+        if (formatFunction == null) {
             throw new IllegalArgumentException(String.format(
                     "Unknown formatter `%s` found in format string: %s", formatter, state));
         }
 
-        String result = formatters.get(formatter).apply(argument, state.indent);
+        String result = formatFunction.apply(argument, state.indent);
 
         if (!state.eof() && state.c() == '@') {
             if (startingBraceColumn == -1) {
