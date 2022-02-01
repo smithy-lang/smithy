@@ -1,6 +1,6 @@
-=================
+-----------------
 Constraint traits
-=================
+-----------------
 
 Constraint traits are used to constrain the values that can be provided
 for a shape.
@@ -14,9 +14,8 @@ for a shape.
 .. smithy-trait:: smithy.api#enum
 .. _enum-trait:
 
---------------
 ``enum`` trait
---------------
+==============
 
 Summary
     Constrains the acceptable values of a string to a fixed set.
@@ -161,9 +160,8 @@ The following example defines an enum of valid string values for ``MyString``.
 .. smithy-trait:: smithy.api#idRef
 .. _idref-trait:
 
----------------
 ``idRef`` trait
----------------
+===============
 
 Summary
     Indicates that a string value MUST contain a valid absolute
@@ -320,9 +318,8 @@ Given the following model,
 
 .. _length-trait:
 
-----------------
 ``length`` trait
-----------------
+================
 
 Summary
     Constrains a shape to minimum and maximum number of elements or size.
@@ -392,9 +389,8 @@ blob         The size of the blob in bytes
 .. smithy-trait:: smithy.api#pattern
 .. _pattern-trait:
 
------------------
 ``pattern`` trait
------------------
+=================
 
 Summary
     Restricts string shape values to a specified regular expression.
@@ -458,9 +454,8 @@ languages.
 .. smithy-trait:: smithy.api#private
 .. _private-trait:
 
------------------
 ``private`` trait
------------------
+=================
 
 Summary
     Prevents models defined in a different namespace from referencing the
@@ -479,9 +474,8 @@ of the targeted shape.
 .. smithy-trait:: smithy.api#range
 .. _range-trait:
 
----------------
 ``range`` trait
----------------
+===============
 
 Summary
     Restricts allowed values of byte, short, integer, long, float, double,
@@ -543,9 +537,8 @@ of the targeted numeric shape to which it is applied.
 .. smithy-trait:: smithy.api#required
 .. _required-trait:
 
-------------------
 ``required`` trait
-------------------
+==================
 
 Summary
     Marks a structure member as required, meaning a value for the member MUST
@@ -601,9 +594,8 @@ in a response.
 .. smithy-trait:: smithy.api#uniqueItems
 .. _uniqueItems:
 
----------------------
 ``uniqueItems`` trait
----------------------
+=====================
 
 .. warning:
 
@@ -647,9 +639,8 @@ Value type
 
 .. _precedence:
 
-----------------
 Trait precedence
-----------------
+================
 
 Some constraints can be applied to shapes as well as structure members. If a
 constraint of the same type is applied to a structure member and the shape
