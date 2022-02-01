@@ -81,17 +81,7 @@ Table of contents
 
     model
     prelude-model
-    constraint-traits
-    documentation-traits
-    type-refinement-traits
-    protocol-traits
-    auth-traits
-    behavior-traits
-    resource-traits
-    stream-traits
-    http-traits
-    xml-traits
-    endpoint-traits
+    traits
     selectors
     model-validation
     idl

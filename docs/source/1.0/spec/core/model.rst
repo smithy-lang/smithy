@@ -2444,9 +2444,10 @@ shape being validated.
 Defining traits
 ===============
 
-Traits are defined inside of a namespace by applying ``smithy.api#trait`` to
-a shape. This trait can only be applied to simple types, ``list``, ``map``,
-``set``, ``structure``, and ``union`` shapes.
+Traits are defined inside of a namespace by applying
+:ref:`smithy.api#trait <trait-trait>` to a shape. This trait can only be
+applied to simple types, ``list``, ``map``, ``set``, ``structure``, and
+``union`` shapes.
 
 The following example defines a trait with a :ref:`shape ID <shape-id>` of
 ``smithy.example#myTraitName`` and applies it to ``smithy.example#MyString``:
@@ -2484,40 +2485,6 @@ The following example defines a trait with a :ref:`shape ID <shape-id>` of
                 }
             }
         }
-
-.. rubric:: Trait properties
-
-``smithy.api#trait`` is a structure that supports the following members:
-
-.. list-table::
-    :header-rows: 1
-    :widths: 10 20 70
-
-    * - Property
-      - Type
-      - Description
-    * - selector
-      - ``string``
-      - A valid :ref:`selector <selectors>` that defines where the trait
-        can be applied. For example, a ``selector`` set to ``:test(list, map)``
-        means that the trait can be applied to a :ref:`list <list>` or
-        :ref:`map <map>` shape. This value defaults to ``*`` if not set,
-        meaning the trait can be applied to any shape.
-    * - conflicts
-      - [``string``]
-      - Defines the shape IDs of traits that MUST NOT be applied to the same
-        shape as the trait being defined. This allows traits to be defined as
-        mutually exclusive. Provided shape IDs MAY target unknown traits
-        that are not defined in the model.
-    * - structurallyExclusive
-      - ``string``
-      - One of "member" or "target". When set to "member", only a single
-        member of a structure can be marked with the trait. When set to
-        "target", only a single member of a structure can target a shape
-        marked with this trait.
-    * - breakingChanges
-      - [:ref:`BreakingChangeRule <trait-breaking-change-rules>`]
-      - Defines the backward compatibility rules of the trait.
 
 The following example defines two custom traits: ``beta`` and
 ``structuredTrait``:
