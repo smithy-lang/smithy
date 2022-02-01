@@ -1,6 +1,6 @@
-======================
+----------------------
 Type refinement traits
-======================
+----------------------
 
 Type refinement traits are traits that significantly refine, or change,
 the type of a shape.
@@ -15,9 +15,8 @@ the type of a shape.
 
 .. _default-trait:
 
------------------
 ``default`` trait
------------------
+=================
 
 Summary
     Marks a structure member as having a default, zero value.
@@ -45,7 +44,7 @@ has a default zero value:
 .. _default-values:
 
 Default zero values
-===================
+-------------------
 
 The following table describes the default zero value of each kind of shape.
 Programming languages and code generators that cannot initialize structure
@@ -98,14 +97,14 @@ nullable as this is semantically equivalent to the default zero value.
 
 
 Constraint validation
-=====================
+---------------------
 
 Constraint traits are not evaluated on structure members marked with the
 default trait when the value of the member is the default value.
 
 
 Guidance on protocol design
-===========================
+---------------------------
 
 Protocols MAY choose if and how the default trait impacts serialization and
 deserialization. However, protocol designers should consider the following
@@ -136,9 +135,8 @@ best-practices:
 .. smithy-trait:: smithy.api#error
 .. _error-trait:
 
----------------
 ``error`` trait
----------------
+===============
 
 Summary
     Indicates that a structure shape represents an error. All shapes
@@ -207,9 +205,8 @@ in Java).
 .. smithy-trait:: smithy.api#input
 .. _input-trait:
 
----------------
 ``input`` trait
----------------
+===============
 
 Summary
     Specializes a structure for use only as the input of a single operation.
@@ -237,9 +234,8 @@ ways that would otherwise require complex model transformations.
 .. smithy-trait:: smithy.api#output
 .. _output-trait:
 
-----------------
 ``output`` trait
-----------------
+================
 
 Summary
     Specializes a structure for use only as the output of a single operation.
@@ -266,9 +262,8 @@ ways that would otherwise require complex model transformations.
 .. smithy-trait:: smithy.api#sparse
 .. _sparse-trait:
 
-----------------
 ``sparse`` trait
-----------------
+================
 
 Summary
     Indicates that lists and maps MAY contain ``null`` values. The ``sparse``
@@ -342,9 +337,8 @@ The following example defines a :ref:`map <map>` shape that MAY contain
 
 .. _mixin-trait:
 
----------------
 ``mixin`` trait
----------------
+===============
 
 Summary
     Indicates that the targeted shape is a mixin.
