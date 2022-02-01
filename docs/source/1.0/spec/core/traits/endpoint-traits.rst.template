@@ -1,8 +1,8 @@
 .. _endpoint-traits:
 
-===============
+---------------
 Endpoint Traits
-===============
+---------------
 
 Smithy provides various endpoint binding traits that can be used to configure
 request endpoints.
@@ -16,9 +16,8 @@ request endpoints.
 .. smithy-trait:: smithy.api#endpoint
 .. _endpoint-trait:
 
-------------------
 ``endpoint`` trait
-------------------
+==================
 
 Summary
     Configures a custom operation endpoint.
@@ -75,7 +74,7 @@ The following example defines an operation that uses a custom endpoint:
 .. _endpoint-Labels:
 
 Labels
-======
+------
 
 ``hostPrefix`` patterns MAY contain label placeholders. :dfn:`Labels` consist
 of label name characters surrounded by open and closed braces (for example,
@@ -227,7 +226,7 @@ invalid because the ``{foo}`` and ``{bar}`` labels are adjacent:
 .. _endpoint-ClientBehavior:
 
 Client Behavior
-===============
+---------------
 
 If an API operation is decorated with an endpoint trait, a client MUST expand
 the ``hostPrefix`` template and prepend the expanded value to the client's
@@ -322,9 +321,8 @@ header will contain the value ``abc``.
 .. smithy-trait:: smithy.api#hostLabel
 .. _hostLabel-trait:
 
--------------------
 ``hostLabel`` trait
--------------------
+===================
 
 Summary
     Binds a top-level operation input structure member to a label in the
