@@ -1,8 +1,8 @@
 .. _stream-traits:
 
-=================
+-----------------
 Streaming Traits
-=================
+-----------------
 
 A streaming shape is a shape which represents data that is not returned all at
 once. This includes both streaming binary data and event streams.
@@ -16,9 +16,8 @@ once. This includes both streaming binary data and event streams.
 .. smithy-trait:: smithy.api#streaming
 .. _streaming-trait:
 
--------------------
 ``streaming`` trait
--------------------
+===================
 
 Summary
     Indicates that the data represented by the shape needs to be streamed.
@@ -66,9 +65,8 @@ Validation
 .. smithy-trait:: smithy.api#requiresLength
 .. _requiresLength-trait:
 
-------------------------
 ``requiresLength`` trait
-------------------------
+========================
 
 Summary
     Indicates that the streaming blob MUST be finite and has a known size.
@@ -96,9 +94,8 @@ Value type
 
 .. _event-streams:
 
--------------
 Event streams
--------------
+=============
 
 An event stream is an abstraction that allows multiple messages to be sent
 asynchronously between a client and server. Event streams support both duplex
@@ -188,7 +185,7 @@ stream in its output:
 
 
 Modeled errors in event streams
-===============================
+-------------------------------
 
 Event streams MAY target shapes marked with the :ref:`error-trait`. These
 events are considered terminal errors and MUST terminate the event stream
@@ -198,7 +195,7 @@ when received.
 .. _initial-messages:
 
 Initial messages
-================
+----------------
 
 An *initial message* is comprised of the top-level input or output members
 of an operation that do not target the event stream union. Initial
@@ -318,7 +315,7 @@ received for an initial message that contains only optional members.
 .. _event-stream-client-behavior:
 
 Client behavior
-===============
+---------------
 
 Clients that send or receive event streams are expected to
 provide an abstraction to end-users that allows values to be produced or
@@ -368,7 +365,7 @@ provided).
 .. _event-message-serialization:
 
 Event message serialization
-===========================
+---------------------------
 
 While the framing and serialization of an event stream is protocol-specific,
 traits can be used to influence the serialization of an event stream event.
@@ -467,7 +464,7 @@ based protocol, the event payload is serialized as a JSON object:
         }
 
 Event stream traits
-===================
+-------------------
 
 .. smithy-trait:: smithy.api#eventHeader
 .. _eventheader-trait:

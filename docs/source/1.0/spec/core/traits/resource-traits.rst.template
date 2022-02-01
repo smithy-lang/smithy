@@ -1,6 +1,6 @@
-===============
+---------------
 Resource traits
-===============
+---------------
 
 Resource traits augment resources and resource operation semantics.
 
@@ -13,9 +13,8 @@ Resource traits augment resources and resource operation semantics.
 .. smithy-trait:: smithy.api#noReplace
 .. _noReplace-trait:
 
--------------------
 ``noReplace`` trait
--------------------
+===================
 
 Summary
     Indicates that the :ref:`put lifecycle <put-lifecycle>` operation of a
@@ -80,9 +79,8 @@ to call ``CreateTable`` on a table that already exists will return an error.
 .. smithy-trait:: smithy.api#references
 .. _references-trait:
 
---------------------
 ``references`` trait
---------------------
+====================
 
 Summary
     Defines a design-time reference to :ref:`resource` shapes. Resource
@@ -255,7 +253,7 @@ property in the reference.
 .. _implicit-ids:
 
 Implicit ids
-============
+------------
 
 The "ids" property of a reference MAY be omitted in any of the following
 conditions:
@@ -269,9 +267,8 @@ conditions:
 .. smithy-trait:: smithy.api#resourceIdentifier
 .. _resourceIdentifier-trait:
 
-----------------------------
 ``resourceIdentifier`` trait
-----------------------------
+============================
 
 Summary
     Indicates that the targeted structure member provides an identifier for a

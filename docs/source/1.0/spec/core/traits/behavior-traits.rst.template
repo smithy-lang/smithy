@@ -1,6 +1,6 @@
-===============
+---------------
 Behavior traits
-===============
+---------------
 
 Behavior traits are used to alter the behavior of operations.
 
@@ -13,9 +13,8 @@ Behavior traits are used to alter the behavior of operations.
 .. smithy-trait:: smithy.api#idempotencyToken
 .. _idempotencyToken-trait:
 
---------------------------
 ``idempotencyToken`` trait
---------------------------
+==========================
 
 Summary
     Defines the input member of an operation that is used by the server to
@@ -58,9 +57,8 @@ member if and only if the member is not explicitly provided.
 .. smithy-trait:: smithy.api#idempotent
 .. _idempotent-trait:
 
---------------------
 ``idempotent`` trait
---------------------
+====================
 
 Summary
     Indicates that the intended effect on the server of multiple identical
@@ -90,9 +88,8 @@ Conflicts with
 .. smithy-trait:: smithy.api#readonly
 .. _readonly-trait:
 
-------------------
 ``readonly`` trait
-------------------
+==================
 
 Summary
     Indicates that an operation is effectively read-only.
@@ -115,9 +112,8 @@ Conflicts with
 .. smithy-trait:: smithy.api#retryable
 .. _retryable-trait:
 
--------------------
 ``retryable`` trait
--------------------
+===================
 
 Summary
     Indicates that an error MAY be retried by the client.
@@ -159,9 +155,8 @@ The retryable trait is a structure that contains the following members:
 .. smithy-trait:: smithy.api#paginated
 .. _paginated-trait:
 
--------------------
 ``paginated`` trait
--------------------
+===================
 
 Summary
     The ``paginated`` trait indicates that an operation intentionally limits
@@ -373,7 +368,7 @@ wrapper where the output token and items are referenced by paths.
 
 
 Pagination Behavior
-===================
+-------------------
 
 #. If an operation returns a naturally size-limited subset of data
    (e.g., a top-ten list of users sorted by rank), then the operation
@@ -395,7 +390,7 @@ Pagination Behavior
 
 
 Client behavior
-===============
+---------------
 
 Smithy clients SHOULD provide abstractions that can be used to automatically
 iterate over paginated responses. The following steps describe the process a
@@ -425,7 +420,7 @@ client MUST follow when iterating over paginated API calls:
 
 
 Continuation tokens
-===================
+-------------------
 
 The ``paginated`` trait indicates that an operation utilizes cursor-based
 pagination. When a paginated operation truncates its output, it MUST return a
@@ -479,7 +474,7 @@ to request additional results from the operation.
 
 
 Backward compatibility
-======================
+----------------------
 
 Many tools use the ``paginated`` trait to expose additional functionality to
 things like generated code. To support these use cases, the following changes
@@ -502,9 +497,8 @@ The following changes are considered backward compatible:
 .. smithy-trait:: smithy.api#httpChecksumRequired
 .. _httpChecksumRequired-trait:
 
-------------------------------
 ``httpChecksumRequired`` trait
-------------------------------
+==============================
 
 Summary
     Indicates that an operation requires a checksum in its HTTP request. By
