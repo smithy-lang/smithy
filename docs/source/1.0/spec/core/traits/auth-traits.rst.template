@@ -1,8 +1,8 @@
 .. _authentication-traits:
 
-=====================
+---------------------
 Authentication traits
-=====================
+---------------------
 
 Authentication traits define how a client authenticates with a service.
 
@@ -15,9 +15,8 @@ Authentication traits define how a client authenticates with a service.
 .. smithy-trait:: smithy.api#authDefinition
 .. _authDefinition-trait:
 
-------------------------
 ``authDefinition`` trait
-------------------------
+========================
 
 Summary
     A meta-trait that marks a trait as an authentication scheme. Traits
@@ -117,9 +116,8 @@ can also support configuration settings.
 .. smithy-trait:: smithy.api#httpBasicAuth
 .. _httpBasicAuth-trait:
 
------------------------
 ``httpBasicAuth`` trait
------------------------
+=======================
 
 Summary
     Indicates that a service supports HTTP Basic Authentication as
@@ -140,9 +138,8 @@ Value type
 .. smithy-trait:: smithy.api#httpDigestAuth
 .. _httpDigestAuth-trait:
 
-------------------------
 ``httpDigestAuth`` trait
-------------------------
+========================
 
 Summary
     Indicates that a service supports HTTP Digest Authentication as defined
@@ -163,9 +160,8 @@ Value type
 .. smithy-trait:: smithy.api#httpBearerAuth
 .. _httpBearerAuth-trait:
 
-------------------------
 ``httpBearerAuth`` trait
-------------------------
+========================
 
 Summary
     Indicates that a service supports HTTP Bearer Authentication as defined
@@ -186,9 +182,8 @@ Value type
 .. smithy-trait:: smithy.api#httpApiKeyAuth
 .. _httpApiKeyAuth-trait:
 
-------------------------
 ``httpApiKeyAuth`` trait
-------------------------
+========================
 
 Summary
     Indicates that a service supports HTTP-specific authentication using an
@@ -245,9 +240,8 @@ the HTTP ``Authorization`` header:
 .. smithy-trait:: smithy.api#optionalAuth
 .. _optionalAuth-trait:
 
-----------------------
 ``optionalAuth`` trait
-----------------------
+======================
 
 Summary
     Indicates that an operation MAY be invoked without authentication,
@@ -284,9 +278,8 @@ The following example defines an operation that does not support
 .. smithy-trait:: smithy.api#auth
 .. _auth-trait:
 
---------------
 ``auth`` trait
---------------
+==============
 
 Summary
     Defines the priority ordered authentication schemes supported by a service

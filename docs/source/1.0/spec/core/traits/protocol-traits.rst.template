@@ -1,6 +1,6 @@
-===============
+---------------
 Protocol traits
-===============
+---------------
 
 Serialization and protocol traits define how data is transferred over
 the wire.
@@ -14,9 +14,8 @@ the wire.
 .. smithy-trait:: smithy.api#protocolDefinition
 .. _protocolDefinition-trait:
 
-----------------------------
 ``protocolDefinition`` trait
-----------------------------
+============================
 
 Summary
     A meta-trait that marks a trait as a protocol definition trait. Traits
@@ -137,9 +136,8 @@ support configuration settings.
 .. smithy-trait:: smithy.api#jsonName
 .. _jsonName-trait:
 
-------------------
 ``jsonName`` trait
-------------------
+==================
 
 Summary
     Allows a serialized object property name in a JSON document to differ from
@@ -212,9 +210,8 @@ following document:
 .. smithy-trait:: smithy.api#mediaType
 .. _mediaType-trait:
 
--------------------
 ``mediaType`` trait
--------------------
+===================
 
 Summary
     Describes the contents of a blob or string shape using a design-time
@@ -278,9 +275,8 @@ application to function.
 .. smithy-trait:: smithy.api#timestampFormat
 .. _timestampFormat-trait:
 
--------------------------
 ``timestampFormat`` trait
--------------------------
+=========================
 
 Summary
     Defines a custom timestamp serialization format.
