@@ -1077,6 +1077,18 @@ dt:target, .highlighted {
   /* Hide the header, footer, relations, and table of contents */
   header, footer, .relations, .contents { display: none; }
 
+  .width-wrapper {
+    max-width: 100%;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .page-container > .width-wrapper {
+    display: block;
+  }
+
   /* Make text and padding a lot tighter */
   body {
     font-size: 12px;

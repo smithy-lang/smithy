@@ -1,8 +1,8 @@
 .. _xml-binding-traits:
 
-==================
+------------------
 XML binding traits
-==================
+------------------
 
 This document defines how to bind Smithy shapes to XML documents. Smithy
 defines several traits that are used to influence the serialization of
@@ -16,9 +16,8 @@ shapes with XML based protocols.
 
 .. _serializing-xml-shapes:
 
-----------------------
 Serializing XML shapes
-----------------------
+======================
 
 This document provides recommendations on how Smithy structures and
 shapes within structures SHOULD be serialized with XML based protocols;
@@ -29,7 +28,7 @@ if necessary.
 .. _xml-structure-and-union-serialization:
 
 Structure and union serialization
-=================================
+---------------------------------
 
 All XML serialization starts with a structure or union. The shape name of a
 structure/union is used as the outermost XML element name. Members of a
@@ -54,21 +53,21 @@ The XML serialization is:
 
 
 Custom XML element names
-------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Structure/union member element names can be changed using the
 :ref:`xmlname-trait`.
 
 
 XML attributes
---------------
+~~~~~~~~~~~~~~
 
 The :ref:`xmlattribute-trait` is used to serialize a structure
 member as an XML attribute.
 
 
 ``xmlName`` on structures and unions
-------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 An ``xmlName`` trait applied to a structure or union changes the element name
 of the serialized shape; however, it does not influence the serialization of
@@ -130,7 +129,7 @@ The XML serialization of ``AStruct`` is:
 
 
 Simple type serialization
-=========================
+-------------------------
 
 The following table defines how simple types are serialized in XML documents.
 
@@ -207,14 +206,14 @@ The following table defines how simple types are serialized in XML documents.
 .. _xml-list-and-set-serialization:
 
 List and set serialization
-==========================
+--------------------------
 
 List and set shapes use the same serialization semantics. List and set shapes
 can be serialized as wrapped lists (the default behavior) or flattened lists.
 
 
 Wrapped list serialization
---------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A wrapped list or set is serialized in an XML element where each value is
 serialized in a nested element named ``member``. For example, given the
@@ -297,7 +296,7 @@ The XML serialization of ``Foo`` is:
 
 
 Flattened list serialization
-----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The :ref:`xmlflattened-trait` can be used to unwrap the values of list/set
 into a containing structure/union. The name of the elements repeated within
@@ -376,14 +375,14 @@ The XML serialization of ``Choice`` is:
 .. _xml-map-serialization:
 
 Map serialization
-=================
+-----------------
 
 Map shapes can be serialized as wrapped maps (the default behavior) or
 flattened maps.
 
 
 Wrapped map serialization
--------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A wrapped map is serialized in an XML element where each value is
 serialized in a nested element named ``entry`` that contains a nested
@@ -453,7 +452,7 @@ The XML serialization of ``Foo`` is:
 
 
 Flattened map serialization
----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The :ref:`xmlFlattened-trait` can be used to flatten the members of map
 into a containing structure/union. For example, given the following:
@@ -597,9 +596,8 @@ The XML serialization of ``Choice`` is:
 .. smithy-trait:: smithy.api#xmlAttribute
 .. _xmlAttribute-trait:
 
-----------------------
 ``xmlAttribute`` trait
-----------------------
+======================
 
 Summary
     Serializes an object property as an XML attribute rather than a nested
@@ -702,9 +700,8 @@ The XML serialization is:
 .. smithy-trait:: smithy.api#xmlFlattened
 .. _xmlFlattened-trait:
 
-----------------------
 ``xmlFlattened`` trait
-----------------------
+======================
 
 Summary
     Unwraps the values of a list or map into the containing structure.
@@ -855,9 +852,8 @@ The XML serialization is:
 .. smithy-trait:: smithy.api#xmlName
 .. _xmlName-trait:
 
------------------
 ``xmlName`` trait
------------------
+=================
 
 Summary
     Changes the serialized element or attribute name of a structure, union,
@@ -940,9 +936,8 @@ The XML serialization is:
 .. smithy-trait:: smithy.api#xmlNamespace
 .. _xmlNamespace-trait:
 
-----------------------
 ``xmlNamespace`` trait
-----------------------
+======================
 
 Summary
     Adds an `XML namespace`_ to an XML element.
