@@ -1,8 +1,8 @@
 .. _documentation-traits:
 
-====================
+--------------------
 Documentation traits
-====================
+--------------------
 
 Documentation traits are used to document and describe shapes in the model
 in a way that does not materially affect the semantics of the model.
@@ -16,9 +16,8 @@ in a way that does not materially affect the semantics of the model.
 .. smithy-trait:: smithy.api#deprecated
 .. _deprecated-trait:
 
---------------------
 ``deprecated`` trait
---------------------
+====================
 
 Summary
     Marks a shape or member as deprecated.
@@ -81,9 +80,8 @@ The ``deprecated`` trait is a structure that supports the following members:
 .. smithy-trait:: smithy.api#documentation
 .. _documentation-trait:
 
------------------------
 ``documentation`` trait
------------------------
+=======================
 
 Summary
     Adds documentation to a shape or member using the CommonMark_ format.
@@ -166,9 +164,8 @@ the effective documentation of ``Foo$baz`` resolves to "Member documentation",
 .. smithy-trait:: smithy.api#examples
 .. _examples-trait:
 
-------------------
 ``examples`` trait
-------------------
+==================
 
 Summary
     Provides example inputs and outputs for operations.
@@ -262,7 +259,7 @@ These values use the same semantics and format as
 .. _examples-ErrorExample-structure:
 
 ``ErrorExample`` structure
-==========================
+--------------------------
 
 The ``ErrorExample`` structure defines an error example using the following
 members:
@@ -289,9 +286,8 @@ members:
 .. smithy-trait:: smithy.api#externalDocumentation
 .. _externalDocumentation-trait:
 
--------------------------------
 ``externalDocumentation`` trait
--------------------------------
+===============================
 
 Summary
     Provides named links to external documentation for a shape.
@@ -317,9 +313,8 @@ Value type
 .. smithy-trait:: smithy.api#internal
 .. _internal-trait:
 
-------------------
 ``internal`` trait
-------------------
+==================
 
 Summary
     Shapes marked with the internal trait are meant only for internal use.
@@ -350,9 +345,8 @@ filtered version of the model.
 .. smithy-trait:: smithy.api#recommended
 .. _recommended-trait:
 
----------------------
 ``recommended`` trait
----------------------
+=====================
 
 Summary
     Indicates that a structure member SHOULD be set. This trait is useful when
@@ -392,9 +386,8 @@ Conflicts with
 .. smithy-trait:: smithy.api#sensitive
 .. _sensitive-trait:
 
--------------------
 ``sensitive`` trait
--------------------
+===================
 
 Summary
     Indicates that the data stored in the shape is sensitive and MUST be
@@ -421,9 +414,8 @@ output. Application of this trait SHOULD NOT affect wire logging
 .. smithy-trait:: smithy.api#since
 .. _since-trait:
 
----------------
 ``since`` trait
----------------
+===============
 
 Summary
     Defines the version or date in which a shape or member was added to
@@ -437,9 +429,8 @@ Value type
 .. smithy-trait:: smithy.api#tags
 .. _tags-trait:
 
---------------
 ``tags`` trait
---------------
+==============
 
 Summary
     Tags a shape with arbitrary tag names that can be used to filter and group
@@ -464,9 +455,8 @@ tags trait are arbitrary and up to the model author.
 .. smithy-trait:: smithy.api#title
 .. _title-trait:
 
----------------
 ``title`` trait
----------------
+===============
 
 Summary
     Defines a proper name for a service or resource shape. This title can be
@@ -494,9 +484,8 @@ Value type
 .. smithy-trait:: smithy.api#unstable
 .. _unstable-trait:
 
-------------------
 ``unstable`` trait
-------------------
+==================
 
 Summary
     Indicates a shape is unstable and MAY change in the future. This trait can
