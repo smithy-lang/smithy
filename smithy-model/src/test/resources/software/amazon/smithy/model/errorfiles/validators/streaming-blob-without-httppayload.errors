@@ -1,0 +1,1 @@
+[ERROR] com.amazonaws.simple#StreamingOperationOutput$output: Member `com.amazonaws.simple#StreamingOperationOutput$output` referencing @streaming shape `com.amazonaws.simple#StreamingBlob` must have the @httpPayload trait, as service `com.amazonaws.simple#SimpleService` has a protocol that supports @httpPayload. | StreamingTrait
