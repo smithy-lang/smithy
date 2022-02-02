@@ -22,9 +22,9 @@ structure and layout of an API, while traits provide refinement and style.
 
 .. _trait-trait:
 
-===============
+---------------
 ``trait`` trait
-===============
+---------------
 
 Summary
     Marks a shape as a :ref:`trait <traits>`.
