@@ -22,14 +22,19 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
+import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
 import software.amazon.smithy.model.neighbor.RelationshipDirection;
 import software.amazon.smithy.model.neighbor.RelationshipType;
+import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.HttpPayloadTrait;
+import software.amazon.smithy.model.traits.ProtocolDefinitionTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -42,6 +47,9 @@ import software.amazon.smithy.utils.Pair;
  * <p>Ensures that the targeted shapes are only referenced by top level input/output structures.
  *
  * <p>If the targeted shape is a union, ensures that all members are structures.
+ *
+ * <p>If used in the scope of any service that supports {@link software.amazon.smithy.model.traits.HttpPayloadTrait},
+ * ensures that any blobs targeted also have @httpPayload applied.
  */
 public final class StreamingTraitValidator extends AbstractValidator {
     @Override
@@ -52,6 +60,35 @@ public final class StreamingTraitValidator extends AbstractValidator {
 
         List<ValidationEvent> events = validateStreamingTargets(model);
         events.addAll(validateAllEventStreamMembers(model));
+        events.addAll(validateBlobTargetsArePayloads(model));
+        return events;
+    }
+
+    private List<ValidationEvent> validateBlobTargetsArePayloads(Model model) {
+        List<ValidationEvent> events = new ArrayList<>();
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
+        Walker walker = new Walker(model);
+
+        final Set<ServiceShape> servicesWithPayloadSupportingProtocols =
+                model.getServiceShapes().stream().filter(service -> serviceIndex.getProtocols(service).values().stream()
+                        .map(trait -> model.expectShape(trait.toShapeId()))
+                        .map(traitShape -> traitShape.expectTrait(ProtocolDefinitionTrait.class))
+                        .anyMatch(protocol -> protocol.getTraits().contains(HttpPayloadTrait.ID)))
+                        .collect(Collectors.toSet());
+
+        for (ServiceShape service : servicesWithPayloadSupportingProtocols) {
+            walker.walkShapes(service).stream()
+                    .filter(Shape::isMemberShape)
+                    .map(shape -> shape.asMemberShape().get())
+                    .filter(memberShape -> !memberShape.hasTrait(HttpPayloadTrait.ID))
+                    .filter(memberShape -> model.expectShape(memberShape.getTarget()).isBlobShape())
+                    .filter(memberShape -> model.expectShape(memberShape.getTarget()).hasTrait(StreamingTrait.ID))
+                    .forEach(memberShape ->
+                        events.add(error(memberShape, String.format("Member `%s` referencing "
+                                + "@streaming shape `%s` must have the @httpPayload trait, "
+                                + "as service `%s` has a protocol that supports @httpPayload.",
+                                memberShape.toShapeId(), memberShape.getTarget(), service.toShapeId()))));
+        }
         return events;
     }
 

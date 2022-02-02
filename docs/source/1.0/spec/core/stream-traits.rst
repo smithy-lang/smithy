@@ -41,6 +41,9 @@ Validation
     * The ``streaming`` trait is *structurally exclusive by target*, meaning
       only a single member of a structure can target a shape marked as
       ``streaming``.
+    * If a service supports a protocol that supports the :ref:`httpPayload-trait`,
+      any member that targets a ``streaming`` ``blob`` must also be marked as
+      ``@httpPayload``.
 
 .. code-block:: smithy
 
@@ -54,8 +57,7 @@ Validation
 
     @output
     structure StreamingOperationOutput {
-        @required
-        streamId: String
+        @httpPayload
         output: StreamingBlob,
     }
 
