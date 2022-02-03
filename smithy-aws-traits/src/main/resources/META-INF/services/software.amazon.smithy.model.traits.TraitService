@@ -6,6 +6,7 @@ software.amazon.smithy.aws.traits.DataPlaneTrait$Provider
 software.amazon.smithy.aws.traits.DataTrait$Provider
 software.amazon.smithy.aws.traits.ServiceTrait$Provider
 software.amazon.smithy.aws.traits.auth.UnsignedPayloadTrait$Provider
+software.amazon.smithy.aws.traits.auth.PresignableTrait$Provider
 software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientEndpointDiscoveryTrait$Provider
 software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientEndpointDiscoveryIdTrait$Provider
 software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientDiscoveredEndpointTrait$Provider
