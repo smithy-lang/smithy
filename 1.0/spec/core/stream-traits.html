@@ -112,6 +112,9 @@ MUST NOT be targeted by other members.</li>
 <li>The <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait is <em>structurally exclusive by target</em>, meaning
 only a single member of a structure can target a shape marked as
 <code class="docutils literal notranslate"><span class="pre">streaming</span></code>.</li>
+<li>If a service supports a protocol that supports the <a class="reference internal" href="http-traits.html#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
+any member that targets a <code class="docutils literal notranslate"><span class="pre">streaming</span></code> <code class="docutils literal notranslate"><span class="pre">blob</span></code> must also be marked as
+<code class="docutils literal notranslate"><span class="pre">&#64;httpPayload</span></code>.</li>
 </ul>
 </dd>
 </dl>
@@ -125,8 +128,7 @@ only a single member of a structure can target a shape marked as
 
 <span class="nd">@output</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> StreamingOperationOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nl">streamId:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@httpPayload</span><span class="w"></span>
 <span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">StreamingBlob</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 

@@ -2406,7 +2406,7 @@ target from traits and how their values are defined in
         corresponds to the member name.
     * - union
       - object
-      - The object MUST contain a single single key-value pair. The key MUST be
+      - The object MUST contain a single key-value pair. The key MUST be
         one of the member names of the union shape, and the value MUST be
         compatible with the corresponding shape.
 

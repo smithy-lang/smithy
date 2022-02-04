@@ -12,7 +12,7 @@ parser.
 * Smithy JSON models can be merged together with other JSON models or other
   Smithy IDL models using the rules defined in :ref:`merging-models`.
 * All shape IDs in the JSON AST MUST be absolute shape IDs that contain a
-  namespace. One of the main drivers of the simplicity of the the JSON AST
+  namespace. One of the main drivers of the simplicity of the JSON AST
   over the Smithy IDL is that relative and forward references never need to
   be resolved.
 

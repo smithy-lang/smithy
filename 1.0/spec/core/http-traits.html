@@ -884,8 +884,8 @@ that target a <code class="docutils literal notranslate"><span class="pre">map</
 </dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code> value that defines the prefix to prepend to each header field
 name stored in the targeted map member. For example, given a prefix value
-of of &quot;X-Amz-Meta-&quot; and a map key entry of &quot;Baz&quot;, the resulting header
-field name serialized in the message is &quot;X-Amz-Meta-Baz&quot;.</dd>
+of &quot;X-Amz-Meta-&quot; and a map key entry of &quot;Baz&quot;, the resulting header field
+name serialized in the message is &quot;X-Amz-Meta-Baz&quot;.</dd>
 <dt>Conflicts with</dt><dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>, <a class="reference internal" href="#httpqueryparams-trait"><span class="std std-ref">httpQueryParams trait</span></a>,
 <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>, <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
 <a class="reference internal" href="#httpresponsecode-trait"><span class="std std-ref">httpResponseCode trait</span></a></dd>
@@ -993,6 +993,10 @@ query string parameters to the query string using the same name. For
 example, given a member bound to <code class="docutils literal notranslate"><span class="pre">foo</span></code> that targets a list of strings
 with a value of <code class="docutils literal notranslate"><span class="pre">[&quot;a&quot;,</span> <span class="pre">&quot;b&quot;]</span></code>, the value is serialized in the query string
 as <code class="docutils literal notranslate"><span class="pre">foo=a&amp;foo=b</span></code>.</li>
+<li>When deserializing, server implementations SHOULD use the first encountered
+value in the query string for non-collection members. For example, given a
+member bound to <code class="docutils literal notranslate"><span class="pre">foo</span></code> that targets a string and a query string of
+<code class="docutils literal notranslate"><span class="pre">foo=a&amp;foo=b</span></code>, the deserialized value of <code class="docutils literal notranslate"><span class="pre">foo</span></code> should be <code class="docutils literal notranslate"><span class="pre">a</span></code>.</li>
 </ul>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
@@ -1069,6 +1073,11 @@ the body of the response.</p>
 target map will be serialized in the request query string. Key-value pairs in the target map
 are treated like they were explicitly bound using the <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>, including the
 requirement that reserved characters MUST be <a class="reference external" href="https://tools.ietf.org/html/rfc3986#section-2.1">percent-encoded</a>.</p>
+<p>When servers deserialize the query string into a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code>, they SHOULD take the
+first encountered value for each key. Since this rule applies to all future query string
+values, and changing from a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code> to a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code> is
+backwards-incompatible, care should be taken to use <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code> only when it is
+certain that multiple values for any query string will never be meaningful for the operation.</p>
 <p>If a member with the <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait and a member with the <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>
 conflict, clients MUST use the value set by the member with the <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a> and
 disregard the value set by <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code>. For example, given the following model:</p>
@@ -1269,7 +1278,7 @@ parameters:</p>
 <ol class="arabic simple">
 <li>If serializing the output of an operation, set the status code of the
 response to the <code class="docutils literal notranslate"><span class="pre">code</span></code> property of the <a class="reference internal" href="#http-trait"><span class="std std-ref">http trait</span></a>.</li>
-<li>If serializing an error and the the <a class="reference internal" href="#httperror-trait"><span class="std std-ref">httpError trait</span></a> is present,
+<li>If serializing an error and the <a class="reference internal" href="#httperror-trait"><span class="std std-ref">httpError trait</span></a> is present,
 set the status code of the response to its value. Otherwise, set the status
 code to 400 if the error trait is &quot;client&quot; or to 500 if the error trait is
 &quot;server&quot;.</li>

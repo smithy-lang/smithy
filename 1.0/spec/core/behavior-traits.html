@@ -235,12 +235,12 @@ the service that contains the operation.</p>
 <tr class="row-odd"><td>outputToken</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td><p class="first">The path to the operation output member that contains an optional
-continuation token. When this value is present in operation output,
-it indicates that there are more results to retrieve. To get the next
-page of results, the client passes the received output continuation
-token to the input continuation token of the next request. This
-output member MUST NOT be marked as <code class="docutils literal notranslate"><span class="pre">required</span></code> and SHOULD target a
-string shape. It can, but SHOULD NOT target a map shape.</p>
+continuation token. When this value is present and not empty in
+operation output, it indicates that there are more results to retrieve.
+To get the next page of results, the client passes the received output
+continuation token to the input continuation token of the next request.
+This output member MUST NOT be marked as <code class="docutils literal notranslate"><span class="pre">required</span></code> and SHOULD target
+a string shape. It can, but SHOULD NOT target a map shape.</p>
 <p class="last">When contained within a service, a paginated operation MUST either
 configure <code class="docutils literal notranslate"><span class="pre">outputToken</span></code> on the operation itself or inherit it from
 the service that contains the operation.</p>
@@ -430,8 +430,9 @@ client MUST follow when iterating over paginated API calls:</p>
 include input parameters that are used to influence the starting point
 at which pagination occurs.</li>
 <li>If the received response does not contain a continuation token in the
-referenced <code class="docutils literal notranslate"><span class="pre">outputToken</span></code> member, then there are no more results to
-retrieve and the process is complete.</li>
+referenced <code class="docutils literal notranslate"><span class="pre">outputToken</span></code> member (either the member is not set or is set to
+an empty value), then there are no more results to retrieve and the process
+is complete.</li>
 <li>If there is a continuation token in the referenced <code class="docutils literal notranslate"><span class="pre">outputToken</span></code> member
 of the response, then the client sends a subsequent request using the same
 input parameters as the original call, but including the last received
