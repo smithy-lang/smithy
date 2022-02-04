@@ -924,6 +924,10 @@ request:
   example, given a member bound to ``foo`` that targets a list of strings
   with a value of ``["a", "b"]``, the value is serialized in the query string
   as ``foo=a&foo=b``.
+* When deserializing, server implementations SHOULD use the first encountered
+  value in the query string for non-collection members. For example, given a
+  member bound to ``foo`` that targets a string and a query string of
+  ``foo=a&foo=b``, the deserialized value of ``foo`` should be ``a``.
 
 .. important:: Percent-encoding is an implementation detail
 
@@ -1017,6 +1021,12 @@ See the :ref:`httpQuery-trait` serialization rules that define how the keys and 
 target map will be serialized in the request query string. Key-value pairs in the target map
 are treated like they were explicitly bound using the :ref:`httpQuery-trait`, including the
 requirement that reserved characters MUST be percent-encoded_.
+
+When servers deserialize the query string into a ``map`` of ``string``, they SHOULD take the
+first encountered value for each key. Since this rule applies to all future query string
+values, and changing from a ``map`` of ``string`` to a ``map`` of ``list`` of ``string`` is
+backwards-incompatible, care should be taken to use ``map`` of ``string`` only when it is
+certain that multiple values for any query string will never be meaningful for the operation.
 
 If a member with the ``httpQueryParams`` trait and a member with the :ref:`httpQuery-trait`
 conflict, clients MUST use the value set by the member with the :ref:`httpQuery-trait` and
