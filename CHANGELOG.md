@@ -1,5 +1,24 @@
 # Smithy Changelog
 
+## 1.17.0 (2022-02-04)
+
+### Bug Fixes
+* Updated `@streaming` validation for protocols that support `@httpPayload`.
+  ([#1076](https://github.com/awslabs/smithy/pull/1076))
+
+### Features
+* Added ability to serialize the JMESPath AST. ([#1059](https://github.com/awslabs/smithy/pull/1059))
+* Update `CodeWriter` to add getters and ability to copy settings. ([#1067](https://github.com/awslabs/smithy/pull/1067))
+
+### Documentation
+* Clarified `outputToken`. ([#1056](https://github.com/awslabs/smithy/pull/1056))
+* Removed repeated words. ([#1063](https://github.com/awslabs/smithy/pull/1063))
+* Clarified server behavior for query parameter deserialization. ([#1080](https://github.com/awslabs/smithy/pull/1080))
+
+## Other
+* Updated traits to preserve the original `Node` value from the model.
+  ([#1047](https://github.com/awslabs/smithy/pull/1047))
+
 ## 1.16.3 (2022-01-13)
 
 ### Bug Fixes
