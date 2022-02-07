@@ -86,6 +86,15 @@ public class CodegenWriter<T extends CodegenWriter<T, U>, U extends ImportContai
     }
 
     /**
+     * Gets the documentation writer.
+     *
+     * @return Returns the documentation writer.
+     */
+    public final DocumentationWriter<T> getDocumentationWriter() {
+        return documentationWriter;
+    }
+
+    /**
      * Gets the import container associated with the writer.
      *
      * <p>The {@link #toString()} method of the {@code CodegenWriter} should
