@@ -454,7 +454,6 @@ operation PostPlayerAction {
 
 @input
 structure PostPlayerActionInput {
-    @required
     action: PlayerAction
 }
 
