@@ -54,7 +54,7 @@ public final class UnitTypeValidator extends AbstractValidator {
                             .asMemberShape()
                             .map(MemberShape::getContainer)
                             .flatMap(model::getShape)
-                            .filter(shape -> shape.getType() != ShapeType.UNION)
+                            .filter(shape -> !(shape.getType() == ShapeType.UNION || shape.getType() == ShapeType.ENUM))
                             .ifPresent(container -> {
                                 events.add(error(relationship.getShape(),
                                                  "Only members of a union can reference smithy.api#Unit"));
