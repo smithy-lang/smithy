@@ -466,6 +466,13 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
     }
 
     /**
+     * @return Optionally returns the shape as a {@link EnumShape}.
+     */
+    public Optional<EnumShape> asEnumShape() {
+        return Optional.empty();
+    }
+
+    /**
      * @return Optionally returns the shape as a {@link StructureShape}.
      */
     public Optional<StructureShape> asStructureShape() {
@@ -616,7 +623,14 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
      * @return Returns true if the shape is a {@link StringShape} shape.
      */
     public final boolean isStringShape() {
-        return getType() == ShapeType.STRING;
+        return getType() == ShapeType.STRING || getType() == ShapeType.ENUM;
+    }
+
+    /**
+     * @return Returns true if the shape is an {@link EnumShape} shape.
+     */
+    public final boolean isEnumShape() {
+        return getType() == ShapeType.ENUM;
     }
 
     /**
