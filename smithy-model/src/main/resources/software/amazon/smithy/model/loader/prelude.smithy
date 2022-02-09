@@ -585,6 +585,16 @@ structure EnumDefinition {
 @pattern("^[a-zA-Z_]+[a-zA-Z_0-9]*$")
 string EnumConstantBodyName
 
+/// Defines the value of an enum entry.
+@trait(selector: "enum > member")
+union enumValue {
+    /// The value for the enum entry if it is a string.
+    string: String
+
+    /// The value for the enum entry if it is an integer.
+    int: Integer
+}
+
 /// Constrains a shape to minimum and maximum number of elements or size.
 @trait(selector: ":test(list, map, string, blob, member > :is(list, map, string, blob))")
 structure length {
