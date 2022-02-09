@@ -33,6 +33,7 @@ public enum ShapeType {
     DOUBLE("double", DoubleShape.class, Category.SIMPLE),
     BIG_DECIMAL("bigDecimal", BigDecimalShape.class, Category.SIMPLE),
     BIG_INTEGER("bigInteger", BigIntegerShape.class, Category.SIMPLE),
+    ENUM("enum", EnumShape.class, Category.SIMPLE),
 
     LIST("list", ListShape.class, Category.AGGREGATE),
     SET("set", SetShape.class, Category.AGGREGATE),
@@ -110,6 +111,8 @@ public enum ShapeType {
                 return BooleanShape.builder();
             case STRING:
                 return StringShape.builder();
+            case ENUM:
+                return EnumShape.builder();
             case TIMESTAMP:
                 return TimestampShape.builder();
             case BYTE:
