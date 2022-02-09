@@ -62,6 +62,10 @@ public interface ShapeVisitor<R> {
 
     R stringShape(StringShape shape);
 
+    default R enumShape(EnumShape shape) {
+        return stringShape(shape);
+    }
+
     R structureShape(StructureShape shape);
 
     R unionShape(UnionShape shape);
