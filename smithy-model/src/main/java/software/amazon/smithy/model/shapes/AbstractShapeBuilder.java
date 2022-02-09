@@ -153,7 +153,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<B, S>,
      * @return Returns the builder.
      */
     @SuppressWarnings("unchecked")
-    public final B addTrait(Trait trait) {
+    public B addTrait(Trait trait) {
         Objects.requireNonNull(trait, "trait must not be null");
 
         traits.get().put(trait.toShapeId(), trait);
@@ -180,7 +180,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<B, S>,
      * @return Returns the builder.
      */
     @SuppressWarnings("unchecked")
-    public final B removeTrait(ShapeId traitId) {
+    public B removeTrait(ShapeId traitId) {
         if (traits.hasValue()) {
             traits.get().remove(traitId);
         }
