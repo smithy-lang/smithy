@@ -403,6 +403,13 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
     }
 
     /**
+     * @return Optionally returns the shape as a {@link IntEnumShape}.
+     */
+    public Optional<IntEnumShape> asIntEnumShape() {
+        return Optional.empty();
+    }
+
+    /**
      * @return Optionally returns the shape as a {@link ListShape}.
      */
     public Optional<ListShape> asListShape() {
@@ -574,7 +581,14 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
      * @return Returns true if the shape is a {@link IntegerShape} shape.
      */
     public final boolean isIntegerShape() {
-        return getType() == ShapeType.INTEGER;
+        return getType() == ShapeType.INTEGER || getType() == ShapeType.INT_ENUM;
+    }
+
+    /**
+     * @return Returns true if the shape is a {@link IntEnumShape} shape.
+     */
+    public final boolean isIntEnumShape() {
+        return getType() == ShapeType.INT_ENUM;
     }
 
     /**
