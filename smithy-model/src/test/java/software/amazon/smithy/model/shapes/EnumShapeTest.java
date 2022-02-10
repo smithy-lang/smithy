@@ -25,6 +25,7 @@ import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
+import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SetUtils;
 
@@ -246,7 +247,7 @@ public class EnumShapeTest {
     public void cannotDirectlyRemoveEnumTrait() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
         Assertions.assertThrows(SourceException.class, () -> {
-            builder.removeTrait(EnumTrait.ID).build();
+            builder.removeTrait(SyntheticEnumTrait.ID).build();
         });
     }
 
@@ -302,7 +303,7 @@ public class EnumShapeTest {
                 .build();
         Optional<EnumShape> optionalEnum = EnumShape.fromStringShape(string);
         assertTrue(optionalEnum.isPresent());
-        assertEquals(trait, optionalEnum.get().expectTrait(EnumTrait.class));
+        assertEquals(trait.getValues(), optionalEnum.get().expectTrait(SyntheticEnumTrait.class).getValues());
 
         assertEquals(optionalEnum.get().getMember("foo").get(),
                 MemberShape.builder()
