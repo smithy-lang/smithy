@@ -228,8 +228,11 @@ public final class EnumShape extends StringShape {
                         "Enum members may only target `smithy.api#Unit`, but found `%s`", member.getTarget()
                 ), getSourceLocation());
             }
-            if (!member.hasTrait(EnumValueTrait.ID)
-                    || !member.expectTrait(EnumValueTrait.class).getStringValue().isPresent()) {
+            if (!member.hasTrait(EnumValueTrait.ID)) {
+                member = member.toBuilder()
+                        .addTrait(EnumValueTrait.builder().stringValue(member.getMemberName()).build())
+                        .build();
+            } else if (!member.expectTrait(EnumValueTrait.class).getStringValue().isPresent()) {
                 throw new SourceException(
                         "Enum members MUST have the enumValue trait with the `string` member set",
                         getSourceLocation());
