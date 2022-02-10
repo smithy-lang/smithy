@@ -28,17 +28,21 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 /**
  * Constrains string values to one of the predefined enum constants.
  */
-public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<EnumTrait> {
+public class EnumTrait extends AbstractTrait implements ToSmithyBuilder<EnumTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.api#enum");
 
-    private final List<EnumDefinition> definitions;
+    protected final List<EnumDefinition> definitions;
 
-    private EnumTrait(Builder builder) {
-        super(ID, builder.sourceLocation);
+    protected EnumTrait(ShapeId id, Builder builder) {
+        super(id, builder.sourceLocation);
         this.definitions = builder.definitions.copy();
         if (definitions.isEmpty()) {
             throw new SourceException("enum must have at least one entry", getSourceLocation());
         }
+    }
+
+    private EnumTrait(Builder builder) {
+        this(ID, builder);
     }
 
     /**
@@ -93,7 +97,7 @@ public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<En
     /**
      * Builder used to create the enum trait.
      */
-    public static final class Builder extends AbstractTraitBuilder<EnumTrait, Builder> {
+    public static class Builder extends AbstractTraitBuilder<EnumTrait, Builder> {
         private final BuilderRef<List<EnumDefinition>> definitions = BuilderRef.forList();
 
         public Builder addEnum(EnumDefinition value) {

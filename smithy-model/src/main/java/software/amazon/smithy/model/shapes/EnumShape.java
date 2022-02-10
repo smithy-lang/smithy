@@ -26,6 +26,7 @@ import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
+import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ListUtils;
 
@@ -73,6 +74,14 @@ public final class EnumShape extends StringShape {
         // Members are ordered, so do a test on the ordering and their values.
         EnumShape b = (EnumShape) other;
         return getMemberNames().equals(b.getMemberNames()) && members.equals(b.members);
+    }
+
+    @Override
+    public Optional<Trait> findTrait(ShapeId id) {
+        if (id.equals(EnumTrait.ID)) {
+            return super.findTrait(SyntheticEnumTrait.ID);
+        }
+        return super.findTrait(id);
     }
 
     /**
@@ -164,12 +173,13 @@ public final class EnumShape extends StringShape {
                 throw new IllegalStateException("An id must be set before adding a named enum trait to a string.");
             }
             clearMembers();
-            super.addTrait(trait);
+            SyntheticEnumTrait.Builder traitBuilder = SyntheticEnumTrait.builder();
 
             for (EnumDefinition definition : trait.getValues()) {
                 Optional<MemberShape> member = definition.asMember(getId());
                 if (member.isPresent()) {
                     addMember(member.get(), false);
+                    traitBuilder.addEnum(definition);
                 } else {
                     throw new IllegalStateException(String.format(
                             "Unable to convert enum trait entry with name: `%s` and value `%s` to an enum member.",
@@ -177,6 +187,7 @@ public final class EnumShape extends StringShape {
                     ));
                 }
             }
+            super.addTrait(traitBuilder.build());
 
             return this;
         }
@@ -202,7 +213,7 @@ public final class EnumShape extends StringShape {
          */
         public Builder clearMembers() {
             members.clear();
-            super.removeTrait(EnumTrait.ID);
+            super.removeTrait(SyntheticEnumTrait.ID);
             return this;
         }
 
@@ -226,11 +237,11 @@ public final class EnumShape extends StringShape {
             members.get().put(member.getMemberName(), member);
 
             if (updateEnumTrait) {
-                EnumTrait.Builder builder;
-                if (getTraits().containsKey(EnumTrait.ID)) {
-                    builder = ((EnumTrait) getTraits().get(EnumTrait.ID)).toBuilder();
+                SyntheticEnumTrait.Builder builder;
+                if (getTraits().containsKey(SyntheticEnumTrait.ID)) {
+                    builder = ((SyntheticEnumTrait) getTraits().get(SyntheticEnumTrait.ID)).toBuilder();
                 } else {
-                    builder = EnumTrait.builder();
+                    builder = SyntheticEnumTrait.builder();
                 }
                 builder.addEnum(EnumDefinition.fromMember(member));
                 super.addTrait(builder.build());
@@ -288,7 +299,7 @@ public final class EnumShape extends StringShape {
         public Builder removeMember(String member) {
             if (members.hasValue()) {
                 members.get().remove(member);
-                EnumTrait trait = (EnumTrait) getTraits().get(EnumTrait.ID);
+                SyntheticEnumTrait trait = (SyntheticEnumTrait) getTraits().get(SyntheticEnumTrait.ID);
                 super.addTrait(trait.toBuilder().removeEnumByName(member).build());
             }
             return this;
@@ -305,7 +316,7 @@ public final class EnumShape extends StringShape {
 
         @Override
         public Builder removeTrait(ShapeId traitId) {
-            if (traitId.equals(EnumTrait.ID)) {
+            if (traitId.equals(SyntheticEnumTrait.ID)) {
                 throw new SourceException(
                         "The enum trait cannot be removed directly from an enum shape.", getSourceLocation());
             }
