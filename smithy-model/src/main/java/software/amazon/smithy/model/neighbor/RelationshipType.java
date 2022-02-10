@@ -18,6 +18,8 @@ package software.amazon.smithy.model.neighbor;
 import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.selector.Selector;
+import software.amazon.smithy.model.shapes.EnumShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -151,6 +153,18 @@ public enum RelationshipType {
      * returned from the operation.
      */
     ERROR("error", RelationshipDirection.DIRECTED),
+
+    /**
+     * Relationships that exist on {@link EnumShape enum} shapes to their
+     * {@link MemberShape member shapes}.
+     */
+    ENUM_MEMBER("member", RelationshipDirection.DIRECTED),
+
+    /**
+     * Relationships that exist on {@link IntEnumShape intEnum} shapes to their
+     * {@link MemberShape member shapes}.
+     */
+    INT_ENUM_MEMBER("member", RelationshipDirection.DIRECTED),
 
     /**
      * Relationships that exist on {@link ListShape list} shapes to their
