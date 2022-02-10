@@ -26,7 +26,8 @@ import software.amazon.smithy.model.traits.UnitTypeTrait;
 public class IntEnumShapeTest {
     @Test
     public void returnsAppropriateType() {
-        IntEnumShape shape = (IntEnumShape) IntEnumShape.builder().id("ns.foo#bar").build();
+        IntEnumShape.Builder builder = (IntEnumShape.Builder) IntEnumShape.builder().id("ns.foo#bar");
+        IntEnumShape shape = builder.addMember("foo", 1).build();
 
         assertEquals(shape.getType(), ShapeType.INT_ENUM);
         assertTrue(shape.isIntEnumShape());
