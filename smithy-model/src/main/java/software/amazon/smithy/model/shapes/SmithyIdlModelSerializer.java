@@ -24,9 +24,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -42,6 +44,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.AnnotationTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
+import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.model.traits.InputTrait;
 import software.amazon.smithy.model.traits.OutputTrait;
@@ -396,6 +399,10 @@ public final class SmithyIdlModelSerializer {
         }
 
         private void shapeWithMembers(Shape shape, List<MemberShape> members) {
+            shapeWithMembers(shape, members, false);
+        }
+
+        private void shapeWithMembers(Shape shape, List<MemberShape> members, boolean isEnum) {
             List<MemberShape> nonMixinMembers = new ArrayList<>();
             List<MemberShape> mixinMembers = new ArrayList<>();
             for (MemberShape member : members) {
@@ -410,7 +417,11 @@ public final class SmithyIdlModelSerializer {
             codeWriter.writeInline("$L $L ", shape.getType(), shape.getId().getName());
 
             writeMixins(shape);
-            writeShapeMembers(nonMixinMembers);
+            if (isEnum) {
+                writeEnumMembers(nonMixinMembers);
+            } else {
+                writeShapeMembers(nonMixinMembers);
+            }
             codeWriter.write("");
             applyIntroducedTraits(mixinMembers);
         }
@@ -440,6 +451,25 @@ public final class SmithyIdlModelSerializer {
                     }
                 });
             }
+        }
+
+        private void writeEnumMembers(Collection<MemberShape> members) {
+            if (members.isEmpty()) {
+                codeWriter.writeInline("{}").write("");
+                return;
+            }
+
+            codeWriter.openBlock("{", "}", () -> {
+                for (MemberShape member : members) {
+                    Map<ShapeId, Trait> traits = new LinkedHashMap<>(member.getAllTraits());
+                    Optional<String> stringValue = member.expectTrait(EnumValueTrait.class).getStringValue();
+                    if (stringValue.isPresent() && member.getMemberName().equals(stringValue.get())) {
+                        traits.remove(EnumValueTrait.ID);
+                    }
+                    serializeTraits(traits);
+                    codeWriter.write("$L", member.getMemberName());
+                }
+            });
         }
 
         private void applyIntroducedTraits(Collection<MemberShape> members) {
@@ -509,6 +539,18 @@ public final class SmithyIdlModelSerializer {
 
         private boolean isEmptyStructure(Node node, Shape shape) {
             return !shape.isDocumentShape() && node.asObjectNode().map(ObjectNode::isEmpty).orElse(false);
+        }
+
+        @Override
+        public Void enumShape(EnumShape shape) {
+            shapeWithMembers(shape, new ArrayList<>(shape.members()), true);
+            return null;
+        }
+
+        @Override
+        public Void intEnumShape(IntEnumShape shape) {
+            shapeWithMembers(shape, new ArrayList<>(shape.members()), true);
+            return null;
         }
 
         @Override
