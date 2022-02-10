@@ -35,7 +35,9 @@ import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.FloatShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
@@ -75,7 +77,7 @@ enum AstModelLoader {
     private static final List<String> TOP_LEVEL_PROPERTIES = ListUtils.of("smithy", SHAPES, METADATA);
     private static final List<String> APPLY_PROPERTIES = ListUtils.of(TYPE, TRAITS);
     private static final List<String> SIMPLE_PROPERTY_NAMES = ListUtils.of(TYPE, TRAITS);
-    private static final List<String> STRUCTURE_AND_UNION_PROPERTY_NAMES = ListUtils.of(TYPE, MEMBERS, TRAITS, MIXINS);
+    private static final List<String> NAMED_MEMBER_SHAPE_PROPERTY_NAMES = ListUtils.of(TYPE, MEMBERS, TRAITS, MIXINS);
     private static final List<String> COLLECTION_PROPERTY_NAMES = ListUtils.of(TYPE, "member", TRAITS);
     private static final List<String> MAP_PROPERTY_NAMES = ListUtils.of(TYPE, "key", "value", TRAITS);
     private static final Set<String> MEMBER_PROPERTIES = SetUtils.of(TARGET, TRAITS);
@@ -143,6 +145,9 @@ enum AstModelLoader {
             case "integer":
                 loadSimpleShape(id, value, IntegerShape.builder(), modelFile);
                 break;
+            case "intEnum":
+                loadNamedMemberShape(id, value, IntEnumShape.builder(), modelFile);
+                break;
             case "long":
                 loadSimpleShape(id, value, LongShape.builder(), modelFile);
                 break;
@@ -164,6 +169,9 @@ enum AstModelLoader {
             case "string":
                 loadSimpleShape(id, value, StringShape.builder(), modelFile);
                 break;
+            case "enum":
+                loadNamedMemberShape(id, value, EnumShape.builder(), modelFile);
+                break;
             case "timestamp":
                 loadSimpleShape(id, value, TimestampShape.builder(), modelFile);
                 break;
@@ -183,10 +191,10 @@ enum AstModelLoader {
                 loadService(id, value, modelFile);
                 break;
             case "structure":
-                loadStructure(id, value, modelFile);
+                loadNamedMemberShape(id, value, StructureShape.builder(), modelFile);
                 break;
             case "union":
-                loadUnion(id, value, modelFile);
+                loadNamedMemberShape(id, value, UnionShape.builder(), modelFile);
                 break;
             case "operation":
                 loadOperation(id, value, modelFile);
@@ -320,19 +328,18 @@ enum AstModelLoader {
         addMixins(id, node, modelFile);
     }
 
-    private void loadStructure(ShapeId id, ObjectNode node, FullyResolvedModelFile modelFile) {
-        LoaderUtils.checkForAdditionalProperties(node, id, STRUCTURE_AND_UNION_PROPERTY_NAMES, modelFile.events());
-        modelFile.onShape(StructureShape.builder().id(id).source(node.getSourceLocation()));
-        finishLoadingStructOrUnionMembers(id, node, modelFile);
+    private void loadNamedMemberShape(
+            ShapeId id,
+            ObjectNode node,
+            AbstractShapeBuilder<?, ?> builder,
+            FullyResolvedModelFile modelFile
+    ) {
+        LoaderUtils.checkForAdditionalProperties(node, id, NAMED_MEMBER_SHAPE_PROPERTY_NAMES, modelFile.events());
+        modelFile.onShape(builder.id(id).source(node.getSourceLocation()));
+        finishLoadingNamedMemberShapeMembers(id, node, modelFile);
     }
 
-    private void loadUnion(ShapeId id, ObjectNode node, FullyResolvedModelFile modelFile) {
-        LoaderUtils.checkForAdditionalProperties(node, id, STRUCTURE_AND_UNION_PROPERTY_NAMES, modelFile.events());
-        modelFile.onShape(UnionShape.builder().id(id).source(node.getSourceLocation()));
-        finishLoadingStructOrUnionMembers(id, node, modelFile);
-    }
-
-    private void finishLoadingStructOrUnionMembers(ShapeId id, ObjectNode node, FullyResolvedModelFile modelFile) {
+    private void finishLoadingNamedMemberShapeMembers(ShapeId id, ObjectNode node, FullyResolvedModelFile modelFile) {
         applyShapeTraits(id, node, modelFile);
         ObjectNode memberObject = node.getObjectMember(MEMBERS).orElse(Node.objectNode());
         for (Map.Entry<String, Node> entry : memberObject.getStringMap().entrySet()) {
