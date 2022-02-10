@@ -39,6 +39,10 @@ public interface ShapeVisitor<R> {
 
     R integerShape(IntegerShape shape);
 
+    default R intEnumShape(IntEnumShape shape) {
+        return integerShape(shape);
+    }
+
     R longShape(LongShape shape);
 
     R floatShape(FloatShape shape);
