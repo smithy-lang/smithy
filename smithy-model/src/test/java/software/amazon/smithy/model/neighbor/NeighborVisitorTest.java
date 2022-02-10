@@ -25,6 +25,8 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
+import software.amazon.smithy.model.shapes.EnumShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -74,6 +76,42 @@ public class NeighborVisitorTest {
         List<Relationship> relationships = shape.accept(neighborVisitor);
 
         assertThat(relationships, empty());
+    }
+
+    @Test
+    public void enumShape() {
+        EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#name");
+        EnumShape shape = builder
+                .addMember("foo", "bar")
+                .addMember("baz", "bam")
+                .build();
+        MemberShape member1Target = shape.getMember("foo").get();
+        MemberShape member2Target = shape.getMember("baz").get();
+        Model model = Model.builder().addShape(shape).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
+        List<Relationship> relationships = shape.accept(neighborVisitor);
+
+        assertThat(relationships, containsInAnyOrder(
+                Relationship.create(shape, RelationshipType.ENUM_MEMBER, member1Target),
+                Relationship.create(shape, RelationshipType.ENUM_MEMBER, member2Target)));
+    }
+
+    @Test
+    public void intEnumShape() {
+        IntEnumShape.Builder builder = (IntEnumShape.Builder) IntEnumShape.builder().id("ns.foo#name");
+        IntEnumShape shape = builder
+                .addMember("foo", 1)
+                .addMember("baz", 2)
+                .build();
+        MemberShape member1Target = shape.getMember("foo").get();
+        MemberShape member2Target = shape.getMember("baz").get();
+        Model model = Model.builder().addShape(shape).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
+        List<Relationship> relationships = shape.accept(neighborVisitor);
+
+        assertThat(relationships, containsInAnyOrder(
+                Relationship.create(shape, RelationshipType.INT_ENUM_MEMBER, member1Target),
+                Relationship.create(shape, RelationshipType.INT_ENUM_MEMBER, member2Target)));
     }
 
     @Test
