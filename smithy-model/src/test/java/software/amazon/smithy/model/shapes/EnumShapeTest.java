@@ -32,7 +32,8 @@ import software.amazon.smithy.utils.SetUtils;
 public class EnumShapeTest {
     @Test
     public void returnsAppropriateType() {
-        EnumShape shape = (EnumShape) EnumShape.builder().id("ns.foo#bar").build();
+        EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
+        EnumShape shape = builder.addMember("foo", "bar").build();
 
         assertEquals(shape.getType(), ShapeType.ENUM);
         assertTrue(shape.isEnumShape());
