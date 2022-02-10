@@ -43,7 +43,9 @@ import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.FloatShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
@@ -64,6 +66,7 @@ import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.InputTrait;
 import software.amazon.smithy.model.traits.OutputTrait;
 import software.amazon.smithy.model.traits.TraitFactory;
+import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
@@ -403,6 +406,9 @@ final class IdlModelParser extends SimpleParser {
             case "string":
                 parseSimpleShape(id, location, StringShape.builder());
                 break;
+            case "enum":
+                parseEnumShape(id, location, EnumShape.builder());
+                break;
             case "blob":
                 parseSimpleShape(id, location, BlobShape.builder());
                 break;
@@ -414,6 +420,9 @@ final class IdlModelParser extends SimpleParser {
                 break;
             case "integer":
                 parseSimpleShape(id, location, IntegerShape.builder());
+                break;
+            case "intEnum":
+                parseEnumShape(id, location, IntEnumShape.builder());
                 break;
             case "long":
                 parseSimpleShape(id, location, LongShape.builder());
@@ -455,6 +464,13 @@ final class IdlModelParser extends SimpleParser {
         parseMixins(id);
     }
 
+    private void parseEnumShape(ShapeId id, SourceLocation location, AbstractShapeBuilder builder) {
+        modelFile.onShape(builder.id(id).source(location));
+        parseMixins(id);
+        parseMembers(id, Collections.emptySet(), true);
+        clearPendingDocs();
+    }
+
     // See parseMap for information on why members are parsed before the
     // list/set is registered with the ModelFile.
     private void parseCollection(ShapeId id, SourceLocation location, CollectionShape.Builder builder) {
@@ -466,6 +482,10 @@ final class IdlModelParser extends SimpleParser {
     }
 
     private void parseMembers(ShapeId id, Set<String> requiredMembers) {
+        parseMembers(id, requiredMembers, false);
+    }
+
+    private void parseMembers(ShapeId id, Set<String> requiredMembers, boolean targetsUnion) {
         Set<String> definedMembers = new HashSet<>();
 
         ws();
@@ -477,7 +497,7 @@ final class IdlModelParser extends SimpleParser {
                 break;
             }
 
-            parseMember(id, requiredMembers, definedMembers);
+            parseMember(id, requiredMembers, definedMembers, targetsUnion);
 
             // Clears out any previously captured documentation
             // comments that may have been found when parsing the member.
@@ -493,7 +513,7 @@ final class IdlModelParser extends SimpleParser {
         expect('}');
     }
 
-    private void parseMember(ShapeId parent, Set<String> allowed, Set<String> defined) {
+    private void parseMember(ShapeId parent, Set<String> allowed, Set<String> defined, boolean targetsUnion) {
         // Parse optional member traits.
         List<TraitEntry> memberTraits = parseDocsAndTraits();
         SourceLocation memberLocation = currentLocation();
@@ -511,21 +531,28 @@ final class IdlModelParser extends SimpleParser {
             throw syntax(parent, "Unexpected member of " + parent + ": '" + memberName + '\'');
         }
 
-        ws();
-        expect(':');
-
-        if (peek() == '=') {
-            throw syntax("Defining structures inline with the `:=` syntax may only be used when "
-                    + "defining operation input and output shapes.");
-        }
-
-        ws();
         ShapeId memberId = parent.withMember(memberName);
         MemberShape.Builder memberBuilder = MemberShape.builder().id(memberId).source(memberLocation);
-        String target = ParserUtils.parseShapeId(this);
         modelFile.onShape(memberBuilder);
+        String target;
+
+        ws();
+
+        if (!targetsUnion) {
+            expect(':');
+
+            if (peek() == '=') {
+                throw syntax("Defining structures inline with the `:=` syntax may only be used when "
+                        + "defining operation input and output shapes.");
+            }
+
+            ws();
+            target = ParserUtils.parseShapeId(this);
+        } else {
+            target = UnitTypeTrait.UNIT.toString();
+        }
         modelFile.addForwardReference(target, memberBuilder::target);
-        addTraits(memberId, memberTraits);
+        addTraits(parent.withMember(memberName), memberTraits);
     }
 
     private void parseMapStatement(ShapeId id, SourceLocation location) {
