@@ -34,6 +34,7 @@ public enum ShapeType {
     BIG_DECIMAL("bigDecimal", BigDecimalShape.class, Category.SIMPLE),
     BIG_INTEGER("bigInteger", BigIntegerShape.class, Category.SIMPLE),
     ENUM("enum", EnumShape.class, Category.SIMPLE),
+    INT_ENUM("intEnum", IntEnumShape.class, Category.SIMPLE),
 
     LIST("list", ListShape.class, Category.AGGREGATE),
     SET("set", SetShape.class, Category.AGGREGATE),
@@ -121,6 +122,8 @@ public enum ShapeType {
                 return ShortShape.builder();
             case INTEGER:
                 return IntegerShape.builder();
+            case INT_ENUM:
+                return IntEnumShape.builder();
             case LONG:
                 return LongShape.builder();
             case FLOAT:
