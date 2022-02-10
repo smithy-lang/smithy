@@ -16,9 +16,12 @@
 package software.amazon.smithy.model.transform;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import org.hamcrest.Matchers;
@@ -29,14 +32,24 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.EnumShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.ListShape;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.DocumentationTrait;
+import software.amazon.smithy.model.traits.EnumDefinition;
+import software.amazon.smithy.model.traits.EnumTrait;
+import software.amazon.smithy.model.traits.EnumValueTrait;
+import software.amazon.smithy.model.traits.UnitTypeTrait;
+import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 
 public class ChangeShapeTypeTest {
@@ -46,11 +59,28 @@ public class ChangeShapeTypeTest {
         DocumentationTrait docTrait = new DocumentationTrait("Hi");
         ShapeId id = ShapeId.from("smithy.example#Test");
         SourceLocation source = new SourceLocation("/foo", 1, 1);
-        Shape startShape = start.createBuilderForType()
-                .addTrait(docTrait)
-                .id(id)
-                .source(source)
-                .build();
+        Shape startShape;
+        if (start == ShapeType.ENUM) {
+            startShape = EnumShape.builder()
+                    .id(id)
+                    .addMember("FOO", "foo")
+                    .addTrait(docTrait)
+                    .source(source)
+                    .build();
+        } else if (start == ShapeType.INT_ENUM) {
+            startShape = IntEnumShape.builder()
+                    .id(id)
+                    .addMember("FOO", 1)
+                    .addTrait(docTrait)
+                    .source(source)
+                    .build();
+        } else {
+            startShape = start.createBuilderForType()
+                    .addTrait(docTrait)
+                    .id(id)
+                    .source(source)
+                    .build();
+        }
         Model model = Model.builder().addShape(startShape).build();
 
         try {
@@ -71,7 +101,7 @@ public class ChangeShapeTypeTest {
     private static List<Arguments> simpleTypeTransforms() {
         Set<ShapeType> simpleTypes = new TreeSet<>();
         for (ShapeType type : ShapeType.values()) {
-            if (type.getCategory() == ShapeType.Category.SIMPLE) {
+            if (type.getCategory() == ShapeType.Category.SIMPLE || type.getCategory() == ShapeType.Category.ENUM) {
                 simpleTypes.add(type);
             }
         }
@@ -217,5 +247,97 @@ public class ChangeShapeTypeTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             ModelTransformer.create().changeShapeType(model, MapUtils.of(startShape.getId(), ShapeType.STRING));
         });
+    }
+
+    @Test
+    public void canConvertStringToEnum() {
+        EnumTrait trait = EnumTrait.builder()
+                .addEnum(EnumDefinition.builder()
+                        .name("foo")
+                        .value("bar")
+                        .build())
+                .build();
+        SourceLocation source = new SourceLocation("/foo", 1, 1);
+        ShapeId id = ShapeId.fromParts("ns.foo", "bar");
+        StringShape startShape = StringShape.builder()
+                .id(id)
+                .addTrait(trait)
+                .source(source)
+                .build();
+        Model model = Model.assembler().addShape(startShape).assemble().unwrap();
+        Model result = ModelTransformer.create().changeShapeType(model, MapUtils.of(id, ShapeType.ENUM));
+
+        assertThat(result.expectShape(id).getType(), Matchers.is(ShapeType.ENUM));
+        assertThat(result.expectShape(id).getSourceLocation(), Matchers.equalTo(source));
+        assertThat(result.expectShape(id).members(), Matchers.hasSize(1));
+        assertThat(result.expectShape(id).members().iterator().next(), Matchers.equalTo(MemberShape.builder()
+                .id(id.withMember("foo"))
+                .target(UnitTypeTrait.UNIT)
+                .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+                .build()));
+    }
+
+    @Test
+    public void cantConvertBaseStringWithoutEnumTrait() {
+        SourceLocation source = new SourceLocation("/foo", 1, 1);
+        ShapeId id = ShapeId.fromParts("ns.foo", "bar");
+        StringShape startShape = StringShape.builder()
+                .id(id)
+                .source(source)
+                .build();
+        Model model = Model.assembler().addShape(startShape).assemble().unwrap();
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            ModelTransformer.create().changeShapeType(model, MapUtils.of(startShape.getId(), ShapeType.ENUM));
+        });
+    }
+
+    @Test
+    public void cantConvertBaseStringWithNamelessEnumTrait() {
+        EnumTrait trait = EnumTrait.builder()
+                .addEnum(EnumDefinition.builder()
+                        .value("bar")
+                        .build())
+                .build();
+        SourceLocation source = new SourceLocation("/foo", 1, 1);
+        ShapeId id = ShapeId.fromParts("ns.foo", "bar");
+        StringShape startShape = StringShape.builder()
+                .id(id)
+                .addTrait(trait)
+                .source(source)
+                .build();
+        Model model = Model.assembler().addShape(startShape).assemble().unwrap();
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            ModelTransformer.create().changeShapeType(model, MapUtils.of(startShape.getId(), ShapeType.ENUM));
+        });
+    }
+
+    @Test
+    public void canConvertEnumToString() {
+        SourceLocation source = new SourceLocation("/foo", 1, 1);
+        ShapeId id = ShapeId.fromParts("ns.foo", "bar");
+        Shape startShape = EnumShape.builder()
+                .id(id)
+                .addMember("FOO", "foo")
+                .source(source)
+                .build();
+
+        Model model = Model.assembler().addShape(startShape).assemble().unwrap();
+        Model result = ModelTransformer.create().changeShapeType(model, MapUtils.of(id, ShapeType.STRING));
+
+        assertThat(result.expectShape(id).getType(), Matchers.is(ShapeType.STRING));
+        assertThat(result.expectShape(id).getSourceLocation(), Matchers.equalTo(source));
+        assertTrue(result.expectShape(id).hasTrait(EnumTrait.ID));
+
+        EnumTrait trait = result.expectShape(id).expectTrait(EnumTrait.class);
+        assertFalse(trait instanceof SyntheticEnumTrait);
+
+        assertThat(trait.getValues(), Matchers.equalTo(ListUtils.of(
+                EnumDefinition.builder()
+                        .name("FOO")
+                        .value("foo")
+                        .build()
+        )));
     }
 }
