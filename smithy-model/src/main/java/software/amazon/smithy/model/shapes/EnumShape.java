@@ -38,6 +38,10 @@ public final class EnumShape extends StringShape {
     private EnumShape(Builder builder) {
         super(builder);
         members = builder.members.get();
+        validateMemberShapeIds();
+        if (members.size() < 1) {
+            throw new SourceException("enum shapes must have at least one member", getSourceLocation());
+        }
     }
 
     /**
