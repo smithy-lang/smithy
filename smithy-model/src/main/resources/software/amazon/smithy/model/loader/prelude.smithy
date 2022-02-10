@@ -435,7 +435,7 @@ structure EnumDefinition {
 string EnumConstantBodyName
 
 /// Defines the value of an enum entry.
-@trait(selector: "enum > member")
+@trait(selector: ":is(enum, intEnum) > member")
 union enumValue {
     /// The value for the enum entry if it is a string.
     string: String
