@@ -255,27 +255,6 @@ public class EnumShapeTest {
     }
 
     @Test
-    public void cannotDirectlyAddEnumTrait() {
-        EnumTrait trait = EnumTrait.builder()
-                .addEnum(EnumDefinition.builder()
-                        .name("foo")
-                        .value("bar")
-                        .build())
-                .build();
-        Assertions.assertThrows(SourceException.class, () -> {
-            EnumShape.builder().addTrait(trait).id("ns.foo#bar").build();
-        });
-    }
-
-    @Test
-    public void cannotDirectlyRemoveEnumTrait() {
-        EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
-        Assertions.assertThrows(SourceException.class, () -> {
-            builder.removeTrait(SyntheticEnumTrait.ID).build();
-        });
-    }
-
-    @Test
     public void membersMustHaveEnumValueWithStringSet() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
         MemberShape member = MemberShape.builder()
