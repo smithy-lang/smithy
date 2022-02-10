@@ -89,6 +89,29 @@ public class EnumShapeTest {
     }
 
     @Test
+    public void memberValueIsAppliedIfNotPresent() {
+        EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
+        MemberShape member = MemberShape.builder()
+                .id("ns.foo#bar$foo")
+                .target(UnitTypeTrait.UNIT)
+                .build();
+        EnumShape shape = builder.addMember(member).build();
+
+        MemberShape expected = member.toBuilder()
+                .addTrait(EnumValueTrait.builder().stringValue("foo").build())
+                .build();
+        assertEquals(shape.getMember("foo").get(), expected);
+
+        assertTrue(shape.hasTrait(EnumTrait.class));
+        assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(
+                EnumDefinition.builder()
+                        .name("foo")
+                        .value("foo")
+                        .build()
+        ));
+    }
+
+    @Test
     public void addMemberFromEnumTrait() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
         EnumDefinition enumDefinition = EnumDefinition.builder()
@@ -248,18 +271,6 @@ public class EnumShapeTest {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
         Assertions.assertThrows(SourceException.class, () -> {
             builder.removeTrait(SyntheticEnumTrait.ID).build();
-        });
-    }
-
-    @Test
-    public void membersMustHaveEnumValue() {
-        EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
-        MemberShape member = MemberShape.builder()
-                .id("ns.foo#bar$foo")
-                .target(UnitTypeTrait.UNIT)
-                .build();
-        Assertions.assertThrows(SourceException.class, () -> {
-            builder.addMember(member);
         });
     }
 
