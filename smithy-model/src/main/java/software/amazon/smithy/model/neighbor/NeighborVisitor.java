@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.EntityShape;
+import software.amazon.smithy.model.shapes.EnumShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -168,6 +170,24 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
         List<Relationship> result = new ArrayList<>(2);
         result.add(relationship(shape, RelationshipType.MEMBER_CONTAINER, shape.getContainer()));
         result.add(relationship(shape, RelationshipType.MEMBER_TARGET, shape.getTarget()));
+        return result;
+    }
+
+    @Override
+    public List<Relationship> enumShape(EnumShape shape) {
+        List<Relationship> result = new ArrayList<>();
+        for (MemberShape member : shape.getAllMembers().values()) {
+            result.add(relationship(shape, RelationshipType.ENUM_MEMBER, member));
+        }
+        return result;
+    }
+
+    @Override
+    public List<Relationship> intEnumShape(IntEnumShape shape) {
+        List<Relationship> result = new ArrayList<>();
+        for (MemberShape member : shape.getAllMembers().values()) {
+            result.add(relationship(shape, RelationshipType.INT_ENUM_MEMBER, member));
+        }
         return result;
     }
 
