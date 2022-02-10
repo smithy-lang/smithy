@@ -34,6 +34,10 @@ public final class IntEnumShape extends IntegerShape {
     private IntEnumShape(Builder builder) {
         super(builder);
         members = builder.members.get();
+        validateMemberShapeIds();
+        if (members.size() < 1) {
+            throw new SourceException("intEnum shapes must have at least one member", getSourceLocation());
+        }
     }
 
     /**
