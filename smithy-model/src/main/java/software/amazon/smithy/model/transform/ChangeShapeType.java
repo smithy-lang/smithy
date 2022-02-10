@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.transform;
 
 import java.util.Map;
+import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
@@ -25,7 +26,9 @@ import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.FloatShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
@@ -40,6 +43,8 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.EnumTrait;
+import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
 
 final class ChangeShapeType {
 
@@ -97,6 +102,17 @@ final class ChangeShapeType {
         }
 
         @Override
+        public Shape intEnumShape(IntEnumShape shape) {
+            if (to.getCategory() != ShapeType.Category.SIMPLE) {
+                throw invalidType(shape, to, "Enum types can only be converted to simple types.");
+            }
+
+            AbstractShapeBuilder<?, ?> shapeBuilder = to.createBuilderForType();
+            copySharedParts(shape, shapeBuilder);
+            return shapeBuilder.build();
+        }
+
+        @Override
         public Shape longShape(LongShape shape) {
             return copyToSimpleShape(to, shape);
         }
@@ -128,7 +144,34 @@ final class ChangeShapeType {
 
         @Override
         public Shape stringShape(StringShape shape) {
+            if (to == ShapeType.ENUM) {
+                Optional<EnumShape> enumShape = EnumShape.fromStringShape(shape);
+                if (enumShape.isPresent()) {
+                    return enumShape.get();
+                }
+                throw invalidType(shape, to, "Strings can only be converted to enums if they have an enum "
+                        + "trait where each enum definition has a name.");
+            }
             return copyToSimpleShape(to, shape);
+        }
+
+        @Override
+        public Shape enumShape(EnumShape shape) {
+            if (to.getCategory() != ShapeType.Category.SIMPLE) {
+                throw invalidType(shape, to, "Enum types can only be converted to simple types.");
+            }
+
+            AbstractShapeBuilder<?, ?> shapeBuilder = to.createBuilderForType();
+            copySharedParts(shape, shapeBuilder);
+            shapeBuilder.removeTrait(SyntheticEnumTrait.ID);
+
+            if (to == ShapeType.STRING) {
+                EnumTrait.Builder traitBuilder = EnumTrait.builder();
+                shape.expectTrait(SyntheticEnumTrait.class).getValues().forEach(traitBuilder::addEnum);
+                shapeBuilder.addTrait(traitBuilder.build());
+            }
+
+            return shapeBuilder.build();
         }
 
         @Override
@@ -142,7 +185,7 @@ final class ChangeShapeType {
                 throw invalidType(shape, to, "Lists can only be converted to sets.");
             }
             SetShape.Builder builder = SetShape.builder();
-            copySharedPartsToShape(shape, builder);
+            copySharedPartsAndMembers(shape, builder);
             return builder.build();
         }
 
@@ -152,7 +195,7 @@ final class ChangeShapeType {
                 throw invalidType(shape, to, "Sets can only be converted to lists.");
             }
             ListShape.Builder builder = ListShape.builder();
-            copySharedPartsToShape(shape, builder);
+            copySharedPartsAndMembers(shape, builder);
             return builder.build();
         }
 
@@ -162,7 +205,7 @@ final class ChangeShapeType {
                 throw invalidType(shape, to, "Structures can only be converted to unions.");
             }
             UnionShape.Builder builder = UnionShape.builder();
-            copySharedPartsToShape(shape, builder);
+            copySharedPartsAndMembers(shape, builder);
             return builder.build();
         }
 
@@ -172,18 +215,21 @@ final class ChangeShapeType {
                 throw invalidType(shape, to, "Unions can only be converted to structures.");
             }
             StructureShape.Builder builder = StructureShape.builder();
-            copySharedPartsToShape(shape, builder);
+            copySharedPartsAndMembers(shape, builder);
             return builder.build();
         }
 
-        private void copySharedPartsToShape(Shape source, AbstractShapeBuilder<?, ?> builder) {
-            builder.traits(source.getAllTraits().values());
-            builder.id(source.getId());
-            builder.source(source.getSourceLocation());
-
+        private void copySharedPartsAndMembers(Shape source, AbstractShapeBuilder<?, ?> builder) {
+            copySharedParts(source, builder);
             for (MemberShape member : source.members()) {
                 builder.addMember(member);
             }
+        }
+
+        private void copySharedParts(Shape source, AbstractShapeBuilder<?, ?> builder) {
+            builder.traits(source.getAllTraits().values());
+            builder.id(source.getId());
+            builder.source(source.getSourceLocation());
         }
 
         private Shape copyToSimpleShape(ShapeType to, Shape shape) {
@@ -192,7 +238,7 @@ final class ChangeShapeType {
             }
 
             AbstractShapeBuilder<?, ?> shapeBuilder = to.createBuilderForType();
-            copySharedPartsToShape(shape, shapeBuilder);
+            copySharedPartsAndMembers(shape, shapeBuilder);
             return shapeBuilder.build();
         }
 

@@ -155,6 +155,11 @@ public final class EnumShape extends StringShape {
 
         @Override
         public EnumShape build() {
+            SyntheticEnumTrait.Builder builder = SyntheticEnumTrait.builder();
+            for (MemberShape member : members.get().values()) {
+                builder.addEnum(EnumDefinition.fromMember(member));
+            }
+            addTrait(builder.build());
             return new EnumShape(this);
         }
 
@@ -177,13 +182,11 @@ public final class EnumShape extends StringShape {
                 throw new IllegalStateException("An id must be set before adding a named enum trait to a string.");
             }
             clearMembers();
-            SyntheticEnumTrait.Builder traitBuilder = SyntheticEnumTrait.builder();
 
             for (EnumDefinition definition : trait.getValues()) {
                 Optional<MemberShape> member = definition.asMember(getId());
                 if (member.isPresent()) {
                     addMember(member.get(), false);
-                    traitBuilder.addEnum(definition);
                 } else {
                     throw new IllegalStateException(String.format(
                             "Unable to convert enum trait entry with name: `%s` and value `%s` to an enum member.",
@@ -191,7 +194,6 @@ public final class EnumShape extends StringShape {
                     ));
                 }
             }
-            super.addTrait(traitBuilder.build());
 
             return this;
         }
@@ -217,7 +219,6 @@ public final class EnumShape extends StringShape {
          */
         public Builder clearMembers() {
             members.clear();
-            super.removeTrait(SyntheticEnumTrait.ID);
             return this;
         }
 
@@ -242,17 +243,6 @@ public final class EnumShape extends StringShape {
                         getSourceLocation());
             }
             members.get().put(member.getMemberName(), member);
-
-            if (updateEnumTrait) {
-                SyntheticEnumTrait.Builder builder;
-                if (getTraits().containsKey(SyntheticEnumTrait.ID)) {
-                    builder = ((SyntheticEnumTrait) getTraits().get(SyntheticEnumTrait.ID)).toBuilder();
-                } else {
-                    builder = SyntheticEnumTrait.builder();
-                }
-                builder.addEnum(EnumDefinition.fromMember(member));
-                super.addTrait(builder.build());
-            }
 
             return this;
         }
@@ -306,28 +296,8 @@ public final class EnumShape extends StringShape {
         public Builder removeMember(String member) {
             if (members.hasValue()) {
                 members.get().remove(member);
-                SyntheticEnumTrait trait = (SyntheticEnumTrait) getTraits().get(SyntheticEnumTrait.ID);
-                super.addTrait(trait.toBuilder().removeEnumByName(member).build());
             }
             return this;
-        }
-
-        @Override
-        public Builder addTrait(Trait trait) {
-            if (trait instanceof EnumTrait) {
-                throw new SourceException(
-                        "The enum trait cannot be added directly to an enum shape.", getSourceLocation());
-            }
-            return (Builder) super.addTrait(trait);
-        }
-
-        @Override
-        public Builder removeTrait(ShapeId traitId) {
-            if (traitId.equals(SyntheticEnumTrait.ID)) {
-                throw new SourceException(
-                        "The enum trait cannot be removed directly from an enum shape.", getSourceLocation());
-            }
-            return (Builder) super.removeTrait(traitId);
         }
     }
 }
