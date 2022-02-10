@@ -230,6 +230,16 @@ public final class ModelSerializer {
         }
 
         @Override
+        public Node enumShape(EnumShape shape) {
+            return createNamedMemberShape(shape, shape.getAllMembers());
+        }
+
+        @Override
+        public Node intEnumShape(IntEnumShape shape) {
+            return createNamedMemberShape(shape, shape.getAllMembers());
+        }
+
+        @Override
         public Node listShape(ListShape shape) {
             ObjectNode.Builder result = createTypedBuilder(shape);
             mixinMember(result, shape.getMember(), "member");
@@ -323,15 +333,15 @@ public final class ModelSerializer {
 
         @Override
         public Node structureShape(StructureShape shape) {
-            return createStructureAndUnion(shape, shape.getAllMembers());
+            return createNamedMemberShape(shape, shape.getAllMembers());
         }
 
         @Override
         public Node unionShape(UnionShape shape) {
-            return createStructureAndUnion(shape, shape.getAllMembers());
+            return createNamedMemberShape(shape, shape.getAllMembers());
         }
 
-        private ObjectNode createStructureAndUnion(Shape shape, Map<String, MemberShape> members) {
+        private ObjectNode createNamedMemberShape(Shape shape, Map<String, MemberShape> members) {
             ObjectNode.Builder result = createTypedBuilder(shape);
 
             ObjectNode.Builder membersBuilder = ObjectNode.objectNodeBuilder();
