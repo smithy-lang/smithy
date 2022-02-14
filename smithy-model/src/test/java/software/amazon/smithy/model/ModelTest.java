@@ -38,6 +38,7 @@ import software.amazon.smithy.model.knowledge.KnowledgeIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -203,6 +204,16 @@ public class ModelTest {
         Model model = Model.builder().addShapes(a, b).build();
 
         assertThat(model.toSet(), containsInAnyOrder(a, b));
+    }
+
+    @Test
+    public void toSetWithTypeRespectsSubclassing() {
+        StringShape a = StringShape.builder().id("ns.foo#a").build();
+        EnumShape.Builder enumBuilder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#b");
+        EnumShape b = enumBuilder.addMember("FOO", "foo").build();
+        Model model = Model.builder().addShapes(a, b).build();
+
+        assertThat(model.toSet(StringShape.class), containsInAnyOrder(a, b));
     }
 
     @Test
