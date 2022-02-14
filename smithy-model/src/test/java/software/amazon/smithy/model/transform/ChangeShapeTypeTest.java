@@ -340,4 +340,48 @@ public class ChangeShapeTypeTest {
                         .build()
         )));
     }
+
+    @Test
+    public void canFindEnumsToConvert() {
+        EnumTrait compatibleTrait = EnumTrait.builder()
+                .addEnum(EnumDefinition.builder()
+                        .name("foo")
+                        .value("bar")
+                        .build())
+                .build();
+        ShapeId compatibleStringId = ShapeId.fromParts("ns.foo", "CompatibleString");
+        StringShape compatibleString = StringShape.builder()
+                .id(compatibleStringId)
+                .addTrait(compatibleTrait)
+                .build();
+
+        EnumTrait incompatibleTrait = EnumTrait.builder()
+                .addEnum(EnumDefinition.builder()
+                        .value("bar")
+                        .build())
+                .build();
+        ShapeId incompatibleStringId = ShapeId.fromParts("ns.foo", "IncompatibleString");
+        StringShape incompatibleString = StringShape.builder()
+                .id(incompatibleStringId)
+                .addTrait(incompatibleTrait)
+                .build();
+
+
+        Model model = Model.assembler()
+                .addShape(compatibleString)
+                .addShape(incompatibleString)
+                .assemble().unwrap();
+        Model result = ModelTransformer.create().changeStringEnumsToEnumShapes(model);
+
+        assertThat(result.expectShape(compatibleStringId).getType(), Matchers.is(ShapeType.ENUM));
+        assertThat(result.expectShape(compatibleStringId).members(), Matchers.hasSize(1));
+        assertThat(result.expectShape(compatibleStringId).members().iterator().next(), Matchers.equalTo(MemberShape.builder()
+                .id(compatibleStringId.withMember("foo"))
+                .target(UnitTypeTrait.UNIT)
+                .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+                .build()));
+
+        assertThat(result.expectShape(incompatibleStringId).getType(), Matchers.is(ShapeType.STRING));
+        assertThat(result.expectShape(incompatibleStringId).members(), Matchers.hasSize(0));
+    }
 }
