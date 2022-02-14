@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import org.hamcrest.Matchers;
@@ -323,7 +322,11 @@ public class ChangeShapeTypeTest {
                 .source(source)
                 .build();
 
-        Model model = Model.assembler().addShape(startShape).assemble().unwrap();
+        Model model = Model.assembler()
+                .setParsedShapesVersion("2.0")
+                .addShape(startShape)
+                .assemble()
+                .unwrap();
         Model result = ModelTransformer.create().changeShapeType(model, MapUtils.of(id, ShapeType.STRING));
 
         assertThat(result.expectShape(id).getType(), Matchers.is(ShapeType.STRING));
