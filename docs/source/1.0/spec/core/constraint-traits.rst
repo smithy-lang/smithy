@@ -360,7 +360,7 @@ Shape        Length constrains
 list         The number of members
 set          The number of members
 map          The number of key-value pairs
-string       The number of Unicode code points
+string       The number of `Unicode scalar values <https://www.unicode.org/glossary/#unicode_scalar_value>`__
 blob         The size of the blob in bytes
 ===========  =====================================
 
