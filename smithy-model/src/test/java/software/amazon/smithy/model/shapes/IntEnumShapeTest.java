@@ -130,31 +130,6 @@ public class IntEnumShapeTest {
     }
 
     @Test
-    public void membersMustHaveEnumValue() {
-        IntEnumShape.Builder builder = (IntEnumShape.Builder) IntEnumShape.builder().id("ns.foo#bar");
-        MemberShape member = MemberShape.builder()
-                .id("ns.foo#bar$foo")
-                .target(UnitTypeTrait.UNIT)
-                .build();
-        Assertions.assertThrows(SourceException.class, () -> {
-            builder.addMember(member);
-        });
-    }
-
-    @Test
-    public void membersMustHaveEnumValueWithIntSet() {
-        IntEnumShape.Builder builder = (IntEnumShape.Builder) IntEnumShape.builder().id("ns.foo#bar");
-        MemberShape member = MemberShape.builder()
-                .id("ns.foo#bar$foo")
-                .target(UnitTypeTrait.UNIT)
-                .addTrait(EnumValueTrait.builder().stringValue("bar").build())
-                .build();
-        Assertions.assertThrows(SourceException.class, () -> {
-            builder.addMember(member);
-        });
-    }
-
-    @Test
     public void membersMustTargetUnit() {
         IntEnumShape.Builder builder = (IntEnumShape.Builder) IntEnumShape.builder().id("ns.foo#bar");
         MemberShape member = MemberShape.builder()

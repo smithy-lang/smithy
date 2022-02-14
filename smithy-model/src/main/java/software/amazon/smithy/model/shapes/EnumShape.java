@@ -155,12 +155,24 @@ public final class EnumShape extends StringShape {
 
         @Override
         public EnumShape build() {
+            addSyntheticEnumTrait();
+            return new EnumShape(this);
+        }
+
+        private void addSyntheticEnumTrait() {
             SyntheticEnumTrait.Builder builder = SyntheticEnumTrait.builder();
             for (MemberShape member : members.get().values()) {
-                builder.addEnum(EnumDefinition.fromMember(member));
+                try {
+                    builder.addEnum(EnumDefinition.fromMember(member));
+                } catch (IllegalStateException e) {
+                    // This can happen if the enum value trait is using something other
+                    // than a string value. Rather than letting the exception propagate
+                    // here, we let the shape validator handle it because it will give
+                    // a much better error.
+                    return;
+                }
             }
             addTrait(builder.build());
-            return new EnumShape(this);
         }
 
         @Override
@@ -237,10 +249,6 @@ public final class EnumShape extends StringShape {
                 member = member.toBuilder()
                         .addTrait(EnumValueTrait.builder().stringValue(member.getMemberName()).build())
                         .build();
-            } else if (!member.expectTrait(EnumValueTrait.class).getStringValue().isPresent()) {
-                throw new SourceException(
-                        "Enum members MUST have the enumValue trait with the `string` member set",
-                        getSourceLocation());
             }
             members.get().put(member.getMemberName(), member);
 
