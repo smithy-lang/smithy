@@ -1,6 +1,7 @@
 software.amazon.smithy.model.validation.validators.AuthTraitValidator
 software.amazon.smithy.model.validation.validators.DefaultValueInUpdateValidator
 software.amazon.smithy.model.validation.validators.DeprecatedTraitValidator
+software.amazon.smithy.model.validation.validators.EnumShapeValidator
 software.amazon.smithy.model.validation.validators.EnumTraitValidator
 software.amazon.smithy.model.validation.validators.EventPayloadTraitValidator
 software.amazon.smithy.model.validation.validators.ExamplesTraitValidator
