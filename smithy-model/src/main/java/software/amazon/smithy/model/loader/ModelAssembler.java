@@ -105,6 +105,7 @@ public final class ModelAssembler {
     private final Map<String, Object> properties = new HashMap<>();
     private boolean disablePrelude;
     private Consumer<ValidationEvent> validationEventListener = DEFAULT_EVENT_LISTENER;
+    private Version parsedShapesVersion;
 
     // Lazy initialization holder class idiom to hold a default trait factory.
     static final class LazyTraitFactoryHolder {
@@ -368,6 +369,18 @@ public final class ModelAssembler {
     }
 
     /**
+     * Sets the Smithy version to use for parsed shapes added directly to the
+     * assembler.
+     *
+     * @param version A Smithy IDL version.
+     * @return Returns the assembler.
+     */
+    public ModelAssembler setParsedShapesVersion(String version) {
+        this.parsedShapesVersion = Version.fromString(version);
+        return this;
+    }
+
+    /**
      * Explicitly adds a trait to a shape in the assembled model.
      *
      * @param target Shape to add the trait to.
@@ -617,7 +630,9 @@ public final class ModelAssembler {
         }
 
         // A modelFile is created for the assembler to capture anything that was manually added.
-        FullyResolvedModelFile assemblerModelFile = FullyResolvedModelFile.fromShapes(traitFactory, shapes);
+        FullyResolvedModelFile assemblerModelFile = FullyResolvedModelFile.fromShapes(
+                traitFactory, shapes, parsedShapesVersion);
+
         modelFiles.add(assemblerModelFile);
         metadata.forEach(assemblerModelFile::putMetadata);
         for (Pair<ShapeId, Trait> pendingTrait : pendingTraits) {
