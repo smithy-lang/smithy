@@ -171,12 +171,6 @@ public final class IntEnumShape extends IntegerShape {
                         "intEnum members may only target `smithy.api#Unit`, but found `%s`", member.getTarget()
                 ), getSourceLocation());
             }
-            if (!member.hasTrait(EnumValueTrait.ID)
-                    || !member.expectTrait(EnumValueTrait.class).getIntValue().isPresent()) {
-                throw new SourceException(
-                        "intEnum members MUST have the enumValue trait with the `int` member set",
-                        getSourceLocation());
-            }
             members.get().put(member.getMemberName(), member);
 
             return this;
