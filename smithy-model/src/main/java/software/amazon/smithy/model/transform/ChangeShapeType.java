@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.transform;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.model.Model;
@@ -52,6 +53,17 @@ final class ChangeShapeType {
 
     ChangeShapeType(Map<ShapeId, ShapeType> shapeToType) {
         this.shapeToType = shapeToType;
+    }
+
+    static ChangeShapeType upgradeEnums(Model model) {
+        Map<ShapeId, ShapeType> toUpdate = new HashMap<>();
+        for (StringShape shape: model.getStringShapesWithTrait(EnumTrait.class)) {
+            EnumTrait trait = shape.expectTrait(EnumTrait.class);
+            if (trait.getValues().iterator().next().getName().isPresent()) {
+                toUpdate.put(shape.getId(), ShapeType.ENUM);
+            }
+        }
+        return new ChangeShapeType(toUpdate);
     }
 
     Model transform(ModelTransformer transformer, Model model) {
