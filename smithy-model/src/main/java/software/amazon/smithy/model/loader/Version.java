@@ -70,21 +70,20 @@ enum Version {
     }
 
     /**
-     * Returns true if this version of the IDL supports using "!" as
-     * syntactic sugar for applying the required trait.
-     *
-     * @return Returns true if this version of the IDL supports "!" sugar.
-     */
-    boolean supportsRequiredSugar() {
-        return this == VERSION_2_0;
-    }
-
-    /**
      * Checks if this version of the IDL supports inlined operation IO shapes.
      *
      * @return Returns true if this version supports inlined operation IO shapes.
      */
     boolean supportsInlineOperationIO() {
+        return this == VERSION_2_0;
+    }
+
+    /**
+     * Checks if this version supports enum and intEnum shapes.
+     *
+     * @return Returns true if this version supports the enum and intEnum shapes.
+     */
+    boolean supportsEnumShapes() {
         return this == VERSION_2_0;
     }
 
