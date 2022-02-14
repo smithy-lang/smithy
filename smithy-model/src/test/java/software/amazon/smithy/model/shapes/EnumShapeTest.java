@@ -255,19 +255,6 @@ public class EnumShapeTest {
     }
 
     @Test
-    public void membersMustHaveEnumValueWithStringSet() {
-        EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
-        MemberShape member = MemberShape.builder()
-                .id("ns.foo#bar$foo")
-                .target(UnitTypeTrait.UNIT)
-                .addTrait(EnumValueTrait.builder().intValue(1).build())
-                .build();
-        Assertions.assertThrows(SourceException.class, () -> {
-            builder.addMember(member);
-        });
-    }
-
-    @Test
     public void membersMustTargetUnit() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
         MemberShape member = MemberShape.builder()

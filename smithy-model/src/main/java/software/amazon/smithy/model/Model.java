@@ -41,7 +41,9 @@ import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.FloatShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
@@ -386,6 +388,25 @@ public final class Model implements ToSmithyBuilder<Model> {
     }
 
     /**
+     * Gets an immutable set of all intEnums in the Model.
+     *
+     * @return Returns the Set of {@code intEnum}s.
+     */
+    public Set<IntEnumShape> getIntEnumShapes() {
+        return toSet(IntEnumShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all intEnums in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code intEnum}s that have a specific trait.
+     */
+    public Set<IntEnumShape> getIntEnumShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), IntEnumShape.class);
+    }
+
+    /**
      * Gets an immutable set of all lists in the Model.
      *
      * @return Returns the Set of {@code list}s.
@@ -575,6 +596,25 @@ public final class Model implements ToSmithyBuilder<Model> {
      */
     public Set<StringShape> getStringShapesWithTrait(Class<? extends Trait> trait) {
         return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), StringShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all enums in the Model.
+     *
+     * @return Returns the Set of {@code enum}s.
+     */
+    public Set<EnumShape> getEnumShapes() {
+        return toSet(EnumShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all enums in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code enum}s that have a specific trait.
+     */
+    public Set<EnumShape> getEnumShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), EnumShape.class);
     }
 
     /**
