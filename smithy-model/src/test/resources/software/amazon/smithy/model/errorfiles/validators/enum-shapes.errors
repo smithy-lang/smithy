@@ -1,0 +1,7 @@
+[ERROR] ns.foo#StringEnum$INT_VALUE: The enumValue trait may only use the string option when applied to enum shapes. | EnumShape
+[ERROR] ns.foo#StringEnum$DUPLICATE_VALUE: Multiple enum members found with duplicate value `explicit` | EnumShape
+[WARNING] ns.foo#StringEnum$undesirableName: The name `undesirableName` does not match the recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores. | EnumShape
+[ERROR] ns.foo#IntEnum$IMPLICIT_VALUE: intEnum members must have the enumValue trait with the `int` member set | EnumShape
+[ERROR] ns.foo#IntEnum$STRING_VALUE: intEnum members must have the enumValue trait with the `int` member set | EnumShape
+[ERROR] ns.foo#IntEnum$DUPLICATE_VALUE: Multiple enum members found with duplicate value `1` | EnumShape
+[WARNING] ns.foo#IntEnum$undesirableName: The name `undesirableName` does not match the recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores. | EnumShape
