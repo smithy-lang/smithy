@@ -482,6 +482,18 @@ public final class ModelTransformer {
     }
 
     /**
+     * Changes each compatible string shape with the enum trait to an enum shape.
+     *
+     * <p>Strings with enum traits that don't define names are not converted.
+     *
+     * @param model Model to transform.
+     * @return Returns the transformed model.
+     */
+    public Model changeStringEnumsToEnumShapes(Model model) {
+        return ChangeShapeType.upgradeEnums(model).transform(this, model);
+    }
+
+    /**
      * Copies the errors defined on the given service onto each operation bound to the
      * service, effectively flattening service error inheritance.
      *
