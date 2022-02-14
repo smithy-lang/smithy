@@ -772,7 +772,7 @@ public final class Model implements ToSmithyBuilder<Model> {
         return (Set<T>) cachedTypes.computeIfAbsent(shapeType, t -> {
             Set<T> result = new HashSet<>();
             for (Shape shape : shapeMap.values()) {
-                if (shape.getClass() == shapeType) {
+                if (shapeType.isAssignableFrom(shape.getClass())) {
                     result.add((T) shape);
                 }
             }
