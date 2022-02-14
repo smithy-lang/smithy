@@ -221,7 +221,7 @@ contain a valid shape ID that targets an integer shape in the model.
 
         @trait
         @idRef(failWhenMissing: true, selector: "integer")
-        string IntegerRefTraitValue
+        string integerRef
 
     .. code-tab:: json
 
