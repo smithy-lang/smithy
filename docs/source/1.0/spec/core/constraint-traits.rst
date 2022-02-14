@@ -427,6 +427,12 @@ languages.
     string matches the regular expression, whereas ``@pattern("^\\w+$")``
     requires that the entire string matches the regular expression.
 
+.. note::
+
+    Pattern values that contain ``\`` need to :ref:`escape it <string-escape-characters>`.
+    For example, the regular expression ``^\w+$`` would be specified as
+    ``@pattern("^\\w+$")``.
+
 .. tabs::
 
     .. code-tab:: smithy
