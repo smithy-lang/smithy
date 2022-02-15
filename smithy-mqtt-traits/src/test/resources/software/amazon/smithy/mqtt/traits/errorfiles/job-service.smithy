@@ -51,45 +51,34 @@ structure RejectedError {
   executionState: JobExecutionState,
 }
 
-@enum([
-  {
-    name: "INVALID_TOPIC",
-    value: "InvalidTopic",
-  },
-  {
-    name: "INVALID_JSON",
-    value: "InvalidJson",
-  },
-  {
-    name: "INVALID_REQUEST",
-    value: "InvalidRequest",
-  },
-  {
-    name: "INVALID_STATE_TRANSITION",
-    value: "InvalidStateTransition",
-  },
-  {
-    name: "RESOURCE_NOT_FOUND",
-    value: "ResourceNotFound",
-  },
-  {
-    name: "VERSION_MISMATCH",
-    value: "VersionMismatch",
-  },
-  {
-    name: "INTERNAL_ERROR",
-    value: "InternalError",
-  },
-  {
-    name: "REQUEST_THROTTLED",
-    value: "RequestThrottled",
-  },
-  {
-    name: "TERMINAL_STATE_REACHED",
-    value: "TerminalStateReached",
-  },
-])
-string RejectedErrorCode
+enum RejectedErrorCode {
+    @enumValue(string: "InvalidTopic")
+    INVALID_TOPIC
+
+    @enumValue(string: "InvalidJson")
+    INVALID_JSON
+
+    @enumValue(string: "InvalidRequest")
+    INVALID_REQUEST
+
+    @enumValue(string: "InvalidStateTransition")
+    INVALID_STATE_TRANSITION
+
+    @enumValue(string: "ResourceNotFound")
+    RESOURCE_NOT_FOUND
+
+    @enumValue(string: "VersionMismatch")
+    VERSION_MISMATCH
+
+    @enumValue(string: "InternalError")
+    INTERNAL_ERROR
+
+    @enumValue(string: "RequestThrottled")
+    REQUEST_THROTTLED
+
+    @enumValue(string: "TerminalStateReached")
+    TERMINAL_STATE_REACHED
+}
 
 // ------ GetPendingJobExecutions -------
 
@@ -231,41 +220,16 @@ structure JobExecutionData {
   executionNumber: smithy.api#Long,
 }
 
-@enum([
-  {
-    name: "QUEUED",
-    value: "QUEUED",
-  },
-  {
-    name: "IN_PROGRESS",
-    value: "IN_PROGRESS",
-  },
-  {
-    name: "TIMED_OUT",
-    value: "TIMED_OUT",
-  },
-  {
-    name: "FAILED",
-    value: "FAILED",
-  },
-  {
-    name: "SUCCEEDED",
-    value: "SUCCEEDED",
-  },
-  {
-    name: "CANCELED",
-    value: "CANCELED",
-  },
-  {
-    name: "REJECTED",
-    value: "REJECTED",
-  },
-  {
-    name: "REMOVED",
-    value: "REMOVED",
-  },
-])
-string JobStatus
+enum JobStatus {
+    QUEUED
+    IN_PROGRESS
+    TIMED_OUT
+    FAILED
+    SUCCEEDED
+    CANCELED
+    REJECTED
+    REMOVED
+}
 
 
 // ------- DescribeJobExecution ----------
