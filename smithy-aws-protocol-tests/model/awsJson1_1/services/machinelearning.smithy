@@ -135,17 +135,13 @@ map ScoreValuePerLabelMap {
     value: ScoreValue,
 }
 
-@enum([
-    {
-        value: "PredictiveModelType",
-        name: "PREDICTIVE_MODEL_TYPE",
-    },
-    {
-        value: "Algorithm",
-        name: "ALGORITHM",
-    },
-])
-string DetailsAttributes
+enum DetailsAttributes {
+    @enumValue(string: "PredictiveModelType")
+    PREDICTIVE_MODEL_TYPE
+
+    @enumValue(string: "Algorithm")
+    ALGORITHM
+}
 
 @length(
     min: 1,

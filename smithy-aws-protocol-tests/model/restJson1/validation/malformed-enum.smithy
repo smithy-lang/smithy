@@ -191,8 +191,13 @@ structure MalformedEnumInput {
     union: EnumUnion
 }
 
-@enum([{value: "abc", name: "ABC"}, {value: "def", name: "DEF"}])
-string EnumString
+enum EnumString {
+    @enumValue(string: "abc")
+    ABC
+
+    @enumValue(string: "def")
+    DEF
+}
 
 list EnumList {
     member: EnumString
