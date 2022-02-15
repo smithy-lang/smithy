@@ -92,8 +92,8 @@ apply MalformedLength @httpMalformedRequestTests([
             }
         },
         testParameters: {
-            value: ["a", "abcdefghijklmnopqrstuvwxyz"],
-            inputLength: ["1", "26"]
+            value: ["a", "abcdefghijklmnopqrstuvwxyz", "👍"],
+            inputLength: ["1", "26", "1"]
         }
     },
     {
@@ -409,8 +409,8 @@ apply MalformedLengthOverride @httpMalformedRequestTests([
             }
         },
         testParameters: {
-            value: ["abc", "abcdefg"],
-            inputLength: ["3", "7"]
+            value: ["abc", "abcdefg", "👍👍👍"],
+            inputLength: ["3", "7", "3"]
         }
     },
     {
