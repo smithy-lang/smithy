@@ -35,8 +35,10 @@ structure EnumPayloadInput {
     payload: StringEnum
 }
 
-@enum([{"value": "enumvalue", "name": "V"}])
-string StringEnum
+enum StringEnum {
+    @enumValue(string: "enumvalue")
+    V
+}
 
 @http(uri: "/StringPayload", method: "POST")
 @httpRequestTests([
