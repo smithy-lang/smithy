@@ -394,7 +394,7 @@ string title
 
 /// Constrains the acceptable values of a string to a fixed set
 /// of constant values.
-@trait(selector: "string")
+@trait(selector: "string :not(enum)")
 @tags(["diff.error.add", "diff.error.remove"])
 @length(min: 1)
 @deprecated
