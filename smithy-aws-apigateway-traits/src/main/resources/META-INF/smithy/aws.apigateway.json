@@ -216,26 +216,40 @@
             }
         },
         "aws.apigateway#IntegrationType": {
-            "type": "string",
-            "traits": {
-                "smithy.api#enum": [
-                    {
-                        "value": "aws",
-                        "name": "AWS"
-                    },
-                    {
-                        "value": "aws_proxy",
-                        "name": "AWS_PROXY"
-                    },
-                    {
-                        "value": "http",
-                        "name": "HTTP"
-                    },
-                    {
-                        "value": "http_proxy",
-                        "name": "HTTP_PROXY"
+            "type": "enum",
+            "members": {
+                "AWS": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "aws"
+                        }
                     }
-                ]
+                },
+                "AWS_PROXY": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "aws_proxy"
+                        }
+                    }
+                },
+                "HTTP": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "http"
+                        }
+                    }
+                },
+                "HTTP_PROXY": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "http_proxy"
+                        }
+                    }
+                }
             }
         },
         "aws.apigateway#IamRoleArn": {
@@ -283,50 +297,81 @@
             }
         },
         "aws.apigateway#ConnectionType": {
-            "type": "string",
-            "traits": {
-                "smithy.api#private": {},
-                "smithy.api#enum": [
-                    {
-                        "name": "INTERNET",
-                        "value": "INTERNET"
-                    },
-                    {
-                        "name": "VPC_LINK",
-                        "value": "VPC_LINK"
+            "type": "enum",
+            "members": {
+                "INTERNET": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "INTERNET"
+                        }
                     }
-                ]
+                },
+                "VPC_LINK": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "VPC_LINK"
+                        }
+                    }
+                }
             }
         },
         "aws.apigateway#PassThroughBehavior": {
-            "type": "string",
+            "type": "enum",
+            "members": {
+                "WHEN_NO_TEMPLATES": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "when_no_templates"
+                        }
+                    }
+                },
+                "WHEN_NO_MATCH": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "when_no_match"
+                        }
+                    }
+                },
+                "NEVER": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "never"
+                        }
+                    }
+                }
+            },
             "traits": {
                 "smithy.api#documentation": "Defines the passThroughBehavior for the integration",
-                "smithy.api#enum": [
-                    {
-                        "value": "when_no_templates",
-                        "name": "WHEN_NO_TEMPLATES"
-                    },
-                    {
-                        "value": "when_no_match",
-                        "name": "WHEN_NO_MATCH"
-                    },
-                    {
-                        "value": "never",
-                        "name": "NEVER"
-                    }
-                ],
                 "smithy.api#private": {}
             }
         },
         "aws.apigateway#ContentHandling": {
-            "type": "string",
+            "type": "enum",
+            "members": {
+                "CONVERT_TO_TEXT": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "CONVERT_TO_TEXT"
+                        }
+                    }
+                },
+                "CONVERT_TO_BINARY": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "CONVERT_TO_BINARY"
+                        }
+                    }
+                }
+            },
             "traits": {
                 "smithy.api#documentation": "Defines the contentHandling for the integration",
-                "smithy.api#enum": [
-                    {"value": "CONVERT_TO_TEXT", "name": "CONVERT_TO_TEXT"},
-                    {"value": "CONVERT_TO_BINARY", "name": "CONVERT_TO_BINARY"}
-                ],
                 "smithy.api#private": {}
             }
         },

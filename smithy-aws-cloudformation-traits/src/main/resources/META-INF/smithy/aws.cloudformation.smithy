@@ -41,52 +41,42 @@ structure cfnExcludeProperty {}
     selector: "structure > member",
     conflicts: [cfnExcludeProperty]
 )
-@enum([
-    {
-        value: "full",
-        name: "FULL",
-        documentation: """
-            Indicates that the CloudFormation property generated from this
-            member does not have any mutability restrictions, meaning that it
-            can be specified by the user and returned in a `read` or `list`
-            request.""",
-    },
-    {
-        value: "create-and-read",
-        name: "CREATE_AND_READ",
-        documentation: """
-            Indicates that the CloudFormation property generated from this
-            member can be specified only during resource creation and can be
-            returned in a `read` or `list` request.""",
-    },
-    {
-        value: "create",
-        name: "CREATE",
-        documentation: """
-            Indicates that the CloudFormation property generated from this
-            member can be specified only during resource creation and cannot
-            be returned in a `read` or `list` request. MUST NOT be set if the
-            member is also marked with the `@additionalIdentifier` trait.""",
-    },
-    {
-        value: "read",
-        name: "READ",
-        documentation: """
-            Indicates that the CloudFormation property generated from this
-            member can be returned by a `read` or `list` request, but
-            cannot be set by the user.""",
-    },
-    {
-        value: "write",
-        name: "WRITE",
-        documentation: """
-            Indicates that the CloudFormation property generated from this
-            member can be specified by the user, but cannot be returned by a
-            `read` or `list` request. MUST NOT be set if the member is also
-            marked with the `@additionalIdentifier` trait.""",
-    }
-])
-string cfnMutability
+enum cfnMutability {
+    /// Indicates that the CloudFormation property generated from this
+    /// member does not have any mutability restrictions, meaning that it
+    /// can be specified by the user and returned in a `read` or `list`
+    /// request.
+    @enumValue(string: "full")
+    FULL
+
+    /// Indicates that the CloudFormation property generated from this
+    /// member can be specified only during resource creation and can be
+    /// returned in a `read` or `list` request.
+    @enumValue(string: "create-and-read")
+    CREATE_AND_READ
+
+    /// Indicates that the CloudFormation property generated from this
+    /// member can be specified only during resource creation and cannot
+    /// be returned in a `read` or `list` request. MUST NOT be set if the
+    /// member is also marked with the `@additionalIdentifier` trait.
+    @enumValue(string: "create")
+    CREATE
+
+
+    /// Indicates that the CloudFormation property generated from this
+    /// member can be returned by a `read` or `list` request, but
+    /// cannot be set by the user.
+    @enumValue(string: "read")
+    READ
+
+
+    /// Indicates that the CloudFormation property generated from this
+    /// member can be specified by the user, but cannot be returned by a
+    /// `read` or `list` request. MUST NOT be set if the member is also
+    /// marked with the `@additionalIdentifier` trait.
+    @enumValue(string: "write")
+    WRITE
+}
 
 /// Indicates that a Smithy resource is a CloudFormation resource.
 @unstable
