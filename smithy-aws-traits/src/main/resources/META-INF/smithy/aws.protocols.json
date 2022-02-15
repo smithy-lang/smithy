@@ -276,26 +276,42 @@
             }
         },
         "aws.protocols#ChecksumAlgorithm": {
-            "type": "string",
-            "traits": {
-                "smithy.api#enum": [
-                    {
-                        "value": "CRC32C",
-                        "name": "CRC32C"
-                    },
-                    {
-                        "value": "CRC32",
-                        "name": "CRC32"
-                    },
-                    {
-                        "value": "SHA1",
-                        "name": "SHA1"
-                    },
-                    {
-                        "value": "SHA256",
-                        "name": "SHA256"
+            "type": "enum",
+            "members": {
+                "CRC32C": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "CRC32C"
+                        }
                     }
-                ],
+                },
+                "CRC32": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "CRC32"
+                        }
+                    }
+                },
+                "SHA1": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "SHA1"
+                        }
+                    }
+                },
+                "SHA256": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "SHA256"
+                        }
+                    }
+                }
+            },
+            "traits": {
                 "smithy.api#private": {}
             }
         }

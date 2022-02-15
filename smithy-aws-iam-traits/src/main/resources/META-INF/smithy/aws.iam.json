@@ -122,39 +122,157 @@
             }
         },
         "aws.iam#ConditionKeyType": {
-            "type": "string",
+            "type": "enum",
+            "members": {
+                "ARN": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "ARN"
+                        }
+                    }
+                },
+                "ARRAY_OF_ARN": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "ArrayOfARN"
+                        }
+                    }
+                },
+                "BINARY": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "Binary"
+                        }
+                    }
+                },
+                "ARRAY_OF_BINARY": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "ArrayOfBinary"
+                        }
+                    }
+                },
+                "STRING": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "String"
+                        }
+                    }
+                },
+                "ARRAY_OF_STRING": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "ArrayOfString"
+                        }
+                    }
+                },
+                "NUMERIC": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "Numeric"
+                        }
+                    }
+                },
+                "DATE": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "Date"
+                        }
+                    }
+                },
+                "ARRAY_OF_DATE": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "ArrayOfDate"
+                        }
+                    }
+                },
+                "BOOL": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "Bool"
+                        }
+                    }
+                },
+                "ARRAY_OF_BOOL": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "ArrayOfBool"
+                        }
+                    }
+                },
+                "IP_ADDRESS": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "IPAddress"
+                        }
+                    }
+                },
+                "ARRAY_OF_IP_ADDRESS": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "ArrayOfIPAddress"
+                        }
+                    }
+                }
+            },
             "traits": {
                 "smithy.api#private": {},
-                "smithy.api#documentation": "The IAM policy type of the value that will supplied for this context key",
-                "smithy.api#enum": [
-                    {"value": "ARN", "name": "ARN"},
-                    {"value": "ArrayOfARN", "name": "ARRAY_OF_ARN"},
-                    {"value": "Binary", "name": "BINARY"},
-                    {"value": "ArrayOfBinary", "name": "ARRAY_OF_BINARY"},
-                    {"value": "String", "name": "STRING"},
-                    {"value": "ArrayOfString", "name": "ARRAY_OF_STRING"},
-                    {"value": "Numeric", "name": "NUMERIC"},
-                    {"value": "ArrayOfNumeric", "name": "ARRAY_OF_NUMERIC"},
-                    {"value": "Date", "name": "DATE"},
-                    {"value": "ArrayOfDate", "name": "ARRAY_OF_DATE"},
-                    {"value": "Bool", "name": "BOOL"},
-                    {"value": "ArrayOfBool", "name": "ARRAY_OF_BOOL"},
-                    {"value": "IPAddress", "name": "IP_ADDRESS"},
-                    {"value": "ArrayOfIPAddress", "name": "ARRAY_OF_IP_ADDRESS"}
-                ]
+                "smithy.api#documentation": "The IAM policy type of the value that will supplied for this context key"
             }
         },
         "aws.iam#PrincipalType": {
-            "type": "string",
+            "type": "enum",
+            "members": {
+                "ROOT": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "Root"
+                        }
+                    }
+                },
+                "IAM_USER": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "IAMUser"
+                        }
+                    }
+                },
+                "IAM_ROLE": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "IAMRole"
+                        }
+                    }
+                },
+                "FEDERATED_USER": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": {
+                            "string": "FederatedUser"
+                        }
+                    }
+                }
+            },
             "traits": {
                 "smithy.api#private": {},
-                "smithy.api#documentation": "An IAM policy principal type.",
-                "smithy.api#enum": [
-                    {"value": "Root", "name": "ROOT"},
-                    {"value": "IAMUser", "name": "IAM_USER"},
-                    {"value": "IAMRole", "name": "IAM_ROLE"},
-                    {"value": "FederatedUser", "name": "FEDERATED_USER"}
-                ]
+                "smithy.api#documentation": "An IAM policy principal type."
             }
         }
     }

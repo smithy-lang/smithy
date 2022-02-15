@@ -45,7 +45,8 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public final class ProtocolHttpPayloadValidator extends AbstractValidator {
     private static final Set<ShapeType> VALID_HTTP_PAYLOAD_TYPES = SetUtils.of(
-            ShapeType.STRUCTURE, ShapeType.UNION, ShapeType.DOCUMENT, ShapeType.BLOB, ShapeType.STRING
+            ShapeType.STRUCTURE, ShapeType.UNION, ShapeType.DOCUMENT, ShapeType.BLOB, ShapeType.STRING,
+            ShapeType.ENUM
     );
 
     @Override

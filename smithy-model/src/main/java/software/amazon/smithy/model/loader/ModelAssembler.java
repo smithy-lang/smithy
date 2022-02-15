@@ -646,7 +646,11 @@ public final class ModelAssembler {
             List<Shape> nonPrelude = model.shapes()
                     .filter(FunctionalUtils.not(Prelude::isPreludeShape))
                     .collect(Collectors.toList());
-            FullyResolvedModelFile resolvedFile = FullyResolvedModelFile.fromShapes(traitFactory, nonPrelude);
+            // Since we're pulling from a loaded model, we know that it has been converted to the latest
+            // supported version. We include that here to ensure we don't hit any validation issues from
+            // using new features.
+            FullyResolvedModelFile resolvedFile = FullyResolvedModelFile.fromShapes(
+                    traitFactory, nonPrelude, Version.fromString(Model.MODEL_VERSION));
             model.getMetadata().forEach(resolvedFile::putMetadata);
             modelFiles.add(resolvedFile);
         }

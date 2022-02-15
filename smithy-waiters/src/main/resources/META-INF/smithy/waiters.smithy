@@ -69,30 +69,22 @@ structure Acceptor {
 
 /// The transition state of a waiter.
 @private
-@enum([
-    {
-        "name": "SUCCESS",
-        "value": "success",
-        "documentation": """
-                The waiter successfully finished waiting. This is a terminal
-                state that causes the waiter to stop."""
-    },
-    {
-        "name": "FAILURE",
-        "value": "failure",
-        "documentation": """
-                The waiter failed to enter into the desired state. This is a
-                terminal state that causes the waiter to stop."""
-    },
-    {
-        "name": "RETRY",
-        "value": "retry",
-        "documentation": """
-                The waiter will retry the operation. This state transition is
-                implicit if no accepter causes a state transition."""
-    },
-])
-string AcceptorState
+enum AcceptorState {
+    /// The waiter successfully finished waiting. This is a terminal
+    /// state that causes the waiter to stop.
+    @enumValue(string: "success")
+    SUCCESS
+
+    /// The waiter failed to enter into the desired state. This is a
+    /// terminal state that causes the waiter to stop.
+    @enumValue(string: "failure")
+    FAILURE
+
+    /// The waiter will retry the operation. This state transition is
+    /// implicit if no accepter causes a state transition.
+    @enumValue(string: "retry")
+    RETRY
+}
 
 /// Defines how an acceptor determines if it matches the current state of
 /// a resource.
@@ -141,30 +133,24 @@ structure PathMatcher {
 }
 
 /// Defines a comparison to perform in a PathMatcher.
-@enum([
-    {
-        "name": "STRING_EQUALS",
-        "value": "stringEquals",
-        "documentation": "Matches if the return value is a string that is equal to the expected string."
-    },
-    {
-        "name": "BOOLEAN_EQUALS",
-        "value": "booleanEquals",
-        "documentation": "Matches if the return value is a boolean that is equal to the string literal 'true' or 'false'."
-    },
-    {
-        "name": "ALL_STRING_EQUALS",
-        "value": "allStringEquals",
-        "documentation": "Matches if all values in the list matches the expected string."
-    },
-    {
-        "name": "ANY_STRING_EQUALS",
-        "value": "anyStringEquals",
-        "documentation": "Matches if any value in the list matches the expected string."
-    }
-])
 @private
-string PathComparator
+enum PathComparator {
+    /// Matches if the return value is a string that is equal to the expected string.
+    @enumValue(string: "stringEquals")
+    STRING_EQUALS
+
+    /// Matches if the return value is a boolean that is equal to the string literal 'true' or 'false'.
+    @enumValue(string: "booleanEquals")
+    BOOLEAN_EQUALS
+
+    /// Matches if all values in the list matches the expected string.
+    @enumValue(string: "allStringEquals")
+    ALL_STRING_EQUALS
+
+    /// Matches if any value in the list matches the expected string.
+    @enumValue(string: "anyStringEquals")
+    ANY_STRING_EQUALS
+}
 
 @private
 list NonEmptyStringList {
