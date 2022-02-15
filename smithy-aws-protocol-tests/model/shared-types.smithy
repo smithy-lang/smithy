@@ -74,29 +74,22 @@ list TimestampList {
     member: Timestamp,
 }
 
-@enum([
-    {
-        name: "FOO",
-        value: "Foo",
-    },
-    {
-        name: "BAZ",
-        value: "Baz",
-    },
-    {
-        name: "BAR",
-        value: "Bar",
-    },
-    {
-        name: "ONE",
-        value: "1",
-    },
-    {
-        name: "ZERO",
-        value: "0",
-    },
-])
-string FooEnum
+enum FooEnum {
+    @enumValue(string: "Foo")
+    FOO
+
+    @enumValue(string: "Baz")
+    BAZ
+
+    @enumValue(string: "Bar")
+    BAR
+
+    @enumValue(string: "1")
+    ONE
+
+    @enumValue(string: "0")
+    ZERO
+}
 
 list FooEnumList {
     member: FooEnum,

@@ -46,19 +46,15 @@ structure trait {
 }
 
 @private
-@enum([
-    {
-        name: "MEMBER",
-        value: "member",
-        documentation: "Only a single member of a structure can be marked with the trait."
-    },
-    {
-        name: "TARGET",
-        value: "target",
-        documentation: "Only a single member of a structure can target a shape marked with this trait."
-    }
-])
-string StructurallyExclusive
+enum StructurallyExclusive {
+    /// Only a single member of a structure can be marked with the trait.
+    @enumValue(string: "member")
+    MEMBER
+
+    /// Only a single member of a structure can target a shape marked with this trait.
+    @enumValue(string: "target")
+    TARGET
+}
 
 /// Marks a shape or member as deprecated.
 @trait
@@ -176,17 +172,13 @@ structure httpApiKeyAuth {
 structure default {}
 
 @private
-@enum([
-    {
-        name: "HEADER",
-        value: "header",
-    },
-    {
-        name: "QUERY",
-        value: "query",
-    },
-])
-string HttpApiKeyLocations
+enum HttpApiKeyLocations {
+    @enumValue(string: "header")
+    HEADER
+
+    @enumValue(string: "query")
+    QUERY
+}
 
 /// Indicates that an operation can be called without authentication.
 @trait(selector: "operation")
@@ -226,10 +218,13 @@ structure ExampleError {
 /// targeted with this trait.
 @trait(selector: "structure", conflicts: [trait])
 @tags(["diff.error.const"])
-@enum([
-    {value: "client", name: "CLIENT"},
-    {value: "server", name: "SERVER"}])
-string error
+enum error {
+    @enumValue(string: "client")
+    CLIENT
+
+    @enumValue(string: "server")
+    SERVER
+}
 
 /// Indicates that an error MAY be retried by the client.
 @trait(selector: "structure[trait|error]")
@@ -402,6 +397,7 @@ string title
 @trait(selector: "string")
 @tags(["diff.error.add", "diff.error.remove"])
 @length(min: 1)
+@deprecated
 list enum {
     member: EnumDefinition
 }
@@ -695,31 +691,24 @@ structure idRef {
 
 @trait(selector: ":test(timestamp, member > timestamp)")
 @tags(["diff.error.const"])
-@enum([
-    {
-        value: "date-time",
-        name: "DATE_TIME",
-        documentation: """
-            Date time as defined by the date-time production in RFC3339 section 5.6
-            with no UTC offset (for example, 1985-04-12T23:20:50.52Z)."""
-    },
-    {
-        value: "epoch-seconds",
-        name: "EPOCH_SECONDS",
-        documentation: """
-            Also known as Unix time, the number of seconds that have elapsed since
-            00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970,
-            with decimal precision (for example, 1515531081.1234)."""
-    },
-    {
-        value: "http-date",
-        name: "HTTP_DATE",
-        documentation: """
-            An HTTP date as defined by the IMF-fixdate production in
-            RFC 7231#section-7.1.1.1 (for example, Tue, 29 Apr 2014 18:30:38 GMT)."""
-    }
-])
-string timestampFormat
+enum timestampFormat {
+
+    /// Date time as defined by the date-time production in RFC3339 section 5.6
+    /// with no UTC offset (for example, 1985-04-12T23:20:50.52Z).
+    @enumValue(string: "date-time")
+    DATE_TIME
+
+    /// Also known as Unix time, the number of seconds that have elapsed since
+    /// 00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970,
+    /// with decimal precision (for example, 1515531081.1234).
+    @enumValue(string: "epoch-seconds")
+    EPOCH_SECONDS
+
+    /// An HTTP date as defined by the IMF-fixdate production in
+    /// RFC 7231#section-7.1.1.1 (for example, Tue, 29 Apr 2014 18:30:38 GMT).
+    @enumValue(string: "http-date")
+    HTTP_DATE
+}
 
 /// Configures a custom operation endpoint.
 @trait(selector: "operation")

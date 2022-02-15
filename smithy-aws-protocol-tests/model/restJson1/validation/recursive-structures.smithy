@@ -85,8 +85,13 @@ structure RecursiveStructuresInput {
     union: RecursiveUnionOne
 }
 
-@enum([{value: "abc", name: "ABC"}, {value: "def", name: "DEF"}])
-string RecursiveEnumString
+enum RecursiveEnumString {
+    @enumValue(string: "abc")
+    ABC
+
+    @enumValue(string: "def")
+    DEF
+}
 
 union RecursiveUnionOne {
     string: RecursiveEnumString,
