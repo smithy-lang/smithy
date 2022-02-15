@@ -21,9 +21,12 @@ import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceException;
+import software.amazon.smithy.model.traits.DeprecatedTrait;
+import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.EnumValueTrait;
+import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
 import software.amazon.smithy.utils.ListUtils;
@@ -126,6 +129,74 @@ public class EnumShapeTest {
                         .id(shape.getId().withMember("foo"))
                         .target(UnitTypeTrait.UNIT)
                         .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+                        .build());
+
+        assertTrue(shape.hasTrait(EnumTrait.class));
+        assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(enumDefinition));
+    }
+
+    @Test
+    public void convertsDocsFromEnumTrait() {
+        EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
+        String docs = "docs";
+        EnumDefinition enumDefinition = EnumDefinition.builder()
+                .name("foo")
+                .value("bar")
+                .documentation(docs)
+                .build();
+        EnumShape shape = builder.members(EnumTrait.builder().addEnum(enumDefinition).build()).build();
+
+        assertEquals(shape.getMember("foo").get(),
+                MemberShape.builder()
+                        .id(shape.getId().withMember("foo"))
+                        .target(UnitTypeTrait.UNIT)
+                        .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+                        .addTrait(new DocumentationTrait(docs))
+                        .build());
+
+        assertTrue(shape.hasTrait(EnumTrait.class));
+        assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(enumDefinition));
+    }
+
+    @Test
+    public void convertsTagsFromEnumTrait() {
+        EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
+        String tag = "tag";
+        EnumDefinition enumDefinition = EnumDefinition.builder()
+                .name("foo")
+                .value("bar")
+                .addTag(tag)
+                .build();
+        EnumShape shape = builder.members(EnumTrait.builder().addEnum(enumDefinition).build()).build();
+
+        assertEquals(shape.getMember("foo").get(),
+                MemberShape.builder()
+                        .id(shape.getId().withMember("foo"))
+                        .target(UnitTypeTrait.UNIT)
+                        .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+                        .addTrait(TagsTrait.builder().addValue(tag).build())
+                        .build());
+
+        assertTrue(shape.hasTrait(EnumTrait.class));
+        assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(enumDefinition));
+    }
+
+    @Test
+    public void convertsDeprecatedFromEnumTrait() {
+        EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
+        EnumDefinition enumDefinition = EnumDefinition.builder()
+                .name("foo")
+                .value("bar")
+                .deprecated(true)
+                .build();
+        EnumShape shape = builder.members(EnumTrait.builder().addEnum(enumDefinition).build()).build();
+
+        assertEquals(shape.getMember("foo").get(),
+                MemberShape.builder()
+                        .id(shape.getId().withMember("foo"))
+                        .target(UnitTypeTrait.UNIT)
+                        .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+                        .addTrait(DeprecatedTrait.builder().build())
                         .build());
 
         assertTrue(shape.hasTrait(EnumTrait.class));
