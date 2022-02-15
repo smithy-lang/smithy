@@ -540,7 +540,7 @@ string title
 /// Constrains the acceptable values of a string to a fixed set
 /// of constant values.
 @trait(
-    selector: "string",
+    selector: "string :not(enum)",
     // It's a breaking change to change values or enums or the ordering of enums,
     // but that validation happens in code to provide better error messages.
     breakingChanges: [
