@@ -20,6 +20,14 @@ enum StringEnum {
     undesirableName
 }
 
+@enum([{
+    name: "FOO"
+    value: "FOO"
+}])
+enum EnumWithEnumTrait {
+    BAR
+}
+
 intEnum IntEnum {
     IMPLICIT_VALUE
 
