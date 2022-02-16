@@ -33,7 +33,8 @@ public final class IntEnumShape extends IntegerShape {
 
     private IntEnumShape(Builder builder) {
         super(builder);
-        members = builder.members.get();
+        members = NamedMemberUtils.computeMixinMembers(
+                builder.getMixins(), builder.members, getId(), getSourceLocation());
         validateMemberShapeIds();
         if (members.size() < 1) {
             throw new SourceException("intEnum shapes must have at least one member", getSourceLocation());
@@ -227,6 +228,32 @@ public final class IntEnumShape extends IntegerShape {
                 members.get().remove(member);
             }
             return this;
+        }
+
+        @Override
+        public Builder addMixin(Shape shape) {
+            if (getId() == null) {
+                throw new IllegalStateException("An id must be set before adding a mixin");
+            }
+            super.addMixin(shape);
+            NamedMemberUtils.cleanMixins(shape, members.get());
+            return this;
+        }
+
+        @Override
+        public Builder removeMixin(ToShapeId shape) {
+            super.removeMixin(shape);
+            NamedMemberUtils.removeMixin(shape, members.get());
+            return this;
+        }
+
+        @Override
+        public Builder flattenMixins() {
+            if (getMixins().isEmpty()) {
+                return this;
+            }
+            members(NamedMemberUtils.flattenMixins(members.get(), getMixins(), getId(), getSourceLocation()));
+            return (Builder) super.flattenMixins();
         }
     }
 }
