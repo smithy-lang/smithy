@@ -33,22 +33,22 @@ public enum ShapeType {
     DOUBLE("double", DoubleShape.class, Category.SIMPLE),
     BIG_DECIMAL("bigDecimal", BigDecimalShape.class, Category.SIMPLE),
     BIG_INTEGER("bigInteger", BigIntegerShape.class, Category.SIMPLE),
-
-    ENUM("enum", EnumShape.class, Category.ENUM),
-    INT_ENUM("intEnum", IntEnumShape.class, Category.ENUM),
+    ENUM("enum", EnumShape.class, Category.SIMPLE),
+    INT_ENUM("intEnum", IntEnumShape.class, Category.SIMPLE),
 
     LIST("list", ListShape.class, Category.AGGREGATE),
     SET("set", SetShape.class, Category.AGGREGATE),
     MAP("map", MapShape.class, Category.AGGREGATE),
     STRUCTURE("structure", StructureShape.class, Category.AGGREGATE),
     UNION("union", UnionShape.class, Category.AGGREGATE),
-    MEMBER("member", MemberShape.class, Category.AGGREGATE),
+
+    MEMBER("member", MemberShape.class, Category.MEMBER),
 
     SERVICE("service", ServiceShape.class, Category.SERVICE),
     RESOURCE("resource", ResourceShape.class, Category.SERVICE),
     OPERATION("operation", OperationShape.class, Category.SERVICE);
 
-    public enum Category { SIMPLE, AGGREGATE, SERVICE, ENUM }
+    public enum Category { SIMPLE, AGGREGATE, SERVICE, MEMBER }
 
     private final String stringValue;
     private final Class<? extends Shape> shapeClass;
