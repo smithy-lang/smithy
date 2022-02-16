@@ -100,7 +100,7 @@ public class ChangeShapeTypeTest {
     private static List<Arguments> simpleTypeTransforms() {
         Set<ShapeType> simpleTypes = new TreeSet<>();
         for (ShapeType type : ShapeType.values()) {
-            if (type.getCategory() == ShapeType.Category.SIMPLE || type.getCategory() == ShapeType.Category.ENUM) {
+            if (type.getCategory() == ShapeType.Category.SIMPLE) {
                 simpleTypes.add(type);
             }
         }
@@ -109,12 +109,19 @@ public class ChangeShapeTypeTest {
         for (ShapeType start : simpleTypes) {
             for (ShapeType dest : ShapeType.values()) {
                 if (start != dest) {
-                    result.add(Arguments.of(start, dest, dest.getCategory() == ShapeType.Category.SIMPLE));
+                    result.add(Arguments.of(start, dest, expectedResult(dest)));
                 }
             }
         }
 
         return result;
+    }
+
+    private static boolean expectedResult(ShapeType dest) {
+        if (dest == ShapeType.ENUM || dest == ShapeType.INT_ENUM) {
+            return false;
+        }
+        return dest.getCategory() == ShapeType.Category.SIMPLE;
     }
 
     @Test
