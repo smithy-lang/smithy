@@ -536,9 +536,8 @@ final class IdlModelParser extends SimpleParser {
         modelFile.onShape(memberBuilder);
         String target;
 
-        ws();
-
         if (!targetsUnion) {
+            ws();
             expect(':');
 
             if (peek() == '=') {
