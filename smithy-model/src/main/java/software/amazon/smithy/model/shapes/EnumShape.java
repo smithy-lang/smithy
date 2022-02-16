@@ -30,14 +30,15 @@ import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ListUtils;
 
-public final class EnumShape extends StringShape {
+public final class EnumShape extends StringShape implements NamedMembers {
 
     private final Map<String, MemberShape> members;
     private volatile List<String> memberNames;
 
     private EnumShape(Builder builder) {
         super(builder);
-        members = builder.members.get();
+        members = NamedMemberUtils.computeMixinMembers(
+                builder.getMixins(), builder.members, getId(), getSourceLocation());
         validateMemberShapeIds();
         if (members.size() < 1) {
             throw new SourceException("enum shapes must have at least one member", getSourceLocation());
@@ -198,7 +199,7 @@ public final class EnumShape extends StringShape {
             for (EnumDefinition definition : trait.getValues()) {
                 Optional<MemberShape> member = definition.asMember(getId());
                 if (member.isPresent()) {
-                    addMember(member.get(), false);
+                    addMember(member.get());
                 } else {
                     throw new IllegalStateException(String.format(
                             "Unable to convert enum trait entry with name: `%s` and value `%s` to an enum member.",
@@ -236,10 +237,6 @@ public final class EnumShape extends StringShape {
 
         @Override
         public Builder addMember(MemberShape member) {
-            return addMember(member, true);
-        }
-
-        private Builder addMember(MemberShape member, boolean updateEnumTrait) {
             if (!member.getTarget().equals(UnitTypeTrait.UNIT)) {
                 throw new SourceException(String.format(
                         "Enum members may only target `smithy.api#Unit`, but found `%s`", member.getTarget()
@@ -306,6 +303,32 @@ public final class EnumShape extends StringShape {
                 members.get().remove(member);
             }
             return this;
+        }
+
+        @Override
+        public Builder addMixin(Shape shape) {
+            if (getId() == null) {
+                throw new IllegalStateException("An id must be set before adding a mixin");
+            }
+            super.addMixin(shape);
+            NamedMemberUtils.cleanMixins(shape, members.get());
+            return this;
+        }
+
+        @Override
+        public Builder removeMixin(ToShapeId shape) {
+            super.removeMixin(shape);
+            NamedMemberUtils.removeMixin(shape, members.get());
+            return this;
+        }
+
+        @Override
+        public Builder flattenMixins() {
+            if (getMixins().isEmpty()) {
+                return this;
+            }
+            members(NamedMemberUtils.flattenMixins(members.get(), getMixins(), getId(), getSourceLocation()));
+            return (Builder) super.flattenMixins();
         }
     }
 }

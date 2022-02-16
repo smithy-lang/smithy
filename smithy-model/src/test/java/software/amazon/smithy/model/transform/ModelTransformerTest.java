@@ -173,7 +173,8 @@ public class ModelTransformerTest {
             "operations",
             "resources",
             "services",
-            "idl-mixins-redefine-member"
+            "idl-mixins-redefine-member",
+            "enum-mixins"
         };
     }
 }
