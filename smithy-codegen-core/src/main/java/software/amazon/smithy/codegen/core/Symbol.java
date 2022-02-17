@@ -111,7 +111,7 @@ public final class Symbol extends TypedPropertiesBag
     }
 
     /**
-     * Gets the unqualified name of the symbol, that is, a name with
+     * Gets the unqualified name of the symbol, that is, a name without
      * namespace.
      *
      * @return Returns the name of the symbol.
