@@ -19,9 +19,11 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.StringJoiner;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -654,6 +656,85 @@ public class CodeWriter {
         }
 
         return this;
+    }
+
+    /**
+     * Gets the debug path to the current state so that errors encountered while
+     * using CodeWriter are easier to track down.
+     *
+     * <p>For example, if state "Foo" is entered, and then an unnamed state is
+     * entered, the return value is "ROOT/Foo/UNNAMED".
+     *
+     * @return Returns a "/" separated path to the current state.
+     */
+    public final String getStateDebugPath() {
+        StringJoiner result = new StringJoiner("/");
+
+        int i = 0;
+        Iterator<State> iterator = states.descendingIterator();
+        while (iterator.hasNext()) {
+            State state = iterator.next();
+            if (i++ == 0) {
+                result.add("ROOT");
+            } else {
+                result.add(state.getDebugName());
+            }
+        }
+
+        return result.toString();
+    }
+
+    /**
+     * Gets debug information about the current state of the CodeWriter, including
+     * the path to the current state as returned by {@link #getStateDebugPath()},
+     * and up to the last two lines of text written to the CodeWriter.
+     *
+     * <p>This debug information is used in most exceptions thrown by CodeWriter to
+     * provide additional context when something goes wrong. It can also be used
+     * by subclasses and collaborators to aid in debugging codegen issues.
+     *
+     * @return Returns debug info as a string.
+     * @see #getDebugInfo(int)
+     */
+    public final CodeWriterDebugInfo getDebugInfo() {
+        return getDebugInfo(2);
+    }
+
+    /**
+     * Gets debug information about the current state of the CodeWriter.
+     *
+     * <p>This method can be overridden in order to add more metadata to the created
+     * debug info object.
+     *
+     * @param numberOfContextLines Include the last N lines in the output. Set to 0 to omit lines.
+     * @return Returns debug info as a string.
+     * @see #getDebugInfo
+     */
+    public CodeWriterDebugInfo getDebugInfo(int numberOfContextLines) {
+        // Implementer's note: a snapshot of CodeWriter is used rather than just
+        // querying data from CodeWriter from within CodeWriterDebugInfo each time
+        // toString is called on it. This ensures that debug info is immutable, at
+        // least in terms of the state path and the most recent lines written.
+        CodeWriterDebugInfo info = new CodeWriterDebugInfo();
+        info.putMetadata("path", getStateDebugPath());
+
+        if (numberOfContextLines < 0) {
+            throw new IllegalArgumentException("Cannot get fewer than 0 lines");
+        } else if (numberOfContextLines > 0) {
+            StringBuilder lastLines = new StringBuilder();
+            // Get the last N lines of text written.
+            String str = toString();
+            if (!str.isEmpty()) {
+                String[] lines = str.split("\r?\n", 0);
+                int startPosition = Math.max(0, lines.length - numberOfContextLines);
+                for (int i = startPosition; i < lines.length; i++) {
+                    lastLines.append(lines[i]).append("\\n");
+                }
+            }
+            info.putMetadata("near", lastLines.toString());
+        }
+
+        return info;
     }
 
     /**
@@ -1302,8 +1383,7 @@ public class CodeWriter {
      * @see #putFormatter
      */
     public final String format(Object content, Object... args) {
-        CodeFormatter formatter = currentState.getCodeFormatter();
-        return formatter.format(currentState.expressionStart, content, currentState.indentText, this, args);
+        return currentState.getCodeFormatter().format(this, content, args);
     }
 
     /**
@@ -1475,6 +1555,29 @@ public class CodeWriter {
      */
     public Object getContext(String key) {
         return currentState.context.get(key);
+    }
+
+    /**
+     * Gets a named context key-value pair from the current state and
+     * casts the value to the given type.
+     *
+     * @param key Key to retrieve.
+     * @param type The type of value expected.
+     * @return Returns the associated value or null if not present.
+     * @throws ClassCastException if the stored value is not null and does not match {@code type}.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getContext(String key, Class<T> type) {
+        Object value = getContext(key);
+        if (value == null) {
+            return null;
+        } else if (type.isInstance(value)) {
+            return (T) value;
+        } else {
+            throw new ClassCastException(String.format(
+                    "Expected CodeWriter context value '%s' to be an instance of %s, but found %s %s",
+                    key, type.getName(), value.getClass().getName(), getDebugInfo()));
+        }
     }
 
     // Used only by CodeFormatter to expand inline argument sections.
@@ -1692,6 +1795,10 @@ public class CodeWriter {
             }
 
             leadingIndentString = StringUtils.repeat(this.indentText, indentation);
+        }
+
+        private String getDebugName() {
+            return sectionName == null ? "UNNAMED" : sectionName;
         }
     }
 }
