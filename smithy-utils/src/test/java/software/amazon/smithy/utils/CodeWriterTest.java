@@ -335,6 +335,66 @@ public class CodeWriterTest {
     }
 
     @Test
+    public void canGetTypedContextValues() {
+        CodeWriter w = new CodeWriter();
+        w.putContext("foo", "hello");
+        String value = w.getContext("foo", String.class);
+
+        assertThat(value, equalTo("hello"));
+    }
+
+    @Test
+    public void failsWhenTypedContextDoesNotMatch() {
+        CodeWriter w = new CodeWriter();
+        w.pushState("a");
+        w.putContext("foo", "hello");
+        w.write("Hello {");
+
+        ClassCastException e = Assertions.assertThrows(ClassCastException.class, () -> {
+            w.getContext("foo", Integer.class);
+        });
+
+        assertThat(e.getMessage(), equalTo("Expected CodeWriter context value 'foo' to be an instance of "
+                                           + "java.lang.Integer, but found java.lang.String "
+                                           + "(Debug Info {path=ROOT/a, near=Hello {\\n})"));
+    }
+
+    @Test
+    public void getsDebugInfoWithNoLines() {
+        CodeWriter w = new CodeWriter();
+
+        assertThat(w.getDebugInfo().toString(), equalTo("(Debug Info {path=ROOT, near=})"));
+    }
+
+    @Test
+    public void getsDebugInfoWithNoLinesAndContext() {
+        CodeWriter w = new CodeWriter();
+        w.pushState("a");
+        w.pushState("b");
+
+        assertThat(w.getDebugInfo().toString(), equalTo("(Debug Info {path=ROOT/a/b, near=})"));
+    }
+
+    @Test
+    public void getsDebugInfoWithTwoLines() {
+        CodeWriter w = new CodeWriter();
+        w.write("Hello {");
+        w.write("  hello");
+
+        assertThat(w.getDebugInfo().toString(), equalTo("(Debug Info {path=ROOT, near=Hello {\\n  hello\\n})"));
+    }
+
+    @Test
+    public void getsDebugInfoWithThreeLines() {
+        CodeWriter w = new CodeWriter();
+        w.write("Hello {");
+        w.write("  hello1");
+        w.write("  hello2");
+
+        assertThat(w.getDebugInfo().toString(), equalTo("(Debug Info {path=ROOT, near=  hello1\\n  hello2\\n})"));
+    }
+
+    @Test
     public void hasSections() {
         // Setup the code writer and section interceptors.
         CodeWriter w = CodeWriter.createDefault().putContext("testing", "123");

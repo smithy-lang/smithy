@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -71,32 +71,36 @@ final class CodeFormatter {
         return result;
     }
 
-    String format(char expressionStart, Object content, String indent, CodeWriter writer, Object... args) {
+    String format(CodeWriter writer, Object content, Object... args) {
         String expression = String.valueOf(content);
+        char expressionStart = writer.getExpressionStart();
+        String indent = writer.getIndentText();
 
         // Simple case of no arguments and no expressions.
         if (args.length == 0 && expression.indexOf(expressionStart) == -1) {
             return expression;
         }
 
-        return parse(expressionStart, new State(content, indent, writer, args));
+        return parse(writer, new State(content, indent, writer, args));
     }
 
-    private String parse(char expressionStart, State state) {
+    private String parse(CodeWriter writer, State state) {
+        char expressionStart = writer.getExpressionStart();
+
         while (!state.eof()) {
             char c = state.c();
             state.next();
             if (c == expressionStart) {
-                parseArgumentWrapper(expressionStart, state);
+                parseArgumentWrapper(writer, state);
             } else {
                 state.append(c);
             }
         }
 
         if (state.relativeIndex == -1) {
-            ensureAllPositionalArgumentsWereUsed(state.expression, state.positionals);
+            ensureAllPositionalArgumentsWereUsed(writer, state.expression, state.positionals);
         } else if (state.relativeIndex < state.args.length) {
-            throw new IllegalArgumentException(String.format(
+            throw error(writer, String.format(
                     "Found %d unused relative format arguments: %s",
                     state.args.length - state.relativeIndex, state.expression));
         }
@@ -104,62 +108,68 @@ final class CodeFormatter {
         return state.result.toString();
     }
 
-    private void parseArgumentWrapper(char expressionStart, State state) {
+    // Provides debug context in each thrown error.
+    public static IllegalArgumentException error(CodeWriter writer, String message) {
+        return new IllegalArgumentException(message + " " + writer.getDebugInfo());
+    }
+
+    private void parseArgumentWrapper(CodeWriter writer, State state) {
         if (state.eof()) {
-            throw new IllegalArgumentException("Invalid format string: " + state);
+            throw error(writer, "Invalid format string: " + state);
         }
 
+        char expressionStart = writer.getExpressionStart();
         char c = state.c();
         if (c == expressionStart) {
             // $$ -> $
             state.append(expressionStart);
             state.next();
         } else if (c == '{') {
-            parseBracedArgument(state);
+            parseBracedArgument(writer, state);
         } else {
-            parseArgument(state, -1);
+            parseArgument(writer, state, -1);
         }
     }
 
-    private void parseBracedArgument(State state) {
+    private void parseBracedArgument(CodeWriter writer, State state) {
         int startingBraceColumn = state.column;
         state.next(); // Skip "{"
-        parseArgument(state, startingBraceColumn);
+        parseArgument(writer, state, startingBraceColumn);
 
         if (state.eof() || state.c() != '}') {
-            throw new IllegalArgumentException("Unclosed expression argument: " + state);
+            throw error(writer, "Unclosed expression argument: " + state);
         }
 
         state.next(); // Skip "}"
     }
 
-    private void parseArgument(State state, int startingBraceColumn) {
+    private void parseArgument(CodeWriter writer, State state, int startingBraceColumn) {
         if (state.eof()) {
-            throw new IllegalArgumentException("Invalid format string: " + state);
+            throw error(writer, "Invalid format string: " + state);
         }
 
         char c = state.c();
         if (Character.isLowerCase(c)) {
-            parseNamedArgument(state, startingBraceColumn);
+            parseNamedArgument(writer, state, startingBraceColumn);
         } else if (Character.isDigit(c)) {
-            parsePositionalArgument(state, startingBraceColumn);
+            parsePositionalArgument(writer, state, startingBraceColumn);
         } else {
-            parseRelativeArgument(state, startingBraceColumn);
+            parseRelativeArgument(writer, state, startingBraceColumn);
         }
     }
 
-    private void parseNamedArgument(State state, int startingBraceColumn) {
+    private void parseNamedArgument(CodeWriter writer, State state, int startingBraceColumn) {
         // Expand a named context value: "$" key ":" identifier
-        String name = parseNameUntil(state, ':');
+        String name = parseNameUntil(writer, state, ':');
         state.next();
 
         // Consume the character after the colon.
         if (state.eof()) {
-            throw new IllegalArgumentException("Expected an identifier after the ':' in a named argument: " + state);
+            throw error(writer, "Expected an identifier after the ':' in a named argument: " + state);
         }
 
         char identifier = consumeFormatterIdentifier(state);
-        state.append(applyFormatter(state, identifier, state.writer.getContext(name), startingBraceColumn));
+        state.append(applyFormatter(writer, state, identifier, state.writer.getContext(name), startingBraceColumn));
     }
 
     private char consumeFormatterIdentifier(State state) {
@@ -168,55 +178,59 @@ final class CodeFormatter {
         return identifier;
     }
 
-    private void parsePositionalArgument(State state, int startingBraceColumn) {
+    private void parsePositionalArgument(CodeWriter writer, State state, int startingBraceColumn) {
         // Expand a positional argument: "$" 1*digit identifier
-        expectConsistentRelativePositionals(state, state.relativeIndex <= 0);
+        expectConsistentRelativePositionals(writer, state, state.relativeIndex <= 0);
         state.relativeIndex = -1;
         int startPosition = state.position;
         while (state.next() && Character.isDigit(state.c()));
         int index = Integer.parseInt(state.expression.substring(startPosition, state.position)) - 1;
 
         if (index < 0 || index >= state.args.length) {
-            throw new IllegalArgumentException(String.format(
+            throw error(writer, String.format(
                     "Positional argument index %d out of range of provided %d arguments in "
                     + "format string: %s", index, state.args.length, state));
         }
 
-        Object arg = getPositionalArgument(state.expression, index, state.args);
+        Object arg = getPositionalArgument(writer, state.expression, index, state.args);
         state.positionals[index] = true;
         char identifier = consumeFormatterIdentifier(state);
-        state.append(applyFormatter(state, identifier, arg, startingBraceColumn));
+        state.append(applyFormatter(writer, state, identifier, arg, startingBraceColumn));
     }
 
-    private void parseRelativeArgument(State state, int startingBraceColumn) {
+    private void parseRelativeArgument(CodeWriter writer, State state, int startingBraceColumn) {
         // Expand to a relative argument.
-        expectConsistentRelativePositionals(state, state.relativeIndex > -1);
+        expectConsistentRelativePositionals(writer, state, state.relativeIndex > -1);
         state.relativeIndex++;
-        Object argument = getPositionalArgument(state.expression, state.relativeIndex - 1, state.args);
+        Object argument = getPositionalArgument(writer, state.expression, state.relativeIndex - 1, state.args);
         char identifier = consumeFormatterIdentifier(state);
-        state.append(applyFormatter(state, identifier, argument, startingBraceColumn));
+        state.append(applyFormatter(writer, state, identifier, argument, startingBraceColumn));
     }
 
-    private String parseNameUntil(State state, char endToken) {
+    private String parseNameUntil(CodeWriter writer, State state, char endToken) {
         int endIndex = state.expression.indexOf(endToken, state.position);
 
         if (endIndex == -1) {
-            throw new IllegalArgumentException("Invalid named format argument: " + state);
+            throw error(writer, "Invalid named format argument: " + state);
         }
 
         String name = state.expression.substring(state.position, endIndex);
-        ensureNameIsValid(state, name);
+        ensureNameIsValid(writer, state, name);
         state.position = endIndex;
         return name;
     }
 
-    private static void expectConsistentRelativePositionals(State state, boolean expectation) {
+    private static void expectConsistentRelativePositionals(CodeWriter writer, State state, boolean expectation) {
         if (!expectation) {
-            throw new IllegalArgumentException("Cannot mix positional and relative arguments: " + state);
+            throw error(writer, "Cannot mix positional and relative arguments: " + state);
         }
     }
 
-    private static void ensureAllPositionalArgumentsWereUsed(String expression, boolean[] positionals) {
+    private static void ensureAllPositionalArgumentsWereUsed(
+            CodeWriter writer,
+            String expression,
+            boolean[] positionals
+    ) {
         int unused = 0;
 
         for (boolean b : positionals) {
@@ -226,25 +240,31 @@ final class CodeFormatter {
         }
 
         if (unused > 0) {
-            throw new IllegalArgumentException(String.format(
+            throw error(writer, String.format(
                     "Found %d unused positional format arguments: %s", unused, expression));
         }
     }
 
-    private Object getPositionalArgument(String content, int index, Object[] args) {
+    private Object getPositionalArgument(CodeWriter writer, String content, int index, Object[] args) {
         if (index >= args.length) {
-            throw new IllegalArgumentException(String.format(
+            throw error(writer, String.format(
                     "Given %d arguments but attempted to format index %d: %s", args.length, index, content));
         }
 
         return args[index];
     }
 
-    private String applyFormatter(State state, char formatter, Object argument, int startingBraceColumn) {
+    private String applyFormatter(
+            CodeWriter writer,
+            State state,
+            char formatter,
+            Object argument,
+            int startingBraceColumn
+    ) {
         BiFunction<Object, String, String> formatFunction = getFormatter(formatter);
 
         if (formatFunction == null) {
-            throw new IllegalArgumentException(String.format(
+            throw error(writer, String.format(
                     "Unknown formatter `%s` found in format string: %s", formatter, state));
         }
 
@@ -252,9 +272,9 @@ final class CodeFormatter {
 
         if (!state.eof() && state.c() == '@') {
             if (startingBraceColumn == -1) {
-                throw new IllegalArgumentException("Inline blocks can only be created inside braces: " + state);
+                throw error(writer, "Inline blocks can only be created inside braces: " + state);
             }
-            result = expandInlineSection(state, result);
+            result = expandInlineSection(writer, state, result);
         }
 
         // Only look for alignment when inside a brace interpolation.
@@ -285,16 +305,16 @@ final class CodeFormatter {
         return result;
     }
 
-    private String expandInlineSection(State state, String argument) {
+    private String expandInlineSection(CodeWriter writer, State state, String argument) {
         state.next(); // Skip "@"
-        String sectionName = parseNameUntil(state, '}');
-        ensureNameIsValid(state, sectionName);
+        String sectionName = parseNameUntil(writer, state, '}');
+        ensureNameIsValid(writer, state, sectionName);
         return state.writer.expandSection(sectionName, argument, s -> state.writer.write(s));
     }
 
-    private static void ensureNameIsValid(State state, String name) {
+    private static void ensureNameIsValid(CodeWriter writer, State state, String name) {
         if (!NAME_PATTERN.matcher(name).matches()) {
-            throw new IllegalArgumentException(String.format(
+            throw error(writer, String.format(
                     "Invalid format expression name `%s` at position %d of: %s",
                     name, state.position + 1, state));
         }
