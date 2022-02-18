@@ -1,6 +1,6 @@
 # Enum shapes in Smithy
 
-* **Author**: Michael Dowling
+* **Authors**: Michael Dowling, Jordon Phillips
 * **Created**: 2022-02-14
 * **Last updated**: 2022-02-14
 
@@ -163,22 +163,22 @@ making the `@enumValue` of the member 0:
 
 ```
 intEnum FaceCard {
-    @enumValue(0)
+    @enumValue(int: 0)
     UNKNOWN
 
-    @enumValue(1)
+    @enumValue(int: 1)
     JACK
     
-    @enumValue(2)
+    @enumValue(int: 2)
     QUEEN
     
-    @enumValue(3)
+    @enumValue(int: 3)
     KING
     
-    @enumValue(4)
+    @enumValue(int: 4)
     ACE
     
-    @enumValue(5)
+    @enumValue(int: 5)
     JOKER
 }
 ```
@@ -187,7 +187,7 @@ intEnum FaceCard {
 
 Like enums, intEnums are considered open, meaning it is a backward compatible
 change to add new members. Previously generated clients MUST NOT fail when
-they encounter an unknown intEnum value. Client implementations SHOULD provide
+they encounter an unknown intEnum value. Client implementations MUST provide
 the capability of sending and receiving unknown intEnum values.
 
 To facilitate this behavior, the intEnum type is a subclass of the integer
@@ -217,15 +217,20 @@ called “member” to go alongside simple, aggregate, and service types.
 
 ## Smithy 1.0 → 2.0
 
-Since the enum trait does not require names, it is not possible to
-automatically convert string shapes using the `@enum` trait into enum traits.
-Instead, a transformer will be added that upgrades those shapes that can
-be upgraded. To make this change backward compatible for existing code
-generators, enum shapes in IDL 2.0 will always contain an enum trait with
-properties that correspond to the members of the enum. To prevent the
-`@enum` trait from being serialized, a synthetic variant will be used.
-Additionally, visitors will call their parent shape's visitor method by
-default.
+The `@enum` trait will be deprecated in IDL 2.0, but not removed. This is to
+make it easier to migrate to IDL 2.0.
+
+The reference implementation will not automatically upgrade strings bearing
+the `@enum` trait into enum shapes since it isn't possible to convert enum
+traits that don't set the name property. Instead, a transformer will be added
+that upgrades those shapes that can be upgraded.
+
+Additionally, to make this change backwards compatible for exising code
+generators, visitors in the reference implementation will call their parent
+shape's visitor methods by default. `enum` shapes in the reference
+implementation will always contain an `@enum` trait with properties filled
+out based on the enum's members and their traits. To prevent this trait
+from being serialized, a synthetic variant will be used.
 
 ## FAQ
 
