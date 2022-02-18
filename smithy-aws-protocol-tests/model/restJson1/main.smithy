@@ -81,6 +81,7 @@ service RestJson {
         // Documents
         DocumentType,
         DocumentTypeAsPayload,
+        DocumentTypeSets,
 
         // Unions
         JsonUnions,

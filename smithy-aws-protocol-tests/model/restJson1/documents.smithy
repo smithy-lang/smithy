@@ -324,3 +324,49 @@ apply DocumentTypeAsPayload @httpResponseTests([
         }
     }
 ])
+
+/// This example serializes a set of documents as part of the payload.
+@idempotent
+@http(uri: "/DocumentTypeSets", method: "PUT")
+operation DocumentTypeSets {
+    input: DocumentTypeSetsInputOutput,
+    output: DocumentTypeSetsInputOutput
+}
+
+structure DocumentTypeSetsInputOutput {
+    documentSet: DocumentSet
+}
+
+set DocumentSet {
+    member: Document
+}
+
+apply DocumentTypeSets @httpRequestTests([
+    {
+        id: "DocumentTypeSetsConsiderNull",
+        documentation: """
+            Unlike structures, null in a document is different from the key being unspecified,
+            and therefore two documents that differ only by a null valued member are still unique.""",
+        protocol: restJson1,
+        method: "PUT",
+        uri: "/DocumentTypeSets",
+        body: """
+            { "documentSet" : [ {"a": 1, "b": null}, {"a": 1}] }
+        """,
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            documentSet: [
+                {
+                    a: 1,
+                    b: null
+                },
+                {
+                    a: 1
+                }
+            ]
+        }
+
+    }
+])
+
