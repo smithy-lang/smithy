@@ -31,7 +31,7 @@ import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
-public class EnumShapeValidator extends AbstractValidator {
+public final class EnumShapeValidator extends AbstractValidator {
     private static final Pattern RECOMMENDED_NAME_PATTERN = Pattern.compile("^[A-Z]+[A-Z_0-9]*$");
 
     @Override
@@ -55,7 +55,7 @@ public class EnumShapeValidator extends AbstractValidator {
             Optional<String> value = member.expectTrait(EnumValueTrait.class).getStringValue();
             if (!value.isPresent()) {
                 events.add(error(member, member.expectTrait(EnumValueTrait.class),
-                        "The enumValue trait may only use the string option when applied to enum shapes."));
+                        "The enumValue trait must use the string option when applied to enum shapes."));
             } else if (!values.add(value.get())) {
                 events.add(error(member, String.format(
                         "Multiple enum members found with duplicate value `%s`",
