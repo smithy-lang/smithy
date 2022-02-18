@@ -41,7 +41,16 @@ public interface SmithyBuilder<T> {
      */
     static <T> T requiredState(String method, T value) {
         if (value == null) {
-            throw new IllegalStateException(method + " was not set on the builder");
+            StringBuilder message = new StringBuilder(method).append(" was not set on the builder");
+
+            // Include the builder class that could not be built.
+            StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+            if (elements.length >= 2) {
+                String builder = elements[2].getClassName();
+                message.append(" (builder class is probably ").append(builder).append(')');
+            }
+
+            throw new IllegalStateException(message.toString());
         }
         return value;
     }
