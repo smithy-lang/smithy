@@ -312,10 +312,13 @@ Operation error serialization
 
 Error responses in the ``restJson1`` protocol are serialized identically to
 standard responses with one additional component to distinguish which error
-is contained. The component MUST be one of the following: an additional header
-with the name ``X-Amzn-Errortype``, a body field with the name ``code``, or a
-body field named ``__type``. The value of this component SHOULD contain only
-the :token:`shape name <smithy:identifier>` of the error's :ref:`shape-id`.
+is contained. New server-side protocol implementations MUST use a header field
+named ``X-Amzn-Errortype``. Clients MUST accept any one of the following: an
+additional header with the name ``X-Amzn-Errortype``, a body field with the
+name ``__type``, or a body field named ``code
+``. The value of this component
+SHOULD contain only the :token:`shape name <smithy:identifier>` of the error's
+:ref:`shape-id`.
 
 Legacy server-side protocol implementations sometimes include additional
 information in this value. New server-side protocol implementations SHOULD NOT
