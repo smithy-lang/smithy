@@ -21,6 +21,13 @@ import software.amazon.smithy.model.traits.EnumTrait;
 
 /**
  * A synthetic copy of the {@link EnumTrait} for use in the {@link EnumShape}.
+ *
+ * This exists only to bridge compatibility between IDL 1.0 and 2.0. This
+ * synthetic trait will be applied to enum shapes so that code generators
+ * can treat enum shapes as string shapes with the enum trait. We set synthetic
+ * to true so that it won't get serialized. We change the shape id so that
+ * it doesn't trip up selector validation for the enum trait, which does
+ * not allow targeting enum shapes.
  */
 public final class SyntheticEnumTrait extends EnumTrait {
 
