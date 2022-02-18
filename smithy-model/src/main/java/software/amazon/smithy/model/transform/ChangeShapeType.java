@@ -248,7 +248,7 @@ final class ChangeShapeType {
             if (to.getCategory() != ShapeType.Category.SIMPLE) {
                 throw invalidType(shape, to, "Simple types can only be converted to other simple types.");
             } else if (to == ShapeType.ENUM || to == ShapeType.INT_ENUM) {
-                throw invalidType(shape, to, "Simple types cannot be converted to enum types.");
+                throw invalidType(shape, to, "This simple type cannot be converted to an enum type.");
             }
 
             AbstractShapeBuilder<?, ?> shapeBuilder = to.createBuilderForType();
