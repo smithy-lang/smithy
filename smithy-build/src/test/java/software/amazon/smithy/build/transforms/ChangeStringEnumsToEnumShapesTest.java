@@ -32,8 +32,6 @@ import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 
 public class ChangeStringEnumsToEnumShapesTest {
-
-    
     @Test
     public void canFindEnumsToConvert() {
         EnumTrait compatibleTrait = EnumTrait.builder()
