@@ -1,0 +1,8 @@
+{
+    "version": "1.0",
+    "projections": {
+        "foo": {
+            "imports": ["test-bad-trait-serializer-import.smithy"]
+        }
+    }
+}

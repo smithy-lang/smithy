@@ -289,6 +289,9 @@ final class SmithyBuildImpl {
                         "The model could not be merged with the following imports: [%s]",
                         projection.getImports()));
                 return ProjectionResult.builder()
+                        // Create an empty model so that ProjectionResult can be created when
+                        // the Model can't be assembled.
+                        .model(Model.builder().build())
                         .projectionName(projectionName)
                         .events(baseModel.getValidationEvents())
                         .build();
