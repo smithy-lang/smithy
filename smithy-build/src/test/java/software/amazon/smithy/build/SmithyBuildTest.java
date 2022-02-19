@@ -18,6 +18,7 @@ package software.amazon.smithy.build;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
@@ -46,12 +47,18 @@ import software.amazon.smithy.build.model.ProjectionConfig;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.build.model.TransformConfig;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.SourceException;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
+import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.traits.TraitFactory;
+import software.amazon.smithy.model.validation.Severity;
+import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
@@ -589,5 +596,64 @@ public class SmithyBuildTest {
         assertThat(e.getMessage(), containsString("1 Smithy build projections failed"));
         assertThat(e.getMessage(), containsString("(exampleProjection): java.lang.RuntimeException: Hi"));
         assertThat(e.getSuppressed(), equalTo(new Throwable[]{canned}));
+    }
+
+    /*
+     This test causes SmithyBuild to fail in a way that it's unable to create Model as part of the
+     projection while using imports. This trigger a specific code path that needs to be able to create
+     a ProjectionResult with no model, so an empty model is provided. To achieve this, a test trait is
+     used with a custom trait factory that always throws when toNode is called on the trait (this is
+     something that's used for lots of stuff like trait hash code and equality). Smithy's model
+     assembler will catch the thrown SourceException, turn it into a validation event, and then bail
+     on trying to finish to build the model, triggering the code path under test here.
+     */
+    @Test
+    public void projectionsThatCannotCreateModelsFailGracefully() throws URISyntaxException {
+        Path config = Paths.get(getClass().getResource("test-bad-trait-serializer-config.json").toURI());
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("test-bad-trait-serializer.smithy"))
+                .assemble()
+                .unwrap();
+        ShapeId badId = ShapeId.from("smithy.test#badTrait");
+        TraitFactory baseFactory = TraitFactory.createServiceFactory();
+        SmithyBuild builder = new SmithyBuild()
+                .config(config)
+                .model(model)
+                .fileManifestFactory(MockManifest::new)
+                .modelAssemblerSupplier(() -> {
+                    // Hook in a TraitFactory that knows about our custom, failing trait.
+                    return Model.assembler()
+                            .traitFactory((id, target, node) -> {
+                                if (id.equals(badId)) {
+                                    return Optional.of(new BadCustomTrait());
+                                } else {
+                                    return baseFactory.createTrait(id, target, node);
+                                }
+                            });
+                });
+
+        SmithyBuildResult result = builder.build();
+
+        // The project must have failed.
+        assertTrue(result.anyBroken());
+
+        // Now validate that we got the failure to serialize the model.
+        List<ValidationEvent> events = result.getProjectionResults().get(0).getEvents();
+        assertThat(events, not(empty()));
+        assertThat(events.get(0).getSeverity(), is(Severity.ERROR));
+        assertThat(events.get(0).getMessage(), containsString("Unable to serialize trait"));
+    }
+
+    // A test trait that always throws when toNode is called.
+    private static final class BadCustomTrait implements Trait {
+        @Override
+        public ShapeId toShapeId() {
+            return ShapeId.from("smithy.test#badTrait");
+        }
+
+        @Override
+        public Node toNode() {
+            throw new SourceException("Unable to serialize trait!", SourceLocation.none());
+        }
     }
 }
