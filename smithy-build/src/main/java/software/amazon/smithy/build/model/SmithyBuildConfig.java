@@ -16,19 +16,15 @@
 package software.amazon.smithy.build.model;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -51,13 +47,10 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
         SmithyBuilder.requiredState("version", builder.version);
         version = builder.version;
         outputDirectory = builder.outputDirectory;
-        imports = ListUtils.copyOf(builder.imports);
-        projections = MapUtils.copyOf(builder.projections);
-        plugins = new HashMap<>(builder.plugins);
+        imports = builder.imports.copy();
+        projections = builder.projections.copy();
+        plugins = builder.plugins.copy();
         ignoreMissingPlugins = builder.ignoreMissingPlugins;
-        for (String builtin : BUILTIN_PLUGINS) {
-            plugins.put(builtin, Node.objectNode());
-        }
     }
 
     /**
@@ -181,9 +174,9 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
      * Builder used to create a {@link SmithyBuildConfig}.
      */
     public static final class Builder implements SmithyBuilder<SmithyBuildConfig> {
-        private final List<String> imports = new ArrayList<>();
-        private final Map<String, ProjectionConfig> projections = new LinkedHashMap<>();
-        private final Map<String, ObjectNode> plugins = new LinkedHashMap<>();
+        private final BuilderRef<List<String>> imports = BuilderRef.forList();
+        private final BuilderRef<Map<String, ProjectionConfig>> projections = BuilderRef.forOrderedMap();
+        private final BuilderRef<Map<String, ObjectNode>> plugins = BuilderRef.forOrderedMap();
         private String version;
         private String outputDirectory;
         private boolean ignoreMissingPlugins;
@@ -192,6 +185,11 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
 
         @Override
         public SmithyBuildConfig build() {
+            // Add built-in plugins. This is done here to ensure that they cannot be unset.
+            for (String builtin : BUILTIN_PLUGINS) {
+                plugins.get().put(builtin, Node.objectNode());
+            }
+
             return new SmithyBuildConfig(this);
         }
 
@@ -225,9 +223,9 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
         public Builder merge(SmithyBuildConfig config) {
             config.getOutputDirectory().ifPresent(this::outputDirectory);
             version(config.getVersion());
-            imports.addAll(config.getImports());
-            projections.putAll(config.getProjections());
-            plugins.putAll(config.getPlugins());
+            imports.get().addAll(config.getImports());
+            projections.get().putAll(config.getProjections());
+            plugins.get().putAll(config.getPlugins());
 
             // If either one wants to ignore missing plugins, then ignore them.
             if (config.isIgnoreMissingPlugins()) {
@@ -249,38 +247,38 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
         }
 
         /**
-         * Sets imports on the config.
+         * Replaces imports on the config.
          *
          * @param imports Imports to set.
          * @return Returns the builder.
          */
         public Builder imports(Collection<String> imports) {
             this.imports.clear();
-            this.imports.addAll(imports);
+            this.imports.get().addAll(imports);
             return this;
         }
 
         /**
-         * Sets projections on the config.
+         * Replaces projections on the config.
          *
          * @param projections Projections to set.
          * @return Returns the builder.
          */
         public Builder projections(Map<String, ProjectionConfig> projections) {
             this.projections.clear();
-            this.projections.putAll(projections);
+            this.projections.get().putAll(projections);
             return this;
         }
 
         /**
-         * Sets plugins on the config.
+         * Replaces plugins on the config.
          *
          * @param plugins Plugins to set.
          * @return Returns the builder.
          */
         public Builder plugins(Map<String, ObjectNode> plugins) {
             this.plugins.clear();
-            this.plugins.putAll(plugins);
+            this.plugins.get().putAll(plugins);
             return this;
         }
 

@@ -15,11 +15,10 @@
 
 package software.amazon.smithy.codegen.core;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -70,14 +69,14 @@ public final class Symbol extends TypedPropertiesBag
     private final List<SymbolDependency> dependencies;
 
     private Symbol(Builder builder) {
-        super(builder.properties);
+        super(builder);
         this.namespace = builder.namespace;
         this.namespaceDelimiter = builder.namespaceDelimiter;
         this.name = builder.name;
         this.declarationFile = builder.declarationFile;
         this.definitionFile = !builder.definitionFile.isEmpty() ? builder.definitionFile : declarationFile;
-        this.references = ListUtils.copyOf(builder.references);
-        this.dependencies = ListUtils.copyOf(builder.dependencies);
+        this.references = builder.references.copy();
+        this.dependencies = builder.dependencies.copy();
     }
 
     /**
@@ -252,8 +251,8 @@ public final class Symbol extends TypedPropertiesBag
         private String namespaceDelimiter = "";
         private String definitionFile = "";
         private String declarationFile = "";
-        private final List<SymbolReference> references = new ArrayList<>();
-        private final List<SymbolDependency> dependencies = new ArrayList<>();
+        private final BuilderRef<List<SymbolReference>> references = BuilderRef.forList();
+        private final BuilderRef<List<SymbolDependency>> dependencies = BuilderRef.forList();
 
         @Override
         public Symbol build() {
@@ -345,7 +344,7 @@ public final class Symbol extends TypedPropertiesBag
          * @return Returns the builder.
          */
         public Builder addReference(SymbolReference reference) {
-            references.add(Objects.requireNonNull(reference));
+            references.get().add(Objects.requireNonNull(reference));
             return this;
         }
 
@@ -379,7 +378,7 @@ public final class Symbol extends TypedPropertiesBag
          * @return Returns the builder.
          */
         public Builder addDependency(SymbolDependencyContainer dependency) {
-            dependencies.addAll(dependency.getDependencies());
+            dependencies.get().addAll(dependency.getDependencies());
             return this;
         }
 
