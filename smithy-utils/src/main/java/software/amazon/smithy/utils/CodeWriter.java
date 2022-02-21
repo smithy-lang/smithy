@@ -667,7 +667,7 @@ public class CodeWriter {
      *
      * @return Returns a "/" separated path to the current state.
      */
-    public final String getStateDebugPath() {
+    private String getStateDebugPath() {
         StringJoiner result = new StringJoiner("/");
 
         int i = 0;
