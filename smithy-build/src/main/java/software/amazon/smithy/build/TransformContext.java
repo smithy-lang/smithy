@@ -16,8 +16,6 @@
 package software.amazon.smithy.build;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -27,7 +25,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -52,9 +50,9 @@ public final class TransformContext implements ToSmithyBuilder<TransformContext>
         transformer = builder.transformer != null ? builder.transformer : ModelTransformer.create();
         settings = builder.settings;
         originalModel = builder.originalModel;
-        sources = SetUtils.copyOf(builder.sources);
         projectionName = builder.projectionName;
-        originalModelValidationEvents = builder.originalModelValidationEvents;
+        sources = builder.sources.copy();
+        originalModelValidationEvents = builder.originalModelValidationEvents.copy();
     }
 
     /**
@@ -157,10 +155,10 @@ public final class TransformContext implements ToSmithyBuilder<TransformContext>
         private ObjectNode settings = Node.objectNode();
         private Model model;
         private Model originalModel;
-        private Set<Path> sources = Collections.emptySet();
+        private BuilderRef<Set<Path>> sources = BuilderRef.forOrderedSet();
         private String projectionName = "source";
         private ModelTransformer transformer;
-        private final List<ValidationEvent> originalModelValidationEvents = new ArrayList<>();
+        private final BuilderRef<List<ValidationEvent>> originalModelValidationEvents = BuilderRef.forList();
 
         private Builder() {}
 
@@ -185,7 +183,8 @@ public final class TransformContext implements ToSmithyBuilder<TransformContext>
         }
 
         public Builder sources(Set<Path> sources) {
-            this.sources = Objects.requireNonNull(sources);
+            this.sources.clear();
+            this.sources.get().addAll(sources);
             return this;
         }
 
@@ -201,7 +200,7 @@ public final class TransformContext implements ToSmithyBuilder<TransformContext>
 
         public Builder originalModelValidationEvents(List<ValidationEvent> originalModelValidationEvents) {
             this.originalModelValidationEvents.clear();
-            this.originalModelValidationEvents.addAll(originalModelValidationEvents);
+            this.originalModelValidationEvents.get().addAll(originalModelValidationEvents);
             return this;
         }
     }

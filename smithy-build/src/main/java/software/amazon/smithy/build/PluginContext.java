@@ -18,7 +18,6 @@ package software.amazon.smithy.build;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -31,7 +30,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -59,7 +58,7 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
         events = Collections.unmodifiableList(builder.events);
         settings = builder.settings;
         pluginClassLoader = builder.pluginClassLoader;
-        sources = SetUtils.copyOf(builder.sources);
+        sources = builder.sources.copy();
     }
 
     /**
@@ -262,7 +261,7 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
         private ObjectNode settings = Node.objectNode();
         private FileManifest fileManifest;
         private ClassLoader pluginClassLoader;
-        private Set<Path> sources = Collections.emptySet();
+        private BuilderRef<Set<Path>> sources = BuilderRef.forOrderedSet();
 
         private Builder() {}
 
@@ -354,14 +353,15 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
         }
 
         /**
-         * Sets the path to models that are considered "source" models of the
+         * Replaces the path to models that are considered "source" models of the
          * package being built.
          *
          * @param sources Source models to set.
          * @return Returns the builder.
          */
         public Builder sources(Collection<Path> sources) {
-            this.sources = new HashSet<>(sources);
+            this.sources.clear();
+            this.sources.get().addAll(sources);
             return this;
         }
     }
