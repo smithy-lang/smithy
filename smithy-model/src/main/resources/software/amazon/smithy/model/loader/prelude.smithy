@@ -38,7 +38,7 @@ structure trait {
     /// The valid places in a model that the trait can be applied.
     selector: String,
 
-    /// Whether or not only a single member in a structure can have this trait.
+    /// Whether or not only a single member in a shape can have this trait.
     structurallyExclusive: StructurallyExclusive,
 
     /// The traits that this trait conflicts with.
@@ -47,11 +47,11 @@ structure trait {
 
 @private
 enum StructurallyExclusive {
-    /// Only a single member of a structure can be marked with the trait.
+    /// Only a single member of a shape can be marked with the trait.
     @enumValue(string: "member")
     MEMBER
 
-    /// Only a single member of a structure can target a shape marked with this trait.
+    /// Only a single member of a shape can target a shape marked with this trait.
     @enumValue(string: "target")
     TARGET
 }
@@ -430,7 +430,7 @@ structure EnumDefinition {
 @pattern("^[a-zA-Z_]+[a-zA-Z_0-9]*$")
 string EnumConstantBodyName
 
-/// Defines the value of an enum entry.
+/// Defines the value of an enum member.
 @trait(selector: ":is(enum, intEnum) > member")
 union enumValue {
     /// The value for the enum entry if it is a string.
@@ -439,6 +439,14 @@ union enumValue {
     /// The value for the enum entry if it is an integer.
     int: Integer
 }
+
+/// Sets an enum member as the default value member.
+@trait(
+    selector: ":is(enum, intEnum) > member"
+    structurallyExclusive: "member"
+    conflicts: [enumValue]
+)
+structure enumDefault {}
 
 /// Constrains a shape to minimum and maximum number of elements or size.
 @trait(selector: ":test(collection, map, string, blob, member > :is(collection, map, string, blob))")

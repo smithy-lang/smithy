@@ -17,6 +17,7 @@ package software.amazon.smithy.model.traits;
 
 import java.util.Optional;
 import software.amazon.smithy.model.SourceException;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -25,6 +26,9 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
+/**
+ * Sets the value for an enum member.
+ */
 public final class EnumValueTrait extends AbstractTrait implements ToSmithyBuilder<EnumValueTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.api#enumValue");
 
@@ -43,12 +47,46 @@ public final class EnumValueTrait extends AbstractTrait implements ToSmithyBuild
         }
     }
 
+    /**
+     * Gets the string value if a string value was set.
+     *
+     * @return Optionally returns the string value.
+     */
     public Optional<String> getStringValue() {
         return Optional.ofNullable(string);
     }
 
+    /**
+     * Gets the string value.
+     *
+     * @return Returns the string value.
+     * @throws ExpectationNotMetException if the string value was not set.
+     */
+    public String expectStringValue() {
+        return getStringValue().orElseThrow(() -> new ExpectationNotMetException(
+                "Expected string value was not set.", this
+        ));
+    }
+
+    /**
+     * Gets the int value if an int value was set.
+     *
+     * @return Returns the set int value.
+     */
     public Optional<Integer> getIntValue() {
         return Optional.ofNullable(integer);
+    }
+
+    /**
+     * Gets the int value.
+     *
+     * @return Returns the int value.
+     * @throws ExpectationNotMetException if the int value was not set.
+     */
+    public int expectIntValue() {
+        return getIntValue().orElseThrow(() -> new ExpectationNotMetException(
+                "Expected integer value was not set.", this
+        ));
     }
 
     public static final class Provider extends AbstractTrait.Provider {

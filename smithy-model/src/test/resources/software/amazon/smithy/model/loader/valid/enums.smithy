@@ -20,7 +20,7 @@ enum EnumWithValueTraits {
 }
 
 enum EnumWithDefaultBound {
-    @enumValue(string: "")
+    @enumDefault
     DEFAULT
 }
 
@@ -36,6 +36,6 @@ intEnum IntEnum {
 }
 
 intEnum IntEnumWithDefaultBound {
-    @enumValue(int: 0)
+    @enumDefault
     DEFAULT
 }

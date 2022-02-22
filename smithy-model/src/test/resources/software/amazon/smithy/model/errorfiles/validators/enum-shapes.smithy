@@ -9,6 +9,9 @@ enum StringEnum {
     EXPLICIT_VALUE
 
     @enumValue(string: "")
+    EMPTY_STRING
+
+    @enumDefault
     DEFAULT_VALUE
 
     @enumValue(int: 1)
@@ -28,6 +31,20 @@ enum EnumWithEnumTrait {
     BAR
 }
 
+enum MultipleDefaults {
+    @enumDefault
+    DEFAULT1
+
+    @enumDefault
+    DEFAULT2
+}
+
+enum DefaultWithExplicitValue {
+    @enumDefault
+    @enumValue(string: "foo")
+    DEFAULT
+}
+
 intEnum IntEnum {
     IMPLICIT_VALUE
 
@@ -35,6 +52,9 @@ intEnum IntEnum {
     EXPLICIT_VALUE
 
     @enumValue(int: 0)
+    ZERO
+
+    @enumDefault
     DEFAULT_VALUE
 
     @enumValue(string: "foo")
