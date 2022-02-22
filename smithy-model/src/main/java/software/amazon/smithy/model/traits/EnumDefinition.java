@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
@@ -41,6 +42,8 @@ public final class EnumDefinition implements ToNode, ToSmithyBuilder<EnumDefinit
     public static final String DOCUMENTATION = "documentation";
     public static final String TAGS = "tags";
     public static final String DEPRECATED = "deprecated";
+
+    private static final Pattern CONVERTABLE_VALUE = Pattern.compile("^[a-zA-Z-_.:/\\s]+[a-zA-Z_0-9-.:/\\s]*$");
 
     private final String value;
     private final String documentation;
@@ -114,15 +117,21 @@ public final class EnumDefinition implements ToNode, ToSmithyBuilder<EnumDefinit
     /**
      * Converts an enum definition to the equivalent enum member shape.
      *
-     * This is only possible if the enum definition has a name.
-     *
      * @param parentId The {@link ShapeId} of the enum shape.
+     * @param synthesizeName Whether to synthesize a name if possible.
      * @return An optional member shape representing the enum definition,
      *         or empty if conversion is impossible.
      */
-    public Optional<MemberShape> asMember(ShapeId parentId) {
+    public Optional<MemberShape> asMember(ShapeId parentId, boolean synthesizeName) {
+        String name;
         if (!getName().isPresent()) {
-            return Optional.empty();
+            if (canConvertToMember(synthesizeName)) {
+                name = getValue().replaceAll("[-.:/\\s]+", "_");
+            } else {
+                return Optional.empty();
+            }
+        } else {
+            name = getName().get();
         }
 
         try {
@@ -143,6 +152,29 @@ public final class EnumDefinition implements ToNode, ToSmithyBuilder<EnumDefinit
         } catch (ShapeIdSyntaxException e) {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Converts an enum definition to the equivalent enum member shape.
+     *
+     * This is only possible if the enum definition has a name.
+     *
+     * @param parentId The {@link ShapeId} of the enum shape.
+     * @return An optional member shape representing the enum definition,
+     *         or empty if conversion is impossible.
+     */
+    public Optional<MemberShape> asMember(ShapeId parentId) {
+        return asMember(parentId, false);
+    }
+
+    /**
+     * Determines whether the definition can be converted to a member.
+     *
+     * @param withSynthesizedNames Whether to account for name synthesization.
+     * @return Returns true if the definition can be converted.
+     */
+    public boolean canConvertToMember(boolean withSynthesizedNames) {
+        return getName().isPresent() || (withSynthesizedNames && CONVERTABLE_VALUE.matcher(getValue()).find());
     }
 
     /**
