@@ -44,32 +44,53 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
 
 final class ChangeShapeType {
 
     private final Map<ShapeId, ShapeType> shapeToType;
+    private final boolean synthesizeEnumNames;
 
-    ChangeShapeType(Map<ShapeId, ShapeType> shapeToType) {
+    ChangeShapeType(Map<ShapeId, ShapeType> shapeToType, boolean synthesizeEnumNames) {
         this.shapeToType = shapeToType;
+        this.synthesizeEnumNames = synthesizeEnumNames;
     }
 
-    static ChangeShapeType upgradeEnums(Model model) {
+    ChangeShapeType(Map<ShapeId, ShapeType> shapeToType) {
+        this(shapeToType, false);
+    }
+
+    static ChangeShapeType upgradeEnums(Model model, boolean synthesizeEnumNames) {
         Map<ShapeId, ShapeType> toUpdate = new HashMap<>();
         for (StringShape shape: model.getStringShapesWithTrait(EnumTrait.class)) {
             EnumTrait trait = shape.expectTrait(EnumTrait.class);
-            if (trait.getValues().iterator().next().getName().isPresent()) {
+            if (canUpgradeEnum(trait, synthesizeEnumNames)) {
                 toUpdate.put(shape.getId(), ShapeType.ENUM);
             }
         }
-        return new ChangeShapeType(toUpdate);
+        return new ChangeShapeType(toUpdate, synthesizeEnumNames);
+    }
+
+    private static boolean canUpgradeEnum(EnumTrait trait, boolean synthesizeEnumNames) {
+        if (!synthesizeEnumNames && trait.getValues().iterator().next().getName().isPresent()) {
+            return true;
+        }
+
+        for (EnumDefinition definition : trait.getValues()) {
+            if (!definition.canConvertToMember(synthesizeEnumNames)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     Model transform(ModelTransformer transformer, Model model) {
         return transformer.mapShapes(model, shape -> {
             if (shapeToType.containsKey(shape.getId())) {
-                return shape.accept(new Retype(shapeToType.get(shape.getId())));
+                return shape.accept(new Retype(shapeToType.get(shape.getId()), synthesizeEnumNames));
             } else {
                 return shape;
             }
@@ -78,9 +99,11 @@ final class ChangeShapeType {
 
     private static final class Retype extends ShapeVisitor.Default<Shape> {
         private final ShapeType to;
+        private final boolean synthesizeEnumNames;
 
-        Retype(ShapeType to) {
+        Retype(ShapeType to, boolean synthesizeEnumNames) {
             this.to = to;
+            this.synthesizeEnumNames = synthesizeEnumNames;
         }
 
         @Override
@@ -157,7 +180,7 @@ final class ChangeShapeType {
         @Override
         public Shape stringShape(StringShape shape) {
             if (to == ShapeType.ENUM) {
-                Optional<EnumShape> enumShape = EnumShape.fromStringShape(shape);
+                Optional<EnumShape> enumShape = EnumShape.fromStringShape(shape, synthesizeEnumNames);
                 if (enumShape.isPresent()) {
                     return enumShape.get();
                 }
