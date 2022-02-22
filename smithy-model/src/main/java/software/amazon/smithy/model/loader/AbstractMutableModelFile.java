@@ -83,8 +83,7 @@ abstract class AbstractMutableModelFile implements ModelFile {
     void onShape(AbstractShapeBuilder<?, ?> builder) {
         allShapeIds.add(builder.getId());
 
-        if ((builder.getShapeType() == ShapeType.ENUM || builder.getShapeType() == ShapeType.INT_ENUM)
-                && !getVersion().supportsEnumShapes()) {
+        if (!getVersion().isShapeTypeSupported(builder.getShapeType())) {
             throw new SourceException(String.format(
                     "%s shapes may only be used with Smithy version 2 or later.", builder.getShapeType().toString()),
                     builder.getSourceLocation());
