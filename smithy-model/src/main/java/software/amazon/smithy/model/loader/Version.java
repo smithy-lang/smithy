@@ -17,6 +17,7 @@ package software.amazon.smithy.model.loader;
 
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.MixinTrait;
 
 /**
@@ -79,12 +80,16 @@ enum Version {
     }
 
     /**
-     * Checks if this version supports enum and intEnum shapes.
+     * Checks if the given shape type is supported in this version.
      *
-     * @return Returns true if this version supports the enum and intEnum shapes.
+     * @param shapeType The shape type to check.
+     * @return Returns true if the shape type is supported in this version.
      */
-    boolean supportsEnumShapes() {
-        return this == VERSION_2_0;
+    boolean isShapeTypeSupported(ShapeType shapeType) {
+        if (this == VERSION_2_0) {
+            return true;
+        }
+        return shapeType != ShapeType.ENUM && shapeType != ShapeType.INT_ENUM;
     }
 
     /**
