@@ -21,17 +21,26 @@ import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Constrains string values to one of the predefined enum constants.
+ *
+ * This trait is deprecated, use an {@link EnumShape} instead.
+ *
+ * There is also the {@link SyntheticEnumTrait}, which is a synthetic variant of this
+ * trait used exclusively to assist in making {@link EnumShape} as backwards compatible
+ * as possible.
  */
+@Deprecated
 public class EnumTrait extends AbstractTrait implements ToSmithyBuilder<EnumTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.api#enum");
 
-    protected final List<EnumDefinition> definitions;
+    private final List<EnumDefinition> definitions;
 
     protected EnumTrait(ShapeId id, Builder builder) {
         super(id, builder.sourceLocation);
