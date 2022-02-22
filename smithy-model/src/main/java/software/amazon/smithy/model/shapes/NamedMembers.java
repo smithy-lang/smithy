@@ -42,7 +42,5 @@ interface NamedMembers {
      * @param name Name of the member to retrieve.
      * @return Returns the optional member.
      */
-    default Optional<MemberShape> getMember(String name) {
-        return Optional.ofNullable(getAllMembers().get(name));
-    }
+    Optional<MemberShape> getMember(String name);
 }
