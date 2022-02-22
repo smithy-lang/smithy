@@ -104,7 +104,9 @@ public final class EnumValueTrait extends AbstractTrait implements ToSmithyBuild
             objectNode.getMember("int")
                     .map(v -> v.expectNumberNode().getValue().intValue())
                     .ifPresent(builder::intValue);
-            return builder.build();
+            EnumValueTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 
