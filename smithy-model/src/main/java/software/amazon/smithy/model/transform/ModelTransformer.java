@@ -482,6 +482,40 @@ public final class ModelTransformer {
     }
 
     /**
+     * Changes the type of each given shape.
+     *
+     * <p>The following transformations are permitted:
+     *
+     * <ul>
+     *     <li>Any simple type to any simple type</li>
+     *     <li>List to set</li>
+     *     <li>Set to list</li>
+     *     <li>Structure to union</li>
+     *     <li>Union to structure</li>
+     * </ul>
+     *
+     * @param model Model to transform.
+     * @param shapeToType Map of shape IDs to the new type to use for the shape.
+     * @param synthesizeEnumNames Whether enums without names should have names synthesized if possible.
+     * @return Returns the transformed model.
+     * @throws ModelTransformException if an incompatible type transform is attempted.
+     */
+    public Model changeShapeType(Model model, Map<ShapeId, ShapeType> shapeToType, boolean synthesizeEnumNames) {
+        return new ChangeShapeType(shapeToType, synthesizeEnumNames).transform(this, model);
+    }
+
+    /**
+     * Changes each compatible string shape with the enum trait to an enum shape.
+     *
+     * @param model Model to transform.
+     * @param synthesizeEnumNames Whether enums without names should have names synthesized if possible.
+     * @return Returns the transformed model.
+     */
+    public Model changeStringEnumsToEnumShapes(Model model, boolean synthesizeEnumNames) {
+        return ChangeShapeType.upgradeEnums(model, synthesizeEnumNames).transform(this, model);
+    }
+
+    /**
      * Changes each compatible string shape with the enum trait to an enum shape.
      *
      * <p>Strings with enum traits that don't define names are not converted.
@@ -490,7 +524,7 @@ public final class ModelTransformer {
      * @return Returns the transformed model.
      */
     public Model changeStringEnumsToEnumShapes(Model model) {
-        return ChangeShapeType.upgradeEnums(model).transform(this, model);
+        return ChangeShapeType.upgradeEnums(model, false).transform(this, model);
     }
 
     /**
