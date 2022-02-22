@@ -372,6 +372,8 @@ public final class ModelAssembler {
      * Sets the Smithy version to use for parsed shapes added directly to the
      * assembler.
      *
+     * If unset, the default version of 1.0 will be assumed.
+     *
      * @param version A Smithy IDL version.
      * @return Returns the assembler.
      */
