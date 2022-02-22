@@ -65,9 +65,7 @@
                 "DEFAULT": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": ""
-                        }
+                        "smithy.api#enumDefault": {}
                     }
                 }
             }
@@ -107,9 +105,7 @@
                 "DEFAULT": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "int": 0
-                        }
+                        "smithy.api#enumDefault": {}
                     }
                 }
             }
