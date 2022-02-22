@@ -218,6 +218,46 @@ public class EnumShapeTest {
     }
 
     @Test
+    public void givenEnumTraitMaySynthesizeNames() {
+        EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
+        EnumTrait trait = EnumTrait.builder()
+                .addEnum(EnumDefinition.builder()
+                        .value("foo:bar")
+                        .build())
+                .build();
+        EnumShape shape = builder.members(trait, true).build();
+
+        assertEquals(shape.getMember("foo_bar").get(),
+                MemberShape.builder()
+                        .id(shape.getId().withMember("foo_bar"))
+                        .target(UnitTypeTrait.UNIT)
+                        .addTrait(EnumValueTrait.builder().stringValue("foo:bar").build())
+                        .build());
+
+        assertTrue(shape.hasTrait(EnumTrait.class));
+
+        EnumDefinition expectedDefinition = EnumDefinition.builder()
+                .name("foo_bar")
+                .value("foo:bar")
+                .build();
+        assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(expectedDefinition));
+    }
+
+    @Test
+    public void givenEnumTraitMayOnlySynthesizeNamesFromValidValues() {
+        EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
+        EnumTrait trait = EnumTrait.builder()
+                .addEnum(EnumDefinition.builder()
+                        .value("foo&bar")
+                        .build())
+                .build();
+
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            builder.members(trait, true);
+        });
+    }
+
+    @Test
     public void addMultipleMembers() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
 

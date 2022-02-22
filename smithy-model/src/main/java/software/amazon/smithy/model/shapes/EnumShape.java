@@ -130,9 +130,10 @@ public final class EnumShape extends StringShape implements NamedMembers {
      * or if the enum definitions don't have names.
      *
      * @param shape A base {@link StringShape} to convert.
+     * @param synthesizeNames Whether names should be synthesized if possible.
      * @return Optionally returns an {@link EnumShape} equivalent of the given shape.
      */
-    public static Optional<EnumShape> fromStringShape(StringShape shape) {
+    public static Optional<EnumShape> fromStringShape(StringShape shape, boolean synthesizeNames) {
         if (!shape.hasTrait(EnumTrait.ID)) {
             return Optional.empty();
         }
@@ -140,10 +141,23 @@ public final class EnumShape extends StringShape implements NamedMembers {
         Builder enumBuilder = EnumShape.builder();
         stringWithoutEnumTrait.updateBuilder(enumBuilder);
         try {
-            return Optional.of(enumBuilder.members(shape.expectTrait(EnumTrait.class)).build());
+            return Optional.of(enumBuilder.members(shape.expectTrait(EnumTrait.class), synthesizeNames).build());
         } catch (IllegalStateException e) {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Converts a base {@link StringShape} to an {@link EnumShape} if possible.
+     *
+     * The result will be empty if the given shape doesn't have the {@link EnumTrait}
+     * or if the enum definitions don't have names.
+     *
+     * @param shape A base {@link StringShape} to convert.
+     * @return Optionally returns an {@link EnumShape} equivalent of the given shape.
+     */
+    public static Optional<EnumShape> fromStringShape(StringShape shape) {
+        return fromStringShape(shape, false);
     }
 
     @Override
@@ -190,14 +204,14 @@ public final class EnumShape extends StringShape implements NamedMembers {
             return this;
         }
 
-        public Builder members(EnumTrait trait) {
+        public Builder members(EnumTrait trait, boolean synthesizeNames) {
             if (getId() == null) {
                 throw new IllegalStateException("An id must be set before adding a named enum trait to a string.");
             }
             clearMembers();
 
             for (EnumDefinition definition : trait.getValues()) {
-                Optional<MemberShape> member = definition.asMember(getId());
+                Optional<MemberShape> member = definition.asMember(getId(), synthesizeNames);
                 if (member.isPresent()) {
                     addMember(member.get());
                 } else {
@@ -209,6 +223,10 @@ public final class EnumShape extends StringShape implements NamedMembers {
             }
 
             return this;
+        }
+
+        public Builder members(EnumTrait trait) {
+            return members(trait, false);
         }
 
         /**
