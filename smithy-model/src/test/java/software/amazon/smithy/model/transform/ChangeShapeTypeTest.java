@@ -418,4 +418,31 @@ public class ChangeShapeTypeTest {
                 .addTrait(EnumValueTrait.builder().stringValue("foo:bar").build())
                 .build()));
     }
+
+    @Test
+    public void canDowngradeEnums() {
+        EnumShape.Builder stringEnumBuilder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#Enum");
+        EnumShape stringEnum = stringEnumBuilder.addMember("FOO", "foo").build();
+
+        IntEnumShape.Builder intEnumBuilder = (IntEnumShape.Builder) IntEnumShape.builder().id("ns.foo#IntEnum");
+        IntEnumShape intEnum = intEnumBuilder.addMember("FOO", 1).build();
+
+        Model model = Model.assembler()
+                .setParsedShapesVersion("2.0")
+                .addShapes(stringEnum, intEnum)
+                .assemble().unwrap();
+        Model result = ModelTransformer.create().changeEnumsToBaseShapeTypes(model);
+
+        assertThat(result.expectShape(stringEnum.getId()).getType(), Matchers.is(ShapeType.STRING));
+        assertThat(result.expectShape(intEnum.getId()).getType(), Matchers.is(ShapeType.INTEGER));
+
+        EnumTrait trait = result.expectShape(stringEnum.getId()).expectTrait(EnumTrait.class);
+        assertFalse(trait instanceof SyntheticEnumTrait);
+        assertThat(trait.getValues(), Matchers.equalTo(ListUtils.of(
+                EnumDefinition.builder()
+                        .name("FOO")
+                        .value("foo")
+                        .build()
+        )));
+    }
 }
