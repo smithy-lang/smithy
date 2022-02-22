@@ -27,6 +27,7 @@ import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.traits.EnumDefaultTrait;
 import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -52,15 +53,25 @@ public final class EnumShapeValidator extends AbstractValidator {
     private void validateEnumShape(List<ValidationEvent> events, EnumShape shape) {
         Set<String> values = new HashSet<>();
         for (MemberShape member : shape.members()) {
+            if (member.hasTrait(EnumDefaultTrait.ID)) {
+                continue;
+            }
             Optional<String> value = member.expectTrait(EnumValueTrait.class).getStringValue();
             if (!value.isPresent()) {
                 events.add(error(member, member.expectTrait(EnumValueTrait.class),
                         "The enumValue trait must use the string option when applied to enum shapes."));
-            } else if (!values.add(value.get())) {
-                events.add(error(member, String.format(
-                        "Multiple enum members found with duplicate value `%s`",
-                        value.get()
-                )));
+            } else {
+                if (!values.add(value.get())) {
+                    events.add(error(member, String.format(
+                            "Multiple enum members found with duplicate value `%s`",
+                            value.get()
+                    )));
+                }
+                if (value.get().equals("")) {
+                    events.add(error(member, "enum values may not be empty because an empty string is the "
+                            + "default value of enum shapes. Instead, use `smithy.api#enumDefault` to set an "
+                            + "explicit name for the default value."));
+                }
             }
             validateEnumMemberName(events, member);
         }
@@ -69,6 +80,9 @@ public final class EnumShapeValidator extends AbstractValidator {
     private void validateIntEnumShape(List<ValidationEvent> events, IntEnumShape shape) {
         Set<Integer> values = new HashSet<>();
         for (MemberShape member : shape.members()) {
+            if (member.hasTrait(EnumDefaultTrait.ID)) {
+                continue;
+            }
             if (!member.hasTrait(EnumValueTrait.ID)) {
                 events.add(missingIntEnumValue(member, member));
             } else if (!member.expectTrait(EnumValueTrait.class).getIntValue().isPresent()) {
@@ -80,6 +94,11 @@ public final class EnumShapeValidator extends AbstractValidator {
                             "Multiple enum members found with duplicate value `%s`",
                             value
                     )));
+                }
+                if (value == 0) {
+                    events.add(error(member, "intEnum values may not be set to 0 because 0 is the "
+                            + "default value of intEnum shapes. Instead, use `smithy.api#enumDefault` to set an "
+                            + "explicit name for the default value."));
                 }
             }
             validateEnumMemberName(events, member);
