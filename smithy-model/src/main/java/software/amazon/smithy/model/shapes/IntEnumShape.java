@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import software.amazon.smithy.model.SourceException;
+import software.amazon.smithy.model.traits.EnumDefaultTrait;
 import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.utils.BuilderRef;
@@ -53,7 +54,11 @@ public final class IntEnumShape extends IntegerShape implements NamedMembers {
         if (enumValues == null) {
             Map<String, Integer> values = new LinkedHashMap<>(members.size());
             for (MemberShape member : members()) {
-                values.put(member.getMemberName(), member.expectTrait(EnumValueTrait.class).getIntValue().get());
+                if (member.hasTrait(EnumDefaultTrait.ID)) {
+                    values.put(member.getMemberName(), 0);
+                    continue;
+                }
+                values.put(member.getMemberName(), member.expectTrait(EnumValueTrait.class).expectIntValue());
             }
             enumValues = MapUtils.orderedCopyOf(values);
         }
@@ -227,6 +232,40 @@ public final class IntEnumShape extends IntegerShape implements NamedMembers {
                     .target(UnitTypeTrait.UNIT)
                     .id(getId().withMember(memberName))
                     .addTrait(EnumValueTrait.builder().intValue(enumValue).build());
+
+            if (memberUpdater != null) {
+                memberUpdater.accept(builder);
+            }
+
+            return addMember(builder.build());
+        }
+
+        /**
+         * Adds the default member to the builder.
+         *
+         * @param memberName Member name to add.
+         * @return Returns the builder.
+         */
+        public Builder addDefaultMember(String memberName) {
+            return addDefaultMember(memberName, null);
+        }
+
+        /**
+         * Adds the default member to the builder.
+         *
+         * @param memberName Member name to add.
+         * @param memberUpdater Consumer that can update the created member shape.
+         * @return Returns the builder.
+         */
+        public Builder addDefaultMember(String memberName, Consumer<MemberShape.Builder> memberUpdater) {
+            if (getId() == null) {
+                throw new IllegalStateException("An id must be set before setting a member with a target");
+            }
+
+            MemberShape.Builder builder = MemberShape.builder()
+                    .target(UnitTypeTrait.UNIT)
+                    .id(getId().withMember(memberName))
+                    .addTrait(new EnumDefaultTrait());
 
             if (memberUpdater != null) {
                 memberUpdater.accept(builder);
