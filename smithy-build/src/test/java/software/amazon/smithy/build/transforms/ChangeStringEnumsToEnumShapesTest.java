@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
@@ -46,6 +47,7 @@ public class ChangeStringEnumsToEnumShapesTest {
                 .addTrait(compatibleTrait)
                 .build();
 
+        // This won't have a name synthesized because that setting is disabled
         EnumTrait incompatibleTrait = EnumTrait.builder()
                 .addEnum(EnumDefinition.builder()
                         .value("bar")
@@ -79,5 +81,39 @@ public class ChangeStringEnumsToEnumShapesTest {
 
         assertThat(result.expectShape(incompatibleStringId).getType(), Matchers.is(ShapeType.STRING));
         assertThat(result.expectShape(incompatibleStringId).members(), Matchers.hasSize(0));
+    }
+
+    @Test
+    public void canSynthesizeNames() {
+        EnumTrait trait = EnumTrait.builder()
+                .addEnum(EnumDefinition.builder()
+                        .value("foo:bar")
+                        .build())
+                .build();
+        ShapeId shapeId = ShapeId.fromParts("ns.foo", "ConvertableShape");
+        StringShape initialShape = StringShape.builder()
+                .id(shapeId)
+                .addTrait(trait)
+                .build();
+
+        Model model = Model.assembler()
+                .addShape(initialShape)
+                .assemble().unwrap();
+
+        ObjectNode config = Node.parse("{\"synthesizeNames\": true}").expectObjectNode();
+        TransformContext context = TransformContext.builder()
+                .model(model)
+                .settings(config)
+                .build();
+
+        Model result = new ChangeStringEnumsToEnumShapes().transform(context);
+
+        assertThat(result.expectShape(shapeId).getType(), Matchers.is(ShapeType.ENUM));
+        assertThat(result.expectShape(shapeId).members(), Matchers.hasSize(1));
+        assertThat(result.expectShape(shapeId).members().iterator().next(), Matchers.equalTo(MemberShape.builder()
+                .id(shapeId.withMember("foo_bar"))
+                .target(UnitTypeTrait.UNIT)
+                .addTrait(EnumValueTrait.builder().stringValue("foo:bar").build())
+                .build()));
     }
 }
