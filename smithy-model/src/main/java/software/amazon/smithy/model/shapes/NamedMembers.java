@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-interface NamedMembers {
+public interface NamedMembers {
 
     /**
      * Gets the members of the shape, including mixin members.

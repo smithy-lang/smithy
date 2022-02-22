@@ -186,9 +186,11 @@ public final class EnumDefinition implements ToNode, ToSmithyBuilder<EnumDefinit
     public static EnumDefinition fromMember(MemberShape member) {
         EnumDefinition.Builder builder = EnumDefinition.builder().name(member.getMemberName());
 
-        EnumValueTrait valueTrait = member.expectTrait(EnumValueTrait.class);
-        if (valueTrait.getStringValue().isPresent()) {
-            builder.value(valueTrait.getStringValue().get());
+        Optional<String> traitValue = member.getTrait(EnumValueTrait.class).flatMap(EnumValueTrait::getStringValue);
+        if (member.hasTrait(EnumDefaultTrait.class)) {
+            builder.value("");
+        } else if (traitValue.isPresent()) {
+            builder.value(traitValue.get());
         } else {
             throw new IllegalStateException("Enum definitions can only be made for string enums.");
         }
