@@ -31,7 +31,7 @@ final class ShapeTypeSelector implements InternalSelector {
 
     @Override
     public boolean push(Context ctx, Shape shape, Receiver next) {
-        if (shape.getType() == shapeType || isSetMatchForList(shape) || isEnumMatch(shape)) {
+        if (shape.getType().isShapeType(shapeType) || isSetMatchForList(shape)) {
             return next.apply(ctx, shape);
         }
 
@@ -42,12 +42,6 @@ final class ShapeTypeSelector implements InternalSelector {
         ShapeType other = shape.getType();
         return (shapeType == ShapeType.SET && other == ShapeType.LIST)
                 || (shapeType == ShapeType.LIST && other == ShapeType.SET);
-    }
-
-    private boolean isEnumMatch(Shape shape) {
-        ShapeType other = shape.getType();
-        return (shapeType == ShapeType.STRING && other == ShapeType.ENUM)
-                || (shapeType == ShapeType.INTEGER && other == ShapeType.INT_ENUM);
     }
 
     @Override

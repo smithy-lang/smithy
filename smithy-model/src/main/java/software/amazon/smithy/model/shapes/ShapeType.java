@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.shapes;
 
 import java.util.Optional;
+import java.util.function.BiFunction;
 
 /** An enumeration of the different types in a model. */
 public enum ShapeType {
@@ -33,8 +34,9 @@ public enum ShapeType {
     DOUBLE("double", DoubleShape.class, Category.SIMPLE),
     BIG_DECIMAL("bigDecimal", BigDecimalShape.class, Category.SIMPLE),
     BIG_INTEGER("bigInteger", BigIntegerShape.class, Category.SIMPLE),
-    ENUM("enum", EnumShape.class, Category.SIMPLE),
-    INT_ENUM("intEnum", IntEnumShape.class, Category.SIMPLE),
+
+    ENUM("enum", EnumShape.class, Category.SIMPLE, (a, b) -> b.equals(a) || b.equals(STRING)),
+    INT_ENUM("intEnum", IntEnumShape.class, Category.SIMPLE, (a, b) -> b.equals(a) || b.equals(INTEGER)),
 
     LIST("list", ListShape.class, Category.AGGREGATE),
     SET("set", SetShape.class, Category.AGGREGATE),
@@ -53,11 +55,22 @@ public enum ShapeType {
     private final String stringValue;
     private final Class<? extends Shape> shapeClass;
     private final Category category;
+    private final BiFunction<ShapeType, ShapeType, Boolean> isShapeType;
 
-    ShapeType(String stringValue, Class<? extends Shape> shapeClass, Category categry) {
+    ShapeType(String stringValue, Class<? extends Shape> shapeClass, Category category) {
+        this(stringValue, shapeClass, category, Enum::equals);
+    }
+
+    ShapeType(
+            String stringValue,
+            Class<? extends Shape> shapeClass,
+            Category category,
+            BiFunction<ShapeType, ShapeType, Boolean> isShapeType
+    ) {
         this.stringValue = stringValue;
         this.shapeClass = shapeClass;
-        this.category = categry;
+        this.category = category;
+        this.isShapeType = isShapeType;
     }
 
     @Override
@@ -82,6 +95,18 @@ public enum ShapeType {
      */
     public Category getCategory() {
         return category;
+    }
+
+    /**
+     * Returns whether this shape type is equivalent to the given shape type.
+     *
+     * This accounts for things like enums being considered specializations of strings.
+     *
+     * @param other The other shape type to compare against.
+     * @return Returns true if the shape types are equivalent.
+     */
+    public boolean isShapeType(ShapeType other) {
+        return isShapeType.apply(this, other);
     }
 
     /**
