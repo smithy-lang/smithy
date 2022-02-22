@@ -398,11 +398,11 @@ public final class SmithyIdlModelSerializer {
             return null;
         }
 
-        private void shapeWithMembers(Shape shape, List<MemberShape> members) {
+        private void shapeWithMembers(Shape shape, Collection<MemberShape> members) {
             shapeWithMembers(shape, members, false);
         }
 
-        private void shapeWithMembers(Shape shape, List<MemberShape> members, boolean isEnum) {
+        private void shapeWithMembers(Shape shape, Collection<MemberShape> members, boolean isEnum) {
             List<MemberShape> nonMixinMembers = new ArrayList<>();
             List<MemberShape> mixinMembers = new ArrayList<>();
             for (MemberShape member : members) {
@@ -543,13 +543,13 @@ public final class SmithyIdlModelSerializer {
 
         @Override
         public Void enumShape(EnumShape shape) {
-            shapeWithMembers(shape, new ArrayList<>(shape.members()), true);
+            shapeWithMembers(shape, shape.members(), true);
             return null;
         }
 
         @Override
         public Void intEnumShape(IntEnumShape shape) {
-            shapeWithMembers(shape, new ArrayList<>(shape.members()), true);
+            shapeWithMembers(shape, shape.members(), true);
             return null;
         }
 
@@ -573,13 +573,13 @@ public final class SmithyIdlModelSerializer {
 
         @Override
         public Void structureShape(StructureShape shape) {
-            shapeWithMembers(shape, new ArrayList<>(shape.getAllMembers().values()));
+            shapeWithMembers(shape, shape.members());
             return null;
         }
 
         @Override
         public Void unionShape(UnionShape shape) {
-            shapeWithMembers(shape, new ArrayList<>(shape.getAllMembers().values()));
+            shapeWithMembers(shape, shape.members());
             return null;
         }
 
