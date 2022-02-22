@@ -13,7 +13,7 @@
 [ERROR] ns.foo#GInput$b: Found conflicting traits on member shape: `httpHeader` conflicts with `httpPrefixHeaders`, `httpPrefixHeaders` conflicts with `httpHeader` | TraitConflict
 [ERROR] ns.foo#GOutput$a: Found conflicting traits on member shape: `httpHeader` conflicts with `httpPayload`, `httpPayload` conflicts with `httpHeader` | TraitConflict
 [ERROR] ns.foo#GOutput$b: Found conflicting traits on member shape: `httpHeader` conflicts with `httpPrefixHeaders`, `httpPrefixHeaders` conflicts with `httpHeader` | TraitConflict
-[ERROR] ns.foo#JInput: The `httpPrefixHeaders` trait can be applied to only a single member of a structure, but it was found on the following members: `a`, `b` | ExclusiveStructureMemberTrait
+[ERROR] ns.foo#JInput: The `httpPrefixHeaders` trait can be applied to only a single member of a shape, but it was found on the following members: `a`, `b` | ExclusiveStructureMemberTrait
 [ERROR] ns.foo#K: Operation URI, `/k`, conflicts with other operation URIs in the same service: [`ns.foo#L` (/k)] | HttpUriConflict
 [ERROR] ns.foo#KInput: `httpHeader` field name binding conflicts found for the `x-foo` header in the following structure members: `a`, `b` | HttpHeaderTrait
 [ERROR] ns.foo#KInput: `httpQuery` parameter name binding conflicts found for the `foo` parameter in the following structure members: `c`, `d` | HttpQueryTrait
