@@ -46,6 +46,7 @@ public abstract class NamedMembersShape extends Shape implements NamedMembers {
      *
      * @return Returns the immutable member map.
      */
+    @Override
     public Map<String, MemberShape> getAllMembers() {
         return members;
     }
@@ -56,6 +57,7 @@ public abstract class NamedMembersShape extends Shape implements NamedMembers {
      *
      * @return Returns an immutable list of member names.
      */
+    @Override
     public List<String> getMemberNames() {
         List<String> names = memberNames;
         if (names == null) {
@@ -66,8 +68,14 @@ public abstract class NamedMembersShape extends Shape implements NamedMembers {
         return names;
     }
 
+    /**
+     * Get a specific member by name.
+     *
+     * @param name Name of the member to retrieve.
+     * @return Returns the optional member.
+     */
     @Override
-    public final Optional<MemberShape> getMember(String name) {
+    public Optional<MemberShape> getMember(String name) {
         return Optional.ofNullable(members.get(name));
     }
 
