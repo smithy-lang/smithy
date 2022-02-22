@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.shapes;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,11 +30,13 @@ import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
 
 public final class EnumShape extends StringShape implements NamedMembers {
 
     private final Map<String, MemberShape> members;
     private volatile List<String> memberNames;
+    private volatile Map<String, String> enumValues;
 
     private EnumShape(Builder builder) {
         super(builder);
@@ -43,6 +46,22 @@ public final class EnumShape extends StringShape implements NamedMembers {
         if (members.size() < 1) {
             throw new SourceException("enum shapes must have at least one member", getSourceLocation());
         }
+    }
+
+    /**
+     * Gets a map of enum member names to their corresponding values.
+     *
+     * @return A map of member names to enum values.
+     */
+    public Map<String, String> getEnumValues() {
+        if (enumValues == null) {
+            Map<String, String> values = new LinkedHashMap<>(members.size());
+            for (MemberShape member : members()) {
+                values.put(member.getMemberName(), member.expectTrait(EnumValueTrait.class).getStringValue().get());
+            }
+            enumValues = MapUtils.orderedCopyOf(values);
+        }
+        return enumValues;
     }
 
     /**
