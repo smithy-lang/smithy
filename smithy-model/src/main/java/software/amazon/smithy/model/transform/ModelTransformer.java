@@ -528,6 +528,16 @@ public final class ModelTransformer {
     }
 
     /**
+     * Changes each enum shape to a string shape and each intEnum to an integer.
+     *
+     * @param model Model to transform.
+     * @return Returns the transformed model.
+     */
+    public Model changeEnumsToBaseShapeTypes(Model model) {
+        return ChangeShapeType.downgradeEnums(model).transform(this, model);
+    }
+
+    /**
      * Copies the errors defined on the given service onto each operation bound to the
      * service, effectively flattening service error inheritance.
      *
