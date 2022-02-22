@@ -81,12 +81,12 @@ structure GetFooInput {
 }
 ```
 
-To account for this, enums MAY define a default member by making the
-`@enumValue` of the member "":
+To account for this, enums MAY define a default member by setting the
+`@enumDefault` trait on a member:
 
 ```
 enum Suit {
-    @enumValue(string: "")
+    @enumDefault
     UNKNOWN
 
     @enumValue(string: "diamond")
@@ -120,6 +120,10 @@ structure GetFooInput {
     suit: Suit
 }
 ```
+
+#### enums must define at least one member
+
+Every enum shape MUST define at least one member.
 
 ### intEnum shape
 
@@ -159,11 +163,11 @@ structure GetFooInput {
 ```
 
 intEnums MAY define a member to represent the default value of the shape by
-making the `@enumValue` of the member 0:
+setting the `@enumDefault` trait on a member:
 
 ```
 intEnum FaceCard {
-    @enumValue(int: 0)
+    @enumDefault
     UNKNOWN
 
     @enumValue(int: 1)
@@ -197,6 +201,10 @@ Implementation note: In Smithy’s Java implementation, shape visitors will by
 default dispatch to the integer shape when an intEnum is encountered. This
 both makes adding enums backward compatible, and allows implementations that
 do not support enums at all to ignore them.
+
+#### intEnums must define at least one member
+
+Every intEnum shape MUST define at least one member.
 
 ### Smithy taxonomy updates
 
