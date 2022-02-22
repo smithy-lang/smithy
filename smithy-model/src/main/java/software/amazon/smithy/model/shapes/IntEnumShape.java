@@ -26,7 +26,7 @@ import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ListUtils;
 
-public final class IntEnumShape extends IntegerShape {
+public final class IntEnumShape extends IntegerShape implements NamedMembers {
 
     private final Map<String, MemberShape> members;
     private volatile List<String> memberNames;
@@ -46,6 +46,7 @@ public final class IntEnumShape extends IntegerShape {
      *
      * @return Returns the immutable member map.
      */
+    @Override
     public Map<String, MemberShape> getAllMembers() {
         return members;
     }
@@ -56,6 +57,7 @@ public final class IntEnumShape extends IntegerShape {
      *
      * @return Returns an immutable list of member names.
      */
+    @Override
     public List<String> getMemberNames() {
         List<String> names = memberNames;
         if (names == null) {
@@ -83,6 +85,7 @@ public final class IntEnumShape extends IntegerShape {
      * @param name Name of the member to retrieve.
      * @return Returns the optional member.
      */
+    @Override
     public Optional<MemberShape> getMember(String name) {
         return Optional.ofNullable(members.get(name));
     }
