@@ -391,4 +391,31 @@ public class ChangeShapeTypeTest {
         assertThat(result.expectShape(incompatibleStringId).getType(), Matchers.is(ShapeType.STRING));
         assertThat(result.expectShape(incompatibleStringId).members(), Matchers.hasSize(0));
     }
+
+    @Test
+    public void canSynthesizeEnumNames() {
+        EnumTrait trait = EnumTrait.builder()
+                .addEnum(EnumDefinition.builder()
+                        .value("foo:bar")
+                        .build())
+                .build();
+        ShapeId shapeId = ShapeId.fromParts("ns.foo", "ConvertableShape");
+        StringShape initialShape = StringShape.builder()
+                .id(shapeId)
+                .addTrait(trait)
+                .build();
+
+        Model model = Model.assembler()
+                .addShape(initialShape)
+                .assemble().unwrap();
+        Model result = ModelTransformer.create().changeStringEnumsToEnumShapes(model, true);
+
+        assertThat(result.expectShape(shapeId).getType(), Matchers.is(ShapeType.ENUM));
+        assertThat(result.expectShape(shapeId).members(), Matchers.hasSize(1));
+        assertThat(result.expectShape(shapeId).members().iterator().next(), Matchers.equalTo(MemberShape.builder()
+                .id(shapeId.withMember("foo_bar"))
+                .target(UnitTypeTrait.UNIT)
+                .addTrait(EnumValueTrait.builder().stringValue("foo:bar").build())
+                .build()));
+    }
 }
