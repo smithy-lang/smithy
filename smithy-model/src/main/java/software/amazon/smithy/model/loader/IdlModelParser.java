@@ -485,7 +485,7 @@ final class IdlModelParser extends SimpleParser {
         parseMembers(id, requiredMembers, false);
     }
 
-    private void parseMembers(ShapeId id, Set<String> requiredMembers, boolean targetsUnion) {
+    private void parseMembers(ShapeId id, Set<String> requiredMembers, boolean targetsUnit) {
         Set<String> definedMembers = new HashSet<>();
 
         ws();
@@ -497,7 +497,7 @@ final class IdlModelParser extends SimpleParser {
                 break;
             }
 
-            parseMember(id, requiredMembers, definedMembers, targetsUnion);
+            parseMember(id, requiredMembers, definedMembers, targetsUnit);
 
             // Clears out any previously captured documentation
             // comments that may have been found when parsing the member.
@@ -513,7 +513,7 @@ final class IdlModelParser extends SimpleParser {
         expect('}');
     }
 
-    private void parseMember(ShapeId parent, Set<String> allowed, Set<String> defined, boolean targetsUnion) {
+    private void parseMember(ShapeId parent, Set<String> allowed, Set<String> defined, boolean targetsUnit) {
         // Parse optional member traits.
         List<TraitEntry> memberTraits = parseDocsAndTraits();
         SourceLocation memberLocation = currentLocation();
@@ -536,7 +536,7 @@ final class IdlModelParser extends SimpleParser {
         modelFile.onShape(memberBuilder);
         String target;
 
-        if (!targetsUnion) {
+        if (!targetsUnit) {
             ws();
             expect(':');
 
