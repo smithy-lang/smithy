@@ -100,6 +100,17 @@ final class ChangeShapeType {
         return true;
     }
 
+    static ChangeShapeType downgradeEnums(Model model) {
+        Map<ShapeId, ShapeType> toUpdate = new HashMap<>();
+        for (EnumShape shape : model.getEnumShapes()) {
+            toUpdate.put(shape.getId(), ShapeType.STRING);
+        }
+        for (IntEnumShape shape : model.getIntEnumShapes()) {
+            toUpdate.put(shape.getId(), ShapeType.INTEGER);
+        }
+        return new ChangeShapeType(toUpdate);
+    }
+
     Model transform(ModelTransformer transformer, Model model) {
         return transformer.mapShapes(model, shape -> {
             if (shapeToType.containsKey(shape.getId())) {
