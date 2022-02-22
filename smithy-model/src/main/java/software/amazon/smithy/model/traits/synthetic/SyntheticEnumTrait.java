@@ -45,7 +45,7 @@ public final class SyntheticEnumTrait extends EnumTrait {
     @Override
     public Builder toBuilder() {
         Builder builder = (Builder) builder().sourceLocation(getSourceLocation());
-        definitions.forEach(builder::addEnum);
+        getValues().forEach(builder::addEnum);
         return builder;
     }
 
