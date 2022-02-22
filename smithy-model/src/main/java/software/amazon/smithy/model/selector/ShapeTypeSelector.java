@@ -31,9 +31,7 @@ final class ShapeTypeSelector implements InternalSelector {
 
     @Override
     public boolean push(Context ctx, Shape shape, Receiver next) {
-        if (shape.getType() == shapeType
-                || (shapeType == ShapeType.STRING && shape.getType() == ShapeType.ENUM)
-                || (shapeType == ShapeType.INTEGER && shape.getType() == ShapeType.INT_ENUM)) {
+        if (shape.getType().isShapeType(shapeType)) {
             return next.apply(ctx, shape);
         }
 
