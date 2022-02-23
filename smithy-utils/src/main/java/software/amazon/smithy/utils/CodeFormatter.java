@@ -257,9 +257,17 @@ final class CodeFormatter {
                 value = parseRelativeArgument();
             }
 
+            if (value instanceof Runnable) {
+                value = evaluateRunnableArgument((Runnable) value);
+            }
+
             // Parse the formatter and apply it.
             String formatted = consumeFormatterIdentifier().apply(value, writer.getIndentText());
             return Operation.staticValue(formatted);
+        }
+
+        private String evaluateRunnableArgument(Runnable value) {
+            return writer.expandSection("__anonymous_inline_" + Math.random(), "", ignore -> value.run());
         }
 
         private Object parseNamedArgument() {
