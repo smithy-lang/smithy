@@ -62,6 +62,17 @@ import java.util.regex.Pattern;
  * <p>In the above example, {@code $L} is interpolated and replaced with the
  * relative argument {@code there!}.
  *
+ * <p>Passing a {@link Runnable} as an argument to a formatter can be used to
+ * break up large templates. Any text written to the CodeWriter inside of the
+ * Runnable is used as the value of the argument. Note that a single trailing
+ * newline is removed from the captured text.
+ *
+ * <pre>{@code
+ * CodeWriter writer = new CodeWriter();
+ * writer.write("Hello, $L.", () -> writer.write("there"));
+ * assert(writer.toString().equals("Hello, there.\n"));
+ * }</pre>
+ *
  * <p>A CodeWriter supports three kinds of interpolations: relative,
  * positional, and named. Each of these kinds of interpolations pass a value
  * to a <em>formatter</em>.</p>
@@ -97,7 +108,7 @@ import java.util.regex.Pattern;
  * characters:
  *
  * <pre>
- *    "!" / "#" / "%" / "&" / "*" / "+" / "," / "-" / "." / "/" / ";"
+ *    "!" / "#" / "%" / "&amp;" / "*" / "+" / "," / "-" / "." / "/" / ";"
  *  / "=" / "?" / "@" / "A" / "B" / "C" / "D" / "E" / "F" / "G" / "H"
  *  / "I" / "J" / "K" / "L" / "M" / "N" / "O" / "P" / "Q" / "R" / "S"
  *  / "T" / "U" / "V" / "W" / "X" / "Y" / "Z" / "^" / "_" / "`" / "~"

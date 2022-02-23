@@ -952,4 +952,35 @@ public class CodeWriterTest {
         assertThat(b.toString(), equalTo("Hello\n"));
         assertThat(a.toString(), equalTo("\n"));
     }
+
+    @Test
+    public void canPassRunnableToFormatters() {
+        CodeWriter writer = new CodeWriter();
+        writer.write("Hi, $L.", (Runnable) () -> writer.write("TheName"));
+        assertThat(writer.toString(), equalTo("Hi, TheName.\n"));
+    }
+
+    @Test
+    public void canPassRunnableToFormattersAndEvenCreateInlineSections() {
+        CodeWriter writer = new CodeWriter();
+
+        writer.onSection("Name", text -> {
+            writer.write(text + " (name)");
+        });
+
+        writer.write("Hi, $L.", (Runnable) () -> {
+            writer.pushState("Name");
+            writer.write("TheName");
+            writer.popState();
+        });
+
+        assertThat(writer.toString(), equalTo("Hi, TheName (name).\n"));
+    }
+
+    @Test
+    public void canPassRunnableAndKeepTrailingNewline() {
+        CodeWriter writer = new CodeWriter();
+        writer.write("Hi, $L.", (Runnable) () -> writer.write("TheName\n"));
+        assertThat(writer.toString(), equalTo("Hi, TheName\n.\n"));
+    }
 }
