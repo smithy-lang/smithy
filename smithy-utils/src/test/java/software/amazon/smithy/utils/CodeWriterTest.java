@@ -956,7 +956,7 @@ public class CodeWriterTest {
     @Test
     public void canPassRunnableToFormatters() {
         CodeWriter writer = new CodeWriter();
-        writer.write("Hi, $L.", (Runnable) () -> writer.write("TheName"));
+        writer.write("Hi, $C.", (Runnable) () -> writer.write("TheName"));
         assertThat(writer.toString(), equalTo("Hi, TheName.\n"));
     }
 
@@ -968,7 +968,7 @@ public class CodeWriterTest {
             writer.write(text + " (name)");
         });
 
-        writer.write("Hi, $L.", (Runnable) () -> {
+        writer.write("Hi, $C.", (Runnable) () -> {
             writer.pushState("Name");
             writer.write("TheName");
             writer.popState();
@@ -980,7 +980,7 @@ public class CodeWriterTest {
     @Test
     public void canPassRunnableAndKeepTrailingNewline() {
         CodeWriter writer = new CodeWriter();
-        writer.write("Hi, $L.", (Runnable) () -> writer.write("TheName\n"));
+        writer.write("Hi, $C.", (Runnable) () -> writer.write("TheName\n"));
         assertThat(writer.toString(), equalTo("Hi, TheName\n.\n"));
     }
 }

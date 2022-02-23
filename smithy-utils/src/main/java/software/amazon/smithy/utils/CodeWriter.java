@@ -62,17 +62,6 @@ import java.util.regex.Pattern;
  * <p>In the above example, {@code $L} is interpolated and replaced with the
  * relative argument {@code there!}.
  *
- * <p>Passing a {@link Runnable} as an argument to a formatter can be used to
- * break up large templates. Any text written to the CodeWriter inside of the
- * Runnable is used as the value of the argument. Note that a single trailing
- * newline is removed from the captured text.
- *
- * <pre>{@code
- * CodeWriter writer = new CodeWriter();
- * writer.write("Hello, $L.", () -> writer.write("there"));
- * assert(writer.toString().equals("Hello, there.\n"));
- * }</pre>
- *
  * <p>A CodeWriter supports three kinds of interpolations: relative,
  * positional, and named. Each of these kinds of interpolations pass a value
  * to a <em>formatter</em>.</p>
@@ -85,13 +74,25 @@ import java.util.regex.Pattern;
  * formatters:
  *
  * <ul>
- *     <li>{@code L}: Outputs a literal value of an {@code Object} using
+ *     <li>{@code L} (literal): Outputs a literal value of an {@code Object} using
  *     the following implementation: (1) A null value is formatted as "".
  *     (2) An empty {@code Optional} value is formatted as "". (3) A non-empty
  *     {@code Optional} value is recursively formatted using the value inside
  *     of the {@code Optional}. (3) All other valeus are formatted using the
  *     result of calling {@link String#valueOf}.</li>
- *     <li>{@code S}: Adds double quotes around the result of formatting a
+ *
+ *     <li>{@code C} (call): Runs a {@link Runnable} argument that is expected to
+ *     write to the same writer. Any text written to the CodeWriter inside of the
+ *     Runnable is used as the value of the argument. Note that a single trailing
+ *     newline is removed from the captured text.
+ *
+ *     <pre>{@code
+ *     CodeWriter writer = new CodeWriter();
+ *     writer.write("Hello, $C.", () -> writer.write("there"));
+ *     assert(writer.toString().equals("Hello, there.\n"));
+ *     }</pre></li>
+ *
+ *     <li>{@code S} (string): Adds double quotes around the result of formatting a
  *     value first using the default literal "L" implementation described
  *     above and then wrapping the value in an escaped string safe for use in
  *     Java according to https://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6.
@@ -397,6 +398,33 @@ import java.util.regex.Pattern;
  * writer.write("$L: ${L|}", "Names", "Bob\nKaren\nLuis");
  * System.out.println(writer.toString());
  * // Outputs: "Names: Bob\n       Karen\n       Luis\n"
+ * }</pre>
+ *
+ * <p>Alignment occurs either statically or dynamically based on the characters
+ * that come before interpolation. If all of the characters in the literal
+ * template that come before interpolation are spaces and tabs, then those
+ * characters are used when indenting newlines. Otherwise, the number of
+ * characters written as the template result that come before interpolation
+ * are used when indenting (this takes into account any interpolation that
+ * may precede block interpolation).
+ *
+ * <p>Block interpolation is particularly used when using text blocks in Java
+ * because it allows templates to more closely match their end result.
+ *
+ * <pre>{@code
+ * // Assume handleNull, handleA, and handleB are Runnable.
+ * writer.write("""
+ *     if (foo == null) {
+ *         ${C|}
+ *     } else if (foo == "a") {
+ *         ${C|}
+ *     } else if (foo == "b") {
+ *         ${C|}
+ *     }
+ *     """,
+ *     handleNull,
+ *     handleA,
+ *     handleB);
  * }</pre>
  */
 public class CodeWriter {
@@ -1606,8 +1634,26 @@ public class CodeWriter {
         return buffer.toString();
     }
 
-    BiFunction<Object, String, String> getFormatter(char identifier) {
-        return currentState.getCodeFormatterContainer().getFormatter(identifier);
+    // Used only by CodeFormatter to apply formatters.
+    String applyFormatter(char identifier, Object value) {
+        BiFunction<Object, String, String> f = currentState.getCodeFormatterContainer().getFormatter(identifier);
+        if (f != null) {
+            return f.apply(value, getIndentText());
+        } else if (identifier == 'C') {
+            // The default C formatter is evaluated dynamically to prevent cyclic references.
+            if (!(value instanceof Runnable)) {
+                throw new ClassCastException(String.format(
+                        "Expected CodeWriter value for 'C' formatter to be a Runnable, but found %s %s",
+                        value.getClass().getName(), getDebugInfo()));
+            }
+            Runnable runnable = (Runnable) value;
+            // The section name doesn't need to be unique, but making it unpredictable disallows
+            // registering section interceptors.
+            return expandSection("__anonymous_inline_" + System.nanoTime(), "", ignore -> runnable.run());
+        } else {
+            // Return null if no formatter was found.
+            return null;
+        }
     }
 
     private final class State {

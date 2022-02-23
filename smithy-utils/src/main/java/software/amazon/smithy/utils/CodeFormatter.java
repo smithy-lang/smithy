@@ -18,7 +18,6 @@ package software.amazon.smithy.utils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 
 @SmithyInternalApi
@@ -97,19 +96,22 @@ final class CodeFormatter {
         }
 
         // Used for "|". Wraps another operation and ensures newlines are properly indented.
-        static Operation block(Operation delegate) {
-            return (sink, writer, column) -> delegate.apply(new BlockAppender(sink, column), writer, column);
+        static Operation block(Operation delegate, String staticWhitespace) {
+            return (sink, writer, column) -> delegate.apply(
+                    new BlockAppender(sink, column, staticWhitespace), writer, column);
         }
     }
 
     private static final class BlockAppender extends DecoratedAppendable {
         private final Appendable delegate;
         private final int spaces;
+        private final String staticWhitespace;
         private boolean previousIsCarriageReturn;
 
-        BlockAppender(Appendable delegate, int spaces) {
+        BlockAppender(Appendable delegate, int spaces, String staticWhitespace) {
             this.delegate = delegate;
             this.spaces = spaces;
+            this.staticWhitespace = staticWhitespace;
         }
 
         @Override
@@ -130,8 +132,12 @@ final class CodeFormatter {
         }
 
         private void writeSpaces() throws IOException {
-            for (int i = 0; i < spaces; i++) {
-                delegate.append(' ');
+            if (staticWhitespace != null) {
+                delegate.append(staticWhitespace);
+            } else {
+                for (int i = 0; i < spaces; i++) {
+                    delegate.append(' ');
+                }
             }
         }
     }
@@ -223,6 +229,10 @@ final class CodeFormatter {
         }
 
         private Operation parseBracedArgument() {
+            // Track the starting position of the interpolation (here minus the opening '$').
+            int startPosition = parser.position() - 1;
+            int startColumn = parser.column() - 2;
+
             parser.expect('{');
             Operation operation = parseNormalArgument();
 
@@ -236,13 +246,26 @@ final class CodeFormatter {
             }
 
             if (parser.peek() == '|') {
+                String staticWhitespace = isAllLeadingWhitespaceOnLine(startPosition, startColumn)
+                        ? template.substring(startPosition - startColumn, startPosition)
+                        : null;
                 parser.expect('|');
-                operation = Operation.block(operation);
+                operation = Operation.block(operation, staticWhitespace);
             }
 
             parser.expect('}');
 
             return operation;
+        }
+
+        private boolean isAllLeadingWhitespaceOnLine(int startPosition, int startColumn) {
+            for (int i = startPosition - startColumn; i < startPosition; i++) {
+                char ch = template.charAt(i);
+                if (ch != ' ' && ch != '\t') {
+                    return false;
+                }
+            }
+            return true;
         }
 
         private Operation parseNormalArgument() {
@@ -257,17 +280,9 @@ final class CodeFormatter {
                 value = parseRelativeArgument();
             }
 
-            if (value instanceof Runnable) {
-                value = evaluateRunnableArgument((Runnable) value);
-            }
-
             // Parse the formatter and apply it.
-            String formatted = consumeFormatterIdentifier().apply(value, writer.getIndentText());
+            String formatted = consumeAndApplyFormatterIdentifier(value);
             return Operation.staticValue(formatted);
-        }
-
-        private String evaluateRunnableArgument(Runnable value) {
-            return writer.expandSection("__anonymous_inline_" + Math.random(), "", ignore -> value.run());
         }
 
         private Object parseNamedArgument() {
@@ -287,13 +302,13 @@ final class CodeFormatter {
             return writer.getContext(name);
         }
 
-        private BiFunction<Object, String, String> consumeFormatterIdentifier() {
+        private String consumeAndApplyFormatterIdentifier(Object value) {
             char identifier = parser.expect(CodeWriterFormatterContainer.VALID_FORMATTER_CHARS);
-            BiFunction<Object, String, String> formatter = writer.getFormatter(identifier);
-            if (formatter == null) {
+            String result = writer.applyFormatter(identifier, value);
+            if (result == null) {
                 throw error(String.format("Unknown formatter `%c` found in format string", identifier));
             }
-            return formatter;
+            return result;
         }
 
         private Object parseRelativeArgument() {
