@@ -452,4 +452,52 @@ public class CodeFormatterTest {
 
         assertThat(writer.toString(), equalTo("| method() {\n|     // this\n|     // is a test.\n| }\n"));
     }
+
+    @Test
+    public void defaultCFormatterRequiresRunnable() {
+        RuntimeException e = Assertions.assertThrows(RuntimeException.class, () -> new CodeWriter().write("$C", "hi"));
+
+        assertThat(e.getMessage(), containsString(
+                "Expected CodeWriter value for 'C' formatter to be a Runnable, but found java.lang.String"));
+    }
+
+    @Test
+    public void alignsBlocksWithStaticWhitespace() {
+        CodeWriter writer = new CodeWriter();
+        writer.write("$1L() {\n" +
+                     "\t\t${2L|}\n" +
+                     "}", "method", "hi\nthere");
+
+        assertThat(writer.toString(), equalTo("method() {\n\t\thi\n\t\tthere\n}\n"));
+    }
+
+    @Test
+    public void alignsBlocksWithStaticAndSpecificWhitespace() {
+        CodeWriter writer = new CodeWriter();
+        writer.write("$1L() {\n" +
+                     "\t\t  ${2L|}\n" +
+                     "}", "method", "hi\nthere");
+
+        assertThat(writer.toString(), equalTo("method() {\n\t\t  hi\n\t\t  there\n}\n"));
+    }
+
+    @Test
+    public void canAlignNestedBlocks() {
+        CodeWriter writer = new CodeWriter();
+        writer.write("$L() {\n\t\t${C|}\n}", "a", (Runnable) () -> {
+            writer.write("$L() {\n\t\t${C|}\n}", "b", (Runnable) () -> {
+                writer.write("$L() {\n\t\t  ${C|}\n}", "c", (Runnable) () -> {
+                    writer.write("d");
+                });
+            });
+        });
+
+        assertThat(writer.toString(), equalTo("a() {\n"
+                                              + "\t\tb() {\n"
+                                              + "\t\t\t\tc() {\n"
+                                              + "\t\t\t\t\t\t  d\n"
+                                              + "\t\t\t\t}\n"
+                                              + "\t\t}\n"
+                                              + "}\n"));
+    }
 }
