@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.function.BiFunction;
@@ -92,13 +93,14 @@ import java.util.regex.Pattern;
  * inherit the formatters of parent states, adding a formatter to the root state
  * of the CodeWriter allows the formatter to be used in any state.
  *
- * <p>The identifier given to a formatter must match the following ABNF:
+ * <p>The identifier given to a formatter must match one of the following
+ * characters:
  *
  * <pre>
- * %x21-23    ; ( '!' - '#' )
- * / %x25-2F  ; ( '%' - '/' )
- * / %x3A-60  ; ( ':' - '`' )
- * / %x7B-7E  ; ( '{' - '~' )
+ *    "!" / "#" / "%" / "&" / "*" / "+" / "," / "-" / "." / "/" / ";"
+ *  / "=" / "?" / "@" / "A" / "B" / "C" / "D" / "E" / "F" / "G" / "H"
+ *  / "I" / "J" / "K" / "L" / "M" / "N" / "O" / "P" / "Q" / "R" / "S"
+ *  / "T" / "U" / "V" / "W" / "X" / "Y" / "Z" / "^" / "_" / "`" / "~"
  * </pre>
  *
  * <h3>Relative parameters</h3>
@@ -486,7 +488,7 @@ public class CodeWriter {
         if (value == null) {
             return "";
         } else if (value instanceof Optional) {
-            Optional optional = (Optional) value;
+            Optional<?> optional = (Optional<?>) value;
             return optional.isPresent() ? formatLiteral(optional.get()) : "";
         } else {
             return String.valueOf(value);
@@ -1383,7 +1385,9 @@ public class CodeWriter {
      * @see #putFormatter
      */
     public final String format(Object content, Object... args) {
-        return currentState.getCodeFormatter().format(this, content, args);
+        StringBuilder result = new StringBuilder();
+        CodeFormatter.run(result, this, Objects.requireNonNull(content).toString(), args);
+        return result.toString();
     }
 
     /**
@@ -1591,6 +1595,10 @@ public class CodeWriter {
         return buffer.toString();
     }
 
+    BiFunction<Object, String, String> getFormatter(char identifier) {
+        return currentState.getCodeFormatterContainer().getFormatter(identifier);
+    }
+
     private final class State {
         private String indentText = "    ";
         private String leadingIndentString = "";
@@ -1602,10 +1610,10 @@ public class CodeWriter {
         private char expressionStart = '$';
 
         /** The formatter of the parent state (null for the root state). */
-        private CodeFormatter parentFormatter;
+        private CodeWriterFormatterContainer parentFormatter;
 
         /** The formatter of the current state (null until a formatter is added to the state). */
-        private CodeFormatter stateFormatter;
+        private CodeWriterFormatterContainer stateFormatter;
 
         private transient String sectionName;
 
@@ -1630,7 +1638,7 @@ public class CodeWriter {
         State() {
             // A state created without copying from another needs a root formatter that
             // has all of the default formatter functions registered.
-            stateFormatter = new CodeFormatter();
+            stateFormatter = new CodeWriterFormatterContainer();
             DEFAULT_FORMATTERS.forEach(stateFormatter::putFormatter);
         }
 
@@ -1653,7 +1661,7 @@ public class CodeWriter {
             this.disableNewline = copy.disableNewline;
 
             // Copy the resolved formatter of "copy" as the parent formatter of this State.
-            this.parentFormatter = copy.getCodeFormatter();
+            this.parentFormatter = copy.getCodeFormatterContainer();
         }
 
         @Override
@@ -1661,13 +1669,13 @@ public class CodeWriter {
             return builder == null ? "" : builder.toString();
         }
 
-        private CodeFormatter getCodeFormatter() {
+        private CodeWriterFormatterContainer getCodeFormatterContainer() {
             return stateFormatter != null ? stateFormatter : parentFormatter;
         }
 
         private void putFormatter(char identifier, BiFunction<Object, String, String> formatFunction) {
             if (stateFormatter == null) {
-                stateFormatter = new CodeFormatter(parentFormatter);
+                stateFormatter = new CodeWriterFormatterContainer(parentFormatter);
             }
 
             stateFormatter.putFormatter(identifier, formatFunction);

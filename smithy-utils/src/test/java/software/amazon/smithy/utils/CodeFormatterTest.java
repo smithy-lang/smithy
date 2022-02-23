@@ -35,9 +35,9 @@ public class CodeFormatterTest {
     @Test
     public void formatsDollarLiterals() {
         CodeWriter writer = createWriter();
-        String result = writer.format("hello $$");
+        String result = writer.format("hello $$.");
 
-        assertThat(result, equalTo("hello $"));
+        assertThat(result, equalTo("hello $."));
     }
 
     @Test
@@ -60,17 +60,17 @@ public class CodeFormatterTest {
 
     @Test
     public void requiresTextAfterOpeningBrace() {
-        IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        RuntimeException e = Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.format("hello ${", "there");
         });
 
-        assertThat(e.getMessage(), containsString("Invalid format string: hello ${ (Debug Info {path=ROOT, near=})"));
+        assertThat(e.getMessage(), containsString("expected one of the following tokens: '!'"));
     }
 
     @Test
     public void requiresBraceIsClosed() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello ${L .", "there");
@@ -97,7 +97,7 @@ public class CodeFormatterTest {
 
     @Test
     public void ensuresAllRelativeArgumentsWereUsed() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $L", "a", "b", "c");
@@ -106,7 +106,7 @@ public class CodeFormatterTest {
 
     @Test
     public void performsRelativeBoundsChecking() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $L");
@@ -115,7 +115,7 @@ public class CodeFormatterTest {
 
     @Test
     public void validatesThatDollarIsNotAtEof() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $");
@@ -124,7 +124,7 @@ public class CodeFormatterTest {
 
     @Test
     public void validatesThatCustomStartIsNotAtEof() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.setExpressionStart('#');
             writer.format("hello #");
@@ -180,7 +180,7 @@ public class CodeFormatterTest {
 
     @Test
     public void performsPositionalBoundsChecking() {
-        IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        RuntimeException e = Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.write("Foo!");
             writer.putFormatter('L', CodeFormatterTest::valueOf);
@@ -188,13 +188,12 @@ public class CodeFormatterTest {
         });
 
         assertThat(e.getMessage(), containsString("Positional argument index 0 out of range of provided 0 arguments "
-                                                  + "in format string: hello $1L "
-                                                  + "(Debug Info {path=ROOT, near=Foo!\\n})"));
+                                                  + "in format string"));
     }
 
     @Test
     public void performsPositionalBoundsCheckingNotZero() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $0L", "a");
@@ -203,7 +202,7 @@ public class CodeFormatterTest {
 
     @Test
     public void validatesThatPositionalIsNotAtEof() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $2");
@@ -212,7 +211,7 @@ public class CodeFormatterTest {
 
     @Test
     public void validatesThatAllPositionalsAreUsed() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $2L $3L", "a", "b", "c", "d");
@@ -221,7 +220,7 @@ public class CodeFormatterTest {
 
     @Test
     public void cannotMixPositionalAndRelative() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $1L, $L", "there");
@@ -230,7 +229,7 @@ public class CodeFormatterTest {
 
     @Test
     public void cannotMixRelativeAndPositional() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $L, $1L", "there");
@@ -261,7 +260,7 @@ public class CodeFormatterTest {
 
     @Test
     public void ensuresNamedValuesHasColon() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $abc foo");
@@ -270,7 +269,7 @@ public class CodeFormatterTest {
 
     @Test
     public void ensuresNamedValuesHasFormatterAfterColon() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $abc:");
@@ -289,7 +288,7 @@ public class CodeFormatterTest {
 
     @Test
     public void ensuresNamedValuesMatchRegex() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("$nope!:L");
@@ -298,7 +297,7 @@ public class CodeFormatterTest {
 
     @Test
     public void formattersMustNotBeLowercase() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.putFormatter('a', CodeFormatterTest::valueOf);
         });
@@ -306,7 +305,7 @@ public class CodeFormatterTest {
 
     @Test
     public void formattersMustNotBeNumbers() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.putFormatter('1', CodeFormatterTest::valueOf);
         });
@@ -314,7 +313,7 @@ public class CodeFormatterTest {
 
     @Test
     public void formattersMustNotBeDollar() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.putFormatter('$', CodeFormatterTest::valueOf);
         });
@@ -322,7 +321,7 @@ public class CodeFormatterTest {
 
     @Test
     public void ensuresFormatterIsValid() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.format("$E", "hi");
         });
@@ -372,15 +371,14 @@ public class CodeFormatterTest {
 
     @Test
     public void cannotExpandInlineSectionOutsideOfBrace() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            CodeWriter writer = createWriter();
-            writer.write("Foo $L@hello baz", "default");
-        });
+        CodeWriter writer = createWriter();
+        writer.write("Foo $L@hello baz", "default");
+        assertThat(writer.toString(), equalTo("Foo default@hello baz\n"));
     }
 
     @Test
     public void inlineSectionNamesMustBeValid() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.write("${L@foo!}", "default");
         });
@@ -396,7 +394,7 @@ public class CodeFormatterTest {
 
     @Test
     public void detectsBlockAlignmentEof() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(RuntimeException.class, () -> {
             CodeWriter writer = createWriter();
             writer.write("${L|", "default");
         });
