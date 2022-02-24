@@ -81,10 +81,12 @@ import java.util.regex.Pattern;
  *     of the {@code Optional}. (3) All other valeus are formatted using the
  *     result of calling {@link String#valueOf}.</li>
  *
- *     <li>{@code C} (call): Runs a {@link Runnable} argument that is expected to
- *     write to the same writer. Any text written to the CodeWriter inside of the
- *     Runnable is used as the value of the argument. Note that a single trailing
- *     newline is removed from the captured text.
+ *     <li>{@code C} (call): Runs a {@link Runnable} or {@link Consumer} argument
+ *     that is expected to write to the same writer. Any text written to the CodeWriter
+ *     inside of the Runnable is used as the value of the argument. Note that a
+ *     single trailing newline is removed from the captured text. If a Runnable is
+ *     provided, it is required to have a reference to the CodeWriter. A Consumer
+ *     is provided a reference to the CodeWriter as a single argument.
  *
  *     <pre>{@code
  *     CodeWriter writer = new CodeWriter();
@@ -1635,21 +1637,26 @@ public class CodeWriter {
     }
 
     // Used only by CodeFormatter to apply formatters.
+    @SuppressWarnings("unchecked")
     String applyFormatter(char identifier, Object value) {
         BiFunction<Object, String, String> f = currentState.getCodeFormatterContainer().getFormatter(identifier);
         if (f != null) {
             return f.apply(value, getIndentText());
         } else if (identifier == 'C') {
             // The default C formatter is evaluated dynamically to prevent cyclic references.
-            if (!(value instanceof Runnable)) {
+            String sectionName = "__anonymous_inline_" + states.size();
+            if (value instanceof Runnable) {
+                Runnable runnable = (Runnable) value;
+                return expandSection(sectionName, "", ignore -> runnable.run());
+            } else if (value instanceof Consumer) {
+                Consumer<CodeWriter> consumer = (Consumer<CodeWriter>) value;
+                return expandSection(sectionName, "", ignore -> consumer.accept(this));
+            } else {
                 throw new ClassCastException(String.format(
-                        "Expected CodeWriter value for 'C' formatter to be a Runnable, but found %s %s",
+                        "Expected CodeWriter value for 'C' formatter to be an instance of %s or %s, but found %s %s",
+                        Runnable.class.getName(), Consumer.class.getName(),
                         value.getClass().getName(), getDebugInfo()));
             }
-            Runnable runnable = (Runnable) value;
-            // The section name doesn't need to be unique, but making it unpredictable disallows
-            // registering section interceptors.
-            return expandSection("__anonymous_inline_" + System.nanoTime(), "", ignore -> runnable.run());
         } else {
             // Return null if no formatter was found.
             return null;
