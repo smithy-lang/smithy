@@ -432,6 +432,7 @@ string EnumConstantBodyName
 
 /// Defines the value of an enum member.
 @trait(selector: ":is(enum, intEnum) > member")
+@tags(["diff.error.const"])
 document enumValue
 
 /// Sets an enum member as the default value member.
@@ -440,6 +441,7 @@ document enumValue
     structurallyExclusive: "member"
     conflicts: [enumValue]
 )
+@tags(["diff.error.const"])
 structure enumDefault {}
 
 /// Constrains a shape to minimum and maximum number of elements or size.
