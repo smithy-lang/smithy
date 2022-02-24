@@ -30,9 +30,9 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 /**
  * Constrains string values to one of the predefined enum constants.
  *
- * This trait is deprecated, use an {@link EnumShape} instead.
+ * <p>This trait is deprecated, use an {@link EnumShape} instead.
  *
- * There is also the {@link SyntheticEnumTrait}, which is a synthetic variant of this
+ * <p>There is also the {@link SyntheticEnumTrait}, which is a synthetic variant of this
  * trait used exclusively to assist in making {@link EnumShape} as backwards compatible
  * as possible.
  */
