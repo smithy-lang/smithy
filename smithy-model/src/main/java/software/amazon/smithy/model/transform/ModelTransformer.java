@@ -37,6 +37,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
@@ -507,6 +508,8 @@ public final class ModelTransformer {
     /**
      * Changes each compatible string shape with the enum trait to an enum shape.
      *
+     * <p>A member will be created on the shape for each entry in the {@link EnumTrait}.
+     *
      * @param model Model to transform.
      * @param synthesizeEnumNames Whether enums without names should have names synthesized if possible.
      * @return Returns the transformed model.
@@ -517,6 +520,8 @@ public final class ModelTransformer {
 
     /**
      * Changes each compatible string shape with the enum trait to an enum shape.
+     *
+     * <p>A member will be created on the shape for each entry in the {@link EnumTrait}.
      *
      * <p>Strings with enum traits that don't define names are not converted.
      *
@@ -533,7 +538,7 @@ public final class ModelTransformer {
      * @param model Model to transform.
      * @return Returns the transformed model.
      */
-    public Model changeEnumsToBaseShapeTypes(Model model) {
+    public Model downgradeEnums(Model model) {
         return ChangeShapeType.downgradeEnums(model).transform(this, model);
     }
 
