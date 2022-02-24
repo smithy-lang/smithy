@@ -51,10 +51,12 @@ public final class ExclusiveStructureMemberTraitValidator extends AbstractValida
         }
 
         List<ValidationEvent> events = new ArrayList<>();
-        model.shapes().filter(shape -> shape instanceof NamedMembers).forEach(shape -> {
-            validateExclusiveMembers(shape, exclusiveMemberTraits, events);
-            validateExclusiveTargets(model, shape, exclusiveTargetTraits, events);
-        });
+        for (Shape shape : model.toSet()) {
+            if (shape instanceof NamedMembers) {
+                validateExclusiveMembers(shape, exclusiveMemberTraits, events);
+                validateExclusiveTargets(model, shape, exclusiveTargetTraits, events);
+            }
+        }
 
         return events;
     }

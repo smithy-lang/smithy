@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.shapes;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,6 @@ import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.MapUtils;
 
 public final class IntEnumShape extends IntegerShape implements NamedMembers {
 
@@ -60,7 +60,7 @@ public final class IntEnumShape extends IntegerShape implements NamedMembers {
                 }
                 values.put(member.getMemberName(), member.expectTrait(EnumValueTrait.class).expectIntValue());
             }
-            enumValues = MapUtils.orderedCopyOf(values);
+            enumValues = Collections.unmodifiableMap(values);
         }
         return enumValues;
     }
