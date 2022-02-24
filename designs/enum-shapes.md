@@ -53,16 +53,16 @@ member name. The string representation can be customized by applying the
 
 ```
 enum Suit {
-    @enumValue(string: "diamond")
+    @enumValue("diamond")
     DIAMOND
 
-    @enumValue(string: "club")
+    @enumValue("club")
     CLUB
     
-    @enumValue(string: "heart")
+    @enumValue("heart")
     HEART
     
-    @enumValue(string: "spade")
+    @enumValue("spade")
     SPADE
 }
 ```
@@ -89,16 +89,16 @@ enum Suit {
     @enumDefault
     UNKNOWN
 
-    @enumValue(string: "diamond")
+    @enumValue("diamond")
     DIAMOND
     
-    @enumValue(string: "club")
+    @enumValue("club")
     CLUB
     
-    @enumValue(string: "heart")
+    @enumValue("heart")
     HEART
     
-    @enumValue(string: "spade")
+    @enumValue("spade")
     SPADE
 }
 ```
@@ -133,19 +133,19 @@ integer value. The following example defines an intEnum shape:
 
 ```
 intEnum FaceCard {
-    @enumValue(int: 1)
+    @enumValue(1)
     JACK
 
-    @enumValue(int: 2)
+    @enumValue(2)
     QUEEN
     
-    @enumValue(int: 3)
+    @enumValue(3)
     KING
     
-    @enumValue(int: 4)
+    @enumValue(4)
     ACE
     
-    @enumValue(int: 5)
+    @enumValue(5)
     JOKER
 }
 ```
@@ -170,19 +170,19 @@ intEnum FaceCard {
     @enumDefault
     UNKNOWN
 
-    @enumValue(int: 1)
+    @enumValue(1)
     JACK
     
-    @enumValue(int: 2)
+    @enumValue(2)
     QUEEN
     
-    @enumValue(int: 3)
+    @enumValue(3)
     KING
     
-    @enumValue(int: 4)
+    @enumValue(4)
     ACE
     
-    @enumValue(int: 5)
+    @enumValue(5)
     JOKER
 }
 ```

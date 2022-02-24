@@ -7,17 +7,13 @@
                 "FOO": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "foo"
-                        }
+                        "smithy.api#enumValue": "foo"
                     }
                 },
                 "BAR": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "bar"
-                        }
+                        "smithy.api#enumValue": "bar"
                     }
                 }
             },
@@ -29,17 +25,13 @@
                 "FOO": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "int": 1
-                        }
+                        "smithy.api#enumValue": 1
                     }
                 },
                 "BAR": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "int": 2
-                        }
+                        "smithy.api#enumValue": 2
                     }
                 }
             }
