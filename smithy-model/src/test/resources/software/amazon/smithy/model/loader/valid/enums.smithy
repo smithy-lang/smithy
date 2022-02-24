@@ -9,13 +9,13 @@ enum EnumWithoutValueTraits {
 }
 
 enum EnumWithValueTraits {
-    @enumValue(string: "foo")
+    @enumValue("foo")
     FOO
 
-    @enumValue(string: "bar")
+    @enumValue("bar")
     BAR
 
-    @enumValue(string: "baz")
+    @enumValue("baz")
     BAZ
 }
 
@@ -25,13 +25,13 @@ enum EnumWithDefaultBound {
 }
 
 intEnum IntEnum {
-    @enumValue(int: 1)
+    @enumValue(1)
     FOO
 
-    @enumValue(int: 2)
+    @enumValue(2)
     BAR
 
-    @enumValue(int: 3)
+    @enumValue(3)
     BAZ
 }
 

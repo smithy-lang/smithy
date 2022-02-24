@@ -24,11 +24,11 @@ enum MixedEnum with [BaseEnum] {
 @mixin
 @private
 intEnum BaseIntEnum {
-    @enumValue(int: 1)
+    @enumValue(1)
     FOO
 
     /// Documentation
-    @enumValue(int: 2)
+    @enumValue(2)
     BAR
 }
 
@@ -38,6 +38,6 @@ intEnum MixedIntEnum with [BaseIntEnum] {
     /// Docs
     BAR
 
-    @enumValue(int: 3)
+    @enumValue(3)
     BAZ
 }

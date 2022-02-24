@@ -46,27 +46,27 @@ enum cfnMutability {
     /// member does not have any mutability restrictions, meaning that it
     /// can be specified by the user and returned in a `read` or `list`
     /// request.
-    @enumValue(string: "full")
+    @enumValue("full")
     FULL
 
     /// Indicates that the CloudFormation property generated from this
     /// member can be specified only during resource creation and can be
     /// returned in a `read` or `list` request.
-    @enumValue(string: "create-and-read")
+    @enumValue("create-and-read")
     CREATE_AND_READ
 
     /// Indicates that the CloudFormation property generated from this
     /// member can be specified only during resource creation and cannot
     /// be returned in a `read` or `list` request. MUST NOT be set if the
     /// member is also marked with the `@additionalIdentifier` trait.
-    @enumValue(string: "create")
+    @enumValue("create")
     CREATE
 
 
     /// Indicates that the CloudFormation property generated from this
     /// member can be returned by a `read` or `list` request, but
     /// cannot be set by the user.
-    @enumValue(string: "read")
+    @enumValue("read")
     READ
 
 
@@ -74,7 +74,7 @@ enum cfnMutability {
     /// member can be specified by the user, but cannot be returned by a
     /// `read` or `list` request. MUST NOT be set if the member is also
     /// marked with the `@additionalIdentifier` trait.
-    @enumValue(string: "write")
+    @enumValue("write")
     WRITE
 }
 

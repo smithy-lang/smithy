@@ -84,45 +84,35 @@
                 "CUSTOMER_CONTENT": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "content"
-                        },
+                        "smithy.api#enumValue": "content",
                         "smithy.api#documentation": "Customer content means any software (including machine images), data, text, audio, video or images that customers or any customer end user transfers to AWS for processing, storage or hosting by AWS services in connection with the customer\u2019s accounts and any computational results that customers or any customer end user derive from the foregoing through their use of AWS services."
                     }
                 },
                 "CUSTOMER_ACCOUNT_INFORMATION": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "account"
-                        },
+                        "smithy.api#enumValue": "account",
                         "smithy.api#documentation": "Account information means information about customers that customers provide to AWS in connection with the creation or administration of customers\u2019 accounts."
                     }
                 },
                 "SERVICE_ATTRIBUTES": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "usage"
-                        },
+                        "smithy.api#enumValue": "usage",
                         "smithy.api#documentation": "Service Attributes means service usage data related to a customer\u2019s account, such as resource identifiers, metadata tags, security and access roles, rules, usage policies, permissions, usage statistics, logging data, and analytics."
                     }
                 },
                 "TAG_DATA": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "tagging"
-                        },
+                        "smithy.api#enumValue": "tagging",
                         "smithy.api#documentation": "Designates metadata tags applied to AWS resources."
                     }
                 },
                 "PERMISSIONS_DATA": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "permissions"
-                        },
+                        "smithy.api#enumValue": "permissions",
                         "smithy.api#documentation": "Designates security and access roles, rules, usage policies, and permissions."
                     }
                 }
