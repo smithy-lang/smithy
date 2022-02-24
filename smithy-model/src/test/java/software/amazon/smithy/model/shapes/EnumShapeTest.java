@@ -33,7 +33,6 @@ import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
-import software.amazon.smithy.utils.SetUtils;
 
 public class EnumShapeTest {
     @Test
@@ -145,7 +144,7 @@ public class EnumShapeTest {
                 .name("foo")
                 .value("bar")
                 .build();
-        EnumShape shape = builder.members(EnumTrait.builder().addEnum(enumDefinition).build()).build();
+        EnumShape shape = builder.setMembersFromEnumTrait(EnumTrait.builder().addEnum(enumDefinition).build()).build();
 
         assertEquals(shape.getMember("foo").get(),
                 MemberShape.builder()
@@ -167,7 +166,7 @@ public class EnumShapeTest {
                 .value("bar")
                 .documentation(docs)
                 .build();
-        EnumShape shape = builder.members(EnumTrait.builder().addEnum(enumDefinition).build()).build();
+        EnumShape shape = builder.setMembersFromEnumTrait(EnumTrait.builder().addEnum(enumDefinition).build()).build();
 
         assertEquals(shape.getMember("foo").get(),
                 MemberShape.builder()
@@ -190,7 +189,7 @@ public class EnumShapeTest {
                 .value("bar")
                 .addTag(tag)
                 .build();
-        EnumShape shape = builder.members(EnumTrait.builder().addEnum(enumDefinition).build()).build();
+        EnumShape shape = builder.setMembersFromEnumTrait(EnumTrait.builder().addEnum(enumDefinition).build()).build();
 
         assertEquals(shape.getMember("foo").get(),
                 MemberShape.builder()
@@ -212,7 +211,7 @@ public class EnumShapeTest {
                 .value("bar")
                 .deprecated(true)
                 .build();
-        EnumShape shape = builder.members(EnumTrait.builder().addEnum(enumDefinition).build()).build();
+        EnumShape shape = builder.setMembersFromEnumTrait(EnumTrait.builder().addEnum(enumDefinition).build()).build();
 
         assertEquals(shape.getMember("foo").get(),
                 MemberShape.builder()
@@ -236,7 +235,7 @@ public class EnumShapeTest {
                 .build();
 
         Assertions.assertThrows(IllegalStateException.class, () -> {
-            builder.members(trait);
+            builder.setMembersFromEnumTrait(trait);
         });
     }
 
@@ -248,7 +247,7 @@ public class EnumShapeTest {
                         .value("foo:bar")
                         .build())
                 .build();
-        EnumShape shape = builder.members(trait, true).build();
+        EnumShape shape = builder.setMembersFromEnumTrait(trait, true).build();
 
         assertEquals(shape.getMember("foo_bar").get(),
                 MemberShape.builder()
@@ -276,7 +275,7 @@ public class EnumShapeTest {
                 .build();
 
         Assertions.assertThrows(IllegalStateException.class, () -> {
-            builder.members(trait, true);
+            builder.setMembersFromEnumTrait(trait, true);
         });
     }
 
@@ -284,7 +283,7 @@ public class EnumShapeTest {
     public void addMultipleMembers() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
 
-        EnumShape shape = builder.members(ListUtils.of(
+        EnumShape shape = builder.setMembersFromEnumTrait(ListUtils.of(
                 MemberShape.builder()
                         .id("ns.foo#bar$foo")
                         .target(UnitTypeTrait.UNIT)
@@ -328,7 +327,7 @@ public class EnumShapeTest {
     public void removeMember() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
 
-        builder.members(ListUtils.of(
+        builder.setMembersFromEnumTrait(ListUtils.of(
                 MemberShape.builder()
                         .id("ns.foo#bar$foo")
                         .target(UnitTypeTrait.UNIT)
