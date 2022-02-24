@@ -1,0 +1,5 @@
+[ERROR] smithy.example#IntEnum$FLOAT: Error creating trait `enumValue`: Either a string value or an integer value must be set for the enumValue trait. | Model
+[ERROR] smithy.example#IntEnum$ARRAY: Error creating trait `enumValue`: Either a string value or an integer value must be set for the enumValue trait. | Model
+[ERROR] smithy.example#IntEnum$MAP: Error creating trait `enumValue`: Either a string value or an integer value must be set for the enumValue trait. | Model
+[ERROR] smithy.example#IntEnum$NULL: Error creating trait `enumValue`: Either a string value or an integer value must be set for the enumValue trait. | Model
+[ERROR] smithy.example#IntEnum$BOOLEAN: Error creating trait `enumValue`: Either a string value or an integer value must be set for the enumValue trait. | Model

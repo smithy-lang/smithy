@@ -36,7 +36,7 @@ structure EnumPayloadInput {
 }
 
 enum StringEnum {
-    @enumValue(string: "enumvalue")
+    @enumValue("enumvalue")
     V
 }
 

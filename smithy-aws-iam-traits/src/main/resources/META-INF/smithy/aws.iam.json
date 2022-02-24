@@ -127,105 +127,79 @@
                 "ARN": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "ARN"
-                        }
+                        "smithy.api#enumValue": "ARN"
                     }
                 },
                 "ARRAY_OF_ARN": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "ArrayOfARN"
-                        }
+                        "smithy.api#enumValue": "ArrayOfARN"
                     }
                 },
                 "BINARY": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "Binary"
-                        }
+                        "smithy.api#enumValue": "Binary"
                     }
                 },
                 "ARRAY_OF_BINARY": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "ArrayOfBinary"
-                        }
+                        "smithy.api#enumValue": "ArrayOfBinary"
                     }
                 },
                 "STRING": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "String"
-                        }
+                        "smithy.api#enumValue": "String"
                     }
                 },
                 "ARRAY_OF_STRING": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "ArrayOfString"
-                        }
+                        "smithy.api#enumValue": "ArrayOfString"
                     }
                 },
                 "NUMERIC": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "Numeric"
-                        }
+                        "smithy.api#enumValue": "Numeric"
                     }
                 },
                 "DATE": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "Date"
-                        }
+                        "smithy.api#enumValue": "Date"
                     }
                 },
                 "ARRAY_OF_DATE": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "ArrayOfDate"
-                        }
+                        "smithy.api#enumValue": "ArrayOfDate"
                     }
                 },
                 "BOOL": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "Bool"
-                        }
+                        "smithy.api#enumValue": "Bool"
                     }
                 },
                 "ARRAY_OF_BOOL": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "ArrayOfBool"
-                        }
+                        "smithy.api#enumValue": "ArrayOfBool"
                     }
                 },
                 "IP_ADDRESS": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "IPAddress"
-                        }
+                        "smithy.api#enumValue": "IPAddress"
                     }
                 },
                 "ARRAY_OF_IP_ADDRESS": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "ArrayOfIPAddress"
-                        }
+                        "smithy.api#enumValue": "ArrayOfIPAddress"
                     }
                 }
             },
@@ -240,33 +214,25 @@
                 "ROOT": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "Root"
-                        }
+                        "smithy.api#enumValue": "Root"
                     }
                 },
                 "IAM_USER": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "IAMUser"
-                        }
+                        "smithy.api#enumValue": "IAMUser"
                     }
                 },
                 "IAM_ROLE": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "IAMRole"
-                        }
+                        "smithy.api#enumValue": "IAMRole"
                     }
                 },
                 "FEDERATED_USER": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "FederatedUser"
-                        }
+                        "smithy.api#enumValue": "FederatedUser"
                     }
                 }
             },
