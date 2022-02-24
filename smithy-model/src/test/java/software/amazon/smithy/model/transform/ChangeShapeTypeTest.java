@@ -431,7 +431,7 @@ public class ChangeShapeTypeTest {
                 .setParsedShapesVersion("2.0")
                 .addShapes(stringEnum, intEnum)
                 .assemble().unwrap();
-        Model result = ModelTransformer.create().changeEnumsToBaseShapeTypes(model);
+        Model result = ModelTransformer.create().downgradeEnums(model);
 
         assertThat(result.expectShape(stringEnum.getId()).getType(), Matchers.is(ShapeType.STRING));
         assertThat(result.expectShape(intEnum.getId()).getType(), Matchers.is(ShapeType.INTEGER));
