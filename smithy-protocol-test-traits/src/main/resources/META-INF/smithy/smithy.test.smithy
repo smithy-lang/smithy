@@ -274,11 +274,11 @@ string NonEmptyString
 @private
 enum AppliesTo {
     /// The test only applies to client implementations.
-    @enumValue(string: "client")
+    @enumValue("client")
     CLIENT
 
     /// The test only applies to server implementations.
-    @enumValue(string: "server")
+    @enumValue("server")
     SERVER
 }
 

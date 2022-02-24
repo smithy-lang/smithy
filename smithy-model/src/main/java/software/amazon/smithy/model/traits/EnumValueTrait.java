@@ -20,7 +20,6 @@ import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NumberNode;
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -97,13 +96,12 @@ public final class EnumValueTrait extends AbstractTrait implements ToSmithyBuild
         @Override
         public Trait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
-            ObjectNode objectNode = value.expectObjectNode();
-            objectNode.getMember("string")
-                    .map(v -> v.expectStringNode().getValue())
-                    .ifPresent(builder::stringValue);
-            objectNode.getMember("int")
-                    .map(v -> v.expectNumberNode().getValue().intValue())
-                    .ifPresent(builder::intValue);
+            value.asStringNode().ifPresent(node -> builder.stringValue(node.getValue()));
+            value.asNumberNode().ifPresent(node -> {
+                if (node.isNaturalNumber()) {
+                    builder.intValue(node.getValue().intValue());
+                }
+            });
             EnumValueTrait result = builder.build();
             result.setNodeCache(value);
             return result;
@@ -112,11 +110,12 @@ public final class EnumValueTrait extends AbstractTrait implements ToSmithyBuild
 
     @Override
     protected Node createNode() {
-        return ObjectNode.builder()
-                .sourceLocation(getSourceLocation())
-                .withOptionalMember("string", getStringValue().map(StringNode::from))
-                .withOptionalMember("int", getIntValue().map(NumberNode::from))
-                .build();
+        if (getIntValue().isPresent()) {
+            return new NumberNode(integer, getSourceLocation());
+        } else {
+            return new StringNode(string, getSourceLocation());
+
+        }
     }
 
     @Override
