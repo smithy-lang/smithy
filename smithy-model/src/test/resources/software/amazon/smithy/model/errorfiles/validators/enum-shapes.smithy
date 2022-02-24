@@ -5,19 +5,19 @@ namespace ns.foo
 enum StringEnum {
     IMPLICIT_VALUE
 
-    @enumValue(string: "explicit")
+    @enumValue("explicit")
     EXPLICIT_VALUE
 
-    @enumValue(string: "")
+    @enumValue("")
     EMPTY_STRING
 
     @enumDefault
     DEFAULT_VALUE
 
-    @enumValue(int: 1)
+    @enumValue(1)
     INT_VALUE
 
-    @enumValue(string: "explicit")
+    @enumValue("explicit")
     DUPLICATE_VALUE
 
     undesirableName
@@ -41,28 +41,28 @@ enum MultipleDefaults {
 
 enum DefaultWithExplicitValue {
     @enumDefault
-    @enumValue(string: "foo")
+    @enumValue("foo")
     DEFAULT
 }
 
 intEnum IntEnum {
     IMPLICIT_VALUE
 
-    @enumValue(int: 1)
+    @enumValue(1)
     EXPLICIT_VALUE
 
-    @enumValue(int: 0)
+    @enumValue(0)
     ZERO
 
     @enumDefault
     DEFAULT_VALUE
 
-    @enumValue(string: "foo")
+    @enumValue("foo")
     STRING_VALUE
 
-    @enumValue(int: 1)
+    @enumValue(1)
     DUPLICATE_VALUE
 
-    @enumValue(int: 99)
+    @enumValue(99)
     undesirableName
 }
