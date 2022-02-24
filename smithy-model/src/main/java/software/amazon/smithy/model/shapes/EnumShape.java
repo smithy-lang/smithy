@@ -16,11 +16,13 @@
 package software.amazon.smithy.model.shapes;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.traits.EnumDefaultTrait;
 import software.amazon.smithy.model.traits.EnumDefinition;
@@ -31,9 +33,10 @@ import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.MapUtils;
 
 public final class EnumShape extends StringShape implements NamedMembers {
+
+    private static final Logger LOGGER = Logger.getLogger(EnumShape.class.getName());
 
     private final Map<String, MemberShape> members;
     private volatile List<String> memberNames;
@@ -64,7 +67,7 @@ public final class EnumShape extends StringShape implements NamedMembers {
                 }
                 values.put(member.getMemberName(), member.expectTrait(EnumValueTrait.class).expectStringValue());
             }
-            enumValues = MapUtils.orderedCopyOf(values);
+            enumValues = Collections.unmodifiableMap(values);
         }
         return enumValues;
     }
@@ -153,8 +156,9 @@ public final class EnumShape extends StringShape implements NamedMembers {
     /**
      * Converts a base {@link StringShape} to an {@link EnumShape} if possible.
      *
-     * The result will be empty if the given shape doesn't have the {@link EnumTrait}
-     * or if the enum definitions don't have names.
+     * The result will be empty if the given shape doesn't have the {@link EnumTrait},
+     * if the enum doesn't have names and name synthesization is disabled, or if a name
+     * cannot be synthesized.
      *
      * @param shape A base {@link StringShape} to convert.
      * @param synthesizeNames Whether names should be synthesized if possible.
@@ -168,8 +172,11 @@ public final class EnumShape extends StringShape implements NamedMembers {
         Builder enumBuilder = EnumShape.builder();
         stringWithoutEnumTrait.updateBuilder(enumBuilder);
         try {
-            return Optional.of(enumBuilder.members(shape.expectTrait(EnumTrait.class), synthesizeNames).build());
+            return Optional.of(enumBuilder
+                    .setMembersFromEnumTrait(shape.expectTrait(EnumTrait.class), synthesizeNames)
+                    .build());
         } catch (IllegalStateException e) {
+            LOGGER.info(String.format("Unable to convert `%s` to an enum: %s", shape.getId(), e));
             return Optional.empty();
         }
     }
@@ -201,6 +208,13 @@ public final class EnumShape extends StringShape implements NamedMembers {
             return new EnumShape(this);
         }
 
+        /**
+         * Adds a synthetic version of the enum trait.
+         *
+         * <p>This allows the enum shape to be used as if it were a string shape with
+         * the enum trait, without having to manually add the trait or risk that it
+         * gets serialized.
+         */
         private void addSyntheticEnumTrait() {
             SyntheticEnumTrait.Builder builder = SyntheticEnumTrait.builder();
             for (MemberShape member : members.get().values()) {
@@ -231,7 +245,16 @@ public final class EnumShape extends StringShape implements NamedMembers {
             return this;
         }
 
-        public Builder members(EnumTrait trait, boolean synthesizeNames) {
+        /**
+         * Sets enum members from an {@link EnumTrait}.
+         *
+         * <p>This is primarily useful when converting from string shapes to enums.
+         *
+         * @param trait The {@link EnumTrait} whose values should be converted to members.
+         * @param synthesizeNames Whether to synthesize names if they aren't present in the enum trait.
+         * @return Returns the builder.
+         */
+        public Builder setMembersFromEnumTrait(EnumTrait trait, boolean synthesizeNames) {
             if (getId() == null) {
                 throw new IllegalStateException("An id must be set before adding a named enum trait to a string.");
             }
@@ -252,8 +275,16 @@ public final class EnumShape extends StringShape implements NamedMembers {
             return this;
         }
 
-        public Builder members(EnumTrait trait) {
-            return members(trait, false);
+        /**
+         * Sets enum members from an {@link EnumTrait}.
+         *
+         * <p>This is primarily useful when converting from string shapes to enums.
+         *
+         * @param trait The {@link EnumTrait} whose values should be converted to members.
+         * @return Returns the builder.
+         */
+        public Builder setMembersFromEnumTrait(EnumTrait trait) {
+            return setMembersFromEnumTrait(trait, false);
         }
 
         /**
@@ -262,7 +293,7 @@ public final class EnumShape extends StringShape implements NamedMembers {
          * @param members Members to add to the builder.
          * @return Returns the builder.
          */
-        public Builder members(Collection<MemberShape> members) {
+        public Builder setMembersFromEnumTrait(Collection<MemberShape> members) {
             clearMembers();
             for (MemberShape member : members) {
                 addMember(member);
@@ -280,6 +311,16 @@ public final class EnumShape extends StringShape implements NamedMembers {
             return this;
         }
 
+        /**
+         * Adds a member to the shape.
+         *
+         * <p>If the member does not already have an {@link EnumValueTrait}, one will
+         * be generated with the value being equal to the member name.
+         *
+         * @param member Member to add to the shape.
+         * @return Returns the model assembler.
+         * @throws UnsupportedOperationException if the shape does not support members.
+         */
         @Override
         public Builder addMember(MemberShape member) {
             if (!member.getTarget().equals(UnitTypeTrait.UNIT)) {
@@ -406,7 +447,8 @@ public final class EnumShape extends StringShape implements NamedMembers {
             if (getMixins().isEmpty()) {
                 return this;
             }
-            members(NamedMemberUtils.flattenMixins(members.get(), getMixins(), getId(), getSourceLocation()));
+            setMembersFromEnumTrait(NamedMemberUtils.flattenMixins(
+                    members.get(), getMixins(), getId(), getSourceLocation()));
             return (Builder) super.flattenMixins();
         }
     }
