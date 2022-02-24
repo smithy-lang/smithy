@@ -221,33 +221,25 @@
                 "AWS": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "aws"
-                        }
+                        "smithy.api#enumValue": "aws"
                     }
                 },
                 "AWS_PROXY": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "aws_proxy"
-                        }
+                        "smithy.api#enumValue": "aws_proxy"
                     }
                 },
                 "HTTP": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "http"
-                        }
+                        "smithy.api#enumValue": "http"
                     }
                 },
                 "HTTP_PROXY": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "http_proxy"
-                        }
+                        "smithy.api#enumValue": "http_proxy"
                     }
                 }
             }
@@ -302,17 +294,13 @@
                 "INTERNET": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "INTERNET"
-                        }
+                        "smithy.api#enumValue": "INTERNET"
                     }
                 },
                 "VPC_LINK": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "VPC_LINK"
-                        }
+                        "smithy.api#enumValue": "VPC_LINK"
                     }
                 }
             }
@@ -323,25 +311,19 @@
                 "WHEN_NO_TEMPLATES": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "when_no_templates"
-                        }
+                        "smithy.api#enumValue": "when_no_templates"
                     }
                 },
                 "WHEN_NO_MATCH": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "when_no_match"
-                        }
+                        "smithy.api#enumValue": "when_no_match"
                     }
                 },
                 "NEVER": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "never"
-                        }
+                        "smithy.api#enumValue": "never"
                     }
                 }
             },
@@ -356,17 +338,13 @@
                 "CONVERT_TO_TEXT": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "CONVERT_TO_TEXT"
-                        }
+                        "smithy.api#enumValue": "CONVERT_TO_TEXT"
                     }
                 },
                 "CONVERT_TO_BINARY": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "CONVERT_TO_BINARY"
-                        }
+                        "smithy.api#enumValue": "CONVERT_TO_BINARY"
                     }
                 }
             },
