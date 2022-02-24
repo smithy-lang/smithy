@@ -29,7 +29,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
  * On an {@link IntEnumShape} this implies the enum value is 0. On an
  * {@link  EnumShape} this implies the enum value is an empty string.
  */
-public class EnumDefaultTrait extends AnnotationTrait {
+public final class EnumDefaultTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#enumDefault");
 
     public EnumDefaultTrait(ObjectNode node) {
