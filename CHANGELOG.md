@@ -1,5 +1,24 @@
 # Smithy Changelog
 
+## Next Release (TBD)
+
+### Breaking changes
+
+* Sets can now only contain byte, short, integer, long, bigInteger, bigDecimal,
+  and string shapes. Sets with other types of values are either difficult to
+  implement in various programming languages (for example, sets of floats in
+  Rust), or highly problematic for client/server use cases. Clients that are
+  out of sync with a service model could receive structures or unions from a
+  service, not recognize new members and drop them, causing the hash codes of
+  members of the set to collide, and this would result in the client discarding
+  set entries. For example, a service might return a set of 3 structures, but
+  when clients deserialize them, they drop unknown members, and the set
+  contains fewer than 3 entries.
+
+  Existing models that already use a set of other types will need to migrate to
+  use a list rather than a set, and they will need to implement any necessary
+  uniqueness checks server-side as needed.
+
 ## 1.17.0 (2022-02-04)
 
 ### Bug Fixes

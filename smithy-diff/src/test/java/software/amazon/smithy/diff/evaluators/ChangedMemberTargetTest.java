@@ -217,26 +217,6 @@ public class ChangedMemberTargetTest {
     }
 
     @Test
-    public void detectsAcceptableSetMemberChangesInNestedTargets() {
-        Model modelA = Model.assembler()
-                .addImport(getClass().getResource("changed-member-target-valid-nested2-a.smithy"))
-                .assemble()
-                .unwrap();
-        Model modelB = Model.assembler()
-                .addImport(getClass().getResource("changed-member-target-valid-nested2-b.smithy"))
-                .assemble()
-                .unwrap();
-        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
-
-        assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, Severity.WARNING).size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").get(0).getMessage(),
-                   equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
-                           + "`smithy.example#B1` (set) to `smithy.example#B2` (set). This was determined "
-                           + "backward compatible."));
-    }
-
-    @Test
     public void detectsInvalidListMemberChangesInNestedTargets() {
         Model modelA = Model.assembler()
                 .addImport(getClass().getResource("changed-member-target-invalid-nested1-a.smithy"))
