@@ -35,8 +35,8 @@ public enum ShapeType {
     BIG_DECIMAL("bigDecimal", BigDecimalShape.class, Category.SIMPLE),
     BIG_INTEGER("bigInteger", BigIntegerShape.class, Category.SIMPLE),
 
-    ENUM("enum", EnumShape.class, Category.SIMPLE, (a, b) -> b.equals(a) || b.equals(STRING)),
-    INT_ENUM("intEnum", IntEnumShape.class, Category.SIMPLE, (a, b) -> b.equals(a) || b.equals(INTEGER)),
+    ENUM("enum", EnumShape.class, Category.SIMPLE, (a, b) -> b == a || b == STRING),
+    INT_ENUM("intEnum", IntEnumShape.class, Category.SIMPLE, (a, b) -> b == a || b == INTEGER),
 
     LIST("list", ListShape.class, Category.AGGREGATE),
     SET("set", SetShape.class, Category.AGGREGATE),

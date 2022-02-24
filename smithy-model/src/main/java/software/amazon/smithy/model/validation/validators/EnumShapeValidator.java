@@ -32,6 +32,15 @@ import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
+/**
+ * Emits an error validation event if an enum member's enumValue trait has the wrong type,
+ * if there are any duplicate values in a single enum, if the enum's default value is
+ * set using the enumValue trait, or if an intEnum member lacks an enumValue / enumDefault
+ * trait.
+ *
+ * <p>Additionally, emits warning events when enum member names don't follow the recommended
+ * naming convention of all upper case letters separated by underscores.
+ */
 public final class EnumShapeValidator extends AbstractValidator {
     private static final Pattern RECOMMENDED_NAME_PATTERN = Pattern.compile("^[A-Z]+[A-Z_0-9]*$");
 
