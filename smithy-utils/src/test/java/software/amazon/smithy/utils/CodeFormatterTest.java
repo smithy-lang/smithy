@@ -19,6 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
+import java.util.function.Consumer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -454,11 +455,36 @@ public class CodeFormatterTest {
     }
 
     @Test
-    public void defaultCFormatterRequiresRunnable() {
+    public void defaultCFormatterRequiresRunnableOrFunction() {
         RuntimeException e = Assertions.assertThrows(RuntimeException.class, () -> new CodeWriter().write("$C", "hi"));
 
         assertThat(e.getMessage(), containsString(
-                "Expected CodeWriter value for 'C' formatter to be a Runnable, but found java.lang.String"));
+                "Expected CodeWriter value for 'C' formatter to be an instance of " + Runnable.class.getName()
+                + " or " + Consumer.class.getName() + ", but found " + String.class.getName()));
+    }
+
+    @Test
+    public void cFormaterAcceptsConsumersThatAreCodeWriters() {
+        CodeWriter w = new CodeWriter();
+        w.write("$C", (Consumer<CodeWriter>) writer -> writer.write("Hello!"));
+
+        assertThat(w.toString(), equalTo("Hello!\n"));
+    }
+
+    @Test
+    public void cFormatterAcceptsConsumersThatAreSubtypesOfCodeWriters() {
+        CodeWriterSubtype w = new CodeWriterSubtype();
+        w.write("$C", (Consumer<CodeWriterSubtype>) writer -> writer.write2("Hello!"));
+
+        assertThat(w.toString(), equalTo("Hello!\n"));
+    }
+
+    // This class makes sure that subtypes of CodeWriter can be called from the C
+    // formatter using an unsafe cast.
+    static final class CodeWriterSubtype extends CodeWriter {
+        void write2(String text) {
+            write(text);
+        }
     }
 
     @Test
