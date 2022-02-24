@@ -10,10 +10,6 @@ list Baz {
     member: Unit
 }
 
-set Boo {
-    member: Unit
-}
-
 map Bam {
     key: String,
     value: Unit
