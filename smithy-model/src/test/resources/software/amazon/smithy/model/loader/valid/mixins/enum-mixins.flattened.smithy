@@ -16,13 +16,13 @@ enum MixedEnum {
 @sensitive
 @private
 intEnum MixedIntEnum {
-    @enumValue(int: 1)
+    @enumValue(1)
     FOO
 
     /// Docs
-    @enumValue(int: 2)
+    @enumValue(2)
     BAR
 
-    @enumValue(int: 3)
+    @enumValue(3)
     BAZ
 }

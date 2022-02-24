@@ -7,25 +7,19 @@
                 "FOO": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "FOO"
-                        }
+                        "smithy.api#enumValue": "FOO"
                     }
                 },
                 "BAR": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "BAR"
-                        }
+                        "smithy.api#enumValue": "BAR"
                     }
                 },
                 "BAZ": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "BAZ"
-                        }
+                        "smithy.api#enumValue": "BAZ"
                     }
                 }
             }
@@ -36,25 +30,19 @@
                 "FOO": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "foo"
-                        }
+                        "smithy.api#enumValue": "foo"
                     }
                 },
                 "BAR": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "bar"
-                        }
+                        "smithy.api#enumValue": "bar"
                     }
                 },
                 "BAZ": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "baz"
-                        }
+                        "smithy.api#enumValue": "baz"
                     }
                 }
             }
@@ -76,25 +64,19 @@
                 "FOO": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "int": 1
-                        }
+                        "smithy.api#enumValue": 1
                     }
                 },
                 "BAR": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "int": 2
-                        }
+                        "smithy.api#enumValue": 2
                     }
                 },
                 "BAZ": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "int": 3
-                        }
+                        "smithy.api#enumValue": 3
                     }
                 }
             }
