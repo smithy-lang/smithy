@@ -9,7 +9,7 @@ enum Enum {
 string String
 
 intEnum IntEnum {
-    @enumValue(int: 1)
+    @enumValue(1)
     FOO
 }
 

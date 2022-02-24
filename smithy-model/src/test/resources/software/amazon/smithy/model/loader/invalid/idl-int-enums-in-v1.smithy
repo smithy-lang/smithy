@@ -4,9 +4,9 @@ $version: "1.0"
 namespace ns.foo
 
 intEnum IntEnum {
-    @enumValue(int: 1)
+    @enumValue(1)
     FOO
 
-    @enumValue(int: 2)
+    @enumValue(2)
     BAR
 }

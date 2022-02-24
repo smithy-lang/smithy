@@ -72,17 +72,17 @@ structure Acceptor {
 enum AcceptorState {
     /// The waiter successfully finished waiting. This is a terminal
     /// state that causes the waiter to stop.
-    @enumValue(string: "success")
+    @enumValue("success")
     SUCCESS
 
     /// The waiter failed to enter into the desired state. This is a
     /// terminal state that causes the waiter to stop.
-    @enumValue(string: "failure")
+    @enumValue("failure")
     FAILURE
 
     /// The waiter will retry the operation. This state transition is
     /// implicit if no accepter causes a state transition.
-    @enumValue(string: "retry")
+    @enumValue("retry")
     RETRY
 }
 
@@ -136,19 +136,19 @@ structure PathMatcher {
 @private
 enum PathComparator {
     /// Matches if the return value is a string that is equal to the expected string.
-    @enumValue(string: "stringEquals")
+    @enumValue("stringEquals")
     STRING_EQUALS
 
     /// Matches if the return value is a boolean that is equal to the string literal 'true' or 'false'.
-    @enumValue(string: "booleanEquals")
+    @enumValue("booleanEquals")
     BOOLEAN_EQUALS
 
     /// Matches if all values in the list matches the expected string.
-    @enumValue(string: "allStringEquals")
+    @enumValue("allStringEquals")
     ALL_STRING_EQUALS
 
     /// Matches if any value in the list matches the expected string.
-    @enumValue(string: "anyStringEquals")
+    @enumValue("anyStringEquals")
     ANY_STRING_EQUALS
 }
 
