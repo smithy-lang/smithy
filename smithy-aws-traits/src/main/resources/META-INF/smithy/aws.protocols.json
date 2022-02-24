@@ -285,33 +285,25 @@
                 "CRC32C": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "CRC32C"
-                        }
+                        "smithy.api#enumValue": "CRC32C"
                     }
                 },
                 "CRC32": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "CRC32"
-                        }
+                        "smithy.api#enumValue": "CRC32"
                     }
                 },
                 "SHA1": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "SHA1"
-                        }
+                        "smithy.api#enumValue": "SHA1"
                     }
                 },
                 "SHA256": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": {
-                            "string": "SHA256"
-                        }
+                        "smithy.api#enumValue": "SHA256"
                     }
                 }
             },

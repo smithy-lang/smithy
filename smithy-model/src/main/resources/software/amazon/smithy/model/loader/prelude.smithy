@@ -135,11 +135,11 @@ string TraitChangeSeverity
 @private
 enum StructurallyExclusive {
     /// Only a single member of a shape can be marked with the trait.
-    @enumValue(string: "member")
+    @enumValue("member")
     MEMBER
 
     /// Only a single member of a shape can target a shape marked with this trait.
-    @enumValue(string: "target")
+    @enumValue("target")
     TARGET
 }
 
@@ -276,10 +276,10 @@ structure default {}
 
 @private
 enum HttpApiKeyLocations {
-    @enumValue(string: "header")
+    @enumValue("header")
     HEADER
 
-    @enumValue(string: "query")
+    @enumValue("query")
     QUERY
 }
 
@@ -328,10 +328,10 @@ structure ExampleError {
     breakingChanges: [{change: "any"}]
 )
 enum error {
-    @enumValue(string: "client")
+    @enumValue("client")
     CLIENT
 
-    @enumValue(string: "server")
+    @enumValue("server")
     SERVER
 }
 
@@ -582,13 +582,7 @@ string EnumConstantBodyName
 
 /// Defines the value of an enum member.
 @trait(selector: ":is(enum, intEnum) > member")
-union enumValue {
-    /// The value for the enum entry if it is a string.
-    string: String
-
-    /// The value for the enum entry if it is an integer.
-    int: Integer
-}
+document enumValue
 
 /// Sets an enum member as the default value member.
 @trait(
@@ -909,18 +903,18 @@ enum timestampFormat {
 
     /// Date time as defined by the date-time production in RFC3339 section 5.6
     /// with no UTC offset (for example, 1985-04-12T23:20:50.52Z).
-    @enumValue(string: "date-time")
+    @enumValue("date-time")
     DATE_TIME
 
     /// Also known as Unix time, the number of seconds that have elapsed since
     /// 00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970,
     /// with decimal precision (for example, 1515531081.1234).
-    @enumValue(string: "epoch-seconds")
+    @enumValue("epoch-seconds")
     EPOCH_SECONDS
 
     /// An HTTP date as defined by the IMF-fixdate production in
     /// RFC 7231#section-7.1.1.1 (for example, Tue, 29 Apr 2014 18:30:38 GMT).
-    @enumValue(string: "http-date")
+    @enumValue("http-date")
     HTTP_DATE
 }
 

@@ -52,31 +52,31 @@ structure RejectedError {
 }
 
 enum RejectedErrorCode {
-    @enumValue(string: "InvalidTopic")
+    @enumValue("InvalidTopic")
     INVALID_TOPIC
 
-    @enumValue(string: "InvalidJson")
+    @enumValue("InvalidJson")
     INVALID_JSON
 
-    @enumValue(string: "InvalidRequest")
+    @enumValue("InvalidRequest")
     INVALID_REQUEST
 
-    @enumValue(string: "InvalidStateTransition")
+    @enumValue("InvalidStateTransition")
     INVALID_STATE_TRANSITION
 
-    @enumValue(string: "ResourceNotFound")
+    @enumValue("ResourceNotFound")
     RESOURCE_NOT_FOUND
 
-    @enumValue(string: "VersionMismatch")
+    @enumValue("VersionMismatch")
     VERSION_MISMATCH
 
-    @enumValue(string: "InternalError")
+    @enumValue("InternalError")
     INTERNAL_ERROR
 
-    @enumValue(string: "RequestThrottled")
+    @enumValue("RequestThrottled")
     REQUEST_THROTTLED
 
-    @enumValue(string: "TerminalStateReached")
+    @enumValue("TerminalStateReached")
     TERMINAL_STATE_REACHED
 }
 
