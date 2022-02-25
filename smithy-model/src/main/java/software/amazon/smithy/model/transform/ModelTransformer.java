@@ -623,23 +623,4 @@ public final class ModelTransformer {
         return new FlattenAndRemoveMixins().transform(this, model);
     }
 
-    /**
-     * Options that can be enabled when changing shape types.
-     */
-    public enum ChangeShapeTypeOption {
-        /**
-         * Enables synthesizing enum names when changing a string shape to an enum shape and the
-         * string shape's {@link EnumTrait} doesn't have names.
-         */
-        SYNTHESIZE_ENUM_NAMES;
-
-        boolean hasFeature(ChangeShapeTypeOption[] haystack) {
-            for (ChangeShapeTypeOption feature : haystack) {
-                if (feature == this) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
 }
