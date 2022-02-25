@@ -84,6 +84,11 @@ public final class HttpMalformedRequestDefinition implements ToNode, ToSmithyBui
         return Optional.ofNullable(uri);
     }
 
+    public String expectUri() {
+        // This was always required, and is enforced in the smithy model
+        return uri;
+    }
+
     public static HttpMalformedRequestDefinition fromNode(Node node) {
         HttpMalformedRequestDefinition.Builder builder = builder();
         ObjectNode o = node.expectObjectNode();
