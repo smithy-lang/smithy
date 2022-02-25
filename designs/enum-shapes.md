@@ -125,6 +125,41 @@ structure GetFooInput {
 
 Every enum shape MUST define at least one member.
 
+#### enum members always have a value
+
+Enum members that have neither the `@enumValue` nor the `@enumDefault` trait
+are indistinguishable from members that have an `@enumValue` trait whose trait
+value is equal to the enum member's name.
+
+The following model:
+
+```
+enum Suit {
+    DIAMOND
+    CLUB
+    HEART
+    SPADE
+}
+```
+
+Is equivalent to:
+
+```
+enum Suit {
+    @enumValue("DIAMOND")
+    DIAMOND
+
+    @enumValue("CLUB")
+    CLUB
+
+    @enumValue("HEART")
+    HEART
+
+    @enumValue("SPADE")
+    SPADE
+}
+```
+
 ### intEnum shape
 
 An intEnum is used to represent an enumerated set of integer values. The
