@@ -100,6 +100,11 @@ public final class EnumValueTrait extends AbstractTrait implements ToSmithyBuild
             value.asNumberNode().ifPresent(node -> {
                 if (node.isNaturalNumber()) {
                     builder.intValue(node.getValue().intValue());
+                } else {
+                    throw new SourceException(
+                            "Enum values may not use fractional numbers.",
+                            value.getSourceLocation()
+                    );
                 }
             });
             EnumValueTrait result = builder.build();
