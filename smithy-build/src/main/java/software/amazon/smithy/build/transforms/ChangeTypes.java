@@ -22,6 +22,7 @@ import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.transform.ModelTransformer;
 
 /**
  * {@code changeType} is used to change the type of one or more shapes.
@@ -80,7 +81,13 @@ public final class ChangeTypes extends ConfigurableProjectionTransformer<ChangeT
             throw new SmithyBuildException(getName() + ": shapeTypes must not be empty");
         }
 
+        if (config.getSynthesizeEnumNames()) {
+            return context.getTransformer().changeShapeType(
+                    context.getModel(), config.getShapeTypes(),
+                    ModelTransformer.ChangeShapeTypeOption.SYNTHESIZE_ENUM_NAMES);
+        }
+
         return context.getTransformer().changeShapeType(
-                context.getModel(), config.getShapeTypes(), config.getSynthesizeEnumNames());
+                context.getModel(), config.getShapeTypes());
     }
 }
