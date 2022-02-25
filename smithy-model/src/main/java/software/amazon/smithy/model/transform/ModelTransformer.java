@@ -497,12 +497,17 @@ public final class ModelTransformer {
      *
      * @param model Model to transform.
      * @param shapeToType Map of shape IDs to the new type to use for the shape.
-     * @param synthesizeEnumNames Whether enums without names should have names synthesized if possible.
+     * @param changeShapeTypeOptions An array of options to enable when changing types.
      * @return Returns the transformed model.
      * @throws ModelTransformException if an incompatible type transform is attempted.
      */
-    public Model changeShapeType(Model model, Map<ShapeId, ShapeType> shapeToType, boolean synthesizeEnumNames) {
-        return new ChangeShapeType(shapeToType, synthesizeEnumNames).transform(this, model);
+    public Model changeShapeType(
+            Model model,
+            Map<ShapeId, ShapeType> shapeToType,
+            ChangeShapeTypeOption... changeShapeTypeOptions
+    ) {
+        boolean synthesizeNames = ChangeShapeTypeOption.SYNTHESIZE_ENUM_NAMES.hasFeature(changeShapeTypeOptions);
+        return new ChangeShapeType(shapeToType, synthesizeNames).transform(this, model);
     }
 
     /**
@@ -616,5 +621,25 @@ public final class ModelTransformer {
      */
     public Model flattenAndRemoveMixins(Model model) {
         return new FlattenAndRemoveMixins().transform(this, model);
+    }
+
+    /**
+     * Options that can be enabled when changing shape types.
+     */
+    public enum ChangeShapeTypeOption {
+        /**
+         * Enables synthesizing enum names when changing a string shape to an enum shape and the
+         * string shape's {@link EnumTrait} doesn't have names.
+         */
+        SYNTHESIZE_ENUM_NAMES;
+
+        boolean hasFeature(ChangeShapeTypeOption[] haystack) {
+            for (ChangeShapeTypeOption feature : haystack) {
+                if (feature == this) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
