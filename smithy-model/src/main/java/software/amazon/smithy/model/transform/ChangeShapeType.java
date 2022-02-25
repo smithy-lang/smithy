@@ -18,7 +18,6 @@ package software.amazon.smithy.model.transform;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.logging.Logger;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
@@ -45,13 +44,10 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
-import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
 
 final class ChangeShapeType {
-
-    private static final Logger LOGGER = Logger.getLogger(ChangeShapeType.class.getName());
 
     private final Map<ShapeId, ShapeType> shapeToType;
     private final boolean synthesizeEnumNames;
@@ -68,36 +64,11 @@ final class ChangeShapeType {
     static ChangeShapeType upgradeEnums(Model model, boolean synthesizeEnumNames) {
         Map<ShapeId, ShapeType> toUpdate = new HashMap<>();
         for (StringShape shape: model.getStringShapesWithTrait(EnumTrait.class)) {
-            if (canUpgradeEnum(shape, synthesizeEnumNames)) {
+            if (EnumShape.canConvertToEnum(shape, synthesizeEnumNames)) {
                 toUpdate.put(shape.getId(), ShapeType.ENUM);
             }
         }
         return new ChangeShapeType(toUpdate, synthesizeEnumNames);
-    }
-
-    private static boolean canUpgradeEnum(StringShape shape, boolean synthesizeEnumNames) {
-        EnumTrait trait = shape.expectTrait(EnumTrait.class);
-        if (!synthesizeEnumNames && trait.getValues().iterator().next().getName().isPresent()) {
-            LOGGER.warning(String.format(
-                    "Unable to convert string shape `%s` to enum shape because it doesn't define names. The "
-                            + "`synthesizeNames` option may be able to synthesize the names for you.",
-                    shape.getId()
-            ));
-            return true;
-        }
-
-        for (EnumDefinition definition : trait.getValues()) {
-            if (!definition.canConvertToMember(synthesizeEnumNames)) {
-                LOGGER.warning(String.format(
-                        "Unable to convert string shape `%s` to enum shape because it has at least one value which "
-                                + "cannot be safely synthesized into a name: %s",
-                        shape.getId(), definition.getValue()
-                ));
-                return false;
-            }
-        }
-
-        return true;
     }
 
     static ChangeShapeType downgradeEnums(Model model) {

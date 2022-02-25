@@ -226,6 +226,14 @@ public class EnumShapeTest {
     }
 
     @Test
+    public void convertsEnumUnchanged() {
+        EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
+        EnumShape shape = builder.addMember("foo", "bar").build();
+        Optional<EnumShape> converted = EnumShape.fromStringShape(shape);
+        assertEquals(shape, converted.get());
+    }
+
+    @Test
     public void givenEnumTraitMustUseNames() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
         EnumTrait trait = EnumTrait.builder()
