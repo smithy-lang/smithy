@@ -127,9 +127,11 @@ Every enum shape MUST define at least one member.
 
 #### enum members always have a value
 
-Enum members that have neither the `@enumValue` nor the `@enumDefault` trait
-are indistinguishable from members that have an `@enumValue` trait whose trait
-value is equal to the enum member's name.
+If an enum member doesn't have an explicit `@enumValue` or `@enumDefault` trait,
+an `@enumValue` trait will be automatically added to the member where the trait
+value is the member's name. This means that enum members that have neither the
+`@enumValue` nor the `@enumDefault` trait are indistinguishable from enum members
+that have the `@enumValue` trait explicitly set.
 
 The following model:
 
