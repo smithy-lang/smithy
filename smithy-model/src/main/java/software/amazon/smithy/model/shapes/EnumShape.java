@@ -23,11 +23,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import software.amazon.smithy.model.SourceException;
+import software.amazon.smithy.model.traits.DeprecatedTrait;
+import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.EnumDefaultTrait;
 import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.EnumValueTrait;
+import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
@@ -36,6 +40,7 @@ import software.amazon.smithy.utils.ListUtils;
 
 public final class EnumShape extends StringShape implements NamedMembers {
 
+    private static final Pattern CONVERTABLE_VALUE = Pattern.compile("^[a-zA-Z-_.:/\\s]+[a-zA-Z_0-9-.:/\\s]*$");
     private static final Logger LOGGER = Logger.getLogger(EnumShape.class.getName());
 
     private final Map<String, MemberShape> members;
@@ -165,6 +170,10 @@ public final class EnumShape extends StringShape implements NamedMembers {
      * @return Optionally returns an {@link EnumShape} equivalent of the given shape.
      */
     public static Optional<EnumShape> fromStringShape(StringShape shape, boolean synthesizeNames) {
+        if (shape.isEnumShape()) {
+            return Optional.of((EnumShape) shape);
+        }
+
         if (!shape.hasTrait(EnumTrait.ID)) {
             return Optional.empty();
         }
@@ -194,6 +203,129 @@ public final class EnumShape extends StringShape implements NamedMembers {
         return fromStringShape(shape, false);
     }
 
+    /**
+     * Determines whether a given string shape can be converted to an enum shape.
+     *
+     * @param shape The string shape to be converted.
+     * @param synthesizeEnumNames Whether synthesizing enum names should be accounted for.
+     * @return Returns true if the string shape can be converted to an enum shape.
+     */
+    public static boolean canConvertToEnum(StringShape shape, boolean synthesizeEnumNames) {
+        if (shape.isEnumShape()) {
+            return true;
+        }
+
+        if (!shape.hasTrait(EnumTrait.class)) {
+            LOGGER.info(String.format(
+                    "Unable to convert string shape `%s` to enum shape because it doesn't have an enum trait.",
+                    shape.getId()
+            ));
+            return false;
+        }
+
+        EnumTrait trait = shape.expectTrait(EnumTrait.class);
+        if (!synthesizeEnumNames && trait.getValues().iterator().next().getName().isPresent()) {
+            LOGGER.info(String.format(
+                    "Unable to convert string shape `%s` to enum shape because it doesn't define names. The "
+                            + "`synthesizeNames` option may be able to synthesize the names for you.",
+                    shape.getId()
+            ));
+            return true;
+        }
+
+        for (EnumDefinition definition : trait.getValues()) {
+            if (!canConvertEnumDefinitionToMember(definition, synthesizeEnumNames)) {
+                LOGGER.info(String.format(
+                        "Unable to convert string shape `%s` to enum shape because it has at least one value which "
+                                + "cannot be safely synthesized into a name: %s",
+                        shape.getId(), definition.getValue()
+                ));
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Converts an enum definition to the equivalent enum member shape.
+     *
+     * @param parentId The {@link ShapeId} of the enum shape.
+     * @param synthesizeName Whether to synthesize a name if possible.
+     * @return An optional member shape representing the enum definition,
+     *         or empty if conversion is impossible.
+     */
+    static Optional<MemberShape> memberFromEnumDefinition(
+            EnumDefinition definition,
+            ShapeId parentId,
+            boolean synthesizeName
+    ) {
+        String name;
+        if (!definition.getName().isPresent()) {
+            if (canConvertEnumDefinitionToMember(definition, synthesizeName)) {
+                name = definition.getValue().replaceAll("[-.:/\\s]+", "_");
+            } else {
+                return Optional.empty();
+            }
+        } else {
+            name = definition.getName().get();
+        }
+
+        try {
+            MemberShape.Builder builder = MemberShape.builder()
+                    .id(parentId.withMember(name))
+                    .target(UnitTypeTrait.UNIT)
+                    .addTrait(EnumValueTrait.builder().stringValue(definition.getValue()).build());
+
+            definition.getDocumentation().ifPresent(docs -> builder.addTrait(new DocumentationTrait(docs)));
+            if (!definition.getTags().isEmpty()) {
+                builder.addTrait(TagsTrait.builder().values(definition.getTags()).build());
+            }
+            if (definition.isDeprecated()) {
+                builder.addTrait(DeprecatedTrait.builder().build());
+            }
+
+            return Optional.of(builder.build());
+        } catch (ShapeIdSyntaxException e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Determines whether the definition can be converted to a member.
+     *
+     * @param withSynthesizedNames Whether to account for name synthesization.
+     * @return Returns true if the definition can be converted.
+     */
+    static boolean canConvertEnumDefinitionToMember(EnumDefinition definition, boolean withSynthesizedNames) {
+        return definition.getName().isPresent()
+                || (withSynthesizedNames && CONVERTABLE_VALUE.matcher(definition.getValue()).find());
+    }
+
+    /**
+     * Converts an enum member into an equivalent enum definition object.
+     *
+     * @param member The enum member to convert.
+     * @return An {@link EnumDefinition} representing the given member.
+     */
+    static EnumDefinition enumDefinitionFromMember(MemberShape member) {
+        EnumDefinition.Builder builder = EnumDefinition.builder().name(member.getMemberName());
+
+        Optional<String> traitValue = member.getTrait(EnumValueTrait.class).flatMap(EnumValueTrait::getStringValue);
+        if (member.hasTrait(EnumDefaultTrait.class)) {
+            builder.value("");
+        } else if (traitValue.isPresent()) {
+            builder.value(traitValue.get());
+        } else {
+            throw new IllegalStateException("Enum definitions can only be made for string enums.");
+        }
+
+        member.getTrait(DocumentationTrait.class).ifPresent(docTrait -> builder.documentation(docTrait.getValue()));
+        member.getTrait(TagsTrait.class).ifPresent(tagsTrait -> builder.tags(tagsTrait.getValues()));
+        member.getTrait(DeprecatedTrait.class).ifPresent(deprecatedTrait -> builder.deprecated(true));
+        return builder.build();
+    }
+
     @Override
     public ShapeType getType() {
         return ShapeType.ENUM;
@@ -219,7 +351,7 @@ public final class EnumShape extends StringShape implements NamedMembers {
             SyntheticEnumTrait.Builder builder = SyntheticEnumTrait.builder();
             for (MemberShape member : members.get().values()) {
                 try {
-                    builder.addEnum(EnumDefinition.fromMember(member));
+                    builder.addEnum(EnumShape.enumDefinitionFromMember(member));
                 } catch (IllegalStateException e) {
                     // This can happen if the enum value trait is using something other
                     // than a string value. Rather than letting the exception propagate
@@ -261,7 +393,7 @@ public final class EnumShape extends StringShape implements NamedMembers {
             clearMembers();
 
             for (EnumDefinition definition : trait.getValues()) {
-                Optional<MemberShape> member = definition.asMember(getId(), synthesizeNames);
+                Optional<MemberShape> member = EnumShape.memberFromEnumDefinition(definition, getId(), synthesizeNames);
                 if (member.isPresent()) {
                     addMember(member.get());
                 } else {
