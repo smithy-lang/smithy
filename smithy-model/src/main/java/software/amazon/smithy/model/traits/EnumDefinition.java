@@ -20,14 +20,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Pattern;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIdSyntaxException;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.Tagged;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -42,8 +38,6 @@ public final class EnumDefinition implements ToNode, ToSmithyBuilder<EnumDefinit
     public static final String DOCUMENTATION = "documentation";
     public static final String TAGS = "tags";
     public static final String DEPRECATED = "deprecated";
-
-    private static final Pattern CONVERTABLE_VALUE = Pattern.compile("^[a-zA-Z-_.:/\\s]+[a-zA-Z_0-9-.:/\\s]*$");
 
     private final String value;
     private final String documentation;
@@ -111,93 +105,6 @@ public final class EnumDefinition implements ToNode, ToSmithyBuilder<EnumDefinit
             builder.tags(Node.loadArrayOfString(EnumDefinition.TAGS, tags));
         });
 
-        return builder.build();
-    }
-
-    /**
-     * Converts an enum definition to the equivalent enum member shape.
-     *
-     * @param parentId The {@link ShapeId} of the enum shape.
-     * @param synthesizeName Whether to synthesize a name if possible.
-     * @return An optional member shape representing the enum definition,
-     *         or empty if conversion is impossible.
-     */
-    public Optional<MemberShape> asMember(ShapeId parentId, boolean synthesizeName) {
-        String name;
-        if (!getName().isPresent()) {
-            if (canConvertToMember(synthesizeName)) {
-                name = getValue().replaceAll("[-.:/\\s]+", "_");
-            } else {
-                return Optional.empty();
-            }
-        } else {
-            name = getName().get();
-        }
-
-        try {
-            MemberShape.Builder builder = MemberShape.builder()
-                    .id(parentId.withMember(name))
-                    .target(UnitTypeTrait.UNIT)
-                    .addTrait(EnumValueTrait.builder().stringValue(value).build());
-
-            getDocumentation().ifPresent(docs -> builder.addTrait(new DocumentationTrait(docs)));
-            if (!tags.isEmpty()) {
-                builder.addTrait(TagsTrait.builder().values(tags).build());
-            }
-            if (deprecated) {
-                builder.addTrait(DeprecatedTrait.builder().build());
-            }
-
-            return Optional.of(builder.build());
-        } catch (ShapeIdSyntaxException e) {
-            return Optional.empty();
-        }
-    }
-
-    /**
-     * Converts an enum definition to the equivalent enum member shape.
-     *
-     * This is only possible if the enum definition has a name.
-     *
-     * @param parentId The {@link ShapeId} of the enum shape.
-     * @return An optional member shape representing the enum definition,
-     *         or empty if conversion is impossible.
-     */
-    public Optional<MemberShape> asMember(ShapeId parentId) {
-        return asMember(parentId, false);
-    }
-
-    /**
-     * Determines whether the definition can be converted to a member.
-     *
-     * @param withSynthesizedNames Whether to account for name synthesization.
-     * @return Returns true if the definition can be converted.
-     */
-    public boolean canConvertToMember(boolean withSynthesizedNames) {
-        return getName().isPresent() || (withSynthesizedNames && CONVERTABLE_VALUE.matcher(getValue()).find());
-    }
-
-    /**
-     * Converts an enum member into an equivalent enum definition object.
-     *
-     * @param member The enum member to convert.
-     * @return An {@link EnumDefinition} representing the given member.
-     */
-    public static EnumDefinition fromMember(MemberShape member) {
-        EnumDefinition.Builder builder = EnumDefinition.builder().name(member.getMemberName());
-
-        Optional<String> traitValue = member.getTrait(EnumValueTrait.class).flatMap(EnumValueTrait::getStringValue);
-        if (member.hasTrait(EnumDefaultTrait.class)) {
-            builder.value("");
-        } else if (traitValue.isPresent()) {
-            builder.value(traitValue.get());
-        } else {
-            throw new IllegalStateException("Enum definitions can only be made for string enums.");
-        }
-
-        member.getTrait(DocumentationTrait.class).ifPresent(docTrait -> builder.documentation(docTrait.getValue()));
-        member.getTrait(TagsTrait.class).ifPresent(tagsTrait -> builder.tags(tagsTrait.getValues()));
-        member.getTrait(DeprecatedTrait.class).ifPresent(deprecatedTrait -> builder.deprecated(true));
         return builder.build();
     }
 
