@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.utils;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -25,6 +26,7 @@ import java.util.function.BiFunction;
 @SmithyInternalApi
 final class CodeWriterFormatterContainer {
 
+    // Must be sorted for binary search to work.
     static final char[] VALID_FORMATTER_CHARS = {
             '!', '#', '%', '&', '*', '+', ',', '-', '.', '/', ';', '=', '?', '@',
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
@@ -42,18 +44,9 @@ final class CodeWriterFormatterContainer {
     }
 
     void putFormatter(Character identifier, BiFunction<Object, String, String> formatFunction) {
-        boolean matched = false;
-        for (char c : VALID_FORMATTER_CHARS) {
-            if (c == identifier) {
-                matched = true;
-                break;
-            }
-        }
-
-        if (!matched) {
+        if (Arrays.binarySearch(VALID_FORMATTER_CHARS, identifier) < 0) {
             throw new IllegalArgumentException("Invalid formatter identifier: " + identifier);
         }
-
         formatters.put(identifier, formatFunction);
     }
 

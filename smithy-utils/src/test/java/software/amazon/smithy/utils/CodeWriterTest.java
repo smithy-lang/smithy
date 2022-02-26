@@ -254,14 +254,6 @@ public class CodeWriterTest {
     }
 
     @Test
-    public void supportsCall() {
-        CodeWriter w = CodeWriter.createDefault();
-        w.call(() -> w.write("Hello!"));
-
-        assertThat(w.toString(), equalTo("Hello!\n"));
-    }
-
-    @Test
     public void doesNotWriteNullOptionally() {
         CodeWriter w = CodeWriter.createDefault().insertTrailingNewline(false);
         w.writeOptional(null);
@@ -354,9 +346,8 @@ public class CodeWriterTest {
             w.getContext("foo", Integer.class);
         });
 
-        assertThat(e.getMessage(), equalTo("Expected CodeWriter context value 'foo' to be an instance of "
-                                           + "java.lang.Integer, but found java.lang.String "
-                                           + "(Debug Info {path=ROOT/a, near=Hello {\\n})"));
+        assertThat(e.getMessage(), equalTo("Expected context value 'foo' to be an instance of java.lang.Integer, but "
+                                           + "found java.lang.String (Debug Info {path=ROOT/a, near=Hello {\\n})"));
     }
 
     @Test
@@ -413,7 +404,7 @@ public class CodeWriterTest {
 
     @Test
     public void canPrependAndAppendToSection() {
-        CodeWriter w = CodeWriter.createDefault().putContext("testing", "123");
+        CodeWriter w = CodeWriter.createDefault();
         w.onSectionPrepend("foo", () -> w.write("A"));
         w.onSection("foo", text -> {
             w.write(text);
@@ -794,6 +785,38 @@ public class CodeWriterTest {
     }
 
     @Test
+    public void canFilterSectionsWithInterceptorsOutsideState() {
+        CodeWriter writer = new CodeWriter();
+        writer.onSection("foo", text -> {
+            writer.writeWithNoFormatting(text + "??");
+        });
+        writer.pushState("foo");
+        writer.pushFilteredState(s -> s.toUpperCase(Locale.ENGLISH));
+        writer.write("Hello!");
+        writer.writeInline("Goodbye!");
+        writer.popState();
+        writer.popState();
+
+        assertThat(writer.toString(), equalTo("HELLO!\nGOODBYE!??\n"));
+    }
+
+    @Test
+    public void canFilterSectionsWithInterceptorsInsideState() {
+        CodeWriter writer = new CodeWriter();
+        writer.pushState("foo");
+        writer.onSection("foo", text -> {
+            writer.writeWithNoFormatting(text + "??");
+        });
+        writer.pushFilteredState(s -> s.toUpperCase(Locale.ENGLISH));
+        writer.write("Hello!");
+        writer.writeInline("Goodbye!");
+        writer.popState();
+        writer.popState();
+
+        assertThat(writer.toString(), equalTo("HELLO!\nGOODBYE!??\n"));
+    }
+
+    @Test
     public void canComposeSetWithSection() {
         String testSection = "testSection";
         CodeWriter writer = new CodeWriter();
@@ -956,21 +979,22 @@ public class CodeWriterTest {
     @Test
     public void canPassRunnableToFormatters() {
         CodeWriter writer = new CodeWriter();
-        writer.write("Hi, $C.", (Runnable) () -> writer.write("TheName"));
+        writer.write("Hi, $C.", (Runnable) () -> writer.writeInline("TheName"));
         assertThat(writer.toString(), equalTo("Hi, TheName.\n"));
     }
 
+    // This behavior completely removes the need for inline section syntax.
     @Test
     public void canPassRunnableToFormattersAndEvenCreateInlineSections() {
         CodeWriter writer = new CodeWriter();
 
         writer.onSection("Name", text -> {
-            writer.write(text + " (name)");
+            writer.write("$L (name)", text);
         });
 
         writer.write("Hi, $C.", (Runnable) () -> {
             writer.pushState("Name");
-            writer.write("TheName");
+            writer.writeInline("TheName");
             writer.popState();
         });
 
@@ -982,5 +1006,193 @@ public class CodeWriterTest {
         CodeWriter writer = new CodeWriter();
         writer.write("Hi, $C.", (Runnable) () -> writer.write("TheName\n"));
         assertThat(writer.toString(), equalTo("Hi, TheName\n.\n"));
+    }
+
+    @Test
+    public void canCreateTypedSections() {
+        MyWriter writer = new MyWriter();
+
+        // When a section of type MyPojo is encountered, intercept it.
+        writer.onSection(new CodeInterceptor<MyPojo, MyWriter>() {
+            @Override
+            public Class<MyPojo> sectionType() {
+                return MyPojo.class;
+            }
+
+            @Override
+            public void write(MyWriter writer, String previousText, MyPojo section) {
+                if (section.name.equals("Thomas")) {
+                    section.count++;
+                    writer.write("Hi, Thomas!");
+                }
+                writer.writeWithNoFormatting(previousText);
+            }
+        });
+
+        // Create a custom typed section value.
+        MyPojo myPojo = new MyPojo("Thomas", 0);
+
+        writer.pushState(myPojo);
+        writer.write("How are you?");
+        writer.popState(); // At this point, intercept the section.
+
+        assertThat(myPojo.count, equalTo(1));
+        assertThat(writer.toString(), equalTo("Hi, Thomas!\nHow are you?\n"));
+    }
+
+    private static final class MyWriter extends AbstractCodeWriter<MyWriter> {}
+
+    private static final class MyPojo implements CodeSection {
+        public int count = 0;
+        public String name = "";
+
+        MyPojo(String name, int count) {
+            this.name = name;
+            this.count = count;
+        }
+    }
+
+    @Test
+    public void canAppendToTypedSections() {
+        MyWriter writer = new MyWriter();
+        MyPojo myPojo = new MyPojo("Thomas", 0);
+        writer.pushState(myPojo);
+
+        writer.onSection(new CodeInterceptor.Appender<MyPojo, MyWriter>() {
+            @Override
+            public Class<MyPojo> sectionType() {
+                return MyPojo.class;
+            }
+
+            @Override
+            public void append(MyWriter writer, MyPojo section) {
+                if (section.name.equals("Thomas")) {
+                    section.count++;
+                    writer.write("Hi, Thomas!");
+                }
+            }
+        });
+
+        writer.write("How are you?");
+        writer.popState();
+
+        assertThat(myPojo.count, equalTo(1));
+        assertThat(writer.toString(), equalTo("How are you?\nHi, Thomas!\n"));
+    }
+
+    @Test
+    public void canPrependToTypedSections() {
+        MyWriter writer = new MyWriter();
+        MyPojo myPojo = new MyPojo("Thomas", 0);
+        writer.pushState(myPojo);
+
+        writer.onSection(new CodeInterceptor.Prepender<MyPojo, MyWriter>() {
+            @Override
+            public Class<MyPojo> sectionType() {
+                return MyPojo.class;
+            }
+
+            @Override
+            public void prepend(MyWriter writer, MyPojo section) {
+                if (section.name.equals("Thomas")) {
+                    section.count++;
+                    writer.write("Hi, Thomas!");
+                }
+            }
+        });
+
+        writer.write("How are you?");
+        writer.popState();
+
+        assertThat(myPojo.count, equalTo(1));
+        assertThat(writer.toString(), equalTo("Hi, Thomas!\nHow are you?\n"));
+    }
+
+    // Section interceptors are executed after popping state, which means they
+    // don't use the setting configured for the popped state, including any
+    // context variables specific to the state that was just popped. They
+    // map over a state, but aren't part of it.
+    @Test
+    public void canAccessOnlyOuterStateVariablesInPopState() {
+        CodeWriter writer = new CodeWriter();
+        writer.putContext("baz", 1);
+
+        writer.pushState("foo");
+        writer.putContext("baz", 2);
+        writer.onSection("foo", text -> {
+            writer.write(writer.getContext("baz"));
+        });
+        writer.popState();
+
+        assertThat(writer.toString(), equalTo("1\n"));
+    }
+
+    @Test
+    public void injectSectionProvidesShorterWayToAddSectionHooks() {
+        MyWriter writer = new MyWriter();
+
+        writer.onSection(new CodeInterceptor.Appender<MyPojo, MyWriter>() {
+            @Override
+            public Class<MyPojo> sectionType() {
+                return MyPojo.class;
+            }
+
+            @Override
+            public void append(MyWriter writer, MyPojo section) {
+                writer.write("$L", section.name);
+            }
+        });
+
+        writer.write("Name?");
+        writer.injectSection(new MyPojo("Thomas", 0));
+
+        assertThat(writer.toString(), equalTo("Name?\nThomas\n"));
+    }
+
+    // This test ensures that infinite recursion isn't caused when an interceptor is
+    // created that intercepts a CodeSection instances without filtering based on name.
+    // This is prevented by using "AnonymousCodeSection"s internally within
+    // AbstractCodeWriter.
+    @Test
+    public void injectsInlineSectionsThatWriteInlineWithoutInfiniteRecursion() {
+        MyWriter writer = new MyWriter();
+
+        writer.onSection(new CodeInterceptor.Appender<CodeSection, MyWriter>() {
+            @Override
+            public Class<CodeSection> sectionType() {
+                return CodeSection.class;
+            }
+
+            @Override
+            public void append(MyWriter writer, CodeSection section) {
+                writer.write("$L", "DROP_TABLE1,");
+            }
+        });
+
+        writer.onSection(new CodeInterceptor.Appender<CodeSection, MyWriter>() {
+            @Override
+            public Class<CodeSection> sectionType() {
+                return CodeSection.class;
+            }
+
+            @Override
+            public void append(MyWriter writer, CodeSection section) {
+                writer.write("$L", "DROP_TABLE2,");
+            }
+        });
+
+        writer.write("Name: ${L@foo|}", "");
+        writer.unwrite(",\n");
+
+        assertThat(writer.toString(), equalTo("Name: DROP_TABLE1,\n"
+                                              + "      DROP_TABLE2\n"));
+    }
+
+    @Test
+    public void injectsEmptySections() {
+        MyWriter writer = new MyWriter().insertTrailingNewline(false);
+        writer.injectSection(new MyPojo("Thomas", 0));
+
+        assertThat(writer.toString(), equalTo(""));
     }
 }
