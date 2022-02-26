@@ -54,31 +54,7 @@ import java.util.Set;
  *
  * @param <T> Type of value being created.
  */
-public interface BuilderRef<T> {
-    /**
-     * Gets a mutable {@code T} from the reference, creating one if needed.
-     *
-     * <p>Subsequent calls to {@link #hasValue()} will return true after
-     * this method is called.
-     *
-     * @return Returns a mutable {@code T} value.
-     */
-    T get();
-
-    /**
-     * Gets an immutable {@code T} from the reference, reusing borrowed
-     * values if possible, and creating owned values if needed.
-     *
-     * <p>Attempting to mutate the provided value <em>should</em> fail
-     * at runtime, but even if it doesn't, doing so could inadvertently
-     * mutate previously built objects.
-     *
-     * <p>Subsequent calls to {@link #hasValue()} may or may not return true
-     * after this method is called.
-     *
-     * @return Returns an immutable peeked {@code T} value.
-     */
-    T peek();
+public interface BuilderRef<T> extends CopyOnWriteRef<T> {
 
     /**
      * Creates an immutable copy of {@code T}.

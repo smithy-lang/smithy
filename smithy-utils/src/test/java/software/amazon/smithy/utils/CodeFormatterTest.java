@@ -459,7 +459,7 @@ public class CodeFormatterTest {
         RuntimeException e = Assertions.assertThrows(RuntimeException.class, () -> new CodeWriter().write("$C", "hi"));
 
         assertThat(e.getMessage(), containsString(
-                "Expected CodeWriter value for 'C' formatter to be an instance of " + Runnable.class.getName()
+                "Expected value for 'C' formatter to be an instance of " + Runnable.class.getName()
                 + " or " + Consumer.class.getName() + ", but found " + String.class.getName()));
     }
 
@@ -474,14 +474,14 @@ public class CodeFormatterTest {
     @Test
     public void cFormatterAcceptsConsumersThatAreSubtypesOfCodeWriters() {
         CodeWriterSubtype w = new CodeWriterSubtype();
-        w.write("$C", (Consumer<CodeWriterSubtype>) writer -> writer.write2("Hello!"));
+        w.write("$C", w.call(writer -> writer.write2("Hello!")));
 
         assertThat(w.toString(), equalTo("Hello!\n"));
     }
 
     // This class makes sure that subtypes of CodeWriter can be called from the C
     // formatter using an unsafe cast.
-    static final class CodeWriterSubtype extends CodeWriter {
+    static final class CodeWriterSubtype extends AbstractCodeWriter<CodeWriterSubtype> {
         void write2(String text) {
             write(text);
         }

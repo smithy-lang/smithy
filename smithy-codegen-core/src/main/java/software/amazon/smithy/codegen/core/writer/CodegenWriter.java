@@ -27,6 +27,7 @@ import software.amazon.smithy.codegen.core.SymbolContainer;
 import software.amazon.smithy.codegen.core.SymbolDependency;
 import software.amazon.smithy.codegen.core.SymbolDependencyContainer;
 import software.amazon.smithy.codegen.core.SymbolReference;
+import software.amazon.smithy.utils.AbstractCodeWriter;
 import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -82,7 +83,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @SmithyUnstableApi
 public class CodegenWriter<T extends CodegenWriter<T, U>, U extends ImportContainer>
-        extends CodeWriter implements SymbolDependencyContainer {
+        extends AbstractCodeWriter<T> implements SymbolDependencyContainer {
 
     private static final Logger LOGGER = Logger.getLogger(CodegenWriter.class.getName());
     private static final String RELATIVIZE_SYMBOLS = "__CodegenWriterRelativizeSymbols";
@@ -311,7 +312,7 @@ public class CodegenWriter<T extends CodegenWriter<T, U>, U extends ImportContai
      *
      * <p>This method <em>does not</em> automatically escape the expression
      * start character ("$" by default). Write calls made by the Runnable
-     * should either use {@link CodeWriter#writeWithNoFormatting} or escape
+     * should either use {@link AbstractCodeWriter#writeWithNoFormatting} or escape
      * the expression start character manually.
      *
      * <p>This method may be overridden as needed.

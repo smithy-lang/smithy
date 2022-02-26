@@ -15,7 +15,7 @@
 
 package software.amazon.smithy.codegen.core.writer;
 
-import software.amazon.smithy.utils.CodeWriter;
+import software.amazon.smithy.utils.AbstractCodeWriter;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -40,7 +40,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @FunctionalInterface
 @SmithyUnstableApi
-public interface DocumentationWriter<T extends CodeWriter> {
+public interface DocumentationWriter<T extends AbstractCodeWriter<T>> {
     // Implementer's note: this class is not tied to CodegenWriter; it can be
     // used with any kind of CodeWriter, allowing any kind of CodegenWriters to
     // be used but also making this type more general-purpose.

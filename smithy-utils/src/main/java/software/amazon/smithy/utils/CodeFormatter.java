@@ -25,7 +25,7 @@ final class CodeFormatter {
 
     private CodeFormatter() {}
 
-    static void run(Appendable sink, CodeWriter writer, String template, Object[] args) {
+    static void run(Appendable sink, AbstractCodeWriter<?> writer, String template, Object[] args) {
         ColumnTrackingAppendable wrappedSink = new ColumnTrackingAppendable(sink);
         List<Operation> program = new Parser(writer, template, args).parse();
         try {
@@ -74,7 +74,7 @@ final class CodeFormatter {
 
     @FunctionalInterface
     private interface Operation {
-        void apply(Appendable sink, CodeWriter writer, int column) throws IOException;
+        void apply(Appendable sink, AbstractCodeWriter<?> writer, int column) throws IOException;
 
         // Writes literal segments of the input string.
         static Operation stringSlice(String source, int start, int end) {
@@ -91,7 +91,9 @@ final class CodeFormatter {
             return (sink, writer, column) -> {
                 StringBuilder buffer = new StringBuilder();
                 delegate.apply(buffer, writer, column);
-                sink.append(writer.expandSection(sectionName, buffer.toString(), writer::writeWithNoFormatting));
+                String result = buffer.toString();
+                CodeSection section = CodeSection.forName(sectionName);
+                sink.append(writer.expandSection(section, result, writer::writeWithNoFormatting));
             };
         }
 
@@ -148,13 +150,13 @@ final class CodeFormatter {
         private final String template;
         private final SimpleParser parser;
         private final char expressionStart;
-        private final CodeWriter writer;
+        private final AbstractCodeWriter<?> writer;
         private final Object[] arguments;
         private final boolean[] positionals;
         private final List<Operation> operations = new ArrayList<>();
         private int relativeIndex = 0;
 
-        Parser(CodeWriter writer, String template, Object[] arguments) {
+        Parser(AbstractCodeWriter<?> writer, String template, Object[] arguments) {
             this.template = template;
             this.writer = writer;
             this.expressionStart = writer.getExpressionStart();

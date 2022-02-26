@@ -16,7 +16,7 @@
 package software.amazon.smithy.codegen.core.writer;
 
 import java.util.function.Function;
-import software.amazon.smithy.utils.CodeWriter;
+import software.amazon.smithy.utils.AbstractCodeWriter;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -62,7 +62,7 @@ public final class JavaStyleDocumentationWriterBuilder {
      * @param <T> The type of writer to create.
      * @return Returns the created documentation writer.
      */
-    public <T extends CodeWriter> DocumentationWriter<T> build() {
+    public <T extends AbstractCodeWriter<T>> DocumentationWriter<T> build() {
         Function<String, String> function = resolveMappingFunction();
         String sectionName = namedDocumentationSection;
 
