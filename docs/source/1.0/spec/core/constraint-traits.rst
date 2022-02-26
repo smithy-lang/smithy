@@ -1,3 +1,5 @@
+.. _constraint-traits:
+
 =================
 Constraint traits
 =================
