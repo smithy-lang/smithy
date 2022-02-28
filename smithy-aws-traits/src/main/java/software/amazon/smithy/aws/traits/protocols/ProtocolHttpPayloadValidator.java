@@ -95,8 +95,8 @@ public final class ProtocolHttpPayloadValidator extends AbstractValidator {
     private Optional<ValidationEvent> validateBindings(Model model, Collection<HttpBinding> payloadBindings) {
         for (HttpBinding binding : payloadBindings) {
             if (!payloadBoundToValidType(model, binding.getMember().getTarget())) {
-                return Optional.of(error(binding.getMember(), "AWS Protocols do not support applying the httpPayload "
-                        + "trait to members that target sets, lists, or maps."));
+                return Optional.of(error(binding.getMember(), "AWS Protocols only support binding the "
+                        + "following shape types to the payload: string, blob, structure, union, and document"));
             }
         }
         return Optional.empty();
