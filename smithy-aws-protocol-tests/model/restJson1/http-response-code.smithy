@@ -40,6 +40,25 @@ apply HttpResponseCode @httpResponseTests([
         }
     },
     {
+        id: "RestJsonHttpResponseCodeDefaultsToModeledCode",
+        documentation: """
+                Binds the http response code to the http trait's code if the
+                code isn't explicitly set. A client would be parsing the
+                http response code, so this would always be present, but
+                a server doesn't require it to be set to serialize a request.""",
+        protocol: restJson1,
+        code: 200,
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: "{}",
+        bodyMediaType: "application/json",
+        // A client would parse the http response code, and so for clients it
+        // will always be present, but a server doesn't require it to be set.
+        params: {},
+        appliesTo: "server"
+    },
+    {
         id: "RestJsonHttpResponseCodeWithNoPayload",
         documentation: """
                 This test ensures that clients gracefully handle cases where

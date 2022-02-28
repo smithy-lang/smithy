@@ -1145,7 +1145,8 @@ Conflicts with
 
 Marking an output ``structure`` member with this trait can be used to provide
 different response codes for an operation, like a 200 or 201 for a PUT
-operation.
+operation. If this member isn't provided, server implementations MUST default
+to the `code` set by the :ref:`http-trait`.
 
 .. rubric:: ``httpResponseCode`` is only used on output
 
