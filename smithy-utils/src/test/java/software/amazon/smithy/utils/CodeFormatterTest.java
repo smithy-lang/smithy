@@ -474,7 +474,7 @@ public class CodeFormatterTest {
     @Test
     public void cFormatterAcceptsConsumersThatAreSubtypesOfCodeWriters() {
         CodeWriterSubtype w = new CodeWriterSubtype();
-        w.write("$C", w.call(writer -> writer.write2("Hello!")));
+        w.write("$C", w.consumer(writer -> writer.write2("Hello!")));
 
         assertThat(w.toString(), equalTo("Hello!\n"));
     }
