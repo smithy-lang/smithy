@@ -172,6 +172,7 @@ The Smithy IDL is defined by the following ABNF:
     shape_statements             :*(`shape_statement` / `apply_statement`)
     shape_statement              :`trait_statements` `shape_body` `ws`
     shape_body                   :`simple_shape_statement`
+                                 :/ `enum_shape_statement`
                                  :/ `list_statement`
                                  :/ `set_statement`
                                  :/ `map_statement`
@@ -186,6 +187,9 @@ The Smithy IDL is defined by the following ABNF:
                            :/ "byte" / "short" / "integer" / "long"
                            :/ "float" / "double" / "bigInteger"
                            :/ "bigDecimal" / "timestamp"
+    enum_shape_statement   :`enum_type_name` `ws` `identifier` [`mixins`] `ws` `enum_shape_members`
+    enum_type_name         :"enum" / "intEnum"
+    enum_shape_members     :"{" `ws` 1*(`trait_statements` `identifier` `ws`) "}"
     shape_members          :"{" `ws` *(`shape_member_kvp` `ws`) "}"
     shape_member_kvp       :`trait_statements` `identifier` `ws` ":" `ws` `shape_id`
     list_statement :"list" `ws` `identifier` [`mixins`] `ws` `shape_members`
@@ -703,6 +707,86 @@ The following example defines an ``integer`` shape with a :ref:`range-trait`:
                 }
             }
         }
+
+
+.. _idl-enum:
+
+Enum shapes
+-----------
+
+The :ref:`enum` shape is defined using an :token:`smithy:enum_shape_statement`.
+
+The following example defines an :ref:`enum` shape:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+
+    namespace smithy.example
+
+    enum Suit {
+        DIAMOND
+        CLUB
+        HEART
+        SPADE
+    }
+
+The following defines an :ref:`enum` shape with traits:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+
+    namespace smithy.example
+
+    enum Suit {
+        @enumValue("DIAMOND")
+        DIAMOND
+
+        @enumValue("CLUB")
+        CLUB
+
+        @enumValue("HEART")
+        HEART
+
+        @enumValue("SPADE")
+        SPADE
+    }
+
+
+.. _idl-int-enum:
+
+IntEnum shapes
+--------------
+
+The :ref:`intEnum` shape is defined using an
+:token:`smithy:enum_shape_statement`.
+
+.. note::
+    The :ref:`enumValue trait <enumValue-trait>` is required for :ref:`intEnum`
+    shapes.
+
+The following example defines an :ref:`intEnum` shape:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+
+    namespace smithy.example
+
+    intEnum Suit {
+        @enumValue(1)
+        DIAMOND
+
+        @enumValue(2)
+        CLUB
+
+        @enumValue(3)
+        HEART
+
+        @enumValue(4)
+        SPADE
+    }
 
 
 .. _idl-list:
