@@ -390,8 +390,8 @@ public class CodeWriterTest {
         // Setup the code writer and section interceptors.
         CodeWriter w = CodeWriter.createDefault().putContext("testing", "123");
 
-        w.onSection("foo", text -> w.write("Yes: " + text));
-        w.onSection("foo", text -> w.write("Si: " + text));
+        w.onSection("foo", text -> w.writeInline("Yes: " + text));
+        w.onSection("foo", text -> w.writeInline("Si: " + text));
         w.onSection("placeholder", text -> w.write("$testing:L"));
 
         // Emit sections with their original values.
@@ -407,7 +407,7 @@ public class CodeWriterTest {
         CodeWriter w = CodeWriter.createDefault();
         w.onSectionPrepend("foo", () -> w.write("A"));
         w.onSection("foo", text -> {
-            w.write(text);
+            w.writeInlineWithNoFormatting(text);
             w.write("C");
         });
         w.onSectionAppend("foo", () -> w.write("D"));
@@ -453,7 +453,7 @@ public class CodeWriterTest {
         writer.write("");
 
         writer.pushState("foo");
-        writer.write("baz");
+        writer.writeInline("baz");
         writer.popState();
 
         writer.pushState("indented").popState();
@@ -821,9 +821,9 @@ public class CodeWriterTest {
         String testSection = "testSection";
         CodeWriter writer = new CodeWriter();
 
-        writer.onSection(testSection, text -> writer.write(text + "1, "));
-        writer.onSection(testSection, text -> writer.write(text + "2, "));
-        writer.onSection(testSection, text -> writer.write(text + "3"));
+        writer.onSection(testSection, text -> writer.writeInline(text + "1, "));
+        writer.onSection(testSection, text -> writer.writeInline(text + "2, "));
+        writer.onSection(testSection, text -> writer.writeInline(text + "3"));
 
         writer.write("[${L@testSection}]", "");
 
@@ -989,7 +989,7 @@ public class CodeWriterTest {
         CodeWriter writer = new CodeWriter();
 
         writer.onSection("Name", text -> {
-            writer.write("$L (name)", text);
+            writer.writeInline("$L (name)", text);
         });
 
         writer.write("Hi, $C.", (Runnable) () -> {
@@ -1009,6 +1009,13 @@ public class CodeWriterTest {
     }
 
     @Test
+    public void canPassRunnableAndByDefaultDoesNotKeepTrailingNewline() {
+        CodeWriter writer = new CodeWriter();
+        writer.write("Hi, $C.", (Runnable) () -> writer.write("TheName"));
+        assertThat(writer.toString(), equalTo("Hi, TheName.\n"));
+    }
+
+    @Test
     public void canCreateTypedSections() {
         MyWriter writer = new MyWriter();
 
@@ -1025,7 +1032,7 @@ public class CodeWriterTest {
                     section.count++;
                     writer.write("Hi, Thomas!");
                 }
-                writer.writeWithNoFormatting(previousText);
+                writer.writeInlineWithNoFormatting(previousText);
             }
         });
 
@@ -1189,7 +1196,7 @@ public class CodeWriterTest {
 
             @Override
             public void append(MyWriter writer, CodeSection section) {
-                writer.write("$L", "DROP_TABLE1,");
+                writer.write("DROP_TABLE1,");
             }
         });
 
@@ -1201,15 +1208,84 @@ public class CodeWriterTest {
 
             @Override
             public void append(MyWriter writer, CodeSection section) {
-                writer.write("$L", "DROP_TABLE2,");
+                writer.write("DROP_TABLE2,");
+            }
+        });
+
+        writer.onSection(new CodeInterceptor.Appender<CodeSection, MyWriter>() {
+            @Override
+            public Class<CodeSection> sectionType() {
+                return CodeSection.class;
+            }
+
+            @Override
+            public void append(MyWriter writer, CodeSection section) {
+                writer.write("DROP_TABLE3,");
             }
         });
 
         writer.write("Name: ${L@foo|}", "");
-        writer.unwrite(",\n");
 
         assertThat(writer.toString(), equalTo("Name: DROP_TABLE1,\n"
-                                              + "      DROP_TABLE2\n"));
+                                              + "      DROP_TABLE2,\n"
+                                              + "      DROP_TABLE3,\n"));
+    }
+
+    @Test
+    public void canWriteInlineSectionsWithNoNewlines() {
+        MyWriter writer = new MyWriter();
+
+        writer.onSection(new CodeInterceptor.Appender<CodeSection, MyWriter>() {
+            @Override
+            public Class<CodeSection> sectionType() {
+                return CodeSection.class;
+            }
+
+            @Override
+            public void append(MyWriter writer, CodeSection section) {
+                writer.writeInline("DROP_TABLE1,");
+            }
+        });
+
+        writer.onSection(new CodeInterceptor.Appender<CodeSection, MyWriter>() {
+            @Override
+            public Class<CodeSection> sectionType() {
+                return CodeSection.class;
+            }
+
+            @Override
+            public void append(MyWriter writer, CodeSection section) {
+                writer.writeInline("DROP_TABLE2,");
+            }
+        });
+
+        writer.onSection(new CodeInterceptor.Appender<CodeSection, MyWriter>() {
+            @Override
+            public Class<CodeSection> sectionType() {
+                return CodeSection.class;
+            }
+
+            @Override
+            public void append(MyWriter writer, CodeSection section) {
+                writer.writeInline("DROP_TABLE3,");
+            }
+        });
+
+        writer.onSection(new CodeInterceptor.Appender<CodeSection, MyWriter>() {
+            @Override
+            public Class<CodeSection> sectionType() {
+                return CodeSection.class;
+            }
+
+            @Override
+            public void append(MyWriter writer, CodeSection section) {
+                writer.unwrite(",");
+            }
+        });
+
+        writer.write("Name: ${L@foo}", "");
+
+        assertThat(writer.toString(), equalTo("Name: DROP_TABLE1,DROP_TABLE2,DROP_TABLE3\n"));
     }
 
     @Test
@@ -1218,5 +1294,38 @@ public class CodeWriterTest {
         writer.injectSection(new MyPojo("Thomas", 0));
 
         assertThat(writer.toString(), equalTo(""));
+    }
+
+    @Test
+    public void injectsSingleSectionContent() {
+        MyWriter writer = new MyWriter();
+        writer.onSection(new CodeInterceptor.Appender<MyPojo, MyWriter>() {
+            @Override
+            public Class<MyPojo> sectionType() {
+                return MyPojo.class;
+            }
+
+            @Override
+            public void append(MyWriter writer, MyPojo section) {
+                writer.write(section.name);
+            }
+        });
+        writer.injectSection(new MyPojo("Name", 0));
+
+        assertThat(writer.toString(), equalTo("Name\n"));
+    }
+
+    @Test
+    public void ensuresNewlineIsPresent() {
+        CodeWriter writer = new CodeWriter();
+        writer.writeInline("Foo");
+        writer.ensureNewline();
+        writer.writeInline("Bar");
+        writer.ensureNewline();
+        writer.write("Baz");
+        writer.ensureNewline();
+        writer.write("Bam");
+
+        assertThat(writer.toString(), equalTo("Foo\nBar\nBaz\nBam\n"));
     }
 }

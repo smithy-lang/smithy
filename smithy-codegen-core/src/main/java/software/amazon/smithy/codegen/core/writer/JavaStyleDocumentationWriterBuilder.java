@@ -75,6 +75,7 @@ public final class JavaStyleDocumentationWriterBuilder {
             writer.writeWithNoFormatting("/**");
             writer.setNewlinePrefix(" * ");
             runnable.run();
+            writer.ensureNewline();
             writer.popState();
             writer.writeWithNoFormatting(" */");
 
