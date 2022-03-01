@@ -396,8 +396,8 @@ public class CodeWriterTest {
 
         // Emit sections with their original values.
         w.pushState("foo").write("Original!").popState();
-        w.pushState("placeholder").popState();
-        w.pushState("empty-placeholder").popState();
+        w.injectSection(CodeSection.forName("placeholder"));
+        w.injectSection(CodeSection.forName("empty-placeholder"));
 
         assertThat(w.toString(), equalTo("Si: Yes: Original!\n123\n"));
     }
@@ -1143,10 +1143,34 @@ public class CodeWriterTest {
             }
         });
 
+        writer.onSection(new CodeInterceptor.Appender<MyPojo, MyWriter>() {
+            @Override
+            public Class<MyPojo> sectionType() {
+                return MyPojo.class;
+            }
+
+            @Override
+            public void append(MyWriter writer, MyPojo section) {
+                writer.write("Foo");
+            }
+        });
+
+        writer.onSection(new CodeInterceptor.Appender<MyPojo, MyWriter>() {
+            @Override
+            public Class<MyPojo> sectionType() {
+                return MyPojo.class;
+            }
+
+            @Override
+            public void append(MyWriter writer, MyPojo section) {
+                writer.write("Bar");
+            }
+        });
+
         writer.write("Name?");
         writer.injectSection(new MyPojo("Thomas", 0));
 
-        assertThat(writer.toString(), equalTo("Name?\nThomas\n"));
+        assertThat(writer.toString(), equalTo("Name?\nThomas\nFoo\nBar\n"));
     }
 
     // This test ensures that infinite recursion isn't caused when an interceptor is
