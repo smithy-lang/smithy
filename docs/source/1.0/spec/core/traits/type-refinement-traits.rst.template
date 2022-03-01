@@ -64,9 +64,15 @@ nullable as this is semantically equivalent to the default zero value.
     * - numbers
       - ``0``
       - Numeric zero.
+    * - intEnum
+      - ``0``
+      - Numeric zero.
     * - string
       - empty string
-      - Strings with the :ref:`enum-trait` also have an empty string zero value.
+      -
+    * - enum
+      - empty string
+      -
     * - blob
       - empty blob
       - This includes blob shapes marked with the :ref:`streaming-trait`.

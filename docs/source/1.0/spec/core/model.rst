@@ -175,30 +175,33 @@ Shapes are visualized using the following diagram:
     ┌──────────┐  │  ┌──────────┐      │    │member      │  │    │version                  │
     │document  │──┼──│string    │      │    └────────────┘  ├────│operations: [Operation]? │
     └──────────┘  │  └──────────┘      │    ┌────────────┐  │    │resources: [Resource]?   │
-    ┌──────────┐  │                    ├────│    Set     │  │    └─────────────────────────┘
-    │timestamp │──┤                    │    ├────────────┤  │    ┌─────────────────────────┐
-    └──────────┘  │                    │    │member      │  │    │        Operation        │
-                  │                    │    └────────────┘  │    ├─────────────────────────┤
-          ┌───────────────┐            │    ┌────────────┐  │    │input: Structure         │
-          │  «abstract»   │            ├────│    Map     │  ├────│output: Structure        │
-          │    Number     │            │    ├────────────┤  │    │errors: [Structure]?     │
-          └───────────────┘            │    │key         │  │    └─────────────────────────┘
-                  △                    │    │value       │  │    ┌─────────────────────────┐
-    ┌──────────┐  │  ┌──────────┐      │    └────────────┘  │    │        Resource         │
-    │byte      │──┼──│short     │      │    ┌────────────┐  │    ├─────────────────────────┤
-    └──────────┘  │  └──────────┘      ├────│ Structure  │  │    │identifiers?             │
-    ┌──────────┐  │  ┌──────────┐      │    └────────────┘  │    │create: Operation?       │
-    │integer   │──┼──│long      │      │    ┌────────────┐  │    │put: Operation?          │
-    └──────────┘  │  └──────────┘      └────│   Union    │  │    │read: Operation?         │
-    ┌──────────┐  │  ┌──────────┐           └────────────┘  └────│update: Operation?       │
-    │float     │──┼──│double    │                                │delete: Operation?       │
-    └──────────┘  │  └──────────┘                                │list: : Operation?       │
-    ┌──────────┐  │  ┌──────────┐                                │operations: [Operation]? │
-    │bigInteger│──┴──│bigDecimal│                                │collectionOperations:    │
-    └──────────┘     └──────────┘                                │    [Operation]?         │
-                                                                 │resources: [Resource]?   │
-                                                                 └─────────────────────────┘
-
+    ┌──────────┐  │       △            ├────│    Set     │  │    └─────────────────────────┘
+    │timestamp │──┤       │            │    ├────────────┤  │    ┌─────────────────────────┐
+    └──────────┘  │  ┌──────────┐      │    │member      │  │    │        Operation        │
+                  │  │enum      │      │    └────────────┘  │    ├─────────────────────────┤
+                  │  └──────────┘      │    ┌────────────┐  │    │input: Structure         │
+          ┌───────────────┐            ├────│    Map     │  ├────│output: Structure        │
+          │  «abstract»   │            │    ├────────────┤  │    │errors: [Structure]?     │
+          │    Number     │            │    │key         │  │    └─────────────────────────┘
+          └───────────────┘            │    │value       │  │    ┌─────────────────────────┐
+                  △                    │    └────────────┘  │    │        Resource         │
+    ┌──────────┐  │  ┌──────────┐      │    ┌────────────┐  │    ├─────────────────────────┤
+    │float     │──┼──│double    │      ├────│ Structure  │  │    │identifiers?             │
+    └──────────┘  │  └──────────┘      │    └────────────┘  │    │create: Operation?       │
+    ┌──────────┐  │  ┌──────────┐      │    ┌────────────┐  │    │put: Operation?          │
+    │bigInteger│──┼──│bigDecimal│      └────│   Union    │  │    │read: Operation?         │
+    └──────────┘  │  └──────────┘           └────────────┘  └────│update: Operation?       │
+    ┌──────────┐  │  ┌──────────┐                                │delete: Operation?       │
+    │byte      │──┼──│short     │                                │list: : Operation?       │
+    └──────────┘  │  └──────────┘                                │operations: [Operation]? │
+    ┌──────────┐  │  ┌──────────┐                                │collectionOperations:    │
+    │integer   │──┴──│long      │                                │    [Operation]?         │
+    └──────────┘     └──────────┘                                │resources: [Resource]?   │
+         △                                                       └─────────────────────────┘
+         │
+    ┌──────────┐
+    │intEnum   │
+    └──────────┘
 
 .. _shape-id:
 
@@ -353,6 +356,11 @@ Simple shapes
         serialization format of a document is an implementation detail of a
         protocol and MUST NOT have any effect on the types exposed by tooling
         to represent a document value.
+    * - enum
+      - A UTF-8 encoded string with a fixed set of values.
+    * - intEnum
+      - A 32-bit signed integer with a fixed set of values that can range from
+        -2^31 to (2^31)-1 (inclusive).
 
 Simple shapes are defined in the IDL using a :ref:`simple_shape_statement <idl-simple>`.
 
@@ -385,6 +393,13 @@ The following example defines a shape for each simple type in the
         bigDecimal BigDecimal
         timestamp Timestamp
         document Document
+        enum Enum {
+            FOO
+        }
+        intEnum IntEnum {
+            @enumValue(1)
+            FOO
+        }
 
     .. code-tab:: json
 
@@ -429,6 +444,28 @@ The following example defines a shape for each simple type in the
                 },
                 "smithy.example#Document": {
                     "type": "document"
+                },
+                "smithy.example#Enum": {
+                    "type": "enum",
+                    "members": {
+                        "FOO": {
+                            "target": "smithy.api#Unit",
+                            "traits": {
+                                "smithy.api#enumValue": "FOO"
+                            }
+                        }
+                    }
+                },
+                "smithy.example#IntEnum": {
+                    "type": "intEnum",
+                    "members": {
+                        "FOO": {
+                            "target": "smithy.api#Unit",
+                            "traits": {
+                                "smithy.api#enumValue": 1
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -437,6 +474,148 @@ The following example defines a shape for each simple type in the
 
     When defining shapes in the IDL, a namespace MUST first be declared.
 
+.. _enum:
+
+Enum
+====
+
+The enum shape is used to represent a fixed set of one or more string values.
+The following example defines an enum shape:
+
+.. code-block: smithy
+
+    enum Suit {
+        DIAMOND
+        CLUB
+        HEART
+        SPADE
+    }
+
+Each value listed in the enum is a :ref:`member` that implicitly targets
+the :ref:`unit type <unit-type>`. The string representation of an enum member
+defaults to the member name. The string representation can be customized by
+applying the :ref:`enumValue trait <enumValue-trait>`.
+
+.. code-block:: smithy
+
+    enum Suit {
+        @enumValue("diamond")
+        DIAMOND
+
+        @enumValue("club")
+        CLUB
+
+        @enumValue("heart")
+        HEART
+
+        @enumValue("spade")
+        SPADE
+    }
+
+Enums do not support aliasing; all values MUST be unique.
+
+Enum member names SHOULD NOT contain any lowercase ASCII Latin letters
+(``a-z``) and SHOULD NOT start with an ASCII underscore (``_``).
+That is, enum names SHOULD match the following regular expression:
+``^[A-Z]+[A-Z_0-9]*$``.
+
+enum is a specialization of string
+----------------------------------
+
+Enums are considered open, meaning it is a backward compatible change to add
+new members. Previously generated clients MUST NOT fail when they encounter an
+unknown enum value. Client implementations MUST provide the capability of
+sending and receiving unknown enum values.
+
+enum members always have a value
+--------------------------------
+
+If an enum member doesn't have an explicit :ref:`enumValue <enumValue-trait>`
+or :ref:`enumDefault <enumDefault-trait>` trait, an :ref:`enumValue-trait`
+will be automatically added to the member where the trait value is the member's
+name.
+
+The following model:
+
+.. code-block:: smithy
+
+    enum Suit {
+        DIAMOND
+        CLUB
+        HEART
+        SPADE
+    }
+
+Is equivalent to:
+
+.. code-block:: smithy
+
+    enum Suit {
+        @enumValue("DIAMOND")
+        DIAMOND
+
+        @enumValue("CLUB")
+        CLUB
+
+        @enumValue("HEART")
+        HEART
+
+        @enumValue("SPADE")
+        SPADE
+    }
+
+.. _intEnum:
+
+IntEnum
+=======
+
+An intEnum is used to represent an enumerated set of one or more integer
+values. The members of intEnum MUST be marked with the :ref:`enumValue-trait`
+set to a unique integer value. The following example defines an intEnum shape:
+
+.. code-block:: smithy
+
+    intEnum FaceCard {
+        @enumValue(1)
+        JACK
+
+        @enumValue(2)
+        QUEEN
+
+        @enumValue(3)
+        KING
+
+        @enumValue(4)
+        ACE
+
+        @enumValue(5)
+        JOKER
+    }
+
+intEnum member names SHOULD NOT contain any lowercase ASCII Latin letters
+(``a-z``) and SHOULD NOT start with an ASCII underscore (``_``).
+That is, enum names SHOULD match the following regular expression:
+``^[A-Z]+[A-Z_0-9]*$``.
+
+intEnum is a specialization of integer
+--------------------------------------
+
+intEnums are considered open, meaning it is a backward compatible change to add
+new members. Previously generated clients MUST NOT fail when they encounter an
+unknown intEnum value. Client implementations MUST provide the capability of
+sending and receiving unknown intEnum values.
+
+.. _member:
+
+-------------
+Member shapes
+-------------
+
+:dfn:`Members` are defined in shapes to reference other shapes using
+a :ref:`shape ID <shape-id>`. The shape referenced by a member is called its
+"target". A member MUST NOT target a :ref:`trait <trait-shapes>`, ``operation``,
+``resource``, ``service``, or ``member``.
+
 
 .. _aggregate-types:
 
@@ -444,8 +623,7 @@ The following example defines a shape for each simple type in the
 Aggregate shapes
 ----------------
 
-Aggregate types define shapes that are composed of other shapes. Aggregate shapes
-reference other shapes using :ref:`members <member>`.
+Aggregate types are shapes that can contain more than one value.
 
 .. list-table::
     :header-rows: 1
@@ -453,8 +631,6 @@ reference other shapes using :ref:`members <member>`.
 
     * - Type
       - Description
-    * - :ref:`member`
-      - Defined in aggregate shapes to reference other shapes
     * - :ref:`list`
       - Ordered collection of homogeneous values
     * - :ref:`set`
@@ -466,17 +642,6 @@ reference other shapes using :ref:`members <member>`.
     * - :ref:`union`
       - Tagged union data structure that can take on one of several
         different, but fixed, types
-
-
-.. _member:
-
-Member
-======
-
-:dfn:`Members` are defined in aggregate shapes to reference other shapes using
-a :ref:`shape ID <shape-id>`. The shape referenced by a member is called its
-"target". A member MUST NOT target a :ref:`trait <trait-shapes>`, ``operation``,
-``resource``, ``service``, or ``member``.
 
 
 .. _list:
