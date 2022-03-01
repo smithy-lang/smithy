@@ -390,8 +390,8 @@ public class CodeWriterTest {
         // Setup the code writer and section interceptors.
         CodeWriter w = CodeWriter.createDefault().putContext("testing", "123");
 
-        w.onSection("foo", text -> w.writeInline("Yes: " + text));
-        w.onSection("foo", text -> w.writeInline("Si: " + text));
+        w.onSection("foo", text -> w.write("Yes: $L", text));
+        w.onSection("foo", text -> w.write("Si: $L", text));
         w.onSection("placeholder", text -> w.write("$testing:L"));
 
         // Emit sections with their original values.
@@ -407,7 +407,7 @@ public class CodeWriterTest {
         CodeWriter w = CodeWriter.createDefault();
         w.onSectionPrepend("foo", () -> w.write("A"));
         w.onSection("foo", text -> {
-            w.writeInlineWithNoFormatting(text);
+            w.writeWithNoFormatting(text);
             w.write("C");
         });
         w.onSectionAppend("foo", () -> w.write("D"));
