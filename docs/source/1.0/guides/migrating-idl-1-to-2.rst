@@ -311,3 +311,62 @@ can be updated to:
             AccessDeniedError
         ]
     }
+
+Migrate trait-based string enums to enum shapes
+-----------------------------------------------
+
+Smithy IDL 2.0 introduced two new shape types: :ref:`enum` and :ref:`intEnum`.
+While the latter is entirely new, the use case for the former was previously
+handled by applying the :ref:`enum-trait` to a string shape. A major advantage
+of using the enum shapes is that each enum value is now a :ref:`member`. This
+means they can be individually targeted by traits, without having to have
+special handling inside of Smithy itself. Their definitions in the IDL are now
+also much more concise and readable. For example, the following model:
+
+.. code-block::
+
+    $version: "1.0"
+
+    namespace smithy.example
+
+    @enum([
+        {
+            name: "DIAMOND",
+            value: "diamond"
+        },
+        {
+            name: "CLUB",
+            value: "club"
+        },
+        {
+            name: "HEART",
+            value: "heart"
+        },
+        {
+            name: "SPADE",
+            value: "spade"
+        }
+    ])
+    string Suit
+
+can be updated to:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+
+    namespace smithy.example
+
+    enum Suit {
+        @enumValue("diamond")
+        DIAMOND
+
+        @enumValue("club")
+        CLUB
+
+        @enumValue("heart")
+        HEART
+
+        @enumValue("spade")
+        SPADE
+    }
