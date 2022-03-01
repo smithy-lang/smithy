@@ -75,6 +75,77 @@ Value type
     :ref:`Defining traits <defining-traits>`.
 
 
+.. smithy-trait:: smithy.api#enumDefault
+.. _enumDefault-trait:
+
+---------------------
+``enumDefault`` trait
+---------------------
+
+Summary
+    Indicates that the targeted :ref:`enum` or :ref:`intEnum` member represents
+    the default value.
+Trait selector
+    ``:is(enum, intEnum) > member``
+Value type
+    Annotation trait.
+
+The ``enumDefault`` trait can be applied to a member of an :ref:`enum`
+or :ref:`intEnum` to indicate that that member should be used for the
+default value of the enum.
+
+.. seealso::
+    the :ref:`default-values` for the value of the default enum.
+
+.. code-block::
+
+    $version: "2.0"
+
+    namespace smithy.example
+
+    enum Enum {
+        @enumDefault
+        DEFAULT
+
+        NON_DEFAULT
+    }
+
+
+.. smithy-trait:: smithy.api#enumValue
+.. _enumValue-trait:
+
+-------------------
+``enumValue`` trait
+-------------------
+
+Summary
+    Defines the value of the targeted :ref:`enum` or :ref:`intEnum` member.
+Trait selector
+    ``:is(enum, intEnum) > member``
+Value type
+    `string` or `integer`
+
+Defines the value of an :ref:`enum` or :ref:`intEnum`. For
+:ref:`enum shapes <enum>`, a string value must be used. For
+:ref:`intEnum shapes <intEnum>`, an integer value must be used.
+
+.. code-block::
+
+    $version: "2.0"
+
+    namespace smithy.example
+
+    enum Enum {
+        @enumValue("foo")
+        FOO
+    }
+
+    intEnum IntEnum {
+        @enumValue(1)
+        FOO
+    }
+
+
 .. smithy-trait:: smithy.api#noReplace
 .. _noReplace-trait:
 

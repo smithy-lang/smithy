@@ -22,12 +22,13 @@ for a shape.
 Summary
     Constrains the acceptable values of a string to a fixed set.
 Trait selector
-    ``string``
+    ``string :not(enum)``
 Value type
     ``list`` of *enum definition* structures.
 
-Smithy models SHOULD apply the enum trait when string shapes have a fixed
-set of allowable values.
+.. warning::
+    This trait is deprecated. An :ref:`enum shape <enum>` should be used
+    instead.
 
 An *enum definition* is a structure that supports the following members:
 
@@ -78,85 +79,6 @@ An *enum definition* is a structure that supports the following members:
       - ``boolean``
       - Whether the enum value should be considered deprecated for consumers of
         the Smithy model.
-
-.. note::
-
-    Code generators MAY choose to represent enums as programming language
-    constants. Those that do SHOULD use the enum definition's ``name`` property,
-    if specified. Consumers that choose to represent enums as constants SHOULD
-    ensure that unknown enum names returned from a service do not cause runtime
-    failures.
-
-The following example defines an enum of valid string values for ``MyString``.
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        @enum([
-            {
-                value: "t2.nano"
-                name: "T2_NANO"
-                documentation: """
-                    T2 instances are Burstable Performance
-                    Instances that provide a baseline level of CPU
-                    performance with the ability to burst above the
-                    baseline."""
-                tags: ["ebsOnly"]
-            }
-            {
-                value: "t2.micro"
-                name: "T2_MICRO"
-                documentation: """
-                    T2 instances are Burstable Performance
-                    Instances that provide a baseline level of CPU
-                    performance with the ability to burst above the
-                    baseline."""
-                tags: ["ebsOnly"]
-            }
-            {
-                value: "m256.mega"
-                name: "M256_MEGA"
-                deprecated: true
-            }
-        ])
-        string MyString
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyString": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.api#enum": [
-                            {
-                                "value": "t2.nano",
-                                "name": "T2_NANO",
-                                "documentation": "T2 instances are ...",
-                                "tags": [
-                                    "ebsOnly"
-                                ]
-                            },
-                            {
-                                "value": "t2.micro",
-                                "name": "T2_MICRO",
-                                "documentation": "T2 instances are ...",
-                                "tags": [
-                                    "ebsOnly"
-                                ]
-                            },
-                            {
-                                "value": "m256.mega",
-                                "name": "M256_MEGA",
-                                "deprecated": true
-                            }
-                        ]
-                    }
-                }
-            }
-        }
 
 
 .. smithy-trait:: smithy.api#idRef
