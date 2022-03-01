@@ -1065,20 +1065,12 @@ public class CodeWriterTest {
         MyPojo myPojo = new MyPojo("Thomas", 0);
         writer.pushState(myPojo);
 
-        writer.onSection(new CodeInterceptor.Appender<MyPojo, MyWriter>() {
-            @Override
-            public Class<MyPojo> sectionType() {
-                return MyPojo.class;
+        writer.onSection(CodeInterceptor.appender(MyPojo.class, (w, section) -> {
+            if (section.name.equals("Thomas")) {
+                section.count++;
+                w.write("Hi, Thomas!");
             }
-
-            @Override
-            public void append(MyWriter writer, MyPojo section) {
-                if (section.name.equals("Thomas")) {
-                    section.count++;
-                    writer.write("Hi, Thomas!");
-                }
-            }
-        });
+        }));
 
         writer.write("How are you?");
         writer.popState();
@@ -1137,43 +1129,9 @@ public class CodeWriterTest {
     @Test
     public void injectSectionProvidesShorterWayToAddSectionHooks() {
         MyWriter writer = new MyWriter();
-
-        writer.onSection(new CodeInterceptor.Appender<MyPojo, MyWriter>() {
-            @Override
-            public Class<MyPojo> sectionType() {
-                return MyPojo.class;
-            }
-
-            @Override
-            public void append(MyWriter writer, MyPojo section) {
-                writer.write("$L", section.name);
-            }
-        });
-
-        writer.onSection(new CodeInterceptor.Appender<MyPojo, MyWriter>() {
-            @Override
-            public Class<MyPojo> sectionType() {
-                return MyPojo.class;
-            }
-
-            @Override
-            public void append(MyWriter writer, MyPojo section) {
-                writer.write("Foo");
-            }
-        });
-
-        writer.onSection(new CodeInterceptor.Appender<MyPojo, MyWriter>() {
-            @Override
-            public Class<MyPojo> sectionType() {
-                return MyPojo.class;
-            }
-
-            @Override
-            public void append(MyWriter writer, MyPojo section) {
-                writer.write("Bar");
-            }
-        });
-
+        writer.onSection(CodeInterceptor.appender(MyPojo.class, (w, section) -> w.write("$L", section.name)));
+        writer.onSection(CodeInterceptor.appender(MyPojo.class, (w, section) -> w.write("Foo")));
+        writer.onSection(CodeInterceptor.appender(MyPojo.class, (w, section) -> w.write("Bar")));
         writer.write("Name?");
         writer.injectSection(new MyPojo("Thomas", 0));
 
@@ -1187,43 +1145,9 @@ public class CodeWriterTest {
     @Test
     public void injectsInlineSectionsThatWriteInlineWithoutInfiniteRecursion() {
         MyWriter writer = new MyWriter();
-
-        writer.onSection(new CodeInterceptor.Appender<CodeSection, MyWriter>() {
-            @Override
-            public Class<CodeSection> sectionType() {
-                return CodeSection.class;
-            }
-
-            @Override
-            public void append(MyWriter writer, CodeSection section) {
-                writer.write("DROP_TABLE1,");
-            }
-        });
-
-        writer.onSection(new CodeInterceptor.Appender<CodeSection, MyWriter>() {
-            @Override
-            public Class<CodeSection> sectionType() {
-                return CodeSection.class;
-            }
-
-            @Override
-            public void append(MyWriter writer, CodeSection section) {
-                writer.write("DROP_TABLE2,");
-            }
-        });
-
-        writer.onSection(new CodeInterceptor.Appender<CodeSection, MyWriter>() {
-            @Override
-            public Class<CodeSection> sectionType() {
-                return CodeSection.class;
-            }
-
-            @Override
-            public void append(MyWriter writer, CodeSection section) {
-                writer.write("DROP_TABLE3,");
-            }
-        });
-
+        writer.onSection(CodeInterceptor.appender(CodeSection.class, (w, section) -> w.write("DROP_TABLE1,")));
+        writer.onSection(CodeInterceptor.appender(CodeSection.class, (w, section) -> w.write("DROP_TABLE2,")));
+        writer.onSection(CodeInterceptor.appender(CodeSection.class, (w, section) -> w.write("DROP_TABLE3,")));
         writer.write("Name: ${L@foo|}", "");
 
         assertThat(writer.toString(), equalTo("Name: DROP_TABLE1,\n"
@@ -1234,55 +1158,10 @@ public class CodeWriterTest {
     @Test
     public void canWriteInlineSectionsWithNoNewlines() {
         MyWriter writer = new MyWriter();
-
-        writer.onSection(new CodeInterceptor.Appender<CodeSection, MyWriter>() {
-            @Override
-            public Class<CodeSection> sectionType() {
-                return CodeSection.class;
-            }
-
-            @Override
-            public void append(MyWriter writer, CodeSection section) {
-                writer.writeInline("DROP_TABLE1,");
-            }
-        });
-
-        writer.onSection(new CodeInterceptor.Appender<CodeSection, MyWriter>() {
-            @Override
-            public Class<CodeSection> sectionType() {
-                return CodeSection.class;
-            }
-
-            @Override
-            public void append(MyWriter writer, CodeSection section) {
-                writer.writeInline("DROP_TABLE2,");
-            }
-        });
-
-        writer.onSection(new CodeInterceptor.Appender<CodeSection, MyWriter>() {
-            @Override
-            public Class<CodeSection> sectionType() {
-                return CodeSection.class;
-            }
-
-            @Override
-            public void append(MyWriter writer, CodeSection section) {
-                writer.writeInline("DROP_TABLE3,");
-            }
-        });
-
-        writer.onSection(new CodeInterceptor.Appender<CodeSection, MyWriter>() {
-            @Override
-            public Class<CodeSection> sectionType() {
-                return CodeSection.class;
-            }
-
-            @Override
-            public void append(MyWriter writer, CodeSection section) {
-                writer.unwrite(",");
-            }
-        });
-
+        writer.onSection(CodeInterceptor.appender(CodeSection.class, (w, section) -> w.writeInline("DROP_TABLE1,")));
+        writer.onSection(CodeInterceptor.appender(CodeSection.class, (w, section) -> w.writeInline("DROP_TABLE2,")));
+        writer.onSection(CodeInterceptor.appender(CodeSection.class, (w, section) -> w.writeInline("DROP_TABLE3,")));
+        writer.onSection(CodeInterceptor.appender(CodeSection.class, (w, section) -> w.unwrite(",")));
         writer.write("Name: ${L@foo}", "");
 
         assertThat(writer.toString(), equalTo("Name: DROP_TABLE1,DROP_TABLE2,DROP_TABLE3\n"));
@@ -1299,17 +1178,7 @@ public class CodeWriterTest {
     @Test
     public void injectsSingleSectionContent() {
         MyWriter writer = new MyWriter();
-        writer.onSection(new CodeInterceptor.Appender<MyPojo, MyWriter>() {
-            @Override
-            public Class<MyPojo> sectionType() {
-                return MyPojo.class;
-            }
-
-            @Override
-            public void append(MyWriter writer, MyPojo section) {
-                writer.write(section.name);
-            }
-        });
+        writer.onSection(CodeInterceptor.appender(MyPojo.class, (w, section) -> w.write(section.name)));
         writer.injectSection(new MyPojo("Name", 0));
 
         assertThat(writer.toString(), equalTo("Name\n"));

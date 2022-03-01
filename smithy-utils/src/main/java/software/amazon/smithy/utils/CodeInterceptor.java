@@ -77,6 +77,35 @@ interface CodeInterceptor<S extends CodeSection, W extends AbstractCodeWriter<W>
     void write(W writer, String previousText, S section);
 
     /**
+     * Provides a more concise way of creating anonymous {@link Appender}s.
+     *
+     * <p>This method does not support custom filters on matched CodeSections. That
+     * functionality must be implemented by directly creating an Appender class.
+     *
+     * @param type The type of section to intercept.
+     * @param appender A BiConsumer that takes the writer and section and is expected to make write calls.
+     * @param <S> The type of section being intercepted.
+     * @param <W> The type of writer to use.
+     * @return Returns the created Appender.
+     */
+    static <S extends CodeSection, W extends AbstractCodeWriter<W>> CodeInterceptor<S, W> appender(
+            Class<S> type,
+            BiConsumer<W, S> appender
+    ) {
+        return new Appender<S, W>() {
+            @Override
+            public void append(W writer, S section) {
+                appender.accept(writer, section);
+            }
+
+            @Override
+            public Class<S> sectionType() {
+                return type;
+            }
+        };
+    }
+
+    /**
      * A code section interceptor that adds text after the intercepted section.
      *
      * <p>The previously written text is written before {@link #append(AbstractCodeWriter, CodeSection)}
