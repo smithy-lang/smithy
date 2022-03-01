@@ -33,18 +33,46 @@ public class CodeWriter extends AbstractCodeWriter<CodeWriter> {
         return new CodeWriter().trimTrailingSpaces();
     }
 
+    /**
+     * Prepends to the contents of a named section.
+     *
+     * <pre>{@code
+     * writer.onSectionPrepend("foo", () -> {
+     *     writer.write("This text is added before the rest of the section.");
+     * });
+     * }</pre>
+     *
+     * @param sectionName The name of the section to intercept.
+     * @param writeBefore A runnable that prepends to a section by mutating the writer.
+     * @return Returns the CodeWriter.
+     * @see #onSection(CodeInterceptor) as an alternative that allows more explicit whitespace handling.
+     */
     @Deprecated
     public final CodeWriter onSectionPrepend(String sectionName, Runnable writeBefore) {
         return onSection(sectionName, contents -> {
             writeBefore.run();
-            writeInlineWithNoFormatting(contents);
+            writeWithNoFormatting(contents);
         });
     }
 
+    /**
+     * Appends to the contents of a named section.
+     *
+     * <pre>{@code
+     * writer.onSectionAppend("foo", () -> {
+     *     writer.write("This text is added after the rest of the section.");
+     * });
+     * }</pre>
+     *
+     * @param sectionName The name of the section to intercept.
+     * @param writeAfter A runnable that appends to a section by mutating the writer.
+     * @return Returns the CodeWriter.
+     * @see #onSection(CodeInterceptor) as an alternative that allows more explicit whitespace handling.
+     */
     @Deprecated
     public final CodeWriter onSectionAppend(String sectionName, Runnable writeAfter) {
         return onSection(sectionName, contents -> {
-            writeInlineWithNoFormatting(contents);
+            writeWithNoFormatting(contents);
             writeAfter.run();
         });
     }

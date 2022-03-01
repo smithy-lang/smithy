@@ -656,7 +656,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
     /**
      * Copies and pushes the current state to the state stack using a named
      * state that can be intercepted by functions registered with
-     * {@link #onSection}.
+     * {@link #onSection(CodeInterceptor)}.
      *
      * <p>The text written while in this state is buffered and passed to each
      * state interceptor. If no text is written by the section or an
@@ -781,9 +781,11 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      */
     @SuppressWarnings("unchecked")
     public T pushFilteredState(Function<String, String> filter) {
-        String sectionName = "__filtered_state_" + states.size() + 1;
-        pushState(sectionName);
-        onSection(sectionName, content -> writeInlineWithNoFormatting(filter.apply(content.toString())));
+        CodeSection section = CodeSection.forName("__filtered_state_" + states.size() + 1);
+        pushState(section);
+        onSection(CodeInterceptor.forName(section.sectionName(), (w, content) -> {
+            writeInlineWithNoFormatting(filter.apply(content));
+        }));
         return (T) this;
     }
 
@@ -843,23 +845,14 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
 
     /**
      * Registers a function that intercepts the contents of a section and
-     * the current context map and writes to the {@code CodeWriter} with the
-     * updated contents.
+     * writes to the {@code CodeWriter} with the updated contents.
      *
-     * <p>These section interceptors provide a simple hook system for CodeWriters
-     * that add extension points when generating code. The function has the
-     * ability to completely ignore the original contents of the section, to
-     * prepend text to it, and append text to it. Intercepting functions are
-     * expected to have a reference to the {@code CodeWriter} and to mutate it
-     * when they are invoked. Each interceptor is invoked in their own
-     * isolated pushed/popped states.
+     * <p>The {@code interceptor} function is expected to have a reference to
+     * the {@code CodeWriter} and to mutate it when they are invoked. Each
+     * interceptor is invoked in their own isolated pushed/popped states.
      *
-     * <p>Interceptors are registered on the current state of the
-     * {@code CodeWriter}. When the state to which an interceptor is registered
-     * is popped, the interceptor is no longer in scope.
-     *
-     * <p>The text provided to the intercepting function does not contain
-     * a trailing new line. A trailing new line will be injected automatically
+     * <p>The text provided to {@code interceptor} does not contain a trailing
+     * new line. A trailing new line is expected to be injected automatically
      * when the results of intercepting the contents are written to the
      * {@code CodeWriter}. A result is only written if the interceptors write
      * a non-null, non-empty string, allowing for empty placeholders to be
@@ -888,19 +881,65 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * assert(writer.toString().equals("A\nB\nC\n"));
      * }</pre>
      *
+     * <h3>Newline handling</h3>
+     *
+     * <p>This method is a wrapper around {@link #onSection(CodeInterceptor)}
+     * that has several limitations:
+     *
+     * <ul>
+     *     <li>The provided {@code interceptor} is expected to have a reference
+     *     to an {@link AbstractCodeWriter} so that write calls can be made.</li>
+     *     <li>The handling of newlines is much less precise. If you want to
+     *     give interceptors full control over how newlines are injected, then
+     *     {@link #onSection(CodeInterceptor)} must be used directly and
+     *     careful use of {@link #writeInlineWithNoFormatting(Object)} is
+     *     required when writing the previous contents to the interceptor.</li>
+     *     <li>Interceptors do not have access to strongly typed event data
+     *     like {@link CodeInterceptor}s do.
+     * </ul>
+     *
+     * <p>The newline handling functionality provided by this method can be
+     * reproduced using a {@link CodeInterceptor} by removing trailing newlines
+     * using {@link #removeTrailingNewline(String)}.
+     *
+     * <pre>{@code
+     * CodeWriter writer = new CodeWriter();
+     *
+     * CodeInterceptor<CodeSection, CodeWriter> interceptor = CodeInterceptor.forName(sectionName, (w, p) -> {
+     *     String trimmedContent = removeTrailingNewline(p);
+     *     interceptor.accept(trimmedContent);
+     * })
+     *
+     * writer.onSection(interceptor);
+     * }</pre>
+     *
      * @param sectionName The name of the section to intercept.
      * @param interceptor The function to intercept with.
      * @return Returns self.
      */
     @SuppressWarnings("unchecked")
     public T onSection(String sectionName, Consumer<Object> interceptor) {
-        currentState.interceptors.get()
-                .putInterceptor(CodeInterceptor.forName(sectionName, (w, p) -> interceptor.accept(p)));
+        currentState.interceptors.get().putInterceptor(CodeInterceptor.forName(sectionName, (w, p) -> {
+            String trimmedContent = removeTrailingNewline(p);
+            interceptor.accept(trimmedContent);
+        }));
         return (T) this;
     }
 
     /**
      * Intercepts a section of code emitted for a strongly typed {@link CodeSection}.
+     *
+     * <p>These section interceptors provide a kind of event-based hook system for
+     * CodeWriters that add extension points when generating code. The function has
+     * the ability to completely ignore the original contents of the section, to
+     * prepend text to it, and append text to it. Intercepting functions are
+     * expected to have a reference to the {@code CodeWriter} and to mutate it
+     * when they are invoked. Each interceptor is invoked in their own
+     * isolated pushed/popped states.
+     *
+     * <p>Interceptors are registered on the current state of the
+     * {@code CodeWriter}. When the state to which an interceptor is registered
+     * is popped, the interceptor is no longer in scope.
      *
      * @param interceptor A consumer that takes the writer and strongly typed section.
      * @param <S> The type of section being intercepted.
