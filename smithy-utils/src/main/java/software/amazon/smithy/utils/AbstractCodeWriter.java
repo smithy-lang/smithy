@@ -880,19 +880,18 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * // Write text to a section, and ensure that the original
      * // text is written too.
      * writer.onSection("foo", text -> {
+     *     // Write before the original text.
+     *     writer.write("A");
      *     // Write the original text of the section.
-     *     writer.write(text);
+     *     writer.writeWithNoFormatting(text);
      *     // Write more text to the section.
      *     writer.write("C");
      * });
      *
-     * // Append text to a section.
-     * writer.onSectionAppend("foo", () -> writer.write("D"));
-     *
      * // Create the section, write to it, then close the section.
      * writer.pushState("foo").write("B").popState();
      *
-     * assert(writer.toString().equals("A\nB\nC\nD\n"));
+     * assert(writer.toString().equals("A\nB\nC\n"));
      * }</pre>
      *
      * @param sectionName The name of the section to intercept.
@@ -917,48 +916,6 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
     public <S extends CodeSection> T onSection(CodeInterceptor<S, T> interceptor) {
         currentState.interceptors.get().putInterceptor(interceptor);
         return (T) this;
-    }
-
-    /**
-     * Prepends to the contents of a named section.
-     *
-     * <pre>{@code
-     * writer.onSectionPrepend("foo", () -> {
-     *     writer.write("This text is added before the rest of the section.");
-     * });
-     * }</pre>
-     *
-     * @param sectionName The name of the section to intercept.
-     * @param writeBefore A runnable that prepends to a section by mutating the writer.
-     * @return Returns self.
-     * @see #onSection
-     */
-    public final T onSectionPrepend(String sectionName, Runnable writeBefore) {
-        return onSection(sectionName, contents -> {
-            writeBefore.run();
-            writeWithNoFormatting(contents);
-        });
-    }
-
-    /**
-     * Appends to the contents of a named section.
-     *
-     * <pre>{@code
-     * writer.onSectionAppend("foo", () -> {
-     *     writer.write("This text is added after the rest of the section.");
-     * });
-     * }</pre>
-     *
-     * @param sectionName The name of the section to intercept.
-     * @param writeAfter A runnable that appends to a section by mutating the writer.
-     * @return Returns self.
-     * @see #onSection
-     */
-    public final T onSectionAppend(String sectionName, Runnable writeAfter) {
-        return onSection(sectionName, contents -> {
-            writeWithNoFormatting(contents);
-            writeAfter.run();
-        });
     }
 
     /**
