@@ -89,11 +89,20 @@ final class CodeFormatter {
         // Expands inline sections.
         static Operation inlineSection(String sectionName, Operation delegate) {
             return (sink, writer, column) -> {
+                // First capture the given default value.
                 StringBuilder buffer = new StringBuilder();
                 delegate.apply(buffer, writer, column);
-                String result = buffer.toString();
+                String defaultValue = buffer.toString();
+                // Create an interceptable code section for the inline section.
                 CodeSection section = CodeSection.forName(sectionName);
-                sink.append(writer.expandSection(section, result, writer::writeWithNoFormatting));
+                // Expand the section, passing in the default value as a start.
+                String expanded = writer.expandSection(section, defaultValue, writer::writeInlineWithNoFormatting);
+                // Inline sections are called within the context of an existing call to write or writeInline.
+                // These _outer_ methods control whether a trailing newline appended to an inline section. This
+                // behavior exactly matches how $C is treated.
+                expanded = writer.removeTrailingNewline(expanded);
+                // Write the final expanded section to the target sink.
+                sink.append(expanded);
             };
         }
 
@@ -109,6 +118,7 @@ final class CodeFormatter {
         private final int spaces;
         private final String staticWhitespace;
         private boolean previousIsCarriageReturn;
+        private boolean previousIsNewline;
 
         BlockAppender(Appendable delegate, int spaces, String staticWhitespace) {
             this.delegate = delegate;
@@ -118,9 +128,14 @@ final class CodeFormatter {
 
         @Override
         public Appendable append(char c) throws IOException {
+            if (previousIsNewline) {
+                writeSpaces();
+                previousIsNewline = false;
+            }
+
             if (c == '\n') {
                 delegate.append('\n');
-                writeSpaces();
+                previousIsNewline = true;
                 previousIsCarriageReturn = false;
             } else {
                 if (previousIsCarriageReturn) {

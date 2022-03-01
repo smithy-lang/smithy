@@ -37,14 +37,14 @@ public class CodeWriter extends AbstractCodeWriter<CodeWriter> {
     public final CodeWriter onSectionPrepend(String sectionName, Runnable writeBefore) {
         return onSection(sectionName, contents -> {
             writeBefore.run();
-            writeWithNoFormatting(contents);
+            writeInlineWithNoFormatting(contents);
         });
     }
 
     @Deprecated
     public final CodeWriter onSectionAppend(String sectionName, Runnable writeAfter) {
         return onSection(sectionName, contents -> {
-            writeWithNoFormatting(contents);
+            writeInlineWithNoFormatting(contents);
             writeAfter.run();
         });
     }

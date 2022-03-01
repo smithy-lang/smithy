@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.utils;
 
-
 import java.util.function.BiConsumer;
 
 /**
@@ -30,7 +29,7 @@ import java.util.function.BiConsumer;
  * it's best to implement the {@link Appender} or {@link Prepender} interfaces
  * since they take care of properly writing previously written content to
  * the section (for example, only writing if it's non-empty, and using
- * writeWithNoFormatting to avoid unintentional interpolation).
+ * writeInlineWithNoFormatting to avoid unintentional interpolation).
  *
  * @param <S> Type of CodeSection to intercept.
  * @param <W> Type of CodeWriter to expect.
@@ -90,7 +89,7 @@ interface CodeInterceptor<S extends CodeSection, W extends AbstractCodeWriter<W>
         @Override
         default void write(W writer, String previousText, S section) {
             if (!previousText.isEmpty()) {
-                writer.writeWithNoFormatting(previousText);
+                writer.writeInlineWithNoFormatting(previousText);
             }
             append(writer, section);
         }
@@ -117,7 +116,7 @@ interface CodeInterceptor<S extends CodeSection, W extends AbstractCodeWriter<W>
         default void write(W writer, String previousText, S section) {
             prepend(writer, section);
             if (!previousText.isEmpty()) {
-                writer.writeWithNoFormatting(previousText);
+                writer.writeInlineWithNoFormatting(previousText);
             }
         }
 

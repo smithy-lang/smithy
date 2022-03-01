@@ -339,7 +339,7 @@ public class CodeFormatterTest {
     @Test
     public void expandsInlineSectionsWithInterceptors() {
         CodeWriter writer = createWriter();
-        writer.onSection("hello", text -> writer.write("intercepted: " + text));
+        writer.onSection("hello", text -> writer.writeInline("intercepted: " + text));
         writer.write("Foo ${L@hello} baz", "default");
 
         assertThat(writer.toString(), equalTo("Foo intercepted: default baz\n"));
@@ -364,7 +364,7 @@ public class CodeFormatterTest {
     @Test
     public void canUseOtherFormattersWithSections() {
         CodeWriter writer = createWriter();
-        writer.onSection("foo", text -> writer.write(text + "!"));
+        writer.onSection("foo", text -> writer.writeInline(text + "!"));
         writer.write("<abc foo=${S@attributes}>${S@foo}</abc>", "foo!", "baz");
 
         assertThat(writer.toString(), equalTo("<abc foo=\"foo!\">\"baz\"!</abc>\n"));

@@ -440,15 +440,6 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
     private int trimBlankLines = -1;
 
     /**
-     * Tracks when indentation is needed following a newline.
-     *
-     * <p>This is initially set to true to account for the case when a
-     * code writer is initialized with indentation but hasn't written
-     * anything yet.
-     */
-    private boolean needsIndentation = true;
-
-    /**
      * Creates a new CodeWriter that uses "\n" for a newline, four spaces
      * for indentation, does not strip trailing whitespace, does not flatten
      * multiple successive blank lines into a single blank line, and adds no
@@ -458,6 +449,9 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
         states.push(new State());
         currentState = states.getFirst();
         currentState.builder = new StringBuilder();
+        // This is initially set to true to account for the case when a code writer is
+        // initialized with indentation but hasn't written anything yet.
+        currentState.needsIndentation = true;
     }
 
     /**
@@ -789,7 +783,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
     public T pushFilteredState(Function<String, String> filter) {
         String sectionName = "__filtered_state_" + states.size() + 1;
         pushState(sectionName);
-        onSection(sectionName, content -> writeWithNoFormatting(filter.apply(content.toString())));
+        onSection(sectionName, content -> writeInlineWithNoFormatting(filter.apply(content.toString())));
         return (T) this;
     }
 
@@ -815,7 +809,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
 
         if (sectionValue != null) {
             // Get the contents of the current state as a string so it can be filtered.
-            String result = removeTrailingNewline(popped.toString());
+            String result = popped.toString();
 
             // Don't attempt to intercept anonymous sections.
             if (!(sectionValue instanceof AnonymousCodeSection)) {
@@ -832,7 +826,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
                 builder.setLength(0);
                 builder.append(result);
             } else if (!result.isEmpty()) {
-                writeWithNoFormatting(result);
+                writeInlineWithNoFormatting(result);
             }
         }
 
@@ -1491,6 +1485,25 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
     }
 
     /**
+     * Ensures that the last text written to the writer was a newline as defined in
+     * the current state and inserts one if necessary.
+     *
+     * @return Returns self.
+     */
+    @SuppressWarnings("unchecked")
+    public final T ensureNewline() {
+        if (!builderEndsWith(currentState.getBuilder(), getNewline())) {
+            write("");
+        }
+        return (T) this;
+    }
+
+    private boolean builderEndsWith(StringBuilder builder, String check) {
+        return builder.length() > check.length()
+               && builder.substring(builder.length() - check.length(), builder.length()).equals(check);
+    }
+
+    /**
      * Optionally writes text to the CodeWriter and appends a newline
      * if a value is present.
      *
@@ -1655,14 +1668,23 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
         if (f != null) {
             return f.apply(value, getIndentText());
         } else if (identifier == 'C') {
-            // The default C formatter is evaluated dynamically to prevent cyclic references.
+            // The default C formatter is evaluated dynamically to prevent cyclic references in CodeFormatter.
             CodeSection section = new AnonymousCodeSection("__C_formatter_" + states.size());
+            // A single trailing newline is stripped from the result, if present. This is because the $C formatter
+            // is often used on the same line as other text like:
+            //
+            //     w.write("Hi, $C.", w.call(writer -> writer.write("name");
+            //     // Results in "Hi, name.\n" and not "Hi, name\n.\n"
+            //
+            // In these cases, the trailing newline introduced in the $C formatter by writer.write() is removed
+            // since it's up to the surrounding text to dictate newlines. Use an explicit newline in the text to
+            // inject a newline.
             if (value instanceof Runnable) {
                 Runnable runnable = (Runnable) value;
-                return expandSection(section, "", ignore -> runnable.run());
+                return removeTrailingNewline(expandSection(section, "", ignore -> runnable.run()));
             } else if (value instanceof Consumer) {
                 Consumer<T> consumer = (Consumer<T>) value;
-                return expandSection(section, "", ignore -> consumer.accept((T) this));
+                return removeTrailingNewline(expandSection(section, "", ignore -> consumer.accept((T) this)));
             } else {
                 throw new ClassCastException(String.format(
                         "Expected value for 'C' formatter to be an instance of %s or %s, but found %s %s",
@@ -1685,6 +1707,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
         private boolean disableNewline;
         private String newline = "\n";
         private char expressionStart = '$';
+        private boolean needsIndentation;
 
         private CodeSection sectionValue;
         private CopyOnWriteRef<Map<String, Object>> context;
@@ -1727,6 +1750,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
             this.newlinePrefix = copy.newlinePrefix;
             this.trimTrailingSpaces = copy.trimTrailingSpaces;
             this.disableNewline = copy.disableNewline;
+            this.needsIndentation = copy.needsIndentation;
             this.context = CopyOnWriteRef.fromBorrowed(copy.context.peek(), HashMap::new);
             this.formatters = CopyOnWriteRef.fromBorrowed(copy.formatters.peek(), CodeWriterFormatterContainer::new);
             this.interceptors = CopyOnWriteRef.fromBorrowed(copy.interceptors.peek(), CodeInterceptorContainer::new);

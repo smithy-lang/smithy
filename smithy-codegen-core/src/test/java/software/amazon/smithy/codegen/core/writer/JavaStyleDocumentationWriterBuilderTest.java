@@ -43,10 +43,27 @@ public class JavaStyleDocumentationWriterBuilderTest {
                 .namedDocumentationSection("docs")
                 .build();
         writer.onSection("docs", contents -> {
-            writer.writeWithNoFormatting(contents.toString().toUpperCase(Locale.ENGLISH));
+            writer.writeInlineWithNoFormatting(contents.toString().toUpperCase(Locale.ENGLISH));
         });
         docWriter.writeDocs(writer, () -> {
             writer.write("Hello");
+        });
+
+        assertThat(writer.toString(),
+                   equalTo("/**\n * HELLO\n */\n"));
+    }
+
+    @Test
+    public void ensuresNewlineIsAddedBeforeClosing() {
+        MyWriter writer = new MyWriter("foo");
+        DocumentationWriter<MyWriter> docWriter = new JavaStyleDocumentationWriterBuilder()
+                .namedDocumentationSection("docs")
+                .build();
+        writer.onSection("docs", contents -> {
+            writer.writeInlineWithNoFormatting(contents.toString().toUpperCase(Locale.ENGLISH));
+        });
+        docWriter.writeDocs(writer, () -> {
+            writer.writeInline("Hello");
         });
 
         assertThat(writer.toString(),
