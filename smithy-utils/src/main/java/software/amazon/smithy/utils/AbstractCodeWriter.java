@@ -1432,14 +1432,27 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * <p>You can write:
      *
      * <pre>{@code
-     * writer.write("$C", writer.call(w -> w.write("Hi"));
+     * writer.write("$C", writer.consumer(w -> w.write("Hi"));
      * }</pre>
      *
      * @param consumer The consumer to call.
      * @return Returns the consumer as-is, but cast as the appropriate Java type.
      */
-    public Consumer<T> call(Consumer<T> consumer) {
+    public Consumer<T> consumer(Consumer<T> consumer) {
         return consumer;
+    }
+
+    /**
+     * Allows calling out to arbitrary code for things like looping or
+     * conditional writes without breaking method chaining.
+     *
+     * @param task Method to invoke.
+     * @return Returns the CodeWriter.
+     */
+    @SuppressWarnings("unchecked")
+    public final T call(Runnable task) {
+        task.run();
+        return (T) this;
     }
 
     /**
@@ -1673,7 +1686,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
             // A single trailing newline is stripped from the result, if present. This is because the $C formatter
             // is often used on the same line as other text like:
             //
-            //     w.write("Hi, $C.", w.call(writer -> writer.write("name");
+            //     w.write("Hi, $C.", w.consumer(writer -> writer.write("name");
             //     // Results in "Hi, name.\n" and not "Hi, name\n.\n"
             //
             // In these cases, the trailing newline introduced in the $C formatter by writer.write() is removed
