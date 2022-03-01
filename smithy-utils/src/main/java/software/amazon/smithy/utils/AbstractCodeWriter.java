@@ -1859,10 +1859,6 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
                 return sectionValue.sectionName();
             }
         }
-
-        private String getTrimmedPoppedContents() {
-            return removeTrailingNewline(toString());
-        }
     }
 
     String removeTrailingNewline(String value) {
