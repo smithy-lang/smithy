@@ -17,6 +17,7 @@ package software.amazon.smithy.codegen.core;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.CodeInterceptor;
@@ -35,7 +36,30 @@ public class SmithyIntegrationTest {
         }
     }
 
-    private static final class MyIntegration implements SmithyIntegration<MySettings, CodeWriter> {
+    private static final class MyContext implements CodegenContext<MySettings> {
+        @Override
+        public Model model() {
+            return null;
+        }
+
+        @Override
+        public MySettings settings() {
+            return null;
+        }
+
+        @Override
+        public SymbolProvider symbolProvider() {
+            return null;
+        }
+
+        @Override
+        public FileManifest fileManifest() {
+            return null;
+        }
+    }
+
+    private static final class MyIntegration implements SmithyIntegration<
+            MySettings, CodeWriter, MyContext> {
         private final String name;
 
         MyIntegration(String name) {
@@ -48,8 +72,7 @@ public class SmithyIntegrationTest {
         }
 
         @Override
-        public List<? extends CodeInterceptor<? extends CodeSection, CodeWriter>> interceptors(
-                Model model, MySettings settings, SymbolProvider symbolProvider) {
+        public List<? extends CodeInterceptor<? extends CodeSection, CodeWriter>> interceptors(MyContext context) {
             return ListUtils.of(new MyInterceptor1(), new MyInterceptor2());
         }
     }

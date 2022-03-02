@@ -38,7 +38,11 @@ public class IntegrationTopologicalSortTest {
         }
     }
 
-    private static final class MyIntegration implements SmithyIntegration<MySettings, CodeWriter> {
+    private static final class MyIntegration implements SmithyIntegration<
+            MySettings,
+            CodeWriter,
+            CodegenContext<MySettings>
+    > {
         private final String name;
         private final byte priority;
         private final List<String> runBefore;
@@ -89,7 +93,9 @@ public class IntegrationTopologicalSortTest {
         }
     }
 
-    static List<String> toStrings(List<? extends SmithyIntegration<MySettings, CodeWriter>> integrations) {
+    static List<String> toStrings(
+            List<? extends SmithyIntegration<MySettings, CodeWriter, CodegenContext<MySettings>>> integrations
+    ) {
         return SmithyIntegration.sort(integrations).stream()
                 .map(SmithyIntegration::name)
                 .collect(Collectors.toList());
