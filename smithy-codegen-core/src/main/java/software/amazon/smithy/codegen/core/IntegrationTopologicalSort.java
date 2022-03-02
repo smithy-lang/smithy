@@ -76,10 +76,11 @@ final class IntegrationTopologicalSort<S extends SmithyCodegenSettings, I extend
         I previous = this.integrationLookup.put(integration.name(), integration);
         insertionOrder.put(integration.name(), insertionOrder.size());
         if (previous != null) {
-            throw new IllegalArgumentException("Conflicting SmithyIntegration names detected for "
-                                               + integration.name() + ": "
-                                               + integration.getClass().getCanonicalName() + " and "
-                                               + previous.getClass().getCanonicalName());
+            throw new IllegalArgumentException(String.format(
+                    "Conflicting SmithyIntegration names detected for '%s': %s and %s",
+                    integration.name(),
+                    integration.getClass().getCanonicalName(),
+                    previous.getClass().getCanonicalName()));
         }
     }
 

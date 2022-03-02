@@ -203,7 +203,7 @@ public class IntegrationTopologicalSortTest {
         RuntimeException e = Assertions.assertThrows(IllegalArgumentException.class,
                                                      () -> SmithyIntegration.sort(integrations));
         assertThat(e.getMessage(), equalTo(
-                "Conflicting SmithyIntegration names detected for a: software.amazon.smithy.codegen.core.IntegrationTopologicalSortTest.MyIntegration "
+                "Conflicting SmithyIntegration names detected for 'a': software.amazon.smithy.codegen.core.IntegrationTopologicalSortTest.MyIntegration "
                 + "and software.amazon.smithy.codegen.core.IntegrationTopologicalSortTest.MyIntegration"));
     }
 
