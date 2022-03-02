@@ -18,6 +18,9 @@ package software.amazon.smithy.codegen.core;
 import java.util.Collections;
 import java.util.List;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.utils.AbstractCodeWriter;
+import software.amazon.smithy.utils.CodeInterceptor;
+import software.amazon.smithy.utils.CodeSection;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -36,7 +39,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * @param <S> The settings object used to configure the generator.
  */
 @SmithyUnstableApi
-public interface SmithyIntegration<S extends SmithyCodegenSettings> {
+public interface SmithyIntegration<S extends SmithyCodegenSettings, W extends AbstractCodeWriter<W>> {
     /**
      * Preprocess the model before code generation.
      *
@@ -81,6 +84,23 @@ public interface SmithyIntegration<S extends SmithyCodegenSettings> {
      */
     default String name() {
         return getClass().getCanonicalName();
+    }
+
+    /**
+     * Gets a list of {@link CodeInterceptor}s to register with the {@link AbstractCodeWriter}s
+     * created by the code generator.
+     *
+     * @param model The model used for code generation.
+     * @param settings The settings object used for code generation.
+     * @param symbolProvider The SymbolProvider used for code generation.
+     * @return Returns the list of {@link CodeInterceptor}s.
+     */
+    default List<? extends CodeInterceptor<? extends CodeSection, W>> interceptors(
+            Model model,
+            S settings,
+            SymbolProvider symbolProvider
+    ) {
+        return Collections.emptyList();
     }
 
     /**
@@ -133,7 +153,10 @@ public interface SmithyIntegration<S extends SmithyCodegenSettings> {
      * @throws IllegalArgumentException If a cycle is found between integrations.
      * @throws IllegalArgumentException If multiple integrations share the same name.
      */
-    static <S extends SmithyCodegenSettings, I extends SmithyIntegration<S>> List<I> sort(Iterable<I> integrations) {
+    static <S extends SmithyCodegenSettings,
+            W extends AbstractCodeWriter<W>,
+            I extends SmithyIntegration<S, W>>
+    List<I> sort(Iterable<I> integrations) {
         return new IntegrationTopologicalSort<>(integrations).sort();
     }
 }
