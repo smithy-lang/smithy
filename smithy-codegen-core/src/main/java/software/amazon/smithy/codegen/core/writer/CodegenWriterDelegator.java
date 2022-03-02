@@ -72,7 +72,6 @@ public class CodegenWriterDelegator<T extends CodegenWriter<T, ?>> {
     private final Map<String, T> writers = new TreeMap<>();
     private final CodegenWriterFactory<T> codegenWriterFactory;
     private String automaticSeparator = "\n";
-    private UseShapeWriterObserver<T> useShaperWriterObserver = (shape, symbol, symbolProvider1, writer) -> { };
 
     /**
      * @param fileManifest Where code is written when {@link #flushWriters()} is called.
@@ -199,7 +198,6 @@ public class CodegenWriterDelegator<T extends CodegenWriter<T, ?>> {
         symbol.getDependencies().forEach(writer::addDependency);
 
         writer.pushState();
-        useShaperWriterObserver.observe(shape, symbol, symbolProvider, writer);
         writerConsumer.accept(writer);
         writer.popState();
     }
@@ -216,19 +214,6 @@ public class CodegenWriterDelegator<T extends CodegenWriter<T, ?>> {
      */
     public final void setAutomaticSeparator(String automaticSeparator) {
         this.automaticSeparator = Objects.requireNonNull(automaticSeparator);
-    }
-
-    /**
-     * Sets the observer to invoke when shape writers are used.
-     *
-     * <p>The observer is invoked when a shape writer is used, allowing for
-     * customizations to be applied to the shape writer like invoking service
-     * providers to write default contents to generated code.
-     *
-     * @param useShaperWriterObserver Shape writer use observer.
-     */
-    public void setOnShaperWriterUseObserver(UseShapeWriterObserver<T> useShaperWriterObserver) {
-        this.useShaperWriterObserver = Objects.requireNonNull(useShaperWriterObserver);
     }
 
     private T checkoutWriter(String filename, String namespace) {

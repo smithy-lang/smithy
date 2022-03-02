@@ -18,8 +18,6 @@ package software.amazon.smithy.codegen.core.writer;
 import java.util.Map;
 import java.util.TreeMap;
 import software.amazon.smithy.codegen.core.Symbol;
-import software.amazon.smithy.codegen.core.SymbolProvider;
-import software.amazon.smithy.model.shapes.Shape;
 
 /**
  * A pretty basic implementation of CodegenWriter.
@@ -58,13 +56,6 @@ final class MyWriter extends CodegenWriter<MyWriter, MyWriter.MyImportContainer>
 
         private String sanitizeDocString(String docs) {
             return docs.replace("!", "!!");
-        }
-    }
-
-    static final class MyObserver implements UseShapeWriterObserver<MyWriter> {
-        @Override
-        public void observe(Shape shape, Symbol symbol, SymbolProvider symbolProvider, MyWriter writer) {
-            writer.write("/// Writing $L", shape.getId());
         }
     }
 }
