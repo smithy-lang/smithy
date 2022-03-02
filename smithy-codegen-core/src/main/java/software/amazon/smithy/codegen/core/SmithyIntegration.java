@@ -17,6 +17,7 @@ package software.amazon.smithy.codegen.core;
 
 import java.util.Collections;
 import java.util.List;
+import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.utils.AbstractCodeWriter;
 import software.amazon.smithy.utils.CodeInterceptor;
@@ -37,43 +38,15 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * may be added in the future.
  *
  * @param <S> The settings object used to configure the generator.
+ * @param <W> The type of AbstractCodeWriter used by the generator.
+ * @param <C> The CodegenContext value used by the generator.
  */
 @SmithyUnstableApi
-public interface SmithyIntegration<S extends SmithyCodegenSettings, W extends AbstractCodeWriter<W>> {
-    /**
-     * Preprocess the model before code generation.
-     *
-     * <p>This can be used to remove unsupported features, remove traits
-     * from shapes (e.g., make members optional), etc.
-     *
-     * <p>By default, this method will return the given {@code model} as-is.
-     *
-     * @param model Model being generated.
-     * @param settings Setting used to generate code.
-     * @return Returns the updated model.
-     */
-    default Model preprocessModel(Model model, S settings) {
-        return model;
-    }
-
-    /**
-     * Updates the {@link SymbolProvider} used when generating code.
-     *
-     * <p>This can be used to customize the names of shapes, the package
-     * that code is generated into, add dependencies, add imports, etc.
-     *
-     * <p>By default, this method will return the given {@code symbolProvider}
-     * as-is.
-     *
-     * @param model Model being generated.
-     * @param settings Setting used to generate.
-     * @param symbolProvider The original {@code SymbolProvider}.
-     * @return The decorated {@code SymbolProvider}.
-     */
-    default SymbolProvider decorateSymbolProvider(Model model, S settings, SymbolProvider symbolProvider) {
-        return symbolProvider;
-    }
-
+public interface SmithyIntegration<
+        S extends SmithyCodegenSettings,
+        W extends AbstractCodeWriter<W>,
+        C extends CodegenContext<S>
+> {
     /**
      * Gets the name of the integration.
      *
@@ -84,23 +57,6 @@ public interface SmithyIntegration<S extends SmithyCodegenSettings, W extends Ab
      */
     default String name() {
         return getClass().getCanonicalName();
-    }
-
-    /**
-     * Gets a list of {@link CodeInterceptor}s to register with the {@link AbstractCodeWriter}s
-     * created by the code generator.
-     *
-     * @param model The model used for code generation.
-     * @param settings The settings object used for code generation.
-     * @param symbolProvider The SymbolProvider used for code generation.
-     * @return Returns the list of {@link CodeInterceptor}s.
-     */
-    default List<? extends CodeInterceptor<? extends CodeSection, W>> interceptors(
-            Model model,
-            S settings,
-            SymbolProvider symbolProvider
-    ) {
-        return Collections.emptyList();
     }
 
     /**
@@ -143,6 +99,69 @@ public interface SmithyIntegration<S extends SmithyCodegenSettings, W extends Ab
     }
 
     /**
+     * Preprocess the model before code generation.
+     *
+     * <p>This can be used to remove unsupported features, remove traits
+     * from shapes (e.g., make members optional), etc.
+     *
+     * <p>By default, this method will return the given {@code model} as-is.
+     *
+     * @param model Model being generated.
+     * @param settings Setting used to generate code.
+     * @return Returns the updated model.
+     */
+    default Model preprocessModel(Model model, S settings) {
+        return model;
+    }
+
+    /**
+     * Updates the {@link SymbolProvider} used when generating code.
+     *
+     * <p>This can be used to customize the names of shapes, the package
+     * that code is generated into, add dependencies, add imports, etc.
+     *
+     * <p>By default, this method will return the given {@code symbolProvider}
+     * as-is.
+     *
+     * <p>This integration method should be called only after {@link #preprocessModel}.
+     *
+     * @param model Model being generated.
+     * @param settings Setting used to generate.
+     * @param symbolProvider The original {@code SymbolProvider}.
+     * @return The decorated {@code SymbolProvider}.
+     */
+    default SymbolProvider decorateSymbolProvider(Model model, S settings, SymbolProvider symbolProvider) {
+        return symbolProvider;
+    }
+
+    /**
+     * Gets a list of {@link CodeInterceptor}s to register with the {@link AbstractCodeWriter}s
+     * created by the code generator.
+     *
+     * <p>This integration method should be called only after {@link #preprocessModel}
+     * and {@link #decorateSymbolProvider}.
+     *
+     * @param codegenContext Code generation context that can be queried when creating interceptors.
+     * @return Returns the list of {@link CodeInterceptor}s.
+     */
+    default List<? extends CodeInterceptor<? extends CodeSection, W>> interceptors(C codegenContext) {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Allows generators to write additional files, perform additional tasks, and
+     * interact directly with a {@link FileManifest} used to write files to the plugin's
+     * output.
+     *
+     * <p>This method should generally be invoked at the end of the code generation process.
+     *
+     * @param codegenContext Code generation context that can be queried when writing additional files.
+     */
+    default void customize(C codegenContext) {
+        // Does nothing by default.
+    }
+
+    /**
      * Topologically sorts a list of integrations based on priority,
      * runBefore, and runAfter, and integration names.
      *
@@ -155,7 +174,8 @@ public interface SmithyIntegration<S extends SmithyCodegenSettings, W extends Ab
      */
     static <S extends SmithyCodegenSettings,
             W extends AbstractCodeWriter<W>,
-            I extends SmithyIntegration<S, W>>
+            C extends CodegenContext<S>,
+            I extends SmithyIntegration<S, W, C>>
     List<I> sort(Iterable<I> integrations) {
         return new IntegrationTopologicalSort<>(integrations).sort();
     }
