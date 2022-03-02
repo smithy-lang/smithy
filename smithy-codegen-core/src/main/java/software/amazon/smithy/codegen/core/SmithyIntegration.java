@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.codegen.core;
 
+import java.util.Collections;
+import java.util.List;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -67,5 +69,71 @@ public interface SmithyIntegration<S extends SmithyCodegenSettings> {
      */
     default SymbolProvider decorateSymbolProvider(Model model, S settings, SymbolProvider symbolProvider) {
         return symbolProvider;
+    }
+
+    /**
+     * Gets the name of the integration.
+     *
+     * <p>This name is referred to when ordering the graph of integrations. The
+     * name defaults to the canonical class name if not overridden.
+     *
+     * @return Returns the integration name.
+     */
+    default String name() {
+        return getClass().getCanonicalName();
+    }
+
+    /**
+     * Gets the priority ordering relative to the topologically ordered integration graph
+     * determined by {@link #runBefore()} and {@link #runAfter()}.
+     *
+     * <p>Higher numbers come before lower numbers.
+     *
+     * <p>When ordering, implementations must not allow cycles, and no two integrations
+     * may have the same name.
+     *
+     * @return Returns the priority order.
+     */
+    default byte priority() {
+        return 0;
+    }
+
+    /**
+     * Gets the names of integrations that this integration must come before.
+     *
+     * <p>Dependencies are soft. Dependencies on integration names that cannot be found
+     * log a warning and are ignored.
+     *
+     * @return Returns the integration names this must come before.
+     */
+    default List<String> runBefore() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Gets the name of the integrations that this integration must come after.
+     *
+     * <p>Dependencies are soft. Dependencies on integration names that cannot be found
+     * log a warning and are ignored.
+     *
+     * @return Returns the integration names this must come after.
+     */
+    default List<String> runAfter() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Topologically sorts a list of integrations based on priority,
+     * runBefore, and runAfter, and integration names.
+     *
+     * @param integrations Integrations to sort.
+     * @param <S> The type of settings being sorted.
+     * @param <I> The type of integration to sort.
+     * @return Returns the sorted integrations.
+     * @throws IllegalArgumentException If a cycle is found between integrations.
+     * @throws IllegalArgumentException If multiple integrations share the same name.
+     */
+    static <S extends SmithyCodegenSettings, I extends SmithyIntegration<S>> List<I> sort(Iterable<I> integrations) {
+        return new IntegrationTopologicalSort<>(integrations).sort();
     }
 }
