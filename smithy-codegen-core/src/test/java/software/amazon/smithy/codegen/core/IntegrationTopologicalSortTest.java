@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.ListUtils;
 
 public class IntegrationTopologicalSortTest {
@@ -37,7 +38,7 @@ public class IntegrationTopologicalSortTest {
         }
     }
 
-    private static final class MyIntegration implements SmithyIntegration<MySettings> {
+    private static final class MyIntegration implements SmithyIntegration<MySettings, CodeWriter> {
         private final String name;
         private final byte priority;
         private final List<String> runBefore;
@@ -88,7 +89,7 @@ public class IntegrationTopologicalSortTest {
         }
     }
 
-    static List<String> toStrings(List<? extends SmithyIntegration<MySettings>> integrations) {
+    static List<String> toStrings(List<? extends SmithyIntegration<MySettings, CodeWriter>> integrations) {
         return SmithyIntegration.sort(integrations).stream()
                 .map(SmithyIntegration::name)
                 .collect(Collectors.toList());

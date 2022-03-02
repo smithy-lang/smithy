@@ -27,7 +27,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.logging.Logger;
 
-final class IntegrationTopologicalSort<S extends SmithyCodegenSettings, I extends SmithyIntegration<S>> {
+final class IntegrationTopologicalSort<S extends SmithyCodegenSettings, I extends SmithyIntegration<S, ?>> {
 
     private static final Logger LOGGER = Logger.getLogger(IntegrationTopologicalSort.class.getName());
 
