@@ -25,18 +25,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.ListUtils;
 
 public class IntegrationTopologicalSortTest {
 
-    private static final class MySettings implements SmithyCodegenSettings {
-        @Override
-        public ShapeId service() {
-            return ShapeId.from("smithy.example#MyService");
-        }
-    }
+    private static final class MySettings {}
 
     private static final class MyIntegration implements SmithyIntegration<
             MySettings,

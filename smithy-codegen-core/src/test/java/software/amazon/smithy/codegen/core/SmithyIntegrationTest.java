@@ -19,7 +19,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.CodeInterceptor;
 import software.amazon.smithy.utils.CodeSection;
 import software.amazon.smithy.utils.CodeWriter;
@@ -29,12 +28,7 @@ import software.amazon.smithy.utils.ListUtils;
 // like we expect.
 public class SmithyIntegrationTest {
 
-    private static final class MySettings implements SmithyCodegenSettings {
-        @Override
-        public ShapeId service() {
-            return ShapeId.from("smithy.example#MyService");
-        }
-    }
+    private static final class MySettings {}
 
     private static final class MyContext implements CodegenContext<MySettings> {
         @Override
