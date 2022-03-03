@@ -24,7 +24,7 @@ import software.amazon.smithy.model.Model;
  *
  * @param <S> The settings object used to configure the generator.
  */
-public interface CodegenContext<S extends SmithyCodegenSettings> {
+public interface CodegenContext<S> {
     /**
      * @return Gets the model being code generated.
      */
