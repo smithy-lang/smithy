@@ -638,7 +638,7 @@ public class SmithyBuildTest {
         assertTrue(result.anyBroken());
 
         // Now validate that we got the failure to serialize the model.
-        List<ValidationEvent> events = result.getProjectionResults().get(0).getEvents();
+        List<ValidationEvent> events = result.getProjectionResultsMap().get("foo").getEvents();
         assertThat(events, not(empty()));
         assertThat(events.get(0).getSeverity(), is(Severity.ERROR));
         assertThat(events.get(0).getMessage(), containsString("Unable to serialize trait"));
