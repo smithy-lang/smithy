@@ -1,6 +1,6 @@
 # Smithy Changelog
 
-## Next Release (TBD)
+## 1.18.0 (2022-03-07)
 
 ### Breaking changes
 
@@ -17,7 +17,45 @@
 
   Existing models that already use a set of other types will need to migrate to
   use a list rather than a set, and they will need to implement any necessary
-  uniqueness checks server-side as needed.
+  uniqueness checks server-side as needed. ([#1106](https://github.com/awslabs/smithy/pull/1106))
+* Removed unused `UseShapeWriterObserver` and related features. ([#1117](https://github.com/awslabs/smithy/pull/1117))
+
+### Features
+
+* Added interfaces for Codegen integrations, interceptors, and contexts. ([#1109](https://github.com/awslabs/smithy/pull/1109),
+  [#1118](https://github.com/awslabs/smithy/pull/1118))
+* Added support for typed sections, prependers and appenders, and more explicit newline control to `CodeWriter`. ([#1110](https://github.com/awslabs/smithy/pull/1110))
+* Added built-in `Symbol` and `Call` formatters, a typed context, and debug info to `CodeWriter`. ([#1095](https://github.com/awslabs/smithy/pull/1095),
+  [#1104](https://github.com/awslabs/smithy/pull/1104))
+* Added a `DependencyTracker` for `Symbol`s. ([#1107](https://github.com/awslabs/smithy/pull/1107))
+* Rewrote `CodeFormatter` to be easier to understand and evolve. ([#1104](https://github.com/awslabs/smithy/pull/1104))
+* Exposed `CodegenWriter`'s `DocumentationWriter`. ([#1083](https://github.com/awslabs/smithy/pull/1083))
+* Improved error messages from `SmithyBuilder`. ([#1100](https://github.com/awslabs/smithy/pull/1100))
+* Reduced copies made in `smithy-codegen-core` and `smithy-build`. ([#1103](https://github.com/awslabs/smithy/pull/1103))
+* Added non-optional method for `@httpMalformedRequestTest` uris. ([#1108](https://github.com/awslabs/smithy/pull/1108))
+* Added multi-code-unit characters to `@length` validation tests. ([#1092](https://github.com/awslabs/smithy/pull/1092))
+* Added malformed request tests for `set` types. ([#1094](https://github.com/awslabs/smithy/pull/1094))
+* Clarified a message for `@httpPayload` binding errors. ([#1113](https://github.com/awslabs/smithy/pull/1113))  
+* Deprecated `onSectionAppend` and `onSectionPrepend`. ([#1110](https://github.com/awslabs/smithy/pull/1110))
+
+### Bug Fixes
+
+* Fixed an incorrect warning when the `errors` property was set on a `service`. ([#1120](https://github.com/awslabs/smithy/pull/1120))
+* Fixed various issues in protocol tests. ([#1084](https://github.com/awslabs/smithy/pull/1084), [#1040](https://github.com/awslabs/smithy/pull/1040))
+* Fixed a failing code path in `SmithyBuild`. ([#1100](https://github.com/awslabs/smithy/pull/1100))
+
+### Documentation
+
+* Added note about escaping `\` in `@pattern`. ([#1091](https://github.com/awslabs/smithy/pull/1091))
+* Clarified error serialization behavior for `@restJson1`. ([#1099](https://github.com/awslabs/smithy/pull/1099))
+* Clarified defaulting behavior of `@httpResponseCode`. ([#1111](https://github.com/awslabs/smithy/pull/1111))
+* Clarified behavior of the `sources` plugin. ([#977](https://github.com/awslabs/smithy/pull/977))
+* Clarified how `@length` interacts with UTF-8 encoding. ([#1089](https://github.com/awslabs/smithy/pull/1089))
+* Fixed an `@idRef` example. ([#1087](https://github.com/awslabs/smithy/pull/1087))
+
+## Other
+
+* Migrated to using Gradle 7.3.3 to build Smithy. This should have no impactful downstream effects. ([#1085](https://github.com/awslabs/smithy/pull/1085))
 
 ## 1.17.0 (2022-02-04)
 
