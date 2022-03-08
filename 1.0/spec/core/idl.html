@@ -879,9 +879,11 @@ reference can be ignored.</p>
 
 <span class="nd">@deprecated</span><span class="w"></span>
 <span class="kd">set</span><span class="nc"> StringSet</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nd">@sensitive</span><span class="w"></span>
-<span class="w">    </span><span class="nl">member:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span><span class="nl">member:</span><span class="w"> </span><span class="vc">SensitiveString</span><span class="w"></span>
 }<span class="w"></span>
+
+<span class="nd">@sensitive</span><span class="w"></span>
+<span class="kd">string</span><span class="nc"> SensitiveString</span><span class="w"></span>
 </pre></div>
 </div>
 </div><div aria-labelledby="tab-10-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-10-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -890,10 +892,16 @@ reference can be ignored.</p>
         <span class="nt">&quot;smithy.example#StringSet&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;set&quot;</span><span class="p">,</span>
             <span class="nt">&quot;member&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#SensitiveString&quot;</span>
             <span class="p">},</span>
             <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;smithy.api#deprecated&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#SensitiveString&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#sensitive&quot;</span><span class="p">:</span> <span class="p">{}</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>

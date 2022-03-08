@@ -537,7 +537,7 @@ reference other shapes using <a class="reference internal" href="#member"><span 
 <td>Ordered collection of homogeneous values</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#set"><span class="std std-ref">Set</span></a></td>
-<td>Collection of unique homogeneous values</td>
+<td>Ordered collection of unique homogeneous values</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#map"><span class="std std-ref">Map</span></a></td>
 <td>Map data structure that maps string keys to homogeneous values</td>
@@ -628,10 +628,12 @@ example is <code class="docutils literal notranslate"><span class="pre">smithy.e
 </div>
 <div class="section" id="set">
 <span id="id7"></span><h3><a href="#set"><span class="section-number">1.5.3. </span>Set</a></h3>
-<p>The <em class="dfn">set</em> type represents a collection of unique homogeneous
-values. A set shape requires a single member named <code class="docutils literal notranslate"><span class="pre">member</span></code>.
-Sets are defined in the IDL using a <a class="reference internal" href="idl.html#idl-set"><span class="std std-ref">set_statement</span></a>.
-The following example defines a set of strings:</p>
+<p>The <em class="dfn">set</em> type represents an ordered collection of unique values. A set
+shape requires a single member named <code class="docutils literal notranslate"><span class="pre">member</span></code>, and the member MUST target
+either a string, blob, byte, short, integer, long, bigInteger, or bigDecimal
+shape. The targeted shape MUST NOT be marked with the <a class="reference internal" href="stream-traits.html#streaming-trait"><span class="std std-ref">streaming trait</span></a>.</p>
+<p>Sets are defined in the IDL using a <a class="reference internal" href="idl.html#idl-set"><span class="std std-ref">set_statement</span></a>. The
+following example defines a set of strings:</p>
 <div class="sphinx-tabs docutils container">
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-3-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-3-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-3-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-3-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
@@ -666,16 +668,10 @@ request.</p>
 <p>The shape ID of the member of a set is the set shape ID followed by
 <code class="docutils literal notranslate"><span class="pre">$member</span></code>. For example, the shape ID of the set member in the above
 example is <code class="docutils literal notranslate"><span class="pre">smithy.example#StringSet$member</span></code>.</p>
-<p class="rubric">Language support for sets</p>
-<p>Not all programming languages support set data structures. Such languages
-SHOULD represent sets as a custom set data structure that can interpret value
-hash codes and equality, or alternatively, store the values of a set data
+<p class="rubric">Language support for insertion ordered sets</p>
+<p>Not all programming languages support an insertion ordered set data
+structure. Such languages SHOULD store the values of a set data
 structure in a list and rely on validation to ensure uniqueness.</p>
-<p class="rubric">Set member ordering</p>
-<p>Sets MUST be insertion ordered. Not all programming languages that support
-sets support ordered sets, requiring them may be overly burdensome for users,
-or conflict with language idioms. Such languages SHOULD store the values
-of sets in a list and rely on validation to ensure uniqueness.</p>
 </div>
 <div class="section" id="map">
 <span id="id8"></span><h3><a href="#map"><span class="section-number">1.5.4. </span>Map</a></h3>

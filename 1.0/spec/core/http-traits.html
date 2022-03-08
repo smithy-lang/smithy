@@ -1175,7 +1175,8 @@ that target an <code class="docutils literal notranslate"><span class="pre">inte
 <p class="rubric"><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> use cases</p>
 <p>Marking an output <code class="docutils literal notranslate"><span class="pre">structure</span></code> member with this trait can be used to provide
 different response codes for an operation, like a 200 or 201 for a PUT
-operation.</p>
+operation. If this member isn't provided, server implementations MUST default
+to the <cite>code</cite> set by the <a class="reference internal" href="#http-trait"><span class="std std-ref">http trait</span></a>.</p>
 <p class="rubric"><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> is only used on output</p>
 <p><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> is ignored when resolving the HTTP bindings of an
 operation's input structure. This means that if a structure that contains

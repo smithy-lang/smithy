@@ -1534,14 +1534,15 @@ model are copied over literally. When a JAR is used as a source model, the
 Smithy models contained within the JAR are copied as a source model while the
 JAR itself is not copied. If there are no source models, an empty manifest is
 created.</p>
-<p>When applying a projection, a new model file is created that contains only
-the shapes, trait definitions, and metadata that were defined in a source
-model <em>and</em> all of the newly added shapes, traits, and metadata.</p>
+<p>When building projections other than <code class="docutils literal notranslate"><span class="pre">source</span></code>, a new model file is created
+that contains only the shapes, trait definitions, and metadata that were
+defined in a source model <em>and</em> all of the newly added shapes, traits, and
+metadata.</p>
 <p>The manifest file is a newline (<code class="docutils literal notranslate"><span class="pre">\n</span></code>) separated file that contains the
 relative path from the manifest file to each model file created by the
 sources plugin. Lines that start with a number sign (#) are comments and are
 ignored. A Smithy manifest file is stored in a JAR as <code class="docutils literal notranslate"><span class="pre">META-INF/smithy/manifest</span></code>.
-All model names referenced by the manifest are relative to <code class="docutils literal notranslate"><span class="pre">META-INF/smithy/</span></code>.</p>
+All model files referenced by the manifest are relative to <code class="docutils literal notranslate"><span class="pre">META-INF/smithy/</span></code>.</p>
 </div>
 </div>
 </div>

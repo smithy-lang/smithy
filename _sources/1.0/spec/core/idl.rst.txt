@@ -806,9 +806,11 @@ Traits can be applied to the set shape and its members:
 
         @deprecated
         set StringSet {
-            @sensitive
-            member: String
+            member: SensitiveString
         }
+
+        @sensitive
+        string SensitiveString
 
     .. code-tab:: json
 
@@ -818,10 +820,16 @@ Traits can be applied to the set shape and its members:
                 "smithy.example#StringSet": {
                     "type": "set",
                     "member": {
-                        "target": "smithy.api#String"
+                        "target": "smithy.example#SensitiveString"
                     },
                     "traits": {
                         "smithy.api#deprecated": {}
+                    }
+                },
+                "smithy.example#SensitiveString": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#sensitive": {}
                     }
                 }
             }

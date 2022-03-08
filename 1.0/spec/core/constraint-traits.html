@@ -291,7 +291,7 @@ contain a valid shape ID that targets an integer shape in the model.</p>
 
 <span class="nd">@trait</span><span class="w"></span>
 <span class="nd">@idRef</span>(<span class="nl">failWhenMissing:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span>)<span class="w"></span>
-<span class="kd">string</span><span class="nc"> IntegerRefTraitValue</span><span class="w"></span>
+<span class="kd">string</span><span class="nc"> integerRef</span><span class="w"></span>
 </pre></div>
 </div>
 </div><div aria-labelledby="tab-1-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-1-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -425,8 +425,8 @@ syntactically correct absolute shape ID.</li>
 the corresponding shape:</p>
 <table border="1" class="docutils align-default">
 <colgroup>
-<col width="23%" />
-<col width="77%" />
+<col width="10%" />
+<col width="90%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Shape</th>
@@ -444,7 +444,7 @@ the corresponding shape:</p>
 <td>The number of key-value pairs</td>
 </tr>
 <tr class="row-odd"><td>string</td>
-<td>The number of Unicode code points</td>
+<td>The number of <a class="reference external" href="https://www.unicode.org/glossary/#unicode_scalar_value">Unicode scalar values</a></td>
 </tr>
 <tr class="row-even"><td>blob</td>
 <td>The size of the blob in bytes</td>
@@ -503,6 +503,12 @@ expression match does not lead to a potential denial of service. See
 both &quot;hello&quot; and &quot;!hello!&quot; because it requires that just part of the
 string matches the regular expression, whereas <code class="docutils literal notranslate"><span class="pre">&#64;pattern(&quot;^\\w+$&quot;)</span></code>
 requires that the entire string matches the regular expression.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Pattern values that contain <code class="docutils literal notranslate"><span class="pre">\</span></code> need to <a class="reference internal" href="idl.html#string-escape-characters"><span class="std std-ref">escape it</span></a>.
+For example, the regular expression <code class="docutils literal notranslate"><span class="pre">^\w+$</span></code> would be specified as
+<code class="docutils literal notranslate"><span class="pre">&#64;pattern(&quot;^\\w+$&quot;)</span></code>.</p>
 </div>
 <div class="sphinx-tabs docutils container">
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-4-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-4-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-4-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-4-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@pattern</span>(<span class="s2">&quot;\\w+&quot;</span>)<span class="w"></span>
@@ -650,9 +656,7 @@ in a response.</p>
 <span id="uniqueitems"></span><span id="smithy-api-uniqueitems-trait"></span><h2><a href="#uniqueitems-trait"><span class="section-number">3.8. </span><code class="docutils literal notranslate"><span class="pre">uniqueItems</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that the items in a <a class="reference internal" href="model.html#list"><span class="std std-ref">List</span></a> MUST be unique.</dd>
-<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:test(list</span> <span class="pre">&gt;</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">simpleType)</span></code></p>
-<p><em>A list that targets any simple type.</em></p>
-</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(list</span> <span class="pre">&gt;</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">:test(string,</span> <span class="pre">blob,</span> <span class="pre">byte,</span> <span class="pre">short,</span> <span class="pre">integer,</span> <span class="pre">long,</span> <span class="pre">bigDecimal,</span> <span class="pre">bigInteger))</span></code></dd>
 <dt>Value type</dt><dd>Annotation trait.</dd>
 </dl>
 <div class="sphinx-tabs docutils container">
