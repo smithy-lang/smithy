@@ -23,10 +23,10 @@ import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class CodeWriterTest {
+public class SimpleCodeWriterTest {
     @Test
     public void limitsBlankLines() {
-        CodeWriter writer = new CodeWriter().trimBlankLines().trimTrailingSpaces();
+        SimpleCodeWriter writer = new SimpleCodeWriter().trimBlankLines().trimTrailingSpaces();
         writer.write("if ($L == \"foo\") {\n\n\n\n", "BAZ")
                 .indent()
                 .write("print($L)", "BAZ")
@@ -38,7 +38,7 @@ public class CodeWriterTest {
 
     @Test
     public void doesNotLimitBlankLines() {
-        CodeWriter writer = new CodeWriter().trimTrailingSpaces();
+        SimpleCodeWriter writer = new SimpleCodeWriter().trimTrailingSpaces();
         writer.write("if ($L == \"foo\") {\n\n\n\n", "BAZ")
                 .indent()
                 .write("print($L)", "BAZ")
@@ -50,7 +50,7 @@ public class CodeWriterTest {
 
     @Test
     public void resetsBlankLineCounterWhenContentAppears() {
-        CodeWriter writer = new CodeWriter().trimBlankLines().trimTrailingSpaces();
+        SimpleCodeWriter writer = new SimpleCodeWriter().trimBlankLines().trimTrailingSpaces();
         writer.write(".\n.\n.\n\n.\n\n\n.");
 
         assertThat(writer.toString(), equalTo(".\n.\n.\n\n.\n\n.\n"));
@@ -58,7 +58,7 @@ public class CodeWriterTest {
 
     @Test
     public void trimsTrailingSpaces() {
-        CodeWriter writer = new CodeWriter().trimBlankLines().trimTrailingSpaces();
+        SimpleCodeWriter writer = new SimpleCodeWriter().trimBlankLines().trimTrailingSpaces();
         writer.write("hello there  ");
 
         assertThat(writer.toString(), equalTo("hello there\n"));
@@ -66,7 +66,7 @@ public class CodeWriterTest {
 
     @Test
     public void toStringCanDisableTrimmingTrailingSpaces() {
-        CodeWriter writer = new CodeWriter()
+        SimpleCodeWriter writer = new SimpleCodeWriter()
                 .insertTrailingNewline(false)
                 .trimTrailingSpaces(false)
                 .writeInline("hi ");
@@ -76,7 +76,7 @@ public class CodeWriterTest {
 
     @Test
     public void trimsSpacesAndBlankLines() {
-        CodeWriter writer = new CodeWriter().trimTrailingSpaces().trimBlankLines();
+        SimpleCodeWriter writer = new SimpleCodeWriter().trimTrailingSpaces().trimBlankLines();
         writer.write("hello\n\n\nthere, bud");
 
         assertThat(writer.toString(), equalTo("hello\n\nthere, bud\n"));
@@ -84,7 +84,7 @@ public class CodeWriterTest {
 
     @Test
     public void insertsTrailingNewlines() {
-        CodeWriter writer = new CodeWriter().trimTrailingSpaces().trimBlankLines();
+        SimpleCodeWriter writer = new SimpleCodeWriter().trimTrailingSpaces().trimBlankLines();
         writer.write("hello there, bud");
 
         assertThat(writer.toString(), equalTo("hello there, bud\n"));
@@ -92,14 +92,14 @@ public class CodeWriterTest {
 
     @Test
     public void trailingNewlineIsAddedToEmptyText() {
-        CodeWriter writer = new CodeWriter().insertTrailingNewline();
+        SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline();
 
         assertThat(writer.toString(), equalTo("\n"));
     }
 
     @Test
     public void canWriteTextWithNewlinePrefixAndBlankLineTrimming() {
-        CodeWriter writer = CodeWriter.createDefault();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer
                 .write("/**")
                 .setNewlinePrefix(" * ")
@@ -128,7 +128,7 @@ public class CodeWriterTest {
 
     @Test
     public void handlesIndentation() {
-        CodeWriter writer = CodeWriter.createDefault();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer
                 .write("Hi")
                     .indent()
@@ -148,21 +148,21 @@ public class CodeWriterTest {
     @Test
     public void cannotDedentPastRoot() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
-            CodeWriter writer = CodeWriter.createDefault();
+            SimpleCodeWriter writer = new SimpleCodeWriter();
             writer.dedent(10);
         });
     }
 
     @Test
     public void canDedentToRoot() {
-        CodeWriter writer = CodeWriter.createDefault().indent(10).dedent(-1).write("Hi");
+        SimpleCodeWriter writer = new SimpleCodeWriter().indent(10).dedent(-1).write("Hi");
 
         assertThat(writer.toString(), equalTo("Hi\n"));
     }
 
     @Test
     public void canIndentDocBlocks() {
-        CodeWriter writer = CodeWriter.createDefault();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.indent()
                 .write("/**")
                 .setNewlinePrefix(" * ")
@@ -192,7 +192,7 @@ public class CodeWriterTest {
 
     @Test
     public void injectsNewlineWhenNeeded() {
-        CodeWriter writer = CodeWriter.createDefault();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.write("foo");
 
         assertThat(writer.toString(), equalTo("foo\n"));
@@ -200,7 +200,7 @@ public class CodeWriterTest {
 
     @Test
     public void doesNotInjectNewlineWhenNotNeeded() {
-        CodeWriter writer = CodeWriter.createDefault();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.write("foo");
 
         assertThat(writer.toString(), equalTo("foo\n"));
@@ -209,7 +209,7 @@ public class CodeWriterTest {
     @Test
     public void cannotPopMoreStatesThanExist() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
-            CodeWriter.createDefault()
+            new SimpleCodeWriter()
                     .pushState()
                     .popState()
                     .popState();
@@ -218,7 +218,7 @@ public class CodeWriterTest {
 
     @Test
     public void canPushAndPopState() {
-        CodeWriter writer = CodeWriter.createDefault();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer
                 .setNewlinePrefix("0: ")
                 .write("Hi")
@@ -242,7 +242,7 @@ public class CodeWriterTest {
 
     @Test
     public void writesBlocks() {
-        String result = CodeWriter.createDefault()
+        String result = new SimpleCodeWriter()
                 .openBlock("public final class $L {", "Foo")
                     .openBlock("public void main(String[] args) {")
                         .write("System.out.println(args[0]);")
@@ -255,7 +255,7 @@ public class CodeWriterTest {
 
     @Test
     public void doesNotWriteNullOptionally() {
-        CodeWriter w = CodeWriter.createDefault().insertTrailingNewline(false);
+        SimpleCodeWriter w = new SimpleCodeWriter().insertTrailingNewline(false);
         w.writeOptional(null);
 
         assertThat(w.toString(), equalTo(""));
@@ -263,7 +263,7 @@ public class CodeWriterTest {
 
     @Test
     public void doesNotWriteEmptyOptionals() {
-        CodeWriter w = CodeWriter.createDefault().insertTrailingNewline(false);
+        SimpleCodeWriter w = new SimpleCodeWriter().insertTrailingNewline(false);
         w.writeOptional(Optional.empty());
 
         assertThat(w.toString(), equalTo(""));
@@ -271,7 +271,7 @@ public class CodeWriterTest {
 
     @Test
     public void doesNotWriteEmptyStrings() {
-        CodeWriter w = CodeWriter.createDefault().insertTrailingNewline(false);
+        SimpleCodeWriter w = new SimpleCodeWriter().insertTrailingNewline(false);
         w.writeOptional("");
 
         assertThat(w.toString(), equalTo(""));
@@ -279,7 +279,7 @@ public class CodeWriterTest {
 
     @Test
     public void doesNotWriteOptionalsThatContainEmptyStrings() {
-        CodeWriter w = CodeWriter.createDefault().insertTrailingNewline(false);
+        SimpleCodeWriter w = new SimpleCodeWriter().insertTrailingNewline(false);
         w.writeOptional(Optional.of(""));
 
         assertThat(w.toString(), equalTo(""));
@@ -287,7 +287,7 @@ public class CodeWriterTest {
 
     @Test
     public void writesOptionalsWithNonEmptyStringValues() {
-        CodeWriter w = CodeWriter.createDefault().insertTrailingNewline(false);
+        SimpleCodeWriter w = new SimpleCodeWriter().insertTrailingNewline(false);
         w.writeOptional(Optional.of("hi!"));
 
         assertThat(w.toString(), equalTo("hi!"));
@@ -295,7 +295,7 @@ public class CodeWriterTest {
 
     @Test
     public void writesLiteralOptionalByUnwrappingIt() {
-        CodeWriter w = CodeWriter.createDefault();
+        SimpleCodeWriter w = new SimpleCodeWriter();
         w.write("$L", Optional.of("hi!"));
         w.write("$L", Optional.empty());
         w.write("$S", Optional.of("hi!"));
@@ -306,7 +306,7 @@ public class CodeWriterTest {
 
     @Test
     public void formatsNullAsEmptyString() {
-        CodeWriter w = CodeWriter.createDefault();
+        SimpleCodeWriter w = new SimpleCodeWriter();
         w.write("$L", (String) null);
         w.write("$S", (String) null);
 
@@ -315,7 +315,7 @@ public class CodeWriterTest {
 
     @Test
     public void writesWithNamedContext() {
-        CodeWriter w = CodeWriter.createDefault()
+        SimpleCodeWriter w = new SimpleCodeWriter()
                 .putContext("foo", "Hello!")
                 .pushState()
                 .putContext("foo", "Hola!")
@@ -328,7 +328,7 @@ public class CodeWriterTest {
 
     @Test
     public void canGetTypedContextValues() {
-        CodeWriter w = new CodeWriter();
+        SimpleCodeWriter w = new SimpleCodeWriter();
         w.putContext("foo", "hello");
         String value = w.getContext("foo", String.class);
 
@@ -337,7 +337,7 @@ public class CodeWriterTest {
 
     @Test
     public void failsWhenTypedContextDoesNotMatch() {
-        CodeWriter w = new CodeWriter();
+        SimpleCodeWriter w = new SimpleCodeWriter();
         w.pushState("a");
         w.putContext("foo", "hello");
         w.write("Hello {");
@@ -352,14 +352,14 @@ public class CodeWriterTest {
 
     @Test
     public void getsDebugInfoWithNoLines() {
-        CodeWriter w = new CodeWriter();
+        SimpleCodeWriter w = new SimpleCodeWriter();
 
         assertThat(w.getDebugInfo().toString(), equalTo("(Debug Info {path=ROOT, near=})"));
     }
 
     @Test
     public void getsDebugInfoWithNoLinesAndContext() {
-        CodeWriter w = new CodeWriter();
+        SimpleCodeWriter w = new SimpleCodeWriter();
         w.pushState("a");
         w.pushState("b");
 
@@ -368,7 +368,7 @@ public class CodeWriterTest {
 
     @Test
     public void getsDebugInfoWithTwoLines() {
-        CodeWriter w = new CodeWriter();
+        SimpleCodeWriter w = new SimpleCodeWriter();
         w.write("Hello {");
         w.write("  hello");
 
@@ -377,7 +377,7 @@ public class CodeWriterTest {
 
     @Test
     public void getsDebugInfoWithThreeLines() {
-        CodeWriter w = new CodeWriter();
+        SimpleCodeWriter w = new SimpleCodeWriter();
         w.write("Hello {");
         w.write("  hello1");
         w.write("  hello2");
@@ -386,23 +386,26 @@ public class CodeWriterTest {
     }
 
     @Test
-    public void canPrependAndAppendToSection() {
-        CodeWriter w = CodeWriter.createDefault();
-        w.onSectionPrepend("foo", () -> w.write("A"));
-        w.onSection("foo", text -> {
-            w.writeWithNoFormatting(text);
-            w.write("C");
-        });
-        w.onSectionAppend("foo", () -> w.write("D"));
-        w.pushState("foo").write("B").popState();
+    public void hasSections() {
+        // Setup the code writer and section interceptors.
+        SimpleCodeWriter w = new SimpleCodeWriter().putContext("testing", "123");
 
-        assertThat(w.toString(), equalTo("A\nB\nC\nD\n"));
+        w.onSection("foo", text -> w.write("Yes: $L", text));
+        w.onSection("foo", text -> w.write("Si: $L", text));
+        w.onSection("placeholder", text -> w.write("$testing:L"));
+
+        // Emit sections with their original values.
+        w.pushState("foo").write("Original!").popState();
+        w.injectSection(CodeSection.forName("placeholder"));
+        w.injectSection(CodeSection.forName("empty-placeholder"));
+
+        assertThat(w.toString(), equalTo("Si: Yes: Original!\n123\n"));
     }
 
     @Test
     public void allowsForCustomFormatters() {
         // Setup the code writer and section interceptors.
-        CodeWriter w = CodeWriter.createDefault();
+        SimpleCodeWriter w = new SimpleCodeWriter();
         w.putFormatter('X', (text, indent) -> text.toString().replace("\n", "\n" + indent + indent));
         w.setIndentText(" ");
         w.indent(2);
@@ -413,7 +416,7 @@ public class CodeWriterTest {
 
     @Test
     public void canIntegrateSectionsWithComplexStates() {
-        CodeWriter writer = CodeWriter.createDefault();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
 
         writer.onSection("foo", text -> writer.write("Intercepted: " + text + "!\nYap!"));
 
@@ -460,7 +463,7 @@ public class CodeWriterTest {
 
     @Test
     public void canIntegrateInlineSectionsWithComplexStates() {
-        CodeWriter writer = CodeWriter.createDefault();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
 
         writer.onSection("foo", text -> writer.write(text + "!\nYap!"));
 
@@ -498,7 +501,7 @@ public class CodeWriterTest {
 
     @Test
     public void hasOpenBlockRunnable0() {
-        CodeWriter writer = CodeWriter.createDefault();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         String result = writer.openBlock("public {", "}", () -> {
             writer.write("hi();");
         })
@@ -509,7 +512,7 @@ public class CodeWriterTest {
 
     @Test
     public void hasOpenBlockRunnable1() {
-        CodeWriter writer = CodeWriter.createDefault();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         String result = writer.openBlock("public final class $L {", "}", "Foo", () -> {
             writer.openBlock("public void main(String[] args) {", "}", () -> {
                 writer.write("System.out.println(args[0]);");
@@ -522,7 +525,7 @@ public class CodeWriterTest {
 
     @Test
     public void hasOpenBlockRunnable2() {
-        CodeWriter writer = CodeWriter.createDefault();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         String result = writer.openBlock("public $L $L {", "}", "1", "2", () -> {
             writer.write("hi();");
         })
@@ -533,7 +536,7 @@ public class CodeWriterTest {
 
     @Test
     public void hasOpenBlockRunnable3() {
-        CodeWriter writer = CodeWriter.createDefault();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         String result = writer.openBlock("public $L $L $L {", "}", "1", "2", "3", () -> {
             writer.write("hi();");
         })
@@ -544,7 +547,7 @@ public class CodeWriterTest {
 
     @Test
     public void hasOpenBlockRunnable4() {
-        CodeWriter writer = CodeWriter.createDefault();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         String result = writer.openBlock("public $L $L $L $L {", "}", "1", "2", "3", "4", () -> {
             writer.write("hi();");
         })
@@ -555,7 +558,7 @@ public class CodeWriterTest {
 
     @Test
     public void hasOpenBlockRunnable5() {
-        CodeWriter writer = CodeWriter.createDefault();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         String result = writer.openBlock("public $L $L $L $L $L {", "}", "1", "2", "3", "4", "5", () -> {
             writer.write("hi();");
         })
@@ -566,7 +569,7 @@ public class CodeWriterTest {
 
     @Test
     public void poppedSectionsEscapeDollars() {
-        CodeWriter writer = CodeWriter.createDefault();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         String result = writer.pushState("foo").write("$$Hello").popState().toString();
 
         assertThat(result, equalTo("$Hello\n"));
@@ -574,7 +577,7 @@ public class CodeWriterTest {
 
     @Test
     public void poppedSectionsEscapeCustomExpressionStarts() {
-        CodeWriter writer = CodeWriter.createDefault();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         String result = writer
                 .setExpressionStart('#')
                 .pushState("foo")
@@ -589,7 +592,7 @@ public class CodeWriterTest {
 
     @Test
     public void canWriteInline() {
-        String result = CodeWriter.createDefault()
+        String result = new SimpleCodeWriter()
                 .insertTrailingNewline(false)
                 .writeInline("foo")
                 .writeInline(", bar")
@@ -600,7 +603,7 @@ public class CodeWriterTest {
 
     @Test
     public void writeInlineHandlesSingleNewline() {
-        String result = CodeWriter.createDefault()
+        String result = new SimpleCodeWriter()
                 .insertTrailingNewline(false)
                 .writeInline("foo").indent()
                 .writeInline(":\nbar")
@@ -611,7 +614,7 @@ public class CodeWriterTest {
 
     @Test
     public void writeInlineHandlesMultipleNewlines() {
-        String result = CodeWriter.createDefault()
+        String result = new SimpleCodeWriter()
                 .insertTrailingNewline(false)
                 .writeInline("foo:")
                 .writeInline(" [").indent()
@@ -624,7 +627,7 @@ public class CodeWriterTest {
 
     @Test
     public void writeInlineStripsSpaces() {
-        String result = CodeWriter.createDefault()
+        String result = new SimpleCodeWriter()
                 .insertTrailingNewline(false)
                 .trimTrailingSpaces()
                 .writeInline("foo ")
@@ -635,7 +638,7 @@ public class CodeWriterTest {
 
     @Test
     public void writeInlineDoesNotAllowIndentationToBeEscaped() {
-        String result = CodeWriter.createDefault()
+        String result = new SimpleCodeWriter()
                 .setIndentText("\t")
                 .insertTrailingNewline(false)
                 .indent()
@@ -655,8 +658,7 @@ public class CodeWriterTest {
 
     @Test
     public void newlineCanBeDisabled() {
-        CodeWriter writer = CodeWriter
-                .createDefault()
+        SimpleCodeWriter writer = new SimpleCodeWriter()
                 .insertTrailingNewline();
         String result = writer
                 .disableNewlines()
@@ -668,8 +670,7 @@ public class CodeWriterTest {
 
     @Test
     public void newlineCanBeDisabledWithEmptyString() {
-        CodeWriter writer = CodeWriter
-                .createDefault()
+        SimpleCodeWriter writer = new SimpleCodeWriter()
                 .insertTrailingNewline();
         String result = writer
                 .setNewline("")
@@ -682,8 +683,7 @@ public class CodeWriterTest {
 
     @Test
     public void newlineCanBeMultipleCharacters() {
-        CodeWriter writer = CodeWriter
-                .createDefault()
+        SimpleCodeWriter writer = new SimpleCodeWriter()
                 .insertTrailingNewline()
                 .setNewline("\r\n");
         String result = writer
@@ -696,8 +696,7 @@ public class CodeWriterTest {
 
     @Test
     public void newlineCanBeLotsOfCharacters() {
-        CodeWriter writer = CodeWriter
-                .createDefault()
+        SimpleCodeWriter writer = new SimpleCodeWriter()
                 .insertTrailingNewline()
                 .setNewline("HELLO_THIS_IS_A_NEWLINE!!!");
         String result = writer
@@ -710,7 +709,7 @@ public class CodeWriterTest {
 
     @Test
     public void settingNewlineEnablesNewlines() {
-        CodeWriter writer = CodeWriter.createDefault();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         String result = writer
                 .disableNewlines()
                 .setNewline("\n")
@@ -722,7 +721,7 @@ public class CodeWriterTest {
 
     @Test
     public void canSetCustomExpressionStartChar() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.pushState();
         writer.setExpressionStart('#');
         writer.write("Hi, #L", "1");
@@ -748,17 +747,17 @@ public class CodeWriterTest {
 
     @Test
     public void expressionStartCannotBeSpace() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new CodeWriter().setExpressionStart(' '));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new SimpleCodeWriter().setExpressionStart(' '));
     }
 
     @Test
     public void expressionStartCannotBeNewline() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new CodeWriter().setExpressionStart('\n'));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new SimpleCodeWriter().setExpressionStart('\n'));
     }
 
     @Test
     public void canFilterSections() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.pushFilteredState(s -> s.toUpperCase(Locale.ENGLISH));
         writer.write("Hello!");
         writer.write("Goodbye!");
@@ -769,7 +768,7 @@ public class CodeWriterTest {
 
     @Test
     public void canFilterSectionsWithInterceptorsOutsideState() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.onSection("foo", text -> {
             writer.writeWithNoFormatting(text + "??");
         });
@@ -785,7 +784,7 @@ public class CodeWriterTest {
 
     @Test
     public void canFilterSectionsWithInterceptorsInsideState() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.pushState("foo");
         writer.onSection("foo", text -> {
             writer.writeWithNoFormatting(text + "??");
@@ -802,7 +801,7 @@ public class CodeWriterTest {
     @Test
     public void canComposeSetWithSection() {
         String testSection = "testSection";
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
 
         writer.onSection(testSection, text -> writer.writeInline(text + "1, "));
         writer.onSection(testSection, text -> writer.writeInline(text + "2, "));
@@ -816,7 +815,7 @@ public class CodeWriterTest {
     @Test
     public void sectionWithWrite() {
         String testSection = "TEST_SECTION";
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
 
         writer.onSection(testSection, text -> {
             writer.write(text + "addition");
@@ -831,7 +830,7 @@ public class CodeWriterTest {
     @Test
     public void sectionWithWriteInline() {
         String testSection = "TEST_SECTION";
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
 
         writer.onSection(testSection, text -> {
             writer.writeInline(text + "inline addition");
@@ -845,7 +844,7 @@ public class CodeWriterTest {
 
     @Test
     public void canUnwriteMatchingStrings() {
-        CodeWriter writer = new CodeWriter().insertTrailingNewline(false);
+        SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
         writer.writeInline("Hello there");
         writer.unwrite(" there");
 
@@ -854,7 +853,7 @@ public class CodeWriterTest {
 
     @Test
     public void unwriteDoesNothingWhenNoMatch() {
-        CodeWriter writer = new CodeWriter().insertTrailingNewline(false);
+        SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
         writer.writeInline("Hello there");
         writer.unwrite(" nope");
 
@@ -863,7 +862,7 @@ public class CodeWriterTest {
 
     @Test
     public void canUnwriteWhenSubstringTooLong() {
-        CodeWriter writer = new CodeWriter().insertTrailingNewline(false);
+        SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
         writer.writeInline("");
         writer.unwrite("nope");
 
@@ -872,7 +871,7 @@ public class CodeWriterTest {
 
     @Test
     public void canUnwriteWithTemplates() {
-        CodeWriter writer = new CodeWriter().insertTrailingNewline(false);
+        SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
         writer.writeInline("Hi.Hello");
         writer.unwrite("$L", "Hello");
 
@@ -881,7 +880,7 @@ public class CodeWriterTest {
 
     @Test
     public void canUnwriteWithTemplatesThatExpandToNothing() {
-        CodeWriter writer = new CodeWriter().insertTrailingNewline(false);
+        SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
         writer.writeInline("Hi.Hello");
         writer.unwrite("$L", "");
 
@@ -890,7 +889,7 @@ public class CodeWriterTest {
 
     @Test
     public void formattersOnRootStateWorkOnAllStates() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.putFormatter('X', (value, indent) -> value.toString().toUpperCase(Locale.ENGLISH));
         writer.writeInline("$X", "hi");
 
@@ -903,7 +902,7 @@ public class CodeWriterTest {
 
     @Test
     public void formattersArePerState() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         // X is uppercase in all states unless overridden.
         writer.putFormatter('X', (value, indent) -> value.toString().toUpperCase(Locale.ENGLISH));
         writer.writeInline("$X", "salutations");
@@ -924,7 +923,7 @@ public class CodeWriterTest {
 
     @Test
     public void canCopySettingsIntoWriter() {
-        CodeWriter a = new CodeWriter();
+        SimpleCodeWriter a = new SimpleCodeWriter();
         a.setNewline("\r\n");
         a.setExpressionStart('#');
         a.setIndentText("  ");
@@ -933,7 +932,7 @@ public class CodeWriterTest {
         a.trimBlankLines(2);
         a.insertTrailingNewline(false);
 
-        CodeWriter b = new CodeWriter();
+        SimpleCodeWriter b = new SimpleCodeWriter();
         b.copySettingsFrom(a);
         b.indent();
 
@@ -950,8 +949,8 @@ public class CodeWriterTest {
 
     @Test
     public void copyingSettingsDoesNotMutateOtherWriter() {
-        CodeWriter a = new CodeWriter();
-        CodeWriter b = new CodeWriter();
+        SimpleCodeWriter a = new SimpleCodeWriter();
+        SimpleCodeWriter b = new SimpleCodeWriter();
         b.copySettingsFrom(a);
         b.writeInline("Hello");
 
@@ -961,7 +960,7 @@ public class CodeWriterTest {
 
     @Test
     public void canPassRunnableToFormatters() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.write("Hi, $C.", (Runnable) () -> writer.writeInline("TheName"));
         assertThat(writer.toString(), equalTo("Hi, TheName.\n"));
     }
@@ -969,7 +968,7 @@ public class CodeWriterTest {
     // This behavior completely removes the need for inline section syntax.
     @Test
     public void canPassRunnableToFormattersAndEvenCreateInlineSections() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
 
         writer.onSection("Name", text -> {
             writer.writeInline("$L (name)", text);
@@ -986,16 +985,108 @@ public class CodeWriterTest {
 
     @Test
     public void canPassRunnableAndKeepTrailingNewline() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.write("Hi, $C.", (Runnable) () -> writer.write("TheName\n"));
         assertThat(writer.toString(), equalTo("Hi, TheName\n.\n"));
     }
 
     @Test
     public void canPassRunnableAndByDefaultDoesNotKeepTrailingNewline() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.write("Hi, $C.", (Runnable) () -> writer.write("TheName"));
         assertThat(writer.toString(), equalTo("Hi, TheName.\n"));
+    }
+
+    @Test
+    public void canCreateTypedSections() {
+        MyWriter writer = new MyWriter();
+
+        // When a section of type MyPojo is encountered, intercept it.
+        writer.onSection(new CodeInterceptor<MyPojo, MyWriter>() {
+            @Override
+            public Class<MyPojo> sectionType() {
+                return MyPojo.class;
+            }
+
+            @Override
+            public void write(MyWriter writer, String previousText, MyPojo section) {
+                if (section.name.equals("Thomas")) {
+                    section.count++;
+                    writer.write("Hi, Thomas!");
+                }
+                writer.writeInlineWithNoFormatting(previousText);
+            }
+        });
+
+        // Create a custom typed section value.
+        MyPojo myPojo = new MyPojo("Thomas", 0);
+
+        writer.pushState(myPojo);
+        writer.write("How are you?");
+        writer.popState(); // At this point, intercept the section.
+
+        assertThat(myPojo.count, equalTo(1));
+        assertThat(writer.toString(), equalTo("Hi, Thomas!\nHow are you?\n"));
+    }
+
+    private static final class MyWriter extends AbstractCodeWriter<MyWriter> {}
+
+    private static final class MyPojo implements CodeSection {
+        public int count = 0;
+        public String name = "";
+
+        MyPojo(String name, int count) {
+            this.name = name;
+            this.count = count;
+        }
+    }
+
+    @Test
+    public void canAppendToTypedSections() {
+        MyWriter writer = new MyWriter();
+        MyPojo myPojo = new MyPojo("Thomas", 0);
+        writer.pushState(myPojo);
+
+        writer.onSection(CodeInterceptor.appender(MyPojo.class, (w, section) -> {
+            if (section.name.equals("Thomas")) {
+                section.count++;
+                w.write("Hi, Thomas!");
+            }
+        }));
+
+        writer.write("How are you?");
+        writer.popState();
+
+        assertThat(myPojo.count, equalTo(1));
+        assertThat(writer.toString(), equalTo("How are you?\nHi, Thomas!\n"));
+    }
+
+    @Test
+    public void canPrependToTypedSections() {
+        MyWriter writer = new MyWriter();
+        MyPojo myPojo = new MyPojo("Thomas", 0);
+        writer.pushState(myPojo);
+
+        writer.onSection(new CodeInterceptor.Prepender<MyPojo, MyWriter>() {
+            @Override
+            public Class<MyPojo> sectionType() {
+                return MyPojo.class;
+            }
+
+            @Override
+            public void prepend(MyWriter writer, MyPojo section) {
+                if (section.name.equals("Thomas")) {
+                    section.count++;
+                    writer.write("Hi, Thomas!");
+                }
+            }
+        });
+
+        writer.write("How are you?");
+        writer.popState();
+
+        assertThat(myPojo.count, equalTo(1));
+        assertThat(writer.toString(), equalTo("Hi, Thomas!\nHow are you?\n"));
     }
 
     // Section interceptors are executed after popping state, which means they
@@ -1004,7 +1095,7 @@ public class CodeWriterTest {
     // map over a state, but aren't part of it.
     @Test
     public void canAccessOnlyOuterStateVariablesInPopState() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.putContext("baz", 1);
 
         writer.pushState("foo");
@@ -1018,8 +1109,66 @@ public class CodeWriterTest {
     }
 
     @Test
+    public void injectSectionProvidesShorterWayToAddSectionHooks() {
+        MyWriter writer = new MyWriter();
+        writer.onSection(CodeInterceptor.appender(MyPojo.class, (w, section) -> w.write("$L", section.name)));
+        writer.onSection(CodeInterceptor.appender(MyPojo.class, (w, section) -> w.write("Foo")));
+        writer.onSection(CodeInterceptor.appender(MyPojo.class, (w, section) -> w.write("Bar")));
+        writer.write("Name?");
+        writer.injectSection(new MyPojo("Thomas", 0));
+
+        assertThat(writer.toString(), equalTo("Name?\nThomas\nFoo\nBar\n"));
+    }
+
+    // This test ensures that infinite recursion isn't caused when an interceptor is
+    // created that intercepts a CodeSection instances without filtering based on name.
+    // This is prevented by using "AnonymousCodeSection"s internally within
+    // AbstractTypedCodeWriter.
+    @Test
+    public void injectsInlineSectionsThatWriteInlineWithoutInfiniteRecursion() {
+        MyWriter writer = new MyWriter();
+        writer.onSection(CodeInterceptor.appender(CodeSection.class, (w, section) -> w.write("DROP_TABLE1,")));
+        writer.onSection(CodeInterceptor.appender(CodeSection.class, (w, section) -> w.write("DROP_TABLE2,")));
+        writer.onSection(CodeInterceptor.appender(CodeSection.class, (w, section) -> w.write("DROP_TABLE3,")));
+        writer.write("Name: ${L@foo|}", "");
+
+        assertThat(writer.toString(), equalTo("Name: DROP_TABLE1,\n"
+                                              + "      DROP_TABLE2,\n"
+                                              + "      DROP_TABLE3,\n"));
+    }
+
+    @Test
+    public void canWriteInlineSectionsWithNoNewlines() {
+        MyWriter writer = new MyWriter();
+        writer.onSection(CodeInterceptor.appender(CodeSection.class, (w, section) -> w.writeInline("DROP_TABLE1,")));
+        writer.onSection(CodeInterceptor.appender(CodeSection.class, (w, section) -> w.writeInline("DROP_TABLE2,")));
+        writer.onSection(CodeInterceptor.appender(CodeSection.class, (w, section) -> w.writeInline("DROP_TABLE3,")));
+        writer.onSection(CodeInterceptor.appender(CodeSection.class, (w, section) -> w.unwrite(",")));
+        writer.write("Name: ${L@foo}", "");
+
+        assertThat(writer.toString(), equalTo("Name: DROP_TABLE1,DROP_TABLE2,DROP_TABLE3\n"));
+    }
+
+    @Test
+    public void injectsEmptySections() {
+        MyWriter writer = new MyWriter().insertTrailingNewline(false);
+        writer.injectSection(new MyPojo("Thomas", 0));
+
+        assertThat(writer.toString(), equalTo(""));
+    }
+
+    @Test
+    public void injectsSingleSectionContent() {
+        MyWriter writer = new MyWriter();
+        writer.onSection(CodeInterceptor.appender(MyPojo.class, (w, section) -> w.write(section.name)));
+        writer.injectSection(new MyPojo("Name", 0));
+
+        assertThat(writer.toString(), equalTo("Name\n"));
+    }
+
+    @Test
     public void ensuresNewlineIsPresent() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.writeInline("Foo");
         writer.ensureNewline();
         writer.writeInline("Bar");

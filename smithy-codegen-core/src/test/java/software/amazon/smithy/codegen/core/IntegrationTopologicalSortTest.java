@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SimpleCodeWriter;
 
 public class IntegrationTopologicalSortTest {
 
@@ -34,7 +34,7 @@ public class IntegrationTopologicalSortTest {
 
     private static final class MyIntegration implements SmithyIntegration<
             MySettings,
-            CodeWriter,
+            SimpleCodeWriter,
             CodegenContext<MySettings>
     > {
         private final String name;
@@ -88,7 +88,7 @@ public class IntegrationTopologicalSortTest {
     }
 
     static List<String> toStrings(
-            List<? extends SmithyIntegration<MySettings, CodeWriter, CodegenContext<MySettings>>> integrations
+            List<? extends SmithyIntegration<MySettings, SimpleCodeWriter, CodegenContext<MySettings>>> integrations
     ) {
         return SmithyIntegration.sort(integrations).stream()
                 .map(SmithyIntegration::name)

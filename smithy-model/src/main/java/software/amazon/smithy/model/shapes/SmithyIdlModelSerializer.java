@@ -44,6 +44,7 @@ import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.utils.AbstractCodeWriter;
 import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.ListUtils;
@@ -776,7 +777,7 @@ public final class SmithyIdlModelSerializer {
          * Formatter that quotes (and escapes) a string unless it's a valid object key string.
          */
         private String optionallyQuoteKey(Object key, String indent) {
-            String formatted = CodeWriter.formatLiteral(key);
+            String formatted = AbstractCodeWriter.formatLiteral(key);
             if (UNQUOTED_KEY_STRING.matcher(formatted).matches()) {
                 return formatted;
             }

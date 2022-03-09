@@ -28,27 +28,26 @@ import software.amazon.smithy.codegen.core.SymbolDependency;
 import software.amazon.smithy.codegen.core.SymbolDependencyContainer;
 import software.amazon.smithy.codegen.core.SymbolReference;
 import software.amazon.smithy.utils.AbstractCodeWriter;
-import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- * A {@code CodeGenWriter} is a specialized {@link CodeWriter} that makes it
+ * A {@code SymbolWriter} is a specialized {@link AbstractCodeWriter} that makes it
  * easier to implement code generation that utilizes {@link Symbol}s and
  * {@link SymbolDependency} values.
  *
- * <p>A {@code CodegenWriter} is expected to be subclassed, and the
+ * <p>A {@code SymbolWriter} is expected to be subclassed, and the
  * subclass is expected to implement language-specific functionality
  * like writing documentation comments, tracking "imports", and adding
  * any other kinds of helpful functionality for generating source code
  * for a programming language.
  *
- * <p>The following example shows how a subclass of {@code CodegenWriter}
+ * <p>The following example shows how a subclass of {@code SymbolWriter}
  * should be created. CodegenWriters are expected to define a recursive
  * type signature (notice that {@code MyWriter} is a generic parametric
  * type in its own type definition).
  *
  * <pre>{@code
- * public final class MyWriter extends CodegenWriter<MyWriter, MyImportContainer> {
+ * public final class MyWriter extends SymbolWriter<MyWriter, MyImportContainer> {
  *     public MyWriter(String namespace) {
  *         super(new MyDocumentationWriter(), new MyImportContainer(namespace));
  *     }
@@ -69,7 +68,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  *
  * <h2>Formatting symbols with "T"</h2>
  *
- * <p>{@code CodegenWriter} registers a default formatter for "T" that writes
+ * <p>{@code SymbolWriter} registers a default formatter for "T" that writes
  * {@link Symbol}s and {@link SymbolReference}s. Imports needed by these types
  * are automatically registered with {@link #addUseImports} for a {@code Symbol}
  * and {@link #addImport} for a {@code SymbolReference}. Programming languages
@@ -80,25 +79,23 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  *
  * @param <T> The concrete type, used to provide a fluent interface.
  * @param <U> The import container used by the writer to manage imports.
- * @deprecated prefer {@link SymbolWriter}. This will be removed in a future release.
  */
 @SmithyUnstableApi
-@Deprecated
-public class CodegenWriter<T extends CodegenWriter<T, U>, U extends ImportContainer>
-        extends CodeWriter implements SymbolDependencyContainer {
+public class SymbolWriter<T extends SymbolWriter<T, U>, U extends ImportContainer>
+        extends AbstractCodeWriter<T> implements SymbolDependencyContainer {
 
-    private static final Logger LOGGER = Logger.getLogger(CodegenWriter.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SymbolWriter.class.getName());
     private static final String RELATIVIZE_SYMBOLS = "__CodegenWriterRelativizeSymbols";
 
     private final List<SymbolDependency> dependencies = new ArrayList<>();
-    private final DocumentationWriter<T> documentationWriter;
+    private final DocWriter<T> documentationWriter;
     private final U importContainer;
 
     /**
      * @param documentationWriter Writes out documentation emitted by a {@code Runnable}.
      * @param importContainer Container used to persist and filter imports based on package names.
      */
-    public CodegenWriter(DocumentationWriter<T> documentationWriter, U importContainer) {
+    public SymbolWriter(DocWriter<T> documentationWriter, U importContainer) {
         this.documentationWriter = documentationWriter;
         this.importContainer = importContainer;
 
@@ -163,7 +160,7 @@ public class CodegenWriter<T extends CodegenWriter<T, U>, U extends ImportContai
      *
      * @return Returns the documentation writer.
      */
-    public final DocumentationWriter<T> getDocumentationWriter() {
+    public final DocWriter<T> getDocumentationWriter() {
         return documentationWriter;
     }
 
