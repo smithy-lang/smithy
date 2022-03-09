@@ -166,7 +166,7 @@ public final class ModelAssembler {
         documentNodes.clear();
         disablePrelude = false;
         disableValidation = false;
-        validationEventListener = null;
+        validationEventListener = DEFAULT_EVENT_LISTENER;
         return this;
     }
 
