@@ -21,8 +21,8 @@ import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.utils.CodeInterceptor;
 import software.amazon.smithy.utils.CodeSection;
-import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SimpleCodeWriter;
 
 // This test basically just ensures the generics used in SmithyIntegration work
 // like we expect.
@@ -53,7 +53,7 @@ public class SmithyIntegrationTest {
     }
 
     private static final class MyIntegration implements SmithyIntegration<
-            MySettings, CodeWriter, MyContext> {
+            MySettings, SimpleCodeWriter, MyContext> {
         private final String name;
 
         MyIntegration(String name) {
@@ -66,33 +66,33 @@ public class SmithyIntegrationTest {
         }
 
         @Override
-        public List<? extends CodeInterceptor<? extends CodeSection, CodeWriter>> interceptors(MyContext context) {
+        public List<? extends CodeInterceptor<? extends CodeSection, SimpleCodeWriter>> interceptors(MyContext context) {
             return ListUtils.of(new MyInterceptor1(), new MyInterceptor2());
         }
     }
 
     private static final class SomeSection implements CodeSection {}
 
-    private static final class MyInterceptor1 implements CodeInterceptor.Appender<SomeSection, CodeWriter> {
+    private static final class MyInterceptor1 implements CodeInterceptor.Appender<SomeSection, SimpleCodeWriter> {
         @Override
         public Class<SomeSection> sectionType() {
             return SomeSection.class;
         }
 
         @Override
-        public void append(CodeWriter writer, SomeSection section) {
+        public void append(SimpleCodeWriter writer, SomeSection section) {
             writer.write("Hi1");
         }
     }
 
-    private static final class MyInterceptor2 implements CodeInterceptor.Appender<SomeSection, CodeWriter> {
+    private static final class MyInterceptor2 implements CodeInterceptor.Appender<SomeSection, SimpleCodeWriter> {
         @Override
         public Class<SomeSection> sectionType() {
             return SomeSection.class;
         }
 
         @Override
-        public void append(CodeWriter writer, SomeSection section) {
+        public void append(SimpleCodeWriter writer, SomeSection section) {
             writer.write("Hi2");
         }
     }

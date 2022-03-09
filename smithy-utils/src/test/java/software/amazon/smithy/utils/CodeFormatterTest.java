@@ -25,8 +25,8 @@ import org.junit.jupiter.api.Test;
 
 public class CodeFormatterTest {
 
-    private CodeWriter createWriter() {
-        return CodeWriter.createDefault();
+    private SimpleCodeWriter createWriter() {
+        return new SimpleCodeWriter();
     }
 
     private static String valueOf(Object value, String indent) {
@@ -35,7 +35,7 @@ public class CodeFormatterTest {
 
     @Test
     public void formatsDollarLiterals() {
-        CodeWriter writer = createWriter();
+        SimpleCodeWriter writer = createWriter();
         String result = writer.format("hello $$.");
 
         assertThat(result, equalTo("hello $."));
@@ -43,7 +43,7 @@ public class CodeFormatterTest {
 
     @Test
     public void formatsRelativeLiterals() {
-        CodeWriter writer = createWriter();
+        SimpleCodeWriter writer = createWriter();
         writer.putFormatter('L', CodeFormatterTest::valueOf);
         String result = writer.format("hello $L", "there");
 
@@ -52,7 +52,7 @@ public class CodeFormatterTest {
 
     @Test
     public void formatsRelativeLiteralsInBraces() {
-        CodeWriter writer = createWriter();
+        SimpleCodeWriter writer = createWriter();
         writer.putFormatter('L', CodeFormatterTest::valueOf);
         String result = writer.format("hello ${L}", "there");
 
@@ -62,7 +62,7 @@ public class CodeFormatterTest {
     @Test
     public void requiresTextAfterOpeningBrace() {
         RuntimeException e = Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.format("hello ${", "there");
         });
 
@@ -72,7 +72,7 @@ public class CodeFormatterTest {
     @Test
     public void requiresBraceIsClosed() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello ${L .", "there");
         });
@@ -80,7 +80,7 @@ public class CodeFormatterTest {
 
     @Test
     public void formatsMultipleRelativeLiterals() {
-        CodeWriter writer = createWriter();
+        SimpleCodeWriter writer = createWriter();
         writer.putFormatter('L', CodeFormatterTest::valueOf);
         String result = writer.format("hello $L, $L", "there", "guy");
 
@@ -89,7 +89,7 @@ public class CodeFormatterTest {
 
     @Test
     public void formatsMultipleRelativeLiteralsInBraces() {
-        CodeWriter writer = createWriter();
+        SimpleCodeWriter writer = createWriter();
         writer.putFormatter('L', CodeFormatterTest::valueOf);
         String result = writer.format("hello ${L}, ${L}", "there", "guy");
 
@@ -99,7 +99,7 @@ public class CodeFormatterTest {
     @Test
     public void ensuresAllRelativeArgumentsWereUsed() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $L", "a", "b", "c");
         });
@@ -108,7 +108,7 @@ public class CodeFormatterTest {
     @Test
     public void performsRelativeBoundsChecking() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $L");
         });
@@ -117,7 +117,7 @@ public class CodeFormatterTest {
     @Test
     public void validatesThatDollarIsNotAtEof() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $");
         });
@@ -126,7 +126,7 @@ public class CodeFormatterTest {
     @Test
     public void validatesThatCustomStartIsNotAtEof() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.setExpressionStart('#');
             writer.format("hello #");
         });
@@ -134,7 +134,7 @@ public class CodeFormatterTest {
 
     @Test
     public void formatsPositionalLiterals() {
-        CodeWriter writer = createWriter();
+        SimpleCodeWriter writer = createWriter();
         writer.putFormatter('L', CodeFormatterTest::valueOf);
         String result = writer.format("hello $1L", "there");
 
@@ -143,7 +143,7 @@ public class CodeFormatterTest {
 
     @Test
     public void formatsPositionalLiteralsWithCustomStart() {
-        CodeWriter writer = createWriter();
+        SimpleCodeWriter writer = createWriter();
         writer.setExpressionStart('#');
         writer.putFormatter('L', CodeFormatterTest::valueOf);
         String result = writer.format("hello #1L", "there");
@@ -153,7 +153,7 @@ public class CodeFormatterTest {
 
     @Test
     public void formatsMultiplePositionalLiterals() {
-        CodeWriter writer = createWriter();
+        SimpleCodeWriter writer = createWriter();
         writer.putFormatter('L', CodeFormatterTest::valueOf);
         String result = writer.format("hello $1L, $2L. $2L? You $1L?", "there", "guy");
 
@@ -162,7 +162,7 @@ public class CodeFormatterTest {
 
     @Test
     public void formatsMultiplePositionalLiteralsInBraces() {
-        CodeWriter writer = createWriter();
+        SimpleCodeWriter writer = createWriter();
         writer.putFormatter('L', CodeFormatterTest::valueOf);
         String result = writer.format("hello ${1L}, ${2L}. ${2L}? You ${1L}?", "there", "guy");
 
@@ -171,7 +171,7 @@ public class CodeFormatterTest {
 
     @Test
     public void formatsMultipleDigitPositionalLiterals() {
-        CodeWriter writer = createWriter();
+        SimpleCodeWriter writer = createWriter();
         writer.putFormatter('L', CodeFormatterTest::valueOf);
         String result = writer.format("$1L $2L $3L $4L $5L $6L $7L $8L $9L $10L $11L",
                                       "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11");
@@ -182,7 +182,7 @@ public class CodeFormatterTest {
     @Test
     public void performsPositionalBoundsChecking() {
         RuntimeException e = Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.write("Foo!");
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $1L");
@@ -195,7 +195,7 @@ public class CodeFormatterTest {
     @Test
     public void performsPositionalBoundsCheckingNotZero() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $0L", "a");
         });
@@ -204,7 +204,7 @@ public class CodeFormatterTest {
     @Test
     public void validatesThatPositionalIsNotAtEof() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $2");
         });
@@ -213,7 +213,7 @@ public class CodeFormatterTest {
     @Test
     public void validatesThatAllPositionalsAreUsed() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $2L $3L", "a", "b", "c", "d");
         });
@@ -222,7 +222,7 @@ public class CodeFormatterTest {
     @Test
     public void cannotMixPositionalAndRelative() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $1L, $L", "there");
         });
@@ -231,7 +231,7 @@ public class CodeFormatterTest {
     @Test
     public void cannotMixRelativeAndPositional() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $L, $1L", "there");
         });
@@ -239,7 +239,7 @@ public class CodeFormatterTest {
 
     @Test
     public void formatsNamedValues() {
-        CodeWriter writer = createWriter();
+        SimpleCodeWriter writer = createWriter();
         writer.putFormatter('L', CodeFormatterTest::valueOf);
         writer.putContext("a", "a");
         writer.putContext("abc_def", "b");
@@ -250,7 +250,7 @@ public class CodeFormatterTest {
 
     @Test
     public void formatsNamedValuesInBraces() {
-        CodeWriter writer = createWriter();
+        SimpleCodeWriter writer = createWriter();
         writer.putFormatter('L', CodeFormatterTest::valueOf);
         writer.putContext("a", "a");
         writer.putContext("abc_def", "b");
@@ -262,7 +262,7 @@ public class CodeFormatterTest {
     @Test
     public void ensuresNamedValuesHasColon() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $abc foo");
         });
@@ -271,7 +271,7 @@ public class CodeFormatterTest {
     @Test
     public void ensuresNamedValuesHasFormatterAfterColon() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("hello $abc:");
         });
@@ -279,7 +279,7 @@ public class CodeFormatterTest {
 
     @Test
     public void allowsSeveralSpecialCharactersInNamedArguments() {
-        CodeWriter writer = createWriter();
+        SimpleCodeWriter writer = createWriter();
         writer.putFormatter('L', CodeFormatterTest::valueOf);
         writer.putContext("foo.baz#Bar$bam", "hello");
         writer.putContext("foo_baz", "hello");
@@ -290,7 +290,7 @@ public class CodeFormatterTest {
     @Test
     public void ensuresNamedValuesMatchRegex() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.putFormatter('L', CodeFormatterTest::valueOf);
             writer.format("$nope!:L");
         });
@@ -299,7 +299,7 @@ public class CodeFormatterTest {
     @Test
     public void formattersMustNotBeLowercase() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.putFormatter('a', CodeFormatterTest::valueOf);
         });
     }
@@ -307,7 +307,7 @@ public class CodeFormatterTest {
     @Test
     public void formattersMustNotBeNumbers() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.putFormatter('1', CodeFormatterTest::valueOf);
         });
     }
@@ -315,7 +315,7 @@ public class CodeFormatterTest {
     @Test
     public void formattersMustNotBeDollar() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.putFormatter('$', CodeFormatterTest::valueOf);
         });
     }
@@ -323,14 +323,14 @@ public class CodeFormatterTest {
     @Test
     public void ensuresFormatterIsValid() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.format("$E", "hi");
         });
     }
 
     @Test
     public void expandsInlineSectionsWithDefaults() {
-        CodeWriter writer = createWriter();
+        SimpleCodeWriter writer = createWriter();
         writer.putFormatter('L', CodeFormatterTest::valueOf);
 
         assertThat(writer.format("${L@hello}", "default"), equalTo("default"));
@@ -338,7 +338,7 @@ public class CodeFormatterTest {
 
     @Test
     public void expandsInlineSectionsWithInterceptors() {
-        CodeWriter writer = createWriter();
+        SimpleCodeWriter writer = createWriter();
         writer.onSection("hello", text -> writer.writeInline("intercepted: " + text));
         writer.write("Foo ${L@hello} baz", "default");
 
@@ -347,7 +347,7 @@ public class CodeFormatterTest {
 
     @Test
     public void canUseEmptyPlaceHolders() {
-        CodeWriter writer = createWriter();
+        SimpleCodeWriter writer = createWriter();
         writer.write("<abc${L@attributes}>", "");
 
         assertThat(writer.toString(), equalTo("<abc>\n"));
@@ -355,7 +355,7 @@ public class CodeFormatterTest {
 
     @Test
     public void canUsePositionalArgumentsWithSectionDefaults() {
-        CodeWriter writer = createWriter();
+        SimpleCodeWriter writer = createWriter();
         writer.write("<abc${1L@attributes}>", " a=\"Hi\"");
 
         assertThat(writer.toString(), equalTo("<abc a=\"Hi\">\n"));
@@ -363,7 +363,7 @@ public class CodeFormatterTest {
 
     @Test
     public void canUseOtherFormattersWithSections() {
-        CodeWriter writer = createWriter();
+        SimpleCodeWriter writer = createWriter();
         writer.onSection("foo", text -> writer.writeInline(text + "!"));
         writer.write("<abc foo=${S@attributes}>${S@foo}</abc>", "foo!", "baz");
 
@@ -372,7 +372,7 @@ public class CodeFormatterTest {
 
     @Test
     public void cannotExpandInlineSectionOutsideOfBrace() {
-        CodeWriter writer = createWriter();
+        SimpleCodeWriter writer = createWriter();
         writer.write("Foo $L@hello baz", "default");
         assertThat(writer.toString(), equalTo("Foo default@hello baz\n"));
     }
@@ -380,14 +380,14 @@ public class CodeFormatterTest {
     @Test
     public void inlineSectionNamesMustBeValid() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.write("${L@foo!}", "default");
         });
     }
 
     @Test
     public void inlineAlignmentMustOccurInBraces() {
-        CodeWriter writer = createWriter();
+        SimpleCodeWriter writer = createWriter();
         writer.write("  $L|", "a\nb");
 
         assertThat(writer.toString(), equalTo("  a\nb|\n"));
@@ -396,14 +396,14 @@ public class CodeFormatterTest {
     @Test
     public void detectsBlockAlignmentEof() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            CodeWriter writer = createWriter();
+            SimpleCodeWriter writer = createWriter();
             writer.write("${L|", "default");
         });
     }
 
     @Test
     public void expandsAlignedRelativeFormatters() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.write("$L: ${L|}", "Names", "Bob\nKaren\nLuis");
 
         assertThat(writer.toString(), equalTo("Names: Bob\n       Karen\n       Luis\n"));
@@ -411,7 +411,7 @@ public class CodeFormatterTest {
 
     @Test
     public void expandsAlignedPositionalFormatters() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.write("$1L: ${2L|}", "Names", "Bob\nKaren\nLuis");
 
         assertThat(writer.toString(), equalTo("Names: Bob\n       Karen\n       Luis\n"));
@@ -419,7 +419,7 @@ public class CodeFormatterTest {
 
     @Test
     public void expandsAlignedRelativeFormattersWithWindowsNewlines() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.write("$L: ${L|}", "Names", "Bob\r\nKaren\r\nLuis");
 
         assertThat(writer.toString(), equalTo("Names: Bob\r\n       Karen\r\n       Luis\n"));
@@ -427,7 +427,7 @@ public class CodeFormatterTest {
 
     @Test
     public void expandsAlignedRelativeFormattersWithCarriageReturns() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.write("$L: ${L|}", "Names", "Bob\rKaren\rLuis");
 
         assertThat(writer.toString(), equalTo("Names: Bob\r       Karen\r       Luis\n"));
@@ -435,7 +435,7 @@ public class CodeFormatterTest {
 
     @Test
     public void expandsAlignedBlocksWithNewlines() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.write("$1L() {\n" +
                      "    ${2L|}\n" +
                      "}", "method", "// this\n// is a test.");
@@ -445,7 +445,7 @@ public class CodeFormatterTest {
 
     @Test
     public void alignedBlocksComposeWithPrefixes() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.setNewlinePrefix("| ");
         writer.write("$1L() {\n" +
                      "    ${2L|}\n" +
@@ -465,8 +465,8 @@ public class CodeFormatterTest {
 
     @Test
     public void cFormaterAcceptsConsumersThatAreCodeWriters() {
-        CodeWriter w = new CodeWriter();
-        w.write("$C", (Consumer<CodeWriter>) writer -> writer.write("Hello!"));
+        SimpleCodeWriter w = new SimpleCodeWriter();
+        w.write("$C", (Consumer<SimpleCodeWriter>) writer -> writer.write("Hello!"));
 
         assertThat(w.toString(), equalTo("Hello!\n"));
     }
@@ -489,7 +489,7 @@ public class CodeFormatterTest {
 
     @Test
     public void alignsBlocksWithStaticWhitespace() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.write("$1L() {\n" +
                      "\t\t${2L|}\n" +
                      "}", "method", "hi\nthere");
@@ -499,7 +499,7 @@ public class CodeFormatterTest {
 
     @Test
     public void alignsBlocksWithStaticAndSpecificWhitespace() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.write("$1L() {\n" +
                      "\t\t  ${2L|}\n" +
                      "}", "method", "hi\nthere");
@@ -509,7 +509,7 @@ public class CodeFormatterTest {
 
     @Test
     public void canAlignNestedBlocks() {
-        CodeWriter writer = new CodeWriter();
+        SimpleCodeWriter writer = new SimpleCodeWriter();
         writer.write("$L() {\n\t\t${C|}\n}", "a", (Runnable) () -> {
             writer.write("$L() {\n\t\t${C|}\n}", "b", (Runnable) () -> {
                 writer.write("$L() {\n\t\t  ${C|}\n}", "c", (Runnable) () -> {

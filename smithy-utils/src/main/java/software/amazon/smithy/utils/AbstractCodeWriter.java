@@ -538,7 +538,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @return Returns self.
      */
     @SuppressWarnings("unchecked")
-    public final T putFormatter(char identifier, BiFunction<Object, String, String> formatFunction) {
+    public T putFormatter(char identifier, BiFunction<Object, String, String> formatFunction) {
         this.currentState.formatters.get().putFormatter(identifier, formatFunction);
         return (T) this;
     }
@@ -647,7 +647,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @return Returns the code writer.
      */
     @SuppressWarnings("unchecked")
-    public final T pushState() {
+    public T pushState() {
         currentState = new State(currentState);
         states.push(currentState);
         return (T) this;
@@ -991,7 +991,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @param newline Newline character to use.
      * @return Returns self.
      */
-    public final T setNewline(String newline) {
+    public T setNewline(String newline) {
         if (newline.isEmpty()) {
             return disableNewlines();
         } else {
@@ -1010,7 +1010,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @param newline Newline character to use.
      * @return Returns self.
      */
-    public final T setNewline(char newline) {
+    public T setNewline(char newline) {
         return setNewline(String.valueOf(newline));
     }
 
@@ -1030,7 +1030,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @return Returns self.
      */
     @SuppressWarnings("unchecked")
-    public final T setIndentText(String indentText) {
+    public T setIndentText(String indentText) {
         currentState.indent(0, indentText);
         return (T) this;
     }
@@ -1049,7 +1049,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      *
      * @return Returns self.
      */
-    public final T trimTrailingSpaces() {
+    public T trimTrailingSpaces() {
         return trimTrailingSpaces(true);
     }
 
@@ -1060,7 +1060,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @return Returns self.
      */
     @SuppressWarnings("unchecked")
-    public final T trimTrailingSpaces(boolean trimTrailingSpaces) {
+    public T trimTrailingSpaces(boolean trimTrailingSpaces) {
         currentState.trimTrailingSpaces = trimTrailingSpaces;
         return (T) this;
     }
@@ -1079,7 +1079,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      *
      * @return Returns self.
      */
-    public final T trimBlankLines() {
+    public T trimBlankLines() {
         return trimBlankLines(1);
     }
 
@@ -1094,7 +1094,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @return Returns self.
      */
     @SuppressWarnings("unchecked")
-    public final T trimBlankLines(int trimBlankLines) {
+    public T trimBlankLines(int trimBlankLines) {
         this.trimBlankLines = trimBlankLines;
         return (T) this;
     }
@@ -1119,7 +1119,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      *
      * @return Returns self.
      */
-    public final T insertTrailingNewline() {
+    public T insertTrailingNewline() {
         return insertTrailingNewline(true);
     }
 
@@ -1134,7 +1134,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @return Returns self.
      */
     @SuppressWarnings("unchecked")
-    public final T insertTrailingNewline(boolean trailingNewline) {
+    public T insertTrailingNewline(boolean trailingNewline) {
         this.trailingNewline = trailingNewline;
         return (T) this;
     }
@@ -1157,7 +1157,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @return Returns self.
      */
     @SuppressWarnings("unchecked")
-    public final T setNewlinePrefix(String newlinePrefix) {
+    public T setNewlinePrefix(String newlinePrefix) {
         currentState.newlinePrefix = newlinePrefix;
         return (T) this;
     }
@@ -1177,7 +1177,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      *
      * @return Returns self.
      */
-    public final T indent() {
+    public T indent() {
         return indent(1);
     }
 
@@ -1188,7 +1188,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @return Returns self.
      */
     @SuppressWarnings("unchecked")
-    public final T indent(int levels) {
+    public T indent(int levels) {
         currentState.indent(levels, null);
         return (T) this;
     }
@@ -1207,7 +1207,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      *
      * @return Returns self.
      */
-    public final T dedent() {
+    public T dedent() {
         return dedent(1);
     }
 
@@ -1221,7 +1221,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @throws IllegalStateException when trying to dedent too far.
      */
     @SuppressWarnings("unchecked")
-    public final T dedent(int levels) {
+    public T dedent(int levels) {
         int adjusted = levels == -1 ? Integer.MIN_VALUE : -1 * levels;
         currentState.indent(adjusted, null);
         return (T) this;
@@ -1246,7 +1246,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @param args String arguments to use for formatting.
      * @return Returns the {@code CodeWriter}.
      */
-    public final T openBlock(String textBeforeNewline, Object... args) {
+    public T openBlock(String textBeforeNewline, Object... args) {
         return write(textBeforeNewline, args).indent();
     }
 
@@ -1269,7 +1269,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @param f Runnable function to execute inside of the block.
      * @return Returns the {@code CodeWriter}.
      */
-    public final T openBlock(String textBeforeNewline, String textAfterNewline, Runnable f) {
+    public T openBlock(String textBeforeNewline, String textAfterNewline, Runnable f) {
         return openBlock(textBeforeNewline, textAfterNewline, new Object[]{}, f);
     }
 
@@ -1284,7 +1284,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @param f Runnable function to execute inside of the block.
      * @return Returns the {@code CodeWriter}.
      */
-    public final T openBlock(String textBeforeNewline, String textAfterNewline, Object arg1, Runnable f) {
+    public T openBlock(String textBeforeNewline, String textAfterNewline, Object arg1, Runnable f) {
         return openBlock(textBeforeNewline, textAfterNewline, new Object[]{arg1}, f);
     }
 
@@ -1300,8 +1300,8 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @param f Runnable function to execute inside of the block.
      * @return Returns the {@code CodeWriter}.
      */
-    public final T openBlock(String textBeforeNewline, String textAfterNewline,
-            Object arg1, Object arg2, Runnable f) {
+    public T openBlock(String textBeforeNewline, String textAfterNewline,
+                       Object arg1, Object arg2, Runnable f) {
         return openBlock(textBeforeNewline, textAfterNewline, new Object[]{arg1, arg2}, f);
     }
 
@@ -1318,8 +1318,8 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @param f Runnable function to execute inside of the block.
      * @return Returns the {@code CodeWriter}.
      */
-    public final T openBlock(String textBeforeNewline, String textAfterNewline,
-            Object arg1, Object arg2, Object arg3, Runnable f) {
+    public T openBlock(String textBeforeNewline, String textAfterNewline,
+                       Object arg1, Object arg2, Object arg3, Runnable f) {
         return openBlock(textBeforeNewline, textAfterNewline, new Object[]{arg1, arg2, arg3}, f);
     }
 
@@ -1337,8 +1337,8 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @param f Runnable function to execute inside of the block.
      * @return Returns the {@code CodeWriter}.
      */
-    public final T openBlock(String textBeforeNewline, String textAfterNewline,
-            Object arg1, Object arg2, Object arg3, Object arg4, Runnable f) {
+    public T openBlock(String textBeforeNewline, String textAfterNewline,
+                       Object arg1, Object arg2, Object arg3, Object arg4, Runnable f) {
         return openBlock(textBeforeNewline, textAfterNewline, new Object[]{arg1, arg2, arg3, arg4}, f);
     }
 
@@ -1357,8 +1357,8 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @param f Runnable function to execute inside of the block.
      * @return Returns the {@code CodeWriter}.
      */
-    public final T openBlock(String textBeforeNewline, String textAfterNewline,
-            Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Runnable f) {
+    public T openBlock(String textBeforeNewline, String textAfterNewline,
+                       Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Runnable f) {
         return openBlock(textBeforeNewline, textAfterNewline, new Object[]{arg1, arg2, arg3, arg4, arg5}, f);
     }
 
@@ -1374,7 +1374,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @return Returns the {@code CodeWriter}.
      */
     @SuppressWarnings("unchecked")
-    public final T openBlock(String textBeforeNewline, String textAfterNewline, Object[] args, Runnable f) {
+    public T openBlock(String textBeforeNewline, String textAfterNewline, Object[] args, Runnable f) {
         write(textBeforeNewline, args).indent();
         f.run();
         closeBlock(textAfterNewline);
@@ -1388,7 +1388,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @param args String arguments to use for formatting.
      * @return Returns the {@code CodeWriter}.
      */
-    public final T closeBlock(String textAfterNewline, Object... args) {
+    public T closeBlock(String textAfterNewline, Object... args) {
         return dedent().write(textAfterNewline, args);
     }
 
@@ -1404,7 +1404,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @return Returns self.
      */
     @SuppressWarnings("unchecked")
-    public final T writeWithNoFormatting(Object content) {
+    public T writeWithNoFormatting(Object content) {
         currentState.writeLine(content.toString());
         return (T) this;
     }
@@ -1489,7 +1489,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @return Returns the CodeWriter.
      */
     @SuppressWarnings("unchecked")
-    public final T call(Runnable task) {
+    public T call(Runnable task) {
         task.run();
         return (T) this;
     }
@@ -1508,7 +1508,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @return Returns self.
      */
     @SuppressWarnings("unchecked")
-    public final T write(Object content, Object... args) {
+    public T write(Object content, Object... args) {
         String value = format(content, args);
         currentState.writeLine(value);
         return (T) this;
@@ -1530,7 +1530,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @return Returns self.
      */
     @SuppressWarnings("unchecked")
-    public final T writeInline(Object content, Object... args) {
+    public T writeInline(Object content, Object... args) {
         String value = format(content, args);
         currentState.write(value);
         return (T) this;
@@ -1543,7 +1543,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @return Returns self.
      */
     @SuppressWarnings("unchecked")
-    public final T ensureNewline() {
+    public T ensureNewline() {
         if (!builderEndsWith(currentState.getBuilder(), getNewline())) {
             write("");
         }
@@ -1571,7 +1571,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @return Returns self.
      */
     @SuppressWarnings("unchecked")
-    public final T writeOptional(Object content) {
+    public T writeOptional(Object content) {
         if (content == null) {
             return (T) this;
         } else if (content instanceof Optional) {
@@ -1615,7 +1615,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @return Returns self.
      */
     @SuppressWarnings("unchecked")
-    public final T unwrite(Object content, Object... args) {
+    public T unwrite(Object content, Object... args) {
         String value = format(content, args);
         int currentLength = currentState.builder.length();
 
@@ -1652,7 +1652,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @return Returns self.
      */
     @SuppressWarnings("unchecked")
-    public final T putContext(Map<String, Object> mappings) {
+    public T putContext(Map<String, Object> mappings) {
         mappings.forEach(this::putContext);
         return (T) this;
     }
