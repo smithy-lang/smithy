@@ -684,4 +684,27 @@ public class ModelAssemblerTest {
         assertThat(model.expectShape(stringShape.getId()).expectTrait(OriginalShapeIdTrait.class).getOriginalId(),
                    equalTo(originalId));
     }
+
+    @Test
+    public void resetDoesNotBarf() {
+        ModelAssembler assembler = new ModelAssembler();
+        assembler.assemble();
+        assembler.reset();
+        assembler.assemble();
+    }
+
+    // reset() affects multiple properties of the ModelAssembler. The test asserts one of them (shapes).
+    @Test
+    public void reset() {
+        ModelAssembler assembler = new ModelAssembler();
+
+        StringShape shape = StringShape.builder().id("ns.foo#Bar").build();
+        assembler.addShape(shape);
+        ValidatedResult<Model> result = assembler.assemble();
+        assertThat(result.unwrap().getShape(ShapeId.from("ns.foo#Bar")), is(Optional.of(shape)));
+
+        assembler.reset();
+        result = assembler.assemble();
+        assertThat(result.unwrap().getShape(ShapeId.from("ns.foo#Bar")), is(Optional.empty()));
+    }
 }
