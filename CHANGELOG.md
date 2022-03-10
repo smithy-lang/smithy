@@ -1,5 +1,17 @@
 # Smithy Changelog
 
+## 1.18.1 (2022-03-10)
+
+### Features
+* Downgraded set type violations from ERROR to WARNING to give consumers more time to convert these sets to lists.
+  These will be upgraded to ERROR again in a future release. ([#1125](https://github.com/awslabs/smithy/pull/1125))
+
+### Bug Fixes
+
+* Fixed backwards compatibility of CodeWriter and created a new basic implementation of `AbstractCodeWriter` named
+  `SimpleCodeWriter`. ([#1123](https://github.com/awslabs/smithy/pull/1123))
+  
+
 ## 1.18.0 (2022-03-07)
 
 ### Breaking changes
@@ -18,6 +30,9 @@
   Existing models that already use a set of other types will need to migrate to
   use a list rather than a set, and they will need to implement any necessary
   uniqueness checks server-side as needed. ([#1106](https://github.com/awslabs/smithy/pull/1106))
+
+  **NOTE**: This restriction was downgraded to a WARNING in 1.18.1
+
 * Removed unused `UseShapeWriterObserver` and related features. ([#1117](https://github.com/awslabs/smithy/pull/1117))
 
 ### Features
