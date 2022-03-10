@@ -1766,7 +1766,6 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
         private CopyOnWriteRef<CodeWriterFormatterContainer> formatters;
         private CopyOnWriteRef<CodeInterceptorContainer<T>> interceptors;
 
-        /** This StringBuilder, if null, will only be created lazily when needed. */
         private StringBuilder builder;
 
         /**
@@ -1777,6 +1776,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
         private boolean isInline;
 
         State() {
+            builder = new StringBuilder();
             isRoot = true;
             CodeWriterFormatterContainer formatterContainer = new CodeWriterFormatterContainer();
             DEFAULT_FORMATTERS.forEach(formatterContainer::putFormatter);
@@ -1810,13 +1810,10 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
 
         @Override
         public String toString() {
-            return builder == null ? "" : builder.toString();
+            return getBuilder().toString();
         }
 
         StringBuilder getBuilder() {
-            if (builder == null) {
-                builder = new StringBuilder();
-            }
             return builder;
         }
 
@@ -1921,7 +1918,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
             // level is reset back to the root, and the newline prefix is removed.
             // Indentation and prefixes are added automatically if/when the
             // captured text is written into the parent state.
-            currentState.builder = null;
+            currentState.builder = new StringBuilder();
             currentState.newlinePrefix = "";
             dedent(-1);
         }
