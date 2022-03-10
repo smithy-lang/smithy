@@ -507,7 +507,7 @@ structure recommended {
 structure sparse {}
 
 /// Indicates that the items in a list MUST be unique.
-@trait(selector: ":test(list > member > :test(string, blob, byte, short, integer, long, bigDecimal, bigInteger))")
+@trait(selector: "list")
 @deprecated(message: "The uniqueItems trait has been deprecated in favor of using sets.", since: "2.0")
 structure uniqueItems {}
 
