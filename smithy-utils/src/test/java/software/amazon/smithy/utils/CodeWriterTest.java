@@ -1030,4 +1030,22 @@ public class CodeWriterTest {
 
         assertThat(writer.toString(), equalTo("Foo\nBar\nBaz\nBam\n"));
     }
+
+    // Dynamically creating builders for a section doesn't work when pushing
+    // sections into captured sections that haven't written anything yet.
+    // It ends up swallowing the text written to sub-sections because the
+    // top-level section's builder wasn't written yet. This test makes sure
+    // that doesn't happen.
+    @Test
+    public void alwaysWritesToParentBuilders() {
+        SimpleCodeWriter writer = new SimpleCodeWriter();
+
+        writer.pushState("Hi");
+        writer.pushState();
+        writer.write("Hello");
+        writer.popState();
+        writer.popState();
+
+        assertThat(writer.toString(), equalTo("Hello\n"));
+    }
 }
