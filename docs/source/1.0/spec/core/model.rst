@@ -828,10 +828,10 @@ The following example defines a union shape with several members:
         union MyUnion {
             i32: Integer,
 
-            stringA: String,
+            @length(min: 1, max: 100)
+            string: String,
 
-            @sensitive
-            stringB: String,
+            time: Timestamp,
         }
 
     .. code-tab:: json
@@ -845,14 +845,15 @@ The following example defines a union shape with several members:
                         "i32": {
                             "target": "smithy.api#Integer"
                         },
-                        "stringA": {
-                            "target": "smithy.api#String"
-                        },
-                        "stringB": {
+                        "string": {
                             "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#sensitive": {}
+                            "smithy.api#length": {
+                                "min": 1,
+                                "max": 100
                             }
+                        },
+                        "time": {
+                            "target": "smithy.api#Timestamp"
                         }
                     }
                 }
@@ -2177,7 +2178,7 @@ trait is applied to a shape depends on the model file representation.
 
 Traits are applied to shapes in the IDL using :token:`smithy:trait_statements` that
 immediately precede a shape. The following example applies the
-:ref:`sensitive-trait` and :ref:`documentation-trait` to ``MyString``:
+:ref:`length-trait` and :ref:`documentation-trait` to ``MyString``:
 
 .. tabs::
 
@@ -2185,7 +2186,7 @@ immediately precede a shape. The following example applies the
 
         namespace smithy.example
 
-        @sensitive
+        @length(min: 1, max: 100)
         @documentation("Contains a string")
         string MyString
 
@@ -2198,7 +2199,10 @@ immediately precede a shape. The following example applies the
                     "type": "string",
                     "traits": {
                         "smithy.api#documentation": "Contains a string",
-                        "smithy.api#sensitive": {}
+                        "smithy.api#length": {
+                            "min": 1,
+                            "max": 100
+                        }
                     }
                 }
             }
