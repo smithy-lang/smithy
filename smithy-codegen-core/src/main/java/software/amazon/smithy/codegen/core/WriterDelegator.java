@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.codegen.core.writer;
+package software.amazon.smithy.codegen.core;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -24,87 +24,77 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 import software.amazon.smithy.build.FileManifest;
-import software.amazon.smithy.codegen.core.Symbol;
-import software.amazon.smithy.codegen.core.SymbolDependency;
-import software.amazon.smithy.codegen.core.SymbolProvider;
-import software.amazon.smithy.codegen.core.SymbolReference;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- * This class is deprecated and will be removed in a future release.
- *
- * <p>Creates and manages {@link CodegenWriter}s for files and namespaces based
+ * <p>Creates and manages {@link SymbolWriter}s for files and namespaces based
  * on {@link Symbol}s created for a {@link Shape}.
  *
  * <h2>Overview</h2>
  *
- * <p>{@code CodegenWriterDelegator} is designed to generate code in files
+ * <p>{@code WriterDelegator} is designed to generate code in files
  * returned by the {@link Symbol#getDefinitionFile()} method of a {@link Symbol}.
  * If multiple {@code Symbol}s are created that need to be defined in the same
- * file, then the {@code CodegenWriterDelegator} ensures that the state of code
+ * file, then the {@code WriterDelegator} ensures that the state of code
  * generator associated with the file is persisted and only written when all
  * shapes have been generated.
  *
- * <p>{@code CodegenWriter}s are lazily created each time a new filename is
- * requested. If a {@code CodegenWriter} is already associated with a filename,
+ * <p>{@code SymbolWriter}s are lazily created each time a new filename is
+ * requested. If a {@code SymbolWriter} is already associated with a filename,
  * a newline (\n) is written to the file before providing access to the
- * {@code CodegenWriter}. All of the files and CodegenWriters stored in the
+ * {@code SymbolWriter}. All of the files and SymbolWriters stored in the
  * delegator are eventually written to the provided {@link FileManifest} when
  * the {@link #flushWriters()} method is called.
  *
  * <p>This class is not thread-safe.
  *
- * <h2>Extending {@code CodegenWriterDelegator}</h2>
+ * <h2>Extending {@code WriterDelegator}</h2>
  *
  * <p>Language-specific code generators that utilize {@link Symbol} and
  * {@link SymbolDependency} <strong>should</strong> extend both
- * {@code CodegenWriterDelegator} and {@code CodegenWriter} to implement
+ * {@code WriterDelegator} and {@code SymbolWriter} to implement
  * language specific functionality. Extending these classes also makes it
  * easier to create new instances of them because they will be easier to work
  * with since generic types aren't needed in concrete implementations.
  *
- * @param <T> The type of {@link CodegenWriter} to create and manage.
+ * @param <W> The type of {@link SymbolWriter} to create and manage.
+ * @param <I> The type of {@link ImportContainer} used to manage imports.
  */
-@SmithyUnstableApi
-@Deprecated
-public class CodegenWriterDelegator<T extends CodegenWriter<T, ?>> {
+public class WriterDelegator<W extends SymbolWriter<W, I>, I extends ImportContainer>
+        implements SymbolDependencyContainer {
 
     private final FileManifest fileManifest;
     private final SymbolProvider symbolProvider;
-    private final Map<String, T> writers = new TreeMap<>();
-    private final CodegenWriterFactory<T> codegenWriterFactory;
+    private final Map<String, W> writers = new TreeMap<>();
+    private final SymbolWriter.Factory<W> factory;
     private String automaticSeparator = "\n";
 
     /**
      * @param fileManifest Where code is written when {@link #flushWriters()} is called.
      * @param symbolProvider Maps {@link Shape} to {@link Symbol} to determine the "namespace" and file of a shape.
-     * @param codegenWriterFactory Factory used to create new {@link CodegenWriter}s.
+     * @param factory Factory used to create new {@link SymbolWriter}s.
      */
-    public CodegenWriterDelegator(
-            FileManifest fileManifest,
-            SymbolProvider symbolProvider,
-            CodegenWriterFactory<T> codegenWriterFactory
-    ) {
+    public WriterDelegator(FileManifest fileManifest, SymbolProvider symbolProvider, SymbolWriter.Factory<W> factory) {
         this.fileManifest = fileManifest;
         this.symbolProvider = symbolProvider;
-        this.codegenWriterFactory = codegenWriterFactory;
+        this.factory = factory;
     }
 
     /**
      * Gets all of the dependencies that have been registered in writers
-     * created by the {@code CodegenWriterDelegator}.
+     * created by the {@code WriterDelegator}.
      *
      * <p>This method essentially just aggregates the results of calling
-     * {@link CodegenWriter#getDependencies()} of each created writer into
+     * {@link SymbolWriter#getDependencies()} of each created writer into
      * a single array.
      *
      * <p>This method may be overridden as needed (for example, to add in
      * some list of default dependencies or to inject other generative
      * dependencies).
      *
-     * @return Returns all the dependencies used in each {@code CodegenWriter}.
+     * @return Returns all the dependencies used in each writer.
      */
+    @Override
     public List<SymbolDependency> getDependencies() {
         List<SymbolDependency> resolved = new ArrayList<>();
         writers.values().forEach(s -> resolved.addAll(s.getDependencies()));
@@ -112,18 +102,18 @@ public class CodegenWriterDelegator<T extends CodegenWriter<T, ?>> {
     }
 
     /**
-     * Writes each pending {@code CodegenWriter} to the {@link FileManifest}.
+     * Writes each pending {@code SymbolWriter} to the {@link FileManifest}.
      *
      * <p>The {@code toString} method is called on each writer to generate
      * the code to write to the manifest.
      *
-     * <p>This method clears out the managed {@code CodegenWriter}s, meaning a
+     * <p>This method clears out the managed {@code SymbolWriter}s, meaning a
      * subsequent call to {@link #getWriters()} will return an empty map.
      *
      * <p>This method may be overridden as needed.
      */
     public void flushWriters() {
-        for (Map.Entry<String, T> entry : getWriters().entrySet()) {
+        for (Map.Entry<String, W> entry : getWriters().entrySet()) {
             fileManifest.writeFile(entry.getKey(), entry.getValue().toString());
         }
 
@@ -131,20 +121,20 @@ public class CodegenWriterDelegator<T extends CodegenWriter<T, ?>> {
     }
 
     /**
-     * Returns an immutable {@code Map} of created {@code CodegenWriter}s.
+     * Returns an immutable {@code Map} of created {@code SymbolWriter}s.
      *
      * <p>Each map key is the relative filename where the code will be written
      * in the {@link FileManifest}, and each map value is the associated
-     * {@code CodegenWriter} of type {@code T}.
+     * {@code SymbolWriter} of type {@code T}.
      *
      * @return Returns the immutable map of files to writers.
      */
-    public final Map<String, T> getWriters() {
+    public final Map<String, W> getWriters() {
         return Collections.unmodifiableMap(writers);
     }
 
     /**
-     * Gets a previously created {@code CodegenWriter} or creates a new one
+     * Gets a previously created {@code SymbolWriter} or creates a new one
      * if needed.
      *
      * <p>If a writer already exists, a newline is automatically appended to
@@ -152,9 +142,9 @@ public class CodegenWriterDelegator<T extends CodegenWriter<T, ?>> {
      * {@link #setAutomaticSeparator}).
      *
      * @param filename Name of the file to create.
-     * @param writerConsumer Consumer that is expected to write to the {@code CodegenWriter}.
+     * @param writerConsumer Consumer that is expected to write to the {@code SymbolWriter}.
      */
-    public final void useFileWriter(String filename, Consumer<T> writerConsumer) {
+    public final void useFileWriter(String filename, Consumer<W> writerConsumer) {
         useFileWriter(filename, "", writerConsumer);
     }
 
@@ -167,9 +157,9 @@ public class CodegenWriterDelegator<T extends CodegenWriter<T, ?>> {
      *
      * @param filename Name of the file to create.
      * @param namespace Namespace associated with the file (or an empty string).
-     * @param writerConsumer Consumer that is expected to write to the {@code CodegenWriter}.
+     * @param writerConsumer Consumer that is expected to write to the {@code SymbolWriter}.
      */
-    public final void useFileWriter(String filename, String namespace, Consumer<T> writerConsumer) {
+    public final void useFileWriter(String filename, String namespace, Consumer<W> writerConsumer) {
         writerConsumer.accept(checkoutWriter(filename, namespace));
     }
 
@@ -188,13 +178,15 @@ public class CodegenWriterDelegator<T extends CodegenWriter<T, ?>> {
      * the writer (either a newline or whatever value was set on
      * {@link #setAutomaticSeparator}).
      *
+     * <p>This method may be overridden as needed.
+     *
      * @param shape Shape to create the writer for.
-     * @param writerConsumer Consumer that is expected to write to the {@code CodegenWriter}.
+     * @param writerConsumer Consumer that is expected to write to the {@code SymbolWriter}.
      */
-    public final void useShapeWriter(Shape shape, Consumer<T> writerConsumer) {
+    public void useShapeWriter(Shape shape, Consumer<W> writerConsumer) {
         // Checkout/create the appropriate writer for the shape.
         Symbol symbol = symbolProvider.toSymbol(shape);
-        T writer = checkoutWriter(symbol.getDefinitionFile(), symbol.getNamespace());
+        W writer = checkoutWriter(symbol.getDefinitionFile(), symbol.getNamespace());
 
         // Add any needed DECLARE symbols.
         writer.addImportReferences(symbol, SymbolReference.ContextOption.DECLARE);
@@ -206,7 +198,7 @@ public class CodegenWriterDelegator<T extends CodegenWriter<T, ?>> {
     }
 
     /**
-     * Sets the automatic separator that is written to a {@code CodegenWriter}
+     * Sets the automatic separator that is written to a {@code SymbolWriter}
      * each time the writer is reused.
      *
      * <p>The default line separator is a newline ("\n"), but some
@@ -219,11 +211,11 @@ public class CodegenWriterDelegator<T extends CodegenWriter<T, ?>> {
         this.automaticSeparator = Objects.requireNonNull(automaticSeparator);
     }
 
-    private T checkoutWriter(String filename, String namespace) {
+    private W checkoutWriter(String filename, String namespace) {
         String formattedFilename = Paths.get(filename).normalize().toString();
         boolean needsNewline = writers.containsKey(formattedFilename);
 
-        T writer = writers.computeIfAbsent(formattedFilename, file -> codegenWriterFactory.apply(file, namespace));
+        W writer = writers.computeIfAbsent(formattedFilename, file -> factory.apply(file, namespace));
 
         // Add newlines/separators between types in the same file.
         if (needsNewline) {
