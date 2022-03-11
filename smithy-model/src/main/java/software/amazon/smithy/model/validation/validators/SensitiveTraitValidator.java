@@ -19,17 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.SimpleShape;
-import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 /**
- * Finds members marked as sensitive that target shapes marked as sensitive,
- * and find members marked as sensitive that target structures, unions, or
- * enums.
+ * Emits a validation event if a model contains members with the sensitive trait.
  */
 public final class SensitiveTraitValidator extends AbstractValidator {
     @Override
@@ -37,27 +32,14 @@ public final class SensitiveTraitValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
         for (MemberShape member : model.getMemberShapesWithTrait(SensitiveTrait.class)) {
             SensitiveTrait trait = member.expectTrait(SensitiveTrait.class);
-            model.getShape(member.getTarget()).ifPresent(target -> {
-                if (target.hasTrait(SensitiveTrait.class)) {
-                    events.add(warning(member, trait, "Redundant `sensitive` trait found on member that targets a "
-                                                      + "`sensitive` shape"));
-                } else if (isBadSensitiveTarget(target)) {
-                    events.add(warning(member, trait,
-                                       "Members marked with the `sensitive` trait should not target shapes that "
-                                       + "represent concrete data types like structures, unions, or enums. A better "
-                                       + "approach is to instead mark the targeted shape as sensitive and omit the "
-                                       + "`sensitive` trait from the member. This helps to prevent modeling mistakes "
-                                       + "by ensuring every reference to concrete data types that are inherently "
-                                       + "sensitive are always considered sensitive. Concrete types that are "
-                                       + "conditionally sensitive should generally be separated into two types: one "
-                                       + "to represent a sensitive type and one to represent the normal type."));
-                }
-            });
+            events.add(warning(member, trait,
+                    "Instead of marking members with the `sensitive` trait, a better approach is to instead mark the "
+                    + "targeted shape as sensitive. This helps to prevent modeling mistakes by ensuring every "
+                    + "reference to data types that are inherently sensitive are always considered sensitive. Types "
+                    + "that are conditionally sensitive should generally be separated into two types: one to "
+                    + "represent a sensitive type and one to represent the normal type. Applying `sensitive` trait to"
+                    + " members is considered deprecated. It will be removed in Smithy IDL version 2.0."));
         }
         return events;
-    }
-
-    private boolean isBadSensitiveTarget(Shape target) {
-        return !(target instanceof SimpleShape) || target.hasTrait(EnumTrait.class);
     }
 }
