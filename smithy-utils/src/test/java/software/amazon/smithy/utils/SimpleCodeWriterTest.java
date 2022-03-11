@@ -843,6 +843,32 @@ public class SimpleCodeWriterTest {
     }
 
     @Test
+    public void sectionWithSucceedingIndentedWrite() {
+        SimpleCodeWriter writer = new SimpleCodeWriter();
+        writer.writeInline("ori");
+        writer.pushState();
+        writer.write("ginal");
+        writer.popState();
+        writer.setNewlinePrefix("/// ");
+        writer.write("after");
+
+        assertThat(writer.toString(), equalTo("original\n/// after\n"));
+    }
+
+    @Test
+    public void namedSectionWithSucceedingIndentedWrite() {
+        SimpleCodeWriter writer = new SimpleCodeWriter();
+        writer.writeInline("ori");
+        writer.pushState("named");
+        writer.write("ginal");
+        writer.popState();
+        writer.setNewlinePrefix("/// ");
+        writer.write("after");
+
+        assertThat(writer.toString(), equalTo("original\n/// after\n"));
+    }
+
+    @Test
     public void canUnwriteMatchingStrings() {
         SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
         writer.writeInline("Hello there");

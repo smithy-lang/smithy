@@ -844,6 +844,20 @@ public class CodeWriterTest {
     }
 
     @Test
+    public void sectionWithSucceedingIndentedWrite() {
+        CodeWriter writer = new CodeWriter();
+        writer.writeInline("ori");
+        writer.pushState();
+        writer.write("ginal");
+        writer.popState();
+        writer.setNewlinePrefix("/// ");
+        writer.write("after");
+
+        assertThat(writer.toString(), equalTo("original\n/// after\n"));
+    }
+
+
+    @Test
     public void canUnwriteMatchingStrings() {
         CodeWriter writer = new CodeWriter().insertTrailingNewline(false);
         writer.writeInline("Hello there");

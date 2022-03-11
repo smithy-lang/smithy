@@ -10,8 +10,8 @@
 
 * Fixed backwards compatibility of CodeWriter and created a new basic implementation of `AbstractCodeWriter` named
   `SimpleCodeWriter`. ([#1123](https://github.com/awslabs/smithy/pull/1123))
-  
-
+* Fixed a bug in `AbstractCodeWriter` where indenting the next line would not be preserved after popping a state.
+  ([#1129](https://github.com/awslabs/smithy/pull/1129))
 ## 1.18.0 (2022-03-07)
 
 ### Breaking changes
