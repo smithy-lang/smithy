@@ -12,6 +12,16 @@
   `SimpleCodeWriter`. ([#1123](https://github.com/awslabs/smithy/pull/1123))
 * Fixed a bug in `AbstractCodeWriter` where indenting the next line would not be preserved after popping a state.
   ([#1129](https://github.com/awslabs/smithy/pull/1129))
+* Fixed a bug in `AbstractCodeWriter` where text could sometimes be lost due to lazy StringBuilder construction.
+  ([#1128](https://github.com/awslabs/smithy/pull/1128))
+* Fixed a null pointer exception in `ModelAssembler` after calling `reset()`. 
+  ([#1124](https://github.com/awslabs/smithy/pull/1124))
+
+### Documentation
+
+* Removed examples showing `@sensitive` on structure members, which is deprecated in IDL 2.0.
+  ([#1127](https://github.com/awslabs/smithy/pull/1127))
+
 ## 1.18.0 (2022-03-07)
 
 ### Breaking changes
