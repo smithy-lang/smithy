@@ -806,11 +806,9 @@ Traits can be applied to the set shape and its members:
 
         @deprecated
         set StringSet {
-            member: SensitiveString
+            @pattern("\\w+")
+            member: String
         }
-
-        @sensitive
-        string SensitiveString
 
     .. code-tab:: json
 
@@ -820,16 +818,13 @@ Traits can be applied to the set shape and its members:
                 "smithy.example#StringSet": {
                     "type": "set",
                     "member": {
-                        "target": "smithy.example#SensitiveString"
+                        "target": "smithy.api#String",
+                        "traits": {
+                            "smithy.api#pattern": "\\w+"
+                        }
                     },
                     "traits": {
                         "smithy.api#deprecated": {}
-                    }
-                },
-                "smithy.example#SensitiveString": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.api#sensitive": {}
                     }
                 }
             }
@@ -886,7 +881,7 @@ Traits can be applied to the map shape and its members:
             @length(min: 1, max: 10)
             key: String,
 
-            @sensitive
+            @range(min: 1, max: 1000)
             value: Integer
         }
 
@@ -907,9 +902,12 @@ Traits can be applied to the map shape and its members:
                         }
                     },
                     "value": {
-                        "target": "smithy.api#String",
+                        "target": "smithy.api#Integer",
                         "traits": {
-                            "smithy.api#sensitive": {}
+                            "smithy.api#range": {
+                                "min": 1,
+                                "max": 1000
+                            }
                         }
                     },
                     "traits": {
@@ -1031,10 +1029,10 @@ The following example defines a union shape with several members:
         union MyUnion {
             i32: Integer,
 
-            stringA: String,
+            @length(min: 1, max: 100)
+            string: String,
 
-            @sensitive
-            stringB: String,
+            time: Timestamp,
         }
 
     .. code-tab:: json
@@ -1048,14 +1046,15 @@ The following example defines a union shape with several members:
                         "i32": {
                             "target": "smithy.api#Integer"
                         },
-                        "stringA": {
-                            "target": "smithy.api#String"
-                        },
-                        "stringB": {
+                        "string": {
                             "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#sensitive": {}
+                            "smithy.api#length": {
+                                "min": 1,
+                                "max": 100
                             }
+                        },
+                        "time": {
+                            "target": "smithy.api#Timestamp"
                         }
                     }
                 }
@@ -1286,7 +1285,7 @@ Documentation comments can also be applied to members of a shape.
     /// Documentation about the structure.
     structure Example {
         /// Documentation about the member.
-        @sensitive
+        @required
         foo: String,
     }
 
@@ -1307,7 +1306,7 @@ shape. The shape ID of a trait is *resolved* against :token:`smithy:use_statemen
 and the current namespace in exactly the same way as
 :ref:`other shape IDs <relative-shape-id>`.
 
-The following example applies the :ref:`sensitive-trait` and
+The following example applies the :ref:`length-trait` and
 :ref:`documentation-trait` to ``MyString``:
 
 .. tabs::
@@ -1316,7 +1315,7 @@ The following example applies the :ref:`sensitive-trait` and
 
         namespace smithy.example
 
-        @sensitive
+        @length(min: 1, max: 100)
         @documentation("Contains a string")
         string MyString
 
@@ -1329,7 +1328,10 @@ The following example applies the :ref:`sensitive-trait` and
                     "type": "string",
                     "traits": {
                         "smithy.api#documentation": "Contains a string",
-                        "smithy.api#sensitive": {}
+                        "smithy.api#length": {
+                            "min": 1,
+                            "max": 100
+                        }
                     }
                 }
             }

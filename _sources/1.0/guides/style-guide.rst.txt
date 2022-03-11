@@ -27,7 +27,7 @@ Smithy models SHOULD resemble the following example:
     namespace smithy.example.namespace
 
     /// This is the documentation
-    @sensitive
+    @length(min: 1, max: 1000)
     string MyShape
 
     /// This is the documentation.

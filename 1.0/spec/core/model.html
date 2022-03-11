@@ -843,10 +843,10 @@ The following example defines a union shape with several members:</p>
 <span class="kd">union</span><span class="nc"> MyUnion</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">i32:</span><span class="w"> </span><span class="vc">Integer</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="nl">stringA:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@length</span>(<span class="nl">min:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="nl">max:</span><span class="w"> </span><span class="m">100</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">string:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="nd">@sensitive</span><span class="w"></span>
-<span class="w">    </span><span class="nl">stringB:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">time:</span><span class="w"> </span><span class="vc">Timestamp</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 </pre></div>
 </div>
@@ -859,14 +859,15 @@ The following example defines a union shape with several members:</p>
                 <span class="nt">&quot;i32&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Integer&quot;</span>
                 <span class="p">},</span>
-                <span class="nt">&quot;stringA&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;stringB&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;string&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;smithy.api#sensitive&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="nt">&quot;smithy.api#length&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="nt">&quot;max&quot;</span><span class="p">:</span> <span class="mi">100</span>
                     <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;time&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Timestamp&quot;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -2072,11 +2073,11 @@ a single instance of a trait can be applied to a shape. The way in which a
 trait is applied to a shape depends on the model file representation.</p>
 <p>Traits are applied to shapes in the IDL using <a class="reference internal" href="idl.html#grammar-token-smithy-trait_statements"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:trait_statements</span></code></a> that
 immediately precede a shape. The following example applies the
-<a class="reference internal" href="documentation-traits.html#sensitive-trait"><span class="std std-ref">sensitive trait</span></a> and <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a> to <code class="docutils literal notranslate"><span class="pre">MyString</span></code>:</p>
+<a class="reference internal" href="constraint-traits.html#length-trait"><span class="std std-ref">length trait</span></a> and <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a> to <code class="docutils literal notranslate"><span class="pre">MyString</span></code>:</p>
 <div class="sphinx-tabs docutils container">
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-17-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-17-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-17-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-17-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-17-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-17-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="nd">@sensitive</span><span class="w"></span>
+<span class="nd">@length</span>(<span class="nl">min:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="nl">max:</span><span class="w"> </span><span class="m">100</span>)<span class="w"></span>
 <span class="nd">@documentation</span>(<span class="s2">&quot;Contains a string&quot;</span>)<span class="w"></span>
 <span class="kd">string</span><span class="nc"> MyString</span><span class="w"></span>
 </pre></div>
@@ -2088,7 +2089,10 @@ immediately precede a shape. The following example applies the
             <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
             <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;smithy.api#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;Contains a string&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;smithy.api#sensitive&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="nt">&quot;smithy.api#length&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="nt">&quot;max&quot;</span><span class="p">:</span> <span class="mi">100</span>
+                <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>

@@ -879,11 +879,9 @@ reference can be ignored.</p>
 
 <span class="nd">@deprecated</span><span class="w"></span>
 <span class="kd">set</span><span class="nc"> StringSet</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">member:</span><span class="w"> </span><span class="vc">SensitiveString</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@pattern</span>(<span class="s2">&quot;\\w+&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">member:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
 }<span class="w"></span>
-
-<span class="nd">@sensitive</span><span class="w"></span>
-<span class="kd">string</span><span class="nc"> SensitiveString</span><span class="w"></span>
 </pre></div>
 </div>
 </div><div aria-labelledby="tab-10-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-10-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -892,16 +890,13 @@ reference can be ignored.</p>
         <span class="nt">&quot;smithy.example#StringSet&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;set&quot;</span><span class="p">,</span>
             <span class="nt">&quot;member&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#SensitiveString&quot;</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;smithy.api#pattern&quot;</span><span class="p">:</span> <span class="s2">&quot;\\w+&quot;</span>
+                <span class="p">}</span>
             <span class="p">},</span>
             <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;smithy.api#deprecated&quot;</span><span class="p">:</span> <span class="p">{}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nt">&quot;smithy.example#SensitiveString&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;smithy.api#sensitive&quot;</span><span class="p">:</span> <span class="p">{}</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -949,7 +944,7 @@ reference can be ignored.</p>
 <span class="w">    </span><span class="nd">@length</span>(<span class="nl">min:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="nl">max:</span><span class="w"> </span><span class="m">10</span>)<span class="w"></span>
 <span class="w">    </span><span class="nl">key:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="nd">@sensitive</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@range</span>(<span class="nl">min:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="nl">max:</span><span class="w"> </span><span class="m">1000</span>)<span class="w"></span>
 <span class="w">    </span><span class="nl">value:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
 }<span class="w"></span>
 </pre></div>
@@ -969,9 +964,12 @@ reference can be ignored.</p>
                 <span class="p">}</span>
             <span class="p">},</span>
             <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Integer&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;smithy.api#sensitive&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="nt">&quot;smithy.api#range&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="nt">&quot;max&quot;</span><span class="p">:</span> <span class="mi">1000</span>
+                    <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">},</span>
             <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1077,10 +1075,10 @@ reference can be ignored.</p>
 <span class="kd">union</span><span class="nc"> MyUnion</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">i32:</span><span class="w"> </span><span class="vc">Integer</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="nl">stringA:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@length</span>(<span class="nl">min:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="nl">max:</span><span class="w"> </span><span class="m">100</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">string:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="nd">@sensitive</span><span class="w"></span>
-<span class="w">    </span><span class="nl">stringB:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">time:</span><span class="w"> </span><span class="vc">Timestamp</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 </pre></div>
 </div>
@@ -1093,14 +1091,15 @@ reference can be ignored.</p>
                 <span class="nt">&quot;i32&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Integer&quot;</span>
                 <span class="p">},</span>
-                <span class="nt">&quot;stringA&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;stringB&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;string&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;smithy.api#sensitive&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="nt">&quot;smithy.api#length&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="nt">&quot;max&quot;</span><span class="p">:</span> <span class="mi">100</span>
                     <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;time&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Timestamp&quot;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -1297,7 +1296,7 @@ documentation comment comes before the traits applied to a shape:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="cm">/// Documentation about the structure.</span><span class="w"></span>
 <span class="kd">structure</span><span class="nc"> Example</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="cm">/// Documentation about the member.</span><span class="w"></span>
-<span class="w">    </span><span class="nd">@sensitive</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
 <span class="w">    </span><span class="nl">foo:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 </pre></div>
@@ -1313,12 +1312,12 @@ in the <a class="reference internal" href="model.html#semantic-model"><span clas
 shape. The shape ID of a trait is <em>resolved</em> against <a class="reference internal" href="#grammar-token-smithy-use_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:use_statement</span></code></a>s
 and the current namespace in exactly the same way as
 <a class="reference internal" href="#relative-shape-id"><span class="std std-ref">other shape IDs</span></a>.</p>
-<p>The following example applies the <a class="reference internal" href="documentation-traits.html#sensitive-trait"><span class="std std-ref">sensitive trait</span></a> and
+<p>The following example applies the <a class="reference internal" href="constraint-traits.html#length-trait"><span class="std std-ref">length trait</span></a> and
 <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a> to <code class="docutils literal notranslate"><span class="pre">MyString</span></code>:</p>
 <div class="sphinx-tabs docutils container">
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-19-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-19-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-19-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-19-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-19-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-19-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="nd">@sensitive</span><span class="w"></span>
+<span class="nd">@length</span>(<span class="nl">min:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="nl">max:</span><span class="w"> </span><span class="m">100</span>)<span class="w"></span>
 <span class="nd">@documentation</span>(<span class="s2">&quot;Contains a string&quot;</span>)<span class="w"></span>
 <span class="kd">string</span><span class="nc"> MyString</span><span class="w"></span>
 </pre></div>
@@ -1330,7 +1329,10 @@ and the current namespace in exactly the same way as
             <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
             <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;smithy.api#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;Contains a string&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;smithy.api#sensitive&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="nt">&quot;smithy.api#length&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="nt">&quot;max&quot;</span><span class="p">:</span> <span class="mi">100</span>
+                <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
