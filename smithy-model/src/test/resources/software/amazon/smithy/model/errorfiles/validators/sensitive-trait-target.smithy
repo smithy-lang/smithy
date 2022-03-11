@@ -1,7 +1,7 @@
 namespace smithy.example
 
 structure Foo {
-    // This is fine.
+    // This should warn.
     @sensitive
     bar: String,
 
