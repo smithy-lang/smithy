@@ -15,10 +15,15 @@
 
 package software.amazon.smithy.codegen.core.writer;
 
+import software.amazon.smithy.codegen.core.SymbolWriter;
 import software.amazon.smithy.utils.AbstractCodeWriter;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
+ * <p>This class is deprecated and will be removed in a future release.
+ *
+ * <p>Use {@link SymbolWriter} directly instead.
+ *
  * Responsible for properly writing documentation emitted when a
  * {@code Runnable} in invoked.
  *
@@ -40,6 +45,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @FunctionalInterface
 @SmithyUnstableApi
+@Deprecated
 public interface DocWriter<T extends AbstractCodeWriter<T>> {
 
     /**

@@ -19,7 +19,9 @@ import java.util.function.BiFunction;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- * Factory used to create a {@code CodegenWriter}.
+ * This class is deprecated and will be removed in a future release.
+ *
+ * <p>Factory used to create a {@code CodegenWriter}.
  *
  * <p>The following example shows how to implement a basic
  * {@code CodegenWriterFactory}.
@@ -44,6 +46,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @FunctionalInterface
 @SmithyUnstableApi
+@Deprecated
 public interface CodegenWriterFactory<T extends CodegenWriter<T, ?>> extends BiFunction<String, String, T> {
     /**
      * Creates a {@code CodegenWriter} of type {@code T} for the given
