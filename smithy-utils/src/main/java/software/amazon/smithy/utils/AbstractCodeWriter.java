@@ -832,6 +832,10 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
             }
         }
 
+        if (!popped.isInline && popped.needsIndentation) {
+            currentState.needsIndentation = true;
+        }
+
         return (T) this;
     }
 
