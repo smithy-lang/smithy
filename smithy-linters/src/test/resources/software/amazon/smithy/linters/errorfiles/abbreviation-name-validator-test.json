@@ -35,6 +35,28 @@
                     "target": "ns.foo#FooId"
                 }
             }
+        },
+        "ns.foo#Enum": {
+            "type": "enum",
+            "members": {
+                "NAME": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "foo"
+                    }
+                }
+            }
+        },
+        "ns.foo#IntEnum": {
+            "type": "intEnum",
+            "members": {
+                "NAME": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": 1
+                    }
+                }
+            }
         }
     },
     "metadata": {
