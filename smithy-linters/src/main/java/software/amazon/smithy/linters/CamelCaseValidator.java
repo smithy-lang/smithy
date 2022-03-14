@@ -137,6 +137,12 @@ public final class CamelCaseValidator extends AbstractValidator {
 
         Pattern isValidMemberName = config.getMemberNames().getRegex();
         model.shapes(MemberShape.class)
+                // Exclude members of enums from CamelCase validation,
+                // as they're intended to be CAPS_SNAKE.
+                .filter(shape -> {
+                    Shape container = model.expectShape(shape.asMemberShape().get().getContainer());
+                    return !container.isEnumShape() && !container.isIntEnumShape();
+                })
                 .filter(shape -> !isValidMemberName.matcher(shape.getMemberName()).find())
                 .map(shape -> danger(shape, format(
                         "Member shape member name, `%s`, is not %s camel case",
