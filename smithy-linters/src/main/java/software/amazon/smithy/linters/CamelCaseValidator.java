@@ -166,7 +166,7 @@ public final class CamelCaseValidator extends AbstractValidator {
                     .filter(Shape::isMemberShape)
                     .map(shape -> (MemberShape) shape)
                     .collect(Collectors.toList());
-            events.addAll(validateCamelCasing(memberShapes, serviceShape.getId().getName()));
+            events.addAll(validateCamelCasing(model, memberShapes, serviceShape.getId().getName()));
             seenShapes.addAll(memberShapes);
         }
 
@@ -177,29 +177,34 @@ public final class CamelCaseValidator extends AbstractValidator {
                         memberShape -> memberShape.getContainer().getNamespace()));
 
         for (Map.Entry<String, List<MemberShape>> memberShapeGrouping : memberShapesByNamespace.entrySet()) {
-            events.addAll(validateCamelCasing(memberShapeGrouping.getValue(),
+            events.addAll(validateCamelCasing(model, memberShapeGrouping.getValue(),
                     memberShapeGrouping.getKey() + " namespace"));
         }
 
         return events;
     }
 
-    private List<ValidationEvent> validateCamelCasing(List<MemberShape> memberShapes, String scope) {
+    private List<ValidationEvent> validateCamelCasing(Model model, List<MemberShape> memberShapes, String scope) {
         int upperCamelMemberNamesCount = 0;
         int lowerCamelMemberNamesCount = 0;
         Set<MemberShape> nonUpperCamelMemberShapes = new HashSet<>();
         Set<MemberShape> nonLowerCamelMemberShapes = new HashSet<>();
 
         for (MemberShape memberShape : memberShapes) {
-            if (MemberNameHandling.UPPER.getRegex().matcher(memberShape.getMemberName()).find()) {
-                upperCamelMemberNamesCount++;
-            } else {
-                nonUpperCamelMemberShapes.add(memberShape);
-            }
-            if (MemberNameHandling.LOWER.getRegex().matcher(memberShape.getMemberName()).find()) {
-                lowerCamelMemberNamesCount++;
-            } else {
-                nonLowerCamelMemberShapes.add(memberShape);
+            // Exclude members of enums from CamelCase validation,
+            // as they're intended to be CAPS_SNAKE.
+            Shape container = model.expectShape(memberShape.getContainer());
+            if (!container.isEnumShape() && !container.isIntEnumShape()) {
+                if (MemberNameHandling.UPPER.getRegex().matcher(memberShape.getMemberName()).find()) {
+                    upperCamelMemberNamesCount++;
+                } else {
+                    nonUpperCamelMemberShapes.add(memberShape);
+                }
+                if (MemberNameHandling.LOWER.getRegex().matcher(memberShape.getMemberName()).find()) {
+                    lowerCamelMemberNamesCount++;
+                } else {
+                    nonLowerCamelMemberShapes.add(memberShape);
+                }
             }
         }
 
