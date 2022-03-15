@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -44,18 +45,47 @@ final class CommandUtils {
     private CommandUtils() {}
 
     static Model buildModel(Arguments arguments, ClassLoader classLoader, Set<Validator.Feature> features) {
-        List<String> models = arguments.positionalArguments();
+        Severity minSeverity = arguments.has(SmithyCli.SEVERITY)
+                ? parseSeverity(arguments.parameter(SmithyCli.SEVERITY))
+                : Severity.NOTE;
+        return buildModel(
+                arguments.positionalArguments(),
+                classLoader,
+                minSeverity,
+                arguments.has(SmithyCli.DISCOVER),
+                arguments.parameter(SmithyCli.DISCOVER_CLASSPATH, null),
+                arguments.has(SmithyCli.ALLOW_UNKNOWN_TRAITS),
+                features
+        );
+    }
+
+    static Model buildModel(
+            List<String> models,
+            ClassLoader classLoader,
+            Severity minSeverity,
+            boolean discover,
+            String discoverPath,
+            boolean allowUnknownTraits
+    ) {
+        return buildModel(
+                models, classLoader, minSeverity, discover, discoverPath, allowUnknownTraits, Collections.emptySet());
+    }
+
+    static Model buildModel(
+            List<String> models,
+            ClassLoader classLoader,
+            Severity minSeverity,
+            boolean discover,
+            String discoverPath,
+            boolean allowUnknownTraits,
+            Set<Validator.Feature> features
+    ) {
         ModelAssembler assembler = CommandUtils.createModelAssembler(classLoader);
 
         ContextualValidationEventFormatter formatter = new ContextualValidationEventFormatter();
         boolean stdout = features.contains(Validator.Feature.STDOUT);
         boolean quiet = features.contains(Validator.Feature.QUIET);
         Consumer<String> writer = stdout ? Cli.getStdout() : Cli.getStderr();
-
-        // --severity defaults to NOTE.
-        Severity minSeverity = arguments.has(SmithyCli.SEVERITY)
-                ? parseSeverity(arguments.parameter(SmithyCli.SEVERITY))
-                : Severity.NOTE;
 
         assembler.validationEventListener(event -> {
             // Only log events that are >= --severity.
@@ -72,8 +102,17 @@ final class CommandUtils {
             }
         });
 
-        CommandUtils.handleModelDiscovery(arguments, assembler, classLoader);
-        CommandUtils.handleUnknownTraitsOption(arguments, assembler);
+        if (discoverPath != null) {
+            discoverModelsWithClasspath(discoverPath, assembler);
+        } else if (discover) {
+            assembler.discoverModels(classLoader);
+        }
+
+        if (allowUnknownTraits) {
+            LOGGER.fine("Ignoring unknown traits");
+            assembler.putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true);
+        }
+
         models.forEach(assembler::addImport);
         ValidatedResult<Model> result = assembler.assemble();
         Validator.validate(result, features);
@@ -89,23 +128,7 @@ final class CommandUtils {
         return Model.assembler(classLoader).putProperty(ModelAssembler.DISABLE_JAR_CACHE, true);
     }
 
-    private static void handleUnknownTraitsOption(Arguments arguments, ModelAssembler assembler) {
-        if (arguments.has(SmithyCli.ALLOW_UNKNOWN_TRAITS)) {
-            LOGGER.fine("Ignoring unknown traits");
-            assembler.putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true);
-        }
-    }
-
-    private static void handleModelDiscovery(Arguments arguments, ModelAssembler assembler, ClassLoader baseLoader) {
-        if (arguments.has(SmithyCli.DISCOVER_CLASSPATH)) {
-            discoverModelsWithClasspath(arguments, assembler);
-        } else if (arguments.has(SmithyCli.DISCOVER)) {
-            assembler.discoverModels(baseLoader);
-        }
-    }
-
-    private static void discoverModelsWithClasspath(Arguments arguments, ModelAssembler assembler) {
-        String rawClasspath = arguments.parameter(SmithyCli.DISCOVER_CLASSPATH);
+    private static void discoverModelsWithClasspath(String rawClasspath, ModelAssembler assembler) {
         LOGGER.finer("Discovering models with classpath: " + rawClasspath);
 
         // Use System.getProperty here each time since it allows the value to be changed.
