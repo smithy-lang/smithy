@@ -1,0 +1,13 @@
+{
+    "version": "1.0",
+    "projections": {
+        "strips-internal": {
+            "transforms": [{
+                "name": "includeNamespaces",
+                "args": {
+                    "namespaces": ["does.not.exist"]
+                }
+            }]
+        }
+    }
+}
