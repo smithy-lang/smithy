@@ -1,0 +1,98 @@
+/*
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+import org.apache.tools.ant.taskdefs.condition.Os
+
+plugins {
+    id "application"
+    id "org.beryx.runtime" version "1.12.7"
+}
+
+description = "This module implements the Smithy command line interface."
+
+ext {
+    displayName = "Smithy :: CLI"
+    moduleName = "software.amazon.smithy.cli"
+    imageJreVersion = "17"
+    correttoRoot = "https://corretto.aws/downloads/latest/amazon-corretto-${imageJreVersion}"
+}
+
+// Detect which OS and arch is running to create an application class data sharing
+// archive for the current platform.
+if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+    ext.set("imageOs", "win64")
+} else if (Os.isFamily(Os.FAMILY_MAC)) {
+    if (Os.isArch("aarch64")) {
+        ext.set("imageOs", "osx-aarch_64")
+    } else if (Os.isArch("x86_64")) {
+        ext.set("imageOs", "osx-x86_64")
+    } else {
+        println("No JDK for ${System.getProperty("os.arch")}")
+        ext.set("imageOs", "")
+    }
+} else if (Os.isFamily(Os.FAMILY_UNIX)) {
+    if (Os.isArch("aarch")) {
+        ext.set("imageOs", "linux-aarch_64")
+    } else if (Os.isArch("x86_64")) {
+        ext.set("imageOs", "linux-x86_64")
+    } else {
+        println("No JDK for ${System.getProperty("os.arch")}")
+        ext.set("imageOs", "")
+    }
+} else {
+    println("Unknown OS and arch: ${System.getProperty("os.name")}")
+    ext.set("imageOs", "")
+}
+
+dependencies {
+    api project(":smithy-model")
+}
+
+application {
+    mainClass = "software.amazon.smithy.upgrade.SmithyUpgradeCli"
+    applicationName = "smithy-upgrade"
+}
+
+runtime {
+    addOptions("--compress", "0", "--strip-debug", "--no-header-files", "--no-man-pages")
+    addModules("java.logging", "java.xml")
+
+    launcher {
+        jvmArgs = [
+                '-Xshare:auto',
+                '-XX:SharedArchiveFile={{BIN_DIR}}/../lib/smithy.jsa'
+        ]
+    }
+
+    targetPlatform("linux-x86_64") {
+        jdkHome = jdkDownload("${correttoRoot}-x64-linux-jdk.tar.gz")
+    }
+
+    targetPlatform("linux-aarch_64") {
+        jdkHome = jdkDownload("${correttoRoot}-aarch64-linux-jdk.tar.gz")
+    }
+
+    targetPlatform("osx-x86_64") {
+        jdkHome = jdkDownload("${correttoRoot}-x64-macos-jdk.tar.gz")
+    }
+
+    targetPlatform("osx-aarch_64") {
+        jdkHome = jdkDownload("${correttoRoot}-aarch64-macos-jdk.tar.gz")
+    }
+
+    targetPlatform("win64") {
+        jdkHome = jdkDownload("${correttoRoot}-x64-windows-jdk.zip")
+    }
+}
