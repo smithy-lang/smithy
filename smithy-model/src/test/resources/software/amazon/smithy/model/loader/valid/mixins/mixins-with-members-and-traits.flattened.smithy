@@ -17,7 +17,7 @@ structure F {
     b: String,
 
     /// I've changed
-    @sensitive
+    @internal
     c: String,
 
     /// D.d
