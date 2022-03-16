@@ -356,8 +356,8 @@ string resourceIdentifier
 @trait
 structure private {}
 
-/// Indicates that the data stored in the shape or member is sensitive and MUST be handled with care.
-@trait(selector: ":not(:test(service, operation, resource))")
+/// Indicates that the data stored in the shape is sensitive and MUST be handled with care.
+@trait(selector: ":not(:test(service, operation, resource, member))")
 structure sensitive {}
 
 /// Defines the version or date in which a shape or member was added to the model.

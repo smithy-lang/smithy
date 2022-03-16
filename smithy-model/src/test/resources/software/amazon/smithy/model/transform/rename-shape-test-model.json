@@ -85,7 +85,7 @@
         "b": {
           "target": "smithy.api#String",
           "traits": {
-            "smithy.api#sensitive": {}
+            "smithy.api#pattern": "^[a-z]+$"
           }
         }
       }

@@ -1,3 +1,0 @@
-[WARNING] smithy.example#Foo$bar: Instead of marking members with the `sensitive` trait, a better approach is to instead mark the targeted shape as sensitive | SensitiveTrait
-[WARNING] smithy.example#Foo$baz: Instead of marking members with the `sensitive` trait, a better approach is to instead mark the targeted shape as sensitive | SensitiveTrait
-[WARNING] smithy.example#Foo$qux: Instead of marking members with the `sensitive` trait, a better approach is to instead mark the targeted shape as sensitive | SensitiveTrait
