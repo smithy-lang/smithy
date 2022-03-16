@@ -235,7 +235,7 @@ public class ChangedMemberTargetTest {
                    equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
                            + "`smithy.example#B1` (list) to `smithy.example#B2` (list). Both the old and new "
                            + "shapes are a list, but their members have differing traits. The newly targeted "
-                           + "shape now has the following additional traits: [smithy.api#sensitive]."));
+                           + "shape now has the following additional traits: [smithy.api#pattern]."));
     }
 
     @Test
