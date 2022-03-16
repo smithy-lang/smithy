@@ -40,7 +40,7 @@ structure D with [C] {
 
 apply D$c {
     @documentation("I've changed")
-    @sensitive
+    @internal
 }
 
 /// E
@@ -63,10 +63,10 @@ structure F with [
 
 apply F$a {
     @documentation("I've changed")
-    @sensitive
+    @internal
 }
 
-apply F$e @sensitive
+apply F$e @internal
 
 structure G with [
     B
