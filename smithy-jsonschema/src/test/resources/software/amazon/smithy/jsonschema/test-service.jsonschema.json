@@ -4,7 +4,9 @@
       "type": "object",
       "properties": {
         "abc": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
         },
         "def": {
           "type": "number"
@@ -64,7 +66,8 @@
     "Map": {
       "type": "object",
       "additionalProperties": {
-        "type": "string"
+        "type": "string",
+        "pattern": "^[a-z]+$"
       },
       "propertyNames": {
         "type": "string",
