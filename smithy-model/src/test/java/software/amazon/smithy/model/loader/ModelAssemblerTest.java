@@ -721,6 +721,7 @@ public class ModelAssemblerTest {
         assertThat(f.getMemberNames(), contains("a", "b", "c", "d", "e", "f"));
         assertThat(f.getMember("a").get().expectTrait(DocumentationTrait.class).getValue(), equalTo("I've changed"));
         assertThat(f.getMember("c").get().expectTrait(DocumentationTrait.class).getValue(), equalTo("I've changed"));
+        assertTrue(f.getMember("c").get().hasTrait(InternalTrait.class));
     }
 
     @Test
