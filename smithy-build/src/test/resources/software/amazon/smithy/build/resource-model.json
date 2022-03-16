@@ -40,7 +40,7 @@
                     "target": "ns.foo#MyResourceId",
                     "traits": {
                         "smithy.api#required": {},
-                        "smithy.api#sensitive": {}
+                        "smithy.api#pattern": "^[a-z]+$"
                     }
                 }
             }

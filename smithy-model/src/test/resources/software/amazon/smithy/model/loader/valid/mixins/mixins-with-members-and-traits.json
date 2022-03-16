@@ -81,7 +81,7 @@
             "type": "apply",
             "traits": {
                 "smithy.api#documentation": "I've changed",
-                "smithy.api#sensitive": {}
+                "smithy.api#internal": {}
             }
         },
         "smithy.example#E": {
