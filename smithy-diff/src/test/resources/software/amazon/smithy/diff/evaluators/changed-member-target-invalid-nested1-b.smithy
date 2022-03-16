@@ -8,7 +8,7 @@ list A {
 }
 
 list B2 {
-    @sensitive
+    @pattern("^[a-z]+$")
     member: MyString
 }
 

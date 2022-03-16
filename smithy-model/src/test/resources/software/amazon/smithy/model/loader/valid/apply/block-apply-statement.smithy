@@ -7,6 +7,6 @@ structure Foo {
 
 apply Foo$baz {
     @documentation("Hi")
-    @sensitive
+    @internal
     @deprecated
 }
