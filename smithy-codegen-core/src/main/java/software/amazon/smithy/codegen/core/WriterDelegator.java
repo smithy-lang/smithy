@@ -58,9 +58,8 @@ import software.amazon.smithy.model.shapes.Shape;
  * with since generic types aren't needed in concrete implementations.
  *
  * @param <W> The type of {@link SymbolWriter} to create and manage.
- * @param <I> The type of {@link ImportContainer} used to manage imports.
  */
-public class WriterDelegator<W extends SymbolWriter<W, I>, I extends ImportContainer>
+public class WriterDelegator<W extends SymbolWriter<W, ? extends ImportContainer>>
         implements SymbolDependencyContainer {
 
     private final FileManifest fileManifest;

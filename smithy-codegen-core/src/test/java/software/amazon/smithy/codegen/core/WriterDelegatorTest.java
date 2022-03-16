@@ -36,7 +36,7 @@ public class WriterDelegatorTest {
                 .name("Baz")
                 .definitionFile("com/foo/Baz.bam")
                 .build();
-        WriterDelegator<MySimpleWriter, MySimpleWriter.MyImportContainer> delegator = new WriterDelegator<>(
+        WriterDelegator<MySimpleWriter> delegator = new WriterDelegator<>(
                 mockManifest, provider, (f, n) -> new MySimpleWriter(n));
         Shape shape = StringShape.builder().id("com.foo#Baz").build();
         delegator.useShapeWriter(shape, writer -> { });
@@ -48,7 +48,7 @@ public class WriterDelegatorTest {
     public void aggregatesDependencies() {
         MockManifest mockManifest = new MockManifest();
         SymbolProvider provider = (shape) -> null;
-        WriterDelegator<MySimpleWriter, MySimpleWriter.MyImportContainer> delegator = new WriterDelegator<>(
+        WriterDelegator<MySimpleWriter> delegator = new WriterDelegator<>(
                 mockManifest, provider, (f, n) -> new MySimpleWriter(n));
         SymbolDependency dependency = SymbolDependency.builder()
                 .packageName("x")
@@ -66,7 +66,7 @@ public class WriterDelegatorTest {
     public void writesNewlineBetweenFiles() {
         MockManifest mockManifest = new MockManifest();
         SymbolProvider provider = (shape) -> null;
-        WriterDelegator<MySimpleWriter, MySimpleWriter.MyImportContainer> delegator = new WriterDelegator<>(
+        WriterDelegator<MySimpleWriter> delegator = new WriterDelegator<>(
                 mockManifest, provider, (f, n) -> new MySimpleWriter(n));
 
         delegator.useFileWriter("foo/baz", writer -> {
@@ -85,7 +85,7 @@ public class WriterDelegatorTest {
     public void canDisableNewlineBetweenFiles() {
         MockManifest mockManifest = new MockManifest();
         SymbolProvider provider = (shape) -> null;
-        WriterDelegator<MySimpleWriter, MySimpleWriter.MyImportContainer> delegator = new WriterDelegator<>(
+        WriterDelegator<MySimpleWriter> delegator = new WriterDelegator<>(
                 mockManifest, provider, (f, n) -> new MySimpleWriter(n));
         delegator.setAutomaticSeparator("");
 
@@ -109,7 +109,7 @@ public class WriterDelegatorTest {
                 .name("Baz")
                 .definitionFile("com/foo/Baz.bam")
                 .build();
-        WriterDelegator<MySimpleWriter, MySimpleWriter.MyImportContainer> delegator = new WriterDelegator<>(
+        WriterDelegator<MySimpleWriter> delegator = new WriterDelegator<>(
                 mockManifest, provider, (f, n) -> new MySimpleWriter(n));
         Shape shape = StringShape.builder().id("com.foo#Baz").build();
         delegator.useShapeWriter(shape, writer -> {
