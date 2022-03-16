@@ -5,7 +5,7 @@ structure Foo {
     baz: String,
 }
 
-apply Foo$baz{@documentation("Hi") @sensitive
+apply Foo$baz{@documentation("Hi") @internal
 
 
 

@@ -8,7 +8,7 @@
                     "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#documentation": "Hi",
-                        "smithy.api#sensitive": {},
+                        "smithy.api#internal": {},
                         "smithy.api#deprecated": {}
                     }
                 }
