@@ -1,1 +1,1 @@
-[ERROR] ns.foo#Operation: Trait `sensitive` cannot be applied to `ns.foo#Operation`. This trait may only be applied to shapes that match the following selector: :not(:test(service, operation, resource)) | TraitTarget
+[ERROR] ns.foo#Operation: Trait `sensitive` cannot be applied to `ns.foo#Operation`. This trait may only be applied to shapes that match the following selector: :not(:test(service, operation, resource, member)) | TraitTarget

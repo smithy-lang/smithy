@@ -62,6 +62,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.DynamicTrait;
+import software.amazon.smithy.model.traits.InternalTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.traits.SuppressTrait;
@@ -547,7 +548,7 @@ public class ModelAssemblerTest {
                            + "}\n";
         String document2 = "namespace foo.baz\n"
                            + "structure Foo {\n"
-                           + "    @sensitive\n"
+                           + "    @internal\n"
                            + "    foo: String,\n"
                            + "}\n";
         ValidatedResult<Model> result = new ModelAssembler()
@@ -561,7 +562,7 @@ public class ModelAssemblerTest {
         StructureShape shape = result.unwrap().expectShape(ShapeId.from("foo.baz#Foo"), StructureShape.class);
         assertTrue(shape.hasTrait(DeprecatedTrait.class));
         assertTrue(shape.getMember("foo").isPresent());
-        assertTrue(shape.getMember("foo").get().hasTrait(SensitiveTrait.class));
+        assertTrue(shape.getMember("foo").get().hasTrait(InternalTrait.class));
     }
 
     @Test

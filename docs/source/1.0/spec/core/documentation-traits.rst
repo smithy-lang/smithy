@@ -395,12 +395,12 @@ Conflicts with
 -------------------
 
 Summary
-    Indicates that the data stored in the shape or member is sensitive
-    and MUST be handled with care.
+    Indicates that the data stored in the shape is sensitive and MUST be
+    handled with care.
 Trait selector
-    ``:not(:is(service, operation, resource))``
+    ``:not(:is(service, operation, resource, member))``
 
-    *Any shape that is not a service, operation, or resource.*
+    *Any shape that is not a service, operation, resource, or member.*
 Value type
     Annotation trait
 

@@ -61,6 +61,7 @@ import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.PatternTrait;
 import software.amazon.smithy.model.traits.PrivateTrait;
 import software.amazon.smithy.model.traits.RangeTrait;
+import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.traits.TitleTrait;
 import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.utils.IoUtils;
@@ -548,6 +549,24 @@ public class JsonSchemaConverterTest {
         assertThat(schema.getPatternProperties().size(), equalTo(1));
         assertTrue(schema.getPatternProperties().containsKey(".+"));
         assertThat(schema.getPatternProperties().get(".+").getType().get(), equalTo("string"));
+    }
+
+    @Test
+    public void sensitiveTraitHasNoImpact() {
+        StringShape string1 = StringShape.builder()
+                .id("smithy.api#String")
+                .addTrait(new SensitiveTrait())
+                .build();
+        Model model1 = Model.builder().addShapes(string1).build();
+        SchemaDocument document1 = JsonSchemaConverter.builder().model(model1).build().convertShape(string1);
+
+        StringShape string2 = StringShape.builder()
+                .id("smithy.api#String")
+                .build();
+        Model model2 = Model.builder().addShapes(string2).build();
+        SchemaDocument document2 = JsonSchemaConverter.builder().model(model2).build().convertShape(string2);
+
+        assertThat(document1, equalTo(document2));
     }
 
     @Test

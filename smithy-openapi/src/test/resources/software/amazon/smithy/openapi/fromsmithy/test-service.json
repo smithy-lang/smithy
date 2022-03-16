@@ -137,9 +137,12 @@
                     }
                 },
                 "abc": {
-                    "target": "example.rest#String",
+                    "target": "example.rest#SensitiveString",
                     "traits": {
-                        "smithy.api#sensitive": {}
+                        "smithy.api#length": {
+                            "min": 1,
+                            "max": 100
+                        }
                     }
                 },
                 "def": {
@@ -253,6 +256,12 @@
                 "target": "example.rest#String"
             }
         },
+        "example.rest#SensitiveString": {
+            "type": "string",
+            "traits": {
+                "smithy.api#sensitive": {}
+            }
+        },
         "example.rest#Integer": {
             "type": "integer"
         },
@@ -268,9 +277,9 @@
                 }
             },
             "value": {
-                "target": "example.rest#String",
+                "target": "example.rest#SensitiveString",
                 "traits": {
-                    "smithy.api#sensitive": {}
+                    "smithy.api#pattern": "^[a-z]+$"
                 }
             }
         },

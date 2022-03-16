@@ -47,7 +47,9 @@ apply SensitiveValidation @httpMalformedRequestTests([
 ])
 
 structure SensitiveValidationInput {
-    @sensitive
-    @suppress(["SensitiveTrait"])
-    string: PatternString
+    string: SensitivePatternString
 }
+
+@sensitive
+@pattern("^[a-m]+$")
+string SensitivePatternString
