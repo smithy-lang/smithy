@@ -53,7 +53,7 @@ public final class TargetValidator extends AbstractValidator {
             ShapeType.SERVICE, ShapeType.RESOURCE, ShapeType.OPERATION, ShapeType.MEMBER);
     private static final Set<ShapeType> VALID_SET_TARGETS = SetUtils.of(
             ShapeType.STRING, ShapeType.BYTE, ShapeType.SHORT, ShapeType.INTEGER, ShapeType.LONG,
-            ShapeType.BIG_INTEGER, ShapeType.BIG_DECIMAL, ShapeType.BLOB, ShapeType.ENUM);
+            ShapeType.BIG_INTEGER, ShapeType.BIG_DECIMAL, ShapeType.BLOB, ShapeType.ENUM, ShapeType.INT_ENUM);
 
     @Override
     public List<ValidationEvent> validate(Model model) {
