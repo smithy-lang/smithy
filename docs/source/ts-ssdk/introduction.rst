@@ -34,7 +34,7 @@ operation invocation. Contexts generally encapsulate out-of-band, unmodeled data
 or pertinent metadata from the endpoint. Contexts are passed as-is to the operation implementation via the server SDK.
 
 After conversion, the service developer invokes the server SDK directly by passing the request to a
-:doc:`handler <handlers>`. This the first time in request processing that the developer yields control of
+:doc:`handler <handlers>`. This is the first time in request processing that the developer yields control of
 execution to the SSDK. All of the preceding steps must be written explicitly.
 
 The generated implementation of the handler first performs routing, which determines which operation the supplied
