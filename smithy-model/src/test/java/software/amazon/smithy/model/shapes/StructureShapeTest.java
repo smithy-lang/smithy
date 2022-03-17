@@ -273,4 +273,41 @@ public class StructureShapeTest {
 
         assertThat(shape, equalTo(StructureShape.builder().id("smithy.example#A").build()));
     }
+
+    @Test
+    public void redefiningMembersPreservesOrder() {
+        StringShape string = StringShape.builder().id("smithy.example#String").build();
+        StructureShape mixin1 = StructureShape.builder()
+                .id("smithy.example#Mixin1")
+                .addTrait(MixinTrait.builder().build())
+                .addMember("a", string.getId())
+                .addMember("b", string.getId())
+                .addMember("c", string.getId())
+                .build();
+        StructureShape mixin2 = StructureShape.builder()
+                .id("smithy.example#Mixin2")
+                .addTrait(MixinTrait.builder().build())
+                .addMember("c", string.getId())
+                .addMember("b", string.getId())
+                .addMember("a", string.getId())
+                .build();
+        StructureShape mixin3 = StructureShape.builder()
+                .id("smithy.example#Mixin3")
+                .addTrait(MixinTrait.builder().build())
+                .addMember("b", string.getId())
+                .addMember("c", string.getId())
+                .addMember("a", string.getId())
+                .addMixin(mixin2)
+                .build();
+        StructureShape concrete = StructureShape.builder()
+                .id("smithy.example#Concrete")
+                // Note that d is added before mixins, but the builder tracks this
+                // and handles ordering appropriately when building the shape.
+                .addMember("d", string.getId())
+                .addMixin(mixin1)
+                .addMixin(mixin3)
+                .build();
+
+        assertThat(concrete.getMemberNames(), contains("a", "b", "c", "d"));
+    }
 }
