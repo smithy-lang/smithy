@@ -197,7 +197,7 @@ public class NodeValidationVisitorTest {
                 {"ns.foo#String3", "\"foo\"", null},
                 {"ns.foo#String3", "\"bar\"", null},
                 {"ns.foo#String4", "\"ABC\"", null},
-                {"ns.foo#String4", "\"abc\"", new String[] {"String value provided for `ns.foo#String4` must match regular expression: [A-Z]+"}},
+                {"ns.foo#String4", "\"abc\"", new String[] {"String value provided for `ns.foo#String4` must match regular expression: ^[A-Z]+$"}},
 
                 // list
                 {"ns.foo#List", "[\"a\"]", null},

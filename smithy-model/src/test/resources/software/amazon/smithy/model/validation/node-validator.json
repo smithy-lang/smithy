@@ -100,7 +100,7 @@
         "ns.foo#String4": {
             "type": "string",
             "traits": {
-                "smithy.api#pattern": "[A-Z]+"
+                "smithy.api#pattern": "^[A-Z]+$"
             }
         },
         "ns.foo#Blob1": {
