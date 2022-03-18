@@ -156,7 +156,7 @@ string DetailsValue
     min: 1,
     max: 64,
 )
-@pattern("[a-zA-Z0-9_.-]+")
+@pattern("^[a-zA-Z0-9_.-]+$")
 string EntityId
 
 integer ErrorCode

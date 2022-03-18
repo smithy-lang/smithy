@@ -21,6 +21,7 @@ software.amazon.smithy.model.validation.validators.MediaTypeValidator
 software.amazon.smithy.model.validation.validators.NoInlineDocumentSupportValidator
 software.amazon.smithy.model.validation.validators.OperationValidator
 software.amazon.smithy.model.validation.validators.PaginatedTraitValidator
+software.amazon.smithy.model.validation.validators.PatternTraitValidator
 software.amazon.smithy.model.validation.validators.PrivateAccessValidator
 software.amazon.smithy.model.validation.validators.RangeTraitValidator
 software.amazon.smithy.model.validation.validators.ReferencesTraitValidator
