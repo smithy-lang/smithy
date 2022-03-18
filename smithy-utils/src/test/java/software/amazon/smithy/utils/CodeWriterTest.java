@@ -16,12 +16,19 @@
 package software.amazon.smithy.utils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class CodeWriterTest {
     @Test
@@ -1061,5 +1068,275 @@ public class CodeWriterTest {
         writer.popState();
 
         assertThat(writer.toString(), equalTo("Hello\n"));
+    }
+
+    @Test
+    public void skipsConditionalsWithAllWhitespaceLines1() {
+        SimpleCodeWriter writer = new SimpleCodeWriter()
+                .trimTrailingSpaces(false)
+                .insertTrailingNewline(false);
+        writer.putContext("foo", true);
+        writer.write(" ${?foo}\n" // "  " is skipped.
+                     + "  ${foo:L} foo ${foo:L}\n" // "  " is kept, so is the newline.
+                     + " ${/foo}\n" // whole line is skipped.
+                     + " ${^foo}\n" // whole line is skipped.
+                     + "  not ${foo:L}\n" // skipped.
+                     + " ${/foo}\n" // Whole line is skipped.
+                     + "Who?"); // Includes only "Who?"
+
+        assertThat(writer.toString(), equalTo("  true foo true\nWho?"));
+    }
+
+    @Test
+    public void skipsConditionalsWithAllWhitespaceLines2() {
+        SimpleCodeWriter writer = new SimpleCodeWriter()
+                .trimTrailingSpaces(false)
+                .insertTrailingNewline(false);
+        writer.putContext("foo", true);
+        writer.write("${?foo}\n" // "  " is skipped.
+                     + " ${foo:L}\n" // " " is kept, so is the newline.
+                     + "${/foo}\n" // whole line is skipped.
+                     + "${^foo}\n" // whole line is skipped.
+                     + " not ${foo:L}\n" // skipped.
+                     + "${/foo}\n" // Whole line is skipped.
+                     + "Who?"); // Includes only "Who?"
+
+        assertThat(writer.toString(), equalTo(" true\nWho?"));
+    }
+
+    @Test
+    public void skipsConditionalsWithAllWhitespaceLines3() {
+        SimpleCodeWriter writer = new SimpleCodeWriter()
+                .trimTrailingSpaces(false)
+                .insertTrailingNewline(false);
+        writer.write(" ${?foo}\n" // Whole line is skipped.
+                     + "  ${foo:L} foo ${foo:L}\n" // Whole line is skipped.
+                     + " ${/foo}\n" // whole line is skipped.
+                     + " ${^foo}\n" // whole line is skipped.
+                     + "  not ${foo:L}\n" // Includes "  not \n"
+                     + " ${/foo}\n" // Whole line is skipped.
+                     + "Who?"); // Includes only "Who?"
+
+        assertThat(writer.toString(), equalTo("  not \nWho?"));
+    }
+
+    @Test
+    public void expandsEmptyConditionalSections() {
+        SimpleCodeWriter writer = new SimpleCodeWriter()
+                .trimTrailingSpaces(false)
+                .insertTrailingNewline(false);
+        writer.write("Hi\n"
+                     + "${^foo}\n"
+                     + "${/foo}");
+
+        assertThat(writer.toString(), equalTo("Hi\n"));
+    }
+
+    // This test is important because formatters are applied only if the
+    // condition they're contained within evaluate to true. This means that
+    // error handling is deferred until evaluation.
+    @Test
+    public void failsWhenFormatterIsUnknownInsideConditional() {
+        SimpleCodeWriter writer = new SimpleCodeWriter()
+                .trimTrailingSpaces(false)
+                .insertTrailingNewline(false);
+
+        RuntimeException e = Assertions.assertThrows(RuntimeException.class, () -> {
+            writer.write("${^foo}$P${/foo}", 10);
+        });
+
+        assertThat(e.getMessage(), equalTo("Syntax error at line 1 column 9: Unknown formatter `P` "
+                                           + "found in format string (template: ${^foo}$P${/foo}) "
+                                           + "(Debug Info {path=ROOT, near=})"));
+    }
+
+    // This test is important because formatters are applied only if the
+    // condition they're contained within evaluate to true. This means that
+    // error handling is deferred until evaluation.
+    @Test
+    public void ignoresInvalidFormattersInUnevaluatedConditions() {
+        SimpleCodeWriter writer = new SimpleCodeWriter()
+                .trimTrailingSpaces(false)
+                .insertTrailingNewline(false);
+        writer.write("${?foo}$P${/foo}", 10);
+
+        assertThat(writer.toString(), equalTo(""));
+    }
+
+    @ParameterizedTest
+    @MethodSource("nestedBlocksProvider")
+    public void evaluatesNestedBlocks(String line) {
+        SimpleCodeWriter writer = new SimpleCodeWriter()
+                .trimTrailingSpaces(false)
+                .insertTrailingNewline(false);
+        writer.write("${^foo}" + line
+                     + " ${^foo}Hi1${/foo}" + line
+                     + " ${^foo}${^foo}Hi2${?foo}No${/foo}${/foo}${/foo}" + line
+                     + " ${^foo}Hi3${/foo}" + line
+                     + "${/foo}");
+
+        assertThat(writer.toString(), equalTo(" Hi1" + line + " Hi2" + line + " Hi3" + line));
+    }
+
+    public static Stream<Arguments> nestedBlocksProvider() {
+        return Stream.of(Arguments.of("\r"), Arguments.of("\n"), Arguments.of("\r\n"));
+    }
+
+    @Test
+    public void canIterateOverVariable() {
+        SimpleCodeWriter writer = new SimpleCodeWriter()
+                .trimTrailingSpaces(false)
+                .insertTrailingNewline(false);
+        writer.putContext("foo", Arrays.asList("a", "b", "c"));
+        writer.write("${#foo}\n"
+                     + " - ${currentKey:L}: ${currentValue:L}\n"
+                     + "${/foo}");
+
+        assertThat(writer.toString(), equalTo(" - 0: a\n - 1: b\n - 2: c\n"));
+    }
+
+    @Test
+    public void canIterateOverVariableAndDelayConditionals() {
+        SimpleCodeWriter writer = new SimpleCodeWriter()
+                .trimTrailingSpaces(false)
+                .insertTrailingNewline(false);
+        writer.putContext("foo", Arrays.asList("a", "", "b"));
+        writer.write("${#foo}\n"
+                     + " ${?currentValue}\n"
+                     + " - ${currentKey:L}: ${currentValue:L}\n"
+                     + " ${/currentValue}\n"
+                     + "${/foo}\n");
+
+        assertThat(writer.toString(), equalTo(" - 0: a\n - 2: b\n"));
+    }
+
+    @Test
+    public void canGetFirstAndLastFromIterator() {
+        SimpleCodeWriter writer = new SimpleCodeWriter()
+                .trimTrailingSpaces(false)
+                .insertTrailingNewline(false);
+        writer.putContext("foo", Arrays.asList("a", "b", "c"));
+        writer.write("${#foo}\n"
+                     + "${?currentIsFirst}\n"
+                     + "[\n"
+                     + "${/currentIsFirst}\n"
+                     + "    ${currentValue:L}${^currentIsLast},${/currentIsLast}\n"
+                     + "${?currentIsLast}\n"
+                     + "]\n"
+                     + "${/currentIsLast}\n"
+                     + "${/foo}\n");
+
+        assertThat(writer.toString(), equalTo("[\n    a,\n    b,\n    c\n]\n"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("truthyAndFalseyTestCases")
+    public void truthyAndFalsey(Object fooValue, String expected) {
+        String template = "${?foo}A${/foo}${^foo}B${/foo}";
+        String actual = new SimpleCodeWriter()
+                .trimTrailingSpaces(false)
+                .insertTrailingNewline(false)
+                .putContext("foo", fooValue)
+                .write(template)
+                .toString();
+
+        assertThat(actual, equalTo(expected));
+    }
+
+    public static Stream<Arguments> truthyAndFalseyTestCases() {
+        return Stream.of(
+                Arguments.of(null, "B"),
+                Arguments.of(false, "B"),
+                Arguments.of("", "B"),
+                Arguments.of(Collections.emptyList(), "B"),
+                Arguments.of(Collections.emptySet(), "B"),
+                Arguments.of(Collections.emptyMap(), "B"),
+                Arguments.of(Optional.empty(), "B"),
+                Arguments.of(0, "A"),
+                Arguments.of(1, "A"),
+                Arguments.of("a", "A"),
+                Arguments.of(ListUtils.of("a"), "A"),
+                Arguments.of(SetUtils.of("a"), "A"),
+                Arguments.of(MapUtils.of("a", "a"), "A"),
+                Arguments.of(Optional.of(0), "A"),
+                Arguments.of(Optional.of(Collections.emptyList()), "A")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("iterationTestCases")
+    public void handlesIteration(Object fooValue, String expected) {
+        String template = "${#foo}\n"
+                          + "k: ${currentKey:L}, v: ${currentValue:L}, f: ${currentIsFirst:L}, l: ${currentIsLast:L}\n"
+                          + "${/foo}";
+        String actual = new SimpleCodeWriter()
+                .trimTrailingSpaces(false)
+                .insertTrailingNewline(false)
+                .putContext("foo", fooValue)
+                .write(template)
+                .toString();
+
+        assertThat(actual, equalTo(expected));
+    }
+
+    public static Stream<Arguments> iterationTestCases() {
+        return Stream.of(
+                Arguments.of(null, ""),
+                Arguments.of(false, ""),
+                Arguments.of("", ""),
+                Arguments.of(Collections.emptyList(), ""),
+                Arguments.of(Collections.emptySet(), ""),
+                Arguments.of(Collections.emptyMap(), ""),
+                Arguments.of(Optional.empty(), ""),
+                Arguments.of(Optional.of(0), ""),
+                Arguments.of(Optional.of(Collections.emptyList()), ""),
+                Arguments.of(ListUtils.of("a"), "k: 0, v: a, f: true, l: true\n"),
+                Arguments.of(SetUtils.of("a"), "k: 0, v: a, f: true, l: true\n"),
+                Arguments.of(MapUtils.of("ak", "av"), "k: ak, v: av, f: true, l: true\n"),
+                Arguments.of(Arrays.asList("a", "b"),
+                             "k: 0, v: a, f: true, l: false\nk: 1, v: b, f: false, l: true\n")
+        );
+    }
+
+    @Test
+    public void detectsOutOfOrderClosingBlocks() {
+        RuntimeException e = Assertions.assertThrows(RuntimeException.class, () -> {
+            new SimpleCodeWriter().write("${?foo}${?bar}${/foo}${/bar}");
+        });
+
+        assertThat(e.getMessage(), containsString("Invalid closing tag: 'foo'. Expected: 'bar'"));
+    }
+
+    @Test
+    public void detectsClosingUnopenedBlock() {
+        RuntimeException e = Assertions.assertThrows(RuntimeException.class, () -> {
+            new SimpleCodeWriter().write("${/bar}");
+        });
+
+        assertThat(e.getMessage(), containsString("Attempted to close unopened tag: 'bar'"));
+    }
+
+    @Test
+    public void detectsUnclosedBlocks() {
+        RuntimeException e = Assertions.assertThrows(RuntimeException.class, () -> {
+            new SimpleCodeWriter().write("${?bar}${?foo}");
+        });
+
+        assertThat(e.getMessage(), equalTo("Unclosed parse conditional blocks: [foo, bar]"));
+    }
+
+    @Test
+    public void handlesNestedBlockAlignment() {
+        SimpleCodeWriter writer = new SimpleCodeWriter()
+                .trimTrailingSpaces(false)
+                .insertTrailingNewline(false);
+        writer.onSection("nested", writer::writeInlineWithNoFormatting);
+        writer.write("Hello: ${C@nested|}",
+                     writer.consumer(w -> w.write(". ${C|}",
+                                                  w.consumer(w2 -> w2.write("* Hi\n* There")))));
+        String actual = writer.toString();
+
+        assertThat(actual, equalTo("Hello: . * Hi\n"
+                                   + "         * There"));
     }
 }
