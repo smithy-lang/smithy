@@ -1,5 +1,26 @@
 # Smithy Changelog
 
+## 1.19.0 (2022-03-21)
+
+### Features
+
+* Disallowed `requiresLength` trait in output. ([#1155](https://github.com/awslabs/smithy/pull/1155), [#1152](https://github.com/awslabs/smithy/pull/1152))
+* Added validation that `code` in `http` trait is between 100 and 999. ([#1156](https://github.com/awslabs/smithy/pull/1156))
+* Added validation that `uri` in `http` trait uses ASCII characters. ([#1154](https://github.com/awslabs/smithy/pull/1154))
+* Allowed `jsonName` trait on union members. ([#1153](https://github.com/awslabs/smithy/pull/1153))
+* Improved Dockerfile support. ([#1140](https://github.com/awslabs/smithy/pull/1140))
+* Added support for conditions and loops to AbstractCodeWriter. ([#1144](https://github.com/awslabs/smithy/pull/1144))
+* Added a warning for missing `^` or `$` anchors in `@pattern` trait. ([#1141](https://github.com/awslabs/smithy/pull/1141))
+* Added a validator to catch usage of non-inclusive words. ([#931](https://github.com/awslabs/smithy/pull/931))
+* Added new classes for code writing and delegation, which deprecates the `software.amazon.smithy.codegen.core.writer`
+  package. ([#1131](https://github.com/awslabs/smithy/pull/1131))
+* Added a warning for using `@sensitive` trait on members, which will be removed in IDL 2.0. ([#1132](https://github.com/awslabs/smithy/pull/1132))
+
+### Documentation
+
+* Documented the supported OpenAPI version. ([#1151](https://github.com/awslabs/smithy/pull/1151))
+* Added links to Scala generator and plugin. ([#1145](https://github.com/awslabs/smithy/pull/1145))
+
 ## 1.18.1 (2022-03-10)
 
 ### Features
