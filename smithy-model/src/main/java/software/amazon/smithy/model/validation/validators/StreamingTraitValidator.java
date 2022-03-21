@@ -106,6 +106,7 @@ public final class StreamingTraitValidator extends AbstractValidator {
             for (Relationship rel : provider.getNeighbors(shape)) {
                 if (rel.getRelationshipType() != RelationshipType.INPUT
                         && rel.getRelationshipType() != RelationshipType.OUTPUT
+                        && !isInputOutputMixinRelationship(provider, rel)
                         && rel.getRelationshipType().getDirection() == RelationshipDirection.DIRECTED) {
                     events.add(error(rel.getShape(), String.format(
                             "This shape has an invalid `%s` relationship to a structure, `%s`, that contains "
@@ -115,6 +116,30 @@ public final class StreamingTraitValidator extends AbstractValidator {
         }
 
         return events;
+    }
+
+    private boolean isInputOutputMixinRelationship(NeighborProvider provider, Relationship rel) {
+        // Mixins that contain streams are allowed to be mixed into
+        // input and output shapes, but nowhere else.
+        if (rel.getRelationshipType() == RelationshipType.MIXIN) {
+            boolean foundInputOutput = false;
+            for (Relationship mixinRel : provider.getNeighbors(rel.getShape())) {
+                RelationshipType mixinRelType = mixinRel.getRelationshipType();
+                // Inputs, outputs, and the containers where mixins are added are
+                // all allowed as relationships.
+                if (mixinRelType == RelationshipType.INPUT || mixinRelType == RelationshipType.OUTPUT) {
+                    foundInputOutput = true;
+                } else if (mixinRelType != RelationshipType.MEMBER_CONTAINER) {
+                    // Other relationship types aren't allowed, so short-circuit.
+                    return false;
+                }
+            }
+
+            // At least one input or output relationship must be found for this
+            // mixin relationship to be valid.
+            return foundInputOutput;
+        }
+        return false;
     }
 
     private List<ValidationEvent> validateAllEventStreamMembers(Model model) {
