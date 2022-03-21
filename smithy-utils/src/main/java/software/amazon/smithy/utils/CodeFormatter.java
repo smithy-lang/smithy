@@ -193,15 +193,15 @@ final class CodeFormatter {
     }
 
     /**
-     * ParseBlocks are used to track the state of a template. When a condition or loop is parsed,
-     * it pushes a new ParseBlock. Any operations that need to be performed in that pushed block
+     * BlockOperations are used to track the state of a template. When a condition or loop is parsed,
+     * it pushes a new BlockOperation. Any operations that need to be performed in that pushed block
      * are tracked within the block and only executed if the block is valid, or executed N times
      * for the value of a loop.
      */
-    private abstract static class ParseBlock implements Operation {
+    private abstract static class BlockOperation implements Operation {
         private final String variable;
 
-        ParseBlock(String variable) {
+        BlockOperation(String variable) {
             this.variable = variable;
         }
 
@@ -212,9 +212,9 @@ final class CodeFormatter {
         abstract void push(Operation operation);
 
         /**
-         * A ParseBlock that always runs.
+         * A BlockOperation that always runs.
          */
-        static class Unconditional extends ParseBlock {
+        static class Unconditional extends BlockOperation {
             private final int line;
             private final int column;
             private final List<Operation> operations = new ArrayList<>();
@@ -239,7 +239,7 @@ final class CodeFormatter {
         }
 
         /**
-         * A ParseBlock that only runs if the referenced variable matches the condition.
+         * A BlockOperation that only runs if the referenced variable matches the condition.
          */
         static final class Conditional extends Unconditional {
             private final boolean negate;
@@ -259,13 +259,18 @@ final class CodeFormatter {
         }
 
         /**
-         * A ParseBlock that repeats a template for each value referenced by the block. Each iteration pushes
-         * a state to the writer that includes a "currentKey" and "currentValue" context property representing
-         * the current index or key and the current value.
+         * A BlockOperation that repeats a template for each value referenced by the block. Each iteration pushes
+         * a state to the writer that includes key, value, key.first, and key.last context properties. The name
+         * of the context property can be customized in the template.
          */
         static final class Loop extends Unconditional {
-            Loop(String variableName, int line, int column) {
+            private final String keyName;
+            private final String valueName;
+
+            Loop(String variableName, int line, int column, String keyName, String valueName) {
                 super(variableName, line, column);
+                this.keyName = keyName;
+                this.valueName = valueName;
             }
 
             @Override
@@ -276,10 +281,10 @@ final class CodeFormatter {
                 while (iterator.hasNext()) {
                     Map.Entry<?, ?> current = iterator.next();
                     writer.pushState();
-                    writer.putContext("currentKey", current.getKey());
-                    writer.putContext("currentValue", current.getValue());
-                    writer.putContext("currentIsFirst", isFirst);
-                    writer.putContext("currentIsLast", !iterator.hasNext());
+                    writer.putContext(keyName, current.getKey());
+                    writer.putContext(valueName, current.getValue());
+                    writer.putContext(keyName + ".first", isFirst);
+                    writer.putContext(keyName + ".last", !iterator.hasNext());
                     isFirst = false;
                     super.apply(sink, writer);
                     writer.popState();
@@ -339,7 +344,7 @@ final class CodeFormatter {
         private final Object[] arguments;
         private final boolean[] positionals;
         private int relativeIndex = 0;
-        private final Deque<ParseBlock> blocks = new ArrayDeque<>();
+        private final Deque<BlockOperation> blocks = new ArrayDeque<>();
 
         Parser(AbstractCodeWriter<?> writer, String template, Object[] arguments) {
             this.template = template;
@@ -348,7 +353,7 @@ final class CodeFormatter {
             this.parser = new SimpleParser(template);
             this.arguments = arguments;
             this.positionals = new boolean[arguments.length];
-            blocks.add(new ParseBlock.Unconditional("", 1, 1));
+            blocks.add(new BlockOperation.Unconditional("", 1, 1));
         }
 
         private void pushOperation(Operation op) {
@@ -407,7 +412,7 @@ final class CodeFormatter {
                     + blocks.stream()
                             // Don't include the root block.
                             .filter(b -> !b.variable().isEmpty())
-                            .map(ParseBlock::variable)
+                            .map(BlockOperation::variable)
                             .collect(Collectors.joining(", "))
                     + "]");
         }
@@ -462,7 +467,7 @@ final class CodeFormatter {
             if (parser.peek() == '@') {
                 parser.skip();
                 int start = parser.position();
-                parser.consumeUntilNoLongerMatches(c -> c != '}' && c != '|');
+                parser.consumeUntilNoLongerMatches(this::isNameCharacter);
                 String sectionName = parser.sliceFrom(start);
                 ensureNameIsValid(sectionName);
                 operation = Operation.inlineSection(sectionName, operation);
@@ -494,21 +499,45 @@ final class CodeFormatter {
         private void pushBlock(int pendingTextStart, int startPosition, int startLine, int startColumn, char c) {
             parser.expect(c);
             String name = parseArgumentName();
-            parser.expect('}');
-            handleConditionalOnLine(pendingTextStart, startPosition, startColumn);
-            blocks.push(createBlockForChar(c, name, startLine, startColumn));
-        }
 
-        private ParseBlock createBlockForChar(char c, String name, int line, int column) {
+            BlockOperation block;
             switch (c) {
                 case '#':
-                    return new ParseBlock.Loop(name, line, column);
+                    // Parse optional key value pair bindings in the form of:
+                    // ${#foo as key, value}
+                    //       ^  ^    ^ : one or more spaces
+                    String keyPrefix = "key";
+                    String value = "value";
+                    if (parser.peek() == ' ') {
+                        parser.sp();
+                        parser.expect('a');
+                        parser.expect('s');
+                        parser.sp();
+                        int startPos = parser.position();
+                        parser.consumeUntilNoLongerMatches(this::isNameCharacter);
+                        keyPrefix = parser.sliceFrom(startPos);
+                        ensureNameIsValid(keyPrefix);
+                        parser.expect(',');
+                        parser.sp();
+                        startPos = parser.position();
+                        parser.consumeUntilNoLongerMatches(this::isNameCharacter);
+                        value = parser.sliceFrom(startPos);
+                        ensureNameIsValid(value);
+                    }
+                    block = new BlockOperation.Loop(name, startLine, startColumn, keyPrefix, value);
+                    break;
                 case '^':
-                    return new ParseBlock.Conditional(name, true, line, column);
+                    block = new BlockOperation.Conditional(name, true, startLine, startColumn);
+                    break;
                 case '?':
                 default:
-                    return new ParseBlock.Conditional(name, false, line, column);
+                    block = new BlockOperation.Conditional(name, false, startLine, startColumn);
             }
+
+            parser.expect('}');
+
+            handleConditionalOnLine(pendingTextStart, startPosition, startColumn);
+            blocks.push(block);
         }
 
         private void handleConditionalOnLine(int pendingTextStart, int startPosition, int startColumn) {
@@ -539,7 +568,7 @@ final class CodeFormatter {
 
             handleConditionalOnLine(pendingTextStart, startPosition, startColumn);
 
-            ParseBlock block = blocks.pop();
+            BlockOperation block = blocks.pop();
             if (!block.variable().equals(name)) {
                 throw new IllegalArgumentException("Invalid closing tag: '" + name + "'. Expected: '"
                                                    + block.variable() + "'");
@@ -578,7 +607,7 @@ final class CodeFormatter {
 
         private String parseArgumentName() {
             int start = parser.position();
-            parser.consumeUntilNoLongerMatches(c -> c != ':' && c != '}');
+            parser.consumeUntilNoLongerMatches(this::isNameCharacter);
             String name = parser.sliceFrom(start);
             ensureNameIsValid(name);
             return name;
@@ -643,6 +672,16 @@ final class CodeFormatter {
             if (!NAME_PATTERN.matcher(name).matches()) {
                 throw error(String.format("Invalid format expression name `%s`", name));
             }
+        }
+
+        private boolean isNameCharacter(char c) {
+            return (c >= 'a' && c <= 'z')
+                   || (c >= 'A' && c <= 'Z')
+                   || (c >= '0' && c <= '9')
+                   || c == '_'
+                   || c == '.'
+                   || c == '#'
+                   || c == '$';
         }
     }
 }

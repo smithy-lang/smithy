@@ -1189,7 +1189,7 @@ public class CodeWriterTest {
                 .insertTrailingNewline(false);
         writer.putContext("foo", Arrays.asList("a", "b", "c"));
         writer.write("${#foo}\n"
-                     + " - ${currentKey:L}: ${currentValue:L}\n"
+                     + " - ${key:L}: ${value:L}\n"
                      + "${/foo}");
 
         assertThat(writer.toString(), equalTo(" - 0: a\n - 1: b\n - 2: c\n"));
@@ -1202,9 +1202,9 @@ public class CodeWriterTest {
                 .insertTrailingNewline(false);
         writer.putContext("foo", Arrays.asList("a", "", "b"));
         writer.write("${#foo}\n"
-                     + " ${?currentValue}\n"
-                     + " - ${currentKey:L}: ${currentValue:L}\n"
-                     + " ${/currentValue}\n"
+                     + " ${?value}\n"
+                     + " - ${key:L}: ${value:L}\n"
+                     + " ${/value}\n"
                      + "${/foo}\n");
 
         assertThat(writer.toString(), equalTo(" - 0: a\n - 2: b\n"));
@@ -1217,13 +1217,32 @@ public class CodeWriterTest {
                 .insertTrailingNewline(false);
         writer.putContext("foo", Arrays.asList("a", "b", "c"));
         writer.write("${#foo}\n"
-                     + "${?currentIsFirst}\n"
+                     + "${?key.first}\n"
                      + "[\n"
-                     + "${/currentIsFirst}\n"
-                     + "    ${currentValue:L}${^currentIsLast},${/currentIsLast}\n"
-                     + "${?currentIsLast}\n"
+                     + "${/key.first}\n"
+                     + "    ${value:L}${^key.last},${/key.last}\n"
+                     + "${?key.last}\n"
                      + "]\n"
-                     + "${/currentIsLast}\n"
+                     + "${/key.last}\n"
+                     + "${/foo}\n");
+
+        assertThat(writer.toString(), equalTo("[\n    a,\n    b,\n    c\n]\n"));
+    }
+
+    @Test
+    public void canGetFirstAndLastFromIteratorWithCustomName() {
+        SimpleCodeWriter writer = new SimpleCodeWriter()
+                .trimTrailingSpaces(false)
+                .insertTrailingNewline(false);
+        writer.putContext("foo", Arrays.asList("a", "b", "c"));
+        writer.write("${#foo as i, value}\n"
+                     + "${?i.first}\n"
+                     + "[\n"
+                     + "${/i.first}\n"
+                     + "    ${value:L}${^i.last},${/i.last}\n"
+                     + "${?i.last}\n"
+                     + "]\n"
+                     + "${/i.last}\n"
                      + "${/foo}\n");
 
         assertThat(writer.toString(), equalTo("[\n    a,\n    b,\n    c\n]\n"));
@@ -1267,7 +1286,7 @@ public class CodeWriterTest {
     @MethodSource("iterationTestCases")
     public void handlesIteration(Object fooValue, String expected) {
         String template = "${#foo}\n"
-                          + "k: ${currentKey:L}, v: ${currentValue:L}, f: ${currentIsFirst:L}, l: ${currentIsLast:L}\n"
+                          + "k: ${key:L}, v: ${value:L}, f: ${key.first:L}, l: ${key.last:L}\n"
                           + "${/foo}";
         String actual = new SimpleCodeWriter()
                 .trimTrailingSpaces(false)

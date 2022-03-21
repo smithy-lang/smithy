@@ -19,6 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
+import java.util.Arrays;
 import java.util.function.Consumer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -525,5 +526,66 @@ public class CodeFormatterTest {
                                               + "\t\t\t\t}\n"
                                               + "\t\t}\n"
                                               + "}\n"));
+    }
+
+    @Test
+    public void canProvideCustomLoopPrefixes() {
+        SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
+        writer.putContext("foo", Arrays.asList("a", "b", "c"));
+        writer.write("${#foo as k, v}\n"
+                     + "${k:L} ${v:L} ${k.first:L} ${k.last:L}\n"
+                     + "${/foo}");
+
+        assertThat(writer.toString(), equalTo("0 a true false\n"
+                                              + "1 b false false\n"
+                                              + "2 c false true\n"));
+    }
+
+    @Test
+    public void validatesKeyBindingName() {
+        SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
+        RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+                                                     () -> writer.write("${#foo as 0a, v}${/foo}"));
+
+        assertThat(e.getMessage(), containsString("Invalid format expression name `0a`"));
+    }
+
+    @Test
+    public void validatesValueBindingName() {
+        SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
+        RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+                                                     () -> writer.write("${#foo as k, 0v}${/foo}"));
+
+        assertThat(e.getMessage(), containsString("Invalid format expression name `0v`"));
+    }
+
+    @Test
+    public void requiresBothKeyAndValueBindingNamesWhenAnySet() {
+        SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
+        RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+                                                     () -> writer.write("${#foo as k}${/foo}"));
+
+        assertThat(e.getMessage(), containsString("Expected: ',', but found '}'"));
+    }
+
+    @Test
+    public void canNestForLoops() {
+        SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
+        writer.putContext("foo", Arrays.asList("a", "b", "c"));
+        writer.write("${#foo as k1, v1}\n"
+                     + "${#foo as k2, v2}\n"
+                     + "${k1:L} ${v1:L}; ${k2:L} ${v2:L}\n"
+                     + "${/foo}\n"
+                     + "${/foo}");
+
+        assertThat(writer.toString(), equalTo("0 a; 0 a\n"
+                                              + "0 a; 1 b\n"
+                                              + "0 a; 2 c\n"
+                                              + "1 b; 0 a\n"
+                                              + "1 b; 1 b\n"
+                                              + "1 b; 2 c\n"
+                                              + "2 c; 0 a\n"
+                                              + "2 c; 1 b\n"
+                                              + "2 c; 2 c\n"));
     }
 }
