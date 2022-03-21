@@ -588,4 +588,93 @@ public class CodeFormatterTest {
                                               + "2 c; 1 b\n"
                                               + "2 c; 2 c\n"));
     }
+
+    @Test
+    public void controlsLeadingWhitespace() {
+        SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
+        writer.putContext("foo", Arrays.asList("a", "b", "c"));
+        writer.write("Hey.   \n  ${~L}", "hi");
+
+        assertThat(writer.toString(), equalTo("Hey.hi"));
+    }
+
+    @Test
+    public void controlsLeadingAndTrailingWhitespace() {
+        SimpleCodeWriter writer = new SimpleCodeWriter().trimTrailingSpaces(false).insertTrailingNewline(false);
+        writer.putContext("foo", Arrays.asList("a", "b", "c"));
+        writer.write("Hey.   \n  ${~L~}    \n.Bye.", "hi");
+
+        assertThat(writer.toString(), equalTo("Hey.hi.Bye."));
+    }
+
+    @Test
+    public void leadingWhitespaceNoOp() {
+        SimpleCodeWriter writer = new SimpleCodeWriter();
+        writer.putContext("foo", "hi");
+        writer.write("${~foo:L}");
+
+        assertThat(writer.toString(), equalTo("hi\n"));
+    }
+
+    @Test
+    public void controlsLeadingWhitespaceWithConditionals() {
+        SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
+        writer.putContext("foo", Arrays.asList("a", "b", "c"));
+        writer.write("${#foo as k1, v1}\n"      // elided because it's standalone
+                     + "  ${#foo as k2, v2}\n"  // elided because it's standalone
+                     + "      ${~k1:L} ${v1:L}; ${k2:L} ${v2:L}\n" // removes leading ws
+                     + "  ${/foo}\n" // elided
+                     + "${/foo}"); // elided
+
+        assertThat(writer.toString(), equalTo("0 a; 0 a\n"
+                                              + "0 a; 1 b\n"
+                                              + "0 a; 2 c\n"
+                                              + "1 b; 0 a\n"
+                                              + "1 b; 1 b\n"
+                                              + "1 b; 2 c\n"
+                                              + "2 c; 0 a\n"
+                                              + "2 c; 1 b\n"
+                                              + "2 c; 2 c\n"));
+    }
+
+    @Test
+    public void controlsLeadingWhitespaceWithConditionalsAndBlocks() {
+        SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
+        writer.putContext("foo", "text");
+        writer.write("${?foo}\n"             // elided because it's standalone
+                     + "  ${~foo:L} ${C|}\n" // removes leading ws before v, and C is properly formatted.
+                     + "${/foo}",            // elided
+                     writer.consumer(w -> w.writeInlineWithNoFormatting("hi1\nhi2")));
+
+        assertThat(writer.toString(), equalTo("text hi1\n"
+                                              + "     hi2\n"));
+    }
+
+    @Test
+    public void cannotUseInlineBlockAlignmentWithTrimmedWhitespace() {
+        SimpleCodeWriter writer = new SimpleCodeWriter();
+
+        Assertions.assertThrows(RuntimeException.class,
+                                () -> writer.write("${~C|}", writer.consumer(w -> w.write("x"))));
+    }
+
+    @Test
+    public void canStripTrailingWsInFormattedExpansion() {
+        SimpleCodeWriter writer = new SimpleCodeWriter();
+        writer.putContext("foo", "hi");
+        writer.write("${foo:L~}\n  \n  .");
+
+        assertThat(writer.toString(), equalTo("hi.\n"));
+    }
+
+    @Test
+    public void canSkipTrailingWhitespaceInConditionals() {
+        SimpleCodeWriter writer = new SimpleCodeWriter().insertTrailingNewline(false);
+        writer.putContext("nav", "http://example.com");
+        writer.write("${?nav~}\n"
+                     + "  <a href=\"${nav:L}\">${nav:L}</a>\n"
+                     + "${~/nav}");
+
+        assertThat(writer.toString(), equalTo("<a href=\"http://example.com\">http://example.com</a>"));
+    }
 }
