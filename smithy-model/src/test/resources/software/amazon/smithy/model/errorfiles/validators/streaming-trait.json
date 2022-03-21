@@ -41,6 +41,35 @@
                 "smithy.api#streaming": {}
             }
         },
+        "ns.foo#MixedStreamingOperation": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#MixedStreamingOperationInput"
+            }
+        },
+        "ns.foo#MixedStreamingOperationInput": {
+            "type": "structure",
+            "members": {},
+            "mixins": [
+                {
+                    "target": "ns.foo#MixinStream"
+                }
+            ],
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#MixinStream": {
+            "type": "structure",
+            "members": {
+                "Body": {
+                    "target": "ns.foo#StreamingBlob"
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
         "ns.foo#InvalidStreamingOperation": {
             "type": "operation",
             "input": {
@@ -76,7 +105,12 @@
                 "NestedStream": {
                     "target": "ns.foo#NestedStreamContainer"
                 }
-            }
+            },
+            "mixins": [
+                {
+                    "target": "ns.foo#MixinStream"
+                }
+            ]
         },
         "ns.foo#NestedStreamContainer": {
             "type": "structure",
