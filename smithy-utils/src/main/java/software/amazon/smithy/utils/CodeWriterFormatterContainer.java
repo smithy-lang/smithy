@@ -28,9 +28,9 @@ final class CodeWriterFormatterContainer {
 
     // Must be sorted for binary search to work.
     static final char[] VALID_FORMATTER_CHARS = {
-            '!', '#', '%', '&', '*', '+', ',', '-', '.', '/', ';', '=', '?', '@',
+            '!', '%', '&', '*', '+', ',', '-', '.', ';', '=', '@',
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
-            'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '^', '_', '`', '~'};
+            'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '_', '`'};
 
     private final Map<Character, BiFunction<Object, String, String>> formatters = new HashMap<>();
     private final CodeWriterFormatterContainer parent;
