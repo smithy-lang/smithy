@@ -34,9 +34,9 @@ final class CodeFormatter {
 
     private CodeFormatter() {}
 
-    static void run(Appendable sink, AbstractCodeWriter<?> writer, String template, Object[] args) {
+    static void run(StringBuilder sink, AbstractCodeWriter<?> writer, String template, Object[] args) {
         try {
-            TrackingAppendable wrappedSink = new TrackingAppendable(sink);
+            Sink wrappedSink = Sink.from(sink);
             Operation block = new Parser(writer, template, args).parse();
             block.apply(wrappedSink, writer);
         } catch (IOException e) {
@@ -44,55 +44,55 @@ final class CodeFormatter {
         }
     }
 
-    private static class TrackingAppendable implements Appendable {
-        int column = 0;
-        private final Appendable delegate;
+    private interface Sink {
+        int column();
 
-        TrackingAppendable(Appendable delegate) {
-            this.delegate = delegate;
+        void append(char c);
+
+        static void writeString(Sink sink, CharSequence text) {
+            writeString(sink, text, 0, text.length());
         }
 
-        @Override
-        public final String toString() {
-            return delegate.toString();
-        }
-
-        @Override
-        public final TrackingAppendable append(CharSequence csq) throws IOException {
-            return append(csq, 0, csq.length());
-        }
-
-        @Override
-        public final TrackingAppendable append(CharSequence csq, int start, int end) throws IOException {
+        static void writeString(Sink sink, CharSequence text, int start, int end) {
             for (int i = start; i < end; i++) {
-                append(csq.charAt(i));
+                sink.append(text.charAt(i));
             }
-            return this;
         }
 
-        @Override
-        public TrackingAppendable append(char c) throws IOException {
-            if (c == '\r' || c == '\n') {
-                column = 0;
-            } else {
-                column++;
-            }
-            delegate.append(c);
-            return this;
-        }
+        static Sink from(StringBuilder builder) {
+            return new Sink() {
+                private int column = 0;
 
-        public int column() {
-            return column;
+                @Override
+                public int column() {
+                    return column;
+                }
+
+                @Override
+                public void append(char c) {
+                    if (c == '\r' || c == '\n') {
+                        column = 0;
+                    } else {
+                        column++;
+                    }
+                    builder.append(c);
+                }
+
+                @Override
+                public String toString() {
+                    return builder.toString();
+                }
+            };
         }
     }
 
     @FunctionalInterface
     private interface Operation {
-        void apply(TrackingAppendable sink, AbstractCodeWriter<?> writer) throws IOException;
+        void apply(Sink sink, AbstractCodeWriter<?> writer) throws IOException;
 
         // Writes literal segments of the input string.
         static Operation stringSlice(String source, int start, int end) {
-            return (sink, writer) -> sink.append(source, start, end);
+            return (sink, writer) -> Sink.writeString(sink, source, start, end);
         }
 
         // Evaluates a formatter using the provided writer. This is done lazily because formatters
@@ -109,7 +109,7 @@ final class CodeFormatter {
                 if (result == null) {
                     throw new RuntimeException(errorMessage.get());
                 }
-                sink.append(result);
+                Sink.writeString(sink, result);
             };
         }
 
@@ -117,7 +117,7 @@ final class CodeFormatter {
         static Operation inlineSection(String sectionName, Operation delegate) {
             return (sink, writer) -> {
                 // First capture the given default value.
-                TrackingAppendable buffer = new TrackingAppendable(new StringBuilder());
+                Sink buffer = Sink.from(new StringBuilder());
                 delegate.apply(buffer, writer);
                 String defaultValue = buffer.toString();
                 // Create an interceptable code section for the inline section.
@@ -129,7 +129,7 @@ final class CodeFormatter {
                 // behavior exactly matches how $C is treated.
                 expanded = writer.removeTrailingNewline(expanded);
                 // Write the final expanded section to the target sink.
-                sink.append(expanded);
+                Sink.writeString(sink, expanded);
             };
         }
 
@@ -139,28 +139,31 @@ final class CodeFormatter {
         }
     }
 
-    private static final class BlockAppender extends TrackingAppendable {
-        private final TrackingAppendable delegate;
+    private static final class BlockAppender implements Sink {
         private final int spaces;
         private final String staticWhitespace;
         private boolean previousIsCarriageReturn;
         private boolean previousIsNewline;
+        private final Sink delegate;
 
-        BlockAppender(TrackingAppendable delegate, String staticWhitespace) {
-            super(delegate);
+        BlockAppender(Sink delegate, String staticWhitespace) {
             this.delegate = delegate;
             this.spaces = delegate.column();
             this.staticWhitespace = staticWhitespace;
         }
 
         @Override
-        public int column() {
-            // Note: this is never called because this appended is never used as a delegate.
-            return super.column() + spaces;
+        public String toString() {
+            return delegate.toString();
         }
 
         @Override
-        public TrackingAppendable append(char c) throws IOException {
+        public int column() {
+            return delegate.column() + spaces;
+        }
+
+        @Override
+        public void append(char c) {
             if (previousIsNewline) {
                 writeSpaces();
                 previousIsNewline = false;
@@ -177,13 +180,11 @@ final class CodeFormatter {
                 previousIsCarriageReturn = c == '\r';
                 delegate.append(c);
             }
-
-            return this;
         }
 
-        private void writeSpaces() throws IOException {
+        private void writeSpaces() {
             if (staticWhitespace != null) {
-                delegate.append(staticWhitespace);
+                Sink.writeString(delegate, staticWhitespace);
             } else {
                 for (int i = 0; i < spaces; i++) {
                     delegate.append(' ');
@@ -226,7 +227,7 @@ final class CodeFormatter {
             }
 
             @Override
-            public void apply(TrackingAppendable sink, AbstractCodeWriter<?> writer) throws IOException {
+            public void apply(Sink sink, AbstractCodeWriter<?> writer) throws IOException {
                 for (Operation operation : operations) {
                     operation.apply(sink, writer);
                 }
@@ -250,7 +251,7 @@ final class CodeFormatter {
             }
 
             @Override
-            public void apply(TrackingAppendable sink, AbstractCodeWriter<?> writer) throws IOException {
+            public void apply(Sink sink, AbstractCodeWriter<?> writer) throws IOException {
                 Object value = writer.getContext(variable());
                 if (!isConditionTruthy(value) == negate) {
                     super.apply(sink, writer);
@@ -274,7 +275,7 @@ final class CodeFormatter {
             }
 
             @Override
-            public void apply(TrackingAppendable sink, AbstractCodeWriter<?> writer) throws IOException {
+            public void apply(Sink sink, AbstractCodeWriter<?> writer) throws IOException {
                 Object value = writer.getContext(variable());
                 Iterator<? extends Map.Entry<?, ?>> iterator = getValueIterator(value);
                 boolean isFirst = true;
