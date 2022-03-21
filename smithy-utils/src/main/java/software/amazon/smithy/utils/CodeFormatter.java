@@ -446,8 +446,24 @@ final class CodeFormatter {
             int startPosition = parser.position() - 1;
             int startLine = parser.line();
             int startColumn = parser.column() - 2;
+            boolean stripLeading = false;
 
             parser.expect('{');
+
+            // Strip leading whitespace if "~" comes at the start of a template expression. This is handled by faking
+            // that the start position of the expression is the stripped whitespace position. Note that once stripped,
+            // things like columns and lines become detached from the actual source text. This only matters for inline
+            // block alignment, and as such is forbidden to be used with it.
+            if (parser.peek() == '~') {
+                stripLeading = true;
+                parser.skip();
+                if (pendingTextStart > -1) {
+                    while (startPosition > pendingTextStart
+                           && Character.isWhitespace(parser.expression().charAt(startPosition - 1))) {
+                        startPosition--;
+                    }
+                }
+            }
 
             if (parser.peek() == '?' || parser.peek() == '^' || parser.peek() == '#') {
                 pushBlock(pendingTextStart, startPosition, startLine, startColumn, parser.peek());
@@ -475,6 +491,10 @@ final class CodeFormatter {
             }
 
             if (parser.peek() == '|') {
+                // Note: inline block alignment doesn't work with `?`, `^`, and `#`, so just checking here is fine.
+                if (stripLeading) {
+                    throw error("Cannot strip leading whitespace with '~' when using inline block alignment '|'");
+                }
                 String staticWhitespace = isAllLeadingWhitespaceOnLine(startPosition, startColumn)
                         ? template.substring(startPosition - startColumn, startPosition)
                         : null;
@@ -482,9 +502,25 @@ final class CodeFormatter {
                 operation = Operation.block(operation, staticWhitespace);
             }
 
+            boolean skipTrailingWs = parseStripTrailingWhitespace();
             parser.expect('}');
-
             pushOperation(operation);
+
+            if (skipTrailingWs) {
+                skipTrailingWhitespaceInParser();
+            }
+        }
+
+        boolean parseStripTrailingWhitespace() {
+            if (parser.peek() == '~') {
+                parser.skip();
+                return true;
+            }
+            return false;
+        }
+
+        void skipTrailingWhitespaceInParser() {
+            parser.consumeUntilNoLongerMatches(Character::isWhitespace);
         }
 
         private boolean isAllLeadingWhitespaceOnLine(int startPosition, int startColumn) {
@@ -535,10 +571,14 @@ final class CodeFormatter {
                     block = new BlockOperation.Conditional(name, false, startLine, startColumn);
             }
 
+            boolean skipTrailingWs = parseStripTrailingWhitespace();
             parser.expect('}');
-
             handleConditionalOnLine(pendingTextStart, startPosition, startColumn);
             blocks.push(block);
+
+            if (skipTrailingWs) {
+                skipTrailingWhitespaceInParser();
+            }
         }
 
         private void handleConditionalOnLine(int pendingTextStart, int startPosition, int startColumn) {
