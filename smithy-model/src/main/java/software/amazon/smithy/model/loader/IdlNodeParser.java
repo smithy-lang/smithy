@@ -37,17 +37,20 @@ final class IdlNodeParser {
     private IdlNodeParser() {}
 
     static Node parseNode(IdlModelParser parser) {
+        return parseNode(parser, parser.currentLocation());
+    }
+
+    static Node parseNode(IdlModelParser parser, SourceLocation location) {
         char c = parser.peek();
         switch (c) {
             case '{':
-                return parseObjectNode(parser, "object node");
+                return parseObjectNode(parser, "object node", location);
             case '[':
-                return parseArrayNode(parser);
+                return parseArrayNode(parser, location);
             case '"': {
                 if (peekTextBlock(parser)) {
-                    return parseTextBlock(parser);
+                    return parseTextBlock(parser, location);
                 } else {
-                    SourceLocation location = parser.currentLocation();
                     return new StringNode(IdlTextParser.parseQuotedString(parser), location);
                 }
             }
@@ -62,9 +65,8 @@ final class IdlNodeParser {
             case '8':
             case '9':
             case '-':
-                return parser.parseNumberNode();
+                return parser.parseNumberNode(location);
             default: {
-                SourceLocation location = parser.currentLocation();
                 return parseNodeTextWithKeywords(parser, location, ParserUtils.parseShapeId(parser));
             }
         }
@@ -107,8 +109,7 @@ final class IdlNodeParser {
                && parser.peek(2) == '"';
     }
 
-    static Node parseTextBlock(IdlModelParser parser) {
-        SourceLocation location = parser.currentLocation();
+    static Node parseTextBlock(IdlModelParser parser, SourceLocation location) {
         parser.expect('"');
         parser.expect('"');
         parser.expect('"');
@@ -116,8 +117,11 @@ final class IdlNodeParser {
     }
 
     static ObjectNode parseObjectNode(IdlModelParser parser, String parent) {
+        return parseObjectNode(parser, parent, parser.currentLocation());
+    }
+
+    static ObjectNode parseObjectNode(IdlModelParser parser, String parent, SourceLocation location) {
         parser.increaseNestingLevel();
-        SourceLocation location = parser.currentLocation();
         ObjectNode.Builder builder = ObjectNode.builder()
                 .sourceLocation(location);
         parser.expect('{');
@@ -160,9 +164,8 @@ final class IdlNodeParser {
         }
     }
 
-    private static ArrayNode parseArrayNode(IdlModelParser parser) {
+    private static ArrayNode parseArrayNode(IdlModelParser parser, SourceLocation location) {
         parser.increaseNestingLevel();
-        SourceLocation location = parser.currentLocation();
         ArrayNode.Builder builder = ArrayNode.builder()
                 .sourceLocation(location);
         parser.expect('[');
