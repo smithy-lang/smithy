@@ -135,18 +135,18 @@ final class CodeFormatter {
 
         // Used for "|". Wraps another operation and ensures newlines are properly indented.
         static Operation block(Operation delegate, String staticWhitespace) {
-            return (sink, writer) -> delegate.apply(new BlockAppender(sink, staticWhitespace), writer);
+            return (sink, writer) -> delegate.apply(new BlockAlignedSink(sink, staticWhitespace), writer);
         }
     }
 
-    private static final class BlockAppender implements Sink {
+    private static final class BlockAlignedSink implements Sink {
         private final int spaces;
         private final String staticWhitespace;
         private boolean previousIsCarriageReturn;
         private boolean previousIsNewline;
         private final Sink delegate;
 
-        BlockAppender(Sink delegate, String staticWhitespace) {
+        BlockAlignedSink(Sink delegate, String staticWhitespace) {
             this.delegate = delegate;
             this.spaces = delegate.column();
             this.staticWhitespace = staticWhitespace;
@@ -159,7 +159,7 @@ final class CodeFormatter {
 
         @Override
         public int column() {
-            return delegate.column() + spaces;
+            return delegate.column();
         }
 
         @Override
@@ -216,14 +216,10 @@ final class CodeFormatter {
          * A BlockOperation that always runs.
          */
         static class Unconditional extends BlockOperation {
-            private final int line;
-            private final int column;
             private final List<Operation> operations = new ArrayList<>();
 
-            Unconditional(String variable, int line, int column) {
+            Unconditional(String variable) {
                 super(variable);
-                this.line = line;
-                this.column = column;
             }
 
             @Override
@@ -245,8 +241,8 @@ final class CodeFormatter {
         static final class Conditional extends Unconditional {
             private final boolean negate;
 
-            Conditional(String variable, boolean negate, int line, int column) {
-                super(variable, line, column);
+            Conditional(String variable, boolean negate) {
+                super(variable);
                 this.negate = negate;
             }
 
@@ -268,8 +264,8 @@ final class CodeFormatter {
             private final String keyName;
             private final String valueName;
 
-            Loop(String variableName, int line, int column, String keyName, String valueName) {
-                super(variableName, line, column);
+            Loop(String variableName, String keyName, String valueName) {
+                super(variableName);
                 this.keyName = keyName;
                 this.valueName = valueName;
             }
@@ -286,9 +282,9 @@ final class CodeFormatter {
                     writer.putContext(valueName, current.getValue());
                     writer.putContext(keyName + ".first", isFirst);
                     writer.putContext(keyName + ".last", !iterator.hasNext());
-                    isFirst = false;
                     super.apply(sink, writer);
                     writer.popState();
+                    isFirst = false;
                 }
             }
         }
@@ -354,7 +350,7 @@ final class CodeFormatter {
             this.parser = new SimpleParser(template);
             this.arguments = arguments;
             this.positionals = new boolean[arguments.length];
-            blocks.add(new BlockOperation.Unconditional("", 1, 1));
+            blocks.add(new BlockOperation.Unconditional(""));
         }
 
         private void pushOperation(Operation op) {
@@ -434,6 +430,7 @@ final class CodeFormatter {
             if (parser.peek() == '{') {
                 parseBracedArgument(pendingTextStart);
             } else {
+                // Output any pending captured text before the output of the expression.
                 if (pendingTextStart > -1) {
                     pushOperation(Operation.stringSlice(parser.expression(), pendingTextStart, parser.position() - 1));
                 }
@@ -475,6 +472,7 @@ final class CodeFormatter {
                 return;
             }
 
+            // Output any pending captured text before the output of the expression.
             if (pendingTextStart > -1) {
                 pushOperation(Operation.stringSlice(parser.expression(), pendingTextStart, startPosition));
             }
@@ -561,14 +559,14 @@ final class CodeFormatter {
                         value = parser.sliceFrom(startPos);
                         ensureNameIsValid(value);
                     }
-                    block = new BlockOperation.Loop(name, startLine, startColumn, keyPrefix, value);
+                    block = new BlockOperation.Loop(name, keyPrefix, value);
                     break;
                 case '^':
-                    block = new BlockOperation.Conditional(name, true, startLine, startColumn);
+                    block = new BlockOperation.Conditional(name, true);
                     break;
                 case '?':
                 default:
-                    block = new BlockOperation.Conditional(name, false, startLine, startColumn);
+                    block = new BlockOperation.Conditional(name, false);
             }
 
             boolean skipTrailingWs = parseStripTrailingWhitespace();
@@ -582,8 +580,8 @@ final class CodeFormatter {
         }
 
         private void handleConditionalOnLine(int pendingTextStart, int startPosition, int startColumn) {
-            // If the expression is not followed directly by a newline, then all leading text.
             if (parser.peek() != '\r' && parser.peek() != '\n' && parser.peek() != Character.MIN_VALUE) {
+                // If the expression is not followed directly by a newline, then all leading text.
                 if (pendingTextStart > -1) {
                     pushOperation(Operation.stringSlice(parser.expression(), pendingTextStart, startPosition));
                 }
