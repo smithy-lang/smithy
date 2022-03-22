@@ -120,6 +120,11 @@ Build tooling
             smithy-cli/build/image/smithy-cli-linux-x86_64/bin/smithy --help
             smithy-cli/build/image/smithy-cli-linux-aarch_64/bin/smithy --help
 
+    * - `SBT Plugin <https://disneystreaming.github.io/smithy4s/docs/overview/sbt>`_
+      - Scala
+      - 0.x
+      - The Smithy SBT plugin transforms Smithy specifications into
+        protocol-agnostic Scala clients and servers.
 
 ---------------
 Code generators
@@ -156,6 +161,10 @@ of polish or that they work for all use cases.
       - Kotlin
       - 0.x
       - Swift client code generation for Smithy.
+    * - `Scala code generation for Smithy <https://github.com/disneystreaming/smithy4s>`_
+      - Scala
+      - 0.x
+      - Scala client and server code generation for Smithy.
 
 
 ----------------
