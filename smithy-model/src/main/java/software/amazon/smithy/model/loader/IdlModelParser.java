@@ -897,7 +897,10 @@ final class IdlModelParser extends SimpleParser {
     }
 
     NumberNode parseNumberNode() {
-        SourceLocation location = currentLocation();
+        return parseNumberNode(currentLocation());
+    }
+
+    NumberNode parseNumberNode(SourceLocation location) {
         String lexeme = ParserUtils.parseNumber(this);
 
         if (lexeme.contains("e") || lexeme.contains("E")  || lexeme.contains(".")) {
