@@ -123,7 +123,7 @@ Build tooling
     * - `SBT Plugin <https://disneystreaming.github.io/smithy4s/docs/overview/sbt>`_
       - Scala
       - 0.x
-      - The Smithy SBT plugin transforms Smithy speciciations into
+      - The Smithy SBT plugin transforms Smithy specifications into
         protocol-agnostic Scala clients and servers.
 
 ---------------
