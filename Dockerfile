@@ -3,17 +3,17 @@ FROM public.ecr.aws/docker/library/gradle:7-jdk17 AS build
 WORKDIR /build
 COPY . .
 
-# Generate all traits
-RUN ./gradlew :smithy-aws-apigateway-traits:jar --stacktrace
-RUN ./gradlew :smithy-aws-cloudformation-traits:jar --stacktrace
-RUN ./gradlew :smithy-aws-iam-traits:jar --stacktrace
-RUN ./gradlew :smithy-aws-traits:jar --stacktrace
-RUN ./gradlew :smithy-mqtt-traits:jar --stacktrace
-RUN ./gradlew :smithy-protocol-test-traits:jar --stacktrace
-RUN ./gradlew :smithy-validation-model:jar --stacktrace
-
-# Build the CLI
-RUN ./gradlew :smithy-cli:runtime --stacktrace
+RUN \
+    # Generate all traits
+    ./gradlew :smithy-aws-apigateway-traits:jar --stacktrace && \
+    ./gradlew :smithy-aws-cloudformation-traits:jar --stacktrace && \
+    ./gradlew :smithy-aws-iam-traits:jar --stacktrace && \
+    ./gradlew :smithy-aws-traits:jar --stacktrace && \
+    ./gradlew :smithy-mqtt-traits:jar --stacktrace && \
+    ./gradlew :smithy-protocol-test-traits:jar --stacktrace && \
+    ./gradlew :smithy-validation-model:jar --stacktrace && \
+    # Build the CLI
+    ./gradlew :smithy-cli:runtime --stacktrace
 
 # Run Smithy CLI in AL2 container
 FROM public.ecr.aws/amazonlinux/amazonlinux:2
