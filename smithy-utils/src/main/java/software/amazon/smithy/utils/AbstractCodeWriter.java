@@ -479,10 +479,10 @@ import java.util.regex.Pattern;
  *
  * <h4>Loops</h4>
  *
- * <p>Loops can be created to repeat a section of a template for each key value pair
- * stored in a named property. Loops are created using "#".
+ * <p>Loops can be created to repeat a section of a template for each value stored in
+ * a list or each each key value pair stored in a map. Loops are created using "#".
  *
- * <p>The following template with a "foo" value of ["a", "b", "c"]:
+ * <p>The following template with a "foo" value of {"key1": "a", "key2": "b", "key3": "c"}:
  *
  * <pre>{@code
  * ${#foo}
@@ -493,19 +493,19 @@ import java.util.regex.Pattern;
  * <p>Evaluates to:</p>
  *
  * <pre>{@code
- * - 0: a (first: true, last: false)
- * - 1: b (first: false, last: false)
- * - 2: c (first: false, last: true)
+ * - key1: a (first: true, last: false)
+ * - key2: b (first: false, last: false)
+ * - key3: c (first: false, last: true)
  * }</pre>
  *
  * <p>Each iteration of the loop pushes a new state in the writer that sets the following
  * context properties:
  *
  * <ul>
- *     <li>key: contains the current index of the loop or the current key of a map entry</li>
- *     <li>value: contains the current value of the iterator or current value of a map entry</li>
- *     <li>key.first: set to true if the loop is on the first value</li>
- *     <li>key.false: set to true if the loop is on the last value</li>
+ *     <li>key: contains the current 0-based index of an iterator or the current key of a map entry</li>
+ *     <li>value: contains the current value of an iterator or current value of a map entry</li>
+ *     <li>key.first: set to true if the loop is on the first iteration</li>
+ *     <li>key.false: set to true if the loop is on the last iteration</li>
  * </ul>
  *
  * <p>A custom variable name can be used in loops. For example:
@@ -520,7 +520,7 @@ import java.util.regex.Pattern;
  *
  * <p>Conditional blocks that occur on lines that only contain whitespace are not written
  * to the template output. For example, if the condition in the following template evaluates
- * to falsey, then the template expands to nothing:
+ * to falsey, then the template expands to an empty string:
  *
  * <pre>{@code
  * ${?foo}
@@ -528,7 +528,7 @@ import java.util.regex.Pattern;
  * ${/foo}
  * }</pre>
  *
- * <p>Whitespace that comes before an expression removed by putting "~" at the beginning of an expression.
+ * <p>Whitespace that comes before an expression can be removed by putting "~" at the beginning of an expression.
  *
  * <p>Assuming that the first positional argument is "hi":
  *
