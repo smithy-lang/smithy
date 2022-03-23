@@ -29,6 +29,10 @@ Smithy models can be converted to OpenAPI through smithy-build using the
 ``openapi`` plugin or through code using the
 `software.amazon.smithy:smithy-openapi`_ Java package.
 
+.. note::
+
+    The Smithy ``openapi`` plugin currently supports OpenAPI 3.0.2.
+
 
 --------------------------------------
 Differences between Smithy and OpenAPI
