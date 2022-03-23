@@ -73,13 +73,18 @@ Validation
 ------------------------
 
 Summary
-    Indicates that the streaming blob MUST be finite and has a known size.
+    Indicates that the streaming blob MUST be finite and have a known
+    size when sending data from a client to a server.
 
-    In an HTTP-based protocol, for instance, this trait indicates that the
-    ``Content-Length`` header MUST be sent prior to a client or server
-    sending the payload of a message. This can be useful for services that
-    need to determine if a request will be accepted based on its size or
-    where to store data based on the size of the stream.
+    In an HTTP-based protocol, this trait indicates that the
+    ``Content-Length`` header MUST be sent prior to a client sending the
+    payload of a request. This can be useful for services that need to
+    determine if a request will be accepted based on its size or where to
+    store data based on the size of the stream.
+
+    .. note::
+
+        This trait only has an effect when used on blobs in input shapes.
 Trait selector::
     ``blob[trait|streaming]``
 
