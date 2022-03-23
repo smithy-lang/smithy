@@ -1,5 +1,5 @@
 # Build Smithy CLI using latest JDK
-FROM gradle:7-jdk17 AS build
+FROM public.ecr.aws/docker/library/gradle:7-jdk17 AS build
 WORKDIR /build
 COPY . .
 
@@ -16,7 +16,7 @@ RUN ./gradlew :smithy-validation-model:jar --stacktrace
 RUN ./gradlew :smithy-cli:runtime --stacktrace
 
 # Run Smithy CLI in AL2 container
-FROM amazonlinux:2
+FROM public.ecr.aws/amazonlinux/amazonlinux:2
 
 WORKDIR /smithy
 COPY --from=build /build/smithy-cli/build/image/smithy-cli-linux-x86_64 .
