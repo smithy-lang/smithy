@@ -293,7 +293,7 @@ structure internal {}
 
 /// The jsonName trait allows a serialized object property name to differ
 /// from a structure member name used in the model.
-@trait(selector: "structure > member")
+@trait(selector: ":is(structure, union) > member")
 @tags(["diff.error.const"])
 string jsonName
 

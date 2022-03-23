@@ -1,0 +1,2 @@
+[ERROR] ns.foo#A: This shape contains members with conflicting JSON names that resolve to 'b': a, b | JsonName
+[ERROR] ns.foo#B: This shape contains members with conflicting JSON names that resolve to 'b': a, b | JsonName
