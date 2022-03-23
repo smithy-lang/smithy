@@ -30,7 +30,6 @@ string stringTrait
 @documentTrait(null)
 structure TraitBearer {
     /// Documentation
-    @sensitive
     @internal()
     @deprecated(
         since: "1.0"
