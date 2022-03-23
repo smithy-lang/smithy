@@ -1,0 +1,3 @@
+[WARNING] -: ns.foo namespace uses a non-inclusive term `foo`. Consider using one of the following terms instead: `bar` | NoninclusiveTerms
+[WARNING] ns.foo#AInput$foo: Member shape uses a non-inclusive term `foo`. Consider using one of the following terms instead: `bar` | NoninclusiveTerms
+[WARNING] ns.foo#AInput$foo: 'documentation' trait has a value that contains a non-inclusive term `apple`. Consider using one of the following terms instead: `banana` | NoninclusiveTerms

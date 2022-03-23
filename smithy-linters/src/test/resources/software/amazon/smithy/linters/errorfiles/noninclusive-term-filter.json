@@ -1,0 +1,128 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "ns.foo#MyUnionTrait": {
+            "type": "union",
+            "members": {
+                "int_whitelist": {
+                    "target": "smithy.api#Integer"
+                },
+                "no_violation_string": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "ns.foo#MyWhitelistTrait": {
+            "type": "structure",
+            "members": {
+                "document": {
+                    "target": "smithy.api#Document"
+                },
+                "string_value": {
+                    "target": "smithy.api#String"
+                },
+                "nested": {
+                    "target": "ns.foo#NestedTraitStructure"
+                },
+                "collection": {
+                    "target": "ns.foo#ListOfDocs"
+                },
+                "union": {
+                    "target": "ns.foo#MyUnionTrait"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": { }
+            }
+        },
+        "ns.foo#MySimpleValueTrait": {
+            "type": "string",
+            "traits": {
+                "smithy.api#trait": { }
+            }
+        },
+        "ns.foo#NestedTraitStructure": {
+            "type": "structure",
+            "members": {
+                "master_key_violation": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "ns.foo#ListOfDocs": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#Document"
+            }
+        },
+        "ns.foo#MyMasterService": {
+            "type": "service",
+            "version": "2021-10-17",
+            "operations": [
+                {
+                    "target": "ns.foo#A"
+                },
+                {
+                    "target": "ns.foo#BlackListThings"
+                }
+            ]
+        },
+        "ns.foo#A": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#AInput"
+            },
+            "output": {
+                "target": "ns.foo#AOutput"
+            },
+            "traits": {
+                "smithy.api#readonly": {}
+            }
+        },
+        "ns.foo#AInput": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "These docs are apples!",
+                        "ns.foo#MySimpleValueTrait": "slave_value_in_trait"
+                    }
+                },
+                "master_member_name": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "ns.foo#AOutput": {
+            "type": "structure",
+            "traits": {
+                "ns.foo#MyWhitelistTrait": {
+                    "string_value": "whitelist_value_violation_1",
+                    "nested": {
+                        "master_key_violation": "whitelist_value_violation_2"
+                    },
+                    "document": {
+                        "foo": [{"bar": "whitelist_value_violation_3"}],
+                        "whitelist_doc_key_violation_1": "safe_value"
+                    },
+                    "collection": [
+                        {"free_form_key": "value"},
+                        {"blacklist_key":  "problem"},
+                        {"key":  "problem_whitelist_value"}
+                    ]
+                }
+            }
+        },
+        "ns.foo#BlackListThings": {
+            "type": "operation"
+        }
+    },
+    "metadata": {
+        "validators": [
+            {
+                "name": "NoninclusiveTerms"
+            }
+        ]
+    }
+}
