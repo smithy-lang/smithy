@@ -1129,9 +1129,9 @@ can potentially return the ``Unavailable`` or ``BadRequest``
         namespace smithy.example
 
         operation PingService {
-            input: Input,
-            output: Output,
-            errors: [Unavailable, BadRequest]
+            input: PingServiceInput,
+            output: PingServiceOutput,
+            errors: [UnavailableError, BadRequestError]
         }
 
     .. code-tab:: json
@@ -1142,17 +1142,17 @@ can potentially return the ``Unavailable`` or ``BadRequest``
                 "smithy.example#PingService": {
                     "type": "operation",
                     "input": {
-                        "target": "smithy.example#Input"
+                        "target": "smithy.example#PingServiceInput"
                     },
                     "output": {
-                        "target": "smithy.example#Output"
+                        "target": "smithy.example#PingServiceOutput"
                     },
                     "errors": [
                         {
-                            "target": "smithy.example#Unavailable"
+                            "target": "smithy.example#UnavailableError"
                         },
                         {
-                            "target": "smithy.example#BadRequest"
+                            "target": "smithy.example#BadRequestError"
                         }
                     ]
                 }
@@ -1178,11 +1178,11 @@ and defines a :ref:`read <read-lifecycle>` operation:
 
         namespace smithy.example
 
-        resource Model {
+        resource SprocketResource {
             identifiers: {
-                modelId: String,
+                sprocketId: String,
             },
-            read: GetModel,
+            read: GetSprocket,
         }
 
     .. code-tab:: json
@@ -1190,15 +1190,15 @@ and defines a :ref:`read <read-lifecycle>` operation:
         {
             "smithy": "1.0",
             "shapes": {
-                "smithy.example#Model": {
+                "smithy.example#Sprocket": {
                     "type": "resource",
                     "identifiers": {
-                        "modelId": {
+                        "sprocketId": {
                             "target": "smithy.api#String"
                         }
                     },
                     "read": {
-                        "target": "smithy.example#GetModel"
+                        "target": "smithy.example#SprocketResource"
                     }
                 }
             }
