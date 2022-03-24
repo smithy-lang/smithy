@@ -570,7 +570,8 @@ structure http {
     /// The HTTP status code of a successful response.
     ///
     /// Defaults to 200 if not provided.
-    code: PrimitiveInteger,
+    @range(min: 100, max: 999)
+    code: Integer,
 }
 
 /// Binds an operation input structure member to an HTTP label.
