@@ -27,7 +27,6 @@ enum Version {
 
     UNKNOWN(""),
     VERSION_1_0("1.0"),
-    VERSION_1_1("1.1"),
     VERSION_2_0("2.0");
 
     private final String version;
