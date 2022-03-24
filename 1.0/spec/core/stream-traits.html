@@ -140,17 +140,23 @@ any member that targets a <code class="docutils literal notranslate"><span class
 <div class="section" id="requireslength-trait">
 <span id="smithy-api-requireslength-trait"></span><span id="id2"></span><h2><a href="#requireslength-trait"><span class="section-number">10.2. </span><code class="docutils literal notranslate"><span class="pre">requiresLength</span></code> trait</a></h2>
 <dl class="docutils">
-<dt>Summary</dt><dd><p>Indicates that the streaming blob MUST be finite and has a known size.</p>
-<p>In an HTTP-based protocol, for instance, this trait indicates that the
-<code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> header MUST be sent prior to a client or server
-sending the payload of a message. This can be useful for services that
-need to determine if a request will be accepted based on its size or
-where to store data based on the size of the stream.</p>
+<dt>Summary</dt><dd><p>Indicates that the streaming blob MUST be finite and have a known
+size when sending data from a client to a server.</p>
+<p>In an HTTP-based protocol, this trait indicates that the
+<code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> header MUST be sent prior to a client sending the
+payload of a request. This can be useful for services that need to
+determine if a request will be accepted based on its size or where to
+store data based on the size of the stream.</p>
 </dd>
 <dt>Trait selector::</dt><dd><p><code class="docutils literal notranslate"><span class="pre">blob[trait|streaming]</span></code></p>
 <p><em>A blob shape marked with the streaming trait</em></p>
 </dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+<dt>Validation</dt><dd><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">requiresLength</span></code> shapes can only be referenced from top-level members
+of operation input structures.</li>
+</ul>
+</dd>
 </dl>
 <div class="sphinx-tabs docutils container">
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@streaming</span><span class="w"></span>

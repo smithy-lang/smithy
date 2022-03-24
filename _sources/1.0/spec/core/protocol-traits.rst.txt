@@ -143,11 +143,11 @@ support configuration settings.
 
 Summary
     Allows a serialized object property name in a JSON document to differ from
-    a structure member name used in the model.
+    a structure or union member name used in the model.
 Trait selector
-    ``structure > member``
+    ``:is(structure, union) > member``
 
-    *Any structure member*
+    *Any structure or union member*
 Value type
     ``string``
 
@@ -202,6 +202,11 @@ following document:
         "Foo": "abc",
         "bar": "def"
     }
+
+.. note::
+
+    No two members of the same structure or union can use the
+    same case-sensitive ``@jsonName``.
 
 
 .. smithy-trait:: smithy.api#mediaType

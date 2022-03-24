@@ -1161,9 +1161,9 @@ can potentially return the <code class="docutils literal notranslate"><span clas
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-17-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-17-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-17-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-17-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-17-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-17-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
 <span class="kd">operation</span><span class="nc"> PingService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">Input</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">Output</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">errors:</span><span class="w"> </span>[<span class="vc">Unavailable</span><span class="p">,</span><span class="w"> </span><span class="vc">BadRequest</span>]<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">PingServiceInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">PingServiceOutput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">errors:</span><span class="w"> </span>[<span class="vc">UnavailableError</span><span class="p">,</span><span class="w"> </span><span class="vc">BadRequestError</span>]<span class="w"></span>
 }<span class="w"></span>
 </pre></div>
 </div>
@@ -1173,17 +1173,17 @@ can potentially return the <code class="docutils literal notranslate"><span clas
         <span class="nt">&quot;smithy.example#PingService&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
             <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Input&quot;</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PingServiceInput&quot;</span>
             <span class="p">},</span>
             <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Output&quot;</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PingServiceOutput&quot;</span>
             <span class="p">},</span>
             <span class="nt">&quot;errors&quot;</span><span class="p">:</span> <span class="p">[</span>
                 <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Unavailable&quot;</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#UnavailableError&quot;</span>
                 <span class="p">},</span>
                 <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#BadRequest&quot;</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#BadRequestError&quot;</span>
                 <span class="p">}</span>
             <span class="p">]</span>
         <span class="p">}</span>
@@ -1203,26 +1203,26 @@ and defines a <a class="reference internal" href="model.html#read-lifecycle"><sp
 <div class="sphinx-tabs docutils container">
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-18-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-18-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-18-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-18-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-18-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-18-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">resource</span><span class="nc"> Model</span><span class="w"> </span>{<span class="w"></span>
+<span class="kd">resource</span><span class="nc"> SprocketResource</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">identifiers:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="nl">modelId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">sprocketId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">read:</span><span class="w"> </span><span class="vc">GetModel</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">read:</span><span class="w"> </span><span class="vc">GetSprocket</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
 </pre></div>
 </div>
 </div><div aria-labelledby="tab-18-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-18-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;smithy.example#Model&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#Sprocket&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;resource&quot;</span><span class="p">,</span>
             <span class="nt">&quot;identifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;modelId&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;sprocketId&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
                 <span class="p">}</span>
             <span class="p">},</span>
             <span class="nt">&quot;read&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#GetModel&quot;</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#SprocketResource&quot;</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>

@@ -128,6 +128,73 @@ Example:
     ]
 
 
+.. _NoninclusiveTerms:
+
+NoninclusiveTerms
+=================
+
+Validates that all text content in a model (i.e. shape names, member names,
+documentation, trait values, etc.) does not contain words that perpetuate cultural
+biases. This validator has a built-in set of bias terms that are commonly found
+in APIs along with suggested alternatives.
+
+Noninclusive terms are case-insensitively substring matched and can have any
+number of leading or trailing whitespace or non-whitespace characters.
+
+This validator has built-in mappings from noninclusive terms to match model
+text to suggested alternatives. The configuration allows for additional terms
+to suggestions mappings to either override or append the built-in mappings. If
+a match occurs and the suggested alternatives is empty, no suggestion is made
+in the generated warning message.
+
+Rationale
+    Intent doesn't always match impact. The use of noninclusive language like
+    "whitelist" and "blacklist" perpetuates bias through past association of
+    acceptance and denial based on skin color. Other words should be used that
+    are not only inclusive, but more clearly communicate meaning. Words like
+    allowList and denyList much more clearly indicate that something is
+    allowed or denied.
+
+Default severity
+    ``WARNING``
+
+Configuration
+    .. list-table::
+       :header-rows: 1
+       :widths: 20 20 60
+
+       * - Property
+         - Type
+         - Description
+       * - terms
+         - { ``keyword`` -> [ ``alternatives`` ] }
+         - A set of noninclusive terms to suggestions to either override or replace
+           the built-in mappings. This property is not required unless
+           ``excludeDefaults`` is true. The default value is the empty set.
+       * - excludeDefaults
+         - ``boolean``
+         - A flag indicating whether or not the mappings set specified by ``terms``
+           configuration replaces the built-in set or appends additional mappings.
+           This property is not required and defaults to false.
+
+Example:
+
+.. code-block:: smithy
+
+    $version: "1.0"
+
+    metadata validators = [{
+        name: "NoninclusiveTerms"
+        configuration: {
+            excludeDefaults: false,
+            terms: {
+                mankind: ["humankind"],
+                mailman: ["mail carrier", "postal worker"]
+            }
+        }
+    }]
+
+
 .. _ReservedWords:
 
 ReservedWords

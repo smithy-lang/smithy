@@ -1430,7 +1430,7 @@ named ``MyOperationInput``, returns an output structure named
     operation MyOperation {
         input: MyOperationInput,
         output: MyOperationOutput,
-        errors: [NotFound, BadRequest]
+        errors: [NotFoundError, BadRequestError]
     }
 
     @input

@@ -201,9 +201,9 @@ support configuration settings.</p>
 <span id="smithy-api-jsonname-trait"></span><span id="id2"></span><h2><a href="#jsonname-trait"><span class="section-number">6.2. </span><code class="docutils literal notranslate"><span class="pre">jsonName</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Allows a serialized object property name in a JSON document to differ from
-a structure member name used in the model.</dd>
-<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></p>
-<p><em>Any structure member</em></p>
+a structure or union member name used in the model.</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:is(structure,</span> <span class="pre">union)</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></p>
+<p><em>Any structure or union member</em></p>
 </dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
 </dl>
@@ -251,6 +251,11 @@ following document:</p>
     <span class="nt">&quot;bar&quot;</span><span class="p">:</span> <span class="s2">&quot;def&quot;</span>
 <span class="p">}</span>
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">No two members of the same structure or union can use the
+same case-sensitive <code class="docutils literal notranslate"><span class="pre">&#64;jsonName</span></code>.</p>
 </div>
 </div>
 <div class="section" id="mediatype-trait">
