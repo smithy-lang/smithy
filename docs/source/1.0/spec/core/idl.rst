@@ -1704,7 +1704,7 @@ The following example applies the :ref:`documentation-trait` to the
 
     .. code-tab:: smithy
 
-        $version: "1.1"
+        $version: "2.0"
         namespace smithy.example
 
         apply MyString @documentation("This is my string!")
@@ -1712,7 +1712,7 @@ The following example applies the :ref:`documentation-trait` to the
     .. code-tab:: json
 
         {
-            "smithy": "1.1",
+            "smithy": "2.0",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "apply",
@@ -1731,7 +1731,7 @@ and :ref:`length-trait` to the ``smithy.example#MyString`` shape:
 
     .. code-tab:: smithy
 
-        $version: "1.1"
+        $version: "2.0"
         namespace smithy.example
 
         apply MyString {
@@ -1742,7 +1742,7 @@ and :ref:`length-trait` to the ``smithy.example#MyString`` shape:
     .. code-tab:: json
 
         {
-            "smithy": "1.1",
+            "smithy": "2.0",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "apply",
@@ -1761,7 +1761,7 @@ Traits can be applied to members too:
 
 .. code-block:: smithy
 
-    $version: "1.1"
+    $version: "2.0"
     namespace smithy.example
 
     apply MyStructure$foo @documentation("Structure member documentation")
