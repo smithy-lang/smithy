@@ -50,7 +50,8 @@ The ``http`` trait is a structure that supports the following members:
     * - code
       - ``integer``
       - The HTTP status code of a successful response. Defaults to ``200`` if
-        not provided.
+        not provided. The provided value SHOULD be between 100 and 599, and
+        it MUST be between 100 and 999.
 
 The following example defines an operation that uses HTTP bindings:
 
