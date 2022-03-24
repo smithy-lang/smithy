@@ -18,6 +18,7 @@ package software.amazon.smithy.model.validation.validators;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
@@ -26,7 +27,6 @@ import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
 import software.amazon.smithy.model.neighbor.RelationshipDirection;
-import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -35,6 +35,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.ProtocolDefinitionTrait;
+import software.amazon.smithy.model.traits.RequiresLengthTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -96,25 +97,45 @@ public final class StreamingTraitValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
         NeighborProvider provider = NeighborProviderIndex.of(model).getReverseProvider();
 
-        // Find any containers that reference a streaming trait.
-        Set<Shape> streamingStructures = model.shapes(MemberShape.class)
-                .filter(member -> member.getMemberTrait(model, StreamingTrait.class).isPresent())
-                .map(member -> model.expectShape(member.getContainer()))
-                .collect(Collectors.toSet());
-
-        for (Shape shape : streamingStructures) {
-            for (Relationship rel : provider.getNeighbors(shape)) {
-                if (rel.getRelationshipType() != RelationshipType.INPUT
-                        && rel.getRelationshipType() != RelationshipType.OUTPUT
-                        && rel.getRelationshipType().getDirection() == RelationshipDirection.DIRECTED) {
-                    events.add(error(rel.getShape(), String.format(
-                            "This shape has an invalid `%s` relationship to a structure, `%s`, that contains "
-                            + "a stream", rel.getRelationshipType(), shape.getId())));
+        for (MemberShape member : model.getMemberShapes()) {
+            Shape target = model.expectShape(member.getTarget());
+            if (target.hasTrait(StreamingTrait.class)) {
+                Shape container = model.expectShape(member.getContainer());
+                for (Relationship rel : provider.getNeighbors(container)) {
+                    validateStreamingTargetRel(container, target, rel, events);
                 }
             }
         }
 
         return events;
+    }
+
+    private void validateStreamingTargetRel(
+            Shape container,
+            Shape target,
+            Relationship rel,
+            List<ValidationEvent> events
+    ) {
+        if (rel.getRelationshipType().getDirection() == RelationshipDirection.DIRECTED) {
+            switch (rel.getRelationshipType()) {
+                case INPUT:
+                    break;
+                case OUTPUT:
+                    if (target.hasTrait(RequiresLengthTrait.class)) {
+                        events.add(error(rel.getShape(), String.format(
+                                "Structures that contain a reference to a stream marked with the "
+                                + "@requiresLength trait can only be used as operation inputs, but this "
+                                + "structure is referenced from `%s` as %s",
+                                rel.getShape().getId(),
+                                rel.getRelationshipType().toString().toLowerCase(Locale.ENGLISH))));
+                    }
+                    break;
+                default:
+                    events.add(error(rel.getShape(), String.format(
+                            "This shape has an invalid `%s` relationship to a structure, `%s`, that contains "
+                            + "a stream", rel.getRelationshipType(), container.getId())));
+            }
+        }
     }
 
     private List<ValidationEvent> validateAllEventStreamMembers(Model model) {
