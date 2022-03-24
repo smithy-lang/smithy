@@ -81,16 +81,15 @@ Summary
     payload of a request. This can be useful for services that need to
     determine if a request will be accepted based on its size or where to
     store data based on the size of the stream.
-
-    .. note::
-
-        This trait only has an effect when used on blobs in input shapes.
 Trait selector::
     ``blob[trait|streaming]``
 
     *A blob shape marked with the streaming trait*
 Value type
     ``structure``
+Validation
+    * ``requiresLength`` shapes can only be referenced from top-level members
+      of operation input structures.
 
 .. tabs::
 

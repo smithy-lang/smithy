@@ -105,8 +105,7 @@ blob StreamingBlob
 /// not a structure or a union type.
 @http(uri: "/StreamingTraitsRequireLength", method: "POST")
 operation StreamingTraitsRequireLength {
-    input: StreamingTraitsRequireLengthInputOutput,
-    output: StreamingTraitsRequireLengthInputOutput
+    input: StreamingTraitsRequireLengthInput
 }
 
 apply StreamingTraitsRequireLength @httpRequestTests([
@@ -147,43 +146,8 @@ apply StreamingTraitsRequireLength @httpRequestTests([
     },
 ])
 
-apply StreamingTraitsRequireLength @httpResponseTests([
-    {
-        id: "RestJsonStreamingTraitsRequireLengthWithBlob",
-        documentation: "Serializes a blob in the HTTP payload with a required length",
-        protocol: restJson1,
-        code: 200,
-        body: "blobby blob blob",
-        bodyMediaType: "application/octet-stream",
-        headers: {
-            "X-Foo": "Foo",
-            "Content-Type": "application/octet-stream"
-        },
-        requireHeaders: [
-            "Content-Length"
-        ],
-        params: {
-            foo: "Foo",
-            blob: "blobby blob blob"
-        }
-    },
-    {
-        id: "RestJsonStreamingTraitsRequireLengthWithNoBlobBody",
-        documentation: "Serializes an empty blob in the HTTP payload",
-        protocol: restJson1,
-        code: 200,
-        body: "",
-        bodyMediaType: "application/octet-stream",
-        headers: {
-            "X-Foo": "Foo"
-        },
-        params: {
-            foo: "Foo"
-        }
-    }
-])
-
-structure StreamingTraitsRequireLengthInputOutput {
+@input
+structure StreamingTraitsRequireLengthInput {
     @httpHeader("X-Foo")
     foo: String,
 
