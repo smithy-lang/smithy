@@ -1,6 +1,6 @@
 # You can set these variables from the command line.
 SPHINXOPTS    =
-SPHINXBUILD   = python -msphinx
+SPHINXBUILD   = python3 -msphinx
 SPHINXPROJ    = Smithy
 SOURCEDIR     = source
 BUILDDIR      = build
@@ -10,14 +10,14 @@ help:
 	@echo "  openhtml    to preview the built index.html"
 
 install:
-	pip install -r requirements.txt .
-	pip install -e .
+	pip3 install -r requirements.txt .
+	pip3 install -e .
 
 clean:
 	-rm -rf $(BUILDDIR)/*
 
 install-server:
-	pip install -r requirements-server.txt
+	pip3 install -r requirements-server.txt
 
 serve: clean
 	sphinx-autobuild source build/html
