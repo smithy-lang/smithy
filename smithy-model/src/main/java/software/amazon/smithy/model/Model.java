@@ -18,15 +18,16 @@ package software.amazon.smithy.model;
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
@@ -87,7 +88,7 @@ public final class Model implements ToSmithyBuilder<Model> {
 
     /** Cache of computed {@link KnowledgeIndex} instances. */
     private final Map<Class<? extends KnowledgeIndex>, KnowledgeIndex> blackboard
-            = Collections.synchronizedMap(new IdentityHashMap<>());
+            = new ConcurrentSkipListMap<>(Comparator.comparing(Class::getCanonicalName));
 
     /** Lazily computed trait mappings. */
     private volatile TraitCache traitCache;
