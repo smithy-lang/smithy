@@ -15,19 +15,33 @@
 
 package software.amazon.smithy.upgrade;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import software.amazon.smithy.build.ProjectionResult;
+import software.amazon.smithy.build.SmithyBuild;
+import software.amazon.smithy.build.model.SmithyBuildConfig;
+import software.amazon.smithy.cli.commands.CommandUtils;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.loader.ParserUtils;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -41,12 +55,15 @@ import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.SimpleParser;
 import software.amazon.smithy.utils.StringUtils;
 
 final class Upgrader {
-    private static final Pattern VERSION = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"1\\.0\"\\s*$");
+    private static final Logger LOGGER = Logger.getLogger(Upgrader.class.getName());
+    private static final Pattern VERSION_1 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"1\\.0\"\\s*$");
+    private static final Pattern VERSION_2 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"2\\.0\"\\s*$");
     private static final EnumSet<ShapeType> HAD_DEFAULT_VALUE_IN_1_0 = EnumSet.of(
             ShapeType.BYTE,
             ShapeType.SHORT,
@@ -59,8 +76,90 @@ final class Upgrader {
     private Upgrader() {
     }
 
+    static void upgradeFiles(
+            List<String> modelFilesOrDirectories,
+            String discoverPath,
+            String config
+    ) throws IOException {
+        ClassLoader classLoader = Upgrader.class.getClassLoader();
+
+        // Use the provided smithy-build.json file
+        SmithyBuildConfig.Builder configBuilder = SmithyBuildConfig.builder();
+        configBuilder.load(Paths.get(config).toAbsolutePath());
+
+        // Set an output into a temporary directory - we don't actually care about
+        // the serialized output.
+        Path tempDir = Files.createTempDirectory("smithyUpgrade");
+        configBuilder.outputDirectory(tempDir.toString());
+
+        Model initialModel = CommandUtils.buildModel(
+                modelFilesOrDirectories,
+                classLoader,
+                Severity.DANGER,
+                false,
+                discoverPath,
+                true
+        );
+
+        SmithyBuild smithyBuild = SmithyBuild.create(classLoader)
+                .config(configBuilder.build())
+                // Only build the source projection
+                .projectionFilter(name -> name.equals("source"))
+                // The only traits we care about looking at are in the prelude,
+                // so we can safely ignore any that are unknown.
+                .modelAssemblerSupplier(() -> {
+                    ModelAssembler assembler = Model.assembler();
+                    assembler.putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true);
+                    return assembler;
+                })
+                .model(initialModel);
+
+        // Run SmithyBuild to get the finalized model
+        ResultConsumer resultConsumer = new ResultConsumer();
+        smithyBuild.build(resultConsumer, resultConsumer);
+        Model finalizedModel = resultConsumer.getResult().getModel();
+
+        for (Path modelFile : resolveModelFiles(finalizedModel, modelFilesOrDirectories)) {
+            writeUpgradedFile(finalizedModel, modelFile);
+        }
+    }
+
+    private static List<Path> resolveModelFiles(Model model, List<String> modelFilesOrDirectories) {
+        Set<Path> absoluteModelFilesOrDirectories = modelFilesOrDirectories.stream()
+                .map(path -> Paths.get(path).toAbsolutePath())
+                .collect(Collectors.toSet());
+        return model.shapes()
+                .filter(shape -> !Prelude.isPreludeShape(shape))
+                .map(shape -> Paths.get(shape.getSourceLocation().getFilename()).toAbsolutePath())
+                .distinct()
+                .filter(locationPath -> {
+                    for (Path inputPath : absoluteModelFilesOrDirectories) {
+                        if (!locationPath.startsWith(inputPath)) {
+                            LOGGER.finest("Skipping non-target model file: " + locationPath);
+                            return false;
+                        }
+                    }
+                    if (!locationPath.toString().endsWith(".smithy")) {
+                        LOGGER.info("Skipping non-IDL model file: " + locationPath);
+                        return false;
+                    }
+                    return true;
+                })
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    static void writeUpgradedFile(Model completeModel, Path filePath) throws IOException {
+        Files.write(filePath, upgradeFile(completeModel, filePath).getBytes(StandardCharsets.UTF_8));
+    }
+
     static String upgradeFile(Model completeModel, Path filePath) {
-        ShapeUpgradeVisitor visitor = new ShapeUpgradeVisitor(completeModel, IoUtils.readUtf8File(filePath));
+        String contents = IoUtils.readUtf8File(filePath);
+        if (VERSION_2.matcher(contents).find()) {
+            return contents;
+        }
+
+        ShapeUpgradeVisitor visitor = new ShapeUpgradeVisitor(completeModel, contents);
 
         completeModel.shapes()
                 .filter(shape -> shape.getSourceLocation().getFilename().equals(filePath.toString()))
@@ -74,11 +173,35 @@ final class Upgrader {
     }
 
     private static String updateVersion(String modelString) {
-        Matcher matcher = VERSION.matcher(modelString);
+        Matcher matcher = VERSION_1.matcher(modelString);
         if (matcher.find()) {
             return matcher.replaceFirst("\\$version: \"2.0\"\n");
         }
         return "$version: \"2.0\"\n\n" + modelString;
+    }
+
+    private static final class ResultConsumer implements Consumer<ProjectionResult>, BiConsumer<String, Throwable> {
+        private Throwable error;
+        private ProjectionResult result;
+
+        @Override
+        public void accept(String name, Throwable throwable) {
+            this.error = throwable;
+        }
+
+        @Override
+        public void accept(ProjectionResult projectionResult) {
+            // We only expect one result because we're only building one
+            // projection - the source projection.
+            this.result = projectionResult;
+        }
+
+        ProjectionResult getResult() {
+            if (error != null) {
+                throw new RuntimeException(error);
+            }
+            return result;
+        }
     }
 
     // Sorts shapes in the order they appear in the file.
@@ -110,7 +233,7 @@ final class Upgrader {
 
     private static class ShapeUpgradeVisitor extends ShapeVisitor.Default<Void> {
         private final Model completeModel;
-        private ModelWriter writer;
+        private final ModelWriter writer;
 
         ShapeUpgradeVisitor(Model completeModel, String modelString) {
             this.completeModel = completeModel;
@@ -251,7 +374,7 @@ final class Upgrader {
     }
 
     private static class IdlAwareSimpleParser extends SimpleParser {
-        public IdlAwareSimpleParser(String expression) {
+        IdlAwareSimpleParser(String expression) {
             super(expression);
         }
 
@@ -297,7 +420,7 @@ final class Upgrader {
     private static class ModelWriter {
         private String contents;
 
-        public ModelWriter(String contents) {
+        ModelWriter(String contents) {
             this.contents = contents;
         }
 

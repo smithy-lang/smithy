@@ -57,7 +57,9 @@ if (Os.isFamily(Os.FAMILY_WINDOWS)) {
 }
 
 dependencies {
-    api project(":smithy-model")
+    implementation project(":smithy-model")
+    implementation project(":smithy-cli")
+    implementation project(":smithy-build")
 }
 
 application {

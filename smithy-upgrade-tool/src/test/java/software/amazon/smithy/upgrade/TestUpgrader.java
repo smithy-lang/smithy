@@ -15,18 +15,29 @@
 
 package software.amazon.smithy.upgrade;
 
+import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.utils.IoUtils;
+import software.amazon.smithy.utils.ListUtils;
 
 public class TestUpgrader {
 
@@ -48,5 +59,121 @@ public class TestUpgrader {
         return Files.walk(start)
                 .filter(path -> path.getFileName().toString().endsWith(".v1.smithy"))
                 .map(path -> Arguments.of(path, path.getFileName().toString().replace(".v1.smithy", "")));
+    }
+
+    @Test
+    public void testUpgradeDirectory() throws Exception {
+        Path baseDir = Paths.get(TestUpgrader.class.getResource(
+                "directory-cases/all-local/v1").toURI()).toAbsolutePath();
+
+        Path tempDir = Files.createTempDirectory("testUpgradeDirectory");
+        copyDir(baseDir, tempDir);
+
+        Path modelsDir = tempDir.resolve("model");
+        Path config = tempDir.resolve("smithy-build.json");
+
+        Upgrader.upgradeFiles(ListUtils.of(modelsDir.toString()), null, config.toString());
+        assertDirEqual(baseDir.getParent().resolve("v2"), tempDir);
+    }
+
+    @Test
+    public void testUpgradeDirectoryWithProjection() throws Exception {
+        Path baseDir = Paths.get(TestUpgrader.class.getResource("directory-cases/ignores-projections/v1").toURI());
+
+        Path tempDir = Files.createTempDirectory("testUpgradeDirectory");
+        copyDir(baseDir, tempDir);
+
+        Path modelsDir = tempDir.resolve("model");
+        Path config = tempDir.resolve("smithy-build.json");
+        Upgrader.upgradeFiles(ListUtils.of(modelsDir.toString()), null, config.toString());
+        assertDirEqual(baseDir.getParent().resolve("v2"), tempDir);
+    }
+
+    @Test
+    public void testUpgradeDirectoryWithJar() throws Exception {
+        Path baseDir = Paths.get(TestUpgrader.class.getResource("directory-cases/with-jar/v1").toURI());
+
+        Path tempDir = Files.createTempDirectory("testUpgradeDirectory");
+        copyDir(baseDir, tempDir);
+
+        Path modelsDir = tempDir.resolve("model");
+        Path config = tempDir.resolve("smithy-build.json");
+        Upgrader.upgradeFiles(
+                ListUtils.of(modelsDir.toString()),
+                tempDir.toAbsolutePath().resolve("jar-import.jar").toString(),
+                config.toString()
+        );
+        assertDirEqual(baseDir.getParent().resolve("v2"), tempDir);
+
+    }
+
+    private void assertDirEqual(Path actualDir, Path excpectedDir) throws Exception {
+        Set<Path> files = Files.walk(actualDir)
+                .filter(Files::isRegularFile)
+                .filter(path -> path.toString().endsWith(".smithy"))
+                .collect(Collectors.toSet());
+        for (Path actual : files) {
+            Path expected = excpectedDir.resolve(actualDir.relativize(actual));
+            assertThat(IoUtils.readUtf8File(actual), equalTo(IoUtils.readUtf8File(expected)));
+        }
+    }
+
+    // Why does Java make this so hard
+    private void copyDir(Path source, Path target) throws IOException {
+        Files.walkFileTree(source, new DirectoryCopier(source, target));
+    }
+
+    static class DirectoryCopier implements FileVisitor<Path> {
+        private final Path source;
+        private final Path target;
+
+        DirectoryCopier(Path source, Path target) {
+            this.source = source;
+            this.target = target;
+        }
+
+        @Override
+        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+            if (dir.toAbsolutePath().equals(source.toAbsolutePath())) {
+                return CONTINUE;
+            }
+            try {
+                Files.copy(dir, target.resolve(source.relativize(dir)), REPLACE_EXISTING);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+            try {
+                Files.copy(file, target.resolve(source.relativize(file)));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult postVisitDirectory(Path dir, IOException e) {
+            if (e != null) {
+                throw new RuntimeException(e);
+            }
+
+            try {
+                FileTime time = Files.getLastModifiedTime(dir);
+                Files.setLastModifiedTime(target.resolve(source.relativize(dir)), time);
+            } catch (Exception exc) {
+                throw new RuntimeException(exc);
+            }
+
+            return CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult visitFileFailed(Path file, IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
