@@ -108,9 +108,20 @@
             },
             "mixins": [
                 {
-                    "target": "ns.foo#MixinStream"
+                    "target": "ns.foo#NestedMixinStream"
                 }
             ]
+        },
+        "ns.foo#NestedMixinStream": {
+            "type": "structure",
+            "members": {
+                "Body": {
+                    "target": "ns.foo#NestedStreamContainer"
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
         },
         "ns.foo#NestedStreamContainer": {
             "type": "structure",
@@ -118,6 +129,25 @@
                 "nested": {
                     "target": "ns.foo#StreamingBlob"
                 }
+            }
+        },
+        "ns.foo#BadOperation": {
+            "type": "operation",
+            "errors": [
+                {
+                    "target": "ns.foo#BadError"
+                }
+            ]
+        },
+        "ns.foo#BadError": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "ns.foo#StreamingBlob"
+                }
+            },
+            "traits": {
+                "smithy.api#error": "client"
             }
         }
     }
