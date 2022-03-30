@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.knowledge.ServiceIndex;
@@ -31,11 +31,9 @@ import software.amazon.smithy.model.neighbor.RelationshipDirection;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.ProtocolDefinitionTrait;
@@ -106,63 +104,48 @@ public final class StreamingTraitValidator extends AbstractValidator {
 
     private void validateStreamingTargets(Model model, List<ValidationEvent> events) {
         NeighborProvider provider = NeighborProviderIndex.of(model).getReverseProvider();
-
-        // Find any containers that reference a streaming trait.
-        Set<Shape> streamingStructures = model.shapes(MemberShape.class)
-                .filter(member -> member.getMemberTrait(model, StreamingTrait.class).isPresent())
-                .map(member -> model.expectShape(member.getContainer()))
-                .collect(Collectors.toSet());
-
-        for (Shape shape : streamingStructures) {
+        // Find members that target streaming shapes and validate things that target their containers.
+        for (Shape shape : model.getShapesWithTrait(StreamingTrait.class)) {
             for (Relationship rel : provider.getNeighbors(shape)) {
-                if (rel.getRelationshipType() != RelationshipType.INPUT
-                        && rel.getRelationshipType() != RelationshipType.OUTPUT
-                        && !isInputOutputMixinRelationship(provider, rel)
-                        && rel.getRelationshipType().getDirection() == RelationshipDirection.DIRECTED) {
-                    events.add(error(rel.getShape(), String.format(
-                            "This shape has an invalid `%s` relationship to a structure, `%s`, that contains "
-                            + "a stream", rel.getRelationshipType(), shape.getId())));
-                }
-            }
-        }
-
-        for (OperationShape operation : model.getOperationShapes()) {
-            StructureShape output = model.expectShape(operation.getOutputShape(), StructureShape.class);
-            for (MemberShape member : output.getAllMembers().values()) {
-                Shape target = model.expectShape(member.getTarget());
-                if (target.hasTrait(RequiresLengthTrait.class)) {
-                    events.add(error(model.expectShape(member.getContainer()), String.format(
-                            "Structures that contain a reference to a stream marked with the "
-                            + "@requiresLength trait can only be used as operation inputs, but this "
-                            + "structure is referenced from `%s` as output",
-                            operation.getId())));
+                if (rel.getRelationshipType() == RelationshipType.MEMBER_TARGET) {
+                    MemberShape member = rel.getShape().asMemberShape().get();
+                    validateRef(model, member, provider, events);
                 }
             }
         }
     }
 
-    private boolean isInputOutputMixinRelationship(NeighborProvider provider, Relationship rel) {
-        // Mixins that contain streams are allowed to be mixed into
-        // input and output shapes, but nowhere else.
-        if (rel.getRelationshipType() == RelationshipType.MIXIN) {
-            boolean foundInputOutput = false;
-            for (Relationship mixinRel : provider.getNeighbors(rel.getShape())) {
-                RelationshipType mixinRelType = mixinRel.getRelationshipType();
-                // Inputs, outputs, and the containers where mixins are added are
-                // all allowed as relationships.
-                if (mixinRelType == RelationshipType.INPUT || mixinRelType == RelationshipType.OUTPUT) {
-                    foundInputOutput = true;
-                } else if (mixinRelType != RelationshipType.MEMBER_CONTAINER) {
-                    // Other relationship types aren't allowed, so short-circuit.
-                    return false;
+    private void validateRef(Model model, MemberShape member, NeighborProvider reverse, List<ValidationEvent> events) {
+        Shape target = model.expectShape(member.getTarget());
+        Shape container = model.expectShape(member.getContainer());
+        for (Relationship rel : reverse.getNeighbors(container)) {
+            if (rel.getRelationshipType().getDirection() == RelationshipDirection.DIRECTED) {
+                switch (rel.getRelationshipType()) {
+                    case INPUT:
+                    case MIXIN:
+                        break;
+                    case OUTPUT:
+                        if (target.hasTrait(RequiresLengthTrait.class)) {
+                            events.add(error(rel.getNeighborShape().get(), String.format(
+                                    "Structures that contain a reference to a stream marked with the "
+                                    + "@requiresLength trait can only be used as operation inputs, but this "
+                                    + "structure is referenced from `%s` as %s",
+                                    rel.getShape().getId(),
+                                    rel.getRelationshipType().toString().toLowerCase(Locale.ENGLISH))));
+                        }
+                        break;
+                    case MEMBER_TARGET:
+                        events.add(error(rel.getShape(), String.format(
+                                "Members cannot target structures that contain a stream, but this member targets %s",
+                                container.getId())));
+                        break;
+                    default:
+                        events.add(error(rel.getShape(), String.format(
+                                "This shape has an invalid `%s` relationship to a structure, `%s`, that contains "
+                                + "a stream", rel.getRelationshipType(), container.getId())));
                 }
             }
-
-            // At least one input or output relationship must be found for this
-            // mixin relationship to be valid.
-            return foundInputOutput;
         }
-        return false;
     }
 
     private void validateAllEventStreamMembersTargetStructures(Model model, List<ValidationEvent> events) {
