@@ -26,6 +26,9 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.MockManifest;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.utils.CodeInterceptor;
+import software.amazon.smithy.utils.CodeSection;
+import software.amazon.smithy.utils.ListUtils;
 
 public class WriterDelegatorTest {
     @Test
@@ -119,5 +122,28 @@ public class WriterDelegatorTest {
         delegator.flushWriters();
 
         assertThat(mockManifest.getFileString("com/foo/Baz.bam"), equalTo(Optional.of("Hi!\n")));
+    }
+
+    @Test
+    public void registersInterceptors() {
+        MockManifest mockManifest = new MockManifest();
+        SymbolProvider provider = (shape) -> Symbol.builder()
+                .namespace("com.foo", ".")
+                .name("Baz")
+                .definitionFile("com/foo/Baz.bam")
+                .build();
+        WriterDelegator<MySimpleWriter> delegator = new WriterDelegator<>(
+                mockManifest, provider, (f, n) -> new MySimpleWriter(n));
+
+        CodeInterceptor<CodeSection, MySimpleWriter> a = CodeInterceptor.forName("test", (w, s) -> {
+            w.write("Yes");
+        });
+        delegator.setInterceptors(ListUtils.of(a));
+
+        delegator.useFileWriter("/foo.txt", w -> {
+            w.pushState("test").popState();
+        });
+
+        assertThat(delegator.getWriters().get(Paths.get("/foo.txt").toString()).toString(), equalTo("Yes\n"));
     }
 }

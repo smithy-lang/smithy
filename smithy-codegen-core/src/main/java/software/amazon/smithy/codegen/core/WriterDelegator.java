@@ -25,6 +25,8 @@ import java.util.TreeMap;
 import java.util.function.Consumer;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.utils.CodeInterceptor;
+import software.amazon.smithy.utils.CodeSection;
 
 /**
  * <p>Creates and manages {@link SymbolWriter}s for files and namespaces based
@@ -66,6 +68,7 @@ public class WriterDelegator<W extends SymbolWriter<W, ? extends ImportContainer
     private final SymbolProvider symbolProvider;
     private final Map<String, W> writers = new TreeMap<>();
     private final SymbolWriter.Factory<W> factory;
+    private final List<CodeInterceptor<? extends CodeSection, W>> interceptors = new ArrayList<>();
     private String automaticSeparator = "\n";
 
     /**
@@ -77,6 +80,16 @@ public class WriterDelegator<W extends SymbolWriter<W, ? extends ImportContainer
         this.fileManifest = fileManifest;
         this.symbolProvider = symbolProvider;
         this.factory = factory;
+    }
+
+    /**
+     * Sets the list of code interceptors to registered with each newly created writer.
+     *
+     * @param interceptors Interceptors to register.
+     */
+    public void setInterceptors(List<? extends CodeInterceptor<? extends CodeSection, W>> interceptors) {
+        this.interceptors.clear();
+        this.interceptors.addAll(interceptors);
     }
 
     /**
@@ -214,7 +227,11 @@ public class WriterDelegator<W extends SymbolWriter<W, ? extends ImportContainer
         String formattedFilename = Paths.get(filename).normalize().toString();
         boolean needsNewline = writers.containsKey(formattedFilename);
 
-        W writer = writers.computeIfAbsent(formattedFilename, file -> factory.apply(file, namespace));
+        W writer = writers.computeIfAbsent(formattedFilename, file -> {
+            W result = factory.apply(file, namespace);
+            interceptors.forEach(result::onSection);
+            return result;
+        });
 
         // Add newlines/separators between types in the same file.
         if (needsNewline) {
