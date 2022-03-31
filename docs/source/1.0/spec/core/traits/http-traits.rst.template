@@ -1051,7 +1051,7 @@ disregard the value set by ``httpQueryParams``. For example, given the following
     }
 
     map MapOfStrings {
-        key: String,
+        key: String
         value: String
     }
 
@@ -1094,7 +1094,7 @@ given the following model:
         }
 
         map MapOfStrings {
-            key: String,
+            key: String
             value: String
         }
 
@@ -1317,7 +1317,7 @@ marked with the ``httpPayload`` trait:
 
     @input
     structure InvalidOperationInput {
-        invalid: MessageStream, // <-- Missing the @httpPayload trait
+        invalid: MessageStream  // <-- Missing the @httpPayload trait
     }
 
     @streaming

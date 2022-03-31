@@ -155,7 +155,7 @@ Consider the following *abridged* model of S3's ``GetBucketLocation`` operation:
     @http(uri: "/GetBucketLocation", method: "GET")
     @s3UnwrappedXmlOutput
     operation GetBucketLocation {
-        input: GetBucketLocationInput,
+        input: GetBucketLocationInput
         output: GetBucketLocationOutput
     }
 

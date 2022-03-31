@@ -436,9 +436,9 @@ so that they can be referred to using only ``Foo`` and ``Baz``.
 
     map MyMap {
         // Resolves to smithy.example#Foo
-        key: Foo,
+        key: Foo
         // Resolves to smithy.example#Baz
-        value: Baz,
+        value: Baz
     }
 
 A use statement can refer to :ref:`traits <traits>` too. The following example
@@ -493,34 +493,34 @@ to.
     structure MyStructure {
         // Resolves to smithy.example#MyString
         // There is a shape named MyString defined in the same namespace.
-        a: MyString,
+        a: MyString
 
         // Resolves to smithy.example#MyString
         // Absolute shape IDs do not perform namespace resolution.
-        b: smithy.example#MyString,
+        b: smithy.example#MyString
 
         // Resolves to foo.baz#Bar
         // The "use foo.baz#Bar" statement imported the Bar symbol,
         // allowing the shape to be referenced using a relative shape ID.
-        c: Bar,
+        c: Bar
 
         // Resolves to smithy.api#String
         // No shape named String was imported through a use statement
         // the smithy.example namespace does not contain a shape named
         // String, and the prelude model contains a shape named String.
-        d: String,
+        d: String
 
         // Resolves to smithy.example#MyBoolean.
         // There is a shape named MyBoolean defined in the same namespace.
         // Forward references are supported both within the same file and
         // across multiple files.
-        e: MyBoolean,
+        e: MyBoolean
 
         // Resolves to smithy.example#InvalidShape. A shape by this name has
         // not been imported through a use statement, a shape by this name
         // does not exist in the current namespace, and a shape by this name
         // does not exist in the prelude model.
-        f: InvalidShape,
+        f: InvalidShape
     }
 
     boolean MyBoolean
@@ -1039,8 +1039,8 @@ The following example defines a structure with two members:
         namespace smithy.example
 
         structure MyStructure {
-            foo: String,
-            baz: Integer,
+            foo: String
+            baz: Integer
         }
 
     .. code-tab:: json
@@ -1074,11 +1074,11 @@ Traits can be applied to structure members:
         structure MyStructure {
             /// This is documentation for `foo`.
             @required
-            foo: String,
+            foo: String
 
             /// This is documentation for `baz`.
             @deprecated
-            baz: Integer,
+            baz: Integer
         }
 
     .. code-tab:: json
@@ -1128,12 +1128,12 @@ The following example defines a union shape with several members:
         namespace smithy.example
 
         union MyUnion {
-            i32: Integer,
+            i32: Integer
 
             @length(min: 1, max: 100)
-            string: String,
+            string: String
 
-            time: Timestamp,
+            time: Timestamp
         }
 
     .. code-tab:: json
