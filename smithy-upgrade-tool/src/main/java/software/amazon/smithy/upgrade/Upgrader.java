@@ -126,7 +126,7 @@ final class Upgrader {
             if (shape.hasTrait(BoxTrait.class)) {
                 writer.eraseTrait(shape, shape.expectTrait(BoxTrait.class));
             }
-            // handle members in reverse definition order
+            // Handle members in reverse definition order.
             shape.members().stream()
                     .sorted(new SourceLocationSorter().reversed())
                     .forEach(this::handleMemberShape);
@@ -163,7 +163,7 @@ final class Upgrader {
             parser.skip();
             parser.ws();
 
-            // Capture the start of the target identifier
+            // Capture the start of the target identifier.
             int start = parser.position();
             parser.consumeUntilNoLongerMatches(ParserUtils::isValidIdentifierCharacter);
 

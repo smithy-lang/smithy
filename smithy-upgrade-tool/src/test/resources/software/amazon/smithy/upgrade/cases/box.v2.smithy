@@ -11,3 +11,23 @@ structure StructureWithOptionalString {
 
     boxedMember: NonBoxedInteger,
 }
+
+union BoxyUnion {
+    boxedTarget: BoxedInteger,
+
+    boxedMember: NonBoxedInteger,
+}
+
+list BadSparseList {
+    member: NonBoxedInteger,
+}
+
+set BadSparseSet {
+    member: NonBoxedInteger,
+}
+
+map BadSparseMap {
+    key: String,
+
+    value: NonBoxedInteger,
+}
