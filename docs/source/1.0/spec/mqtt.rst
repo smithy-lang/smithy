@@ -170,7 +170,7 @@ The following example defines an operation that publishes messages to the
 
     @publish("foo/{bar}")
     operation PostFoo {
-        input: PostFooInput,
+        input: PostFooInput
         output: Unit
     }
 
@@ -180,7 +180,7 @@ The following example defines an operation that publishes messages to the
         @topicLabel
         bar: String
 
-        someValue: String,
+        someValue: String
         anotherValue: Boolean
     }
 
