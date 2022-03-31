@@ -524,8 +524,8 @@ The following example defines two operations:
 
         @supportedPrincipalTypes(["Root", "IAMUser", "IAMRole", "FederatedUser"])
         service MyService {
-            version: "2020-07-02",
-            operations: [OperationA, OperationB],
+            version: "2020-07-02"
+            operations: [OperationA, OperationB]
         }
 
         @supportedPrincipalTypes(["Root"])
@@ -577,7 +577,7 @@ deviates from the :ref:`shape name of the shape ID <shape-id>` of the resource.
         resource SuperResource {
             identifiers: {
                 superId: String,
-            },
+            }
         }
 
 

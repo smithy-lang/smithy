@@ -1216,19 +1216,19 @@ setting the ``validationMode`` input property to "ENABLED".
         responseAlgorithms: ["CRC32C", "CRC32", "SHA1", "SHA256"]
     )
     operation PutSomething {
-        input: PutSomethingInput,
+        input: PutSomethingInput
         output: PutSomethingOutput
     }
 
     structure PutSomethingInput {
         @httpHeader("x-amz-request-algorithm")
-        checksumAlgorithm: ChecksumAlgorithm,
+        checksumAlgorithm: ChecksumAlgorithm
 
         @httpHeader("x-amz-response-validation-mode")
-        validationMode: ValidationMode,
+        validationMode: ValidationMode
 
         @httpPayload
-        content: Blob,
+        content: Blob
     }
 
     @enum([
@@ -1267,7 +1267,7 @@ behavior, will fail validation.
 
     @httpChecksum()
     operation PutSomething {
-        input: PutSomethingInput,
+        input: PutSomethingInput
         output: PutSomethingOutput
     }
 
