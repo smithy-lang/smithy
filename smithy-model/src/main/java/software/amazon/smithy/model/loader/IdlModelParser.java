@@ -88,6 +88,7 @@ final class IdlModelParser extends SimpleParser {
     private static final String LIST_KEY = "list";
     private static final String RESOURCES_KEY = "resources";
     private static final String OPERATIONS_KEY = "operations";
+    private static final String PROPERTIES_KEY = "properties";
     private static final String RENAME_KEY = "rename";
     private static final String COLLECTION_OPERATIONS_KEY = "collectionOperations";
     private static final String IDENTIFIERS_KEY = "identifiers";
@@ -97,7 +98,7 @@ final class IdlModelParser extends SimpleParser {
 
     static final Collection<String> RESOURCE_PROPERTY_NAMES = ListUtils.of(
             TYPE_KEY, CREATE_KEY, READ_KEY, UPDATE_KEY, DELETE_KEY, LIST_KEY,
-            IDENTIFIERS_KEY, RESOURCES_KEY, OPERATIONS_KEY, PUT_KEY, COLLECTION_OPERATIONS_KEY);
+            IDENTIFIERS_KEY, RESOURCES_KEY, OPERATIONS_KEY, PUT_KEY, PROPERTIES_KEY, COLLECTION_OPERATIONS_KEY);
     static final List<String> SERVICE_PROPERTY_NAMES = ListUtils.of(
             TYPE_KEY, VERSION_KEY, OPERATIONS_KEY, RESOURCES_KEY, RENAME_KEY, ERRORS_KEY);
     private static final Collection<String> OPERATION_PROPERTY_NAMES = ListUtils.of("input", "output", "errors");
@@ -769,6 +770,14 @@ final class IdlModelParser extends SimpleParser {
                 String name = entry.getKey().getValue();
                 StringNode target = entry.getValue().expectStringNode();
                 modelFile.addForwardReference(target.getValue(), targetId -> builder.addIdentifier(name, targetId));
+            }
+        });
+        // Load properties and resolve forward references.
+        shapeNode.getObjectMember(PROPERTIES_KEY).ifPresent(properties -> {
+            for (Map.Entry<StringNode, Node> entry : properties.getMembers().entrySet()) {
+                String name = entry.getKey().getValue();
+                StringNode target = entry.getValue().expectStringNode();
+                modelFile.addForwardReference(target.getValue(), targetId -> builder.addProperty(name, targetId));
             }
         });
         clearPendingDocs();

@@ -86,7 +86,7 @@ enum AstModelLoader {
             TYPE, "input", "output", ERRORS, TRAITS);
     private static final Set<String> RESOURCE_PROPERTIES = SetUtils.of(
             TYPE, "create", "read", "update", "delete", "list", "put",
-            "identifiers", "resources", "operations", "collectionOperations", TRAITS);
+            "identifiers", "resources", "operations", "collectionOperations", "properties", TRAITS);
     private static final Set<String> SERVICE_PROPERTIES = SetUtils.of(
             TYPE, "version", "operations", "resources", "rename", ERRORS, TRAITS);
 
@@ -290,6 +290,15 @@ enum AstModelLoader {
                 String name = entry.getKey().getValue();
                 ShapeId target = loadReferenceBody(modelFile, id, entry.getValue());
                 builder.addIdentifier(name, target);
+            }
+        });
+
+        // Load properties and resolve forward references.
+        node.getObjectMember("properties").ifPresent(properties -> {
+            for (Map.Entry<StringNode, Node> entry : properties.getMembers().entrySet()) {
+                String name = entry.getKey().getValue();
+                ShapeId target = loadReferenceBody(modelFile, id, entry.getValue());
+                builder.addProperty(name, target);
             }
         });
 

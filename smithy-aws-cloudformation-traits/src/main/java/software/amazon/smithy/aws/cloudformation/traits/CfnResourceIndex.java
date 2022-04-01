@@ -234,7 +234,7 @@ public final class CfnResourceIndex implements KnowledgeIndex {
         for (MemberShape member : propertyContainer.members()) {
             // We've explicitly set identifier mutability based on how the
             // resource instance comes about, so only handle non-identifiers.
-            if (operationMemberIsIdentifier(model, resourceId, operationId, member)) {
+            if (inputOperationMemberIsIdentifier(model, resourceId, operationId, member)) {
                 continue;
             }
 
@@ -281,7 +281,7 @@ public final class CfnResourceIndex implements KnowledgeIndex {
         };
     }
 
-    private boolean operationMemberIsIdentifier(
+    private boolean inputOperationMemberIsIdentifier(
             Model model,
             ShapeId resourceId,
             ShapeId operationId,
@@ -294,7 +294,7 @@ public final class CfnResourceIndex implements KnowledgeIndex {
         }
 
         IdentifierBindingIndex index = IdentifierBindingIndex.of(model);
-        Map<String, String> bindings = index.getOperationBindings(resourceId, operationId);
+        Map<String, String> bindings = index.getOperationInputBindings(resourceId, operationId);
         String memberName = member.getMemberName();
         // Check for literal identifier bindings.
         for (String bindingMemberName : bindings.values()) {

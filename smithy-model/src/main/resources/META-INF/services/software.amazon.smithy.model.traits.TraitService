@@ -38,12 +38,15 @@ software.amazon.smithy.model.traits.JsonNameTrait$Provider
 software.amazon.smithy.model.traits.LengthTrait$Provider
 software.amazon.smithy.model.traits.MediaTypeTrait$Provider
 software.amazon.smithy.model.traits.MixinTrait$Provider
+software.amazon.smithy.model.traits.NestedPropertiesTrait$Provider
 software.amazon.smithy.model.traits.NoReplaceTrait$Provider
+software.amazon.smithy.model.traits.NotPropertyTrait$Provider
 software.amazon.smithy.model.traits.OptionalAuthTrait$Provider
 software.amazon.smithy.model.traits.OutputTrait$Provider
 software.amazon.smithy.model.traits.PaginatedTrait$Provider
 software.amazon.smithy.model.traits.PatternTrait$Provider
 software.amazon.smithy.model.traits.PrivateTrait$Provider
+software.amazon.smithy.model.traits.PropertyTrait$Provider
 software.amazon.smithy.model.traits.ProtocolDefinitionTrait$Provider
 software.amazon.smithy.model.traits.RangeTrait$Provider
 software.amazon.smithy.model.traits.ReadonlyTrait$Provider
@@ -62,6 +65,8 @@ software.amazon.smithy.model.traits.TagsTrait$Provider
 software.amazon.smithy.model.traits.TimestampFormatTrait$Provider
 software.amazon.smithy.model.traits.TitleTrait$Provider
 software.amazon.smithy.model.traits.TraitDefinition$Provider
+software.amazon.smithy.model.traits.NestedPropertiesTrait$Provider
+software.amazon.smithy.model.traits.NotPropertyTrait$Provider
 software.amazon.smithy.model.traits.UniqueItemsTrait$Provider
 software.amazon.smithy.model.traits.UnitTypeTrait$Provider
 software.amazon.smithy.model.traits.UnstableTrait$Provider

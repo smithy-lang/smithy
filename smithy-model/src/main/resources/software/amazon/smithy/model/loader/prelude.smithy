@@ -472,6 +472,7 @@ map NonEmptyStringMap {
     breakingChanges: [{change: "remove"}]
 )
 @length(min: 1)
+@notProperty
 string resourceIdentifier
 
 /// Prevents models defined in a different namespace from referencing the targeted shape.
@@ -622,6 +623,29 @@ string pattern
     breakingChanges: [{change: "add"}]
 )
 structure required {}
+
+/// Configures a structure member's resource property mapping behavior
+@trait(
+    selector: "structure > member"
+    conflict: [resourceIdentifier]
+)
+@tags(["diff.error.remove", "diff.contents"])
+structure property {
+    name: String
+}
+
+/// Explicitly excludes a member from resource property mapping.
+@trait(selector: ":is(structure > member, [trait|trait])")
+@tags(["diff.error.add"])
+structure notProperty {}
+
+/// Adjusts the resource property mapping of a lifecycle operation to the targeted member
+@trait(
+    selector: "structure > member"
+    structurallyExclusive: "member"
+    )
+@tags(["diff.error.const"])
+structure nestedProperties {}
 
 /// Indicates that a structure member SHOULD be set.
 @trait(selector: "structure > member", conflicts: [required])
