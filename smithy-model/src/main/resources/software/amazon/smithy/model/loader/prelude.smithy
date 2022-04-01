@@ -474,6 +474,19 @@ string pattern
 @tags(["diff.error.add"])
 structure required {}
 
+/// Configures a structure member's resource property mapping behavior
+@trait(selector: "structure > member")
+@tags(["diff.error.remove", "diff.contents"])
+structure property {
+    /// Remaps the expected resource property name to this configured one
+    name: String
+}
+
+/// Marks a structure member as transient, which excludes it from any property mapping.
+@trait(selector: "structure > member")
+@tags(["diff.error.add"])
+structure transient {}
+
 /// Indicates that a structure member SHOULD be set.
 @trait(selector: "structure > member", conflicts: [required])
 structure recommended {
