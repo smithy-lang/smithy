@@ -152,10 +152,10 @@ public final class DirectedCodegenRunner<
      * You will need to manually deserialize your settings if using types that
      * are not supported by Smithy's {@link NodeMapper}.
      *
-     * @param settingsNode Settings node value to deserialize.
      * @param settingsType Settings type to deserialize into.
+     * @param settingsNode Settings node value to deserialize.
      */
-    public void settings(Node settingsNode, Class<S> settingsType) {
+    public void settings(Class<S> settingsType, Node settingsNode) {
         LOGGER.fine(() -> "Loading codegen settings from node value: " + settingsNode.getSourceLocation());
         settings(new NodeMapper().deserialize(settingsNode, settingsType));
     }

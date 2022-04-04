@@ -15,16 +15,14 @@
 
 package software.amazon.smithy.codegen.core.directed;
 
-import java.util.Map;
-import java.util.TreeMap;
-import software.amazon.smithy.codegen.core.ImportContainer;
-import software.amazon.smithy.codegen.core.Symbol;
+public final class TestSettings {
+    private String foo;
 
-final class TestImports implements ImportContainer {
-    Map<String, Symbol> imports = new TreeMap<>();
+    public void foo(String foo) {
+        this.foo = foo;
+    }
 
-    @Override
-    public void importSymbol(Symbol symbol, String alias) {
-        imports.put(alias, symbol);
+    public String foo() {
+        return foo;
     }
 }
