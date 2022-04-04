@@ -14,11 +14,13 @@ operation ListA {
     output: ListAOutput
 }
 
+@input
 structure ListAInput {
     maxResults: Integer,
     nextToken: String
 }
 
+@output
 structure ListAOutput {
     nextToken: String,
     items: StringList
@@ -35,11 +37,13 @@ operation ListB {
     output: ListBOutput
 }
 
+@input
 structure ListBInput {
     maxResults: Integer,
     nextToken: String
 }
 
+@output
 structure ListBOutput {
     nextToken: String,
     items: StringList
