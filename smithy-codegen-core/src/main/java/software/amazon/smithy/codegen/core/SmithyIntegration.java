@@ -42,7 +42,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * @param <C> The CodegenContext value used by the generator.
  */
 @SmithyUnstableApi
-public interface SmithyIntegration<S, W extends AbstractCodeWriter<W>, C extends CodegenContext<S>> {
+public interface SmithyIntegration<S, W extends SymbolWriter<W, ?>, C extends CodegenContext<S, W>> {
     /**
      * Gets the name of the integration.
      *
@@ -162,14 +162,12 @@ public interface SmithyIntegration<S, W extends AbstractCodeWriter<W>, C extends
      * runBefore, and runAfter, and integration names.
      *
      * @param integrations Integrations to sort.
-     * @param <S> The type of settings being sorted.
      * @param <I> The type of integration to sort.
      * @return Returns the sorted integrations.
      * @throws IllegalArgumentException If a cycle is found between integrations.
      * @throws IllegalArgumentException If multiple integrations share the same name.
      */
-    static <S, W extends AbstractCodeWriter<W>, C extends CodegenContext<S>, I extends SmithyIntegration<S, W, C>>
-    List<I> sort(Iterable<I> integrations) {
+    static <I extends SmithyIntegration<?, ?, ?>> List<I> sort(Iterable<I> integrations) {
         return new IntegrationTopologicalSort<>(integrations).sort();
     }
 }

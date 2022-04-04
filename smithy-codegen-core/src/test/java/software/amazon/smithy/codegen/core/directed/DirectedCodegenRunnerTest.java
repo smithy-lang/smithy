@@ -15,19 +15,12 @@
 
 package software.amazon.smithy.codegen.core.directed;
 
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.function.Consumer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.MockManifest;
-import software.amazon.smithy.codegen.core.ImportContainer;
 import software.amazon.smithy.codegen.core.SmithyIntegration;
-import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
-import software.amazon.smithy.codegen.core.SymbolWriter;
-import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -35,82 +28,45 @@ import software.amazon.smithy.model.shapes.ShapeId;
 // TODO: fill in these test
 public class DirectedCodegenRunnerTest {
 
-    private static final class TestImports implements ImportContainer {
-        Map<String, Symbol> imports = new TreeMap<>();
-
-        @Override
-        public void importSymbol(Symbol symbol, String alias) {
-            imports.put(alias, symbol);
-        }
-    }
-
-    private static final class TestWriter extends SymbolWriter<TestWriter, TestImports> {
-        public TestWriter() {
-            super(new TestImports());
-        }
-
-        @Override
-        public TestWriter writeDocs(Consumer<TestWriter> consumer) {
-            consumer.accept(this);
-            return this;
-        }
-    }
-
     interface TestIntegration extends SmithyIntegration<Object, TestWriter, TestContext> {}
 
-    private static final class Delegator extends WriterDelegator<TestWriter> {
-        Delegator(FileManifest manifest, SymbolProvider symbolProvider, SymbolWriter.Factory<TestWriter> factory) {
-            super(manifest, symbolProvider, factory);
-        }
-    }
-
-    private static final class TestDirected implements DirectedCodegen<TestContext, Object, Delegator> {
+    private static final class TestDirected implements DirectedCodegen<TestContext, Object> {
         @Override
         public SymbolProvider createSymbolProvider(CreateSymbolProvider<Object> directive) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public Delegator createWriterDelegator(CreateWriterDelegator<Object, Delegator> directive) {
-            return new Delegator(directive.fileManifest(), directive.symbolProvider(), (f, n) -> {
-                TestWriter writer = new TestWriter();
-                writer.setRelativizeSymbols(n);
-                return writer;
-            });
-        }
-
-        @Override
-        public TestContext createContext(CreateContext<Object, Delegator> directive) {
+        public TestContext createContext(CreateContext<Object> directive) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public void generateService(GenerateService<TestContext, Object, Delegator> directive) { }
+        public void generateService(GenerateService<TestContext, Object> directive) { }
 
         @Override
-        public void generateResource(GenerateResource<TestContext, Object, Delegator> directive) { }
+        public void generateResource(GenerateResource<TestContext, Object> directive) { }
 
         @Override
-        public void generateStructure(GenerateStructure<TestContext, Object, Delegator> directive) { }
+        public void generateStructure(GenerateStructure<TestContext, Object> directive) { }
 
         @Override
-        public void generateError(GenerateError<TestContext, Object, Delegator> directive) { }
+        public void generateError(GenerateError<TestContext, Object> directive) { }
 
         @Override
-        public void generateUnion(GenerateUnion<TestContext, Object, Delegator> directive) {}
+        public void generateUnion(GenerateUnion<TestContext, Object> directive) {}
 
         @Override
-        public void finalizeBeforeIntegrations(Finalize<TestContext, Object, Delegator> directive) {}
+        public void customizeBeforeIntegrations(Customize<TestContext, Object> directive) {}
 
         @Override
-        public void finalizeAfterIntegrations(Finalize<TestContext, Object, Delegator> directive) {}
+        public void customizeAfterIntegrations(Customize<TestContext, Object> directive) {}
     }
 
     @Test
     public void validatesInput() {
         TestDirected testDirected = new TestDirected();
-        DirectedCodegenRunner<TestWriter, TestIntegration, TestContext, Object, Delegator> runner
-                = new DirectedCodegenRunner<>();
+        DirectedCodegenRunner<TestWriter, TestIntegration, TestContext, Object> runner = new DirectedCodegenRunner<>();
 
         runner.directedCodegen(testDirected);
         runner.fileManifest(new MockManifest());
@@ -124,8 +80,7 @@ public class DirectedCodegenRunnerTest {
     @Test
     public void failsWhenServiceIsMissing() {
         TestDirected testDirected = new TestDirected();
-        DirectedCodegenRunner<TestWriter, TestIntegration, TestContext, Object, Delegator> runner
-                = new DirectedCodegenRunner<>();
+        DirectedCodegenRunner<TestWriter, TestIntegration, TestContext, Object> runner = new DirectedCodegenRunner<>();
 
         FileManifest manifest = new MockManifest();
         runner.settings(new Object());

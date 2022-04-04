@@ -18,8 +18,6 @@ package software.amazon.smithy.codegen.core.directed;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.CodegenContext;
 import software.amazon.smithy.codegen.core.SymbolProvider;
-import software.amazon.smithy.codegen.core.SymbolWriter;
-import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.shapes.ServiceShape;
 
 /**
@@ -28,16 +26,13 @@ import software.amazon.smithy.model.shapes.ServiceShape;
  * @param <C> CodegenContext type.
  * @param <S> Codegen settings type.
  */
-public abstract class ContextualDirective<C extends CodegenContext<S>, S, D extends WriterDelegator<?>>
-        extends Directive<S> {
+public abstract class ContextualDirective<C extends CodegenContext<S, ?>, S> extends Directive<S> {
 
     private final C context;
-    private final D writerDelegator;
 
-    ContextualDirective(C context, ServiceShape service, D writerDelegator) {
+    ContextualDirective(C context, ServiceShape service) {
         super(context.model(), context.settings(), service);
         this.context = context;
-        this.writerDelegator = writerDelegator;
     }
 
     /**
@@ -53,13 +48,6 @@ public abstract class ContextualDirective<C extends CodegenContext<S>, S, D exte
      */
     public final C context() {
         return context;
-    }
-
-    /**
-     * @return Gets the {@link WriterDelegator} used to create {@link SymbolWriter}s.
-     */
-    public final D writerDelegator() {
-        return writerDelegator;
     }
 
     /**

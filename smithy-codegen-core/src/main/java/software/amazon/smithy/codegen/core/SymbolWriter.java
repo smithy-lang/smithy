@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.logging.Logger;
 import software.amazon.smithy.utils.AbstractCodeWriter;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -318,38 +317,5 @@ public abstract class SymbolWriter<W extends SymbolWriter<W, I>, I extends Impor
                 }
             }
         }
-    }
-
-    /**
-     * Writes documentation comments.
-     *
-     * <p>This method is responsible for setting up the writer to begin
-     * writing documentation comments. This includes writing any necessary
-     * opening tokens (e.g., "/*"), adding tokens to the beginning of lines
-     * (e.g., "*"), sanitizing documentation strings, and writing any
-     * tokens necessary to close documentation comments (e.g., "*\/").
-     *
-     * <p>This method <em>does not</em> automatically escape the expression
-     * start character ("$" by default). Write calls made by the Runnable
-     * should either use {@link AbstractCodeWriter#writeWithNoFormatting} or escape
-     * the expression start character manually.
-     *
-     * <p>This method may be overridden as needed.
-     *
-     * @param consumer Consumer that accepts the writer and writes documentation.
-     * @return Returns the writer.
-     */
-    public abstract W writeDocs(Consumer<W> consumer);
-
-    /**
-     * Writes documentation comments from a string.
-     *
-     * @param docs Documentation to write.
-     * @return Returns the writer.
-     */
-    @SuppressWarnings("unchecked")
-    public final W writeDocs(String docs) {
-        writeDocs(w -> w.writeWithNoFormatting(docs));
-        return (W) this;
     }
 }

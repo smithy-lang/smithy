@@ -23,8 +23,9 @@ import software.amazon.smithy.model.Model;
  * {@link SmithyIntegration}.
  *
  * @param <S> The settings object used to configure the generator.
+ * @param <W> The type of {@link SymbolWriter} used by the generator.
  */
-public interface CodegenContext<S> {
+public interface CodegenContext<S, W extends SymbolWriter<W, ?>> {
     /**
      * @return Gets the model being code generated.
      */
@@ -44,4 +45,16 @@ public interface CodegenContext<S> {
      * @return Gets the FileManifest being written to for code generation.
      */
     FileManifest fileManifest();
+
+    /**
+     * Get the WriterDelegator used for generating code.
+     *
+     * <p>Generates might need other delegators for specific purposes, and it's fine to
+     * add more methods for those specific purposes. If an implementation uses a specific
+     * subclass of a WriterDelegator, implementations can override this method to return
+     * a more specific WriterDelegator type.
+     *
+     * @return Returns the writer delegator used by the generator.
+     */
+    WriterDelegator<W> writerDelegator();
 }

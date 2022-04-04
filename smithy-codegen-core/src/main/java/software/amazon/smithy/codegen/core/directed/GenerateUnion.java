@@ -16,7 +16,6 @@
 package software.amazon.smithy.codegen.core.directed;
 
 import software.amazon.smithy.codegen.core.CodegenContext;
-import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.StreamingTrait;
@@ -26,14 +25,12 @@ import software.amazon.smithy.model.traits.StreamingTrait;
  *
  * @param <C> CodegenContext type.
  * @param <S> Codegen settings type.
- * @param <D> WriterDelegator type.
  * @see DirectedCodegen#generateUnion
  */
-public final class GenerateUnion<C extends CodegenContext<S>, S, D extends WriterDelegator<?>>
-        extends ShapeDirective<UnionShape, C, S, D> {
+public final class GenerateUnion<C extends CodegenContext<S, ?>, S> extends ShapeDirective<UnionShape, C, S> {
 
-    GenerateUnion(C context, ServiceShape service, D writerDelegator, UnionShape shape) {
-        super(context, service, writerDelegator, shape);
+    GenerateUnion(C context, ServiceShape service, UnionShape shape) {
+        super(context, service, shape);
     }
 
     /**

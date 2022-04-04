@@ -21,7 +21,6 @@ import static org.hamcrest.Matchers.hasKey;
 
 import java.util.Map;
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.knowledge.EventStreamInfo;
 import software.amazon.smithy.model.knowledge.PaginationInfo;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -29,14 +28,14 @@ import software.amazon.smithy.model.shapes.ShapeId;
 public class GenerateServiceDirectiveTest {
     @Test
     public void getsServiceTitleWithExplicitTrait() {
-        GenerateService<TestContext, Object, WriterDelegator<?>> d = createDirective("service-title.smithy");
+        GenerateService<TestContext, Object> d = createDirective("service-title.smithy");
 
         assertThat(d.serviceTitle(), equalTo("Foo Service"));
     }
 
     @Test
     public void getsServiceTitleFromSymbolDefault() {
-        GenerateService<TestContext, Object, WriterDelegator<?>> d = createDirective(
+        GenerateService<TestContext, Object> d = createDirective(
                 "service-title.smithy", ShapeId.from("smithy.example#Foo2"));
 
         assertThat(d.serviceTitle(), equalTo("Foo2"));
@@ -44,8 +43,7 @@ public class GenerateServiceDirectiveTest {
 
     @Test
     public void providesPaginatedMap() {
-        GenerateService<TestContext, Object, WriterDelegator<?>> d = createDirective(
-                "service-paginated.smithy");
+        GenerateService<TestContext, Object> d = createDirective("service-paginated.smithy");
 
         Map<ShapeId, PaginationInfo> info = d.paginatedOperations();
         assertThat(info, hasKey(ShapeId.from("smithy.example#ListA")));
@@ -54,8 +52,7 @@ public class GenerateServiceDirectiveTest {
 
     @Test
     public void providesEventStreamMap() {
-        GenerateService<TestContext, Object, WriterDelegator<?>> d = createDirective(
-                "service-eventstream.smithy");
+        GenerateService<TestContext, Object> d = createDirective("service-eventstream.smithy");
 
         Map<ShapeId, EventStreamInfo> input = d.inputEventStreamOperations();
         Map<ShapeId, EventStreamInfo> output = d.outputEventStreamOperations();
@@ -64,15 +61,12 @@ public class GenerateServiceDirectiveTest {
         assertThat(output, hasKey(ShapeId.from("smithy.example#GetAndSendMovements")));
     }
 
-    private GenerateService<TestContext, Object, WriterDelegator<?>> createDirective(
-            String modelFile,
-            ShapeId serviceId
-    ) {
+    private GenerateService<TestContext, Object> createDirective(String modelFile, ShapeId serviceId) {
         TestContext context = TestContext.create(modelFile, serviceId);
-        return new GenerateService<>(context, context.service(), context.delegator());
+        return new GenerateService<>(context, context.service());
     }
 
-    private GenerateService<TestContext, Object, WriterDelegator<?>> createDirective(String modelFile) {
+    private GenerateService<TestContext, Object> createDirective(String modelFile) {
         return createDirective(modelFile, ShapeId.from("smithy.example#Foo"));
     }
 }

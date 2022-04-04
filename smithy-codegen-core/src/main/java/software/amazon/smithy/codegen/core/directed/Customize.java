@@ -16,7 +16,6 @@
 package software.amazon.smithy.codegen.core.directed;
 
 import software.amazon.smithy.codegen.core.CodegenContext;
-import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.shapes.ServiceShape;
 
 /**
@@ -24,14 +23,11 @@ import software.amazon.smithy.model.shapes.ServiceShape;
  *
  * @param <C> CodegenContext type.
  * @param <S> Codegen settings type.
- * @param <D> WriterDelegator type.
- * @see DirectedCodegen#finalizeBeforeIntegrations
- * @see DirectedCodegen#finalizeAfterIntegrations
+ * @see DirectedCodegen#customizeBeforeIntegrations
+ * @see DirectedCodegen#customizeAfterIntegrations
  */
-public final class Finalize<C extends CodegenContext<S>, S, D extends WriterDelegator<?>>
-        extends ContextualDirective<C, S, D> {
-
-    Finalize(C context, ServiceShape service, D writerDelegator) {
-        super(context, service,  writerDelegator);
+public final class Customize<C extends CodegenContext<S, ?>, S> extends ContextualDirective<C, S> {
+    Customize(C context, ServiceShape service) {
+        super(context, service);
     }
 }

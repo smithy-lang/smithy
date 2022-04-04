@@ -39,15 +39,6 @@ public class SymbolWriterTest {
     }
 
     @Test
-    public void writesDocumentationWithSanitation() {
-        MySimpleWriter writer = new MySimpleWriter("foo");
-        writer.writeDocs("Hi $dollar!");
-        String result = writer.toString();
-
-        assertThat(result, equalTo("Before\nHi $dollar!!\nAfter\n"));
-    }
-
-    @Test
     public void addsUseImportsWithReferences() {
         MySimpleWriter writer = new MySimpleWriter("foo");
         Symbol s = Symbol.builder()

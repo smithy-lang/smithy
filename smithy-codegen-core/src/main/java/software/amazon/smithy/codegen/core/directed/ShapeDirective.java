@@ -17,7 +17,6 @@ package software.amazon.smithy.codegen.core.directed;
 
 import software.amazon.smithy.codegen.core.CodegenContext;
 import software.amazon.smithy.codegen.core.Symbol;
-import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 
@@ -28,14 +27,14 @@ import software.amazon.smithy.model.shapes.Shape;
  * @param <C> CodegenContext type.
  * @param <S> Codegen settings type.
  */
-public abstract class ShapeDirective<T extends Shape, C extends CodegenContext<S>, S, D extends WriterDelegator<?>>
-        extends ContextualDirective<C, S, D> {
+public abstract class ShapeDirective<T extends Shape, C extends CodegenContext<S, ?>, S>
+        extends ContextualDirective<C, S> {
 
     private final T shape;
     private final Symbol symbol;
 
-    ShapeDirective(C context, ServiceShape service, D writerDelegator, T shape) {
-        super(context, service, writerDelegator);
+    ShapeDirective(C context, ServiceShape service, T shape) {
+        super(context, service);
         this.shape = shape;
         this.symbol = symbolProvider().toSymbol(shape);
     }
