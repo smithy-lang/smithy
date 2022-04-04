@@ -16,14 +16,16 @@
 package software.amazon.smithy.build.transforms;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.build.ProtoReservedFieldsTrait;
 import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
@@ -31,6 +33,7 @@ import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.FunctionalUtils;
 
 public class RenameShapesTest {
@@ -59,6 +62,39 @@ public class RenameShapesTest {
 
         assertThat(ids, containsInAnyOrder("ns.foo#MyService", "ns.foo#Baz", "ns.foo#Corge", "ns.foo#Corge$foo"));
         assertThat(ids, not(containsInAnyOrder("ns.foo#Bar", "ns.foo#Qux")));
+    }
+
+    @Test
+    public void renameShapesBroken() throws Exception {
+        Model model = Model.assembler()
+                .addImport(Paths.get(getClass().getResource("rename-shapes-broken.smithy").toURI()))
+                .assemble()
+                .unwrap();
+        ObjectNode renamed = Node.objectNode()
+                .withMember("ns.foo#MyStruct", "ns.foo#Corge");
+        ObjectNode config = Node.objectNode().withMember("renamed", renamed);
+        TransformContext context = TransformContext.builder()
+                .model(model)
+                .settings(config)
+                .build();
+        Model result = new RenameShapes().transform(context);
+        List<String> ids = result.shapes()
+                .filter(FunctionalUtils.not(Prelude::isPreludeShape))
+                .map(Shape::getId)
+                .map(Object::toString)
+                .collect(Collectors.toList());
+        assertThat(ids, containsInAnyOrder(
+                "ns.foo#Corge",
+                "ns.foo#Corge$value",
+                "ns.foo#MyString",
+                "ns.foo#protoReservedFields",
+                "ns.foo#protoReservedFields$member"
+        ));
+        assertThat(ids, not(containsInAnyOrder("ns.foo#MyStruct")));
+
+        final ProtoReservedFieldsTrait before = model.getShape(ShapeId.from("ns.foo#MyStruct")).flatMap(s -> s.getTrait(ProtoReservedFieldsTrait.class)).get();
+        final ProtoReservedFieldsTrait after = result.getShape(ShapeId.from("ns.foo#Corge")).flatMap(s -> s.getTrait(ProtoReservedFieldsTrait.class)).get();
+        assertThat(after.getReserved(), equalTo(before.getReserved()));
     }
 
     @Test
