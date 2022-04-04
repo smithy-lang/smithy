@@ -29,7 +29,6 @@ import software.amazon.smithy.codegen.core.ImportContainer;
 import software.amazon.smithy.codegen.core.SmithyIntegration;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.SymbolWriter;
-import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.node.Node;
@@ -57,9 +56,8 @@ import software.amazon.smithy.utils.SmithyBuilder;
 public final class DirectedCodegenRunner<
         W extends SymbolWriter<W, ? extends ImportContainer>,
         I extends SmithyIntegration<S, W, C>,
-        C extends CodegenContext<S>,
-        S,
-        D extends WriterDelegator<W>> {
+        C extends CodegenContext<S, W>,
+        S> {
 
     private static final Logger LOGGER = Logger.getLogger(DirectedCodegen.class.getName());
 
@@ -69,7 +67,7 @@ public final class DirectedCodegenRunner<
     private S settings;
     private FileManifest fileManifest;
     private Supplier<Iterable<I>> integrationFinder;
-    private DirectedCodegen<C, S, D> directedCodegen;
+    private DirectedCodegen<C, S> directedCodegen;
     private final List<BiFunction<Model, ModelTransformer, Model>> transforms = new ArrayList<>();
 
     /**
@@ -122,7 +120,7 @@ public final class DirectedCodegenRunner<
      *
      * @param directedCodegen Directed code generator to run.
      */
-    public void directedCodegen(DirectedCodegen<C, S, D> directedCodegen) {
+    public void directedCodegen(DirectedCodegen<C, S> directedCodegen) {
         this.directedCodegen = directedCodegen;
     }
 
@@ -157,7 +155,7 @@ public final class DirectedCodegenRunner<
      * @param settingsNode Settings node value to deserialize.
      * @param settingsType Settings type to deserialize into.
      */
-    public void settingsFromNode(Node settingsNode, Class<S> settingsType) {
+    public void settings(Node settingsNode, Class<S> settingsType) {
         LOGGER.fine(() -> "Loading codegen settings from node value: " + settingsNode.getSourceLocation());
         settings(new NodeMapper().deserialize(settingsNode, settingsType));
     }
@@ -265,34 +263,32 @@ public final class DirectedCodegenRunner<
 
         SymbolProvider provider = createSymbolProvider(integrations, serviceShape);
 
-        D writerDelegator = createWriterDelegator(serviceShape, provider);
+        C context = createContext(serviceShape, provider);
 
-        C context = createContext(serviceShape, provider, writerDelegator);
-
-        registerInterceptors(context, integrations, writerDelegator);
+        registerInterceptors(context, integrations);
 
         LOGGER.finest(() -> "Generating service " + serviceShape.getId());
-        directedCodegen.generateService(new GenerateService<>(context, serviceShape, writerDelegator));
+        directedCodegen.generateService(new GenerateService<>(context, serviceShape));
 
-        generateShapesInService(context, serviceShape, shapes, writerDelegator);
+        generateShapesInService(context, serviceShape, shapes);
 
-        Finalize<C, S, D> postProcess = new Finalize<>(context, serviceShape, writerDelegator);
+        Customize<C, S> postProcess = new Customize<>(context, serviceShape);
 
-        LOGGER.finest(() -> "Post-processing codegen for "
+        LOGGER.finest(() -> "Performing custom codegen for "
                             + directedCodegen.getClass().getName() + " before integrations");
-        directedCodegen.finalizeBeforeIntegrations(postProcess);
+        directedCodegen.customizeBeforeIntegrations(postProcess);
 
         applyIntegrationCustomizations(context, integrations);
 
-        LOGGER.finest(() -> "Post-processing codegen for "
+        LOGGER.finest(() -> "Performing custom codegen for "
                             + directedCodegen.getClass().getName() + " after integrations");
-        directedCodegen.finalizeAfterIntegrations(postProcess);
+        directedCodegen.customizeAfterIntegrations(postProcess);
 
         LOGGER.finest(() -> "Directed codegen finished for " + directedCodegen.getClass().getName());
 
-        if (!writerDelegator.getWriters().isEmpty()) {
+        if (!context.writerDelegator().getWriters().isEmpty()) {
             LOGGER.info(() -> "Flushing remaining writers of " + directedCodegen.getClass().getName());
-            writerDelegator.flushWriters();
+            context.writerDelegator().flushWriters();
         }
     }
 
@@ -349,79 +345,70 @@ public final class DirectedCodegenRunner<
         return provider;
     }
 
-    private D createWriterDelegator(ServiceShape serviceShape, SymbolProvider provider) {
-        return directedCodegen.createWriterDelegator(new CreateWriterDelegator<>(
+    private C createContext(ServiceShape serviceShape, SymbolProvider provider) {
+        LOGGER.fine(() -> "Creating a codegen context for " + directedCodegen.getClass().getName());
+        return directedCodegen.createContext(new CreateContext<>(
                 model, settings, serviceShape, provider, fileManifest));
     }
 
-    private C createContext(ServiceShape serviceShape, SymbolProvider provider, D writerDelegator) {
-        LOGGER.fine(() -> "Creating a codegen context for " + directedCodegen.getClass().getName());
-        return directedCodegen.createContext(new CreateContext<>(
-                model, settings, serviceShape, provider, writerDelegator, fileManifest));
-    }
-
-    private void registerInterceptors(C context, List<I> integrations, D writerDelegator) {
+    private void registerInterceptors(C context, List<I> integrations) {
         LOGGER.fine(() -> "Registering CodeInterceptors from integrations of " + integrationClass.getName());
         List<CodeInterceptor<? extends CodeSection, W>> interceptors = new ArrayList<>();
         for (I integration : integrations) {
             interceptors.addAll(integration.interceptors(context));
         }
-        writerDelegator.setInterceptors(interceptors);
+        context.writerDelegator().setInterceptors(interceptors);
     }
 
-    private void generateShapesInService(C context, ServiceShape serviceShape, Set<Shape> shapes, D writerDelegator) {
+    private void generateShapesInService(C context, ServiceShape serviceShape, Set<Shape> shapes) {
         LOGGER.fine(() -> "Generating shapes for " + directedCodegen.getClass().getName());
-        generateResourceShapes(context, serviceShape, shapes, writerDelegator);
-        generateStructures(context, serviceShape, shapes, writerDelegator);
-        generateUnionShapes(context, serviceShape, shapes, writerDelegator);
-        generateEnumShapes(context, serviceShape, shapes, writerDelegator);
+        generateResourceShapes(context, serviceShape, shapes);
+        generateStructures(context, serviceShape, shapes);
+        generateUnionShapes(context, serviceShape, shapes);
+        generateEnumShapes(context, serviceShape, shapes);
         LOGGER.finest(() -> "Finished generating shapes for " + directedCodegen.getClass().getName());
     }
 
-    private void generateResourceShapes(C context, ServiceShape serviceShape, Set<Shape> shapes, D writerDelegator) {
+    private void generateResourceShapes(C context, ServiceShape serviceShape, Set<Shape> shapes) {
         for (ResourceShape shape : model.getResourceShapes()) {
             if (shapes.contains(shape)) {
                 LOGGER.finest(() -> "Generating resource " + shape.getId());
                 directedCodegen.generateResource(
-                        new GenerateResource<>(context, serviceShape, writerDelegator, shape));
+                        new GenerateResource<>(context, serviceShape, shape));
             }
         }
     }
 
-    private void generateStructures(C context, ServiceShape serviceShape, Set<Shape> shapes, D writerDelegator) {
+    private void generateStructures(C context, ServiceShape serviceShape, Set<Shape> shapes) {
         for (StructureShape shape : model.getStructureShapes()) {
             if (shapes.contains(shape)) {
                 if (shape.hasTrait(ErrorTrait.class)) {
                     LOGGER.finest(() -> "Generating error " + shape.getId());
-                    directedCodegen.generateError(new GenerateError<>(
-                            context, serviceShape, writerDelegator, shape));
+                    directedCodegen.generateError(new GenerateError<>(context, serviceShape, shape));
                 } else {
                     LOGGER.finest(() -> "Generating structure " + shape.getId());
-                    directedCodegen.generateStructure(
-                            new GenerateStructure<>(context, serviceShape, writerDelegator, shape));
+                    directedCodegen.generateStructure(new GenerateStructure<>(context, serviceShape, shape));
                 }
             }
         }
     }
 
-    private void generateUnionShapes(C context, ServiceShape serviceShape, Set<Shape> shapes, D writerDelegator) {
+    private void generateUnionShapes(C context, ServiceShape serviceShape, Set<Shape> shapes) {
         for (UnionShape shape : model.getUnionShapes()) {
             if (shapes.contains(shape)) {
                 LOGGER.finest(() -> "Generating union " + shape.getId());
-                directedCodegen.generateUnion(
-                        new GenerateUnion<>(context, serviceShape, writerDelegator, shape));
+                directedCodegen.generateUnion(new GenerateUnion<>(context, serviceShape, shape));
             }
         }
     }
 
-    private void generateEnumShapes(C context, ServiceShape serviceShape, Set<Shape> shapes, D writerDelegator) {
+    private void generateEnumShapes(C context, ServiceShape serviceShape, Set<Shape> shapes) {
         // Generate enum shapes connected to the service.
         /*
         for (EnumShape shape : model.getEnumShapes()) {
             if (shapes.contains(shape)) {
                 LOGGER.finest(() -> "Generating enum " + shape.getId());
-                directedCodegen.generateEnumShape(
-                        new GenerateEnumContext<>(context, serviceShape, writerDelegator, shape));
+                directedCodegen.generateEnumShape(new GenerateEnumContext<>(context, serviceShape, shape));
             }
         }
         TODO: uncomment in idl-2.0
@@ -430,7 +417,7 @@ public final class DirectedCodegenRunner<
 
     private void applyIntegrationCustomizations(C context, List<I> integrations) {
         for (I integration : integrations) {
-            LOGGER.finest(() -> "Post-processing codegen for " + directedCodegen.getClass().getName()
+            LOGGER.finest(() -> "Customizing codegen for " + directedCodegen.getClass().getName()
                                 + " using integration " + integration.getClass().getName());
             integration.customize(context);
         }

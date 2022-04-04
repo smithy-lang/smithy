@@ -10,13 +10,13 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
-final class TestContext implements CodegenContext<Object> {
+final class TestContext implements CodegenContext<Object, TestWriter> {
 
     private final Model model;
     private final Object settings;
     private final SymbolProvider symbolProvider;
     private final FileManifest fileManifest;
-    private final WriterDelegator<?> delegator;
+    private final WriterDelegator<TestWriter> delegator;
     private final ServiceShape service;
 
     static TestContext create(String modelFile, ShapeId serviceId) {
@@ -25,7 +25,7 @@ final class TestContext implements CodegenContext<Object> {
                 .name(shape.getId().getName())
                 .namespace("example", ".")
                 .build();
-        WriterDelegator<?> delegator = new WriterDelegator<>(manifest, symbolProvider, (file, namespace) -> {
+        WriterDelegator<TestWriter> delegator = new WriterDelegator<>(manifest, symbolProvider, (file, namespace) -> {
             throw new UnsupportedOperationException();
         });
         Model model = Model.assembler()
@@ -37,7 +37,7 @@ final class TestContext implements CodegenContext<Object> {
     }
 
     TestContext(Model model, Object settings, SymbolProvider symbolProvider, FileManifest fileManifest,
-            WriterDelegator<?> delegator, ServiceShape service) {
+            WriterDelegator<TestWriter> delegator, ServiceShape service) {
         this.model = model;
         this.settings = settings;
         this.symbolProvider = symbolProvider;
@@ -66,7 +66,8 @@ final class TestContext implements CodegenContext<Object> {
         return fileManifest;
     }
 
-    public WriterDelegator<?> delegator() {
+    @Override
+    public WriterDelegator<TestWriter> writerDelegator() {
         return delegator;
     }
 

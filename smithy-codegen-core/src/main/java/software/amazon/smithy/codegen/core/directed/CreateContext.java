@@ -19,8 +19,6 @@ import java.util.Map;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.CodegenContext;
 import software.amazon.smithy.codegen.core.SymbolProvider;
-import software.amazon.smithy.codegen.core.SymbolWriter;
-import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -31,13 +29,11 @@ import software.amazon.smithy.model.traits.Trait;
  * Directive used to create a {@link CodegenContext}.
  *
  * @param <S> Codegen settings type.
- * @param <D> Type of {@link WriterDelegator}.
  * @see DirectedCodegen#createContext
  */
-public final class CreateContext<S, D extends WriterDelegator<?>> extends Directive<S> {
+public final class CreateContext<S> extends Directive<S> {
 
     private final SymbolProvider symbolProvider;
-    private final D writerDelegator;
     private final FileManifest fileManifest;
 
     CreateContext(
@@ -45,12 +41,10 @@ public final class CreateContext<S, D extends WriterDelegator<?>> extends Direct
             S settings,
             ServiceShape service,
             SymbolProvider symbolProvider,
-            D writerDelegator,
             FileManifest fileManifest
     ) {
         super(model, settings, service);
         this.symbolProvider = symbolProvider;
-        this.writerDelegator = writerDelegator;
         this.fileManifest = fileManifest;
     }
 
@@ -59,13 +53,6 @@ public final class CreateContext<S, D extends WriterDelegator<?>> extends Direct
      */
     public SymbolProvider symbolProvider() {
         return symbolProvider;
-    }
-
-    /**
-     * @return Gets the {@link WriterDelegator} used to create {@link SymbolWriter}s.
-     */
-    public D writerDelegator() {
-        return writerDelegator;
     }
 
     /**

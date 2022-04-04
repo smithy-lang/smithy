@@ -30,9 +30,8 @@ import software.amazon.smithy.codegen.core.WriterDelegator;
  *
  * @param <C> Smithy {@link CodegenContext} to use in directed methods.
  * @param <S> Settings object passed to directed methods as part of the context.
- * @param <D> WriterDelegator used to create SymbolWriters.
  */
-public interface DirectedCodegen<C extends CodegenContext<S>, S, D extends WriterDelegator<?>> {
+public interface DirectedCodegen<C extends CodegenContext<S, ?>, S> {
 
     /**
      * Create the {@link SymbolProvider} used to map shapes to code symbols.
@@ -43,34 +42,26 @@ public interface DirectedCodegen<C extends CodegenContext<S>, S, D extends Write
     SymbolProvider createSymbolProvider(CreateSymbolProvider<S> directive);
 
     /**
-     * Creates the factory that creates {@link SymbolWriter}s of type {@code W}.
-     *
-     * @param directive Directive context data.
-     * @return Returns the created writer delegator.
-     */
-    D createWriterDelegator(CreateWriterDelegator<S, D> directive);
-
-    /**
      * Creates the codegen context object.
      *
      * @param directive Directive context data.
      * @return Returns the created context object used by the rest of the directed generation.
      */
-    C createContext(CreateContext<S, D> directive);
+    C createContext(CreateContext<S> directive);
 
     /**
      * Generates the code needed for a service shape.
      *
      * @param directive Directive to perform.
      */
-    void generateService(GenerateService<C, S, D> directive);
+    void generateService(GenerateService<C, S> directive);
 
     /**
      * Generates the code needed for a resource shape.
      *
      * @param directive Directive to perform.
      */
-    default void generateResource(GenerateResource<C, S, D> directive) {
+    default void generateResource(GenerateResource<C, S> directive) {
         // Does nothing by default.
     }
 
@@ -82,21 +73,21 @@ public interface DirectedCodegen<C extends CodegenContext<S>, S, D extends Write
      *
      * @param directive Directive to perform.
      */
-    void generateStructure(GenerateStructure<C, S, D> directive);
+    void generateStructure(GenerateStructure<C, S> directive);
 
     /**
      * Generates the code needed for an error structure.
      *
      * @param directive Directive to perform.
      */
-    void generateError(GenerateError<C, S, D> directive);
+    void generateError(GenerateError<C, S> directive);
 
     /**
      * Generates the code needed for a union shape.
      *
      * @param directive Directive to perform.
      */
-    void generateUnion(GenerateUnion<C, S, D> directive);
+    void generateUnion(GenerateUnion<C, S> directive);
 
     /*
      * TODO: Uncomment in IDL-2.0 branch
@@ -105,7 +96,7 @@ public interface DirectedCodegen<C extends CodegenContext<S>, S, D extends Write
      *
      * @param directive Directive to perform.
      */
-    //void generateEnumShape(GenerateEnumContext<C, S, D> directive);
+    //void generateEnumShape(GenerateEnumContext<C, S> directive);
 
     /**
      * Performs any necessary code generation after all shapes are generated,
@@ -114,7 +105,7 @@ public interface DirectedCodegen<C extends CodegenContext<S>, S, D extends Write
      *
      * @param directive Directive to perform.
      */
-    default void finalizeBeforeIntegrations(Finalize<C, S, D> directive) {
+    default void customizeBeforeIntegrations(Customize<C, S> directive) {
         // Does nothing by default.
     }
 
@@ -133,7 +124,7 @@ public interface DirectedCodegen<C extends CodegenContext<S>, S, D extends Write
      *
      * @param directive Directive to perform.
      */
-    default void finalizeAfterIntegrations(Finalize<C, S, D> directive) {
+    default void customizeAfterIntegrations(Customize<C, S> directive) {
         // Does nothing by default.
     }
 }

@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import software.amazon.smithy.codegen.core.CodegenContext;
 import software.amazon.smithy.codegen.core.Symbol;
-import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.knowledge.EventStreamIndex;
 import software.amazon.smithy.model.knowledge.EventStreamInfo;
 import software.amazon.smithy.model.knowledge.PaginatedIndex;
@@ -34,14 +33,12 @@ import software.amazon.smithy.model.traits.TitleTrait;
  *
  * @param <C> CodegenContext type.
  * @param <S> Codegen settings type.
- * @param <D> WriterDelegator type.
  * @see DirectedCodegen#generateService
  */
-public final class GenerateService<C extends CodegenContext<S>, S, D extends WriterDelegator<?>>
-        extends ShapeDirective<ServiceShape, C, S, D> {
+public final class GenerateService<C extends CodegenContext<S, ?>, S> extends ShapeDirective<ServiceShape, C, S> {
 
-    GenerateService(C context, ServiceShape service, D writerDelegator) {
-        super(context, service, writerDelegator, service);
+    GenerateService(C context, ServiceShape service) {
+        super(context, service, service);
     }
 
     /**

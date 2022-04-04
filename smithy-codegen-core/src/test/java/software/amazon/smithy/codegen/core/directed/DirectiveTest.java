@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -33,8 +32,7 @@ public class DirectiveTest {
     @Test
     public void providesOperations() {
         TestContext context = TestContext.create("directive-operations.smithy", ShapeId.from("smithy.example#Foo"));
-        GenerateService<TestContext, Object, WriterDelegator<?>> d = new GenerateService<>(
-                context, context.service(), context.delegator());
+        GenerateService<TestContext, Object> d = new GenerateService<>(context, context.service());
 
         Set<OperationShape> operationShapes = d.operations();
         assertThat(operationShapes, sameInstance(d.operations()));
@@ -49,8 +47,7 @@ public class DirectiveTest {
     @Test
     public void providesConnectedShapes() {
         TestContext context = TestContext.create("directive-operations.smithy", ShapeId.from("smithy.example#Foo"));
-        GenerateService<TestContext, Object, WriterDelegator<?>> d = new GenerateService<>(
-                context, context.service(), context.delegator());
+        GenerateService<TestContext, Object> d = new GenerateService<>(context, context.service());
 
         Map<ShapeId, Shape> connected = d.connectedShapes();
         assertThat(connected, sameInstance(d.connectedShapes()));

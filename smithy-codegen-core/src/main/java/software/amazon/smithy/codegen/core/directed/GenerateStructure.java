@@ -16,7 +16,6 @@
 package software.amazon.smithy.codegen.core.directed;
 
 import software.amazon.smithy.codegen.core.CodegenContext;
-import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.InputTrait;
@@ -28,14 +27,12 @@ import software.amazon.smithy.model.transform.ModelTransformer;
  *
  * @param <C> CodegenContext type.
  * @param <S> Codegen settings type.
- * @param <D> WriterDelegator type.
  * @see DirectedCodegen#generateService
  */
-public final class GenerateStructure<C extends CodegenContext<S>, S, D extends WriterDelegator<?>>
-        extends ShapeDirective<StructureShape, C, S, D> {
+public final class GenerateStructure<C extends CodegenContext<S, ?>, S> extends ShapeDirective<StructureShape, C, S> {
 
-    GenerateStructure(C context, ServiceShape service, D writerDelegator, StructureShape shape) {
-        super(context, service, writerDelegator, shape);
+    GenerateStructure(C context, ServiceShape service, StructureShape shape) {
+        super(context, service, shape);
     }
 
     /**

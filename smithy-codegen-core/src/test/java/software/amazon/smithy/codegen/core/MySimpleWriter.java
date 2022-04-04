@@ -17,7 +17,6 @@ package software.amazon.smithy.codegen.core;
 
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.function.Consumer;
 
 /**
  * A pretty basic implementation of SymbolWriter.
@@ -26,20 +25,6 @@ final class MySimpleWriter extends SymbolWriter<MySimpleWriter, MySimpleWriter.M
 
     public MySimpleWriter(String namespace) {
         super(new MyImportContainer(namespace));
-    }
-
-    @Override
-    public MySimpleWriter writeDocs(Consumer<MySimpleWriter> consumer) {
-        pushFilteredState(this::sanitizeDocString);
-        write("Before");
-        consumer.accept(this);
-        write("After");
-        popState();
-        return this;
-    }
-
-    private String sanitizeDocString(String docs) {
-        return docs.replace("!", "!!");
     }
 
     static final class MyImportContainer implements ImportContainer {
