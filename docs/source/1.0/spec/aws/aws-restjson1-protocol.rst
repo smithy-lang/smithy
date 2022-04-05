@@ -98,7 +98,10 @@ The following example defines a service that requires the use of
 
     use aws.protocols#restJson1
 
-    @restJson1(eventStreamHttp: ["h2"])
+    @restJson1(
+        http: ["h2", "http/1.1"],
+        eventStreamHttp: ["h2"]
+    )
     service MyService {
         version: "2020-04-02"
     }
@@ -113,7 +116,10 @@ preferred over ``http/1.1``.
 
     use aws.protocols#restJson1
 
-    @restJson1(eventStreamHttp: ["h2", "http/1.1"])
+    @awsJson1_1(
+        http: ["h2", "http/1.1"],
+        eventStreamHttp: ["h2", "http/1.1"]
+    )
     service MyService {
         version: "2020-04-02"
     }
@@ -315,8 +321,7 @@ standard responses with one additional component to distinguish which error
 is contained. New server-side protocol implementations MUST use a header field
 named ``X-Amzn-Errortype``. Clients MUST accept any one of the following: an
 additional header with the name ``X-Amzn-Errortype``, a body field with the
-name ``__type``, or a body field named ``code
-``. The value of this component
+name ``__type``, or a body field named ``code``. The value of this component
 SHOULD contain only the :token:`shape name <smithy:identifier>` of the error's
 :ref:`shape-id`.
 
