@@ -32,13 +32,40 @@ import java.util.logging.Logger;
 public final class NodePointer {
 
     private static final Logger LOGGER = Logger.getLogger(NodePointer.class.getName());
+    private static final NodePointer EMPTY = new NodePointer("", Collections.emptyList());
 
-    private String originalString;
-    private List<String> parts;
+    private final String originalString;
+    private final List<String> parts;
 
     private NodePointer(String originalString, List<String> parts) {
         this.originalString = originalString;
         this.parts = parts;
+    }
+
+    /**
+     * Gets an empty Node pointer.
+     *
+     * @return Returns a node pointer with a value of "".
+     */
+    public static NodePointer empty() {
+        return EMPTY;
+    }
+
+    /**
+     * Creates a NodePointer from a Node value.
+     *
+     * @param node Node value to parse.
+     * @return Returns the parsed NodePointer.
+     * @throws ExpectationNotMetException if the pointer cannot be parsed.
+     */
+    public static NodePointer fromNode(Node node) {
+        try {
+            String value = node.expectStringNode().getValue();
+            return NodePointer.parse(value);
+        } catch (RuntimeException e) {
+            String message = "Expected a string containing a valid JSON pointer: " + e.getMessage();
+            throw new ExpectationNotMetException(message, node);
+        }
     }
 
     /**
@@ -66,7 +93,7 @@ public final class NodePointer {
      * @throws IllegalArgumentException if the pointer does not start with slash (/).
      */
     public static NodePointer parse(String pointer) {
-        return new NodePointer(pointer, parseJsonPointer(pointer));
+        return pointer.isEmpty() ? empty() : new NodePointer(pointer, parseJsonPointer(pointer));
     }
 
     private static List<String> parseJsonPointer(String pointer) {

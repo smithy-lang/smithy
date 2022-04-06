@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -17,16 +17,21 @@ package software.amazon.smithy.model.traits;
 
 import static software.amazon.smithy.model.node.Node.loadArrayOfString;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.node.ArrayNode;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodePointer;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -37,7 +42,7 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
     public static final ShapeId ID = ShapeId.from("smithy.api#trait");
 
     /** The structural exclusion semantics of the trait. */
-    public enum StructurallyExclusive {
+    public enum StructurallyExclusive implements ToNode {
         /** The trait can only be applied to a single member of a structure. */
         MEMBER,
 
@@ -48,21 +53,168 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
         public String toString() {
             return super.toString().toLowerCase(Locale.ENGLISH);
         }
+
+        @Override
+        public Node toNode() {
+            return Node.from(toString());
+        }
+
+        public static StructurallyExclusive fromNode(Node node) {
+            String value = node.expectStringNode().expectOneOf(
+                    StructurallyExclusive.MEMBER.toString(),
+                    StructurallyExclusive.TARGET.toString());
+            return StructurallyExclusive.valueOf(value.toUpperCase(Locale.ENGLISH));
+        }
     }
 
-    public static final String SELECTOR_KEY = "selector";
-    public static final String STRUCTURALLY_EXCLUSIVE_KEY = "structurallyExclusive";
-    public static final String CONFLICTS_KEY = "conflicts";
+    /**
+     * Represents an individual trait diff rule to define backward compatibility rules.
+     */
+    public static final class BreakingChangeRule implements ToNode {
+        private final NodePointer path;
+        private final Severity severity;
+        private final ChangeType change;
+        private final String message;
+
+        public BreakingChangeRule(NodePointer path, Severity severity, ChangeType change, String message) {
+            this.path = path;
+            this.severity = severity;
+            this.change = change;
+            this.message = message;
+        }
+
+        public Optional<NodePointer> getPath() {
+            return Optional.ofNullable(path);
+        }
+
+        public NodePointer getDefaultedPath() {
+            return path == null ? NodePointer.empty() : path;
+        }
+
+        public Optional<Severity> getSeverity() {
+            return Optional.ofNullable(severity);
+        }
+
+        public Severity getDefaultedSeverity() {
+            return severity == null ? Severity.ERROR : severity;
+        }
+
+        public ChangeType getChange() {
+            return change;
+        }
+
+        public Optional<String> getMessage() {
+            return Optional.ofNullable(message);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(path, severity, change, message);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof BreakingChangeRule) {
+                BreakingChangeRule other = (BreakingChangeRule) obj;
+                return Objects.equals(path, other.path)
+                       && Objects.equals(severity, other.severity)
+                       && Objects.equals(message, other.message)
+                       && change == other.change;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return super.toString();
+        }
+
+        @Override
+        public Node toNode() {
+            return Node.objectNodeBuilder()
+                    .withOptionalMember("path", getPath().map(NodePointer::toString).map(Node::from))
+                    .withOptionalMember("severity", getSeverity().map(Severity::toNode))
+                    .withMember("change", change.toNode())
+                    .withOptionalMember("message", getMessage().map(Node::from))
+                    .build();
+        }
+
+        /**
+         * Creates a TraitDiffRule from a Node.
+         *
+         * @param node Node to deserialize.
+         * @return Returns the created TraitDiffRule.
+         * @throws ExpectationNotMetException if the node is invalid.
+         */
+        public static BreakingChangeRule fromNode(Node node) {
+            ObjectNode obj = node.expectObjectNode();
+            NodePointer path = obj.getStringMember("path").map(NodePointer::fromNode).orElse(null);
+            Severity severity = obj.getStringMember("severity").map(Severity::fromNode).orElse(null);
+            ChangeType change = ChangeType.fromNode(obj.expectStringMember("change"));
+            String message = obj.getStringMemberOrDefault("message", null);
+            if (severity == Severity.SUPPRESSED) {
+                throw new ExpectationNotMetException("Invalid severity", obj.expectMember("severity"));
+            }
+            return new BreakingChangeRule(path, severity, change, message);
+        }
+    }
+
+    public enum ChangeType implements ToNode {
+
+        /** Emit when a trait or value is added that previously did not exist. */
+        ADD,
+
+        /** Emit when a trait or value is removed. */
+        REMOVE,
+
+        /** Emit when a trait is added or removed. */
+        PRESENCE,
+
+        /** Emit when a trait already existed, continues to exist, but it is modified. */
+        UPDATE,
+
+        /** Emit when any change occurs. */
+        ANY;
+
+        /**
+         * Creates a ChangeType value from a node.
+         *
+         * @param node Node to parse.
+         * @return Returns the parsed ChangeType.
+         * @throws ExpectationNotMetException if the node is invalid.
+         */
+        public static ChangeType fromNode(Node node) {
+            try {
+                return ChangeType.valueOf(node.expectStringNode().getValue().toUpperCase(Locale.ENGLISH));
+            } catch (RuntimeException e) {
+                String message = "Expected a string containing a valid trait diff type: " + e.getMessage();
+                throw new ExpectationNotMetException(message, node);
+            }
+        }
+
+        @Override
+        public Node toNode() {
+            return Node.from(toString());
+        }
+
+        @Override
+        public String toString() {
+            return super.toString().toLowerCase(Locale.ENGLISH);
+        }
+    }
 
     private final Selector selector;
     private final List<ShapeId> conflicts;
     private final StructurallyExclusive structurallyExclusive;
+    private final List<BreakingChangeRule> breakingChanges;
 
     public TraitDefinition(TraitDefinition.Builder builder) {
         super(ID, builder.sourceLocation);
         selector = builder.selector;
         conflicts = builder.conflicts.copy();
         structurallyExclusive = builder.structurallyExclusive;
+        breakingChanges = builder.breakingChanges.copy();
     }
 
     public static Builder builder() {
@@ -74,7 +226,8 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
         Builder builder = builder()
                 .sourceLocation(getSourceLocation())
                 .selector(selector)
-                .structurallyExclusive(structurallyExclusive);
+                .structurallyExclusive(structurallyExclusive)
+                .breakingChanges(breakingChanges);
         conflicts.forEach(builder::addConflict);
         return builder;
     }
@@ -120,24 +273,36 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
         return structurallyExclusive == StructurallyExclusive.TARGET;
     }
 
+    /**
+     * @return Returns the breaking change rules of the trait.
+     */
+    public List<BreakingChangeRule> getBreakingChanges() {
+        return breakingChanges;
+    }
+
     @Override
     protected Node createNode() {
         ObjectNode.Builder builder = Node.objectNodeBuilder().sourceLocation(getSourceLocation());
 
         if (selector != Selector.IDENTITY) {
-            builder.withMember(SELECTOR_KEY, selector.toString());
+            builder.withMember("selector", selector.toString());
         }
 
         if (!conflicts.isEmpty()) {
-            builder.withMember(CONFLICTS_KEY, conflicts.stream()
+            builder.withMember("conflicts", conflicts.stream()
                     .map(ShapeId::toString)
                     .map(Node::from)
                     .collect(ArrayNode.collect()));
         }
 
-        builder.withOptionalMember(
-                STRUCTURALLY_EXCLUSIVE_KEY,
-                getStructurallyExclusive().map(StructurallyExclusive::toString).map(Node::from));
+        builder.withOptionalMember("structurallyExclusive",
+                                   getStructurallyExclusive().map(StructurallyExclusive::toNode));
+
+        if (!breakingChanges.isEmpty()) {
+            List<Node> result = new ArrayList<>(breakingChanges.size());
+            breakingChanges.forEach(d -> result.add(d.toNode()));
+            builder.withMember("breakingChanges", Node.fromNodes(result));
+        }
 
         return builder.build();
     }
@@ -153,13 +318,14 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
             TraitDefinition od = (TraitDefinition) other;
             return selector.equals(od.selector)
                     && conflicts.equals(od.conflicts)
-                    && Objects.equals(structurallyExclusive, od.structurallyExclusive);
+                    && Objects.equals(structurallyExclusive, od.structurallyExclusive)
+                    && breakingChanges.equals(od.breakingChanges);
         }
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(toShapeId(), selector, conflicts, structurallyExclusive);
+        return Objects.hash(toShapeId(), selector, conflicts, structurallyExclusive, breakingChanges);
     }
 
     /**
@@ -169,6 +335,7 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
         private Selector selector = Selector.IDENTITY;
         private final BuilderRef<List<ShapeId>> conflicts = BuilderRef.forList();
         private StructurallyExclusive structurallyExclusive;
+        private final BuilderRef<List<BreakingChangeRule>> breakingChanges = BuilderRef.forList();
 
         private Builder() {}
 
@@ -198,6 +365,22 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
             return this;
         }
 
+        public Builder breakingChanges(List<BreakingChangeRule> diff) {
+            clearBreakingChanges();
+            diff.forEach(this::addBreakingChange);
+            return this;
+        }
+
+        public Builder clearBreakingChanges() {
+            this.breakingChanges.clear();
+            return this;
+        }
+
+        public Builder addBreakingChange(BreakingChangeRule rule) {
+            this.breakingChanges.get().add(Objects.requireNonNull(rule));
+            return this;
+        }
+
         @Override
         public TraitDefinition build() {
             return new TraitDefinition(this);
@@ -220,21 +403,22 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
 
             Builder builder = builder().sourceLocation(value);
 
-            members.getMember(TraitDefinition.SELECTOR_KEY)
+            members.getMember("selector")
                     .map(Selector::fromNode)
                     .ifPresent(builder::selector);
 
-            members.getStringMember(TraitDefinition.STRUCTURALLY_EXCLUSIVE_KEY)
-                    .map(node -> node.expectOneOf(
-                            StructurallyExclusive.MEMBER.toString(),
-                            StructurallyExclusive.TARGET.toString()))
-                    .map(string -> string.toUpperCase(Locale.ENGLISH))
-                    .map(StructurallyExclusive::valueOf)
+            members.getStringMember("structurallyExclusive")
+                    .map(StructurallyExclusive::fromNode)
                     .ifPresent(builder::structurallyExclusive);
 
-            members.getMember(TraitDefinition.CONFLICTS_KEY)
-                    .ifPresent(values -> loadArrayOfString(TraitDefinition.CONFLICTS_KEY, values)
-                            .forEach(builder::addConflict));
+            members.getMember("conflicts")
+                    .ifPresent(values -> loadArrayOfString("conflicts", values).forEach(builder::addConflict));
+
+            members.getArrayMember("breakingChanges").ifPresent(d -> {
+                for (ObjectNode entry : d.getElementsAs(ObjectNode.class)) {
+                    builder.addBreakingChange(BreakingChangeRule.fromNode(entry));
+                }
+            });
 
             TraitDefinition result = builder.build();
             result.setNodeCache(value);

@@ -99,6 +99,18 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
     }
 
     @Override
+    public Optional<MemberShape> getMember(String name) {
+        switch (name) {
+            case "key":
+                return Optional.of(key);
+            case "value":
+                return Optional.of(value);
+            default:
+                return Optional.empty();
+        }
+    }
+
+    @Override
     public boolean equals(Object other) {
         if (!super.equals(other)) {
             return false;

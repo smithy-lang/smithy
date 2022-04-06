@@ -55,7 +55,7 @@ public class ChangedPaginatedTraitTest {
                 .removeTraitsIf(model, (shape, trait) -> trait instanceof PaginatedTrait);
 
         List<ValidationEvent> events = ModelDiff.compare(model, newModel);
-        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ModifiedTrait");
+        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "TraitBreakingChange");
 
         assertThat(changedTraitEvents.size(), equalTo(1));
     }
@@ -70,7 +70,7 @@ public class ChangedPaginatedTraitTest {
         });
 
         List<ValidationEvent> events = ModelDiff.compare(model, newModel);
-        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ModifiedTrait");
+        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "TraitBreakingChange");
 
         assertThat(changedTraitEvents.size(), equalTo(1));
         assertThat(changedTraitEvents.get(0).getMessage(),
@@ -87,7 +87,7 @@ public class ChangedPaginatedTraitTest {
         });
 
         List<ValidationEvent> events = ModelDiff.compare(oldModel, model);
-        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ModifiedTrait");
+        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "TraitBreakingChange");
 
         assertThat(changedTraitEvents.size(), equalTo(1));
         assertThat(changedTraitEvents.get(0).getMessage(),
@@ -104,7 +104,7 @@ public class ChangedPaginatedTraitTest {
         });
 
         List<ValidationEvent> events = ModelDiff.compare(model, newModel);
-        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ModifiedTrait");
+        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "TraitBreakingChange");
 
         assertThat(changedTraitEvents.size(), equalTo(1));
         assertThat(changedTraitEvents.get(0).getMessage(),
@@ -121,7 +121,7 @@ public class ChangedPaginatedTraitTest {
         });
 
         List<ValidationEvent> events = ModelDiff.compare(model, newModel);
-        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ModifiedTrait");
+        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "TraitBreakingChange");
 
         assertThat(changedTraitEvents.size(), equalTo(1));
         assertThat(changedTraitEvents.get(0).getMessage(),
@@ -138,7 +138,7 @@ public class ChangedPaginatedTraitTest {
         });
 
         List<ValidationEvent> events = ModelDiff.compare(oldModel, model);
-        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ModifiedTrait");
+        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "TraitBreakingChange");
 
         assertThat(changedTraitEvents, empty());
     }
@@ -153,7 +153,7 @@ public class ChangedPaginatedTraitTest {
         });
 
         List<ValidationEvent> events = ModelDiff.compare(model, newModel);
-        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ModifiedTrait");
+        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "TraitBreakingChange");
 
         assertThat(changedTraitEvents.size(), equalTo(1));
         assertThat(changedTraitEvents.get(0).getMessage(),
@@ -169,7 +169,7 @@ public class ChangedPaginatedTraitTest {
         });
 
         List<ValidationEvent> events = ModelDiff.compare(model, newModel);
-        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ModifiedTrait");
+        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "TraitBreakingChange");
 
         assertThat(changedTraitEvents.size(), equalTo(1));
         assertThat(changedTraitEvents.get(0).getMessage(),
@@ -185,7 +185,7 @@ public class ChangedPaginatedTraitTest {
         });
 
         List<ValidationEvent> events = ModelDiff.compare(model, newModel);
-        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "ModifiedTrait");
+        List<ValidationEvent> changedTraitEvents = TestHelper.findEvents(events, "TraitBreakingChange");
 
         assertThat(changedTraitEvents.size(), equalTo(1));
         assertThat(changedTraitEvents.get(0).getMessage(),

@@ -39,6 +39,7 @@ software.amazon.smithy.model.validation.validators.SingleOperationBindingValidat
 software.amazon.smithy.model.validation.validators.SingleResourceBindingValidator
 software.amazon.smithy.model.validation.validators.StreamingTraitValidator
 software.amazon.smithy.model.validation.validators.TargetValidator
+software.amazon.smithy.model.validation.validators.TraitBreakingChangesValidator
 software.amazon.smithy.model.validation.validators.TraitConflictValidator
 software.amazon.smithy.model.validation.validators.TraitTargetValidator
 software.amazon.smithy.model.validation.validators.TraitValueValidator

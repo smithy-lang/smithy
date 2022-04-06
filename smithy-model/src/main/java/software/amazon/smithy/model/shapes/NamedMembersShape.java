@@ -77,13 +77,8 @@ abstract class NamedMembersShape extends Shape {
         return names;
     }
 
-    /**
-     * Get a specific member by name.
-     *
-     * @param name Name of the member to retrieve.
-     * @return Returns the optional member.
-     */
-    public Optional<MemberShape> getMember(String name) {
+    @Override
+    public final Optional<MemberShape> getMember(String name) {
         return Optional.ofNullable(members.get(name));
     }
 

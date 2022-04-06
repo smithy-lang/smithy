@@ -2513,6 +2513,9 @@ The following example defines a trait with a :ref:`shape ID <shape-id>` of
         member of a structure can be marked with the trait. When set to
         "target", only a single member of a structure can target a shape
         marked with this trait.
+    * - breakingChanges
+      - [:ref:`BreakingChangeRule <trait-breaking-change-rules>`]
+      - Defines the backward compatibility rules of the trait.
 
 The following example defines two custom traits: ``beta`` and
 ``structuredTrait``:
@@ -2713,6 +2716,263 @@ after adding a member to the ``foo`` trait:
                 }
             }
         }
+
+
+.. _trait-breaking-change-rules:
+
+Trait breaking change rules
+---------------------------
+
+Backward compatibility rules of a trait can be defined in the ``breakingChanges``
+member of a trait definition. This member is a list of diff rules. Smithy
+tooling that performs semantic diff analysis between two versions of the same
+model can use these rules to detect breaking or risky changes.
+
+.. note::
+
+    Not every kind of breaking change can be described using the
+    ``breakingChanges`` property. Such backward compatibility rules SHOULD
+    instead be described through documentation and ideally enforced through
+    custom diff tooling.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - change
+      - ``string``
+      - **Required**. The type of change. This value can be set to one of the
+        following:
+
+        - ``add``: The trait or value at the given path was added.
+        - ``remove``: The trait or value at the given path was removed.
+        - ``update``: The trait or value at the given path was changed.
+        - ``any``: The trait or value at the given path was added, removed,
+          or changed.
+        - ``presence``: The trait or value at the given path was either
+          added or removed.
+    * - path
+      - ``string``
+      - A JSON pointer as described in :rfc:`6901` that points to the values
+        to compare from the original model to the updated model. If omitted
+        or if an empty string is provided (``""``), the entire trait is used
+        as the value for comparison. The provided pointer MUST correctly
+        correspond to shapes in the model.
+    * - severity
+      - ``string``
+      - Defines the severity of the change. This value can be set to:
+
+        - ``ERROR``: The change is backward incompatible. This is the default
+          assumed severity.
+        - ``DANGER``: The change is very likely backward incompatible.
+        - ``WARNING``: The change might be backward incompatible.
+        - ``NOTICE``: The change is likely ok, but should be noted during
+          things like code reviews.
+    * - message
+      - ``string``
+      - Provides an optional plain text message that provides information about
+        why the detected change could be problematic.
+
+It is a backward incompatible change to add the following trait to an
+existing shape:
+
+.. code-block:: smithy
+
+    @trait(breakingChanges: [{change: "add"}])
+    structure cannotAdd {}
+
+.. note::
+
+    The above trait definition is equivalent to the following:
+
+    .. code-block:: smithy
+
+        @trait(
+            breakingChanges: [
+                {
+                    change: "add",
+                    path: "",
+                    severity: "ERROR"
+                }
+            ]
+        )
+        structure cannotAdd {}
+
+It is a backward incompatible change to add or remove the following trait from
+an existing shape:
+
+.. code-block:: smithy
+
+    @trait(breakingChanges: [{change: "presence"}])
+    structure cannotToAddOrRemove {}
+
+It is very likely backward incompatible to change the "foo" member of the
+following trait or to remove the "baz" member:
+
+.. code-block:: smithy
+
+    @trait(
+        breakingChanges: [
+            {
+                change: "update",
+                path: "/foo",
+                severity: "DANGER"
+            },
+            {
+                change: "remove",
+                path: "/baz",
+                severity: "DANGER"
+            }
+        ]
+    )
+    structure fooBaz {
+        foo: String,
+        baz: String
+    }
+
+So for example, if the following shape:
+
+.. code-block:: smithy
+
+    @fooBaz(foo: "a", baz: "b")
+    string Example
+
+Is changed to:
+
+.. code-block:: smithy
+
+    @fooBaz(foo: "b")
+    string Example
+
+Then the change to the ``foo`` member from "a" to "b" is backward
+incompatible, as is the removal of the ``baz`` member.
+
+.. rubric:: Referring to list and set members
+
+The JSON pointer can path into the members of a list or set using a ``member``
+segment.
+
+In the following example, it is a breaking change to change values of lists
+or sets in instances of the ``names`` trait:
+
+.. code-block:: smithy
+
+    @trait(
+        breakingChanges: [
+            {
+                change: "update",
+                path: "/names/member"
+            }
+        ]
+    )
+    structure names {
+        names: NameList
+    }
+
+    @private
+    list NameList {
+        member: String
+    }
+
+So for example, if the following shape:
+
+.. code-block:: smithy
+
+    @names(names: ["Han", "Luke"])
+    string Example
+
+Is changed to:
+
+.. code-block:: smithy
+
+    @names(names: ["Han", "Chewy"])
+    string Example
+
+Then the change to the second value of the ``names`` member is
+backward incompatible because it changed from ``Luke`` to ``Chewy``.
+
+.. rubric:: Referring to map members
+
+Members of a map shape can be referenced in a JSON pointer using
+``key`` and ``value``.
+
+The following example defines a trait where it is backward incompatible
+to remove a key value pair from a map:
+
+.. code-block:: smithy
+
+    @trait(
+        breakingChanges: [
+            {
+                change: "remove",
+                path: "/key"
+            }
+        ]
+    )
+    map jobs {
+        key: String,
+        value: String
+    }
+
+So for example, if the following shape:
+
+.. code-block:: smithy
+
+    @jobs(Han: "Smuggler", Luke: "Jedi")
+    string Example
+
+Is changed to:
+
+.. code-block:: smithy
+
+    @jobs(Luke: "Jedi")
+    string Example
+
+Then the removal of the "Han" entry of the map is flagged as backward
+incompatible.
+
+The following example detects when values of a map change.
+
+.. code-block:: smithy
+
+    @trait(
+        breakingChanges: [
+            {
+                change: "update",
+                path: "/value"
+            }
+        ]
+    )
+    map jobs {
+        key: String,
+        value: String
+    }
+
+So for example, if the following shape:
+
+.. code-block:: smithy
+
+    @jobs(Han: "Smuggler", Luke: "Jedi")
+    string Example
+
+Is changed to:
+
+.. code-block:: smithy
+
+    @jobs(Han: "Smuggler", Luke: "Ghost")
+    string Example
+
+Then the change to Luke's mapping from "Jedi" to "Ghost" is
+backward incompatible.
+
+.. note::
+
+    * Using the "update" ``change`` type with a map key has no effect.
+    * Using any ``change`` type other than "update" with map values has no
+      effect.
 
 
 .. _metadata:

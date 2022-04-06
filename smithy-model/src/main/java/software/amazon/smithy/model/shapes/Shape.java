@@ -569,6 +569,18 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
         return Collections.emptyList();
     }
 
+    /**
+     * Get a specific member by name.
+     *
+     * <p>Shapes with no members return an empty Optional.
+     *
+     * @param name Name of the member to retrieve.
+     * @return Returns the optional member.
+     */
+    public Optional<MemberShape> getMember(String name) {
+        return Optional.empty();
+    }
+
     @Override
     public ShapeId toShapeId() {
         return id;

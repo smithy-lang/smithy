@@ -18,6 +18,7 @@ package software.amazon.smithy.model.shapes;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import software.amazon.smithy.utils.SmithyBuilder;
 
@@ -46,6 +47,11 @@ public abstract class CollectionShape extends Shape {
      */
     public final MemberShape getMember() {
         return member;
+    }
+
+    @Override
+    public final Optional<MemberShape> getMember(String name) {
+        return name.equals("member") ? Optional.of(member) : Optional.empty();
     }
 
     @Override

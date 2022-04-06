@@ -212,9 +212,13 @@
             },
             "traits": {
                 "smithy.api#trait": {
-                    "selector": "structure [trait|error]"
+                    "selector": "structure [trait|error]",
+                    "breakingChanges": [
+                        {
+                            "change": "any"
+                        }
+                    ]
                 },
-                "smithy.api#tags": ["diff.error.const"],
                 "smithy.api#documentation": "Provides the value in the 'Code' distinguishing field and HTTP response code for an operation error."
             }
         },
