@@ -14,8 +14,72 @@ Model modelB = loadModelB();
 List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 ```
 
+# Adding a custom DiffEvaluator
 
-# Using diff tags
+This library finds all instances of `DiffEvaluator`
+using the [Java service provider interface](https://docs.oracle.com/javase/tutorial/ext/basics/spi.html).
+
+The following example creates a custom `DiffEvaluator`:
+
+```java
+package com.example;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import DiffEvaluator;
+import Differences;
+import software.amazon.smithy.model.validation.ValidationEvent;
+
+/**
+ * Creates a NOTE event when a shape is added named "Foo".
+ */
+public class MyAddedShape extends AbstractDiffEvaluator {
+    @Override
+    public List<ValidationEvent> evaluate(Differences differences) {
+        return differences.addedShapes()
+                .filter(shape -> shape.getId().getName().equals("Foo"))
+                .map(shape -> note(shape, String.format(
+                        "Shape `%s` of type `%s` was added to the model with the name Foo",
+                        shape.getId(), shape.getType())))
+                .collect(Collectors.toList());
+    }
+}
+```
+
+**Note**: You will need to register your provider in a `module-info.java`
+file so that the Java module system knows about your implementation:
+
+```java
+import DiffEvaluator;
+
+module com.example {
+    requires software.amazon.smithy.diff;
+
+    uses DiffEvaluator;
+
+    provides DiffEvaluator with com.example.MyAddedShape;
+}
+```
+
+
+# Reporting
+
+Reporting and visualizing the detected differences is not handled by this
+library. This library is only responsible for detecting differences and
+returning a list of `ValidationEvent` values. Higher-level tooling like a
+CLI or Web frontend should be used to implement reporting.
+
+A very simple form of reporting can be implementing by dumping each
+event to stdout:
+
+```
+List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+events.forEach(System.out::println);
+```
+
+# Deprecated: Diff tags
+
+## Using diff tags
 
 This library checks for traits with special tags to determine if adding,
 removing, or changing a trait is a backward incompatible change. For
@@ -133,67 +197,4 @@ list ListTraitFoos {
     @tags(["diff.danger.const"])
     member: String,
 }
-``` 
-
-# Adding a custom DiffEvaluator
-
-This library finds all instances of `DiffEvaluator`
-using the [Java service provider interface](https://docs.oracle.com/javase/tutorial/ext/basics/spi.html).
-
-The following example creates a custom `DiffEvaluator`:
-
-```java
-package com.example;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import DiffEvaluator;
-import Differences;
-import software.amazon.smithy.model.validation.ValidationEvent;
-
-/**
- * Creates a NOTE event when a shape is added named "Foo".
- */
-public class MyAddedShape extends AbstractDiffEvaluator {
-    @Override
-    public List<ValidationEvent> evaluate(Differences differences) {
-        return differences.addedShapes()
-                .filter(shape -> shape.getId().getName().equals("Foo"))
-                .map(shape -> note(shape, String.format(
-                        "Shape `%s` of type `%s` was added to the model with the name Foo",
-                        shape.getId(), shape.getType())))
-                .collect(Collectors.toList());
-    }
-}
-```
-
-**Note**: You will need to register your provider in a `module-info.java`
-file so that the Java module system knows about your implementation:
-
-```java
-import DiffEvaluator;
-
-module com.example {
-    requires software.amazon.smithy.diff;
-
-    uses DiffEvaluator;
-
-    provides DiffEvaluator with com.example.MyAddedShape;
-}
-```
-
-
-# Reporting
-
-Reporting and visualizing the detected differences is not handled by this
-library. This library is only responsible for detecting differences and
-returning a list of `ValidationEvent` values. Higher-level tooling like a
-CLI or Web frontend should be used to implement reporting.
-
-A very simple form of reporting can be implementing by dumping each
-event to stdout:
-
-```
-List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
-events.forEach(System.out::println);
 ```

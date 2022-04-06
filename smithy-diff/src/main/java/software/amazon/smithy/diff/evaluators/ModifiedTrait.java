@@ -45,6 +45,10 @@ import software.amazon.smithy.utils.ListUtils;
  * Finds breaking changes related to when a trait is added, removed, or
  * updated.
  *
+ * <p>Note that the use of special diff tags is deprecated in favor of using
+ * the breakingChanges property of a trait definition. See
+ * {@link TraitBreakingChange}.
+ *
  * <p>This evaluator looks for trait definitions with specific tags. When
  * traits that use these tags are added, removed, or updated, a validation
  * event is emitted for the change. This uses honors the following tags:
@@ -122,10 +126,12 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
 
         // Find all trait definition shapes.
         for (Shape shape : model.getShapesWithTrait(TraitDefinition.class)) {
-            List<DiffStrategy> strategies =  createStrategiesForShape(shape, true);
+            TraitDefinition definition = shape.expectTrait(TraitDefinition.class);
+            List<DiffStrategy> strategies = createStrategiesForShape(shape, true);
             if (!strategies.isEmpty()) {
                 result.put(shape.getId(), strategies);
-            } else {
+            } else if (definition.getBreakingChanges().isEmpty()) {
+                // Avoid duplicate validation events; only perform the default validation when there are no diff rules.
                 result.put(shape.getId(), DEFAULT_STRATEGIES);
             }
         }
@@ -243,7 +249,7 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                 String pretty = Node.prettyPrintJson(left.toNode());
                 String message;
                 if (path.isEmpty()) {
-                    message = String.format("Removed trait `%s`. Removed value: %s", trait, pretty);
+                    message = String.format("Removed trait `%s`. Previous trait value: %s", trait, pretty);
                 } else {
                     message = String.format("Removed trait contents from `%s` at path `%s`. Removed value: %s",
                                             trait, path, pretty);

@@ -23,3 +23,4 @@ software.amazon.smithy.diff.evaluators.RemovedServiceError
 software.amazon.smithy.diff.evaluators.RemovedShape
 software.amazon.smithy.diff.evaluators.RemovedTraitDefinition
 software.amazon.smithy.diff.evaluators.ServiceRename
+software.amazon.smithy.diff.evaluators.TraitBreakingChange

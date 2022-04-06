@@ -123,7 +123,7 @@ public class ModifiedTraitTest {
 
         assertThat(messages, containsInAnyOrder(
                 "Changed trait `smithy.example#b` from \"hello\" to \"hello!\"",
-                "Removed trait `smithy.example#a`. Removed value: {}",
+                "Removed trait `smithy.example#a`. Previous trait value: {}",
                 "Added trait `smithy.example#c` with value \"foo\""
         ));
     }

@@ -196,6 +196,16 @@ public abstract class Node implements FromSourceLocation, ToNode {
     }
 
     /**
+     * Create a Node from a potentially null {@link ToNode} value.
+     *
+     * @param value Value to create a node from.
+     * @return Returns the created Node.
+     */
+    public static Node from(ToNode value) {
+        return value == null ? Node.nullNode() : value.toNode();
+    }
+
+    /**
      * Creates an {@link ArrayNode} from a Collection of Node values.
      *
      * @param values String values to add to the ArrayNode.

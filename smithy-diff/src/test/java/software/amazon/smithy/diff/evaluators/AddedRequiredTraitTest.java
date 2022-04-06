@@ -41,7 +41,7 @@ public class AddedRequiredTraitTest {
         Model modelB = Model.assembler().addShapes(shapeA2, member2, target).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        assertThat(TestHelper.findEvents(events, "ModifiedTrait").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "TraitBreakingChange").size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, member1.getId()).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(1));
     }
