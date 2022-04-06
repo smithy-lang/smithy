@@ -35,9 +35,10 @@ import software.amazon.smithy.model.traits.TitleTrait;
  * @param <S> Codegen settings type.
  * @see DirectedCodegen#generateService
  */
-public final class GenerateService<C extends CodegenContext<S, ?>, S> extends ShapeDirective<ServiceShape, C, S> {
+public final class GenerateServiceDirective<C extends CodegenContext<S, ?>, S>
+        extends ShapeDirective<ServiceShape, C, S> {
 
-    GenerateService(C context, ServiceShape service) {
+    GenerateServiceDirective(C context, ServiceShape service) {
         super(context, service, service);
     }
 

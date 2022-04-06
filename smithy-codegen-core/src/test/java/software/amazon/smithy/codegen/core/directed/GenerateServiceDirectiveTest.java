@@ -28,14 +28,14 @@ import software.amazon.smithy.model.shapes.ShapeId;
 public class GenerateServiceDirectiveTest {
     @Test
     public void getsServiceTitleWithExplicitTrait() {
-        GenerateService<TestContext, TestSettings> d = createDirective("service-title.smithy");
+        GenerateServiceDirective<TestContext, TestSettings> d = createDirective("service-title.smithy");
 
         assertThat(d.serviceTitle(), equalTo("Foo Service"));
     }
 
     @Test
     public void getsServiceTitleFromSymbolDefault() {
-        GenerateService<TestContext, TestSettings> d = createDirective(
+        GenerateServiceDirective<TestContext, TestSettings> d = createDirective(
                 "service-title.smithy", ShapeId.from("smithy.example#Foo2"));
 
         assertThat(d.serviceTitle(), equalTo("Foo2"));
@@ -43,7 +43,7 @@ public class GenerateServiceDirectiveTest {
 
     @Test
     public void providesPaginatedMap() {
-        GenerateService<TestContext, TestSettings> d = createDirective("service-paginated.smithy");
+        GenerateServiceDirective<TestContext, TestSettings> d = createDirective("service-paginated.smithy");
 
         Map<ShapeId, PaginationInfo> info = d.paginatedOperations();
         assertThat(info, hasKey(ShapeId.from("smithy.example#ListA")));
@@ -52,7 +52,7 @@ public class GenerateServiceDirectiveTest {
 
     @Test
     public void providesEventStreamMap() {
-        GenerateService<TestContext, TestSettings> d = createDirective("service-eventstream.smithy");
+        GenerateServiceDirective<TestContext, TestSettings> d = createDirective("service-eventstream.smithy");
 
         Map<ShapeId, EventStreamInfo> input = d.inputEventStreamOperations();
         Map<ShapeId, EventStreamInfo> output = d.outputEventStreamOperations();
@@ -61,12 +61,12 @@ public class GenerateServiceDirectiveTest {
         assertThat(output, hasKey(ShapeId.from("smithy.example#GetAndSendMovements")));
     }
 
-    private GenerateService<TestContext, TestSettings> createDirective(String modelFile, ShapeId serviceId) {
+    private GenerateServiceDirective<TestContext, TestSettings> createDirective(String modelFile, ShapeId serviceId) {
         TestContext context = TestContext.create(modelFile, serviceId);
-        return new GenerateService<>(context, context.service());
+        return new GenerateServiceDirective<>(context, context.service());
     }
 
-    private GenerateService<TestContext, TestSettings> createDirective(String modelFile) {
+    private GenerateServiceDirective<TestContext, TestSettings> createDirective(String modelFile) {
         return createDirective(modelFile, ShapeId.from("smithy.example#Foo"));
     }
 }

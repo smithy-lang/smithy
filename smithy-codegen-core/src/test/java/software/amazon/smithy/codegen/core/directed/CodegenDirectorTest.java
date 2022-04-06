@@ -28,13 +28,13 @@ import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
 
-public class DirectedCodegenRunnerTest {
+public class CodegenDirectorTest {
 
     interface TestIntegration extends SmithyIntegration<TestSettings, TestWriter, TestContext> {}
 
     private static final class TestDirected implements DirectedCodegen<TestContext, TestSettings> {
         @Override
-        public SymbolProvider createSymbolProvider(CreateSymbolProvider<TestSettings> directive) {
+        public SymbolProvider createSymbolProvider(CreateSymbolProviderDirective<TestSettings> directive) {
             return shape -> Symbol.builder()
                     .name(shape.getId().getName())
                     .namespace(shape.getId().getNamespace(), ".")
@@ -42,7 +42,7 @@ public class DirectedCodegenRunnerTest {
         }
 
         @Override
-        public TestContext createContext(CreateContext<TestSettings> directive) {
+        public TestContext createContext(CreateContextDirective<TestSettings> directive) {
             WriterDelegator<TestWriter> delegator = new WriterDelegator<>(
                     directive.fileManifest(),
                     directive.symbolProvider(),
@@ -53,32 +53,43 @@ public class DirectedCodegenRunnerTest {
         }
 
         @Override
-        public void generateService(GenerateService<TestContext, TestSettings> directive) { }
+        public void generateService(GenerateServiceDirective<TestContext, TestSettings> directive) { }
 
         @Override
-        public void generateResource(GenerateResource<TestContext, TestSettings> directive) { }
+        public void generateResource(GenerateResourceDirective<TestContext, TestSettings> directive) { }
 
         @Override
-        public void generateStructure(GenerateStructure<TestContext, TestSettings> directive) { }
+        public void generateStructure(GenerateStructureDirective<TestContext, TestSettings> directive) { }
 
         @Override
-        public void generateError(GenerateError<TestContext, TestSettings> directive) { }
+        public void generateError(GenerateErrorDirective<TestContext, TestSettings> directive) { }
 
         @Override
-        public void generateUnion(GenerateUnion<TestContext, TestSettings> directive) {}
+        public void generateUnion(GenerateUnionDirective<TestContext, TestSettings> directive) {}
 
         @Override
-        public void customizeBeforeIntegrations(Customize<TestContext, TestSettings> directive) {}
+        public void generateEnumShape(GenerateEnumDirective<TestContext, TestSettings> directive) {
+            GenerateEnumDirective.EnumType type = directive.getEnumType();
+            if (type == GenerateEnumDirective.EnumType.STRING) {
+                directive.getEnumTrait();
+            } else {
+                // TODO: update for idl-2.0
+                throw new RuntimeException("Expected enum type to be string");
+            }
+        }
 
         @Override
-        public void customizeAfterIntegrations(Customize<TestContext, TestSettings> directive) {}
+        public void customizeBeforeIntegrations(CustomizeDirective<TestContext, TestSettings> directive) {}
+
+        @Override
+        public void customizeAfterIntegrations(CustomizeDirective<TestContext, TestSettings> directive) {}
     }
 
     @Test
     public void validatesInput() {
         TestDirected testDirected = new TestDirected();
-        DirectedCodegenRunner<TestWriter, TestIntegration, TestContext, TestSettings>
-                runner = new DirectedCodegenRunner<>();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings>
+                runner = new CodegenDirector<>();
 
         runner.directedCodegen(testDirected);
         runner.fileManifest(new MockManifest());
@@ -92,8 +103,8 @@ public class DirectedCodegenRunnerTest {
     @Test
     public void failsWhenServiceIsMissing() {
         TestDirected testDirected = new TestDirected();
-        DirectedCodegenRunner<TestWriter, TestIntegration, TestContext, TestSettings> runner
-                = new DirectedCodegenRunner<>();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner
+                = new CodegenDirector<>();
         FileManifest manifest = new MockManifest();
 
         runner.settings(TestSettings.class, Node.objectNode().withMember("foo", "hi"));
@@ -109,8 +120,8 @@ public class DirectedCodegenRunnerTest {
     @Test
     public void performsCodegen() {
         TestDirected testDirected = new TestDirected();
-        DirectedCodegenRunner<TestWriter, TestIntegration, TestContext, TestSettings> runner
-                = new DirectedCodegenRunner<>();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner
+                = new CodegenDirector<>();
         FileManifest manifest = new MockManifest();
         Model model = Model.assembler()
                 .addImport(getClass().getResource("directed-model.smithy"))

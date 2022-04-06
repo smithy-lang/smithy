@@ -28,7 +28,8 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
- * Base class for all Directives emitted from {@link DirectedCodegen}.
+ * Directive classes contain all of the context needed in order to perform
+ * the tasks defined in a {@link DirectedCodegen} implementation.
  *
  * @param <S> Settings object used to configure code generation.
  */

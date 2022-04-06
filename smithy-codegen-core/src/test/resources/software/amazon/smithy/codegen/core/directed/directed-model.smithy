@@ -4,7 +4,12 @@ namespace smithy.example
 
 @paginated(inputToken: "nextToken", outputToken: "nextToken", items: "items", pageSize: "maxResults")
 service Foo {
-    operations: [ListFoo]
+    resources: [TheFoo]
+}
+
+resource TheFoo {
+    identifiers: {id: String},
+    list: ListFoo
 }
 
 @readonly
@@ -23,9 +28,22 @@ structure ListFooInput {
 @output
 structure ListFooOutput {
     nextToken: String,
-    items: StringList
+    status: Status,
+    items: StringList,
+    instruction: Instruction,
 }
 
 list StringList {
     member: String
+}
+
+@enum([
+    {name: "GOOD", value: "GOOD"},
+    {name: "BAD", value: "BAD"}
+])
+string Status
+
+union Instruction {
+    continueIteration: Unit,
+    stopIteration: Unit
 }
