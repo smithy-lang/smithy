@@ -17,28 +17,31 @@ package software.amazon.smithy.codegen.core.directed;
 
 import software.amazon.smithy.codegen.core.CodegenContext;
 import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.model.shapes.UnionShape;
-import software.amazon.smithy.model.traits.StreamingTrait;
+import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.ErrorTrait;
 
 /**
- * Directive used to generate a union.
+ * Directive used to generate an error.
  *
  * @param <C> CodegenContext type.
  * @param <S> Codegen settings type.
- * @see DirectedCodegen#generateUnion
+ * @see DirectedCodegen#generateError
  */
-public final class GenerateUnion<C extends CodegenContext<S, ?>, S> extends ShapeDirective<UnionShape, C, S> {
+public final class GenerateErrorDirective<C extends CodegenContext<S, ?>, S>
+        extends ShapeDirective<StructureShape, C, S> {
 
-    GenerateUnion(C context, ServiceShape service, UnionShape shape) {
+    GenerateErrorDirective(C context, ServiceShape service, StructureShape shape) {
         super(context, service, shape);
     }
 
     /**
-     * Check if this is an event stream union.
+     * Gets the {@code error} trait.
      *
-     * @return Returns true if this is an event stream.
+     * <p>This is equivalent to calling {@code shape().expectTrait(ErrorTrait.class)}.
+     *
+     * @return Gets the {@link ErrorTrait} of the error.
      */
-    public boolean isEventStream() {
-        return shape().hasTrait(StreamingTrait.class);
+    public ErrorTrait errorTrait() {
+        return shape().expectTrait(ErrorTrait.class);
     }
 }

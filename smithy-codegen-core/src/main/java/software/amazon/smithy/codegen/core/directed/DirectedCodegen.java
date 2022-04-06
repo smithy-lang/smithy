@@ -39,7 +39,7 @@ public interface DirectedCodegen<C extends CodegenContext<S, ?>, S> {
      * @param directive Directive context data.
      * @return Returns the created SymbolProvider.
      */
-    SymbolProvider createSymbolProvider(CreateSymbolProvider<S> directive);
+    SymbolProvider createSymbolProvider(CreateSymbolProviderDirective<S> directive);
 
     /**
      * Creates the codegen context object.
@@ -47,21 +47,21 @@ public interface DirectedCodegen<C extends CodegenContext<S, ?>, S> {
      * @param directive Directive context data.
      * @return Returns the created context object used by the rest of the directed generation.
      */
-    C createContext(CreateContext<S> directive);
+    C createContext(CreateContextDirective<S> directive);
 
     /**
      * Generates the code needed for a service shape.
      *
      * @param directive Directive to perform.
      */
-    void generateService(GenerateService<C, S> directive);
+    void generateService(GenerateServiceDirective<C, S> directive);
 
     /**
      * Generates the code needed for a resource shape.
      *
      * @param directive Directive to perform.
      */
-    default void generateResource(GenerateResource<C, S> directive) {
+    default void generateResource(GenerateResourceDirective<C, S> directive) {
         // Does nothing by default.
     }
 
@@ -73,30 +73,30 @@ public interface DirectedCodegen<C extends CodegenContext<S, ?>, S> {
      *
      * @param directive Directive to perform.
      */
-    void generateStructure(GenerateStructure<C, S> directive);
+    void generateStructure(GenerateStructureDirective<C, S> directive);
 
     /**
      * Generates the code needed for an error structure.
      *
      * @param directive Directive to perform.
      */
-    void generateError(GenerateError<C, S> directive);
+    void generateError(GenerateErrorDirective<C, S> directive);
 
     /**
      * Generates the code needed for a union shape.
      *
      * @param directive Directive to perform.
      */
-    void generateUnion(GenerateUnion<C, S> directive);
+    void generateUnion(GenerateUnionDirective<C, S> directive);
 
-    /*
-     * TODO: Uncomment in IDL-2.0 branch
-     *
-     * Generates the code needed for an enum shape.
+    /**
+     * Generates the code needed for an enum shape, whether it's a string shape
+     * marked with the enum trait, or a proper enum shape introduced in Smithy
+     * IDL 2.0.
      *
      * @param directive Directive to perform.
      */
-    //void generateEnumShape(GenerateEnumContext<C, S> directive);
+    void generateEnumShape(GenerateEnumDirective<C, S> directive);
 
     /**
      * Performs any necessary code generation after all shapes are generated,
@@ -105,7 +105,7 @@ public interface DirectedCodegen<C extends CodegenContext<S, ?>, S> {
      *
      * @param directive Directive to perform.
      */
-    default void customizeBeforeIntegrations(Customize<C, S> directive) {
+    default void customizeBeforeIntegrations(CustomizeDirective<C, S> directive) {
         // Does nothing by default.
     }
 
@@ -124,7 +124,7 @@ public interface DirectedCodegen<C extends CodegenContext<S, ?>, S> {
      *
      * @param directive Directive to perform.
      */
-    default void customizeAfterIntegrations(Customize<C, S> directive) {
+    default void customizeAfterIntegrations(CustomizeDirective<C, S> directive) {
         // Does nothing by default.
     }
 }

@@ -31,12 +31,12 @@ import software.amazon.smithy.model.traits.Trait;
  * @param <S> Codegen settings type.
  * @see DirectedCodegen#createContext
  */
-public final class CreateContext<S> extends Directive<S> {
+public final class CreateContextDirective<S> extends Directive<S> {
 
     private final SymbolProvider symbolProvider;
     private final FileManifest fileManifest;
 
-    CreateContext(
+    CreateContextDirective(
             Model model,
             S settings,
             ServiceShape service,

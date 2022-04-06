@@ -25,8 +25,8 @@ import software.amazon.smithy.model.shapes.ServiceShape;
  * @param <S> Codegen settings type.
  * @see DirectedCodegen#createContext
  */
-public final class CreateSymbolProvider<S> extends Directive<S> {
-    CreateSymbolProvider(Model model, S settings, ServiceShape service) {
+public final class CreateSymbolProviderDirective<S> extends Directive<S> {
+    CreateSymbolProviderDirective(Model model, S settings, ServiceShape service) {
         super(model, settings, service);
     }
 }

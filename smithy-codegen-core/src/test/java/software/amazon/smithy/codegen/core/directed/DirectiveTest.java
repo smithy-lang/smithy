@@ -32,7 +32,8 @@ public class DirectiveTest {
     @Test
     public void providesOperations() {
         TestContext context = TestContext.create("directive-operations.smithy", ShapeId.from("smithy.example#Foo"));
-        GenerateService<TestContext, TestSettings> d = new GenerateService<>(context, context.service());
+        GenerateServiceDirective<TestContext, TestSettings> d = new GenerateServiceDirective<>(
+                context, context.service());
 
         Set<OperationShape> operationShapes = d.operations();
         assertThat(operationShapes, sameInstance(d.operations()));
@@ -47,7 +48,8 @@ public class DirectiveTest {
     @Test
     public void providesConnectedShapes() {
         TestContext context = TestContext.create("directive-operations.smithy", ShapeId.from("smithy.example#Foo"));
-        GenerateService<TestContext, TestSettings> d = new GenerateService<>(context, context.service());
+        GenerateServiceDirective<TestContext, TestSettings> d = new GenerateServiceDirective<>(
+                context, context.service());
 
         Map<ShapeId, Shape> connected = d.connectedShapes();
         assertThat(connected, sameInstance(d.connectedShapes()));

@@ -29,9 +29,10 @@ import software.amazon.smithy.model.transform.ModelTransformer;
  * @param <S> Codegen settings type.
  * @see DirectedCodegen#generateService
  */
-public final class GenerateStructure<C extends CodegenContext<S, ?>, S> extends ShapeDirective<StructureShape, C, S> {
+public final class GenerateStructureDirective<C extends CodegenContext<S, ?>, S>
+        extends ShapeDirective<StructureShape, C, S> {
 
-    GenerateStructure(C context, ServiceShape service, StructureShape shape) {
+    GenerateStructureDirective(C context, ServiceShape service, StructureShape shape) {
         super(context, service, shape);
     }
 
@@ -40,7 +41,7 @@ public final class GenerateStructure<C extends CodegenContext<S, ?>, S> extends 
      *
      * <p>This is equivalent to calling {@code shape().hasTrait(InputTrait.class)}.
      *
-     * <p>Use the {@link DirectedCodegenRunner#createDedicatedInputsAndOutputs()} method
+     * <p>Use the {@link CodegenDirector#createDedicatedInputsAndOutputs()} method
      * to ensure that every operation has a unique input shape marked with the
      * input trait.
      *
@@ -56,7 +57,7 @@ public final class GenerateStructure<C extends CodegenContext<S, ?>, S> extends 
      *
      * <p>This is equivalent to calling {@code shape().hasTrait(OutputTrait.class)}.
      *
-     * <p>Use the {@link DirectedCodegenRunner#createDedicatedInputsAndOutputs()} method
+     * <p>Use the {@link CodegenDirector#createDedicatedInputsAndOutputs()} method
      * to ensure that every operation has a unique output shape marked with the
      * output trait.
      *

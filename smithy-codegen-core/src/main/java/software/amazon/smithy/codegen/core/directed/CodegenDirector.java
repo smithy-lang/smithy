@@ -37,8 +37,10 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.utils.CodeInterceptor;
@@ -53,7 +55,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
  * @param <C> Type of {@link CodegenContext} to create and use.
  * @param <S> Type of settings object to pass to directed methods.
  */
-public final class DirectedCodegenRunner<
+public final class CodegenDirector<
         W extends SymbolWriter<W, ? extends ImportContainer>,
         I extends SmithyIntegration<S, W, C>,
         C extends CodegenContext<S, W>,
@@ -80,7 +82,7 @@ public final class DirectedCodegenRunner<
      * </ul>
      *
      * <p><em>Note</em>: This transform is applied automatically by a code
-     * generator if {@link DirectedCodegenRunner#performDefaultCodegenTransforms()} is
+     * generator if {@link CodegenDirector#performDefaultCodegenTransforms()} is
      * set to true.
      *
      * @param model Model being code generated.
@@ -192,7 +194,7 @@ public final class DirectedCodegenRunner<
     }
 
     /**
-     * Set to true to apply {@link DirectedCodegenRunner#simplifyModelForServiceCodegen}
+     * Set to true to apply {@link CodegenDirector#simplifyModelForServiceCodegen}
      * prior to code generation.
      */
     public void performDefaultCodegenTransforms() {
@@ -268,11 +270,11 @@ public final class DirectedCodegenRunner<
         registerInterceptors(context, integrations);
 
         LOGGER.finest(() -> "Generating service " + serviceShape.getId());
-        directedCodegen.generateService(new GenerateService<>(context, serviceShape));
+        directedCodegen.generateService(new GenerateServiceDirective<>(context, serviceShape));
 
         generateShapesInService(context, serviceShape, shapes);
 
-        Customize<C, S> postProcess = new Customize<>(context, serviceShape);
+        CustomizeDirective<C, S> postProcess = new CustomizeDirective<>(context, serviceShape);
 
         LOGGER.finest(() -> "Performing custom codegen for "
                             + directedCodegen.getClass().getName() + " before integrations");
@@ -304,7 +306,7 @@ public final class DirectedCodegenRunner<
         if (integrationFinder == null) {
             LOGGER.fine(() -> String.format("Finding %s integrations using the %s class loader",
                                             integrationClass.getName(),
-                                            DirectedCodegenRunner.class.getCanonicalName()));
+                                            CodegenDirector.class.getCanonicalName()));
             integrationClassLoader(getClass().getClassLoader());
         }
     }
@@ -335,7 +337,7 @@ public final class DirectedCodegenRunner<
     private SymbolProvider createSymbolProvider(List<I> integrations, ServiceShape serviceShape) {
         LOGGER.fine(() -> "Creating a symbol provider from " + settings.getClass().getName());
         SymbolProvider provider = directedCodegen.createSymbolProvider(
-                new CreateSymbolProvider<>(model, settings, serviceShape));
+                new CreateSymbolProviderDirective<>(model, settings, serviceShape));
 
         LOGGER.finer(() -> "Decorating symbol provider using " + integrationClass.getName());
         for (I integration : integrations) {
@@ -347,7 +349,7 @@ public final class DirectedCodegenRunner<
 
     private C createContext(ServiceShape serviceShape, SymbolProvider provider) {
         LOGGER.fine(() -> "Creating a codegen context for " + directedCodegen.getClass().getName());
-        return directedCodegen.createContext(new CreateContext<>(
+        return directedCodegen.createContext(new CreateContextDirective<>(
                 model, settings, serviceShape, provider, fileManifest));
     }
 
@@ -374,7 +376,7 @@ public final class DirectedCodegenRunner<
             if (shapes.contains(shape)) {
                 LOGGER.finest(() -> "Generating resource " + shape.getId());
                 directedCodegen.generateResource(
-                        new GenerateResource<>(context, serviceShape, shape));
+                        new GenerateResourceDirective<>(context, serviceShape, shape));
             }
         }
     }
@@ -384,10 +386,10 @@ public final class DirectedCodegenRunner<
             if (shapes.contains(shape)) {
                 if (shape.hasTrait(ErrorTrait.class)) {
                     LOGGER.finest(() -> "Generating error " + shape.getId());
-                    directedCodegen.generateError(new GenerateError<>(context, serviceShape, shape));
+                    directedCodegen.generateError(new GenerateErrorDirective<>(context, serviceShape, shape));
                 } else {
                     LOGGER.finest(() -> "Generating structure " + shape.getId());
-                    directedCodegen.generateStructure(new GenerateStructure<>(context, serviceShape, shape));
+                    directedCodegen.generateStructure(new GenerateStructureDirective<>(context, serviceShape, shape));
                 }
             }
         }
@@ -397,21 +399,28 @@ public final class DirectedCodegenRunner<
         for (UnionShape shape : model.getUnionShapes()) {
             if (shapes.contains(shape)) {
                 LOGGER.finest(() -> "Generating union " + shape.getId());
-                directedCodegen.generateUnion(new GenerateUnion<>(context, serviceShape, shape));
+                directedCodegen.generateUnion(new GenerateUnionDirective<>(context, serviceShape, shape));
             }
         }
     }
 
     private void generateEnumShapes(C context, ServiceShape serviceShape, Set<Shape> shapes) {
         // Generate enum shapes connected to the service.
+        for (StringShape shape : model.getStringShapesWithTrait(EnumTrait.class)) {
+            if (shapes.contains(shape)) {
+                LOGGER.finest(() -> "Generating string enum " + shape.getId());
+                directedCodegen.generateEnumShape(new GenerateEnumDirective<>(context, serviceShape, shape));
+            }
+        }
+
         /*
+        TODO: uncomment in idl-2.0
         for (EnumShape shape : model.getEnumShapes()) {
             if (shapes.contains(shape)) {
                 LOGGER.finest(() -> "Generating enum " + shape.getId());
                 directedCodegen.generateEnumShape(new GenerateEnumContext<>(context, serviceShape, shape));
             }
         }
-        TODO: uncomment in idl-2.0
         */
     }
 

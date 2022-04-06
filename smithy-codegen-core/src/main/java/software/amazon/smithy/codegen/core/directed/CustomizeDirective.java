@@ -16,18 +16,18 @@
 package software.amazon.smithy.codegen.core.directed;
 
 import software.amazon.smithy.codegen.core.CodegenContext;
-import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 
 /**
- * Directive used to generate a resource.
+ * Directive used to perform post-processing code generation.
  *
  * @param <C> CodegenContext type.
  * @param <S> Codegen settings type.
- * @see DirectedCodegen#generateResource
+ * @see DirectedCodegen#customizeBeforeIntegrations
+ * @see DirectedCodegen#customizeAfterIntegrations
  */
-public final class GenerateResource<C extends CodegenContext<S, ?>, S> extends ShapeDirective<ResourceShape, C, S> {
-    GenerateResource(C context, ServiceShape service, ResourceShape shape) {
-        super(context, service, shape);
+public final class CustomizeDirective<C extends CodegenContext<S, ?>, S> extends ContextualDirective<C, S> {
+    CustomizeDirective(C context, ServiceShape service) {
+        super(context, service);
     }
 }
