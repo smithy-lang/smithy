@@ -286,7 +286,7 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
         }
 
         public Builder addProperty(String name, ToShapeId targetShape) {
-            identifiers.get().put(Objects.requireNonNull(name), targetShape.toShapeId());
+            properties.get().put(Objects.requireNonNull(name), targetShape.toShapeId());
             return this;
         }
 

@@ -24,13 +24,13 @@ import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
- *
+ * Configures how a structure member maps to a resource property.
  */
 public final class PropertyTrait extends AbstractTrait implements ToSmithyBuilder<PropertyTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.api#property");
     private final String name;
 
-    public PropertyTrait(Builder builder) {
+    private PropertyTrait(Builder builder) {
         super(ID, builder.sourceLocation);
         name = builder.name;
     }
@@ -77,8 +77,7 @@ public final class PropertyTrait extends AbstractTrait implements ToSmithyBuilde
         @Override
         public PropertyTrait createTrait(ShapeId target, Node value) {
             ObjectNode objectNode = value.expectObjectNode();
-            String name = objectNode.getMember("name")
-                    .map(v -> v.expectStringNode().getValue()).orElse(null);
+            String name = objectNode.getStringMemberOrDefault("name", null);
             PropertyTrait result = builder().sourceLocation(value).name(name).build();
             result.setNodeCache(value);
             return result;
