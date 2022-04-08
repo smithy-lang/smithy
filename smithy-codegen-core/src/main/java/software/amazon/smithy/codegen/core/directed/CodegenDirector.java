@@ -156,10 +156,13 @@ public final class CodegenDirector<
      *
      * @param settingsType Settings type to deserialize into.
      * @param settingsNode Settings node value to deserialize.
+     * @return Returns the deserialized settings as this is needed to provide a service shape ID.
      */
-    public void settings(Class<S> settingsType, Node settingsNode) {
+    public S settings(Class<S> settingsType, Node settingsNode) {
         LOGGER.fine(() -> "Loading codegen settings from node value: " + settingsNode.getSourceLocation());
-        settings(new NodeMapper().deserialize(settingsNode, settingsType));
+        S deserialized = new NodeMapper().deserialize(settingsNode, settingsType);
+        settings(deserialized);
+        return deserialized;
     }
 
     /**
