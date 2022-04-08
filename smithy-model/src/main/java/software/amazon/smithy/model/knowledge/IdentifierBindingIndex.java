@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -19,6 +19,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
@@ -30,13 +33,16 @@ import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
 import software.amazon.smithy.utils.Pair;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Index of operation shapes to the identifiers bound to the operation.
  */
 public final class IdentifierBindingIndex implements KnowledgeIndex {
     /** Map of Resource shape ID to a map of Operation shape ID to a map of identifier name to the member name. */
-    private final Map<ShapeId, Map<ShapeId, Map<String, String>>> bindings = new HashMap<>();
+    private final Map<ShapeId, Map<ShapeId, Map<String, String>>> inputBindings = new HashMap<>();
+    private final Map<ShapeId, Map<ShapeId, Map<String, String>>> outputBindings = new HashMap<>();
+    private final SortedSet<String> allIdentifiers = new TreeSet<>();
 
     /** Map of Resource shape ID to a map of Operation shape ID to a binding type. */
     private final Map<ShapeId, Map<ShapeId, BindingType>> bindingTypes = new HashMap<>();
@@ -87,22 +93,72 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
      * @return Returns the identifier bindings map or an empty map if the
      *  binding is invalid or cannot be found.
      */
-    public Map<String, String> getOperationBindings(ToShapeId resource, ToShapeId operation) {
-        return Optional.ofNullable(bindings.get(resource.toShapeId()))
+    public Map<String, String> getOperationInputBindings(ToShapeId resource, ToShapeId operation) {
+        return Optional.ofNullable(inputBindings.get(resource.toShapeId()))
                 .flatMap(resourceMap -> Optional.ofNullable(resourceMap.get(operation.toShapeId())))
                 .map(Collections::unmodifiableMap)
                 .orElseGet(Collections::emptyMap);
     }
 
+    /**
+     * Gets a map of identifier names to output member names that provide a
+     * value for that identifier.
+     *
+     * @param resource Shape ID of a resource.
+     * @param operation Shape ID of an operation.
+     * @return Returns the identifier bindings map or an empty map if the
+     *  binding is invalid or cannot be found.
+     */
+    public Map<String, String> getOperationOutputBindings(ToShapeId resource, ToShapeId operation) {
+        return Optional.ofNullable(outputBindings.get(resource.toShapeId()))
+                .flatMap(resourceMap -> Optional.ofNullable(resourceMap.get(operation.toShapeId())))
+                .map(Collections::unmodifiableMap)
+                .orElseGet(Collections::emptyMap);
+    }
+
+    /**
+     * Gets a map of identifier names to input member names that provide a
+     * value for that identifier.
+     *
+     * Deprecated. Use {@link #getOperationInputBindings} instead.
+     *
+     * @param resource Shape ID of a resource.
+     * @param operation Shape ID of an operation.
+     * @return Returns the identifier bindings map or an empty map if the
+     *  binding is invalid or cannot be found.
+     */
+    @Deprecated
+    public Map<String, String> getOperationBindings(ToShapeId resource, ToShapeId operation) {
+        return getOperationInputBindings(resource, operation);
+    }
+
+     /**
+     * Gets a map of identifier names associated with either input or output on the operation.
+     *
+     * @param resource Shape ID of a resource.
+     * @param operation Shape ID of an operation.
+     * @return Returns a set of all identifier names associated with the operation.
+     */
+    public Set<String> getAllOperationIdentifiers(ToShapeId resource, ToShapeId operation) {
+        return SetUtils.copyOf(allIdentifiers);
+    }
+
     private void processResource(ResourceShape resource, OperationIndex operationIndex, Model model) {
-        bindings.put(resource.getId(), new HashMap<>());
+        inputBindings.put(resource.getId(), new HashMap<>());
+        outputBindings.put(resource.getId(), new HashMap<>());
         bindingTypes.put(resource.getId(), new HashMap<>());
         resource.getAllOperations().forEach(operationId -> {
             // Ignore broken models in this index.
-            Map<String, String> computedBindings = operationIndex.getInputShape(operationId)
+            Map<String, String> computedInputBindings = operationIndex.getInputShape(operationId)
                     .map(inputShape -> computeBindings(resource, inputShape))
                     .orElseGet(HashMap::new);
-            bindings.get(resource.getId()).put(operationId, computedBindings);
+            inputBindings.get(resource.getId()).put(operationId, computedInputBindings);
+            allIdentifiers.addAll(computedInputBindings.values());
+            Map<String, String> computedOutputBindings = operationIndex.getOutputShape(operationId)
+                    .map(outputShape -> computeBindings(resource, outputShape))
+                    .orElseGet(HashMap::new);
+            outputBindings.get(resource.getId()).put(operationId, computedOutputBindings);
+            allIdentifiers.addAll(computedOutputBindings.values());
 
             bindingTypes.get(resource.getId()).put(operationId, isCollection(resource, operationId)
                     ? BindingType.COLLECTION
@@ -122,8 +178,8 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
                 && memberEntry.getValue().getTarget().equals(resource.getIdentifiers().get(memberEntry.getKey()));
     }
 
-    private Map<String, String> computeBindings(ResourceShape resource, StructureShape inputShape) {
-        return inputShape.getAllMembers().entrySet().stream()
+    private Map<String, String> computeBindings(ResourceShape resource, StructureShape shape) {
+        return shape.getAllMembers().entrySet().stream()
                 .flatMap(entry -> entry.getValue().getTrait(ResourceIdentifierTrait.class)
                         .map(trait -> Stream.of(Pair.of(trait.getValue(), entry.getKey())))
                         .orElseGet(() -> isImplicitIdentifierBinding(entry, resource)

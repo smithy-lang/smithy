@@ -483,7 +483,6 @@ structure required {}
 )
 @tags(["diff.error.remove", "diff.contents"])
 structure property {
-    /// Remaps the expected resource property name to this configured one
     name: String
 }
 
@@ -493,7 +492,10 @@ structure property {
 structure notProperty {}
 
 /// Adjusts the resource property mapping of a lifecycle operation to the targeted member
-@trait(selector: "structure > member")
+@trait(
+    selector: "structure > member"
+    structurallyExclusive: "member"
+    )
 @tags(["diff.error.const"])
 structure nestedProperties {}
 

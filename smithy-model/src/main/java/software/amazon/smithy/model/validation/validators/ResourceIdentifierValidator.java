@@ -36,8 +36,22 @@ public final class ResourceIdentifierValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         return model.shapes(ResourceShape.class)
-                .flatMap(resource -> validateAgainstChildren(resource, model))
+                .flatMap(resource ->
+                        Stream.concat(validateAgainstChildren(resource, model),
+                                      validatePropertyRedefine(resource, model)))
                 .collect(Collectors.toList());
+    }
+
+    private Stream<ValidationEvent> validatePropertyRedefine(ResourceShape resource, Model model) {
+        if (resource.hasProperties()) {
+            return resource.getProperties().keySet().stream()
+                        .filter(key -> resource.getIdentifiers().containsKey(key))
+                        .map(key -> error(resource,
+                                String.format("Resource identifier `%s` cannot also be a"
+                                            + " resource property", key)));
+        } else {
+            return Stream.of();
+        }
     }
 
     private Stream<ValidationEvent> validateAgainstChildren(ResourceShape resource, Model model) {

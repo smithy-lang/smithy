@@ -15,7 +15,9 @@
 
 package software.amazon.smithy.model.validation.testrunner;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -105,6 +107,15 @@ public final class SmithyTestSuite {
                 .setModelAssemblerFactory(assembler::copy)
                 .addTestCasesFromUrl(contextClass.getResource(DEFAULT_TEST_CASE_LOCATION))
                 .parameterizedTestSource();
+    }
+
+    public static Result singleFileTestSource(String path, Class<?> contextClass) throws MalformedURLException {
+        ClassLoader classLoader = contextClass.getClassLoader();
+        ModelAssembler assembler = Model.assembler(classLoader).discoverModels(classLoader);
+        return SmithyTestSuite.runner()
+                .setModelAssemblerFactory(assembler::copy)
+                .addTestCasesFromUrl(new File(path).toURI().toURL())
+                .run();
     }
 
     private Stream<Object[]> parameterizedTestSource() {
