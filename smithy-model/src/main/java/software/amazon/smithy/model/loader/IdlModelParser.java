@@ -772,6 +772,14 @@ final class IdlModelParser extends SimpleParser {
                 modelFile.addForwardReference(target.getValue(), targetId -> builder.addIdentifier(name, targetId));
             }
         });
+        // Load properties and resolve forward references.
+        shapeNode.getObjectMember(PROPERTIES_KEY).ifPresent(properties -> {
+            for (Map.Entry<StringNode, Node> entry : properties.getMembers().entrySet()) {
+                String name = entry.getKey().getValue();
+                StringNode target = entry.getValue().expectStringNode();
+                modelFile.addForwardReference(target.getValue(), targetId -> builder.addProperty(name, targetId));
+            }
+        });
         clearPendingDocs();
     }
 
