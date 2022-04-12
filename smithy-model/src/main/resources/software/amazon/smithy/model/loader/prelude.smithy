@@ -475,7 +475,10 @@ string pattern
 structure required {}
 
 /// Configures a structure member's resource property mapping behavior
-@trait(selector: "structure > member")
+@trait(
+    selector: "structure > member"
+    conflict: [resourceIdentifier]
+)
 @tags(["diff.error.remove", "diff.contents"])
 structure property {
     /// Remaps the expected resource property name to this configured one
