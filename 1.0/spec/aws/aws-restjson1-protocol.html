@@ -73,14 +73,14 @@ status codes.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#aws-protocols-restjson1-trait" id="id7"><code class="docutils literal notranslate"><span class="pre">aws.protocols#restJson1</span></code> trait</a></li>
-<li><a class="reference internal" href="#supported-traits" id="id8">Supported traits</a></li>
-<li><a class="reference internal" href="#content-type" id="id9">Content-Type</a></li>
-<li><a class="reference internal" href="#json-shape-serialization" id="id10">JSON shape serialization</a></li>
-<li><a class="reference internal" href="#http-binding-serialization" id="id11">HTTP binding serialization</a></li>
-<li><a class="reference internal" href="#non-numeric-float-and-double-serialization" id="id12">Non-numeric float and double serialization</a></li>
-<li><a class="reference internal" href="#operation-error-serialization" id="id13">Operation error serialization</a></li>
-<li><a class="reference internal" href="#protocol-compliance-tests" id="id14">Protocol compliance tests</a></li>
+<li><a class="reference internal" href="#aws-protocols-restjson1-trait" id="id3"><code class="docutils literal notranslate"><span class="pre">aws.protocols#restJson1</span></code> trait</a></li>
+<li><a class="reference internal" href="#supported-traits" id="id4">Supported traits</a></li>
+<li><a class="reference internal" href="#content-type" id="id5">Content-Type</a></li>
+<li><a class="reference internal" href="#json-shape-serialization" id="id6">JSON shape serialization</a></li>
+<li><a class="reference internal" href="#http-binding-serialization" id="id7">HTTP binding serialization</a></li>
+<li><a class="reference internal" href="#non-numeric-float-and-double-serialization" id="id8">Non-numeric float and double serialization</a></li>
+<li><a class="reference internal" href="#operation-error-serialization" id="id9">Operation error serialization</a></li>
+<li><a class="reference internal" href="#protocol-compliance-tests" id="id10">Protocol compliance tests</a></li>
 </ul>
 </div>
 <div class="section" id="aws-protocols-restjson1-trait">
@@ -160,7 +160,10 @@ values are provided.</p>
 
 <span class="kd">use</span><span class="nc"> aws.protocols#restJson1</span><span class="w"></span>
 
-<span class="nd">@restJson1</span>(<span class="nl">eventStreamHttp:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span>])<span class="w"></span>
+<span class="nd">@restJson1</span>(<span class="w"></span>
+<span class="w">    </span><span class="nl">http:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;http/1.1&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">eventStreamHttp:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span>]<span class="w"></span>
+)<span class="w"></span>
 <span class="kd">service</span><span class="nc"> MyService</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2020-04-02&quot;</span><span class="w"></span>
 }<span class="w"></span>
@@ -173,7 +176,10 @@ preferred over <code class="docutils literal notranslate"><span class="pre">http
 
 <span class="kd">use</span><span class="nc"> aws.protocols#restJson1</span><span class="w"></span>
 
-<span class="nd">@restJson1</span>(<span class="nl">eventStreamHttp:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;http/1.1&quot;</span>])<span class="w"></span>
+<span class="nd">@awsJson1</span><span class="vc">_1</span>(<span class="w"></span>
+<span class="w">    </span><span class="nl">http:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;http/1.1&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">eventStreamHttp:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;http/1.1&quot;</span>]<span class="w"></span>
+)<span class="w"></span>
 <span class="kd">service</span><span class="nc"> MyService</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2020-04-02&quot;</span><span class="w"></span>
 }<span class="w"></span>
@@ -438,8 +444,7 @@ standard responses with one additional component to distinguish which error
 is contained. New server-side protocol implementations MUST use a header field
 named <code class="docutils literal notranslate"><span class="pre">X-Amzn-Errortype</span></code>. Clients MUST accept any one of the following: an
 additional header with the name <code class="docutils literal notranslate"><span class="pre">X-Amzn-Errortype</span></code>, a body field with the
-name <code class="docutils literal notranslate"><span class="pre">__type</span></code>, or a body field named <a href="#id3"><span class="problematic" id="id4">``</span></a>code
-<a href="#id5"><span class="problematic" id="id6">``</span></a>. The value of this component
+name <code class="docutils literal notranslate"><span class="pre">__type</span></code>, or a body field named <code class="docutils literal notranslate"><span class="pre">code</span></code>. The value of this component
 SHOULD contain only the <a class="reference internal" href="../core/model.html#grammar-token-smithy-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
 <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>.</p>
 <p>Legacy server-side protocol implementations sometimes include additional
