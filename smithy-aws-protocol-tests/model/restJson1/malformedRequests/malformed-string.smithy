@@ -37,6 +37,8 @@ apply MalformedString @httpMalformedRequestTests([
             value: [
                 // Insufficient padding
                 "xyz",
+                // Extant, but also insufficient padding
+                "YmxvYg=",
                 // Invalid characters
                 "[][]",
                 // Invalid characters which are commonly used as filename-safe
