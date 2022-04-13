@@ -1,5 +1,17 @@
 # Smithy Changelog
 
+## 1.21.0 (2022-04-13)
+
+### Features
+* Added `DirectedCodegen` to make codegen simpler. ([#1167](https://github.com/awslabs/smithy/pull/1167), [#1180](https://github.com/awslabs/smithy/pull/1180))
+* Add ability to register interceptors with delegator. ([#1165](https://github.com/awslabs/smithy/pull/1165))
+* Optimized deprecated trait validation. ([#1162](https://github.com/awslabs/smithy/pull/1162))
+* Used ConcurrentSkipListMap in Model for knowledge instead of synchornized IdentityMap. ([#1161](https://github.com/awslabs/smithy/pull/1161))
+
+### Documentation
+
+* Added http and eventStreamHttp properties to AWS protocols. ([#1172](https://github.com/awslabs/smithy/pull/1172))
+
 ## 1.19.0 (2022-03-21)
 
 ### Features
