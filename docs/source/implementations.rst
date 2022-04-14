@@ -138,7 +138,7 @@ of polish or that they work for all use cases.
     :widths: 25 15 10 50
 
     * - Project
-      - Language
+      - Generator Language
       - Status
       - Description
     * - `TypeScript client and server codegen <https://github.com/awslabs/smithy-typescript>`_
@@ -207,7 +207,7 @@ AWS specific
     :widths: 25 15 10 50
 
     * - Project
-      - Language
+      - Generator Language
       - Status
       - Description
     * - :ref:`aws-specifications`
@@ -227,7 +227,9 @@ AWS specific
     * - `AWS SDK for Rust <https://github.com/awslabs/aws-sdk-rust>`_
       - Kotlin
       - 0.x
-      - The AWS SDK for Rust is built with Smithy.
+      - The AWS SDK for Rust is built with Smithy. The generator
+        implementation, including the AWS components, can be found in
+        `smithy-rs. <https://github.com/awslabs/smithy-rs>`_
     * - :ref:`smithy-to-cloudformation`
       - Java
       - 1.x
