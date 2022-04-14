@@ -225,7 +225,7 @@ AWS specific
       - 1.x
       - The AWS SDK for Go v2 is built with Smithy.
     * - `AWS SDK for Rust <https://github.com/awslabs/aws-sdk-rust>`_
-      - Kotlin
+      - Rust
       - 0.x
       - The AWS SDK for Rust is built with Smithy.
     * - :ref:`smithy-to-cloudformation`
