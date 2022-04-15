@@ -28,4 +28,15 @@ public interface FromSourceLocation {
     default SourceLocation getSourceLocation() {
         return SourceLocation.none();
     }
+
+    /**
+     * Compares two SourceLocations.
+     *
+     * @param s1 the first SourceLocation to compare.
+     * @param s2 the second SourceLocation to compare.
+     * @return the value 0 if s1 == s2; a value less than 0 if s1 < s2; and a value greater than 0 if s1 > s2.
+     */
+    static int compare(SourceLocation s1, SourceLocation s2) {
+        return s1.compareTo(s2);
+    }
 }
