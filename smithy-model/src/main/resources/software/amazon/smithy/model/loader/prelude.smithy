@@ -249,6 +249,7 @@ structure idempotent {}
 @trait(selector: "structure > :test(member > string)",
        structurallyExclusive: "member")
 @tags(["diff.error.remove"])
+@notProperty
 structure idempotencyToken {}
 
 /// Shapes marked with the internal trait are meant only for internal use and
@@ -350,6 +351,7 @@ map NonEmptyStringMap {
 @trait(selector: "structure > :test(member[trait|required] > string)")
 @tags(["diff.error.remove"])
 @length(min: 1)
+@notProperty
 string resourceIdentifier
 
 /// Prevents models defined in a different namespace from referencing the targeted shape.
@@ -485,10 +487,15 @@ structure property {
     name: String
 }
 
-/// Marks a structure member as transient, which excludes it from any property mapping.
-@trait(selector: "structure > member")
+/// Explicitly excludes a member from resource property mapping.
+@trait(selector: ":is(structure > member, [trait|trait])")
 @tags(["diff.error.add"])
-structure transient {}
+structure notProperty {}
+
+/// Adjusts the resource property mapping of a lifecycle operation to the targeted member
+@trait(selector: "structure > member")
+@tags(["diff.error.const"])
+structure nestedProperty {}
 
 /// Indicates that a structure member SHOULD be set.
 @trait(selector: "structure > member", conflicts: [required])

@@ -20,23 +20,23 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
- * Indicates that a top level input/output structure member is transient
- * with regard to resource property state.
+ * Indicates that a top level input/output structure member is not associated
+ * with a resource property.
  */
-public final class TransientTrait extends AnnotationTrait {
-    public static final ShapeId ID = ShapeId.from("smithy.api#transient");
+public final class NotPropertyTrait extends AnnotationTrait {
+    public static final ShapeId ID = ShapeId.from("smithy.api#notProperty");
 
-    public TransientTrait(ObjectNode node) {
+    public NotPropertyTrait(ObjectNode node) {
         super(ID, node);
     }
 
-    public TransientTrait() {
+    public NotPropertyTrait() {
         this(Node.objectNode());
     }
 
-    public static final class Provider extends AnnotationTrait.Provider<TransientTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<NotPropertyTrait> {
         public Provider() {
-            super(ID, TransientTrait::new);
+            super(ID, NotPropertyTrait::new);
         }
     }
 }
