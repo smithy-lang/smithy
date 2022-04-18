@@ -30,13 +30,13 @@ public interface FromSourceLocation {
     }
 
     /**
-     * Compares two SourceLocations.
+     * Compares two FromSourceLocations.
      *
-     * @param s1 the first SourceLocation to compare.
-     * @param s2 the second SourceLocation to compare.
+     * @param s1 the first FromSourceLocation to compare.
+     * @param s2 the second FromSourceLocation to compare.
      * @return the value 0 if s1 == s2; a value less than 0 if s1 < s2; and a value greater than 0 if s1 > s2.
      */
-    static int compare(SourceLocation s1, SourceLocation s2) {
-        return s1.compareTo(s2);
+    static int compare(FromSourceLocation s1, FromSourceLocation s2) {
+        return s1.getSourceLocation().compareTo(s2.getSourceLocation());
     }
 }
