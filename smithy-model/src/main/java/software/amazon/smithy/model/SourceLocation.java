@@ -20,7 +20,7 @@ import java.util.Objects;
 /**
  * Represents the source location of a model component.
  */
-public final class SourceLocation implements FromSourceLocation {
+public final class SourceLocation implements FromSourceLocation, Comparable<SourceLocation> {
 
     public static final SourceLocation NONE = new SourceLocation("N/A");
 
@@ -96,5 +96,19 @@ public final class SourceLocation implements FromSourceLocation {
         }
 
         return h;
+    }
+
+    @Override
+    public int compareTo(SourceLocation o) {
+        if (!this.getFilename().equals(o.getFilename())) {
+            return this.getFilename().compareTo(o.getFilename());
+        }
+
+        int lineComparison = Integer.compare(this.getLine(), o.getLine());
+        if (lineComparison != 0) {
+            return lineComparison;
+        }
+
+        return Integer.compare(this.getColumn(), o.getColumn());
     }
 }
