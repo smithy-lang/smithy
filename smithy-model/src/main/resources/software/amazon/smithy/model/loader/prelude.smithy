@@ -495,7 +495,7 @@ structure notProperty {}
 /// Adjusts the resource property mapping of a lifecycle operation to the targeted member
 @trait(selector: "structure > member")
 @tags(["diff.error.const"])
-structure nestedProperty {}
+structure nestedProperties {}
 
 /// Indicates that a structure member SHOULD be set.
 @trait(selector: "structure > member", conflicts: [required])
