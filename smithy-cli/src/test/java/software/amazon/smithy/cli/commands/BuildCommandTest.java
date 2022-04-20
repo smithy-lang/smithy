@@ -17,6 +17,7 @@ package software.amazon.smithy.cli.commands;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.isEmptyString;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -95,6 +96,36 @@ public class BuildCommandTest {
         assertThat(output, containsString("ResourceLifecycle"));
         assertThat(e.getMessage(),
                    containsString("The following 1 Smithy build projection(s) failed: [exampleProjection]"));
+    }
+
+    @Test
+    public void validationEventsAreOutputByDefault() throws Exception {
+        String model = Paths.get(getClass().getResource("build-events.smithy").toURI()).toString();
+
+        PrintStream out = System.out;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(outputStream);
+        System.setOut(printStream);
+        SmithyCli.create().run("build", model);
+        System.setOut(out);
+        String output = outputStream.toString("UTF-8");
+
+        assertThat(output, containsString("Validation result: 0 ERROR(s), 0 DANGER(s), 1 WARNING(s), 1 NOTE(s)"));
+    }
+
+    @Test
+    public void nothingIsOutputWhenSilentAndSuccessful() throws Exception {
+        String model = Paths.get(getClass().getResource("build-events.smithy").toURI()).toString();
+
+        PrintStream out = System.out;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(outputStream);
+        System.setOut(printStream);
+        SmithyCli.create().run("build", "--silent", model);
+        System.setOut(out);
+        String output = outputStream.toString("UTF-8");
+
+        assertThat(output, isEmptyString());
     }
 
     @Test

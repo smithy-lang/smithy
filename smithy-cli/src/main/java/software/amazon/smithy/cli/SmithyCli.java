@@ -30,6 +30,7 @@ public final class SmithyCli {
     public static final String DISCOVER_CLASSPATH = "--discover-classpath";
     public static final String ALLOW_UNKNOWN_TRAITS = "--allow-unknown-traits";
     public static final String SEVERITY = "--severity";
+    public static final String SILENT = "--silent";
 
     private ClassLoader classLoader = getClass().getClassLoader();
     private boolean configureLogging;
