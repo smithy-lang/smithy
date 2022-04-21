@@ -19,8 +19,6 @@ import java.util.function.BiFunction;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- * This class is deprecated and will be removed in a future release.
- *
  * <p>Factory used to create a {@code CodegenWriter}.
  *
  * <p>The following example shows how to implement a basic
@@ -43,6 +41,8 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * }</pre>
  *
  * @param <T> Type of {@code CodegenWriter} to create.
+ * @deprecated prefer {@link software.amazon.smithy.codegen.core.SymbolWriter.Factory}.
+ * This will be removed in a future release.
  */
 @FunctionalInterface
 @SmithyUnstableApi
