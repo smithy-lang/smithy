@@ -332,7 +332,7 @@ is not a valid number:
 Attributes
 ==========
 
-Selector attributes return objects that MAY have nested properties. Objects
+Attribute selectors return objects that MAY have nested properties. Objects
 returned from selectors MAY be available to cast to a string. Shapes support
 the following attributes:
 
