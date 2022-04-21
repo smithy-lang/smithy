@@ -80,7 +80,8 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  *
  * @param <T> The concrete type, used to provide a fluent interface.
  * @param <U> The import container used by the writer to manage imports.
- * @deprecated prefer {@link SymbolWriter}. This will be removed in a future release.
+ * @deprecated prefer {@link software.amazon.smithy.codegen.core.SymbolWriter}.
+ * This will be removed in a future release.
  */
 @SmithyUnstableApi
 @Deprecated

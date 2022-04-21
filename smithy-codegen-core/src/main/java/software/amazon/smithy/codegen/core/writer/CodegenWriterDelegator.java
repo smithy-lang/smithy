@@ -32,8 +32,6 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- * This class is deprecated and will be removed in a future release.
- *
  * <p>Creates and manages {@link CodegenWriter}s for files and namespaces based
  * on {@link Symbol}s created for a {@link Shape}.
  *
@@ -65,6 +63,8 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * with since generic types aren't needed in concrete implementations.
  *
  * @param <T> The type of {@link CodegenWriter} to create and manage.
+ * @deprecated prefer {@link software.amazon.smithy.codegen.core.WriterDelegator}.
+ * This class will be removed in a future release.
  */
 @SmithyUnstableApi
 @Deprecated
