@@ -959,13 +959,16 @@ model that can be marked with the ``smithy.api#unitType`` trait.
 Recursive shape definitions
 ===========================
 
-Smithy allows for recursive shape definitions with the following constraint:
-the member of a list, set, or map cannot directly or transitively target its
-containing shape unless one or more members in the path from the container
-back to itself targets a structure or union shape. This ensures that shapes
-that are typically impossible to define in various programming languages are
-not defined in Smithy models (for example, you can't define a recursive list
-in Java ``List<List<List....``).
+Smithy allows recursive shape definitions with the following limitations:
+
+1. The member of a list, set, or map cannot directly or transitively target
+   its containing shape unless one or more members in the path from the
+   container back to itself targets a structure or union shape. This ensures
+   that shapes that are typically impossible to define in various programming
+   languages are not defined in Smithy models (for example, you can't define
+   a recursive list in Java ``List<List<List....``).
+2. A structure cannot contain a cyclical set of members marked with the
+   :ref:`required-trait` that refers back to itself.
 
 The following recursive shape definition is **valid**:
 
@@ -1030,6 +1033,23 @@ The following recursive shape definition is **invalid**:
                 }
             }
         }
+
+The following recursive shape definition is **invalid** due to mutual
+recursion and the :ref:`required-trait`.
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    structure RecursiveShape1 {
+        @required
+        recursiveMember: RecursiveShape2
+    }
+
+    structure RecursiveShape2 {
+        @required
+        recursiveMember: RecursiveShape1
+    }
 
 
 .. _service-types:
