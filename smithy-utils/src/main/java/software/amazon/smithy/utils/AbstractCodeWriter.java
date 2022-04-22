@@ -574,6 +574,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
     private State currentState;
     private boolean trailingNewline = true;
     private int trimBlankLines = -1;
+    private boolean enableStackTraceComments;
 
     /**
      * Creates a new SimpleCodeWriter that uses "\n" for a newline, four spaces
@@ -620,6 +621,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
         // Copy global settings.
         trailingNewline = other.trailingNewline;
         trimBlankLines = other.trimBlankLines;
+        enableStackTraceComments = other.enableStackTraceComments;
 
         // Copy the current state settings of other into the current state.
         currentState.copyStateFrom(other.currentState);
@@ -1540,13 +1542,76 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * <p>Indentation and the newline prefix is only prepended if the writer's
      * cursor is at the beginning of a newline.
      *
+     * <p>Stack trace comments are written along with the given content if
+     * {@link #enableStackTraceComments(boolean)} was called with {@code true}.
+     *
      * @param content Content to write.
      * @return Returns self.
      */
     @SuppressWarnings("unchecked")
     public T writeWithNoFormatting(Object content) {
-        currentState.writeLine(content.toString());
+        currentState.writeLine(findAndFormatStackTraceElement(content.toString(), false));
         return (T) this;
+    }
+
+    private String findAndFormatStackTraceElement(String content, boolean inline) {
+        if (enableStackTraceComments) {
+            for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
+                if (isStackTraceRelevant(e)) {
+                    return formatWithStackTraceElement(content, e, inline);
+                }
+            }
+        }
+
+        return content;
+    }
+
+    /**
+     * Tests if the given {@code StackTraceElement} is relevant for a comment
+     * used when writing debug information before calls to write.
+     *
+     * <p>The default implementation filters out all methods in "java.*",
+     * AbstractCodeWriter, software.amazon.smithy.utils.SymbolWriter,
+     * SimpleCodeWriter, and methods of the implementing subclass of
+     * AbstractCodeWriter. This method can be overridden to further filter
+     * stack frames as needed.
+     *
+     * @param e StackTraceElement to test.
+     * @return Returns true if this element should be in a comment.
+     */
+    protected boolean isStackTraceRelevant(StackTraceElement e) {
+        String normalized = e.getClassName().replace("$", ".");
+        return !normalized.startsWith("java.")
+               // Ignore writes made by AbstractCodeWriter or AbstractCodeWriter$State.
+               && !normalized.startsWith(AbstractCodeWriter.class.getCanonicalName())
+               // Ignore writes made by subclasses of this class.
+               && !normalized.startsWith(getClass().getCanonicalName())
+               // Ignore writes made by SimpleCodeWriter.
+               && !normalized.equals(SimpleCodeWriter.class.getCanonicalName())
+               // Ignore any writes made by the well-known SymbolWriter from smithy-codegen-core.
+               && !normalized.equals("software.amazon.smithy.utils.SymbolWriter");
+    }
+
+    /**
+     * Formats content for the given stack frame.
+     *
+     * <p>Subclasses are expected to override this method as needed to handle
+     * language-specific comment requirements. By default, this class will use
+     * C/Java style "traditional" comments that come on the same line before
+     * both calls to writeInline and calls to write with a newline
+     * {@see https://docs.oracle.com/javase/specs/jls/se18/html/jls-3.html#jls-3.7}.
+     *
+     * <p>Programming languages that do not support inline comments should return
+     * the given {@code content} string as-is when {@code writingInline} is set
+     * to {@code true}.
+     *
+     * @param content The content about to be written.
+     * @param element The {@code StackFrameElement} to format.
+     * @param inline Set to true when this is a comment intended to appear before inline content.
+     * @return Returns the formatted content that includes a leading comment.
+     */
+    protected String formatWithStackTraceElement(String content, StackTraceElement element, boolean inline) {
+        return "/* " + element + " */ " + content;
     }
 
     /**
@@ -1556,12 +1621,15 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * Indentation and the newline prefix is only prepended if the writer's
      * cursor is at the beginning of a newline.
      *
+     * <p>Stack trace comments are written along with the given content if
+     * {@link #enableStackTraceComments(boolean)} was called with {@code true}.
+     *
      * @param content Inline content to write.
      * @return Returns self.
      */
     @SuppressWarnings("unchecked")
     public final T writeInlineWithNoFormatting(Object content) {
-        currentState.write(content.toString());
+        currentState.write(findAndFormatStackTraceElement(content.toString(), true));
         return (T) this;
     }
 
@@ -1571,7 +1639,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      *
      * <p>Important: if the formatters that are executed while formatting the
      * given {@code content} string mutate the AbstractCodeWriter, it could leave the
-     * SimpleCodeWriterin an inconsistent state. For example, some AbstractCodeWriter
+     * SimpleCodeWriter in an inconsistent state. For example, some AbstractCodeWriter
      * implementations manage imports and dependencies automatically based on
      * code that is referenced by formatters. If such an expression is used
      * with this format method but the returned String is never written to the
@@ -1643,15 +1711,16 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * <p>Indentation and the newline prefix is only prepended if the writer's
      * cursor is at the beginning of a newline.
      *
+     * <p>If a subclass overrides this method, it <em>should</em> first
+     * perform formatting and then delegate to {@link #writeWithNoFormatting}
+     * to perform the actual write.
+     *
      * @param content Content to write.
      * @param args String arguments to use for formatting.
      * @return Returns self.
      */
-    @SuppressWarnings("unchecked")
     public T write(Object content, Object... args) {
-        String value = format(content, args);
-        currentState.writeLine(value);
-        return (T) this;
+        return writeWithNoFormatting(format(content, args));
     }
 
     /**
@@ -1665,15 +1734,16 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      *
      * <p>If newlines are present in the given string, each of those lines will receive proper indentation.
      *
+     * <p>If a subclass overrides this method, it <em>should</em> first
+     * perform formatting and then delegate to {@link #writeInlineWithNoFormatting}
+     * to perform the actual write.
+     *
      * @param content Content to write.
      * @param args String arguments to use for formatting.
      * @return Returns self.
      */
-    @SuppressWarnings("unchecked")
     public T writeInline(Object content, Object... args) {
-        String value = format(content, args);
-        currentState.write(value);
-        return (T) this;
+        return writeInlineWithNoFormatting(format(content, args));
     }
 
     /**
@@ -1842,6 +1912,25 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
                     "Expected context value '%s' to be an instance of %s, but found %s %s",
                     key, type.getName(), value.getClass().getName(), getDebugInfo()));
         }
+    }
+
+    /**
+     * Enable or disable writing stack trace comments before each call to
+     * {@link #write}, {@link #writeWithNoFormatting}, {@link #writeInline},
+     * and {@link #writeInlineWithNoFormatting}.
+     *
+     * <p>It's sometimes useful to know where in a code generator a line of code
+     * generated text came from. Enabling stack trace comments will output
+     * the last relevant stack trace information caused text to appear in the
+     * code writer's output.
+     *
+     * @param enableStackTraceComments Set to true to enable stack trace comments.
+     * @return Returns self.
+     */
+    @SuppressWarnings("unchecked")
+    public final T enableStackTraceComments(boolean enableStackTraceComments) {
+        this.enableStackTraceComments = enableStackTraceComments;
+        return (T) this;
     }
 
     String expandSection(CodeSection section, String previousContent, Consumer<String> consumer) {

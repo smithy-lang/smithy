@@ -17,7 +17,9 @@ package software.amazon.smithy.utils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.startsWith;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -1357,5 +1359,92 @@ public class CodeWriterTest {
 
         assertThat(actual, equalTo("Hello: . * Hi\n"
                                    + "         * There"));
+    }
+
+    @Test
+    public void writesStackTraceInfo() {
+        MyCustomWriter writer = new MyCustomWriter();
+        writer.enableStackTraceComments(true);
+
+        writer.writeWithNoFormatting("Hello 1");
+        writer.write("Hello 2");
+        writer.indent().write("Hello 3");
+        writer.writeInline("Hello 4");
+        writer.writeInline("Hello 5");
+        String[] result = writer.toString().split("\n");
+
+        assertThat(result[0], startsWith("/* software.amazon.smithy.utils.CodeWriterTest.writesStackTraceInfo"));
+        assertThat(result[0], endsWith("*/ Hello 1"));
+        assertThat(result[1], startsWith("/* software.amazon.smithy.utils.CodeWriterTest.writesStackTraceInfo"));
+        assertThat(result[1], endsWith("*/ Hello 2"));
+        assertThat(result[2], startsWith("    /* software.amazon.smithy.utils.CodeWriterTest.writesStackTraceInfo"));
+        assertThat(result[2], endsWith("*/ Hello 3"));
+        assertThat(result[3], startsWith("    /* software.amazon.smithy.utils.CodeWriterTest.writesStackTraceInfo"));
+        assertThat(result[3], containsString("Hello 4"));
+        assertThat(result[3], endsWith("*/ Hello 5"));
+    }
+
+    @Test
+    public void writesStackTraceInfoIgnoringInlineWrites() {
+        // This writer ignores inline writes and puts the comment on the line before.
+        MyCustomPythonWriter writer = new MyCustomPythonWriter();
+        writer.enableStackTraceComments(true);
+
+        writer.writeWithNoFormatting("Hello 1");
+        writer.write("Hello 2");
+        writer.indent().write("Hello 3");
+        writer.writeInline("Hello 4|");
+        writer.writeInline("Hello 5");
+        String[] result = writer.toString().split("\n");
+
+        assertThat(result[0], startsWith("# software.amazon.smithy.utils.CodeWriterTest.writesStackTraceInfo"));
+        assertThat(result[1], equalTo("Hello 1"));
+        assertThat(result[2], startsWith("# software.amazon.smithy.utils.CodeWriterTest.writesStackTraceInfo"));
+        assertThat(result[3], equalTo("Hello 2"));
+        assertThat(result[4], startsWith("    # software.amazon.smithy.utils.CodeWriterTest.writesStackTraceInfo"));
+        assertThat(result[5], equalTo("    Hello 3"));
+        assertThat(result[6], equalTo("    Hello 4|Hello 5"));
+    }
+
+    @Test
+    public void filteringAllStackFramesEmitsNoStackComment() {
+        // This writer ignores inline writes and puts the comment on the line before.
+        MyCustomFilteredWriter writer = new MyCustomFilteredWriter();
+        writer.enableStackTraceComments(true);
+        writer.write("Hello");
+
+        assertThat(writer.toString(), equalTo("Hello\n"));
+    }
+
+    private static final class MyCustomWriter extends AbstractCodeWriter<MyCustomWriter> {
+        // Ensure that subclass methods are automatically filtered out as irrelevant frames.
+        @Override
+        public MyCustomWriter write(Object content, Object... args) {
+            return super.write(content, args);
+        }
+
+        // Ensure that subclass methods are automatically filtered out as irrelevant frames.
+        @Override
+        public MyCustomWriter writeInline(Object content, Object... args) {
+            return super.writeInline(content, args);
+        }
+    }
+
+    private static final class MyCustomPythonWriter extends AbstractCodeWriter<MyCustomPythonWriter> {
+        @Override
+        protected String formatWithStackTraceElement(String content, StackTraceElement element, boolean inline) {
+            if (inline) {
+                return content;
+            } else {
+                return "# " + element + getNewline() + content;
+            }
+        }
+    }
+
+    private static final class MyCustomFilteredWriter extends AbstractCodeWriter<MyCustomFilteredWriter> {
+        @Override
+        protected boolean isStackTraceRelevant(StackTraceElement e) {
+            return false;
+        }
     }
 }
