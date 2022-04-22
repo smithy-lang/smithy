@@ -19,12 +19,10 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
@@ -225,9 +223,10 @@ public final class PathFinder {
          * @return Returns the list of shapes.
          */
         public List<Shape> getShapes() {
-            List<Shape> results = relationships.stream()
-                    .map(Relationship::getShape)
-                    .collect(Collectors.toList());
+            List<Shape> results = new ArrayList<>(relationships.size());
+            for (Relationship rel : relationships) {
+                results.add(rel.getShape());
+            }
             Relationship last = relationships.get(relationships.size() - 1);
             if (last.getNeighborShape().isPresent()) {
                 results.add(last.getNeighborShape().get());
@@ -299,8 +298,10 @@ public final class PathFinder {
         }
 
         List<Path> execute() {
+            Set<ShapeId> visited = new HashSet<>();
             for (Shape candidate : candidates) {
-                traverseUp(candidate, new LinkedList<>(), new HashSet<>());
+                traverseUp(candidate, new ArrayList<>(), visited);
+                visited.clear();
             }
 
             return results;
@@ -323,8 +324,7 @@ public final class PathFinder {
                 return;
             }
 
-            Set<ShapeId> newVisited = new HashSet<>(visited);
-            newVisited.add(current.getId());
+            visited.add(current.getId());
 
             for (Relationship relationship : provider.getNeighbors(current)) {
                 // Don't traverse up through containers.
@@ -332,9 +332,11 @@ public final class PathFinder {
                     List<Relationship> newPath = new ArrayList<>(path.size() + 1);
                     newPath.add(relationship);
                     newPath.addAll(path);
-                    traverseUp(relationship.getShape(), newPath, newVisited);
+                    traverseUp(relationship.getShape(), newPath, visited);
                 }
             }
+
+            visited.remove(current.getId());
         }
     }
 }

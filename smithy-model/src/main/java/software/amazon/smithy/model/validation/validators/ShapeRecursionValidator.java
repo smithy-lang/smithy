@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,21 +15,17 @@
 
 package software.amazon.smithy.model.validation.validators;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.StringJoiner;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.shapes.ListShape;
-import software.amazon.smithy.model.shapes.MapShape;
-import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.SetShape;
+import software.amazon.smithy.model.neighbor.Relationship;
+import software.amazon.smithy.model.selector.PathFinder;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeVisitor;
+import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -37,7 +33,8 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * Ensures that list, set, and map shapes are not directly recursive,
  * meaning that if they do have a recursive reference to themselves,
  * one or more references that form the recursive path travels through
- * a structure or union shape.
+ * a structure or union shape. And ensures that structure members are
+ * not infinitely mutually recursive using the required trait.
  *
  * <p>This check removes an entire class of problems from things like
  * code generators where a list of itself or a list of maps of itself
@@ -47,82 +44,74 @@ public final class ShapeRecursionValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.shapes()
-                .map(shape -> validateShape(model, shape))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        PathFinder finder = PathFinder.create(model);
+        List<ValidationEvent> events = new ArrayList<>();
+
+        for (Shape shape : model.toSet()) {
+            if (isShapeToCheck(shape)) {
+                // Find and validate all paths back to itself.
+                for (PathFinder.Path path : finder.search(shape, Collections.singletonList(shape))) {
+                    if (shape.isStructureShape()) {
+                        validateStructurePath(shape, path, events);
+                    } else {
+                        validateListSetMapPath(shape, path, events);
+                    }
+                }
+            }
+        }
+
+        return events;
     }
 
-    private ValidationEvent validateShape(Model model, Shape shape) {
-        return new RecursiveNeighborVisitor(model, shape).visit(shape);
+    private boolean isShapeToCheck(Shape shape) {
+        return shape.isListShape() || shape.isSetShape() || shape.isMapShape() || shape.isStructureShape();
     }
 
-    private final class RecursiveNeighborVisitor extends ShapeVisitor.Default<ValidationEvent> {
+    private void validateStructurePath(Shape shape, PathFinder.Path path, List<ValidationEvent> events) {
+        boolean allRequired = false;
 
-        private final Model model;
-        private final Shape root;
-        private final Set<ShapeId> visited = new HashSet<>();
-        private final Deque<String> context = new ArrayDeque<>();
-
-        RecursiveNeighborVisitor(Model model, Shape root) {
-            this.root = root;
-            this.model = model;
-        }
-
-        ValidationEvent visit(Shape shape) {
-            ValidationEvent event = hasShapeBeenVisited(shape);
-            return event != null ? event : shape.accept(this);
-        }
-
-        private ValidationEvent hasShapeBeenVisited(Shape shape) {
-            if (!visited.contains(shape.getId())) {
-                return null;
+        for (Relationship rel : path) {
+            Shape neighbor = rel.getNeighborShape().orElse(null);
+            if (neighbor != null) {
+                if (neighbor.isMemberShape() && neighbor.hasTrait(RequiredTrait.class)) {
+                    allRequired = true;
+                } else if (!neighbor.isStructureShape()) {
+                    // Not a required member and does not target a structure, so the path is valid.
+                    break;
+                }
             }
-
-            return error(shape, String.format(
-                    "Found invalid shape recursion: %s. A recursive list, set, or map shape is only valid if "
-                    + "an intermediate reference is through a union or structure.",
-                    String.join(" > ", context)));
         }
 
-        @Override
-        protected ValidationEvent getDefault(Shape shape) {
-            return null;
+        if (allRequired) {
+            events.add(error(shape, String.format(
+                    "Found invalid shape recursion: %s. A structure cannot be mutually recursive through all "
+                    + "required members.", formatPath(path))));
         }
+    }
 
-        @Override
-        public ValidationEvent listShape(ListShape shape) {
-            return validateMember(shape, shape.getMember());
-        }
-
-        @Override
-        public ValidationEvent setShape(SetShape shape) {
-            return validateMember(shape, shape.getMember());
-        }
-
-        @Override
-        public ValidationEvent mapShape(MapShape shape) {
-            return validateMember(shape, shape.getValue());
-        }
-
-        private ValidationEvent validateMember(Shape container, MemberShape member) {
-            ValidationEvent event = null;
-            Shape target = model.getShape(member.getTarget()).orElse(null);
-
-            if (target != null) {
-                // Add to the visited set and the context deque before visiting,
-                // the remove from them after done visiting this shape.
-                visited.add(container.getId());
-                // Eventually, this would look like: member-id > shape-id[ > member-id > shape-id [ > [...]]
-                context.addLast(member.getId().toString());
-                context.addLast(member.getTarget().toString());
-                event = visit(target);
-                context.removeLast();
-                context.removeLast();
-                visited.remove(container.getId());
+    private void validateListSetMapPath(Shape shape, PathFinder.Path path, List<ValidationEvent> events) {
+        for (Relationship rel : path) {
+            Shape neighbor = rel.getNeighborShape().orElse(null);
+            if (neighbor == null || neighbor instanceof StructureShape || neighbor instanceof UnionShape) {
+                // Invalid model, or it paths through a structure / union so the recursion is allowed.
+                return;
             }
-
-            return event;
         }
+
+        events.add(error(shape, String.format(
+                "Found invalid shape recursion: %s. A recursive list, set, or map shape is only "
+                + "valid if an intermediate reference is through a union or structure.", formatPath(path))));
+    }
+
+    private String formatPath(PathFinder.Path path) {
+        StringJoiner joiner = new StringJoiner(" > ");
+        List<Shape> shapes = path.getShapes();
+        for (int i = 0; i < shapes.size(); i++) {
+            // Skip the first shape (the subject) to shorten the error message.
+            if (i > 0) {
+                joiner.add(shapes.get(i).getId().toString());
+            }
+        }
+        return joiner.toString();
     }
 }
