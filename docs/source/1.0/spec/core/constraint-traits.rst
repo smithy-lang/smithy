@@ -604,10 +604,10 @@ in a response.
 ``uniqueItems`` trait
 ---------------------
 
-.. warning:
+.. warning::
 
-    This trait has been deprecated. It may be removed in future versions. Set
-    shapes should be used instead.
+    This trait has been deprecated. It will be removed in future versions
+    of Smithy. Set shapes should be used instead.
 
 Summary
     Indicates that the items in a :ref:`list` MUST be unique.
