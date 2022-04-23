@@ -20,14 +20,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.neighbor.Relationship;
 import software.amazon.smithy.model.selector.PathFinder;
+import software.amazon.smithy.model.shapes.ListShape;
+import software.amazon.smithy.model.shapes.MapShape;
+import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.FunctionalUtils;
 
 /**
  * Ensures that list, set, and map shapes are not directly recursive,
@@ -46,61 +48,53 @@ public final class ShapeRecursionValidator extends AbstractValidator {
     public List<ValidationEvent> validate(Model model) {
         PathFinder finder = PathFinder.create(model);
         List<ValidationEvent> events = new ArrayList<>();
-
-        for (Shape shape : model.toSet()) {
-            if (isShapeToCheck(shape)) {
-                // Find and validate all paths back to itself.
-                for (PathFinder.Path path : finder.search(shape, Collections.singletonList(shape))) {
-                    if (shape.isStructureShape()) {
-                        validateStructurePath(shape, path, events);
-                    } else {
-                        validateListSetMapPath(shape, path, events);
-                    }
-                }
-            }
-        }
-
+        validateListMapSetShapes(finder, model, events);
+        validateStructurePaths(finder, model, events);
         return events;
     }
 
-    private boolean isShapeToCheck(Shape shape) {
-        return shape.isListShape() || shape.isSetShape() || shape.isMapShape() || shape.isStructureShape();
-    }
+    private void validateListMapSetShapes(PathFinder finder, Model model, List<ValidationEvent> events) {
+        finder.relationshipFilter(rel -> !(rel.getShape().isStructureShape() || rel.getShape().isUnionShape()));
 
-    private void validateStructurePath(Shape shape, PathFinder.Path path, List<ValidationEvent> events) {
-        boolean allRequired = false;
-
-        for (Relationship rel : path) {
-            Shape neighbor = rel.getNeighborShape().orElse(null);
-            if (neighbor != null) {
-                if (neighbor.isMemberShape() && neighbor.hasTrait(RequiredTrait.class)) {
-                    allRequired = true;
-                } else if (!neighbor.isStructureShape()) {
-                    // Not a required member and does not target a structure, so the path is valid.
-                    break;
-                }
-            }
+        for (ListShape shape : model.getListShapes()) {
+            validateListMapSetShapes(shape, finder, events);
         }
 
-        if (allRequired) {
+        for (SetShape shape : model.getSetShapes()) {
+            validateListMapSetShapes(shape, finder, events);
+        }
+
+        for (MapShape shape : model.getMapShapes()) {
+            validateListMapSetShapes(shape, finder, events);
+        }
+
+        finder.relationshipFilter(FunctionalUtils.alwaysTrue());
+    }
+
+    private void validateListMapSetShapes(Shape shape, PathFinder finder, List<ValidationEvent> events) {
+        for (PathFinder.Path path : finder.search(shape, Collections.singletonList(shape))) {
             events.add(error(shape, String.format(
-                    "Found invalid shape recursion: %s. A structure cannot be mutually recursive through all "
-                    + "required members.", formatPath(path))));
+                    "Found invalid shape recursion: %s. A recursive list, set, or map shape is only "
+                    + "valid if an intermediate reference is through a union or structure.", formatPath(path))));
         }
     }
 
-    private void validateListSetMapPath(Shape shape, PathFinder.Path path, List<ValidationEvent> events) {
-        for (Relationship rel : path) {
-            Shape neighbor = rel.getNeighborShape().orElse(null);
-            if (neighbor == null || neighbor instanceof StructureShape || neighbor instanceof UnionShape) {
-                // Invalid model, or it paths through a structure / union so the recursion is allowed.
-                return;
+    private void validateStructurePaths(PathFinder finder, Model model, List<ValidationEvent> events) {
+        finder.relationshipFilter(rel -> {
+            if (rel.getShape().isStructureShape()) {
+                return rel.getNeighborShape().get().hasTrait(RequiredTrait.class);
+            } else {
+                return rel.getShape().isMemberShape();
+            }
+        });
+
+        for (StructureShape shape : model.getStructureShapes()) {
+            for (PathFinder.Path path : finder.search(shape, Collections.singletonList(shape))) {
+                events.add(error(shape, String.format(
+                        "Found invalid shape recursion: %s. A structure cannot be mutually recursive through all "
+                        + "required members.", formatPath(path))));
             }
         }
-
-        events.add(error(shape, String.format(
-                "Found invalid shape recursion: %s. A recursive list, set, or map shape is only "
-                + "valid if an intermediate reference is through a union or structure.", formatPath(path))));
     }
 
     private String formatPath(PathFinder.Path path) {

@@ -6,6 +6,10 @@ structure RecursiveShape1 {
 }
 
 structure RecursiveShape2 {
+    // Bad
     @required
-    recursiveMember: RecursiveShape1
+    recursiveMember: RecursiveShape1,
+
+    // Ok
+    recursiveMember2: RecursiveShape1
 }

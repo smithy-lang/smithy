@@ -111,4 +111,10 @@
         <Class name="software.amazon.smithy.model.knowledge.HttpBindingIndex"/>
         <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
     </Match>
+
+    <!-- current is used to create an internal linked list's next value from a list -->
+    <Match>
+        <Class name="software.amazon.smithy.model.selector.PathFinder$Path"/>
+        <Bug pattern="UC_USELESS_OBJECT"/>
+    </Match>
 </FindBugsFilter>
