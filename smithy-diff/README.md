@@ -31,7 +31,7 @@ This library checks for the following tags on trait definitions:
 * `diff.error.update`: An error event is emitted when the trait is updated
   or modified in some way.
 * `diff.error.const`: An error event is emitted when the trait is added,
-  removed, or modified on a trait.
+  removed, or modified in some way.
 * `diff.danger.add`: A danger event is emitted when the trait is added to a
    shape.
 * `diff.danger.remove`: A danger event is emitted when the trait is removed
@@ -39,7 +39,7 @@ This library checks for the following tags on trait definitions:
 * `diff.danger.update`: A danger event is emitted when the trait is updated
   or modified in some way.
 * `diff.danger.const`: A danger event is emitted when the trait is added,
-  removed, or modified on a trait.
+  removed, or modified in some way.
 * `diff.warning.add`: A warning event is emitted when the trait is added to a
    shape.
 * `diff.warning.remove`: A warning event is emitted when the trait is removed
@@ -47,7 +47,7 @@ This library checks for the following tags on trait definitions:
 * `diff.warning.update`: A warning event is emitted when the trait is updated
   or modified in some way.
 * `diff.warning.const`: A warning event is emitted when the trait is added,
-  removed, or modified on a trait.
+  removed, or modified in some way.
 
 The following example defines a trait that configures this library to emit
 an error event when `myTrait` is added to a shape.
@@ -65,7 +65,7 @@ structure myTrait {}
 The `diff.contents` tag is used to diff the contents of a trait value based
 on diff tags applied to members of shapes used to define a trait. For example,
 if it is a breaking change to update some members of a trait but not others,
-this can be automatically validated using the `diff.contents` trait. When
+this can be automatically validated using the `diff.contents` tag. When
 evaluating the contents of a trait, only tags applied to members of lists,
 sets, maps (value only), structures, and unions are considered.
 
@@ -107,10 +107,10 @@ structure NestedTraitStruct {
 }
 ```
 
-Nested diffs also works with lists and sets. When diff tags are applied
-to members of lists. For example, a trait could require that the order of
-values is a backward compatibility contract; adding a value to the
-beginning of a list of changing a value in a list is a breaking change.
+Nested diffs also works with lists and sets, when diff tags are applied
+to members of lists and sets. For example, a trait could require that the
+order of values is a backward compatibility contract; adding a value to the
+beginning of a list or changing a value in a list is a breaking change.
 The following trait only allows values to be appended to the `foo` list:
 
 ```
