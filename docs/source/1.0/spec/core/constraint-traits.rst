@@ -650,9 +650,9 @@ Value type
 Trait precedence
 ----------------
 
-Some constraints can be applied to shapes as well as structure members. If a
-constraint of the same type is applied to a structure member and the shape
-that the member targets, the trait applied to the member takes precedence.
+Some constraint traits can be applied to shapes as well as members.
+Constraint traits applied to members take precedence over constraint
+traits applied to the shape targeted by members.
 
 In the below example, the ``range`` trait applied to ``numberOfItems``
 takes precedence over the one applied to ``PositiveInteger``. The resolved
