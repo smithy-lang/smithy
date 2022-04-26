@@ -15,8 +15,13 @@ namespace aws.protocols
 )
 @trait(selector: "service")
 structure awsJson1_0 {
+    /// The priority ordered list of supported HTTP protocol versions.
     http: StringList
 
+    /// The priority ordered list of supported HTTP protocol versions that
+    /// are required when using event streams with the service. If not set,
+    /// this value defaults to the value of the `http` member. Any entry in
+    /// `eventStreamHttp` MUST also appear in `http`.
     eventStreamHttp: StringList
 }
 
@@ -35,7 +40,13 @@ structure awsJson1_0 {
     selector: "service"
 )
 structure awsJson1_1 {
+    /// The priority ordered list of supported HTTP protocol versions.
     http: StringList
+
+    /// The priority ordered list of supported HTTP protocol versions that
+    /// are required when using event streams with the service. If not set,
+    /// this value defaults to the value of the `http` member. Any entry in
+    /// `eventStreamHttp` MUST also appear in `http`.
     eventStreamHttp: StringList
 }
 
@@ -104,9 +115,7 @@ structure ec2Query {}
 string ec2QueryName
 
 /// Indicates that an operation supports checksum validation.
-@trait(
-    selector: "operation"
-)
+@trait(selector: "operation")
 @unstable
 structure httpChecksum {
     /// Defines a top-level operation input member that is used to configure
@@ -146,8 +155,13 @@ structure httpChecksum {
 )
 @trait(selector: "service")
 structure restJson1 {
+    /// The priority ordered list of supported HTTP protocol versions.
     http: StringList
 
+    /// The priority ordered list of supported HTTP protocol versions that
+    /// are required when using event streams with the service. If not set,
+    /// this value defaults to the value of the `http` member. Any entry in
+    /// `eventStreamHttp` MUST also appear in `http`.
     eventStreamHttp: StringList
 }
 
@@ -176,8 +190,13 @@ structure restJson1 {
 )
 @trait(selector: "service")
 structure restXml {
+    /// The priority ordered list of supported HTTP protocol versions.
     http: StringList
 
+    /// The priority ordered list of supported HTTP protocol versions that
+    /// are required when using event streams with the service. If not set,
+    /// this value defaults to the value of the `http` member. Any entry in
+    /// `eventStreamHttp` MUST also appear in `http`.
     eventStreamHttp: StringList
 
     /// Disables the serialization wrapping of error properties in an 'Error'
@@ -199,11 +218,15 @@ set ChecksumAlgorithmSet {
 
 @private
 enum ChecksumAlgorithm {
+    /// CRC32C
     CRC32C
 
+    /// CRC32
     CRC32
 
+    /// SHA1
     SHA1
 
+    /// SHA256
     SHA256
 }

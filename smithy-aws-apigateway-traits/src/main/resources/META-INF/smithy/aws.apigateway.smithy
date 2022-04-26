@@ -40,37 +40,67 @@ map authorizers {
     ]
 )
 structure integration {
+    /// The type of integration with the specified backend.
     @required
     type: IntegrationType
 
+    /// The endpoint URI of the backend. For integrations of the `aws` type,
+    /// this is an ARN value. For the HTTP integration, this is the URL of the
+    /// HTTP endpoint including the `https` or `http` scheme.
     @required
     uri: Arn
 
+    /// Specifies the credentials required for the integration, if any. For AWS
+    /// IAM role-based credentials, specify the ARN of an appropriate IAM role.
+    /// If unspecified, credentials will default to resource-based permissions
+    /// that must be added manually to allow the API to access the resource.
     credentials: IamRoleArn
 
+    /// Specifies the integration's HTTP method type (for example, `POST`).
+    /// For Lambda function invocations, the value must be `POST`.
     @required
     httpMethod: String
 
+    /// Specifies how a request payload of unmapped content type is passed
+    /// through the integration request without modification.
     passThroughBehavior: PassThroughBehavior
 
+    /// Request payload content handling.
     contentHandling: ContentHandling
 
+    /// Integration timeouts between 50 ms and 29,000 ms.
     timeoutInMillis: Integer
 
+    /// The ID of a VpcLink for the private integration.
     connectionId: String
 
+    /// The type of the network connection to the integration endpoint. The
+    /// valid value is `INTERNET` for connections through the public routable
+    /// internet or `VPC_LINK` for private connections between API Gateway and
+    /// a network load balancer in a VPC. The default value is `INTERNET`.
     connectionType: ConnectionType
 
+    /// An API-specific tag group of related cached parameters.
     cacheNamespace: String
 
+    /// Specifies the format of the payload sent to an integration. Required
+    /// for HTTP APIs. For HTTP APIs, supported values for Lambda proxy
+    /// integrations are 1.0 and 2.0. For all other integrations, 1.0 is the
+    /// only supported value.
     payloadFormatVersion: String
 
+    /// A list of request parameter names whose values are to be cached.
     cacheKeyParameters: StringList
 
+    /// Specifies mappings from method request parameters to integration
+    /// request parameters.
     requestParameters: RequestParameters
 
+    /// Mapping templates for a request payload of specified media types.
     requestTemplates: Templates
 
+    /// Defines the method's responses and specifies desired parameter mappings
+    /// or payload mappings from integration responses to method responses.
     responses: IntegrationResponses
 }
 
@@ -84,12 +114,19 @@ structure integration {
     ]
 )
 structure mockIntegration {
+    /// Specifies how a request payload of unmapped content type is passed
+    /// through the integration request without modification.
     passThroughBehavior: PassThroughBehavior
 
+    /// Specifies mappings from method request parameters to integration
+    /// request parameters.
     requestParameters: RequestParameters
 
+    /// Mapping templates for a request payload of specified media types.
     requestTemplates: Templates
 
+    /// Defines the method's responses and specifies desired parameter mappings
+    /// or payload mappings from integration responses to method responses.
     responses: IntegrationResponses
 }
 
@@ -149,8 +186,17 @@ structure IntegrationResponse {
     /// correspond to a matching response in the OpenAPI Operation responses
     /// field.
     statusCode: String
+
+    /// Response payload content handling.
     contentHandling: ContentHandling
+
+    /// Specifies media type-specific mapping templates for the response's
+    /// payload.
     responseTemplates: Templates
+
+    /// Specifies parameter mappings for the response. Only the header and
+    /// body parameters of the integration response can be mapped to the header
+    /// parameters of the method.
     responseParameters: ResponseParameters
 }
 
@@ -217,14 +263,24 @@ map Templates {
 string Arn
 
 enum ConnectionType {
+    /// Connections through the public routable internet.
     INTERNET
+
+    /// Private connections between API Gateway and a network load balancer in
+    /// a VPC.
     VPC_LINK
 }
 
-/// Defines the contentHandling for the integration
+/// Defines the contentHandling for the integration.
 @private
 enum ContentHandling {
+    /// For converting a binary payload into a Base64-encoded string or
+    /// converting a text payload into a utf-8-encoded string or passing
+    /// through the text payload natively without modification
     CONVERT_TO_TEXT
+
+    /// For converting a text payload into Base64-decoded blob or passing
+    /// through a binary payload natively without modification.
     CONVERT_TO_BINARY
 }
 
@@ -239,15 +295,21 @@ enum ContentHandling {
 string IamRoleArn
 
 enum IntegrationType {
+    /// An integration with AWS Lambda functions or other AWS services such as
+    /// Amazon DynamoDB, Amazon Simple Notification Service or Amazon Simple
+    /// Queue Service.
     @enumValue("aws")
     AWS
 
+    /// An integration with AWS Lambda functions.
     @enumValue("aws_proxy")
     AWS_PROXY
 
+    /// An integration with an HTTP backend.
     @enumValue("http")
     HTTP
 
+    /// An integration with an HTTP backend.
     @enumValue("http_proxy")
     HTTP_PROXY
 }
@@ -255,12 +317,26 @@ enum IntegrationType {
 /// Defines the passThroughBehavior for the integration
 @private
 enum PassThroughBehavior {
+    /// Passes the method request body through the integration request to the
+    /// back end without transformation when no mapping template is defined in
+    /// the integration request. If a template is defined when this option is
+    /// selected, the method request of an unmapped content-type will be
+    /// rejected with an HTTP 415 Unsupported Media Type response.
     @enumValue("when_no_templates")
     WHEN_NO_TEMPLATES
 
+    /// Passes the method request body through the integration request to the
+    /// back end without transformation when the method request content type
+    /// does not match any content type associated with the mapping templates
+    /// defined in the integration request.
     @enumValue("when_no_match")
     WHEN_NO_MATCH
 
+    /// Rejects the method request with an HTTP 415 Unsupported Media Type
+    /// response when either the method request content type does not match any
+    /// content type associated with the mapping templates defined in the
+    /// integration request or no mapping template is defined in the integration
+    /// request.
     @enumValue("never")
     NEVER
 }
