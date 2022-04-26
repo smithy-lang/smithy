@@ -75,9 +75,10 @@ public final class TextIndex implements KnowledgeIndex {
         textInstances.add(TextInstance.createShapeInstance(shape));
 
         for (Trait trait : shape.getAllTraits().values()) {
-            Shape traitShape = model.expectShape(trait.toShapeId());
-            computeTextInstancesForAppliedTrait(trait.toNode(), trait, shape, textInstances,
-                    new ArrayDeque<>(), model, traitShape);
+            model.getShape(trait.toShapeId()).ifPresent(traitShape -> {
+                computeTextInstancesForAppliedTrait(trait.toNode(), trait, shape, textInstances,
+                        new ArrayDeque<>(), model, traitShape);
+            });
         }
     }
 
