@@ -122,3 +122,11 @@ The following changes to trait definitions are backward compatible:
 #. Removing a trait from the ``conflicts`` list.
 #. Removing the ``structurallyExclusive`` property.
 #. Marking a trait as deprecated.
+
+
+Using Smithy Diff
+=================
+
+`Smithy Diff <https://github.com/awslabs/smithy/tree/main/smithy-diff>`_ is a
+tool used to compare two Smithy models to check for backward compatibility
+issues. Smithy Diff can be run via a Java library or via the Smithy CLI.
