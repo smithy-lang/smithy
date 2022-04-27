@@ -78,59 +78,42 @@ structure TraitDiffRule {
 }
 
 @private
-@enum([
-    {
-        name: "UPDATE",
-        value: "update",
-        documentation: "Emit when a trait already existed, continues to exist, but it is modified."
-    },
-    {
-        name: "ADD",
-        value: "add",
-        documentation: "Emit when a trait or value is added that previously did not exist."
-    },
-    {
-        name: "REMOVE",
-        value: "remove",
-        documentation: "Emit when a trait or value is removed."
-    },
-    {
-        name: "PRESENCE",
-        value: "presence",
-        documentation: "Emit when a trait is added or removed."
-    },
-    {
-        name: "ANY",
-        value: "any",
-        documentation: "Emit when any change occurs."
-    },
-])
-string TraitChangeType
+enum TraitChangeType {
+    /// Emit when a trait already existed, continues to exist, but it is modified.
+    @enumValue("update")
+    UPDATE
+
+    /// Emit when a trait or value is added that previously did not exist
+    @enumValue("add")
+    ADD
+
+    /// Emit when a trait or value is removed.
+    @enumValue("remove")
+    REMOVE
+
+    /// Emit when a trait is added or removed.
+    @enumValue("presence")
+    PRESENCE
+
+    /// Emit when any change occurs.
+    @enumValue("any")
+    ANY
+}
 
 @private
-@enum([
-    {
-        name: "NOTE",
-        value: "NOTE",
-        documentation: "A minor infraction occurred."
-    },
-    {
-        name: "WARNING",
-        value: "WARNING",
-        documentation: "An infraction occurred that needs attention."
-    },
-    {
-        name: "DANGER",
-        value: "DANGER",
-        documentation: "An infraction occurred that must be resolved."
-    },
-    {
-        name: "ERROR",
-        value: "ERROR",
-        documentation: "An unrecoverable infraction occurred."
-    },
-])
-string TraitChangeSeverity
+enum TraitChangeSeverity {
+    /// A minor infraction occurred.
+    NOTE
+
+    /// An infraction occurred that needs attention.
+    WARNING
+
+    /// An infraction occurred that must be resolved.
+    DANGER
+
+    /// An unrecoverable infraction occurred.
+    ERROR
+}
 
 @private
 enum StructurallyExclusive {
