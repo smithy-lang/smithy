@@ -200,6 +200,7 @@ structure IntegrationResponse {
     responseParameters: ResponseParameters
 }
 
+@private
 list StringList {
     member: String
 }
@@ -262,6 +263,7 @@ map Templates {
 @private
 string Arn
 
+@private
 enum ConnectionType {
     /// Connections through the public routable internet.
     INTERNET
@@ -294,6 +296,7 @@ enum ContentHandling {
 @private
 string IamRoleArn
 
+@private
 enum IntegrationType {
     /// An integration with AWS Lambda functions or other AWS services such as
     /// Amazon DynamoDB, Amazon Simple Notification Service or Amazon Simple
