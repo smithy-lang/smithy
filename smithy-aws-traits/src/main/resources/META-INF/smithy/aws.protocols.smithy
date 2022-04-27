@@ -6,7 +6,6 @@ namespace aws.protocols
 /// HTTP binding traits.
 @protocolDefinition(
     traits: [
-        jsonName
         timestampFormat
         cors
         endpoint
@@ -14,22 +13,12 @@ namespace aws.protocols
     ]
 )
 @trait(selector: "service")
-structure awsJson1_0 {
-    /// The priority ordered list of supported HTTP protocol versions.
-    http: StringList
-
-    /// The priority ordered list of supported HTTP protocol versions that
-    /// are required when using event streams with the service. If not set,
-    /// this value defaults to the value of the `http` member. Any entry in
-    /// `eventStreamHttp` MUST also appear in `http`.
-    eventStreamHttp: StringList
-}
+structure awsJson1_0 with [HttpConfiguration] {}
 
 /// An RPC-based protocol that sends JSON payloads. This protocol does not use
 /// HTTP binding traits.
 @protocolDefinition(
     traits: [
-        jsonName
         timestampFormat
         cors
         endpoint
@@ -39,7 +28,12 @@ structure awsJson1_0 {
 @trait(
     selector: "service"
 )
-structure awsJson1_1 {
+structure awsJson1_1 with [HttpConfiguration] {}
+
+/// Contains HTTP protocol configuration for HTTP-based protocols.
+@private
+@mixin
+structure HttpConfiguration {
     /// The priority ordered list of supported HTTP protocol versions.
     http: StringList
 
@@ -154,16 +148,7 @@ structure httpChecksum {
     ]
 )
 @trait(selector: "service")
-structure restJson1 {
-    /// The priority ordered list of supported HTTP protocol versions.
-    http: StringList
-
-    /// The priority ordered list of supported HTTP protocol versions that
-    /// are required when using event streams with the service. If not set,
-    /// this value defaults to the value of the `http` member. Any entry in
-    /// `eventStreamHttp` MUST also appear in `http`.
-    eventStreamHttp: StringList
-}
+structure restJson1 with [HttpConfiguration] {}
 
 /// A RESTful protocol that sends XML in structured payloads.
 @deprecated
@@ -189,16 +174,7 @@ structure restJson1 {
     ]
 )
 @trait(selector: "service")
-structure restXml {
-    /// The priority ordered list of supported HTTP protocol versions.
-    http: StringList
-
-    /// The priority ordered list of supported HTTP protocol versions that
-    /// are required when using event streams with the service. If not set,
-    /// this value defaults to the value of the `http` member. Any entry in
-    /// `eventStreamHttp` MUST also appear in `http`.
-    eventStreamHttp: StringList
-
+structure restXml with [HttpConfiguration] {
     /// Disables the serialization wrapping of error properties in an 'Error'
     /// XML element.
     @deprecated
