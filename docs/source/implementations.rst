@@ -127,7 +127,7 @@ Build tooling
         protocol-agnostic Scala clients and servers.
 
 ---------------
-Code generators
+Client code generators
 ---------------
 
 The following code generators are in early development. There's no guarantee
@@ -141,23 +141,23 @@ of polish or that they work for all use cases.
       - Generator Language
       - Status
       - Description
-    * - `TypeScript client and server codegen <https://github.com/awslabs/smithy-typescript>`_
+    * - `TypeScript <https://github.com/awslabs/smithy-typescript>`_
       - Java
       - 0.x
       - TypeScript client and server code generation for Smithy.
-    * - `Go client codegen <https://github.com/awslabs/smithy-go>`_
+    * - `Go <https://github.com/awslabs/smithy-go>`_
       - Java
       - 0.x
       - Go client code generation for Smithy.
-    * - `Rust client codegen <https://github.com/awslabs/smithy-rs>`_
+    * - `Rust <https://github.com/awslabs/smithy-rs>`_
       - Kotlin
       - 0.x
       - Rust client code generation for Smithy.
-    * - `Kotlin client codegen <https://github.com/awslabs/smithy-kotlin>`_
+    * - `Kotlin <https://github.com/awslabs/smithy-kotlin>`_
       - Kotlin
       - 0.x
       - Kotlin client code generation for Smithy.
-    * - `Swift client codegen <https://github.com/awslabs/smithy-swift>`_
+    * - `Swift <https://github.com/awslabs/smithy-swift>`_
       - Kotlin
       - 0.x
       - Swift client code generation for Smithy.
@@ -166,6 +166,22 @@ of polish or that they work for all use cases.
       - 0.x
       - Scala client and server code generation for Smithy.
 
+----------------------
+Server code generators
+----------------------
+
+.. list-table::
+    :header-rows: 1
+    :widths: 50 15 10 25
+
+    * - Project
+      - Language
+      - Status
+      - Additional links
+    * - `Smithy Server Generator for TypeScript <https://github.com/awslabs/smithy-typescript>`_
+      - Java
+      - 0.x (Developer Preview)
+      - :doc:`Documentation <ts-ssdk/index>`
 
 ----------------
 Model converters
