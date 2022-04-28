@@ -1,5 +1,24 @@
 # Smithy Changelog
 
+## 1.22.0 (2022-04-28)
+
+### Features
+
+* Add `breakingChanges` property to `@trait`. ([#1193](https://github.com/awslabs/smithy/pull/1193))
+* Disallowed recursion through all required members. ([#1200](https://github.com/awslabs/smithy/pull/1200), [#1212](https://github.com/awslabs/smithy/pull/1212))
+* Added stack trace comment support to code writer. ([#1198](https://github.com/awslabs/smithy/pull/1198))
+* Implemented `Comparable` in `SourceLocation`. ([#1192](https://github.com/awslabs/smithy/pull/1192))
+
+### Documentation
+
+* Added documentation for Smithy Server Generator for TypeScript. ([#1119](https://github.com/awslabs/smithy/pull/1119))
+* Added link to Smithy Diff from Evolving Models guide. ([#1208](https://github.com/awslabs/smithy/pull/1208))
+* Fixed constraint traits doc regarding non-structure members. ([#1205](https://github.com/awslabs/smithy/pull/1205))
+* Fixed typo in `uniqueItems` warning. ([#1201](https://github.com/awslabs/smithy/pull/1201))
+* Clarified `@deprecated` javadocs in `smithy-codegen-core`. ([#1197](https://github.com/awslabs/smithy/pull/1197))
+* Clarified Selectors documentation. ([#1196](https://github.com/awslabs/smithy/pull/1196))
+* Clarified meaning of Language in implementations. ([#1191](https://github.com/awslabs/smithy/pull/1191))
+
 ## 1.21.0 (2022-04-13)
 
 ### Features
