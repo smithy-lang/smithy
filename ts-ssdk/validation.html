@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smithy Server Generator for TypeScript validation &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
+    <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/smithy.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Smithy Server Generator for TypeScript error handling" href="error-handling.html" />
+    <link rel="prev" title="Smithy Server Generator for TypeScript handlers" href="handlers.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="smithy-version" content="1.0">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                </a>
+                <span class="version-text">1.0</span>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../1.0/spec/index.html">Specifications</a></li>
+                <li class="site-page"><a href="../1.0/guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article class="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="index.html" accesskey="U">Smithy Server Generator for TypeScript</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="smithy-server-generator-for-typescript-validation">
+<h1><a href="#smithy-server-generator-for-typescript-validation">Smithy Server Generator for TypeScript validation</a></h1>
+<p>Smithy defines a set of <a class="reference internal" href="../1.0/spec/core/constraint-traits.html#constraint-traits"><span class="std std-ref">constraint traits</span></a> that can be used to restrict the set of allowed
+values for a shape. These traits do not change the type generated; the type will always correspond with the Smithy type.
+This allows Smithy models to evolve over time, so that model changes will not cause changes that break type checks.</p>
+<p>Smithy server SDKs will only validate input values against constraint traits. While output structures can have
+constraint traits applied, they will never be evaluated by the server SDK directly. This is because the failure would
+be too late in the process. At the point of validation, the server SDKs could only return an
+<a class="reference internal" href="error-handling.html#ts-ssdk-internal-failure-exception"><span class="std std-ref">InternalFailureException</span></a> to the user, and changes made by the operation
+implementation would neither be returned to the user nor rolled back.</p>
+<div class="section" id="default-validation">
+<h2><a href="#default-validation">Default validation</a></h2>
+<p>The server SDK validates inputs by default if every operation in the service has the
+<a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-validation-model/model/smithy.framework.validation.smithy#L9">smithy.framework#ValidationException</a> error associated. This can be accomplished by associating the error directly
+with the <a class="reference internal" href="../1.0/spec/core/model.html#service"><span class="std std-ref">service</span></a>, as well. In this mode, the constraint traits built into Smithy are applied to each
+input and an error is generated and automatically returned if any are violated. <code class="docutils literal notranslate"><span class="pre">ValidationException</span></code> contains an
+entry for each constraint violation encountered in the input, along with a pointer to the modeled member that failed
+validation, so that user interfaces can associate these validation errors with input more easily.</p>
+<p>When default validation is enabled and validation fails, the operation is not invoked, and there is no opportunity given
+to the developer to customize the format of the error, to suppress certain errors in certain conditions, or to apply
+constraints that are not supported directly by Smithy.</p>
+<p>If any operation is not associated with <code class="docutils literal notranslate"><span class="pre">smithy.framework#ValidationException</span></code>, the server SDK will refuse to generate
+code unless default validation is disabled.</p>
+</div>
+<div class="section" id="custom-validation">
+<h2><a href="#custom-validation">Custom validation</a></h2>
+<p>For advanced use-cases, developers can choose to customize the validation behavior of the server SDK. This requires
+setting <code class="docutils literal notranslate"><span class="pre">disableDefaultValidation</span></code> to <code class="docutils literal notranslate"><span class="pre">true</span></code> in <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> for the <code class="docutils literal notranslate"><span class="pre">typescript-ssdk-codegen</span></code> plugin:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
+  <span class="nt">&quot;typescript-ssdk-codegen&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;package&quot;</span><span class="p">:</span> <span class="s2">&quot;@aws-smithy/example&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;packageVersion&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0.0-alpha.1&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;disableDefaultValidation&quot;</span><span class="p">:</span> <span class="kc">true</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>When default validation is disabled, every input is still validated against the model's constraints. Instead of
+short-circuiting and returning an error, however, the server SDK instead requires the developer to decide what to do
+with the validation failures encountered. In order to support this, the server SDK adds a required function parameter
+of type <code class="docutils literal notranslate"><span class="pre">ValidationCustomizer</span></code> to every handler factory:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">export</span> <span class="kd">const</span> <span class="nx">getExampleOperationHandler</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">Context</span><span class="o">&gt;</span><span class="p">(</span>
+  <span class="nx">operation</span>: <span class="kt">Operation</span><span class="o">&lt;</span><span class="nx">ExampleOperationServerInput</span><span class="p">,</span> <span class="nx">ExampleOperationServerOutput</span><span class="p">,</span> <span class="nx">Context</span><span class="o">&gt;</span><span class="p">,</span>
+  <span class="nx">customizer</span>: <span class="kt">ValidationCustomizer</span><span class="o">&lt;</span><span class="s2">&quot;ExampleOperation&quot;</span><span class="o">&gt;</span>
+<span class="p">)</span><span class="o">:</span> <span class="nx">ServiceHandler</span><span class="o">&lt;</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">HttpRequest</span><span class="p">,</span> <span class="nx">HttpResponse</span><span class="o">&gt;</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</pre></div>
+</div>
+<p>Where <code class="docutils literal notranslate"><span class="pre">ValidationCustomizer</span></code> is an interface built in to <code class="docutils literal notranslate"><span class="pre">&#64;aws-smithy/server-common</span></code> for the purpose of customizing
+validation failures:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">export</span> <span class="kr">type</span> <span class="nx">ValidationFailure</span> <span class="o">=</span>
+  <span class="o">|</span> <span class="nx">EnumValidationFailure</span>
+  <span class="o">|</span> <span class="nx">LengthValidationFailure</span>
+  <span class="o">|</span> <span class="nx">PatternValidationFailure</span>
+  <span class="o">|</span> <span class="nx">RangeValidationFailure</span>
+  <span class="o">|</span> <span class="nx">RequiredValidationFailure</span>
+  <span class="o">|</span> <span class="nx">UniqueItemsValidationFailure</span><span class="p">;</span>
+
+<span class="k">export</span> <span class="kd">interface</span> <span class="nx">ValidationContext</span><span class="o">&lt;</span><span class="nx">O</span> <span class="k">extends</span> <span class="kt">string</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="nx">operation</span>: <span class="kt">O</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="kr">type</span> <span class="nx">ValidationCustomizer</span><span class="o">&lt;</span><span class="nx">O</span> <span class="k">extends</span> <span class="kt">string</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">(</span>
+  <span class="nx">context</span>: <span class="kt">ValidationContext</span><span class="o">&lt;</span><span class="nx">O</span><span class="o">&gt;</span><span class="p">,</span>
+  <span class="nx">failures</span>: <span class="kt">ValidationFailure</span><span class="p">[]</span>
+<span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">ServiceException</span> <span class="o">|</span> <span class="kc">undefined</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>If the developer-supplied <code class="docutils literal notranslate"><span class="pre">ValidationCustomizer</span></code> returns <code class="docutils literal notranslate"><span class="pre">undefined</span></code>, then the handler will continue executing the
+operation, essentially suppressing validation failures. While this is generally not a good idea, it can be useful in
+cases where new constraints are being evaluated for backwards compatibility, and the service wants to log certain
+validation failures instead of returning errors.</p>
+<p>The developer-supplied <code class="docutils literal notranslate"><span class="pre">ValidationCustomizer</span></code> can also return a code-generated exception extending
+<code class="docutils literal notranslate"><span class="pre">ServiceException</span></code>. This will cause the operation to not be executed, and an error rendered instead.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Server SDKs will not return an error from an operation without the error being associated with the service or
+operation. If you return a code-generated error that is not associated with the operation in question, the handler
+will render an <a class="reference internal" href="error-handling.html#ts-ssdk-internal-failure-exception"><span class="std std-ref">InternalFailureException</span></a> instead.</p>
+</div>
+<p>For example, consider a service that, for backwards compatibility purposes, needs to return a <code class="docutils literal notranslate"><span class="pre">BadInput</span></code> error:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@restJson1</span><span class="w"></span>
+<span class="kd">service</span><span class="nc"> WeatherService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2018-05-10&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">operations:</span><span class="w"> </span>[<span class="vc">GetForecast</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">errors:</span><span class="w"> </span>[<span class="vc">BadInput</span>]<span class="w"></span>
+}<span class="w"></span>
+
+<span class="nd">@httpError</span>(<span class="m">400</span>)<span class="w"></span>
+<span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> BadInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">message:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>After disabling default validation in <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
+  <span class="nt">&quot;typescript-ssdk-codegen&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;package&quot;</span><span class="p">:</span> <span class="s2">&quot;@example/weather-service&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;packageVersion&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0.0-alpha.1&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;disableDefaultValidation&quot;</span><span class="p">:</span> <span class="kc">true</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>the developer can still use Smithy's built in validation, but return <code class="docutils literal notranslate"><span class="pre">BadInput</span></code> instead of <code class="docutils literal notranslate"><span class="pre">ValidationException</span></code>:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span> <span class="nx">handler</span> <span class="o">=</span> <span class="nx">getGetForecastHandler</span><span class="p">(</span><span class="k">async</span> <span class="p">(</span><span class="nx">input</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">getForecast</span><span class="p">(</span><span class="nx">input</span><span class="p">),</span>
+    <span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">failures</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="ow">new</span> <span class="nx">BadInputError</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">failures</span><span class="p">.</span><span class="nx">length</span><span class="si">}</span><span class="sb"> bad inputs detected.`</span><span class="p">);</span>
+    <span class="p">};</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="handlers.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Smithy Server Generator for TypeScript handlers</a>
+                        
+                        <a href="error-handling.html" title="next chapter" class="next-page clearfix">Smithy Server Generator for TypeScript error handling →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="handlers.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
+                                
+                                <a href="error-handling.html" title="next chapter" class="next-page clearfix">Next →</a>
+                            </section>
+                            
+                            <ul>
+<li><a class="reference internal" href="#">Smithy Server Generator for TypeScript validation</a><ul>
+<li><a class="reference internal" href="#default-validation">Default validation</a></li>
+<li><a class="reference internal" href="#custom-validation">Custom validation</a></li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2021, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

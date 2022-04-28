@@ -65,25 +65,25 @@
                     
                     
   <div class="section" id="constraint-traits">
-<h1><a href="#constraint-traits"><span class="section-number">3. </span>Constraint traits</a></h1>
+<span id="id1"></span><h1><a href="#constraint-traits"><span class="section-number">3. </span>Constraint traits</a></h1>
 <p>Constraint traits are used to constrain the values that can be provided
 for a shape.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#enum-trait" id="id8"><code class="docutils literal notranslate"><span class="pre">enum</span></code> trait</a></li>
-<li><a class="reference internal" href="#idref-trait" id="id9"><code class="docutils literal notranslate"><span class="pre">idRef</span></code> trait</a></li>
-<li><a class="reference internal" href="#length-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">length</span></code> trait</a></li>
-<li><a class="reference internal" href="#pattern-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">pattern</span></code> trait</a></li>
-<li><a class="reference internal" href="#private-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">private</span></code> trait</a></li>
-<li><a class="reference internal" href="#range-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">range</span></code> trait</a></li>
-<li><a class="reference internal" href="#required-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">required</span></code> trait</a></li>
-<li><a class="reference internal" href="#uniqueitems-trait" id="id15"><code class="docutils literal notranslate"><span class="pre">uniqueItems</span></code> trait</a></li>
-<li><a class="reference internal" href="#trait-precedence" id="id16">Trait precedence</a></li>
+<li><a class="reference internal" href="#enum-trait" id="id9"><code class="docutils literal notranslate"><span class="pre">enum</span></code> trait</a></li>
+<li><a class="reference internal" href="#idref-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">idRef</span></code> trait</a></li>
+<li><a class="reference internal" href="#length-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">length</span></code> trait</a></li>
+<li><a class="reference internal" href="#pattern-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">pattern</span></code> trait</a></li>
+<li><a class="reference internal" href="#private-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">private</span></code> trait</a></li>
+<li><a class="reference internal" href="#range-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">range</span></code> trait</a></li>
+<li><a class="reference internal" href="#required-trait" id="id15"><code class="docutils literal notranslate"><span class="pre">required</span></code> trait</a></li>
+<li><a class="reference internal" href="#uniqueitems-trait" id="id16"><code class="docutils literal notranslate"><span class="pre">uniqueItems</span></code> trait</a></li>
+<li><a class="reference internal" href="#trait-precedence" id="id17">Trait precedence</a></li>
 </ul>
 </div>
 <div class="section" id="enum-trait">
-<span id="smithy-api-enum-trait"></span><span id="id1"></span><h2><a href="#enum-trait"><span class="section-number">3.1. </span><code class="docutils literal notranslate"><span class="pre">enum</span></code> trait</a></h2>
+<span id="smithy-api-enum-trait"></span><span id="id2"></span><h2><a href="#enum-trait"><span class="section-number">3.1. </span><code class="docutils literal notranslate"><span class="pre">enum</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Constrains the acceptable values of a string to a fixed set.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
@@ -231,7 +231,7 @@ failures.</p>
 </div></div>
 </div>
 <div class="section" id="idref-trait">
-<span id="smithy-api-idref-trait"></span><span id="id2"></span><h2><a href="#idref-trait"><span class="section-number">3.2. </span><code class="docutils literal notranslate"><span class="pre">idRef</span></code> trait</a></h2>
+<span id="smithy-api-idref-trait"></span><span id="id3"></span><h2><a href="#idref-trait"><span class="section-number">3.2. </span><code class="docutils literal notranslate"><span class="pre">idRef</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd><p>Indicates that a string value MUST contain a valid absolute
 <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape ID</span></a>.</p>
@@ -388,7 +388,7 @@ syntactically correct absolute shape ID.</li>
 </ul>
 </div>
 <div class="section" id="length-trait">
-<span id="id3"></span><h2><a href="#length-trait"><span class="section-number">3.3. </span><code class="docutils literal notranslate"><span class="pre">length</span></code> trait</a></h2>
+<span id="id4"></span><h2><a href="#length-trait"><span class="section-number">3.3. </span><code class="docutils literal notranslate"><span class="pre">length</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Constrains a shape to minimum and maximum number of elements or size.</dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:test(collection,</span> <span class="pre">map,</span> <span class="pre">string,</span> <span class="pre">blob,</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">:is(collection,</span> <span class="pre">map,</span> <span class="pre">string,</span> <span class="pre">blob))</span></code></p>
@@ -475,7 +475,7 @@ the corresponding shape:</p>
 </div></div>
 </div>
 <div class="section" id="pattern-trait">
-<span id="smithy-api-pattern-trait"></span><span id="id4"></span><h2><a href="#pattern-trait"><span class="section-number">3.4. </span><code class="docutils literal notranslate"><span class="pre">pattern</span></code> trait</a></h2>
+<span id="smithy-api-pattern-trait"></span><span id="id5"></span><h2><a href="#pattern-trait"><span class="section-number">3.4. </span><code class="docutils literal notranslate"><span class="pre">pattern</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Restricts string shape values to a specified regular expression.</dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:test(string,</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">string)</span></code></p>
@@ -531,7 +531,7 @@ For example, the regular expression <code class="docutils literal notranslate"><
 </div></div>
 </div>
 <div class="section" id="private-trait">
-<span id="smithy-api-private-trait"></span><span id="id5"></span><h2><a href="#private-trait"><span class="section-number">3.5. </span><code class="docutils literal notranslate"><span class="pre">private</span></code> trait</a></h2>
+<span id="smithy-api-private-trait"></span><span id="id6"></span><h2><a href="#private-trait"><span class="section-number">3.5. </span><code class="docutils literal notranslate"><span class="pre">private</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Prevents models defined in a different namespace from referencing the
 targeted shape.</dd>
@@ -544,7 +544,7 @@ access from within the model itself and SHOULD NOT influence code-generation
 of the targeted shape.</p>
 </div>
 <div class="section" id="range-trait">
-<span id="smithy-api-range-trait"></span><span id="id6"></span><h2><a href="#range-trait"><span class="section-number">3.6. </span><code class="docutils literal notranslate"><span class="pre">range</span></code> trait</a></h2>
+<span id="smithy-api-range-trait"></span><span id="id7"></span><h2><a href="#range-trait"><span class="section-number">3.6. </span><code class="docutils literal notranslate"><span class="pre">range</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Restricts allowed values of byte, short, integer, long, float, double,
 bigDecimal, and bigInteger shapes within an acceptable lower and upper
@@ -606,7 +606,7 @@ of the targeted numeric shape to which it is applied.</p>
 </div></div>
 </div>
 <div class="section" id="required-trait">
-<span id="smithy-api-required-trait"></span><span id="id7"></span><h2><a href="#required-trait"><span class="section-number">3.7. </span><code class="docutils literal notranslate"><span class="pre">required</span></code> trait</a></h2>
+<span id="smithy-api-required-trait"></span><span id="id8"></span><h2><a href="#required-trait"><span class="section-number">3.7. </span><code class="docutils literal notranslate"><span class="pre">required</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Marks a structure member as required, meaning a value for the member MUST
 be present and not set to <code class="docutils literal notranslate"><span class="pre">null</span></code>.</dd>

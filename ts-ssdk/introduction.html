@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Introduction to the Smithy Server Generator for TypeScript &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
+    <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/smithy.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Smithy Server Generator for TypeScript handlers" href="handlers.html" />
+    <link rel="prev" title="Smithy Server Generator for TypeScript" href="index.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="smithy-version" content="1.0">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                </a>
+                <span class="version-text">1.0</span>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../1.0/spec/index.html">Specifications</a></li>
+                <li class="site-page"><a href="../1.0/guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article class="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="index.html" accesskey="U">Smithy Server Generator for TypeScript</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="introduction-to-the-smithy-server-generator-for-typescript">
+<h1><a href="#introduction-to-the-smithy-server-generator-for-typescript">Introduction to the Smithy Server Generator for TypeScript</a></h1>
+<p>The Smithy Server Generator generates a lightweight server-side framework for request handling known as a server SDK,
+or SSDK. A server SDK enables server applications, also referred to as services, modeled in Smithy by performing the
+reverse of a client SDK: it deserializes the inputs and serializes the outputs of Smithy operations. Smithy services are
+always written model-first, which encourages developers to focus on their service's contract with its clients, instead
+of leaving the contract to be defined implicitly from their implementation choices.</p>
+<p>A Smithy model defines a <a class="reference internal" href="../1.0/spec/core/model.html#service"><span class="std std-ref">service</span></a> with one or more <a class="reference internal" href="../1.0/spec/core/model.html#operation"><span class="std std-ref">operations</span></a>. Each operation has an
+input shape and an output shape, as well as a set of associated <a class="reference internal" href="../1.0/spec/core/type-refinement-traits.html#error-trait"><span class="std std-ref">error</span></a> shapes. This structure is
+universally applicable to Smithy services, regardless of protocol. Server SDKs are generated from these models into the
+targeted programming language using the same structure, with interfaces called handlers serving as the entrypoint at
+both the service and operation level.</p>
+<div class="section" id="data-flow">
+<h2><a href="#data-flow">Data flow</a></h2>
+<p>Smithy services are generally request-reply services, the basic unit of work for which is one request, corresponding to
+an invocation of a modeled operation. An incoming request will first be serviced by an
+<a class="reference internal" href="supported-endpoints.html"><span class="doc">endpoint</span></a>, which is responsible for reading and writing bytes from the wire, and parsing and
+validating the low-level transport protocol, such as HTTP. These endpoints are separate from the server SDK;
+examples include Amazon API Gateway, Node.js's HTTP module, or Express.</p>
+<p>Next, the request passes through a shim layer, which converts the endpoint's request and response types into the ones
+used by the server SDK. These shim layers can be one of the prebuilt libraries published alongside the server SDK,
+or purpose built for an endpoint with no corresponding library. Since they are just type conversions, their logic should
+be easy to understand, and have no dependencies on any particular Smithy implementation detail or specific
+Smithy-modeled service.</p>
+<p>In this phase, a service developer also has an opportunity to create a <a class="reference internal" href="handlers.html#ts-ssdk-context"><span class="std std-ref">context</span></a> for the
+operation invocation. Contexts generally encapsulate out-of-band, unmodeled data, such as the result of authentication
+or pertinent metadata from the endpoint. Contexts are passed as-is to the operation implementation via the server SDK.</p>
+<p>After conversion, the service developer invokes the server SDK directly by passing the request to a
+<a class="reference internal" href="handlers.html"><span class="doc">handler</span></a>. This is the first time in request processing that the developer yields control of
+execution to the SSDK. All of the preceding steps must be written explicitly.</p>
+<p>The generated implementation of the handler first performs routing, which determines which operation the supplied
+request is intended to invoke. If the request does not correspond to any of the handler's known operations, an
+<a class="reference internal" href="error-handling.html#ts-ssdk-unknown-operation-exception"><span class="std std-ref">UnknownOperationException</span></a> is generated and returned by the handler. Next,
+the handler deserializes the HTTP request and parses it into an object of a type generated from the operation's input.
+If the input is unparseable, a <a class="reference internal" href="error-handling.html#ts-ssdk-serialization-exception"><span class="std std-ref">SerializationException</span></a> is generated and
+returned. Finally, the handler performs <a class="reference internal" href="validation.html"><span class="doc">input validation</span></a> on the deserialized object. If
+validation succeeds, the supplied operation implementation is invoked, yielding control back to the service developer.</p>
+<p>The developer's operation implementation receives the deserialized input object and the context supplied to the handler.
+It must return either an object conforming to the type of the output object, or throw an
+<a class="reference internal" href="error-handling.html"><span class="doc">error</span></a>. In either case, the result is serialized into a response appropriate to the
+service's protocol and returned from the handler, where the service developer must pass the response through the shim
+layer before passing the converted response back to the endpoint.</p>
+<p>This execution flow allows the service developer to choose not only their endpoint, but the programming model of their
+service. For instance, all of the shim conversion and handler invocation can be refactored into a convenience method,
+or the service developer could choose to incorporate their favorite open source middleware library, of which the server
+SDK would simply be one layer. It also allows open-ended request preprocessing and response postprocessing to happen
+independent of Smithy. For instance, a developer could add support for request or response compression, or a custom
+authentication and authorization framework could be plugged into the application before the server SDK is invoked,
+without having to fight against a more heavyweight abstraction.</p>
+</div>
+</div>
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="index.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Smithy Server Generator for TypeScript</a>
+                        
+                        <a href="handlers.html" title="next chapter" class="next-page clearfix">Smithy Server Generator for TypeScript handlers →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="index.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
+                                
+                                <a href="handlers.html" title="next chapter" class="next-page clearfix">Next →</a>
+                            </section>
+                            
+                            <ul>
+<li><a class="reference internal" href="#">Introduction to the Smithy Server Generator for TypeScript</a><ul>
+<li><a class="reference internal" href="#data-flow">Data flow</a></li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2021, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smithy Server Generator for TypeScript supported endpoints &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
+    <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/smithy.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Smithy Server Generator for TypeScript error handling" href="error-handling.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="smithy-version" content="1.0">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                </a>
+                <span class="version-text">1.0</span>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../1.0/spec/index.html">Specifications</a></li>
+                <li class="site-page"><a href="../1.0/guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article class="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="index.html" accesskey="U">Smithy Server Generator for TypeScript</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="smithy-server-generator-for-typescript-supported-endpoints">
+<h1><a href="#smithy-server-generator-for-typescript-supported-endpoints">Smithy Server Generator for TypeScript supported endpoints</a></h1>
+<p>An endpoint is a non-generated component, typically off-the-shelf, that is responsible for reading from and writing to
+the network, as well as handling the low-level protocol, such as HTTP. While the server SDK should be able to support
+any endpoint, some endpoints are supported directly via integration libraries sometimes referred to as shims.</p>
+<div class="section" id="amazon-api-gateway-rest-apis-and-aws-lambda">
+<h2><a href="#amazon-api-gateway-rest-apis-and-aws-lambda">Amazon API Gateway REST APIs and AWS Lambda</a></h2>
+<p>Support for API Gateway REST APIs fronting AWS Lambda is available via the NPM package
+<a class="reference external" href="https://www.npmjs.com/package/&#64;aws-smithy/server-apigateway">&#64;aws-smithy/server-apigateway</a>.</p>
+<p>Incoming events of the type <code class="docutils literal notranslate"><span class="pre">APIGatewayProxyEvent</span></code> from the <code class="docutils literal notranslate"><span class="pre">aws-lambda</span></code> package can be converted into the SDK's
+<code class="docutils literal notranslate"><span class="pre">HttpRequest</span></code> type by calling <code class="docutils literal notranslate"><span class="pre">convertEvent</span></code>. Request headers with the same key are combined into a single request
+header by joining values with <code class="docutils literal notranslate"><span class="pre">,</span></code>. Request bodies are decoded from base64 automatically if
+<code class="docutils literal notranslate"><span class="pre">APIGatewayProxyEvent.isBase64Encoded</span></code> is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p>
+<p>An <code class="docutils literal notranslate"><span class="pre">HttpResponse</span></code> returned from a server SDK handler can be converted into an <code class="docutils literal notranslate"><span class="pre">APIGatewayProxyResult</span></code> via the
+function <code class="docutils literal notranslate"><span class="pre">convertVersion1Response</span></code>. Structured response bodies are never base64 encoded.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Due to incompatibilities between the way that Smithy HTTP bindings and API Gateway HTTP APIs match requests
+to operations, use of HTTP APIs with the Smithy Server Generator for TypeScript is not recommended.</p>
+</div>
+</div>
+</div>
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="error-handling.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Smithy Server Generator for TypeScript error handling</a>
+                        
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="error-handling.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
+                                
+                            </section>
+                            
+                            <ul>
+<li><a class="reference internal" href="#">Smithy Server Generator for TypeScript supported endpoints</a><ul>
+<li><a class="reference internal" href="#amazon-api-gateway-rest-apis-and-aws-lambda">Amazon API Gateway REST APIs and AWS Lambda</a></li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2021, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smithy Server Generator for TypeScript error handling &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
+    <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/smithy.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Smithy Server Generator for TypeScript supported endpoints" href="supported-endpoints.html" />
+    <link rel="prev" title="Smithy Server Generator for TypeScript validation" href="validation.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="smithy-version" content="1.0">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                </a>
+                <span class="version-text">1.0</span>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../1.0/spec/index.html">Specifications</a></li>
+                <li class="site-page"><a href="../1.0/guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article class="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="index.html" accesskey="U">Smithy Server Generator for TypeScript</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="smithy-server-generator-for-typescript-error-handling">
+<h1><a href="#smithy-server-generator-for-typescript-error-handling">Smithy Server Generator for TypeScript error handling</a></h1>
+<p>Errors are structures associated with services and operations in the Smithy model and are used to indicate that the
+server encountered a problem during request processing. Structures with the error trait are code generated as subclasses
+of <code class="docutils literal notranslate"><span class="pre">Error</span></code>.</p>
+<p>If a code-generated <code class="docutils literal notranslate"><span class="pre">Error</span></code> is thrown from a handler implementation, and the <code class="docutils literal notranslate"><span class="pre">Error</span></code> is associated with the
+operation or service in the model, then the server SDK will serialize the Error according to the rules of the protocol.
+For instance, HTTP binding protocols set the status code of the response based on the <code class="docutils literal notranslate"><span class="pre">&#64;httpError</span></code> trait.</p>
+<p>If a non-code-generated Error, or a code-generated Error that is not associated with the operation or service in the
+model, is thrown from a handler, then a <em>synthetic</em> <code class="docutils literal notranslate"><span class="pre">InternalFailure</span></code> will be rendered as the result instead.</p>
+<div class="section" id="synthetic-errors">
+<h2><a href="#synthetic-errors">Synthetic errors</a></h2>
+<p><em>Synthetic errors</em> are errors that are not included in the Smithy model, but can still be thrown by the server SDK. In
+general, these errors are not expected to have corresponding code generated types on the client side. These errors fall
+into two categories: framework-level errors that are unavoidable, and errors that are associated with the low-level
+transport protocol, such as HTTP.</p>
+<p>For backwards compatibility purposes, the names of synthetic errors generally end with <code class="docutils literal notranslate"><span class="pre">Exception</span></code>.</p>
+<div class="section" id="unavoidable-errors">
+<h3><a href="#unavoidable-errors">Unavoidable errors</a></h3>
+<div class="section" id="internalfailureexception">
+<span id="ts-ssdk-internal-failure-exception"></span><h4><a href="#internalfailureexception">InternalFailureException</a></h4>
+<p>InternalFailureException is the catch-all exception for unexpected errors. It indicates either a bug in the framework or
+an exception being thrown from the handler that is not modeled. The server SDK will never include any details about
+internal failures, such as a meaningful exception message, to the caller, in order to prevent unintended information
+disclosure.</p>
+<p>Service developers wishing to throw an InternalFailureException to indicate a bug in their code can simply throw a
+built-in JavaScript error such as <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>.</p>
+</div>
+<div class="section" id="serializationexception">
+<span id="ts-ssdk-serialization-exception"></span><h4><a href="#serializationexception">SerializationException</a></h4>
+<p>SerializationException is thrown by the server SDK when a request is unparseable, or if there is a type mismatch between
+a member in the serialized request and the member in the Smithy model. Since these failures occur during the
+deserialization process, server developers have no ability to customize these messages, and they will short-circuit
+request processing before validation occurs.</p>
+</div>
+<div class="section" id="unknownoperationexception">
+<span id="ts-ssdk-unknown-operation-exception"></span><h4><a href="#unknownoperationexception">UnknownOperationException</a></h4>
+<p>UnknownOperationException is returned when the request cannot be matched to a handler known to the server SDK. This can
+happen either because the server SDK does not recognize the request protocol, which is common for internet-facing
+endpoints that receive robotic traffic, or if the request is in a known protocol but for an operation that is unknown to
+the handler. The latter case can indicate a misconfiguration, such as an operation-level handler being used incorrectly.</p>
+</div>
+</div>
+<div class="section" id="protocol-errors">
+<h3><a href="#protocol-errors"><a href="#unsupportedmediatypeexception">Protocol errors</a></h3>
+<div class="section" id="unsupportedmediatypeexception">
+<h4><a href="#unsupportedmediatypeexception">UnsupportedMediaTypeException</a></h4>
+<p>UnsupportedMediaTypeException represents HTTP error 415, returned when a request has a <code class="docutils literal notranslate"><span class="pre">Content-Type</span></code> that is not
+accepted for the protocol or does not match the <code class="docutils literal notranslate"><span class="pre">&#64;mediaType</span></code> trait in the model.</p>
+</div>
+<div class="section" id="notacceptableexception">
+<h4><a href="#notacceptableexception">NotAcceptableException</a></h4>
+<p>NotAcceptableException represents HTTP error 406, returned when a request's <code class="docutils literal notranslate"><span class="pre">Accept</span></code> header does not match the type used
+to serialize protocol responses, or when it does not match the response payload's <code class="docutils literal notranslate"><span class="pre">&#64;mediaType</span></code> value.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="validation.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Smithy Server Generator for TypeScript validation</a>
+                        
+                        <a href="supported-endpoints.html" title="next chapter" class="next-page clearfix">Smithy Server Generator for TypeScript supported endpoints →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="validation.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
+                                
+                                <a href="supported-endpoints.html" title="next chapter" class="next-page clearfix">Next →</a>
+                            </section>
+                            
+                            <ul>
+<li><a class="reference internal" href="#">Smithy Server Generator for TypeScript error handling</a><ul>
+<li><a class="reference internal" href="#synthetic-errors">Synthetic errors</a><ul>
+<li><a class="reference internal" href="#unavoidable-errors">Unavoidable errors</a><ul>
+<li><a class="reference internal" href="#internalfailureexception">InternalFailureException</a></li>
+<li><a class="reference internal" href="#serializationexception">SerializationException</a></li>
+<li><a class="reference internal" href="#unknownoperationexception">UnknownOperationException</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#protocol-errors">Protocol errors</a><ul>
+<li><a class="reference internal" href="#unsupportedmediatypeexception">UnsupportedMediaTypeException</a></li>
+<li><a class="reference internal" href="#notacceptableexception">NotAcceptableException</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2021, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>
