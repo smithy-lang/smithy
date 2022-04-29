@@ -16,14 +16,13 @@
 package software.amazon.smithy.model.selector;
 
 import java.util.AbstractList;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.Queue;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
@@ -377,30 +376,33 @@ public final class PathFinder {
         }
 
         List<Path> execute() {
-            Queue<Path> queue = new ArrayDeque<>();
-            for (Shape current : candidates) {
-                addRelationships(current, queue, null);
-                while (!queue.isEmpty()) {
-                    Path path = queue.poll();
-                    Shape shape = path.value.getShape();
-                    if (shape.getId().equals(startingShape.getId())) {
-                        results.add(path);
-                    } else {
-                        addRelationships(shape, queue, path);
-                    }
-                }
+            Set<ShapeId> visited = new HashSet<>();
+            for (Shape candidate : candidates) {
+                traverseUp(candidate, null, visited);
             }
 
             return results;
         }
 
-        private void addRelationships(Shape current, Queue<Path> queue, Path currentPath) {
-            for (Relationship relationship : provider.getNeighbors(current)) {
-                if (relationship.getDirection() == RelationshipDirection.DIRECTED) {
-                    if (filter.test(relationship)) {
-                        queue.add(new Path(relationship, currentPath));
+        private void traverseUp(Shape current, Path path, Set<ShapeId> visited) {
+            if (path != null && current.getId().equals(startingShape.getId())) {
+                // Add the path to the result set if the target shape was reached.
+                // But, don't add the path if no nodes have been traversed.
+                results.add(path);
+                return;
+            }
+
+            // Short-circuit recursion.
+            if (visited.add(current.getId())) {
+                for (Relationship relationship : provider.getNeighbors(current)) {
+                    if (relationship.getDirection() == RelationshipDirection.DIRECTED) {
+                        if (filter.test(relationship)) {
+                            traverseUp(relationship.getShape(), new Path(relationship, path), visited);
+                        }
                     }
                 }
+                // Let the less recursive addition remove the entry from the set.
+                visited.remove(current.getId());
             }
         }
     }
