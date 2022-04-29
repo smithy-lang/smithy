@@ -93,6 +93,32 @@ public class PathFinderTest {
     }
 
     @Test
+    public void doesNotFailOnMoreComplexRecursion() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("path-finder-recursion.json"))
+                .assemble()
+                .unwrap();
+        PathFinder finder = PathFinder.create(model);
+        ShapeId operation = ShapeId.from("smithy.example#Operation");
+
+        List<PathFinder.Path> result = finder.search(operation, "[trait|deprecated]");
+        List<String> resultStrings = result.stream().map(PathFinder.Path::toString).collect(Collectors.toList());
+
+        assertThat(resultStrings, containsInAnyOrder(
+            "[id|smithy.example#Operation] -[input]-> [id|smithy.example#OperationInput] -[member]-> [id|smithy.example#OperationInput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$structureMap] > [id|smithy.example#MapOfStructures] -[member]-> [id|smithy.example#MapOfStructures$value]",
+            "[id|smithy.example#Operation] -[input]-> [id|smithy.example#OperationInput] -[member]-> [id|smithy.example#OperationInput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$structureMap] > [id|smithy.example#MapOfStructures] -[member]-> [id|smithy.example#MapOfStructures$value] > [id|smithy.example#SimpleStructure] -[member]-> [id|smithy.example#SimpleStructure$crackle]",
+            "[id|smithy.example#Operation] -[input]-> [id|smithy.example#OperationInput] -[member]-> [id|smithy.example#OperationInput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$structureList] > [id|smithy.example#ListOfStructures] -[member]-> [id|smithy.example#ListOfStructures$member] > [id|smithy.example#SimpleStructure] -[member]-> [id|smithy.example#SimpleStructure$crackle]",
+            "[id|smithy.example#Operation] -[input]-> [id|smithy.example#OperationInput] -[member]-> [id|smithy.example#OperationInput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$nestedStructure] > [id|smithy.example#SimpleStructure] -[member]-> [id|smithy.example#SimpleStructure$crackle]",
+            "[id|smithy.example#Operation] -[input]-> [id|smithy.example#OperationInput] -[member]-> [id|smithy.example#OperationInput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$recursiveStructure] > [id|smithy.example#RecursiveStructure] -[member]-> [id|smithy.example#RecursiveStructure$bar]",
+            "[id|smithy.example#Operation] -[output]-> [id|smithy.example#OperationOutput] -[member]-> [id|smithy.example#OperationOutput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$structureMap] > [id|smithy.example#MapOfStructures] -[member]-> [id|smithy.example#MapOfStructures$value] > [id|smithy.example#SimpleStructure] -[member]-> [id|smithy.example#SimpleStructure$crackle]",
+            "[id|smithy.example#Operation] -[output]-> [id|smithy.example#OperationOutput] -[member]-> [id|smithy.example#OperationOutput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$structureMap] > [id|smithy.example#MapOfStructures] -[member]-> [id|smithy.example#MapOfStructures$value]",
+            "[id|smithy.example#Operation] -[output]-> [id|smithy.example#OperationOutput] -[member]-> [id|smithy.example#OperationOutput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$structureList] > [id|smithy.example#ListOfStructures] -[member]-> [id|smithy.example#ListOfStructures$member] > [id|smithy.example#SimpleStructure] -[member]-> [id|smithy.example#SimpleStructure$crackle]",
+            "[id|smithy.example#Operation] -[output]-> [id|smithy.example#OperationOutput] -[member]-> [id|smithy.example#OperationOutput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$nestedStructure] > [id|smithy.example#SimpleStructure] -[member]-> [id|smithy.example#SimpleStructure$crackle]",
+            "[id|smithy.example#Operation] -[output]-> [id|smithy.example#OperationOutput] -[member]-> [id|smithy.example#OperationOutput$payload] > [id|smithy.example#ComplexStructure] -[member]-> [id|smithy.example#ComplexStructure$recursiveStructure] > [id|smithy.example#RecursiveStructure] -[member]-> [id|smithy.example#RecursiveStructure$bar]"
+        ));
+    }
+
+    @Test
     public void emptyResultsWhenNothingMatchesSelector() {
         StringShape string = StringShape.builder().id("a.b#String").build();
         Model model = Model.builder().addShapes(string).build();
