@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.is;
 
 import java.util.Map;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
@@ -51,10 +51,15 @@ import software.amazon.smithy.model.traits.TimestampFormatTrait;
 
 public class HttpBindingIndexTest {
 
-    private static Model model = Model.assembler()
-            .addImport(HttpBindingIndex.class.getResource("http-index.json"))
-            .assemble()
-            .unwrap();
+    private static Model model;
+
+    @BeforeAll
+    private static void readModel() {
+        model = Model.assembler()
+                .addImport(HttpBindingIndex.class.getResource("http-index.json"))
+                .assemble()
+                .unwrap();
+    }
 
     @Test
     public void providesResponseCode() {

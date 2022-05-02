@@ -57,7 +57,7 @@ public class Upgrade1to2CommandTest {
     public static Stream<Arguments> source() throws Exception {
         Path start = Paths.get(Upgrade1to2CommandTest.class.getResource("upgrade/cases").toURI());
         return Files.walk(start)
-                .filter(path -> path.getFileName().toString().endsWith("enum-with-traits.v1.smithy"))
+                .filter(path -> path.getFileName().toString().endsWith(".v1.smithy"))
                 .map(path -> Arguments.of(path, path.getFileName().toString().replace(".v1.smithy", "")));
     }
 

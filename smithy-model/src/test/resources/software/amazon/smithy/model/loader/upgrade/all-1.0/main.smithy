@@ -28,3 +28,10 @@ structure Integers {
     @box
     nullable2: PrimitiveInteger
 }
+
+structure BlobPayload {
+    payload: StreamingBlob
+}
+
+@streaming
+blob StreamingBlob

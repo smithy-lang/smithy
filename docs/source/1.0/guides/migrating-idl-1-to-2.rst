@@ -119,6 +119,60 @@ Needs to be updated to:
     }
 
 
+Add the default trait to streaming blobs
+========================================
+
+Members that target a blob shape with the :ref:`streaming-trait` have always
+had an implicit default empty value. In IDL 2.0, that will become explicit.
+Any such members that are not already marked with the :ref:`required-trait`
+will now need to be marked with the :ref:`default-trait`.
+
+For example, the following model:
+
+.. code-block:: smithy
+
+    $version: "1.0"
+
+    namespace smithy.example
+
+    structure OptionalStream {
+        // This needs to be updated since it doesn't have the required or
+        // default trait already.
+        payload: StreamingBlob
+    }
+
+    structure RequiredStream {
+        // This doesn't need to be updated because it already has the required
+        // trait.
+        @required
+        payload: StreamingBlob
+    }
+
+    @streaming
+    blob StreamingBlob
+
+Needs to be updated to:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+
+    namespace smithy.example
+
+    structure OptionalStream {
+        @default
+        payload: StreamingBlob
+    }
+
+    structure RequiredStream {
+        @required
+        payload: StreamingBlob
+    }
+
+    @streaming
+    blob StreamingBlob
+
+
 Optional migration steps
 ========================
 

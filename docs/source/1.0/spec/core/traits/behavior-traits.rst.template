@@ -538,6 +538,10 @@ Summary
     large and thus should not be stored in memory or that the size is unknown
     at the start of the request.
 
+    .. warning::
+        Members targeting streaming blobs MUST be marked with the
+        :ref:`required-trait` or :ref:`default-trait`.
+
     When applied to a union, it indicates that shape represents an
     :ref:`event stream <event-streams>`.
 Trait selector::
