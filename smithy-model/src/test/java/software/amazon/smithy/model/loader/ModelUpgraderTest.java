@@ -45,6 +45,8 @@ public class ModelUpgraderTest {
         assertThat(ShapeId.from("smithy.example#Bytes$nonNull"), not(ShapeMatcher.memberIsNullable(result)));
         assertThat(ShapeId.from("smithy.example#Shorts$nonNull"), not(ShapeMatcher.memberIsNullable(result)));
         assertThat(ShapeId.from("smithy.example#Integers$nonNull"), addedDefaultTrait(result));
+
+        assertThat(ShapeId.from("smithy.example#BlobPayload$payload"), addedDefaultTrait(result));
     }
 
     @Test

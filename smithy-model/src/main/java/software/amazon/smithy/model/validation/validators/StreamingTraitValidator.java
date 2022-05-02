@@ -35,8 +35,10 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.ProtocolDefinitionTrait;
+import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.RequiresLengthTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -63,7 +65,19 @@ public final class StreamingTraitValidator extends AbstractValidator {
         validateStreamingTargets(model, events);
         validateAllEventStreamMembersTargetStructures(model, events);
         validateBlobTargetsArePayloads(model, events);
+        validateBlobTargetsAreNonOptional(model, events);
         return events;
+    }
+
+    private void validateBlobTargetsAreNonOptional(Model model, List<ValidationEvent> events) {
+        for (MemberShape member : model.toSet(MemberShape.class)) {
+            Shape target = model.expectShape(member.getTarget());
+            if (target.isBlobShape() && target.hasTrait(StreamingTrait.class)
+                    && !(member.hasTrait(RequiredTrait.class) || member.hasTrait(DefaultTrait.class))) {
+                events.add(error(member, "Members that target blobs marked with the `streaming` trait MUST also be "
+                        + "marked with the `required` or `default` trait."));
+            }
+        }
     }
 
     private void validateBlobTargetsArePayloads(Model model, List<ValidationEvent> events) {

@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -53,6 +54,7 @@ import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.SmithyIdlModelSerializer;
 import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.model.traits.AnnotationTrait;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.EnumTrait;
@@ -312,15 +314,13 @@ public final class Upgrade1to2Command implements Command {
         }
 
         private boolean hasSyntheticDefault(MemberShape shape) {
-            Shape target = completeModel.expectShape(shape.getTarget());
-            if (!(HAD_DEFAULT_VALUE_IN_1_0.contains(target.getType()) && shape.hasTrait(DefaultTrait.class))) {
-                return false;
-            }
+            Optional<SourceLocation> defaultLocation = shape.getTrait(DefaultTrait.class)
+                    .map(AnnotationTrait::getSourceLocation);
             // When Smithy injects the default trait, it sets the source
             // location equal to the shape's source location. This is
             // impossible in any other scenario, so we can use this info
             // to know whether it was injected or not.
-            return shape.getSourceLocation().equals(shape.expectTrait(DefaultTrait.class).getSourceLocation());
+            return defaultLocation.filter(location -> shape.getSourceLocation().equals(location)).isPresent();
         }
 
         @Override
