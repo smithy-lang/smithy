@@ -29,6 +29,7 @@ import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
@@ -134,8 +135,10 @@ final class ModelUpgrader {
 
     private boolean shouldV1MemberHaveDefaultTrait(ShapeType containerType, MemberShape member, Shape target) {
         return containerType == ShapeType.STRUCTURE
-            // Only when the targeted shape had a default value by default in v1.
-            && HAD_DEFAULT_VALUE_IN_1_0.contains(target.getType())
+            // Only when the targeted shape had a default value by default in v1 or if
+            // the member has the http payload trait and targets a streaming blob, which
+            // implies a default in 2.0
+            && (HAD_DEFAULT_VALUE_IN_1_0.contains(target.getType()) || isDefaultPayload(target))
             // Not when the targeted shape was one of the prelude types with the @box trait.
             // This needs special handling here because the @box trait was removed from these
             // prelude shapes in v2.
@@ -148,6 +151,10 @@ final class ModelUpgrader {
             && !member.hasTrait(BoxTrait.class)
             // Don't add a @default trait if the targeted shape was explicitly boxed in v1.
             && !target.hasTrait(BoxTrait.class);
+    }
+
+    private boolean isDefaultPayload(Shape target) {
+        return target.hasTrait(StreamingTrait.class) && target.isBlobShape();
     }
 
     private MemberShape.Builder createOrReuseBuilder(MemberShape member, MemberShape.Builder builder) {

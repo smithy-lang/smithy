@@ -713,6 +713,7 @@ Trait selector
     The ``httpPayload`` trait can be applied to ``structure`` members that
     target a ``string``, ``blob``, ``structure``, ``union``, ``document``,
     ``set``, ``map``, or ``list``.
+
 Value type
     Annotation trait.
 Conflicts with
