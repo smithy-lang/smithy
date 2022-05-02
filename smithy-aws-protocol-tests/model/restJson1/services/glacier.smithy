@@ -206,6 +206,7 @@ structure UploadArchiveInput {
     archiveDescription: string,
     @httpHeader("x-amz-sha256-tree-hash")
     checksum: string,
+    @default
     @httpPayload
     body: Stream,
 }
@@ -224,6 +225,7 @@ structure UploadMultipartPartInput {
     checksum: string,
     @httpHeader("Content-Range")
     range: string,
+    @default
     @httpPayload
     body: Stream,
 }

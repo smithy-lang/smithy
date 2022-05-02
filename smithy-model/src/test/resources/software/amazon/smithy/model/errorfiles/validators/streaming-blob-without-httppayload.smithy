@@ -29,6 +29,8 @@ structure StreamingOperationInput {}
 structure StreamingOperationOutput {
     @required
     streamId: String,
+
+    @default
     output: StreamingBlob,
 }
 
