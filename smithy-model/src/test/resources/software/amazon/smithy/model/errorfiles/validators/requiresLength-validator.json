@@ -17,7 +17,10 @@
             "type": "structure",
             "members": {
                 "Body": {
-                    "target": "ns.foo#StreamingBlob"
+                    "target": "ns.foo#StreamingBlob",
+                    "traits": {
+                        "smithy.api#default": {}
+                    }
                 }
             },
             "traits": {
@@ -28,7 +31,10 @@
             "type": "structure",
             "members": {
                 "Body": {
-                    "target": "ns.foo#StreamingBlob"
+                    "target": "ns.foo#StreamingBlob",
+                    "traits": {
+                        "smithy.api#default": {}
+                    }
                 }
             },
             "traits": {

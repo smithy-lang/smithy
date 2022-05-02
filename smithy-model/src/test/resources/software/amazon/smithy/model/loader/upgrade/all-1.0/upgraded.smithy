@@ -28,3 +28,11 @@ structure Integers {
 
     nullable2: Integer
 }
+
+structure BlobPayload {
+    @default
+    payload: StreamingBlob
+}
+
+@streaming
+blob StreamingBlob
