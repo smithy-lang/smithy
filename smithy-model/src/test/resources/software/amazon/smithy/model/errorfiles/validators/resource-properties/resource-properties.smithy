@@ -64,6 +64,7 @@ structure AddBookRequest {
     authors: AuthorList
 
     @idempotencyToken
+    @notProperty
     token: String
 
     @property(name: "tagsSillyName")
@@ -108,6 +109,7 @@ structure UpdateBookRequest {
     inventoryRefreshDate: Date
 
     @idempotencyToken
+    @notProperty
     token: String
 
     @property(name: "tagsSillyName")
