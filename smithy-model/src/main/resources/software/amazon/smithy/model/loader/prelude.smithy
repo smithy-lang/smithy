@@ -353,6 +353,7 @@ structure idempotent {}
     structurallyExclusive: "member",
     breakingChanges: [{change: "remove"}]
 )
+@notProperty
 structure idempotencyToken {}
 
 /// Shapes marked with the internal trait are meant only for internal use and

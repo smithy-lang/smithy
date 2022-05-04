@@ -39,6 +39,19 @@
                 }
             }
         },
+        "ns.foo#Invalid3": {
+            "type": "resource",
+            "identifiers": {
+                "c": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "properties": {
+                "c": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
         "ns.foo#MyString": {
             "type": "string"
         }

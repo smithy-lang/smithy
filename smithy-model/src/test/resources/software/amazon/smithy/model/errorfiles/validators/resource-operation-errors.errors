@@ -1,0 +1,3 @@
+[ERROR] smithy.example#DeleteResource: This operation does not form a valid instance operation when bound to resource `smithy.example#Resource`. All of the identifiers of the resource were not implicitly or explicitly bound to the input of the operation. Expected the following identifier bindings: [required member named `bookId` that targets `smithy.example#ISBN`]. Found the following identifier bindings: [] | ResourceIdentifierBinding
+[ERROR] smithy.example#Resource: Resource shape's `price` property is not mapped to an input or output member for any lifecycle operation. | ResourceOperationInputOutput
+[NOTE] smithy.example#Price: The string shape is not connected to from any service shape. | UnreferencedShape

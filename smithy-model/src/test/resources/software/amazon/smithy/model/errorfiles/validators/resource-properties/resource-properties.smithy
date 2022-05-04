@@ -2,8 +2,8 @@ $version: "2.0"
 
 namespace smithy.example
 
-/// Serves as a somewhat complete and valid example of a simple
-/// service model with complete defined properties.
+/// Serves as a somewhat complete and valid example of a
+/// service model with resource defined properties.
 service BookStore {
     version: "2022-04-01",
     resources: [
