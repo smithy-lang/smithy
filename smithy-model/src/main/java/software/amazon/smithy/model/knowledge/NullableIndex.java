@@ -22,11 +22,13 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.DefaultTrait;
+import software.amazon.smithy.model.traits.InputTrait;
+import software.amazon.smithy.model.traits.NullableTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
 
 /**
- * An index that checks if a shape can be set to null.
+ * An index that checks if a member is nullable.
  */
 public class NullableIndex implements KnowledgeIndex {
 
@@ -41,28 +43,90 @@ public class NullableIndex implements KnowledgeIndex {
     }
 
     /**
-     * Checks if the given shape is optional.
-     *
-     * @param shape Shape or shape ID to check.
-     * @return Returns true if the shape is optional.
+     * Defines the type of model consumer to assume when determining if
+     * a member should be considered nullable or always present.
      */
-    public final boolean isNullable(ToShapeId shape) {
-        Model m = Objects.requireNonNull(model.get());
-        Shape s = m.expectShape(shape.toShapeId());
-        MemberShape member = s.asMemberShape().orElse(null);
-        // Non-members should always be considered optional.
-        return member == null || isMemberOptional(member);
+    public enum CheckMode {
+        /**
+         * A client, or any other kind of non-authoritative model consumer
+         * that must honor the {@link InputTrait} and {@link NullableTrait}.
+         */
+        CLIENT,
+
+        /**
+         * A server, or any other kind of authoritative model consumer
+         * that does not honor the {@link InputTrait} and {@link NullableTrait}.
+         *
+         * <p>This mode should only be used for model consumers that have
+         * perfect knowledge of the model because they are built and deployed
+         * in lock-step with model updates. A client does not have perfect
+         * knowledge of a model because it has to be generated, deployed,
+         * and then migrated to when model updates are released. However, a
+         * server is required to be updated in order to implement newly added
+         * model components.
+         */
+        SERVER
     }
 
     /**
-     * Checks if a member is optional.
+     * Checks if the given shape is optional using {@link CheckMode#CLIENT}.
+     *
+     * @param shape Shape or shape ID to check.
+     * @return Returns true if the shape is nullable.
+     */
+    public final boolean isNullable(ToShapeId shape) {
+        return isNullable(shape, CheckMode.CLIENT);
+    }
+
+    /**
+     * Checks if the given shape is nullable.
+     *
+     * @param shape Shape or shape ID to check.
+     * @param checkMode The mode used when checking if the shape is considered nullable.
+     * @return Returns true if the shape is nullable.
+     */
+    public final boolean isNullable(ToShapeId shape, CheckMode checkMode) {
+        Model m = Objects.requireNonNull(model.get());
+        Shape s = m.expectShape(shape.toShapeId());
+        MemberShape member = s.asMemberShape().orElse(null);
+        // Non-members should always be considered nullable.
+        return member == null || isMemberNullable(member, checkMode);
+    }
+
+    /**
+     * Checks if a member is nullable using {@link CheckMode#CLIENT}.
      *
      * @param member Member to check.
+     * @return Returns true if the member is optional in
+     *  non-authoritative consumers of the model like clients.
+     * @see #isMemberNullable(MemberShape, CheckMode)
+     */
+    public boolean isMemberNullable(MemberShape member) {
+        return isMemberNullable(member, CheckMode.CLIENT);
+    }
+
+    /**
+     * Checks if a member is nullable.
+     *
+     * <p>A {@code checkMode} parameter is required to declare what kind of
+     * model consumer is checking if the member is optional. The authoritative
+     * consumers like servers do not need to honor the {@link InputTrait} or
+     * {@link NullableTrait}, while non-authoritative consumers like clients
+     * must honor these traits.
+     *
+     * @param member Member to check.
+     * @param checkMode The mode used when checking if the member is considered nullable.
      * @return Returns true if the member is optional.
      */
-    public boolean isMemberOptional(MemberShape member) {
+    public boolean isMemberNullable(MemberShape member, CheckMode checkMode) {
         Model m = Objects.requireNonNull(model.get());
         Shape container = m.expectShape(member.getContainer());
+
+        // Client mode honors the nullable and input trait.
+        if (checkMode == CheckMode.CLIENT
+                && (member.hasTrait(NullableTrait.class) || container.hasTrait(InputTrait.class))) {
+            return true;
+        }
 
         switch (container.getType()) {
             case STRUCTURE:

@@ -249,11 +249,15 @@ structure Message {
 The `@default` trait is defined in Smithy as:
 
 ```
+/// Provides a structure member with a default zero value.
 @trait(
     selector: """
         structure > member
-        :not(> :test(union, structure > :test([trait|required])))"""",
-    conflicts: [nullable, required]
+        :not(> :test(union, structure > :test([trait|required])))""",
+    conflicts: [nullable, required],
+    // The default trait can never be removed. It can only be added if the
+    // member was previously marked as required.
+    breakingChanges: [{change: "remove"}]
 )
 structure default {}
 ```
