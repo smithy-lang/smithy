@@ -473,46 +473,28 @@ Trait selector
     *Member of a structure*
 Value type
     Annotation trait.
+Conflicts with
+    :ref:`default-trait`
 
-The required trait applies to structure data, operation input, output, and
-errors. When a member that is part of the input of an operation is marked as
-required, a client MUST provide a value for the member when calling the
-operation. When a member that is part of the output of an operation or an
-error is marked as required, a service MUST provide a value for the member
-in a response.
+.. important:: The required trait isn't just for inputs
 
-.. tabs::
+    The required trait indicates that value MUST always be present for a
+    member. It applies to all shapes, including inputs of operations, outputs
+    of operations, and errors.
 
-    .. code-tab:: smithy
+.. code-block:: smithy
 
-        structure MyStructure {
-            @required
-            foo: FooString
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyStructure": {
-                    "type": "structure",
-                    "members": {
-                        "foo": {
-                            "target": "smithy.example#FooString",
-                            "traits": {
-                                "smithy.api#required": {}
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    structure MyStructure {
+        @required
+        foo: FooString
+    }
 
 .. seealso::
 
-   :ref:`recommended-trait`
-   :ref:`default-trait`
+   * :ref:`optionality`
+   * :ref:`recommended-trait`
+   * :ref:`default-trait`
+   * :ref:`nullable-trait`
 
 
 .. smithy-trait:: smithy.api#uniqueItems
