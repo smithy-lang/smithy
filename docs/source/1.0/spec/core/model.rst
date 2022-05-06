@@ -963,27 +963,86 @@ member in the above example is ``smithy.example#MyStructure$foo``.
 Structure member optionality
 ----------------------------
 
-Structure members can use the :ref:`required-trait` and :ref:`default-trait`
-to influence the member's optionality, which can have an impact on the code
-generated from the model.
+The optionality of a structure member is determined by evaluating the
+following traits:
 
-Code generated types for structures SHOULD use the
-:ref:`default <default-trait>` and :ref:`required <required-trait>` traits to
-provide member accessors that always return non-null values.
+* :ref:`required-trait`
+* :ref:`default-trait`
+* :ref:`nullable-trait`
+* :ref:`input-trait`
 
-- When the :ref:`default-trait` is present on a member, the corresponding
-  accessor SHOULD always return a non-null value by defaulting missing members
-  with their :ref:`zero values <default-values>`.
-- When the :ref:`required-trait` is present on a member, the corresponding
-  accessor SHOULD always return a non-null value.
-- An explicitly provided default zero value and a member that defaults to the
-  zero value are indistinguishable.
-- Because the :ref:`required-trait` can be backward-compatibly removed from
-  members of structures marked with the :ref:`input-trait` (that is, the input
-  of an operation), code generators MUST generate code that does not break if
-  the required trait is removed from these members. For example, this could
-  mean generating these shapes as a kind of builder pattern or using all
-  optional members.
+Whether the consumer of the model is authoritative is also taken into account
+(for example, servers vs clients).
+
+Authoritative model consumer (servers)
+    An *authoritative model consumer* has perfect knowledge of the model and is
+    updated in lock-step as the model is updated. For example, a server that
+    implements a Smithy ``service`` shape is an authoritative model consumer.
+    Authoritative model consumers determine the optionality of a structure
+    member using the following steps:
+
+    1. When the :ref:`default-trait` is present on a member, the corresponding
+       accessor SHOULD always return a value by defaulting missing members with
+       their :ref:`zero values <default-values>`.
+
+       .. code-block:: smithy
+
+           structure DataWrapper {
+               @default // <- This member has a default and is always present
+               data: String
+           }
+
+       .. important::
+
+           An explicitly provided default zero value and a member that defaults to
+           the zero value are indistinguishable.
+    2. When the :ref:`required-trait` is present on a member, the corresponding
+       accessor SHOULD always return a value.
+
+       .. code-block:: smithy
+
+           structure DataWrapper {
+               @required // <- This member has no default, but is always present
+               data: String
+           }
+Non-authoritative model consumer (clients)
+    A *non-authoritative model consumer* can become out of sync with a model and
+    does not have perfect knowledge of the model. For example, clients do not have
+    perfect knowledge of a model because older clients do not know about updates
+    made to a model until the client is updated.
+
+    Non-authoritative model consumers adhere to the same rules as authoritative
+    model consumers but they MUST first check for the :ref:`input-trait` trait
+    and :ref:`nullable-trait` trait:
+
+    1. When the member is in a structure marked with the :ref:`input-trait`,
+       all members of the structure MUST be considered optional regardless of
+       if they are marked with the ``required`` trait or ``default`` trait.
+       The ``required`` trait MAY be backward compatibly removed from members
+       of structures marked with the ``input`` trait, and the ``default-trait``
+       is not required to replace the ``required`` trait.
+
+       .. code-block:: smithy
+
+           @input // <- Makes all members optional to client code generators
+           structure PutData {
+               @required
+               id: String
+
+               @default
+               data: String
+           }
+    2. When the :ref:`nullable-trait` is present on a member, the member MUST be
+       considered optional regardless of if the member is also marked with the
+       ``required`` trait.
+
+       .. code-block:: smithy
+
+           structure DataWrapper {
+               @required
+               @nullable // <- Makes the member optional to client code generators
+               data: String
+           }
 
 
 .. _union:

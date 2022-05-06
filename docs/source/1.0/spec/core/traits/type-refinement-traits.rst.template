@@ -19,7 +19,7 @@ the type of a shape.
 =================
 
 Summary
-    Marks a structure member as having a default, zero value.
+    Provides a structure member with a default zero value.
 Trait selector
     ``structure > member :not(> :test(union, structure > :test([trait|required])))``
 
@@ -27,6 +27,9 @@ Trait selector
     required members.
 Value type
     Annotation trait.
+Conflicts with
+    :ref:`nullable-trait`
+    :ref:`required-trait`
 
 The default trait can be applied to structure members to indicate that the targeted
 shape has a default, zero value.
@@ -136,6 +139,65 @@ best-practices:
    bad outcome because what the service perceived as a backward compatible
    change (i.e., replacing the :ref:`required-trait` with the default trait)
    could break previously generated clients.
+
+
+.. smithy-trait:: smithy.api#nullable
+.. _nullable-trait:
+
+``nullable`` trait
+==================
+
+Summary
+    Requires that non-authoritative generators like clients treat a structure
+    member as nullable regardless of if the member is also marked with the
+    :ref:`required-trait`.
+Trait selector
+    structure > member
+Value type
+    Annotation trait
+Conflicts with
+    :ref:`default-trait`
+
+What is required today might not be required tomorrow. For cases when a service
+isn't sure if a member will be required forever, they can mark a ``@required``
+member as ``@nullable`` to ensure that non-authoritative consumers of the model
+treat the member as optional (for example, clients MUST treat such members as
+optional while servers could treat them as always present because they have
+perfect knowledge of their own model). The ``@required`` trait can be backward
+compatibly removed from a member marked as ``@nullable`` (and not replaced with
+the ``@default`` trait). This causes the ``@required`` trait to function as
+server-side validation rather than something that changes generated code.
+
+For example, ``foo`` in the following structure is considered a validation
+constraint rather than a type refinement trait:
+
+.. code-block:: smithy
+
+    structure Foo {
+        @required
+        @nullable
+        foo: String
+    }
+
+.. note::
+
+    Structure members in Smithy are automatically considered nullable. For example,
+    the following structure:
+
+    .. code-block:: smithy
+
+        structure Foo {
+            baz: String
+        }
+
+    Is equivalent to the following structure:
+
+    .. code-block:: smithy
+
+        @nullable
+        structure Foo {
+            baz: String
+        }
 
 
 .. smithy-trait:: smithy.api#error

@@ -108,14 +108,6 @@ structure clientEndpointDiscovery {
 )
 structure clientEndpointDiscoveryId {}
 
-/// Indicates that a structure member SHOULD be unconditionally generated as
-/// optional in clients regardless of if the member is required or has a
-/// default value. This trait allows documentation generators to indicate that
-/// a member is required by the service, even if it is not reflected in
-/// generated client code.
-@trait(selector: "structure > member")
-structure clientOptional {}
-
 /// Defines a service, resource, or operation as operating on the control plane.
 @trait(
     selector: ":test(service, resource, operation)"
