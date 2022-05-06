@@ -13,31 +13,26 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.aws.traits;
+package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.AnnotationTrait;
 
-/**
- * Indicates that a structure member should be treated as optional in
- * generated AWS clients, ignoring any required or default traits.
- */
-public final class ClientOptionalTrait extends AnnotationTrait {
-    public static final ShapeId ID = ShapeId.from("aws.api#clientOptional");
+public final class NullableTrait extends AnnotationTrait {
+    public static final ShapeId ID = ShapeId.from("smithy.api#nullable");
 
-    public ClientOptionalTrait(ObjectNode node) {
+    public NullableTrait(ObjectNode node) {
         super(ID, node);
     }
 
-    public ClientOptionalTrait() {
+    public NullableTrait() {
         this(Node.objectNode());
     }
 
-    public static final class Provider extends AnnotationTrait.Provider<ClientOptionalTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<NullableTrait> {
         public Provider() {
-            super(ID, ClientOptionalTrait::new);
+            super(ID, NullableTrait::new);
         }
     }
 }

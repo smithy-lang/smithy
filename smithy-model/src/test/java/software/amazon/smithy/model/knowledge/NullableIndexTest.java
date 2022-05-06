@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,19 +15,29 @@
 
 package software.amazon.smithy.model.knowledge;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.BoxTrait;
+import software.amazon.smithy.model.traits.DefaultTrait;
+import software.amazon.smithy.model.traits.InputTrait;
+import software.amazon.smithy.model.traits.NullableTrait;
+import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
 
 public class NullableIndexTest {
@@ -146,5 +156,75 @@ public class NullableIndexTest {
                 // documents are nullable as structure members
                 {model, structure.getMember("e").get().getId().toString(), true},
         });
+    }
+
+    @ParameterizedTest
+    @MethodSource("nullableTraitTests")
+    public void takesNullableIntoAccount(
+            NullableIndex.CheckMode mode,
+            boolean foo,
+            boolean bar,
+            boolean baz,
+            boolean bam,
+            boolean boo
+    ) {
+        StringShape str = StringShape.builder().id("smithy.example#Str").build();
+        StructureShape struct = StructureShape.builder()
+                .id("smithy.example#Struct")
+                // This member is technically invalid, but nullable takes precedent here
+                // over the default trait.
+                .addMember("foo", str.getId(), b -> b.addTrait(new NullableTrait())
+                        .addTrait(new DefaultTrait())
+                        .build())
+                .addMember("bar", str.getId(), b -> b.addTrait(new NullableTrait())
+                        .addTrait(new RequiredTrait())
+                        .build())
+                .addMember("baz", str.getId(), b -> b.addTrait(new NullableTrait()).build())
+                .addMember("bam", str.getId(), b -> b.addTrait(new RequiredTrait()).build())
+                .addMember("boo", str.getId(), b -> b.addTrait(new DefaultTrait()).build())
+                .build();
+
+        Model model = Model.builder().addShapes(str, struct).build();
+        NullableIndex nullableIndex = NullableIndex.of(model);
+
+        assertThat(nullableIndex.isMemberNullable(struct.getMember("foo").get(), mode), is(foo));
+        assertThat(nullableIndex.isMemberNullable(struct.getMember("bar").get(), mode), is(bar));
+        assertThat(nullableIndex.isMemberNullable(struct.getMember("baz").get(), mode), is(baz));
+        assertThat(nullableIndex.isMemberNullable(struct.getMember("bam").get(), mode), is(bam));
+        assertThat(nullableIndex.isMemberNullable(struct.getMember("boo").get(), mode), is(boo));
+    }
+
+    public static Stream<Arguments> nullableTraitTests() {
+        return Stream.of(
+            Arguments.of(NullableIndex.CheckMode.CLIENT, true, true, true, false, false),
+            Arguments.of(NullableIndex.CheckMode.SERVER, false, false, true, false, false)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("inputTraitTests")
+    public void takesInputTraitIntoAccount(NullableIndex.CheckMode mode, boolean foo, boolean bar, boolean baz) {
+        StringShape str = StringShape.builder().id("smithy.example#Str").build();
+        StructureShape struct = StructureShape.builder()
+                .id("smithy.example#Struct")
+                .addTrait(new InputTrait())
+                .addMember("foo", str.getId(), b -> b.addTrait(new DefaultTrait()).build())
+                .addMember("bar", str.getId(), b -> b.addTrait(new RequiredTrait()).build())
+                .addMember("baz", str.getId())
+                .build();
+
+        Model model = Model.builder().addShapes(str, struct).build();
+        NullableIndex nullableIndex = NullableIndex.of(model);
+
+        assertThat(nullableIndex.isMemberNullable(struct.getMember("foo").get(), mode), is(foo));
+        assertThat(nullableIndex.isMemberNullable(struct.getMember("bar").get(), mode), is(bar));
+        assertThat(nullableIndex.isMemberNullable(struct.getMember("baz").get(), mode), is(baz));
+    }
+
+    public static Stream<Arguments> inputTraitTests() {
+        return Stream.of(
+            Arguments.of(NullableIndex.CheckMode.CLIENT, true, true, true),
+            Arguments.of(NullableIndex.CheckMode.SERVER, false, false, true)
+        );
     }
 }
