@@ -485,10 +485,10 @@ compatibility rules.
 Required members of a structure marked with the `@input` trait are implicitly
 considered `@nullable`. The `@input` trait special-cases a structure as the
 input of a single operation that cannot be referenced in any other place in the
-model. This allows structures marked with the `@input` trait have more relaxed
-backward compatibility guarantees. It is backward compatible to remove the
-`@required` trait from top-level members of structures marked with the `@input`
-trait, and the `@required` trait does not need to be replaced with the
+model. This allows structures marked with the `@input` trait to have more
+relaxed backward compatibility guarantees. It is backward compatible to remove
+the `@required` trait from top-level members of structures marked with the
+`@input` trait, and the `@required` trait does not need to be replaced with the
 `@default` trait (though this is allowed as well). This gives service teams the
 ability to remove the `@required` trait from top-level input members and loosen
 requirements without risking breaking previously generated clients.
