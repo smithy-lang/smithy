@@ -111,12 +111,12 @@ public abstract class SymbolWriter<W extends SymbolWriter<W, I>, I extends Impor
     public interface Factory<W extends SymbolWriter<W, ? extends ImportContainer>>
             extends BiFunction<String, String, W> {
         /**
-         * Creates a {@code SymbolWriter} of type {@code T} for the given
+         * Creates a {@code SymbolWriter} of type {@code W} for the given
          * filename and namespace.
          *
          * @param filename  Non-null filename of the writer being created.
          * @param namespace Non-null namespace associated with the file (possibly empty string).
-         * @return Returns the created writer of type {@code T}.
+         * @return Returns the created writer of type {@code W}.
          */
         W apply(String filename, String namespace);
     }
@@ -158,7 +158,7 @@ public abstract class SymbolWriter<W extends SymbolWriter<W, I>, I extends Impor
     }
 
     /**
-     * Sets a string used to relativize Symbols formatted using the default {@code T}
+     * Sets a string used to relativize Symbols formatted using the default {@code W}
      * implementation used by {@code SymbolWriter} in the <em>current state</em>.
      *
      * <p>In many programming languages, when referring to types in the same namespace as
@@ -166,12 +166,12 @@ public abstract class SymbolWriter<W extends SymbolWriter<W, I>, I extends Impor
      * to be fully-qualified. They can just reference the unqualified type name. By setting
      * a value for {@code relativizeSymbols}, if the result of {@link Symbol#getNamespace()}
      * is equal to {@code relativizeSymbols}, then the unqualified name of the symbol is
-     * written to the {@code SymbolWriter} when the default implementation of {@code T}
+     * written to the {@code SymbolWriter} when the default implementation of {@code W}
      * is written. Symbols that refer to types in other namespaces will write the fully
      * qualified type.
      *
      * <p><strong>Note:</strong> This method may have no effect if a programming language
-     * does not use namespaces or concepts like namespaces or if {@code T} has been
+     * does not use namespaces or concepts like namespaces or if {@code W} has been
      * overridden with another implementation.
      *
      * @param relativizeSymbols The package name, namespace, etc to relativize symbols with.
