@@ -37,8 +37,8 @@ public final class BlobShape extends SimpleShape implements ToSmithyBuilder<Blob
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.blobShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.blobShape(this);
     }
 
     @Override

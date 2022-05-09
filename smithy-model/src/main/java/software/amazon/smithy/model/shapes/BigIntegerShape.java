@@ -37,8 +37,8 @@ public final class BigIntegerShape extends NumberShape implements ToSmithyBuilde
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.bigIntegerShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.bigIntegerShape(this);
     }
 
     @Override

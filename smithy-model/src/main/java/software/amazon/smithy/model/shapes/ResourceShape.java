@@ -82,8 +82,8 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.resourceShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.resourceShape(this);
     }
 
     @Override

@@ -55,8 +55,8 @@ public final class MemberShape extends Shape implements ToSmithyBuilder<MemberSh
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.memberShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.memberShape(this);
     }
 
     @Override

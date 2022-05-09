@@ -37,8 +37,8 @@ public final class BooleanShape extends SimpleShape implements ToSmithyBuilder<B
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.booleanShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.booleanShape(this);
     }
 
     @Override

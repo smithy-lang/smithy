@@ -61,8 +61,8 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.mapShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.mapShape(this);
     }
 
     @Override

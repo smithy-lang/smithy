@@ -55,8 +55,8 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.serviceShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.serviceShape(this);
     }
 
     @Override

@@ -56,11 +56,11 @@ public class NodeValidationVisitorTest {
     public void nodeValidationVisitorTest(String target, String value, String[] errors) {
         ShapeId targetId = ShapeId.from(target);
         Node nodeValue = Node.parse(value);
-        NodeValidationVisitor cases = NodeValidationVisitor.builder()
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
                 .value(nodeValue)
                 .model(MODEL)
                 .build();
-        List<ValidationEvent> events = MODEL.expectShape(targetId).accept(cases);
+        List<ValidationEvent> events = MODEL.expectShape(targetId).accept(visitor);
 
         if (errors != null) {
             List<String> messages = events.stream().map(ValidationEvent::getMessage).collect(Collectors.toList());
@@ -291,55 +291,55 @@ public class NodeValidationVisitorTest {
 
     @Test
     public void canSuccessfullyValidateTimestampsAsUnixTimestamps() {
-        NodeValidationVisitor cases = NodeValidationVisitor.builder()
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
                 .value(Node.from(1234))
                 .model(MODEL)
                 .timestampValidationStrategy(TimestampValidationStrategy.EPOCH_SECONDS)
                 .build();
         List<ValidationEvent> events = MODEL
                 .expectShape(ShapeId.from("ns.foo#TimestampList$member"))
-                .accept(cases);
+                .accept(visitor);
 
         assertThat(events, empty());
     }
 
     @Test
     public void canUnsuccessfullyValidateTimestampsAsUnixTimestamps() {
-        NodeValidationVisitor cases = NodeValidationVisitor.builder()
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
                 .value(Node.from("foo"))
                 .model(MODEL)
                 .timestampValidationStrategy(TimestampValidationStrategy.EPOCH_SECONDS)
                 .build();
         List<ValidationEvent> events = MODEL
                 .expectShape(ShapeId.from("ns.foo#TimestampList$member"))
-                .accept(cases);
+                .accept(visitor);
 
         assertThat(events, not(empty()));
     }
 
     @Test
     public void doesNotAllowNullByDefault() {
-        NodeValidationVisitor cases = NodeValidationVisitor.builder()
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
                 .value(Node.nullNode())
                 .model(MODEL)
                 .build();
         List<ValidationEvent> events = MODEL
                 .expectShape(ShapeId.from("smithy.api#String"))
-                .accept(cases);
+                .accept(visitor);
 
         assertThat(events, not(empty()));
     }
 
     @Test
     public void canConfigureToSupportNull() {
-        NodeValidationVisitor cases = NodeValidationVisitor.builder()
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
                 .value(Node.nullNode())
                 .model(MODEL)
                 .allowBoxedNull(true)
                 .build();
         List<ValidationEvent> events = MODEL
                 .expectShape(ShapeId.from("smithy.api#String"))
-                .accept(cases);
+                .accept(visitor);
 
         assertThat(events, empty());
     }

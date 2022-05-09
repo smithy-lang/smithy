@@ -37,8 +37,8 @@ public final class ByteShape extends NumberShape implements ToSmithyBuilder<Byte
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.byteShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.byteShape(this);
     }
 
     @Override
