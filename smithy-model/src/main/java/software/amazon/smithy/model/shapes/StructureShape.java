@@ -40,8 +40,8 @@ public final class StructureShape extends NamedMembersShape implements ToSmithyB
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.structureShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.structureShape(this);
     }
 
     @Override

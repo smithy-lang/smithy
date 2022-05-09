@@ -37,8 +37,8 @@ public final class IntegerShape extends NumberShape implements ToSmithyBuilder<I
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.integerShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.integerShape(this);
     }
 
     @Override

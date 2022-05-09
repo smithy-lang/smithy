@@ -37,8 +37,8 @@ public final class ListShape extends CollectionShape implements ToSmithyBuilder<
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.listShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.listShape(this);
     }
 
     @Override

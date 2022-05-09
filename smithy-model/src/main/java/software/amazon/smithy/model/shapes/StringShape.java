@@ -37,8 +37,8 @@ public final class StringShape extends SimpleShape implements ToSmithyBuilder<St
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.stringShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.stringShape(this);
     }
 
     @Override

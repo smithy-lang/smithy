@@ -37,8 +37,8 @@ public final class SetShape extends CollectionShape implements ToSmithyBuilder<S
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.setShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.setShape(this);
     }
 
     @Override

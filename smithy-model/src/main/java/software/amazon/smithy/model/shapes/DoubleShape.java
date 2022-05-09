@@ -37,8 +37,8 @@ public final class DoubleShape extends NumberShape implements ToSmithyBuilder<Do
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.doubleShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.doubleShape(this);
     }
 
     @Override

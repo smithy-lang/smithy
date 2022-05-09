@@ -37,8 +37,8 @@ public final class UnionShape extends NamedMembersShape implements ToSmithyBuild
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.unionShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.unionShape(this);
     }
 
     @Override

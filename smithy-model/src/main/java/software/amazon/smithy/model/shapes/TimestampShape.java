@@ -36,8 +36,8 @@ public final class TimestampShape extends SimpleShape implements ToSmithyBuilder
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.timestampShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.timestampShape(this);
     }
 
     @Override

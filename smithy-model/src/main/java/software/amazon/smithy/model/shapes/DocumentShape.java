@@ -37,8 +37,8 @@ public final class DocumentShape extends SimpleShape implements ToSmithyBuilder<
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.documentShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.documentShape(this);
     }
 
     @Override

@@ -107,10 +107,10 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
      * Dispatches the shape to the appropriate {@link ShapeVisitor} method.
      *
      * @param <R> Return type of the accept.
-     * @param cases NeighborVisitor to use.
+     * @param visitor ShapeVisitor to use.
      * @return Returns the result.
      */
-    public abstract <R> R accept(ShapeVisitor<R> cases);
+    public abstract <R> R accept(ShapeVisitor<R> visitor);
 
     /**
      * Get the {@link ShapeId} of the shape.

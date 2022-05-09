@@ -37,8 +37,8 @@ public final class FloatShape extends NumberShape implements ToSmithyBuilder<Flo
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.floatShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.floatShape(this);
     }
 
     @Override

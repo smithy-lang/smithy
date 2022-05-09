@@ -55,8 +55,8 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.operationShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.operationShape(this);
     }
 
     @Override
