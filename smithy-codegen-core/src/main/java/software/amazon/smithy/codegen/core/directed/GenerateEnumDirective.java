@@ -25,7 +25,7 @@ import software.amazon.smithy.model.traits.EnumTrait;
  *
  * @param <C> CodegenContext type.
  * @param <S> Codegen settings type.
- * @see DirectedCodegen#generateUnion
+ * @see DirectedCodegen#generateEnumShape
  */
 public final class GenerateEnumDirective<C extends CodegenContext<S, ?>, S> extends ShapeDirective<Shape, C, S> {
 

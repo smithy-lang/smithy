@@ -23,7 +23,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
  * Directive used to create a {@link SymbolProvider}.
  *
  * @param <S> Codegen settings type.
- * @see DirectedCodegen#createContext
+ * @see DirectedCodegen#createSymbolProvider
  */
 public final class CreateSymbolProviderDirective<S> extends Directive<S> {
     CreateSymbolProviderDirective(Model model, S settings, ServiceShape service) {
