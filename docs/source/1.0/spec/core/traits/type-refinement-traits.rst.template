@@ -28,13 +28,13 @@ Trait selector
 Value type
     Annotation trait.
 Conflicts with
-    :ref:`nullable-trait`
-    :ref:`required-trait`
+    * :ref:`nullable-trait`
+    * :ref:`required-trait`
 
 The default trait can be applied to structure members to indicate that the targeted
 shape has a default, zero value.
 
-The following example defines a structure with a `@default` "title" member that
+The following example defines a structure with a ``@default`` "title" member that
 has a default zero value:
 
 .. code-block:: smithy
@@ -43,6 +43,14 @@ has a default zero value:
         @default
         title: String // defaults to ""
     }
+
+.. seealso::
+
+   * :ref:`structure-nullability`
+   * :ref:`required-trait`
+   * :ref:`nullable-trait`
+   * :ref:`input-trait`
+
 
 .. _default-values:
 
@@ -164,12 +172,13 @@ member as ``@nullable`` to ensure that non-authoritative consumers of the model
 treat the member as optional (for example, clients MUST treat such members as
 optional while servers could treat them as always present because they have
 perfect knowledge of their own model). The ``@required`` trait can be backward
-compatibly removed from a member marked as ``@nullable`` (and not replaced with
-the ``@default`` trait). This causes the ``@required`` trait to function as
-server-side validation rather than something that changes generated code.
+compatibly removed from a member marked as ``@nullable`` (and does not need to
+be replaced with the ``@default`` trait). This causes the ``@required`` trait
+to function as server-side validation rather than something that changes
+generated code.
 
-For example, ``foo`` in the following structure is considered a validation
-constraint rather than a type refinement trait:
+For example, the ``@required`` trait on ``foo`` in the following structure is
+considered a validation constraint rather than a type refinement trait:
 
 .. code-block:: smithy
 
@@ -198,6 +207,13 @@ constraint rather than a type refinement trait:
         structure Foo {
             baz: String
         }
+
+.. seealso::
+
+   * :ref:`structure-nullability`
+   * :ref:`required-trait`
+   * :ref:`default-trait`
+   * :ref:`input-trait`
 
 
 .. smithy-trait:: smithy.api#error
@@ -277,13 +293,16 @@ in Java).
 ===============
 
 Summary
-    Specializes a structure for use only as the input of a single operation.
+    Specializes a structure for use only as the input of a single operation,
+    providing relaxed backward compatibility requirements for structure
+    members.
 Trait selector
     ``structure``
 Value type
     Annotation trait.
 Conflicts with
-    :ref:`output-trait`, :ref:`error-trait`
+    * :ref:`output-trait`
+    * :ref:`error-trait`
 
 Structure shapes marked with the ``@input`` trait MUST adhere to the
 following constraints:
@@ -297,6 +316,19 @@ following constraints:
 
 These constraints allow tooling to specialize operation input shapes in
 ways that would otherwise require complex model transformations.
+
+.. rubric:: Impact on backward compatibility
+
+Required members of a structure marked with the ``@input`` trait are implicitly
+considered :ref:`nullable <nullable-trait>`. It is backward compatible to
+remove the ``@required`` trait from top-level members of structures marked with
+the ``@input`` trait, and the ``@required`` trait does not need to be replaced
+with the ``@default`` trait (though this is allowed as well). This gives
+service teams the ability to remove the ``@required`` trait from top-level
+input members and loosen requirements without risking breaking previously
+generated clients.
+
+.. seealso:: :ref:`structure-nullability`
 
 
 .. smithy-trait:: smithy.api#output
