@@ -958,91 +958,155 @@ by ``$``, followed by the member name. For example, the shape ID of the ``foo``
 member in the above example is ``smithy.example#MyStructure$foo``.
 
 
-.. _optionality:
+.. _structure-nullability:
 
-Structure member optionality
+Structure member nullability
 ----------------------------
 
-The optionality of a structure member is determined by evaluating the
-following traits:
+Whether a structure member is nullable is based on if the model consumer
+is authoritative (e.g., a server) or non-authoritative (e.g., a client) and
+determined by evaluating the :ref:`required-trait`, :ref:`default-trait`,
+:ref:`nullable-trait`, and :ref:`input-trait`.
 
-* :ref:`required-trait`
-* :ref:`default-trait`
-* :ref:`nullable-trait`
-* :ref:`input-trait`
 
-Whether the consumer of the model is authoritative is also taken into account
-(for example, servers vs clients).
+Requiring members
+~~~~~~~~~~~~~~~~~
 
-Authoritative model consumer (servers)
-    An *authoritative model consumer* has perfect knowledge of the model and is
-    updated in lock-step as the model is updated. For example, a server that
-    implements a Smithy ``service`` shape is an authoritative model consumer.
-    Authoritative model consumers determine the optionality of a structure
-    member using the following steps:
+The :ref:`required-trait` indicates that a value MUST always be present for a
+member in order to create a valid structure. Model transformations like code
+generators can generate accessors for these members that always return a value.
 
-    1. When the :ref:`default-trait` is present on a member, the corresponding
-       accessor SHOULD always return a value by defaulting missing members with
-       their :ref:`zero values <default-values>`.
+.. code-block:: smithy
 
-       .. code-block:: smithy
+    structure TimeSpan {
+        // years must always be present to make a TimeSpan
+        @required
+        years: Integer
+    }
 
-           structure DataWrapper {
-               @default // <- This member has a default and is always present
-               data: String
-           }
 
-       .. important::
+Default zero values
+~~~~~~~~~~~~~~~~~~~
 
-           An explicitly provided default zero value and a member that defaults to
-           the zero value are indistinguishable.
-    2. When the :ref:`required-trait` is present on a member, the corresponding
-       accessor SHOULD always return a value.
+A structure member can be given a default zero value using the
+:ref:`default-trait`.
 
-       .. code-block:: smithy
+.. code-block:: smithy
 
-           structure DataWrapper {
-               @required // <- This member has no default, but is always present
-               data: String
-           }
-Non-authoritative model consumer (clients)
-    A *non-authoritative model consumer* can become out of sync with a model and
-    does not have perfect knowledge of the model. For example, clients do not have
-    perfect knowledge of a model because older clients do not know about updates
-    made to a model until the client is updated.
+    structure TimeSpan {
+        @required
+        years: Integer
 
-    Non-authoritative model consumers adhere to the same rules as authoritative
-    model consumers but they MUST first check for the :ref:`input-trait` trait
-    and :ref:`nullable-trait` trait:
+        // Defaults to 0
+        @default
+        days: Integer
+    }
 
-    1. When the member is in a structure marked with the :ref:`input-trait`,
-       all members of the structure MUST be considered optional regardless of
-       if they are marked with the ``required`` trait or ``default`` trait.
-       The ``required`` trait MAY be backward compatibly removed from members
-       of structures marked with the ``input`` trait, and the ``default-trait``
-       is not required to replace the ``required`` trait.
+.. important::
 
-       .. code-block:: smithy
+   An explicitly provided default zero value and a member that defaults to
+   the zero value are indistinguishable.
 
-           @input // <- Makes all members optional to client code generators
-           structure PutData {
-               @required
-               id: String
+.. seealso::
 
-               @default
-               data: String
-           }
-    2. When the :ref:`nullable-trait` is present on a member, the member MUST be
-       considered optional regardless of if the member is also marked with the
-       ``required`` trait.
+    :ref:`default-values` for a list of shapes and their default zero values
 
-       .. code-block:: smithy
 
-           structure DataWrapper {
-               @required
-               @nullable // <- Makes the member optional to client code generators
-               data: String
-           }
+Evolving requirements and members
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Business requirements change; what is required today might not be required
+tomorrow. Smithy provides several ways to make it so that required members no
+longer need to be provided without breaking previously generated code.
+
+.. rubric:: Migrating ``@required`` to ``@default``
+
+If a ``required`` member can no longer be required due to a change in business
+requirements, the ``required`` trait MAY be removed and replaced with the
+:ref:`default-trait`. The member is still considered always present to tools
+like code generators, but instead of requiring the value to be provided by an
+end-user, a default zero value is automatically provided if missing. For
+example, the previous ``TimeSpan`` model can be backward compatibly changed to:
+
+.. code-block:: smithy
+
+    structure TimeSpan {
+        // @required is replaced with @default
+        @default
+        years: Integer
+
+        @default
+        days: Integer
+    }
+
+.. rubric:: Requiring members to be nullable
+
+The :ref:`nullable-trait` is used to indicate that a member that is currently
+required by authoritative model consumers like servers MAY become completely
+optional in the future. Non-authoritative model consumers like client code
+generators MUST treat the member as if it is not required and has no default
+zero value.
+
+For example, the following structure:
+
+.. code-block:: smithy
+
+    structure UserData {
+        @required
+        @nullable
+        summary: String
+    }
+
+Can be backward-compatibly updated to remove the ``required`` trait:
+
+.. code-block:: smithy
+
+    structure UserData {
+        summary: String
+    }
+
+Replacing the ``required`` and ``nullable`` trait with the ``default`` trait
+is *not* a backward compatible change because model consumers would transition
+from assuming the value is nullable to assuming that it is always present due
+to a default zero value.
+
+.. note::
+
+    Authoritative model consumers MAY choose to ignore the ``nullable`` trait.
+
+.. rubric:: Using the ``@input`` trait for more model evolution options
+
+The :ref:`input-trait` specializes a structure as the input of a single
+operation. Transitioning top-level members from ``required`` to optional is
+allowed for such structures because it is loosening an input constraint.
+Non-authoritative model consumers like clients MUST treat each member as
+nullable regardless of the ``required`` or ``default`` trait. This means that
+it is a backward compatible change to remove the ``required`` trait from a
+member of a structure marked with the ``input`` trait, and the ``default``
+trait does not need to be added in its place.
+
+The special ":=" syntax for the operation input property automatically applies
+the ``input`` trait:
+
+.. code-block::
+
+    operation PutTimeSpan {
+        input := {
+            @required
+            years: String
+        }
+    }
+
+Because of the ``input`` trait, the operation can be updated to remove the
+``required`` trait without breaking things like previously generated clients:
+
+.. code-block::
+
+    operation PutTimeSpan {
+        input := {
+            years: String
+        }
+    }
 
 
 .. _union:
