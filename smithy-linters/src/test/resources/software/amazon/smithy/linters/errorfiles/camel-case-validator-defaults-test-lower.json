@@ -56,18 +56,6 @@
                 "lowerCamelCase": {
                     "target": "ns.foo#Foo"
                 },
-                "UpperCamelCase": {
-                    "target": "ns.foo#Foo"
-                },
-                "SecondUpperCamelCase": {
-                    "target": "ns.foo#Foo"
-                },
-                "ThirdUpperCamelCase": {
-                    "target": "ns.foo#Foo"
-                },
-                "FourthUpperCamelCase": {
-                    "target": "ns.foo#Foo"
-                },
                 "snake_case": {
                     "target": "ns.foo#Foo"
                 }
@@ -108,20 +96,6 @@
     },
     "metadata": {
         "validators": [
-            {
-                "name": "CamelCase",
-                "id": "LowerCamelCase",
-                "configuration": {
-                    "memberNames": "lower"
-                }
-            },
-            {
-                "name": "CamelCase",
-                "id": "UpperCamelCase",
-                "configuration": {
-                    "memberNames": "upper"
-                }
-            },
             {
                 "name": "CamelCase",
                 "id": "DefaultCamelCase"
