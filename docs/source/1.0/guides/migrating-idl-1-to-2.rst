@@ -72,7 +72,7 @@ your models.
 
 .. seealso::
 
-    :ref:`optionality`
+    :ref:`structure-nullability`
 
 
 Replace Primitive prelude shape targets

@@ -491,10 +491,11 @@ Conflicts with
 
 .. seealso::
 
-   * :ref:`optionality`
-   * :ref:`recommended-trait`
+   * :ref:`structure-nullability`
    * :ref:`default-trait`
    * :ref:`nullable-trait`
+   * :ref:`input-trait`
+   * :ref:`recommended-trait`
 
 
 .. smithy-trait:: smithy.api#uniqueItems

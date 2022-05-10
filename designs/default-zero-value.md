@@ -390,8 +390,8 @@ The primary use case of the `@nullable` trait is to indicate that while a
 member is _currently_ defined as `@required`, the service reserves the right to
 later remove the `@required` trait and make the member optional in the future.
 
-For example, `foo` in the following structure is considered a validation
-constraint rather than a type refinement trait:
+For example, the `@required` trait on `foo` in the following structure is
+considered a validation constraint rather than a type refinement trait:
 
 ```
 structure Foo {
