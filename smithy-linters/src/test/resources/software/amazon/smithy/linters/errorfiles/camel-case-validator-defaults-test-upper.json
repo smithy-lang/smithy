@@ -15,11 +15,6 @@
         },
         "ns.foo#lowerStructureTrait": {
             "type": "structure",
-            "members": {
-                "lowerCamelCase": {
-                    "target": "ns.foo#Foo"
-                }
-            },
             "traits": {
                 "smithy.api#trait": {}
             }
@@ -59,15 +54,6 @@
                 "UpperCamelCase": {
                     "target": "ns.foo#Foo"
                 },
-                "SecondUpperCamelCase": {
-                    "target": "ns.foo#Foo"
-                },
-                "ThirdUpperCamelCase": {
-                    "target": "ns.foo#Foo"
-                },
-                "FourthUpperCamelCase": {
-                    "target": "ns.foo#Foo"
-                },
                 "snake_case": {
                     "target": "ns.foo#Foo"
                 }
@@ -76,7 +62,7 @@
         "foo.protocols#fooJson1_1": {
             "type": "structure",
             "members": {
-                "foo": {
+                "Foo": {
                     "target": "smithy.api#String"
                 }
             },
@@ -94,7 +80,7 @@
         "foo.auth#v1_1": {
             "type": "structure",
             "members": {
-                "name": {
+                "Name": {
                     "target": "smithy.api#String"
                 }
             },
@@ -108,20 +94,6 @@
     },
     "metadata": {
         "validators": [
-            {
-                "name": "CamelCase",
-                "id": "LowerCamelCase",
-                "configuration": {
-                    "memberNames": "lower"
-                }
-            },
-            {
-                "name": "CamelCase",
-                "id": "UpperCamelCase",
-                "configuration": {
-                    "memberNames": "upper"
-                }
-            },
             {
                 "name": "CamelCase",
                 "id": "DefaultCamelCase"
