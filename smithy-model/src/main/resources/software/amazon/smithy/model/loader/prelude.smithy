@@ -633,10 +633,7 @@ structure range {
 string pattern
 
 /// Marks a structure member as required, meaning a value for the member MUST be present.
-@trait(
-    selector: "structure > member",
-    breakingChanges: [{change: "add"}]
-)
+@trait(selector: "structure > member")
 structure required {}
 
 /// Indicates that a structure member SHOULD be set.
