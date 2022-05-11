@@ -1,6 +1,6 @@
 [DANGER] ns.foo#InvalidTrait: string trait definition, `InvalidTrait`, is not lower camel case | DefaultCamelCase
 [DANGER] ns.foo#bam: string shape name, `bam`, is not upper camel case | DefaultCamelCase
 [DANGER] ns.foo#snake_case: string shape name, `snake_case`, is not upper camel case | DefaultCamelCase
-[DANGER] ns.foo#Structure$snake_case: Member shape member name, `snake_case`, is not consistent camel case. (Member names must also all use consistent camel case) | DefaultCamelCase
-[DANGER] ns.foo#upperStructureTrait$snake_case: Member shape member name, `snake_case`, is not consistent camel case. (Member names must also all use consistent camel case) | DefaultCamelCase
-[DANGER] ns.foo#Structure$lowerCamelCase: Member shape member name, `lowerCamelCase`, is not consistent camel case. (Member names must also all use consistent camel case) | DefaultCamelCase
+[DANGER] ns.foo#Structure$snake_case: Member shape member name, `snake_case`, is not consistent camel case. (Member names must all use the same type of camel case) | DefaultCamelCase
+[DANGER] ns.foo#upperStructureTrait$snake_case: Member shape member name, `snake_case`, is not consistent camel case. (Member names must all use the same type of camel case) | DefaultCamelCase
+[DANGER] ns.foo#Structure$lowerCamelCase: Member shape member name, `lowerCamelCase`, is not consistent camel case. (Member names must all use the same type of camel case) | DefaultCamelCase
