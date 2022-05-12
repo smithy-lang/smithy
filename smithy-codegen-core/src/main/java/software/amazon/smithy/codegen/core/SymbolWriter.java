@@ -43,7 +43,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * <pre>{@code
  * public final class MyWriter extends SymbolWriter<MyWriter, MyImportContainer> {
  *     public MyWriter(String namespace) {
- *         super(new MyDocumentationWriter(), new MyImportContainer(namespace));
+ *         super(new MyImportContainer(namespace));
  *     }
  *
  *     \@Override
