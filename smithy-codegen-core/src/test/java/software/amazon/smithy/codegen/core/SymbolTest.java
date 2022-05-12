@@ -16,8 +16,10 @@
 package software.amazon.smithy.codegen.core;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -113,5 +115,18 @@ public class SymbolTest {
 
         assertThat(symbol.getDependencies(), containsInAnyOrder(a, b));
         assertThat(symbol.toBuilder().build(), equalTo(symbol));
+    }
+
+    @Test
+    public void convertsToAliasedSymbolReference() {
+        Symbol symbol = Symbol.builder()
+                .name("foo")
+                .namespace("bar", ".")
+                .build();
+        SymbolReference reference = symbol.toReference("__foo", SymbolReference.ContextOption.DECLARE);
+
+        assertThat(reference.getSymbol(), is(symbol));
+        assertThat(reference.getAlias(), equalTo("__foo"));
+        assertThat(reference.getOptions(), contains(SymbolReference.ContextOption.DECLARE));
     }
 }

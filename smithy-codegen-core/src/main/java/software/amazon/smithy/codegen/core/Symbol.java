@@ -180,6 +180,21 @@ public final class Symbol extends TypedPropertiesBag
     }
 
     /**
+     * Converts the symbol to a {@link SymbolReference} using the given {@code alias}.
+     *
+     * @param alias Alias to use to refer to the symbol.
+     * @param options Variadic array of {@link SymbolReference.Option}s.
+     * @return Returns the created SymbolReference.
+     */
+    public SymbolReference toReference(String alias, SymbolReference.Option... options) {
+        return SymbolReference.builder()
+                .alias(alias)
+                .symbol(this)
+                .options(options)
+                .build();
+    }
+
+    /**
      * Gets the list of symbols that are referenced by this symbol.
      *
      * @return Returns the Symbol references.
