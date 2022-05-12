@@ -15,9 +15,12 @@
 
 package software.amazon.smithy.codegen.core.directed;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.CodegenContext;
+import software.amazon.smithy.codegen.core.SmithyIntegration;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.ServiceIndex;
@@ -29,23 +32,28 @@ import software.amazon.smithy.model.traits.Trait;
  * Directive used to create a {@link CodegenContext}.
  *
  * @param <S> Codegen settings type.
+ * @param <I> {@link SmithyIntegration} type.
+
  * @see DirectedCodegen#createContext
  */
-public final class CreateContextDirective<S> extends Directive<S> {
+public final class CreateContextDirective<S, I extends SmithyIntegration<S, ?, ?>> extends Directive<S> {
 
     private final SymbolProvider symbolProvider;
     private final FileManifest fileManifest;
+    private final List<I> integrations;
 
     CreateContextDirective(
             Model model,
             S settings,
             ServiceShape service,
             SymbolProvider symbolProvider,
-            FileManifest fileManifest
+            FileManifest fileManifest,
+            List<I> integrations
     ) {
         super(model, settings, service);
         this.symbolProvider = symbolProvider;
         this.fileManifest = fileManifest;
+        this.integrations = Collections.unmodifiableList(integrations);
     }
 
     /**
@@ -60,6 +68,14 @@ public final class CreateContextDirective<S> extends Directive<S> {
      */
     public FileManifest fileManifest() {
         return fileManifest;
+    }
+
+
+    /**
+     * @return Returns the list of Integrations used during codegen.
+     */
+    public List<I> integrations() {
+        return integrations;
     }
 
     /**

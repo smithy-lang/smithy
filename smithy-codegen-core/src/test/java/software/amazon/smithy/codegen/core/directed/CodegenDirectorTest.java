@@ -31,14 +31,13 @@ import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 public class CodegenDirectorTest {
 
     interface TestIntegration extends SmithyIntegration<TestSettings, TestWriter, TestContext> {}
 
-    private static final class TestDirected implements DirectedCodegen<TestContext, TestSettings> {
+    private static final class TestDirected implements DirectedCodegen<TestContext, TestSettings, TestIntegration> {
         public final List<ShapeId> generatedShapes = new ArrayList<>();
 
         @Override
@@ -50,7 +49,7 @@ public class CodegenDirectorTest {
         }
 
         @Override
-        public TestContext createContext(CreateContextDirective<TestSettings> directive) {
+        public TestContext createContext(CreateContextDirective<TestSettings, TestIntegration> directive) {
             WriterDelegator<TestWriter> delegator = new WriterDelegator<>(
                     directive.fileManifest(),
                     directive.symbolProvider(),
