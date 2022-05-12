@@ -129,4 +129,24 @@ public class SymbolTest {
         assertThat(reference.getAlias(), equalTo("__foo"));
         assertThat(reference.getOptions(), contains(SymbolReference.ContextOption.DECLARE));
     }
+
+    @Test
+    public void convertsToAliasedSymbol() {
+        Symbol symbol = Symbol.builder()
+                .name("foo")
+                .namespace("bar", ".")
+                .build();
+
+        Symbol symbolRef = symbol.toReferencedSymbol("__foo");
+
+        SymbolReference ref = SymbolReference.builder()
+                .alias("__foo")
+                .symbol(symbol)
+                .options(SymbolReference.ContextOption.USE)
+                .build();
+
+        assertThat(symbolRef.getName(), equalTo("__foo"));
+        assertThat(symbolRef.getNamespace(), equalTo(""));
+        assertThat(symbolRef.getReferences(), contains(ref));
+    }
 }
