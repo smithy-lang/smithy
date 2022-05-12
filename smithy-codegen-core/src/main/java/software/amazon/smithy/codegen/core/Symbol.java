@@ -195,6 +195,58 @@ public final class Symbol extends TypedPropertiesBag
     }
 
     /**
+     * Converts the symbol to a {@link Symbol} that refers to this Symbol
+     * using a {@link SymbolReference}. This makes it easier to refer to a
+     * type using an alias but still through a Symbol to be compatible with
+     * {@link SymbolProvider}.
+     *
+     * <p>The following example creates a Symbol that is referred to as
+     * "__Document" in code, but is an alias of "foo.Document".
+     *
+     * <pre>{@code
+     * Symbol aliasedSymbol = Symbol.builder()
+     *         .name("Document")
+     *         .namespace("foo", ".")
+     *         .build()
+     *         .toReferenceSymbol("__Document");
+     * }</pre>
+     *
+     * <p>When used with a {@link SymbolWriter}, the writer should add an
+     * import on "foo.Document" and alias it to "__Document".
+     *
+     * <p>The created symbol uses an empty namespace (""). If this is not
+     * compatible with specific {@link ImportContainer}s to understand that
+     * the aliased symbol itself needs no imports, then you can augment the
+     * symbol with other metadata by instead using {@link #toReferencedSymbolBuilder(String)}.
+     *
+     * <p>Note that this does not work with every programming language.
+     * For example, Java does not support aliasing whereas TypeScript does.
+     *
+     * @param alias Alias to use to refer to the symbol.
+     * @return Returns the created Symbol.
+     * @see #toReferencedSymbolBuilder(String)
+     */
+    public Symbol toReferencedSymbol(String alias) {
+        return toReferencedSymbolBuilder(alias).build();
+    }
+
+    /**
+     * Converts the symbol to a {@link Symbol.Builder} that refers to this
+     * Symbol using a {@link SymbolReference} via an alias. This makes it
+     * easier to refer to type using an alias but still use a Symbol to be
+     * compatible with SymbolProviders.
+     *
+     * @param alias Alias to use to refer to the symbol.
+     * @return Returns a SymbolBuilder that is prepared with the symbol and alias.
+     * @see #toReferencedSymbol(String)
+     */
+    public Symbol.Builder toReferencedSymbolBuilder(String alias) {
+        return builder()
+                .name(alias)
+                .addReference(toReference(alias, SymbolReference.ContextOption.USE));
+    }
+
+    /**
      * Gets the list of symbols that are referenced by this symbol.
      *
      * @return Returns the Symbol references.
