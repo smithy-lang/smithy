@@ -30,8 +30,9 @@ import software.amazon.smithy.codegen.core.WriterDelegator;
  *
  * @param <C> Smithy {@link CodegenContext} to use in directed methods.
  * @param <S> Settings object passed to directed methods as part of the context.
+ * @param <I> {@link SmithyIntegration} type to use in directed methods.
  */
-public interface DirectedCodegen<C extends CodegenContext<S, ?>, S> {
+public interface DirectedCodegen<C extends CodegenContext<S, ?>, S, I extends SmithyIntegration<S, ?, ?>> {
 
     /**
      * Create the {@link SymbolProvider} used to map shapes to code symbols.
@@ -47,7 +48,7 @@ public interface DirectedCodegen<C extends CodegenContext<S, ?>, S> {
      * @param directive Directive context data.
      * @return Returns the created context object used by the rest of the directed generation.
      */
-    C createContext(CreateContextDirective<S> directive);
+    C createContext(CreateContextDirective<S, I> directive);
 
     /**
      * Generates the code needed for a service shape.

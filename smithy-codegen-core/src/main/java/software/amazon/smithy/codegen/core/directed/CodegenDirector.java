@@ -71,7 +71,7 @@ public final class CodegenDirector<
     private S settings;
     private FileManifest fileManifest;
     private Supplier<Iterable<I>> integrationFinder;
-    private DirectedCodegen<C, S> directedCodegen;
+    private DirectedCodegen<C, S, I> directedCodegen;
     private final List<BiFunction<Model, ModelTransformer, Model>> transforms = new ArrayList<>();
 
     /**
@@ -124,7 +124,7 @@ public final class CodegenDirector<
      *
      * @param directedCodegen Directed code generator to run.
      */
-    public void directedCodegen(DirectedCodegen<C, S> directedCodegen) {
+    public void directedCodegen(DirectedCodegen<C, S, I> directedCodegen) {
         this.directedCodegen = directedCodegen;
     }
 
@@ -269,7 +269,7 @@ public final class CodegenDirector<
 
         SymbolProvider provider = createSymbolProvider(integrations, serviceShape);
 
-        C context = createContext(serviceShape, provider);
+        C context = createContext(serviceShape, provider, integrations);
 
         // After the context is created, it holds the model that should be used for rest of codegen. So `model` should
         // not really be used directly after this point in the flow. Setting the `model` to `context.model()` to avoid
@@ -356,10 +356,10 @@ public final class CodegenDirector<
         return SymbolProvider.cache(provider);
     }
 
-    private C createContext(ServiceShape serviceShape, SymbolProvider provider) {
+    private C createContext(ServiceShape serviceShape, SymbolProvider provider, List<I> integrations) {
         LOGGER.fine(() -> "Creating a codegen context for " + directedCodegen.getClass().getName());
         return directedCodegen.createContext(new CreateContextDirective<>(
-                model, settings, serviceShape, provider, fileManifest));
+                model, settings, serviceShape, provider, fileManifest, integrations));
     }
 
     private void registerInterceptors(C context, List<I> integrations) {
@@ -404,9 +404,9 @@ public final class CodegenDirector<
 
         private final C context;
         private final ServiceShape serviceShape;
-        private final DirectedCodegen<C, S> directedCodegen;
+        private final DirectedCodegen<C, S, ?> directedCodegen;
 
-        ShapeGenerator(C context, ServiceShape serviceShape, DirectedCodegen<C, S> directedCodegen) {
+        ShapeGenerator(C context, ServiceShape serviceShape, DirectedCodegen<C, S, ?> directedCodegen) {
             this.context = context;
             this.serviceShape = serviceShape;
             this.directedCodegen = directedCodegen;
