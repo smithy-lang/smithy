@@ -18,6 +18,7 @@ package software.amazon.smithy.jsonschema;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.JsonNameTrait;
+import software.amazon.smithy.model.traits.PropertyTrait;
 
 /**
  * Determines the field/property/member name of a member in an object.
@@ -51,6 +52,11 @@ public interface PropertyNamingStrategy {
      */
     static PropertyNamingStrategy createDefaultStrategy() {
         return (containingShape, member, config) -> {
+            // Use the property$name field with highest priority
+            if (member.hasTrait(PropertyTrait.class) && member.expectTrait(PropertyTrait.class).getName().isPresent()) {
+                return member.expectTrait(PropertyTrait.class).getName().get();
+            }
+
             // Use the jsonName trait if configured to do so.
             if (config.getUseJsonName() && member.hasTrait(JsonNameTrait.class)) {
                 return member.expectTrait(JsonNameTrait.class).getValue();

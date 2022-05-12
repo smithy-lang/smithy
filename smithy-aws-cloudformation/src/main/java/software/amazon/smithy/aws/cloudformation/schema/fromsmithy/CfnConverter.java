@@ -47,6 +47,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.DocumentationTrait;
+import software.amazon.smithy.model.traits.PropertyTrait;
 import software.amazon.smithy.model.traits.StringTrait;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.StringUtils;
@@ -225,9 +226,14 @@ public final class CfnConverter {
     private PropertyNamingStrategy getPropertyNamingStrategy() {
         return (containingShape, member, config) -> {
             // The cfnName trait's value takes precedence, even over any settings.
-            Optional<CfnNameTrait> trait = member.getTrait(CfnNameTrait.class);
-            if (trait.isPresent()) {
-                return trait.get().getValue();
+            Optional<CfnNameTrait> cfnNameTrait = member.getTrait(CfnNameTrait.class);
+            if (cfnNameTrait.isPresent()) {
+                return cfnNameTrait.get().getValue();
+            }
+            // property$name takes next precedence
+            Optional<PropertyTrait> propertyTrait = member.getTrait(PropertyTrait.class);
+            if (propertyTrait.isPresent() && propertyTrait.get().getName().isPresent()) {
+                return StringUtils.capitalize(propertyTrait.get().getName().get());
             }
 
             // Otherwise, respect the property capitalization setting.

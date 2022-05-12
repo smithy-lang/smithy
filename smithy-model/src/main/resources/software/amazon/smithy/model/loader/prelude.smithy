@@ -646,6 +646,7 @@ structure notProperty {}
     structurallyExclusive: "member"
     )
 @tags(["diff.error.const"])
+@notProperty
 structure nestedProperties {}
 
 /// Indicates that a structure member SHOULD be set.
