@@ -158,11 +158,10 @@ public final class TargetValidator extends AbstractValidator {
         }
 
         if (!VALID_SET_TARGETS.contains(targetShape.getType())) {
-            return Optional.of(warning(shape, format(
+            return Optional.of(error(shape, format(
                     "Set member targets %s, but sets can target only %s. You can model a collection of %s shapes "
                     + "by changing this shape to a list. Modeling a set of values of other types is problematic "
-                    + "to support across a wide range of programming languages. This will be upgraded to an ERROR "
-                    + "in a future release.",
+                    + "to support across a wide range of programming languages.",
                     targetShape,
                     VALID_SET_TARGETS.stream().map(ShapeType::toString).sorted().collect(Collectors.joining(", ")),
                     targetShape.getType())));
