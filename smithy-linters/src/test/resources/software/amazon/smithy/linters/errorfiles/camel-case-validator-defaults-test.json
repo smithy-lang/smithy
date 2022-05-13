@@ -38,6 +38,40 @@
                 "smithy.api#trait": {}
             }
         },
+        "ns.bar#upperStructureTrait": {
+            "type": "structure",
+            "members": {
+                "UpperCamelCase": {
+                    "target": "ns.foo#Foo"
+                },
+                "SecondUpperCamelCase": {
+                    "target": "ns.foo#Foo"
+                },
+                "lowerCamelCase": {
+                    "target": "ns.foo#Foo"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {}
+            }
+        },
+        "ns.baz#lowerStructureTrait": {
+            "type": "structure",
+            "members": {
+                "lowerCamelCase": {
+                    "target": "ns.foo#Foo"
+                },
+                "secondLowerCamelCase": {
+                    "target": "ns.foo#Foo"
+                },
+                "UpperCamelCase": {
+                    "target": "ns.foo#Foo"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {}
+            }
+        },
         "ns.foo#Foo": {
             "type": "string"
         },
@@ -63,13 +97,13 @@
                     "target": "ns.foo#Foo"
                 },
                 "ThirdUpperCamelCase": {
-                    "target": "ns.foo#Foo"
+                    "target": "ns.foo#BazBar"
                 },
                 "FourthUpperCamelCase": {
-                    "target": "ns.foo#Foo"
+                    "target": "ns.foo#bam"
                 },
                 "snake_case": {
-                    "target": "ns.foo#Foo"
+                    "target": "ns.foo#snake_case"
                 }
             }
         },
@@ -103,6 +137,23 @@
                     "selector": "service"
                 },
                 "smithy.api#authDefinition": {}
+            }
+        },
+        "ns.foo#MyService": {
+            "type": "service",
+            "operations": [
+                {
+                    "target": "ns.foo#MyOperation"
+                }
+            ]
+        },
+        "ns.foo#MyOperation": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#Structure"
+            },
+            "output": {
+                "target": "ns.foo#Structure"
             }
         }
     },
