@@ -15,10 +15,8 @@
 
 package software.amazon.smithy.model.traits;
 
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
@@ -40,13 +38,5 @@ public final class NotPropertyTrait extends AnnotationTrait {
         public Provider() {
             super(ID, NotPropertyTrait::new);
         }
-    }
-
-    public static boolean isNotProperty(Model model, Shape shape) {
-        if (shape.getTrait(NotPropertyTrait.class).isPresent()) {
-            return true;
-        }
-        return shape.getAllTraits().values().stream().map(t -> model.expectShape(t.toShapeId()))
-            .filter(t -> t.hasTrait(NotPropertyTrait.class)).findAny().isPresent();
     }
 }
