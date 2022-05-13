@@ -608,15 +608,13 @@ in a response.
 
 .. warning::
 
-    This trait has been deprecated. It will be removed in future versions
-    of Smithy. Set shapes should be used instead.
+    This trait has been deprecated and will be removed in future versions of
+    Smithy. Set shapes should be used instead.
 
 Summary
     Indicates that the items in a :ref:`list` MUST be unique.
 Trait selector
-    ``:test(list > member > simpleType)``
-
-    *A list that targets any simple type.*
+    ``:test(list > member > :test(string, blob, byte, short, integer, long, bigDecimal, bigInteger))``
 Value type
     Annotation trait.
 
