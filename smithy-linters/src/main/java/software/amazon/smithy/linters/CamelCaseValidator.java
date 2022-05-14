@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.node.NodeMapper;
