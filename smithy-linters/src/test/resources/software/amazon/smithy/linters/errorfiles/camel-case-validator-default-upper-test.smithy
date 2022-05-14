@@ -7,26 +7,48 @@ metadata validators = [
 
 namespace smithy.example
 
-service Example {
+service UpperService {
     version: "2020-09-21",
-    operations: [GetLatestService],
+    operations: [UpperOperation],
 }
 
-operation GetLatestService {
-    input: GetLatestServiceRequest,
-    output: GetLatestServiceResponse,
+operation UpperOperation {
+    input: UpperOperationRequest,
+    output: UpperOperationResponse,
     errors: [],
 }
 
-structure GetLatestServiceRequest {
+structure UpperOperationRequest {
     UpperCamel: MyString,
     SecondUpperCamel: MyString,
     ThirdUpperCamel: MyString,
     FourthUpperCamel: MyStructure
 }
 
-structure GetLatestServiceResponse {
+structure UpperOperationResponse {
     lowerCamel: MyString
+}
+
+service LowerService {
+    version: "2020-09-21",
+    operations: [LowerOperation],
+}
+
+operation LowerOperation {
+    input: LowerOperationRequest,
+    output: LowerOperationResponse,
+    errors: [],
+}
+
+structure LowerOperationRequest {
+    lowerCamel: MyString,
+    secondLowerCamel: MyString,
+    thirdLowerCamel: MyString,
+    fourthLowerCamel: MyStructure
+}
+
+structure LowerOperationResponse {
+    UpperCamel: MyString
 }
 
 structure MyStructure {
