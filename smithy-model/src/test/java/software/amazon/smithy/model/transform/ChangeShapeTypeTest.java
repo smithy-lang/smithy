@@ -208,7 +208,10 @@ public class ChangeShapeTypeTest {
 
     @Test
     public void cannotConvertUnionToAnythingButStructure() {
-        Shape startShape = UnionShape.builder().id(ShapeId.from("smithy.example#Test")).build();
+        Shape startShape = UnionShape.builder()
+                .id(ShapeId.from("smithy.example#Test"))
+                .addMember("foo", ShapeId.from("smithy.api#String"))
+                .build();
         Model model = Model.assembler().addShape(startShape).assemble().unwrap();
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
