@@ -79,6 +79,16 @@ enum Version {
     }
 
     /**
+     * Checks if this version of the IDL supports eliding targets for structures
+     * with mixins or structures bound to resources.
+     *
+     * @return Returns true if the version supports eliding targets.
+     */
+    boolean supportsTargetElision() {
+        return this == VERSION_2_0;
+    }
+
+    /**
      * Checks if the given shape type is supported in this version.
      *
      * @param shapeType The shape type to check.
