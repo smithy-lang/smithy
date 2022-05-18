@@ -253,14 +253,6 @@ having to copy and paste them. The following model:
 
     namespace smithy.example
 
-    resource User {
-        identifiers: {
-            email: String,
-            id: String,
-        },
-        read: GetUser
-    }
-
     operation GetUser {
         input: GetUserInput,
         output: GetUserOutput
@@ -294,15 +286,6 @@ Can be updated to:
 
     namespace smithy.example
 
-    resource User {
-        identifiers: {
-            email: String
-            id: String
-            username: String
-        },
-        read: GetUser
-    }
-
     @mixin
     structure UserIdentifiers {
         @required
@@ -326,6 +309,66 @@ that otherwise have to be copied and pasted.
 
     the :ref:`mixins section <mixins>` of the spec for more details on how they
     work.
+
+
+Use the target elision syntax sugar to reduce boilerplate
+---------------------------------------------------------
+
+Resource shapes contain a set of identifiers, but when writing structures that
+contain those identifiers you have to duplicate those definitions entirely. In
+IDL 2.0, you can use the target elision syntax with a structure bound to a
+resource. For example:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+
+    namespace smithy.example
+
+    resource User {
+        identifiers: {
+            id: String
+            email: String
+        }
+    }
+
+    // The `for` syntax here determines which resource should be checked.
+    structure UserDetails for User {
+        // With this syntax, the target is automatically inferred from the
+        // resource.
+        $id
+
+        // Uncomment this to include an email member. Unlike with mixins, you
+        // must opt in to the members that you want to include. This allows you
+        // to have partial views of a resource, such as in a create operation
+        // that does not bind all of the identifiers.
+        // $email
+
+        address: String
+    }
+
+This syntax can also be used with mixins to more succinctly add additional
+traits to included members.
+
+.. code-block:: smithy
+
+    $version: "2.0"
+
+    namespace smithy.example
+
+    @mixin
+    structure UserIdentifiers {
+        id: String
+        email: String
+    }
+
+    structure UserDetails with [UserIdentifiers] {
+        @required
+        $id
+
+        @required
+        $email
+    }
 
 
 Remove unsightly commas

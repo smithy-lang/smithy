@@ -517,6 +517,12 @@ final class IdlModelParser extends SimpleParser {
         // Parse optional member traits.
         List<TraitEntry> memberTraits = parseDocsAndTraits();
         SourceLocation memberLocation = currentLocation();
+
+        boolean isTargetElided = !targetsUnit && peek() == '$';
+        if (isTargetElided) {
+            expect('$');
+        }
+
         String memberName = ParserUtils.parseIdentifier(this);
 
         if (defined.contains(memberName)) {
@@ -532,25 +538,33 @@ final class IdlModelParser extends SimpleParser {
         }
 
         ShapeId memberId = parent.withMember(memberName);
+
+        if (isTargetElided && !modelFile.getVersion().supportsTargetElision()) {
+            throw syntax(memberId, "Members can only elide targets in IDL version 2 or later. "
+                    + "Attempted to elide a target with version `" + modelFile.getVersion() + "`.");
+        }
+
         MemberShape.Builder memberBuilder = MemberShape.builder().id(memberId).source(memberLocation);
         modelFile.onShape(memberBuilder);
-        String target;
 
-        if (!targetsUnit) {
-            ws();
-            expect(':');
+        // Members whose targets are elided will have those targets resolved later,
+        // for example by SetResourceBasedTargets
+        if (!isTargetElided) {
+            if (!targetsUnit) {
+                ws();
+                expect(':');
 
-            if (peek() == '=') {
-                throw syntax("Defining structures inline with the `:=` syntax may only be used when "
-                        + "defining operation input and output shapes.");
+                if (peek() == '=') {
+                    throw syntax("Defining structures inline with the `:=` syntax may only be used when "
+                            + "defining operation input and output shapes.");
+                }
+
+                ws();
+                modelFile.addForwardReference(ParserUtils.parseShapeId(this), memberBuilder::target);
+            } else {
+                modelFile.addForwardReference(UnitTypeTrait.UNIT.toString(), memberBuilder::target);
             }
-
-            ws();
-            target = ParserUtils.parseShapeId(this);
-        } else {
-            target = UnitTypeTrait.UNIT.toString();
         }
-        modelFile.addForwardReference(target, memberBuilder::target);
         addTraits(parent.withMember(memberName), memberTraits);
     }
 
@@ -579,6 +593,12 @@ final class IdlModelParser extends SimpleParser {
         // would otherwise result in cryptic error messages like:
         // "Member `foo.baz#Foo$Baz` cannot be added to software.amazon.smithy.model.shapes.OperationShape$Builder"
         modelFile.onShape(builder.id(id).source(location));
+
+        // If it's a structure, parse the optional "from" statement to enable
+        // eliding member targets for resource identifiers.
+        if (builder.getShapeType() == ShapeType.STRUCTURE) {
+            parseForResource(id);
+        }
 
         // Parse optional "with" statements to add mixins, but only if it's supported by the version.
         parseMixins(id);
@@ -690,6 +710,7 @@ final class IdlModelParser extends SimpleParser {
         ShapeId id = ShapeId.fromRelative(modelFile.namespace(), name);
         SourceLocation location = currentLocation();
         parseMixins(id);
+        parseForResource(id);
         StructureShape.Builder builder = StructureShape.builder().id(id).source(location);
 
         modelFile.onShape(builder);
@@ -698,6 +719,29 @@ final class IdlModelParser extends SimpleParser {
         clearPendingDocs();
         ws();
         return id;
+    }
+
+    private void parseForResource(ShapeId id) {
+        sp();
+        if (peek() != 'f') {
+            return;
+        }
+
+        expect('f');
+        expect('o');
+        expect('r');
+
+        if (!modelFile.getVersion().supportsTargetElision()) {
+            throw syntax(id, "Structures can only be bound to resources with Smithy version 2 or later. "
+                    + "Attempted to bind a structure to a resource with version `" + modelFile.getVersion() + "`.");
+        }
+
+        ws();
+
+        modelFile.addForwardReference(
+                ParserUtils.parseShapeId(this),
+                shapeId -> modelFile.addPendingModification(id, new SetResourceBasedTargets(shapeId))
+        );
     }
 
     private void parseIdList(Consumer<ShapeId> consumer) {
@@ -948,4 +992,5 @@ final class IdlModelParser extends SimpleParser {
 
         return result.length() == 0 ? "[EOF]" : result.toString();
     }
+
 }

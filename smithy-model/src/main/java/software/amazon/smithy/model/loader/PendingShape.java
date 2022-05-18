@@ -41,17 +41,17 @@ interface PendingShape {
      *
      * @param id ID of the shape.
      * @param sourceLocation Where the shape was defined.
-     * @param mixins Mixins the shape is waiting on to resolve.
+     * @param dependencies Dependencies the shape is waiting on to resolve.
      * @param creator The factory used to create the resolved shape.
      * @return Returns the created pending shape.
      */
     static PendingShape create(
             ShapeId id,
             FromSourceLocation sourceLocation,
-            Set<ShapeId> mixins,
+            Set<ShapeId> dependencies,
             Consumer<Map<ShapeId, Shape>> creator
     ) {
-        return new Singular(id, sourceLocation, mixins, creator);
+        return new Singular(id, sourceLocation, dependencies, creator);
     }
 
     /**
@@ -120,20 +120,20 @@ interface PendingShape {
     class Singular implements PendingShape {
         private final ShapeId id;
         private final SourceLocation sourceLocation;
-        private final Set<ShapeId> mixins;
+        private final Set<ShapeId> dependencies;
         private final Set<ShapeId> pending;
         private final Consumer<Map<ShapeId, Shape>> creator;
 
         Singular(
                 ShapeId id,
                 FromSourceLocation sourceLocation,
-                Set<ShapeId> mixins,
+                Set<ShapeId> dependencies,
                 Consumer<Map<ShapeId, Shape>> creator
         ) {
             this.id = id;
             this.sourceLocation = sourceLocation.getSourceLocation();
-            this.mixins = mixins;
-            this.pending = new HashSet<>(mixins);
+            this.dependencies = dependencies;
+            this.pending = new HashSet<>(dependencies);
             this.creator = creator;
         }
 
