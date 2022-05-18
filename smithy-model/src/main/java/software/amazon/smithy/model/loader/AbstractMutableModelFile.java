@@ -50,7 +50,8 @@ abstract class AbstractMutableModelFile implements ModelFile {
     private final Set<ShapeId> allShapeIds = new HashSet<>();
     private final Map<ShapeId, AbstractShapeBuilder<?, ?>> shapes = new LinkedHashMap<>();
     private final Map<ShapeId, Map<String, MemberShape.Builder>> members = new HashMap<>();
-    private final Map<ShapeId, Set<ShapeId>> pendingShapes = new HashMap<>();
+    private final Map<ShapeId, List<PendingShapeModifier>> pendingModifications = new HashMap<>();
+    private final Map<ShapeId, Set<ShapeId>> pendingDependencies = new HashMap<>();
     private final List<ValidationEvent> events = new ArrayList<>();
     private final MetadataContainer metadata = new MetadataContainer(events);
     private final TraitFactory traitFactory;
@@ -106,7 +107,13 @@ abstract class AbstractMutableModelFile implements ModelFile {
     }
 
     void addPendingMixin(ShapeId shape, ShapeId mixin) {
-        pendingShapes.computeIfAbsent(shape, id -> new LinkedHashSet<>()).add(mixin);
+        addPendingModification(shape, new ApplyMixin(mixin, events));
+    }
+
+    void addPendingModification(ShapeId shape, PendingShapeModifier pendingModification) {
+        pendingDependencies.computeIfAbsent(shape, id -> new LinkedHashSet<>())
+                .addAll(pendingModification.getDependencies());
+        pendingModifications.computeIfAbsent(shape, id -> new ArrayList<>()).add(pendingModification);
     }
 
     private SourceException onConflict(AbstractShapeBuilder<?, ?> builder, AbstractShapeBuilder<?, ?> previous) {
@@ -181,13 +188,15 @@ abstract class AbstractMutableModelFile implements ModelFile {
         List<Shape> resolvedShapes = new ArrayList<>(shapes.size());
         List<PendingShape> pendingMixins = new ArrayList<>();
 
-        for (Map.Entry<ShapeId, Set<ShapeId>> entry : pendingShapes.entrySet()) {
+        for (Map.Entry<ShapeId, List<PendingShapeModifier>> entry : this.pendingModifications.entrySet()) {
             ShapeId subject = entry.getKey();
-            Set<ShapeId> mixins = entry.getValue();
+            List<PendingShapeModifier> pendingModifications = entry.getValue();
+            Set<ShapeId> dependencies = pendingDependencies.getOrDefault(subject, Collections.emptySet());
             AbstractShapeBuilder<?, ?> builder = shapes.get(entry.getKey());
             Map<String, MemberShape.Builder> builderMembers = claimMembersOfContainer(builder.getId());
             shapes.remove(entry.getKey());
-            pendingMixins.add(createPendingShape(subject, builder, builderMembers, mixins, traitContainer));
+            pendingMixins.add(createPendingShape(
+                    subject, builder, builderMembers, dependencies, pendingModifications, traitContainer));
         }
 
         // Build members and add them to top-level shapes.
@@ -223,55 +232,21 @@ abstract class AbstractMutableModelFile implements ModelFile {
             AbstractShapeBuilder<?, ?> builder,
             Map<String, MemberShape.Builder> builderMembers,
             Set<ShapeId> mixins,
+            List<PendingShapeModifier> pendingModifications,
             TraitContainer resolvedTraits
     ) {
         return PendingShape.create(subject, builder, mixins, shapeMap -> {
-            // Build normal members first.
             for (MemberShape.Builder memberBuilder : builderMembers.values()) {
+                for (PendingShapeModifier pendingModification : pendingModifications) {
+                    pendingModification.modifyMember(builder, memberBuilder, resolvedTraits, shapeMap);
+                }
                 buildShape(memberBuilder, resolvedTraits).ifPresent(builder::addMember);
             }
-            // Add each mixin and ensure there are no member conflicts.
-            for (ShapeId mixin : mixins) {
-                Shape mixinShape = shapeMap.get(mixin);
-                for (MemberShape member : mixinShape.members()) {
-                    ShapeId targetId = builder.getId().withMember(member.getMemberName());
-                    Map<ShapeId, Trait> introducedTraits = traitContainer.getTraitsForShape(targetId);
 
-                    MemberShape introducedMember = null;
-                    if (builderMembers.containsKey(member.getMemberName())) {
-                        introducedMember = builderMembers.get(member.getMemberName())
-                                .addMixin(member)
-                                .build();
-
-                        if (!introducedMember.getTarget().equals(member.getTarget())) {
-                            // Members cannot be redefined if their targets conflict.
-                            MemberShape.Builder conflict = builderMembers.get(member.getMemberName());
-                            events.add(ValidationEvent.builder()
-                                    .severity(Severity.ERROR)
-                                    .id(Validator.MODEL_ERROR)
-                                    .shapeId(conflict.getId())
-                                    .sourceLocation(conflict.getSourceLocation())
-                                    .message("Member conflicts with an inherited mixin member: " + member.getId())
-                                    .build());
-                        }
-                    } else if (!introducedTraits.isEmpty()) {
-                        // Build local member copies before adding mixins if traits
-                        // were introduced to inherited mixin members.
-                        introducedMember = MemberShape.builder()
-                                .id(targetId)
-                                .target(member.getTarget())
-                                .source(member.getSourceLocation())
-                                .addTraits(introducedTraits.values())
-                                .addMixin(member)
-                                .build();
-                    }
-
-                    if (introducedMember != null) {
-                        builder.addMember(introducedMember);
-                    }
-                }
-                builder.addMixin(mixinShape);
+            for (PendingShapeModifier pendingModification : pendingModifications) {
+                pendingModification.modifyShape(builder, builderMembers, resolvedTraits, shapeMap);
             }
+
             buildShape(builder, resolvedTraits).ifPresent(result -> shapeMap.put(result.getId(), result));
         });
     }
@@ -285,10 +260,24 @@ abstract class AbstractMutableModelFile implements ModelFile {
                 builder.addTrait(trait);
             }
             return Optional.of(builder.build());
+        } catch (IllegalStateException e) {
+            if (builder.getShapeType() == ShapeType.MEMBER && ((MemberShape.Builder) builder).getTarget() == null) {
+                events.add(ValidationEvent.builder()
+                        .severity(Severity.ERROR)
+                        .id(Validator.MODEL_ERROR)
+                        .shapeId(builder.getId())
+                        .sourceLocation(builder.getSourceLocation())
+                        .message("Member target was elided, but no bound resource or mixin contained a matching "
+                                + "identifier or member name.")
+                        .build());
+                return Optional.empty();
+            }
+            throw e;
         } catch (SourceException e) {
             events.add(ValidationEvent.fromSourceException(e, "", builder.getId()));
             resolvedTraits.clearTraitsForShape(builder.getId());
             return Optional.empty();
         }
     }
+
 }
