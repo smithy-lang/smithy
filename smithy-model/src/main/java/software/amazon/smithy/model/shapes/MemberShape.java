@@ -170,5 +170,12 @@ public final class MemberShape extends Shape implements ToSmithyBuilder<MemberSh
         public Builder target(String shapeId) {
             return target(ShapeId.from(shapeId));
         }
+
+        /**
+         * @return Returns the target currently set on the member.
+         */
+        public ShapeId getTarget() {
+            return target;
+        }
     }
 }

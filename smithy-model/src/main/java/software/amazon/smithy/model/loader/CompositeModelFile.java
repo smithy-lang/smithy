@@ -133,8 +133,9 @@ final class CompositeModelFile implements ModelFile {
             CreatedShapes created = modelFile.createShapes(resolvedTraits);
             for (Shape shape : created.getCreatedShapes()) {
                 createdShapes.put(shape.getId(), shape);
-                // Optimization: Only need to add created shapes that are mixins to the queue.
-                if (shape.hasTrait(MixinTrait.class)) {
+                // Optimization: Only add shapes that could be dependencies of
+                // pending shapes.
+                if (shape.hasTrait(MixinTrait.class) || shape.isResourceShape()) {
                     sorter.enqueue(shape);
                 }
             }
