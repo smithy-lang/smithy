@@ -349,7 +349,7 @@ public final class CodegenDirector<
             provider = integration.decorateSymbolProvider(model, settings, provider);
         }
 
-        return provider;
+        return SymbolProvider.cache(provider);
     }
 
     private C createContext(ServiceShape serviceShape, SymbolProvider provider) {
