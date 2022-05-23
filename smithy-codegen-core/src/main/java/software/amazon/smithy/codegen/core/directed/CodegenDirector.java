@@ -79,13 +79,13 @@ public final class CodegenDirector<
      *
      * <ul>
      *     <li>Flattens error hierarchies onto every operation.</li>
-     *     <li>Converts enum strings to enum shapes.</li>
      *     <li>Flattens mixins</li>
+     *     <li>Converts enum strings to enum shapes.</li>
+     *     <li>Removes trait definition shapes.</li>
      * </ul>
      *
      * <p><em>Note</em>: This transform is applied automatically by a code
-     * generator if {@link CodegenDirector#performDefaultCodegenTransforms()} is
-     * set to true.
+     * generator if {@link CodegenDirector#performDefaultCodegenTransforms()} is called.
      *
      * @param model Model being code generated.
      * @param service Service being generated.
@@ -96,8 +96,8 @@ public final class CodegenDirector<
         ServiceShape serviceShape = model.expectShape(service, ServiceShape.class);
         model = transformer.copyServiceErrorsToOperations(model, serviceShape);
         // model = transformer.flattenAndRemoveMixins(model);
-        model = transformer.copyServiceErrorsToOperations(model, serviceShape);
         // model = transformer.changeStringEnumsToEnumShapes(model, true);
+        model = transformer.getModelWithoutTraitShapes(model);
         return model;
     }
 
@@ -199,8 +199,7 @@ public final class CodegenDirector<
     }
 
     /**
-     * Set to true to apply {@link CodegenDirector#simplifyModelForServiceCodegen}
-     * prior to code generation.
+     * Applies {@link CodegenDirector#simplifyModelForServiceCodegen} prior to code generation.
      */
     public void performDefaultCodegenTransforms() {
         transforms.add((model, transformer) -> {
