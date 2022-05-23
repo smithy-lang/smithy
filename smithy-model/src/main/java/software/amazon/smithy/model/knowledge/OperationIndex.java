@@ -77,6 +77,7 @@ public final class OperationIndex implements KnowledgeIndex {
 
     /**
      * Gets the optional input structure of an operation, and returns an
+     *
      * empty optional if the input targets {@code smithy.api#Unit}.
      *
      * @param operation Operation to get the input structure of.

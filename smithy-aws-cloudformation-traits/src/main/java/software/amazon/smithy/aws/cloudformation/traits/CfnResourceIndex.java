@@ -372,7 +372,7 @@ public final class CfnResourceIndex implements KnowledgeIndex {
             for (MemberShape member : shape.members()) {
                 if (member.hasTrait(CfnExcludePropertyTrait.ID)) {
                     excludedShapes.add(member.getId());
-                } else if (memberPropertyIndex.isPropertyExcluded(shape.toShapeId())) {
+                } else if (memberPropertyIndex.isMemberShapeProperty(shape.toShapeId())) {
                     excludedShapes.add(member.getId());
                 } else {
                     excludedShapes.addAll(model.expectShape(member.getTarget()).accept(this));

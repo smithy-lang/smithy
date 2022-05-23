@@ -635,8 +635,9 @@ structure property {
     name: String
 }
 
-/// Explicitly excludes a member from resource property mapping.
-@trait(selector: ":is(structure > member, [trait|trait])")
+/// Explicitly excludes a member from resource property mapping or
+/// enables another trait to carry the same implied meaning.
+@trait(selector: ":is(operation -[input, output]-> structure > member, [trait|trait])")
 @tags(["diff.error.add"])
 structure notProperty {}
 

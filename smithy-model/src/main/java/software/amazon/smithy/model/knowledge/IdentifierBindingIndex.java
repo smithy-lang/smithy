@@ -153,12 +153,12 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
                     .map(inputShape -> computeBindings(resource, inputShape))
                     .orElseGet(HashMap::new);
             inputBindings.get(resource.getId()).put(operationId, computedInputBindings);
-            allIdentifiers.addAll(computedInputBindings.values());
+            allIdentifiers.addAll(computedInputBindings.keySet());
             Map<String, String> computedOutputBindings = operationIndex.getOutputShape(operationId)
                     .map(outputShape -> computeBindings(resource, outputShape))
                     .orElseGet(HashMap::new);
             outputBindings.get(resource.getId()).put(operationId, computedOutputBindings);
-            allIdentifiers.addAll(computedOutputBindings.values());
+            allIdentifiers.addAll(computedOutputBindings.keySet());
 
             bindingTypes.get(resource.getId()).put(operationId, isCollection(resource, operationId)
                     ? BindingType.COLLECTION

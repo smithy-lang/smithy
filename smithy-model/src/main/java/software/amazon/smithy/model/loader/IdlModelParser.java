@@ -774,6 +774,10 @@ final class IdlModelParser extends SimpleParser {
         });
         // Load properties and resolve forward references.
         shapeNode.getObjectMember(PROPERTIES_KEY).ifPresent(properties -> {
+            if (!modelFile.getVersion().supportsResourceProperties()) {
+                throw syntax(id, "Resource properties can only be used with Smithy version 2 or later. "
+                        + "Attempted to use resource properties with version `" + modelFile.getVersion() + "`.");
+            }
             for (Map.Entry<StringNode, Node> entry : properties.getMembers().entrySet()) {
                 String name = entry.getKey().getValue();
                 StringNode target = entry.getValue().expectStringNode();

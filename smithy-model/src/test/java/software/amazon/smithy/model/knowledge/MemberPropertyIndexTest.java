@@ -32,10 +32,10 @@ public class MemberPropertyIndexTest {
                 .unwrap();
 
         MemberPropertyIndex index = MemberPropertyIndex.of(model);
-        assertTrue(index.isPropertyExcluded(ShapeId.from("com.example#ResourceStructure_1$token")));
-        assertTrue(index.isPropertyExcluded(ShapeId.from("com.example#ResourceStructure_1$id")));
-        assertTrue(index.isPropertyExcluded(ShapeId.from("com.example#ResourceStructure_1$spurious")));
-        assertTrue(index.isPropertyExcluded(ShapeId.from("com.example#ResourceStructure_2$nested")));
-        assertFalse(index.isPropertyExcluded(ShapeId.from("com.example#ResourceStructure_1$property")));
+        assertFalse(index.doesMemberShapeRequireProperty(ShapeId.from("com.example#ResourceStructure_1$token")));
+        assertFalse(index.doesMemberShapeRequireProperty(ShapeId.from("com.example#ResourceStructure_1$id")));
+        assertFalse(index.doesMemberShapeRequireProperty(ShapeId.from("com.example#ResourceStructure_1$spurious")));
+        assertFalse(index.doesMemberShapeRequireProperty(ShapeId.from("com.example#ResourceStructure_2$nested")));
+        assertTrue(index.doesMemberShapeRequireProperty(ShapeId.from("com.example#ResourceStructure_1$property")));
     }
 }

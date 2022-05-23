@@ -29,7 +29,6 @@ resource Book {
     update: UpdateBook
     delete: DeleteBook
     list: ListBooks
-    collectionOperations: [ListBooks]
 }
 
 structure BookDescription {
@@ -143,12 +142,17 @@ operation ListBooks {
 }
 
 structure ListBooksRequest {
+    @notProperty
     maxResults: Integer
+
+    @notProperty
     nextToken: String
 }
 
 structure ListBooksResponse {
     books: BookList
+
+    @notProperty
     nextToken: String
 }
 

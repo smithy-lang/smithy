@@ -61,6 +61,15 @@ enum Version {
     }
 
     /**
+     * Checks if this version of the IDL supports resource properties.
+     *
+     * @return Returns true if this version supports resource properties.
+     */
+    boolean supportsResourceProperties() {
+        return this == VERSION_2_0;
+    }
+
+    /**
      * Checks if this version of the IDL supports mixins.
      *
      * @return Returns true if this version supports mixins.

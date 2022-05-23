@@ -31,7 +31,6 @@ structure AddResourceRequest {
     title: Title
 
     // missing price property
-
     @idempotencyToken
     @notProperty
     token: String
@@ -50,9 +49,8 @@ operation DeleteResource {
 }
 
 structure DeleteResourceRequest {
-    // missing @resourceIdentifier binding to 'bookId'
     @required
-    isbn: ISBN
+    bookId: ISBN
 }
 
 structure DeleteResourceResponse { }
