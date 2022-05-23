@@ -59,6 +59,10 @@ public class ModelTransformerTest {
 
         assertThat(nonTraitShapes.getShape(operation), Matchers.not(Optional.empty()));
         assertThat(nonTraitShapes.getShape(operation).get().getTrait(ReadonlyTrait.class), Matchers.not(Optional.empty()));
+        assertTrue(nonTraitShapes.getShape(operation).get().hasTrait("ns.foo#MyTrait"));
+        assertTrue(nonTraitShapes.getShape(operation).get().hasTrait("ns.foo#MyOtherTrait"));
+        assertFalse(nonTraitShapes.getShape(ShapeId.from("ns.foo#MyTrait")).isPresent());
+        assertFalse(nonTraitShapes.getShape(ShapeId.from("ns.foo#MyOtherTrait")).isPresent());
         assertThat(nonTraitShapes.getShape(EnumTrait.ID), Matchers.equalTo(Optional.empty()));
     }
 
