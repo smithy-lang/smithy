@@ -44,6 +44,7 @@ public final class MemberPropertyIndex implements KnowledgeIndex {
         IdentifierBindingIndex identifierIndex = IdentifierBindingIndex.of(model);
 
         for (ResourceShape resourceShape : model.getResourceShapes()) {
+            Set<String> propertyNames = resourceShape.getProperties().keySet();
             for (ShapeId operationShapeId : resourceShape.getAllOperations()) {
                 OperationShape operationShape = (OperationShape) model.getShape(operationShapeId).get();
                 Shape inputPropertiesShape = getInputPropertiesShape(model, operationIndex, operationShape);
@@ -56,8 +57,13 @@ public final class MemberPropertyIndex implements KnowledgeIndex {
                         memberShapeDoesNotRequireProperty.put(memberShape.toShapeId(),
                                 doesNotRequireProperty(model, memberShape));
                     }
+                    if (doesMemberShapeRequireProperty(memberShape.getId())
+                            || propertyNames.contains(memberShape.getMemberName())) {
+                        memberShapeToPropertyName.put(memberShape.getId(),
+                                getPropertyTraitName(memberShape).orElse(memberShape.getMemberName()));
+                    }
                 }
-                // nesting is taking place, so mark top level input/output members.
+                // nesting is taking place, so index top level input/output members as not property.
                 if (!inputPropertiesShape.getId().equals(operationShape.getInputShape())) {
                     for (MemberShape memberShape : model.expectShape(operationShape.getInputShape()).members()) {
                         memberShapeDoesNotRequireProperty.put(memberShape.toShapeId(), true);
@@ -73,37 +79,16 @@ public final class MemberPropertyIndex implements KnowledgeIndex {
                         memberShapeDoesNotRequireProperty.put(memberShape.toShapeId(),
                                 doesNotRequireProperty(model, memberShape));
                     }
+                    if (doesMemberShapeRequireProperty(memberShape.getId())
+                            || propertyNames.contains(memberShape.getMemberName())) {
+                        memberShapeToPropertyName.put(memberShape.getId(),
+                                getPropertyTraitName(memberShape).orElse(memberShape.getMemberName()));
+                    }
                 }
-                // nesting is taking place, so mark top level input/output members.
+                // nesting is taking place, so index top level input/output members as not property.
                 if (!outputPropertiesShape.getId().equals(operationShape.getOutputShape())) {
                     for (MemberShape memberShape : model.expectShape(operationShape.getOutputShape()).members()) {
                         memberShapeDoesNotRequireProperty.put(memberShape.toShapeId(), true);
-                    }
-                }
-            }
-        }
-
-        for (ResourceShape resourceShape : model.getResourceShapes()) {
-            Set<String> propertyNames = resourceShape.getProperties().keySet();
-            for (ShapeId operationShapeId : resourceShape.getAllOperations()) {
-                OperationShape operationShape = (OperationShape) model.getShape(operationShapeId).get();
-                // determine input properties
-                Shape inputPropertiesShape = getInputPropertiesShape(model, operationIndex, operationShape);
-                for (MemberShape memberShape : inputPropertiesShape.members()) {
-                    if (doesMemberShapeRequireProperty(memberShape.getId())
-                            || propertyNames.contains(memberShape.getMemberName())) {
-                        memberShapeToPropertyName.put(memberShape.getId(),
-                                getPropertyTraitName(memberShape).orElse(memberShape.getMemberName()));
-                    }
-                }
-
-                // determine output properties
-                Shape outputPropertiesShape = getOutputPropertiesShape(model, operationIndex, operationShape);
-                for (MemberShape memberShape : outputPropertiesShape.members()) {
-                    if (doesMemberShapeRequireProperty(memberShape.getId())
-                            || propertyNames.contains(memberShape.getMemberName())) {
-                        memberShapeToPropertyName.put(memberShape.getId(),
-                                getPropertyTraitName(memberShape).orElse(memberShape.getMemberName()));
                     }
                 }
             }
