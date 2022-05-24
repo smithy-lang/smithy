@@ -35,7 +35,6 @@ structure ResourceStructure_1 {
     token: String
 
     @required
-    @resourceIdentifier("id")
     id: String
 
     @notProperty

@@ -49,9 +49,13 @@ public final class MemberPropertyIndex implements KnowledgeIndex {
                 Shape inputPropertiesShape = getInputPropertiesShape(model, operationIndex, operationShape);
                 operationToInputPropertiesShape.put(operationShapeId, inputPropertiesShape.getId());
                 for (MemberShape memberShape : inputPropertiesShape.members()) {
-                    memberShapeDoesNotRequireProperty.put(memberShape.toShapeId(),
-                        doesNotRequireProperty(model, memberShape,
-                                identifierIndex.getAllOperationIdentifiers(resourceShape, operationShapeId)));
+                    if (identifierIndex.getOperationInputBindings(resourceShape, operationShape).values()
+                            .contains(memberShape.getMemberName())) {
+                        memberShapeDoesNotRequireProperty.put(memberShape.toShapeId(), true);
+                    } else {
+                        memberShapeDoesNotRequireProperty.put(memberShape.toShapeId(),
+                                doesNotRequireProperty(model, memberShape));
+                    }
                 }
                 // nesting is taking place, so mark top level input/output members.
                 if (!inputPropertiesShape.getId().equals(operationShape.getInputShape())) {
@@ -62,9 +66,13 @@ public final class MemberPropertyIndex implements KnowledgeIndex {
                 Shape outputPropertiesShape = getOutputPropertiesShape(model, operationIndex, operationShape);
                 operationToOutputPropertiesShape.put(operationShapeId, outputPropertiesShape.getId());
                 for (MemberShape memberShape : outputPropertiesShape.members()) {
-                    memberShapeDoesNotRequireProperty.put(memberShape.toShapeId(),
-                        doesNotRequireProperty(model, memberShape,
-                                identifierIndex.getAllOperationIdentifiers(resourceShape, operationShapeId)));
+                    if (identifierIndex.getOperationInputBindings(resourceShape, operationShape).values()
+                            .contains(memberShape.getMemberName())) {
+                        memberShapeDoesNotRequireProperty.put(memberShape.toShapeId(), true);
+                    } else {
+                        memberShapeDoesNotRequireProperty.put(memberShape.toShapeId(),
+                                doesNotRequireProperty(model, memberShape));
+                    }
                 }
                 // nesting is taking place, so mark top level input/output members.
                 if (!outputPropertiesShape.getId().equals(operationShape.getOutputShape())) {
@@ -126,12 +134,8 @@ public final class MemberPropertyIndex implements KnowledgeIndex {
 
     private boolean doesNotRequireProperty(
         Model model,
-        MemberShape memberShape,
-        Set<String> identifiers
+        MemberShape memberShape
     ) {
-        if (identifiers.contains(memberShape.getMemberName())) {
-            return false;
-        }
         if (memberShape.hasTrait(NotPropertyTrait.class)) {
             return true;
         }

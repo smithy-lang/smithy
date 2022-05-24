@@ -263,6 +263,7 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
                         propertyName, lifecycleOperationName, properties)));
             }
         } else if (identifierMembers.contains(member.getMemberName())) {
+            /* empty if */
         } else {
             events.add(error(member, String.format("Member `%s` targets does not target a resource property",
                     member.getMemberName(),
