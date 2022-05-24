@@ -266,18 +266,22 @@ public final class CodegenDirector<
         preprocessModelWithIntegrations(integrations);
 
         ServiceShape serviceShape = model.expectShape(service, ServiceShape.class);
-        Set<Shape> shapes = new Walker(model).walkShapes(serviceShape);
 
         SymbolProvider provider = createSymbolProvider(integrations, serviceShape);
 
         C context = createContext(serviceShape, provider);
+
+        // After the context is created, it holds the model that should be used for rest of codegen. So `model` should
+        // not really be used directly after this point in the flow. Setting the `model` to `context.model()` to avoid
+        // issues even if `model` gets used unknowingly.
+        model = context.model();
 
         registerInterceptors(context, integrations);
 
         LOGGER.finest(() -> "Generating service " + serviceShape.getId());
         directedCodegen.generateService(new GenerateServiceDirective<>(context, serviceShape));
 
-        generateShapesInService(context, serviceShape, shapes);
+        generateShapesInService(context, serviceShape);
 
         CustomizeDirective<C, S> postProcess = new CustomizeDirective<>(context, serviceShape);
 
@@ -367,8 +371,9 @@ public final class CodegenDirector<
         context.writerDelegator().setInterceptors(interceptors);
     }
 
-    private void generateShapesInService(C context, ServiceShape serviceShape, Set<Shape> shapes) {
+    private void generateShapesInService(C context, ServiceShape serviceShape) {
         LOGGER.fine(() -> "Generating shapes for " + directedCodegen.getClass().getName());
+        Set<Shape> shapes = new Walker(context.model()).walkShapes(serviceShape);
         TopologicalIndex topologicalIndex = TopologicalIndex.of(context.model());
         ShapeGenerator<W, C, S> generator = new ShapeGenerator<>(context, serviceShape, directedCodegen);
         for (Shape shape : topologicalIndex.getOrderedShapes()) {
