@@ -19,6 +19,7 @@ import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -142,8 +143,9 @@ public final class MemberPropertyIndex implements KnowledgeIndex {
      *  properties.
      */
     public Shape getOutputPropertiesShape(OperationShape operation) {
+        Model model = getModel();
         return getPropertiesShape(operationIndex.getOutputMembers(operation).values(),
-                model.get().expectShape(operation.getOutputShape()));
+                model.expectShape(operation.getOutputShape()));
     }
 
     /**
@@ -156,8 +158,9 @@ public final class MemberPropertyIndex implements KnowledgeIndex {
      *  properties.
      */
     public Shape getInputPropertiesShape(OperationShape operation) {
+        Model model = getModel();
         return getPropertiesShape(operationIndex.getInputMembers(operation).values(),
-                model.get().expectShape(operation.getInputShape()));
+                model.expectShape(operation.getInputShape()));
     }
 
     /**
@@ -169,8 +172,16 @@ public final class MemberPropertyIndex implements KnowledgeIndex {
         return !memberShapeDoesNotRequireProperty.getOrDefault(memberShapeId, false);
     }
 
+    private Model getModel() {
+        return Objects.requireNonNull(model.get(), "The dereferenced WeakReference<Model> is null");
+    }
+
     private Set<ShapeId> computeNotPropertyTraits() {
-        return model.get().shapes().filter(shape -> shape.hasTrait(NotPropertyTrait.class))
+        Model model = getModel();
+        //iteration populates non-traits into the set as well, but that doesn't have a negative
+        //impact on desired use.
+        return model.shapes()
+            .filter(shape -> shape.hasTrait(NotPropertyTrait.class))
             .map(shape -> shape.toShapeId())
             .collect(Collectors.toSet());
     }
@@ -180,13 +191,16 @@ public final class MemberPropertyIndex implements KnowledgeIndex {
     }
 
     private boolean doesNotRequireProperty(MemberShape memberShape) {
-        return memberShape.hasTrait(NotPropertyTrait.class) || notPropertyMetaTraitSet.contains(memberShape.getId());
+        return memberShape.hasTrait(NotPropertyTrait.class)
+            || notPropertyMetaTraitSet.stream().filter(traitId -> memberShape.hasTrait(traitId))
+                .findAny().isPresent();
     }
 
     private Shape getPropertiesShape(Collection<MemberShape> members, Shape presumedShape) {
+        Model model = getModel();
         return members.stream()
                 .filter(member -> member.hasTrait(NestedPropertiesTrait.class))
-                .map(member -> model.get().expectShape(member.getTarget()))
+                .map(member -> model.expectShape(member.getTarget()))
                 .findAny().orElse(presumedShape);
     }
 }
