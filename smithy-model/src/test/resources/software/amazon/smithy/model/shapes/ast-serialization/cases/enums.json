@@ -16,8 +16,7 @@
                         "smithy.api#enumValue": "bar"
                     }
                 }
-            },
-            "traits": {}
+            }
         },
         "smithy.example#IntEnum": {
             "type": "intEnum",
