@@ -195,7 +195,10 @@ public final class ModelSerializer {
                     traitsToAdd.put(Node.from(trait.toShapeId().toString()), trait.toNode());
                 }
             }
-            builder.withMember("traits", new ObjectNode(traitsToAdd, SourceLocation.none()));
+
+            if (!traitsToAdd.isEmpty()) {
+                builder.withMember("traits", new ObjectNode(traitsToAdd, SourceLocation.none()));
+            }
         }
 
         return builder;

@@ -219,10 +219,6 @@ public class ModelSerializerTest {
         ModelSerializer serializer = ModelSerializer.builder().build();
         ObjectNode result = serializer.serialize(model);
 
-        assertThat(NodePointer.parse("/shapes/com.foo#Str/traits")
-                           .getValue(result)
-                           .expectObjectNode()
-                           .getStringMap(),
-                   not(hasKey(OriginalShapeIdTrait.ID.toShapeId())));
+        assertTrue(NodePointer.parse("/shapes/com.foo#Str/traits").getValue(result).isNullNode());
     }
 }
