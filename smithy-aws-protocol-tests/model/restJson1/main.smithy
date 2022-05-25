@@ -85,6 +85,7 @@ service RestJson {
         // Unions
         JsonUnions,
         PostPlayerAction,
+        PostUnionWithJsonName,
 
         // @endpoint and @hostLabel trait tests
         EndpointOperation,
