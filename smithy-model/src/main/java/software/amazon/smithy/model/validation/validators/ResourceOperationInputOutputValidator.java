@@ -96,8 +96,8 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
         Set<String> definedProperties = new HashSet<>(resource.getProperties().keySet());
         definedProperties.removeAll(propertiesInOperations);
         for (String propertyNotInLifecycleOp : definedProperties) {
-            events.add(error(resource, String.format("Resource shape's `%s` property does not have a mapping"
-                    + " from an input or output member of any resource operation.", propertyNotInLifecycleOp)));
+            events.add(error(resource, String.format("Resource property `%s` is not used in the input or output"
+                    + " of any lifecycle operation.", propertyNotInLifecycleOp)));
         }
 
         return events;

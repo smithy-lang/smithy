@@ -1,2 +1,2 @@
-[ERROR] smithy.example#Resource: Resource shape's `price` property does not have a mapping from an input or output member of any resource operation. | ResourceOperationInputOutput
+[ERROR] smithy.example#Resource: Resource property `price` is not used in the input or output of any lifecycle operation. | ResourceOperationInputOutput
 [NOTE] smithy.example#Price: The string shape is not connected to from any service shape. | UnreferencedShape
