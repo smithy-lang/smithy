@@ -36,7 +36,7 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 /**
- * Validates that resource are applied appropriately to resources.
+ * Validates that resource properties are correctly used in resource-bound operations.
  */
 public final class ResourceOperationInputOutputValidator extends AbstractValidator {
 
@@ -53,54 +53,41 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
 
         Set<String> propertiesInOperations = new TreeSet<>();
         OperationIndex operationIndex = OperationIndex.of(model);
-        IdentifierBindingIndex identifierBindingIndex = IdentifierBindingIndex.of(model);
         MemberPropertyIndex memberPropertyIndex = MemberPropertyIndex.of(model);
 
         resource.getPut().flatMap(model::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
-            Set<String> identifierMembers = identifierBindingIndex.getAllOperationIdentifiers(resource, operation);
-            propertiesInOperations.addAll(getAllOperationProperties(model, memberPropertyIndex, identifierMembers,
-                    operationIndex, operation));
+            propertiesInOperations.addAll(getAllOperationProperties(memberPropertyIndex, operation));
             validateOperationInputOutput(model, memberPropertyIndex, operationIndex, resource, operation,
                     "put", events);
         });
 
         resource.getCreate().flatMap(model::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
-            Set<String> identifierMembers = identifierBindingIndex.getAllOperationIdentifiers(resource, operation);
-            propertiesInOperations.addAll(getAllOperationProperties(model, memberPropertyIndex, identifierMembers,
-                    operationIndex, operation));
+            propertiesInOperations.addAll(getAllOperationProperties(memberPropertyIndex, operation));
             validateOperationInputOutput(model, memberPropertyIndex, operationIndex, resource, operation,
                     "create", events);
         });
 
         resource.getRead().flatMap(model::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
-            Set<String> identifierMembers = identifierBindingIndex.getAllOperationIdentifiers(resource, operation);
-            propertiesInOperations.addAll(getAllOperationProperties(model, memberPropertyIndex, identifierMembers,
-                    operationIndex, operation));
+            propertiesInOperations.addAll(getAllOperationProperties(memberPropertyIndex, operation));
             validateOperationInputOutput(model, memberPropertyIndex, operationIndex, resource, operation,
                     "read", events);
         });
 
         resource.getUpdate().flatMap(model::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
-            Set<String> identifierMembers = identifierBindingIndex.getAllOperationIdentifiers(resource, operation);
-            propertiesInOperations.addAll(getAllOperationProperties(model, memberPropertyIndex, identifierMembers,
-                    operationIndex, operation));
+            propertiesInOperations.addAll(getAllOperationProperties(memberPropertyIndex, operation));
             validateOperationInputOutput(model, memberPropertyIndex, operationIndex, resource, operation,
                     "update", events);
         });
 
         resource.getDelete().flatMap(model::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
-            Set<String> identifierMembers = identifierBindingIndex.getAllOperationIdentifiers(resource, operation);
-            propertiesInOperations.addAll(getAllOperationProperties(model, memberPropertyIndex, identifierMembers,
-                    operationIndex, operation));
+            propertiesInOperations.addAll(getAllOperationProperties(memberPropertyIndex, operation));
             validateOperationInputOutput(model, memberPropertyIndex, operationIndex, resource, operation,
                     "delete", events);
         });
 
         for (ShapeId operationId : resource.getOperations()) {
             model.getShape(operationId).flatMap(Shape::asOperationShape).ifPresent(operation -> {
-                Set<String> identifierMembers = identifierBindingIndex.getAllOperationIdentifiers(resource, operation);
-                propertiesInOperations.addAll(getAllOperationProperties(model, memberPropertyIndex, identifierMembers,
-                        operationIndex, operation));
+                propertiesInOperations.addAll(getAllOperationProperties(memberPropertyIndex, operation));
                 validateOperationInputOutput(model, memberPropertyIndex, operationIndex, resource, operation,
                         operation.getId().getName(), events);
             });
@@ -117,33 +104,21 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
     }
 
     private List<String> getAllOperationProperties(
-            Model model,
             MemberPropertyIndex memberPropertyIndex,
-            Set<String> identifiers,
-            OperationIndex index,
             OperationShape operation
     ) {
         List<String> properties = new ArrayList<>();
-        for (MemberShape member : memberPropertyIndex.getInputPropertiesShape(model, index, operation).members()) {
+        for (MemberShape member : memberPropertyIndex.getInputPropertiesShape(operation).members()) {
             if (memberPropertyIndex.isMemberShapeProperty(member.getId())) {
                 properties.add(memberPropertyIndex.getPropertyName(member.getId()).get());
             }
         }
-        for (MemberShape member : memberPropertyIndex.getOutputPropertiesShape(model, index, operation).members()) {
+        for (MemberShape member : memberPropertyIndex.getOutputPropertiesShape(operation).members()) {
             if (memberPropertyIndex.isMemberShapeProperty(member.getId())) {
                 properties.add(memberPropertyIndex.getPropertyName(member.getId()).get());
             }
         }
         return properties;
-    }
-
-    private boolean isMemberIgnoredForProperties(
-            MemberShape member,
-            Set<String> identifierMembers,
-            MemberPropertyIndex memberPropertyIndex
-    ) {
-        return !memberPropertyIndex.isMemberShapeProperty(member.getId())
-                || identifierMembers.contains(member.getMemberName());
     }
 
     private void validateOperationInputOutput(
@@ -173,11 +148,12 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
         Map<String, ShapeId> properties = resource.getProperties();
         Map<String, Set<MemberShape>> propertyToMemberMappings = new TreeMap<>();
         IdentifierBindingIndex identifierBindingIndex = IdentifierBindingIndex.of(model);
-        Set<String> identifierMembers = identifierBindingIndex.getAllOperationIdentifiers(resource, operation);
+        Set<String> identifierMembers = new HashSet<>(identifierBindingIndex
+            .getOperationOutputBindings(resource, operation).values());
 
-        Shape shape = memberPropertyIndex.getOutputPropertiesShape(model, operationIndex, operation);
+        Shape shape = memberPropertyIndex.getOutputPropertiesShape(operation);
         for (MemberShape member : shape.members()) {
-            if (!isMemberIgnoredForProperties(member, identifierMembers, memberPropertyIndex)) {
+            if (memberPropertyIndex.isMemberShapeProperty(member.getId())) {
                 validateMember(events, lifecycleOperationName, memberPropertyIndex, resource, member,
                         identifierMembers, properties, propertyToMemberMappings);
             }
@@ -206,9 +182,10 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
         Map<String, ShapeId> properties = resource.getProperties();
         Map<String, Set<MemberShape>> propertyToMemberMappings = new TreeMap<>();
         IdentifierBindingIndex identifierBindingIndex = IdentifierBindingIndex.of(model);
-        Set<String> identifierMembers = identifierBindingIndex.getAllOperationIdentifiers(resource, operation);
+        Set<String> identifierMembers = new HashSet<>(identifierBindingIndex
+            .getOperationOutputBindings(resource, operation).values());
 
-        Shape shape = memberPropertyIndex.getInputPropertiesShape(model, operationIndex, operation);
+        Shape shape = memberPropertyIndex.getInputPropertiesShape(operation);
         for (MemberShape member : shape.members()) {
             if (memberPropertyIndex.isMemberShapeProperty(member.getId())) {
                 validateMember(events, lifecycleOperationName, memberPropertyIndex, resource, member,
