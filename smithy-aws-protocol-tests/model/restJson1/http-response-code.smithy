@@ -37,8 +37,6 @@ operation ResponseCodeHttpFallback {
     output: ResponseCodeHttpFallbackInputOutput,
 }
 
-@input
-@output
 structure ResponseCodeHttpFallbackInputOutput {}
 
 apply HttpResponseCode @httpResponseTests([
