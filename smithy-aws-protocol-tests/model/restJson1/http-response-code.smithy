@@ -104,7 +104,9 @@ apply ResponseCodeRequired @httpResponseTests([
         protocol: restJson1,
         code: 201,
         body: "",
-        params: {"responseCode": 201}
+        params: {
+            responseCode: 201,
+        },
         appliesTo: "server"
     }
 ])
