@@ -15,8 +15,10 @@
 
 package software.amazon.smithy.model;
 
+import java.net.MalformedURLException;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
+
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.validation.testrunner.SmithyTestCase;
@@ -32,18 +34,6 @@ public class ErrorsFileTest {
     public void testRunner(String filename, Callable<SmithyTestCase.Result> callable) throws Exception {
         callable.call();
     }
-
-    /*
-    @ParameterizedTest
-    @ValueSource(strings = "/home/ANT.AMAZON.COM/ogudavid/smithy/smithy/smithy-model/build/resources/test/software/amazon/smithy/model/errorfiles/validators/resource-operation-errors.smithy")
-    public void testSingleFile(String path) {
-        SmithyTestCase testCase = SmithyTestCase.fromModelFile(path);
-        List<ValidationEvent> events = testCase.getExpectedEvents();
-        for (ValidationEvent event : events) {
-            System.out.println("Expected Event: " + event.getMessage());
-        }
-    }
-    */
 
     public static Stream<?> source() {
         return SmithyTestSuite.defaultParameterizedTestSource(ErrorsFileTest.class);

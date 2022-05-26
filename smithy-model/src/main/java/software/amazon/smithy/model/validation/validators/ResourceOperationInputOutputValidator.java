@@ -17,8 +17,10 @@ package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -42,55 +44,34 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.shapes(ResourceShape.class)
-                .filter(ResourceShape::hasProperties)
-                .flatMap(shape -> validateResource(model, shape).stream())
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new LinkedList<>();
+        for (ResourceShape resourceShape : model.getResourceShapes()) {
+            if (resourceShape.hasProperties()) {
+                events.addAll(validateResource(model, resourceShape));
+            }
+        }
+        return events;
     }
 
     private List<ValidationEvent> validateResource(Model model, ResourceShape resource) {
         List<ValidationEvent> events = new ArrayList<>();
-
         Set<String> propertiesInOperations = new TreeSet<>();
         OperationIndex operationIndex = OperationIndex.of(model);
         MemberPropertyIndex memberPropertyIndex = MemberPropertyIndex.of(model);
 
-        resource.getPut().flatMap(model::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
-            propertiesInOperations.addAll(getAllOperationProperties(memberPropertyIndex, operation));
-            validateOperationInputOutput(model, memberPropertyIndex, operationIndex, resource, operation,
-                    "put", events);
-        });
-
-        resource.getCreate().flatMap(model::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
-            propertiesInOperations.addAll(getAllOperationProperties(memberPropertyIndex, operation));
-            validateOperationInputOutput(model, memberPropertyIndex, operationIndex, resource, operation,
-                    "create", events);
-        });
-
-        resource.getRead().flatMap(model::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
-            propertiesInOperations.addAll(getAllOperationProperties(memberPropertyIndex, operation));
-            validateOperationInputOutput(model, memberPropertyIndex, operationIndex, resource, operation,
-                    "read", events);
-        });
-
-        resource.getUpdate().flatMap(model::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
-            propertiesInOperations.addAll(getAllOperationProperties(memberPropertyIndex, operation));
-            validateOperationInputOutput(model, memberPropertyIndex, operationIndex, resource, operation,
-                    "update", events);
-        });
-
-        resource.getDelete().flatMap(model::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
-            propertiesInOperations.addAll(getAllOperationProperties(memberPropertyIndex, operation));
-            validateOperationInputOutput(model, memberPropertyIndex, operationIndex, resource, operation,
-                    "delete", events);
-        });
-
+        processLifecycleOperationProperties(model, resource, "put", resource.getPut(), operationIndex,
+            memberPropertyIndex, propertiesInOperations, events);
+        processLifecycleOperationProperties(model, resource, "create", resource.getCreate(), operationIndex,
+            memberPropertyIndex, propertiesInOperations, events);
+        processLifecycleOperationProperties(model, resource, "read", resource.getRead(), operationIndex,
+            memberPropertyIndex, propertiesInOperations, events);
+        processLifecycleOperationProperties(model, resource, "update", resource.getUpdate(), operationIndex,
+            memberPropertyIndex, propertiesInOperations, events);
+        processLifecycleOperationProperties(model, resource, "delete", resource.getDelete(), operationIndex,
+            memberPropertyIndex, propertiesInOperations, events);
         for (ShapeId operationId : resource.getOperations()) {
-            model.getShape(operationId).flatMap(Shape::asOperationShape).ifPresent(operation -> {
-                propertiesInOperations.addAll(getAllOperationProperties(memberPropertyIndex, operation));
-                validateOperationInputOutput(model, memberPropertyIndex, operationIndex, resource, operation,
-                        operation.getId().getName(), events);
-            });
+            processLifecycleOperationProperties(model, resource, operationId.getName(), Optional.of(operationId),
+                operationIndex, memberPropertyIndex, propertiesInOperations, events);
         }
 
         Set<String> definedProperties = new HashSet<>(resource.getProperties().keySet());
@@ -101,6 +82,23 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
         }
 
         return events;
+    }
+
+    private void processLifecycleOperationProperties(
+        Model model,
+        ResourceShape resource,
+        String name,
+        Optional<ShapeId> operationShapeId,
+        OperationIndex operationIndex,
+        MemberPropertyIndex memberPropertyIndex,
+        Set<String> propertiesInOperations,
+        List<ValidationEvent> events
+    ) {
+        operationShapeId.flatMap(model::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
+            propertiesInOperations.addAll(getAllOperationProperties(memberPropertyIndex, operation));
+            validateOperationInputOutput(model, memberPropertyIndex, operationIndex, resource, operation,
+                    name, events);
+        });
     }
 
     private List<String> getAllOperationProperties(
@@ -161,12 +159,13 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
         validateConflictingProperties(events, shape, propertyToMemberMappings);
 
         if (!shape.getId().equals(operationIndex.getOutputShape(operation).get().getId())) {
-            // This mismatch implies NestedPropertiesTrait has been used, verify all
-            operationIndex.getOutputMembers(operation).values().stream()
-                    .filter(memberShape -> memberPropertyIndex.doesMemberShapeRequireProperty(memberShape.getId()))
-                    .forEach(memberShape -> events.add(error(memberShape,
-                            String.format("Member '%s' must have @notProperty trait applied",
-                                    memberShape.getMemberName()))));
+            // This mismatch implies nestedProperties trait has been used, verify all.
+            for (MemberShape memberShape : operationIndex.getOutputMembers(operation).values()) {
+                if (memberPropertyIndex.doesMemberShapeRequireProperty(memberShape.getId())) {
+                    events.add(error(memberShape, String.format("Member '%s' must have @notProperty trait applied",
+                        memberShape.getMemberName())));
+                }
+            }
         }
     }
 
@@ -195,12 +194,13 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
         validateConflictingProperties(events, shape, propertyToMemberMappings);
 
         if (!shape.getId().equals(operationIndex.getInputShape(operation).get().getId())) {
-            // This mismatch implies NestedPropertiesTrait has been used, verify all
-            operationIndex.getInputMembers(operation).values().stream()
-                    .filter(memberShape -> memberPropertyIndex.doesMemberShapeRequireProperty(memberShape.getId()))
-                    .forEach(memberShape -> events.add(error(memberShape,
-                            String.format("Member '%s' must have @notProperty trait applied",
-                                    memberShape.getMemberName()))));
+            // This mismatch implies nestedProperties trait has been used, verify all.
+            for (MemberShape memberShape : operationIndex.getInputMembers(operation).values()) {
+                if (memberPropertyIndex.doesMemberShapeRequireProperty(memberShape.getId())) {
+                    events.add(error(memberShape, String.format("Member '%s' must have @notProperty trait applied",
+                        memberShape.getMemberName())));
+                }
+            }
         }
     }
 

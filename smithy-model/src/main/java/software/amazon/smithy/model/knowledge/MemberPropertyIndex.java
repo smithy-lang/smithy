@@ -32,12 +32,10 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.NestedPropertiesTrait;
 import software.amazon.smithy.model.traits.NotPropertyTrait;
 import software.amazon.smithy.model.traits.PropertyTrait;
-import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Index of member shapes -> property name, and general queries on if a member shape is a property.
  */
-@SmithyUnstableApi
 public final class MemberPropertyIndex implements KnowledgeIndex {
     private final WeakReference<Model> model;
     private final OperationIndex operationIndex;
@@ -69,8 +67,8 @@ public final class MemberPropertyIndex implements KnowledgeIndex {
                     }
                     if (doesMemberShapeRequireProperty(memberShape.getId())
                             || propertyNames.contains(memberShape.getMemberName())) {
-                        memberShapeToPropertyName.put(memberShape.getId(),
-                                getPropertyTraitName(memberShape).orElse(memberShape.getMemberName()));
+                        memberShapeToPropertyName.put(memberShape.getId(), getPropertyTraitName(memberShape)
+                            .orElse(memberShape.getMemberName()));
                     }
                 }
                 // nesting is taking place, so index top level input/output members as not property.
@@ -91,8 +89,8 @@ public final class MemberPropertyIndex implements KnowledgeIndex {
                     }
                     if (doesMemberShapeRequireProperty(memberShape.getId())
                             || propertyNames.contains(memberShape.getMemberName())) {
-                        memberShapeToPropertyName.put(memberShape.getId(),
-                                getPropertyTraitName(memberShape).orElse(memberShape.getMemberName()));
+                        memberShapeToPropertyName.put(memberShape.getId(), getPropertyTraitName(memberShape)
+                            .orElse(memberShape.getMemberName()));
                     }
                 }
                 // nesting is taking place, so index top level input/output members as not property.
@@ -135,8 +133,8 @@ public final class MemberPropertyIndex implements KnowledgeIndex {
 
     /**
      * Resolves and returns the output shape of an operation that contains the
-     * top-level resource bound
-     * properties. Handles adjustments made with @nestedProperties trait.
+     * top-level resource bound properties. Handles adjustments made with
+     * @nestedProperties trait.
      *
      * @param operation operation to retrieve output properties shape for.
      * @return the output shape of an operation that contains top-level resource
@@ -150,8 +148,8 @@ public final class MemberPropertyIndex implements KnowledgeIndex {
 
     /**
      * Resolves and returns the input shape of an operation that contains the
-     * top-level resource bound
-     * properties. Handles adjustments made with @nestedProperties trait.
+     * top-level resource bound properties. Handles adjustments made with
+     * @nestedProperties trait.
      *
      * @param operation operation to retrieve output properties shape for
      * @return the input shape of an operation that contains top-level resource
@@ -201,6 +199,7 @@ public final class MemberPropertyIndex implements KnowledgeIndex {
         return members.stream()
                 .filter(member -> member.hasTrait(NestedPropertiesTrait.class))
                 .map(member -> model.expectShape(member.getTarget()))
-                .findAny().orElse(presumedShape);
+                .findAny()
+                    .orElse(presumedShape);
     }
 }

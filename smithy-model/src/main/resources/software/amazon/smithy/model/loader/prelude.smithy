@@ -627,26 +627,28 @@ structure required {}
 
 /// Configures a structure member's resource property mapping behavior
 @trait(
-    selector: "structure > member"
-    conflict: [resourceIdentifier]
+    selector: "structure > member",
+    conflicts: [resourceIdentifier],
+    breakingChanges: [{change: "remove"}, {change: "update"}]
 )
-@tags(["diff.error.remove", "diff.contents"])
 structure property {
     name: String
 }
 
 /// Explicitly excludes a member from resource property mapping or
 /// enables another trait to carry the same implied meaning.
-@trait(selector: ":is(operation -[input, output]-> structure > member, [trait|trait])")
-@tags(["diff.error.add"])
+@trait(
+    selector: ":is(operation -[input, output]-> structure > member, [trait|trait])",
+    breakingChanges: [{change: "add"}]
+)
 structure notProperty {}
 
 /// Adjusts the resource property mapping of a lifecycle operation to the targeted member
 @trait(
-    selector: "structure > member"
+    selector: ":is(operation -[input, output]-> structure > member)"
     structurallyExclusive: "member"
-    )
-@tags(["diff.error.const"])
+    breakingChanges: [{change: "any"}]
+)
 @notProperty
 structure nestedProperties {}
 

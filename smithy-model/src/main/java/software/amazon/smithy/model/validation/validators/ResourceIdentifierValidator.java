@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.validation.validators;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -35,23 +36,27 @@ public final class ResourceIdentifierValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.shapes(ResourceShape.class)
-                .flatMap(resource ->
-                        Stream.concat(validateAgainstChildren(resource, model),
-                                      validatePropertyRedefine(resource, model)))
+        List<ValidationEvent> events = model.shapes(ResourceShape.class)
+                .flatMap(resource -> validateAgainstChildren(resource, model))
                 .collect(Collectors.toList());
+        for (ResourceShape resource : model.getResourceShapes()) {
+            events.addAll(validatePropertyRedefine(resource, model));
+        }
+        return events;
     }
 
-    private Stream<ValidationEvent> validatePropertyRedefine(ResourceShape resource, Model model) {
+    private List<ValidationEvent> validatePropertyRedefine(ResourceShape resource, Model model) {
+        List<ValidationEvent> events = new LinkedList<>();
         if (resource.hasProperties()) {
-            return resource.getProperties().keySet().stream()
-                        .filter(key -> resource.getIdentifiers().containsKey(key))
-                        .map(key -> error(resource,
+            for (String propertyName : resource.getProperties().keySet()) {
+                if (resource.getIdentifiers().containsKey(propertyName)) {
+                   events.add(error(resource,
                                 String.format("Resource identifier `%s` cannot also be a"
-                                            + " resource property", key)));
-        } else {
-            return Stream.of();
+                                            + " resource property", propertyName)));
+                }
+            }
         }
+        return events;
     }
 
     private Stream<ValidationEvent> validateAgainstChildren(ResourceShape resource, Model model) {

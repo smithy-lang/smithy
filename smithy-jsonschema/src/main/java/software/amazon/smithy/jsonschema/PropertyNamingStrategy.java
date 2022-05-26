@@ -53,7 +53,7 @@ public interface PropertyNamingStrategy {
     static PropertyNamingStrategy createDefaultStrategy() {
         return (containingShape, member, config) -> {
             // Use the property$name field with highest priority
-            if (member.hasTrait(PropertyTrait.class) && member.expectTrait(PropertyTrait.class).getName().isPresent()) {
+            if (member.getTrait(PropertyTrait.class).flatMap(PropertyTrait::getName).isPresent()) {
                 return member.expectTrait(PropertyTrait.class).getName().get();
             }
 
