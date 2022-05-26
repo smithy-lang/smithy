@@ -239,9 +239,7 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
                         + " target shape `%s` with the `%s` lifecycle operation which targets `%s`.",
                         propertyName, lifecycleOperationName, properties)));
             }
-        } else if (identifierMembers.contains(member.getMemberName())) {
-            /* empty if */
-        } else {
+        } else if (!identifierMembers.contains(member.getMemberName())) {
             events.add(error(member, String.format("Member `%s` targets does not target a resource property",
                     member.getMemberName(),
                     propertyName)));
