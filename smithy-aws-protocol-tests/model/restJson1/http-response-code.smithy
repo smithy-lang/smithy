@@ -31,7 +31,7 @@ structure ResponseCodeRequiredOutput {
     responseCode: Integer,
 }
 
-@http(method: "GET", uri: "/responseCodeHttpFallback", code: 418)
+@http(method: "GET", uri: "/responseCodeHttpFallback", code: 201)
 operation ResponseCodeHttpFallback {
     input: ResponseCodeHttpFallbackInputOutput,
     output: ResponseCodeHttpFallbackInputOutput,
@@ -116,7 +116,7 @@ apply ResponseCodeHttpFallback @httpResponseTests([
                 This test ensures that servers fall back to the code set
                 by @http if @httpResponseCode is not set.""",
         protocol: restJson1,
-        code: 418,
+        code: 201,
         body: "",
         appliesTo: "server"
     }
