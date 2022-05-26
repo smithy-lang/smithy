@@ -21,12 +21,8 @@ structure HttpResponseCodeOutput {
 
 @http(method: "GET", uri: "/responseCodeRequired", code: 200)
 operation ResponseCodeRequired {
-    input: ResponseCodeRequiredInput,
     output: ResponseCodeRequiredOutput,
 }
-
-@input
-structure ResponseCodeRequiredInput {}
 
 @output
 structure ResponseCodeRequiredOutput {
@@ -37,15 +33,13 @@ structure ResponseCodeRequiredOutput {
 
 @http(method: "GET", uri: "/responseCodeHttpFallback", code: 418)
 operation ResponseCodeHttpFallback {
-    input: ResponseCodeHttpFallbackInput,
-    output: ResponseCodeHttpFallbackOutput,
+    input: ResponseCodeHttpFallbackInputOutput,
+    output: ResponseCodeHttpFallbackInputOutput,
 }
 
 @input
-structure ResponseCodeHttpFallbackInput {}
-
 @output
-structure ResponseCodeHttpFallbackOutput {}
+structure ResponseCodeHttpFallbackInputOutput {}
 
 apply HttpResponseCode @httpResponseTests([
     {
@@ -99,7 +93,7 @@ apply HttpResponseCode @httpResponseTests([
             Status: 201,
         },
         appliesTo: "client"
-    }
+    },
 ])
 
 apply ResponseCodeRequired @httpResponseTests([
