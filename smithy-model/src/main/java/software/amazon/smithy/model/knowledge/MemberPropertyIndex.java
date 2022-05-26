@@ -34,7 +34,7 @@ import software.amazon.smithy.model.traits.NotPropertyTrait;
 import software.amazon.smithy.model.traits.PropertyTrait;
 
 /**
- * Index of member shapes -> property name, and general queries on if a member shape is a property.
+ * Index of member shape to associated resource property information.
  */
 public final class MemberPropertyIndex implements KnowledgeIndex {
     private final WeakReference<Model> model;
@@ -121,7 +121,7 @@ public final class MemberPropertyIndex implements KnowledgeIndex {
     /**
      * Returns true if a member shape positively maps to a property.
      *
-     * {@see getPropertyName} will return a non-empty Optional if this method
+     * {@see #getPropertyName(ShapeId)} will return a non-empty Optional if this method
      * returns true.
      *
      * @param memberShapeId the ShapeId of the member shape to check
@@ -164,6 +164,7 @@ public final class MemberPropertyIndex implements KnowledgeIndex {
     /**
      * Returns true if member is required to have an associated property mapping.
      *
+     * @param memberShapeId the ShapeId of the member shape to check
      * @return True if input/output member is required to have a property mapping.
      */
     public boolean doesMemberShapeRequireProperty(ShapeId memberShapeId) {

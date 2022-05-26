@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.model;
 
-import java.net.MalformedURLException;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
