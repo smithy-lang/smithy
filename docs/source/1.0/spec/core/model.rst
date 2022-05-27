@@ -1680,10 +1680,6 @@ A resource supports the following members:
       - ``object``
       - Defines a map of identifier string names to :ref:`shape-id`\s used to
         identify the resource. Each shape ID MUST target a ``string`` shape.
-    * - :ref:`properties <resource-properties>`
-      - ``object``
-      - Defines a map of property string names to :ref:`shape-id`\s that
-        enumerate the properties and define the structure of the resource.
     * - :ref:`create <create-lifecycle>`
       - ``string``
       - Defines the lifecycle operation used to create a resource using one
@@ -1960,7 +1956,7 @@ of an operation provide values for the identifiers of a resource.
 
 - Child resources MUST provide identifier bindings for all of its parent's
   identifiers.
-- Identifier bindings are formed on input or output structure members that are
+- Identifier bindings are only formed on input structure members that are
   marked as :ref:`required <required-trait>`.
 - Resource operations MUST form a valid *instance operation* or
   *collection operation*.
@@ -1990,9 +1986,9 @@ resource.
 Implicit identifier bindings
 ----------------------------
 
-*Implicit identifier bindings* are formed when the input or output of an
-operation contains member names that target the same shapes that are defined
-in the "identifiers" property of the resource to which an operation is bound.
+*Implicit identifier bindings* are formed when the input of an operation
+contains member names that target the same shapes that are defined in the
+"identifiers" property of the resource to which an operation is bound.
 
 For example, given the following model,
 
@@ -2030,7 +2026,7 @@ that targets the same shape as the "forecastId" identifier of the resource.
 
 Implicit identifier bindings for collection operations are created in a
 similar way to an instance operation, but MUST NOT contain identifier bindings
-for *all* child identifiers of the resource on an input shape.
+for *all* child identifiers of the resource.
 
 Given the following model,
 
@@ -2108,135 +2104,6 @@ maps it to the "forecastId" identifier is provided by the
 "customForecastIdName" member, and the :ref:`resourceIdentifier-trait`
 on ``GetHistoricalForecastInput$customHistoricalIdName`` maps that member
 to the "historicalId" identifier.
-
-
-.. _resource-properties:
-
-Resource Properties
-====================
-
-:dfn:`Resource properties` represent the state of a resource within a service.
-Properties can be referred to in the top level input and output shapes
-of a resource's instance operations, including create, read, update,
-delete, and put. All declared resource properties MUST appear in at
-least one instance operation's input or output. Additionally, all instance
-operations on a resource must 
-
-For example, the following model defines a ``Forecast`` resource with a
-single property ``chanceOfRain`` read by the GetForecast operation, and
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        $version: "2.0"
-        namespace smithy.example
-
-        resource Forecast {
-            properties: { chanceOfRain: Float }
-            read: GetForecast
-        }
-
-        @readonly
-        operation GetForecast {
-           output: GetForecastOutput
-        }
-
-        structure GetForecastOutput {
-            chanceOfRain: Float
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "2.0",
-            "shapes": {
-                "smithy.example#Forecast": {
-                    "type": "resource",
-                    "read": {
-                        "target": "smithy.example#GetForecast"
-                    }
-                },
-                "smithy.example#GetForecast": {
-                    "type": "operation",
-                    "output": {
-                        "target": "smithy.example#GetForecastOutput"
-                    },
-                    "traits": {
-                        "smithy.api#readonly": {}
-                    }
-                },
-                "smithy.example#GetForecastOutput": {
-                    "type": "structure",
-                    "members": {
-                        "chanceOfRain": {
-                            "target": "smithy.api#Float"
-                        }
-                    },
-                }
-            }
-        }
-
-.. _binding-properties:
-
-Binding members to properties
----------------------------------
-
-*Property bindings* associate top-level members of input or output shapes
-with resource properties, and occurs through a name match between the member
-name and property name.
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        $version: "2.0"
-        namespace smithy.example
-
-        resource Forecast {
-            properties: { chanceOfRain: Float }
-            read: GetForecast
-        }
-
-        @readonly
-        operation GetForecast {
-           output: GetForecastOutput
-        }
-
-        structure GetForecastOutput {
-            chanceOfRain: Float
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "2.0",
-            "shapes": {
-                "smithy.example#Forecast": {
-                    "type": "resource",
-                    "read": {
-                        "target": "smithy.example#GetForecast"
-                    }
-                },
-                "smithy.example#GetForecast": {
-                    "type": "operation",
-                    "output": {
-                        "target": "smithy.example#GetForecastOutput"
-                    },
-                    "traits": {
-                        "smithy.api#readonly": {}
-                    }
-                },
-                "smithy.example#GetForecastOutput": {
-                    "type": "structure",
-                    "members": {
-                        "chanceOfRain": {
-                            "target": "smithy.api#Float"
-                        }
-                    },
-                }
-            }
-        }
 
 
 .. _lifecycle-operations:
