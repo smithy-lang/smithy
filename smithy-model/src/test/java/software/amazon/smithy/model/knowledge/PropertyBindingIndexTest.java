@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
 
-public class MemberPropertyIndexTest {
+public class PropertyBindingIndexTest {
 
     @Test
     public void testIndex() {
@@ -31,7 +31,7 @@ public class MemberPropertyIndexTest {
                 .assemble()
                 .unwrap();
 
-        MemberPropertyIndex index = MemberPropertyIndex.of(model);
+        PropertyBindingIndex index = PropertyBindingIndex.of(model);
         assertFalse(index.doesMemberShapeRequireProperty(ShapeId.from("com.example#ResourceStructure_1$token")));
         assertFalse(index.doesMemberShapeRequireProperty(ShapeId.from("com.example#ResourceStructure_1$id")));
         assertFalse(index.doesMemberShapeRequireProperty(ShapeId.from("com.example#ResourceStructure_1$spurious")));

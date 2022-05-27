@@ -27,8 +27,8 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.IdentifierBindingIndex;
-import software.amazon.smithy.model.knowledge.MemberPropertyIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
+import software.amazon.smithy.model.knowledge.PropertyBindingIndex;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
@@ -57,21 +57,21 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
         List<ValidationEvent> events = new ArrayList<>();
         Set<String> propertiesInOperations = new TreeSet<>();
         OperationIndex operationIndex = OperationIndex.of(model);
-        MemberPropertyIndex memberPropertyIndex = MemberPropertyIndex.of(model);
+        PropertyBindingIndex propertyBindingIndex = PropertyBindingIndex.of(model);
 
         processLifecycleOperationProperties(model, resource, "put", resource.getPut(), operationIndex,
-            memberPropertyIndex, propertiesInOperations, events);
+            propertyBindingIndex, propertiesInOperations, events);
         processLifecycleOperationProperties(model, resource, "create", resource.getCreate(), operationIndex,
-            memberPropertyIndex, propertiesInOperations, events);
+            propertyBindingIndex, propertiesInOperations, events);
         processLifecycleOperationProperties(model, resource, "read", resource.getRead(), operationIndex,
-            memberPropertyIndex, propertiesInOperations, events);
+            propertyBindingIndex, propertiesInOperations, events);
         processLifecycleOperationProperties(model, resource, "update", resource.getUpdate(), operationIndex,
-            memberPropertyIndex, propertiesInOperations, events);
+            propertyBindingIndex, propertiesInOperations, events);
         processLifecycleOperationProperties(model, resource, "delete", resource.getDelete(), operationIndex,
-            memberPropertyIndex, propertiesInOperations, events);
+            propertyBindingIndex, propertiesInOperations, events);
         for (ShapeId operationId : resource.getOperations()) {
             processLifecycleOperationProperties(model, resource, operationId.getName(), Optional.of(operationId),
-                operationIndex, memberPropertyIndex, propertiesInOperations, events);
+                operationIndex, propertyBindingIndex, propertiesInOperations, events);
         }
 
         Set<String> definedProperties = new HashSet<>(resource.getProperties().keySet());
@@ -90,30 +90,30 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
         String name,
         Optional<ShapeId> operationShapeId,
         OperationIndex operationIndex,
-        MemberPropertyIndex memberPropertyIndex,
+        PropertyBindingIndex propertyBindingIndex,
         Set<String> propertiesInOperations,
         List<ValidationEvent> events
     ) {
         operationShapeId.flatMap(model::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
-            propertiesInOperations.addAll(getAllOperationProperties(memberPropertyIndex, operation));
-            validateOperationInputOutput(model, memberPropertyIndex, operationIndex, resource, operation,
+            propertiesInOperations.addAll(getAllOperationProperties(propertyBindingIndex, operation));
+            validateOperationInputOutput(model, propertyBindingIndex, operationIndex, resource, operation,
                     name, events);
         });
     }
 
     private List<String> getAllOperationProperties(
-            MemberPropertyIndex memberPropertyIndex,
+            PropertyBindingIndex propertyBindingIndex,
             OperationShape operation
     ) {
         List<String> properties = new ArrayList<>();
-        for (MemberShape member : memberPropertyIndex.getInputPropertiesShape(operation).members()) {
-            if (memberPropertyIndex.isMemberShapeProperty(member.getId())) {
-                properties.add(memberPropertyIndex.getPropertyName(member.getId()).get());
+        for (MemberShape member : propertyBindingIndex.getInputPropertiesShape(operation).members()) {
+            if (propertyBindingIndex.isMemberShapeProperty(member.getId())) {
+                properties.add(propertyBindingIndex.getPropertyName(member.getId()).get());
             }
         }
-        for (MemberShape member : memberPropertyIndex.getOutputPropertiesShape(operation).members()) {
-            if (memberPropertyIndex.isMemberShapeProperty(member.getId())) {
-                properties.add(memberPropertyIndex.getPropertyName(member.getId()).get());
+        for (MemberShape member : propertyBindingIndex.getOutputPropertiesShape(operation).members()) {
+            if (propertyBindingIndex.isMemberShapeProperty(member.getId())) {
+                properties.add(propertyBindingIndex.getPropertyName(member.getId()).get());
             }
         }
         return properties;
@@ -121,22 +121,22 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
 
     private void validateOperationInputOutput(
             Model model,
-            MemberPropertyIndex memberPropertyIndex,
+            PropertyBindingIndex propertyBindingIndex,
             OperationIndex operationIndex,
             ResourceShape resource,
             OperationShape operation,
             String lifecycleOperationName,
             List<ValidationEvent> events
     ) {
-        validateOperationInput(model, memberPropertyIndex, operationIndex, resource,
+        validateOperationInput(model, propertyBindingIndex, operationIndex, resource,
                 operation, lifecycleOperationName, events);
-        validateOperationOutput(model, memberPropertyIndex, operationIndex, resource,
+        validateOperationOutput(model, propertyBindingIndex, operationIndex, resource,
                 operation, lifecycleOperationName, events);
     }
 
     private void validateOperationOutput(
             Model model,
-            MemberPropertyIndex memberPropertyIndex,
+            PropertyBindingIndex propertyBindingIndex,
             OperationIndex operationIndex,
             ResourceShape resource,
             OperationShape operation,
@@ -149,10 +149,10 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
         Set<String> identifierMembers = new HashSet<>(identifierBindingIndex
             .getOperationOutputBindings(resource, operation).values());
 
-        Shape shape = memberPropertyIndex.getOutputPropertiesShape(operation);
+        Shape shape = propertyBindingIndex.getOutputPropertiesShape(operation);
         for (MemberShape member : shape.members()) {
-            if (memberPropertyIndex.isMemberShapeProperty(member.getId())) {
-                validateMember(events, lifecycleOperationName, memberPropertyIndex, resource, member,
+            if (propertyBindingIndex.isMemberShapeProperty(member.getId())) {
+                validateMember(events, lifecycleOperationName, propertyBindingIndex, resource, member,
                         identifierMembers, properties, propertyToMemberMappings);
             }
         }
@@ -161,7 +161,7 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
         if (!shape.getId().equals(operationIndex.getOutputShape(operation).get().getId())) {
             // This mismatch implies nestedProperties trait has been used, verify all.
             for (MemberShape memberShape : operationIndex.getOutputMembers(operation).values()) {
-                if (memberPropertyIndex.doesMemberShapeRequireProperty(memberShape.getId())) {
+                if (propertyBindingIndex.doesMemberShapeRequireProperty(memberShape.getId())) {
                     events.add(error(memberShape, String.format("Member '%s' must have @notProperty trait applied",
                         memberShape.getMemberName())));
                 }
@@ -171,7 +171,7 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
 
     private void validateOperationInput(
             Model model,
-            MemberPropertyIndex memberPropertyIndex,
+            PropertyBindingIndex propertyBindingIndex,
             OperationIndex operationIndex,
             ResourceShape resource,
             OperationShape operation,
@@ -184,10 +184,10 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
         Set<String> identifierMembers = new HashSet<>(identifierBindingIndex
             .getOperationOutputBindings(resource, operation).values());
 
-        Shape shape = memberPropertyIndex.getInputPropertiesShape(operation);
+        Shape shape = propertyBindingIndex.getInputPropertiesShape(operation);
         for (MemberShape member : shape.members()) {
-            if (memberPropertyIndex.isMemberShapeProperty(member.getId())) {
-                validateMember(events, lifecycleOperationName, memberPropertyIndex, resource, member,
+            if (propertyBindingIndex.isMemberShapeProperty(member.getId())) {
+                validateMember(events, lifecycleOperationName, propertyBindingIndex, resource, member,
                         identifierMembers, properties, propertyToMemberMappings);
             }
         }
@@ -196,7 +196,7 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
         if (!shape.getId().equals(operationIndex.getInputShape(operation).get().getId())) {
             // This mismatch implies nestedProperties trait has been used, verify all.
             for (MemberShape memberShape : operationIndex.getInputMembers(operation).values()) {
-                if (memberPropertyIndex.doesMemberShapeRequireProperty(memberShape.getId())) {
+                if (propertyBindingIndex.doesMemberShapeRequireProperty(memberShape.getId())) {
                     events.add(error(memberShape, String.format("Member '%s' must have @notProperty trait applied",
                         memberShape.getMemberName())));
                 }
@@ -223,14 +223,14 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
     private void validateMember(
             List<ValidationEvent> events,
             String lifecycleOperationName,
-            MemberPropertyIndex memberPropertyIndex,
+            PropertyBindingIndex propertyBindingIndex,
             ResourceShape resource,
             MemberShape member,
             Set<String> identifierMembers,
             Map<String, ShapeId> properties,
             Map<String, Set<MemberShape>> propertyToMemberMappings
     ) {
-        String propertyName = memberPropertyIndex.getPropertyName(member.getId()).get();
+        String propertyName = propertyBindingIndex.getPropertyName(member.getId()).get();
         propertyToMemberMappings.computeIfAbsent(propertyName, m -> new TreeSet<>()).add(member);
 
         if (properties.containsKey(propertyName)) {

@@ -26,8 +26,8 @@ import java.util.function.Function;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.IdentifierBindingIndex;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
-import software.amazon.smithy.model.knowledge.MemberPropertyIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
+import software.amazon.smithy.model.knowledge.PropertyBindingIndex;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -354,11 +354,11 @@ public final class CfnResourceIndex implements KnowledgeIndex {
 
     private static final class ExcludedPropertiesVisitor extends ShapeVisitor.Default<Set<ShapeId>> {
         private final Model model;
-        private final MemberPropertyIndex memberPropertyIndex;
+        private final PropertyBindingIndex propertyBindingIndex;
 
         private ExcludedPropertiesVisitor(Model model) {
             this.model = model;
-            this.memberPropertyIndex = MemberPropertyIndex.of(model);
+            this.propertyBindingIndex = PropertyBindingIndex.of(model);
         }
 
         @Override
@@ -372,7 +372,7 @@ public final class CfnResourceIndex implements KnowledgeIndex {
             for (MemberShape member : shape.members()) {
                 if (member.hasTrait(CfnExcludePropertyTrait.ID)) {
                     excludedShapes.add(member.getId());
-                } else if (!memberPropertyIndex.doesMemberShapeRequireProperty(shape.toShapeId())) {
+                } else if (!propertyBindingIndex.doesMemberShapeRequireProperty(shape.toShapeId())) {
                     excludedShapes.add(member.getId());
                 } else {
                     excludedShapes.addAll(model.expectShape(member.getTarget()).accept(this));

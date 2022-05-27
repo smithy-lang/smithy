@@ -36,7 +36,7 @@ import software.amazon.smithy.model.traits.PropertyTrait;
 /**
  * Index of member shape to associated resource property information.
  */
-public final class MemberPropertyIndex implements KnowledgeIndex {
+public final class PropertyBindingIndex implements KnowledgeIndex {
     private final WeakReference<Model> model;
     private final OperationIndex operationIndex;
     private final Set<ShapeId> notPropertyMetaTraitSet;
@@ -45,7 +45,7 @@ public final class MemberPropertyIndex implements KnowledgeIndex {
     private final Map<ShapeId, ShapeId> operationToInputPropertiesShape = new HashMap<>();
     private final Map<ShapeId, ShapeId> operationToOutputPropertiesShape = new HashMap<>();
 
-    private MemberPropertyIndex(Model model) {
+    private PropertyBindingIndex(Model model) {
         this.model = new WeakReference<>(model);
         this.notPropertyMetaTraitSet = computeNotPropertyTraits();
         this.operationIndex = OperationIndex.of(model);
@@ -103,8 +103,8 @@ public final class MemberPropertyIndex implements KnowledgeIndex {
         }
     }
 
-    public static MemberPropertyIndex of(Model model) {
-        return model.getKnowledge(MemberPropertyIndex.class, MemberPropertyIndex::new);
+    public static PropertyBindingIndex of(Model model) {
+        return model.getKnowledge(PropertyBindingIndex.class, PropertyBindingIndex::new);
     }
 
     /**
