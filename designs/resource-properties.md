@@ -4,11 +4,19 @@ This document proposes the addition of “properties” to Smithy resource shape
 
 ## Motivation
 
-Smithy allows service teams to define resources, but does not provide any validation or assurances of consistency of resource properties across operations bound to a resource. The only consistency enforced by Smithy is that the identifiers of a resource are present on the input of each instance operation bound to the resource. Because of this, it’s very easy for a service team to call a property “ids” in one operation and “idList” in another, despite these members referring to the same thing.
+Smithy allows service teams to define resources, but does not provide any
+validation or assurances of consistency of resource properties across operations
+bound to a resource. The only consistency enforced by Smithy is that the
+identifiers of a resource are present on the input of each instance operation
+bound to the resource. Because of this, it’s very easy for a service team to
+call a property “ids” in one operation and “idList” in another, despite these
+members referring to the same thing.
 
 ## Proposal
 
-Resource shapes will support a new member named “properties” that defines the properties that can be referred to in the top-level input and output shapes of a resource’s instance operations, including create, read, update, delete, and put.
+Resource shapes will support a new member named “properties” that defines the
+properties that can be referred to in the top-level input and output shapes of
+a resource’s instance operations, including create, read, update, delete, and put.
 
 ```
 resource Config {
@@ -26,14 +34,15 @@ resource Config {
 }
 ```
 
-The following `create` operation for the resource is acceptable because it only uses allowed property definitions:
+The following `create` operation for the resource is acceptable because it only
+uses allowed property definitions:
 
 ```
 operation CreateConfig {
     input := {
         @required
         name: ConfigName
-        
+
         @required
         configData: ConfigData
 
@@ -42,10 +51,10 @@ operation CreateConfig {
     output := {
         @required
         configArn: ConfigArn
-        
+
         @required
         configId: ConfigId
-        
+
         @required
         configType: ConfigType
     }
@@ -55,16 +64,25 @@ operation CreateConfig {
 Introduced and changed validation:
 
 * Identifiers of a resource MUST NOT be redefined in the properties of a resource.
-* Top-level members of the input and output of resource instance operations MUST only use properties that resolve to declared resource properties except for members marked with the `@notProperty` trait or marked with traits marked with the `@notProperty` trait.
-* Defined resource properties that do not resolve to any top-level input or output members are invalid.
-* Members that provide a value for a resource property but use a different target shape are invalid.
-* Members marked with a `@property` trait using a `name` that does not map to a declared resource property are invalid.
+* Top-level members of the input and output of resource instance operations MUST
+  only use properties that resolve to declared resource properties except for
+  members marked with the `@notProperty` trait or marked with traits marked
+  with the `@notProperty` trait.
+* Defined resource properties that do not resolve to any top-level input or
+  output members are invalid.
+* Members that provide a value for a resource property but use a different
+  target shape are invalid.
+* Members marked with a `@property` trait using a `name` that does not map to a
+  declared resource property are invalid.
 * @resourceIdentifier trait can also be applied to top level output shape members
     * Implicit ID binding behavior now applies to output shapes
 
 ### Excluding properties
 
-Resource operations sometimes require inputs or outputs that aren’t resource properties, but rather part of the framing of an API call. For example, the following operation would fail validation because the `dryRun` property is not a resource property:
+Resource operations sometimes require inputs or outputs that aren’t resource
+properties, but rather part of the framing of an API call. For example, the
+following operation would fail validation because the `dryRun` property is not
+a resource property:
 
 ```
 operation UpdateConfig {
@@ -80,7 +98,9 @@ operation UpdateConfig {
 }
 ```
 
-Top-level properties of operations that aren’t part of the resource but are required to be sent by the client or server can be marked as `@notProperty`. The above operation can be corrected by marking `dryRun` as `@notProperty`:
+Top-level properties of operations that aren’t part of the resource but are
+required to be sent by the client or server can be marked as `@notProperty`.
+The above operation can be corrected by marking `dryRun` as `@notProperty`:
 
 ```
 operation UpdateConfig {
@@ -107,7 +127,13 @@ structure notProperty {}
 
 #### `@notProperty` as a meta-trait
 
-There are already many trait requirements in Smithy leading to verbose model definitions, and having to mark every non-property member used in the inputs and outputs of a resource with `@notProperty` makes the problem worse. Traits like `@idempotencyToken` *already* communicate that the member they target is not part of the resource. The `@notProperty` trait can be applied to traits, making the applied trait cause members to be ignored as resource properties. For example, consider the following trait definition:
+There are already many trait requirements in Smithy leading to verbose models
+definitions, and having to mark every non-property member used in the inputs
+and outputs of a resource with `@notProperty` makes the problem worse. Traits
+like `@idempotencyToken` *already* communicate that the member they target is
+not part of the resource. The `@notProperty` trait can be applied to traits,
+making the applied trait cause members to be ignored as resource properties.
+For example, consider the following trait definition:
 
 ```
 @trait
@@ -124,13 +150,20 @@ structure Foo {
 }
 ```
 
-The `token` member is considered transient because `@idempotencyToken` is marked with the `@notProperty` trait.
+The `token` member is considered transient because `@idempotencyToken` is
+marked with the `@notProperty` trait.
 
 #### Resource properties marked as `@notProperty`
 
-Members marked with `@notProperty` carrying traits can still be used as resource properties. Anything declared in the `properties` of a resource are always considered resource properties regardless of if a trait marked with the `@notProperty` property is defined on a corresponding member.
+Members marked with `@notProperty` carrying traits can still be used as resource
+properties. Anything declared in the `properties` of a resource are always
+considered resource properties regardless of if a trait marked with the
+`@notProperty` property is defined on a corresponding member.
 
-In the following resource definition,`token` is a resource property of `Tokenator`. Despite the `token` member of `CreateTokenator` being marked with the `@idempotencyToken` trait, the token member is still considered a resource property.
+In the following resource definition,`token` is a resource property of
+`Tokenator`. Despite the `token` member of `CreateTokenator` being marked with
+the `@idempotencyToken` trait, the token member is still considered a resource
+property.
 
 ```
 resource Tokenator {
@@ -151,7 +184,9 @@ operation CreateTokenator {
 }
 ```
 
-Members marked *directly* with the `@notProperty` trait that provide a value for a corresponding resource property are invalid. The following `CreateTokenator` operation would model will cause a validation error:
+Members marked *directly* with the `@notProperty` trait that provide a value
+for a corresponding resource property are invalid. The following `CreateTokenator`
+operation would model will cause a validation error:
 
 ```
 operation CreateTokenator {
@@ -166,23 +201,27 @@ operation CreateTokenator {
 
 ### Remapping input and output members to properties
 
-Models that already released with discrepancies across properties in their resources can associate a top-level input or output member of a resource operation with a named property using the `@property` trait.
+Models that already released with discrepancies across properties in their
+resources can associate a top-level input or output member of a resource
+operation with a named property using the `@property` trait.
 
 ```
 structure CreateConfigOutput {
     @required
     configArn: ConfigArn
-        
+
     @required
     @property(name: "configId")
     configurationId: ConfigId
-        
+
     @required
     configType: ConfigType
 }
 ```
 
-The property trait contains a single member, “name”, that is used to map the member name to a property of the resource. When resolving the properties of the `Config` object, `configurationId` is mapped to the `configId` property.
+The property trait contains a single member, “name”, that is used to map the
+member name to a property of the resource. When resolving the properties of the
+`Config` object, `configurationId` is mapped to the `configId` property.
 
 #### `@property` trait definition
 
@@ -209,14 +248,15 @@ The `@nestedProperties` trait is defined in Smithy’s prelude as:
 structure nestedProperties { }
 ```
 
-It “pushes down” the mapping of resource properties into the member’s target structure as illustrated below.
+It “pushes down” the mapping of resource properties into the member’s target
+structure as illustrated below.
 
 ```
 resource Pipeline {
 ...
      properties: {
         name: String
-        rank: Integer 
+        rank: Integer
     },
     create: CreatePipeline
     ...
@@ -240,13 +280,20 @@ structure PipelineDescription {
 
 #### @nestedProperties added validation
 
-* Trait can only be applied to members of a top level resource lifecycle operation input or output
-* All other members must have @notProperty trait directly or indirectly applied (@resourceIdentifier, @idempotencyToken)
-* Member must target a structure shape, and members of that structure shape may not use @notProperty
+* Trait can only be applied to members of a top level resource lifecycle
+  operation input or output
+* All other members must have @notProperty trait directly or indirectly applied
+  (@resourceIdentifier, @idempotencyToken)
+* Member must target a structure shape, and members of that structure shape may
+  not use @notProperty
 
 ### Option 2: Associating top level resource properties to structures with `@associatedResource`
 
-In order to support existing services migration to resource properties we will introduce a new trait named `@associatedResource` to associate a structure shape with the top level properties of a specific resource instead of a top level lifecycle operation input or output. This trait can only be allowed to structure shapes one below the input or output of a resource lifecycle operation.
+In order to support existing services migration to resource properties we will
+introduce a new trait named `@associatedResource` to associate a structure shape
+with the top level properties of a specific resource instead of a top level
+lifecycle operation input or output. This trait can only be allowed to structure
+shapes one below the input or output of a resource lifecycle operation.
 
 ```
 resource Pipeline {
@@ -254,7 +301,7 @@ resource Pipeline {
      properties: {
         name: String
         foo: Baz
-        rank: Integer 
+        rank: Integer
     },
     create: CreatePipeline
     ...
@@ -288,7 +335,10 @@ string associatedResource
 
 ### Tracking append vs replace with `@cfnCollection`
 
-We will introduce a new trait named `@cfnCollection` to indicate to CloudFormation if a member of an update operation is used to replace a list/set of values or to append. This trait can be applied only to top-level input properties of an `update` lifecycle operation or a non-lifecycle instance operation of a resource.
+We will introduce a new trait named `@cfnCollection` to indicate to CloudFormation
+if a member of an update operation is used to replace a list/set of values or to
+append. This trait can be applied only to top-level input properties of an `update`
+lifecycle operation or a non-lifecycle instance operation of a resource.
 
 ```
 // Arbitrary example show how this could work.
@@ -304,7 +354,8 @@ operation AppendTags {
 
 ### Add `ignoredProperties` to resource
 
-Rather than define the `@notProperty` trait on members, it could be defined on the resource directly:
+Rather than define the `@notProperty` trait on members, it could be defined on
+the resource directly:
 
 ```
 resource Config {
@@ -357,48 +408,76 @@ Pros:
 Cons:
 
 * The resource shape becomes very verbose.
-* Mixins can also be used with inputs and outputs to mark specific members as `@notProperty`, giving the same effect.
+* Mixins can also be used with inputs and outputs to mark specific members as
+`@notProperty`, giving the same effect.
 
 ## FAQ
 
 ### Why do we need to do this?
 
-Resources released using Smithy often use inconsistent names across operation inputs and outputs. This is confusing for customers, makes it impossible for CloudFormation to take existing Smithy models and generate resource schemas, and it requires work for CloudControl to implement JSON Patch updates to resources.
+Resources released using Smithy often use inconsistent names across operation
+inputs and outputs. This is confusing for customers, makes it impossible for
+CloudFormation to take existing Smithy models and generate resource schemas,
+and it requires work for CloudControl to implement JSON Patch updates to resources.
 
 ### Why do we need to support remapping?
 
-1. Service teams that already shipped with inconsistent resource properties might want to add more rigor into their modeling going forward, so they need a way to address existing inconsistencies.
-2. CloudFormation wants to support existing APIs that already shipped with inconsistent property naming across resources, so they need a way to map the existing service API to the declared properties of a resource.
+1. Service teams that already shipped with inconsistent resource properties
+   might want to add more rigor into their modeling going forward, so they need
+   a way to address existing inconsistencies.
+2. CloudFormation wants to support existing APIs that already shipped with
+   inconsistent property naming across resources, so they need a way to map the
+   existing service API to the declared properties of a resource.
 
 ### Why allow `@notProperty` to be a meta trait?
 
-It makes models less verbose because traits like `@idempotencyToken` already imply that they’re transient.
+It makes models less verbose because traits like `@idempotencyToken` already
+imply that they’re transient.
 
-### What if a member for a resource property is marked with the `@notProperty` trait directly?
+### What if a member for a resource property is marked with the `@notProperty`
+trait directly?
 
-Marking a resource property member directly with the `@notProperty` trait is an error.
+Marking a resource property member directly with the `@notProperty` trait is an
+error.
 
 ### What is the relationship to existing CloudFormation traits?
 
-A good outcome is that new services only need to apply `@notProperty` traits. `@property`, `@cfnExcludeProperty`, and `@cfnName` should only be needed to map existing services to Smithy.
+A good outcome is that new services only need to apply `@notProperty` traits.
+`@property`, `@cfnExcludeProperty`, and `@cfnName` should only be needed to map
+existing services to Smithy.
 
-1. While the `@cfnExcludeProperty` trait has some overlap with `@notProperty`, they do have different use cases. 
-    1. Top-level members of the input or output of an operation marked with `@cfnExclude` or `@notProperty` will both be removed from the output of converting Smithy to a CloudFormation schema.
-    2. `@notProperty` only has an effect on top-level resource properties, whereas `@cfnExcludeProperty` works on shapes nested in the input, output, or errors of an operation.
-    3. It's possible that something is a resource property that isn't transient and is also not supported in CloudFormation (for example, not yet supported in CloudFormation, or an existing CloudFormation schema already shipped with a schema that differs from the API).
+1. While the `@cfnExcludeProperty` trait has some overlap with `@notProperty`,
+   they do have different use cases.
+    1. Top-level members of the input or output of an operation marked with
+       `@cfnExclude` or `@notProperty` will both be removed from the output of
+       converting Smithy to a CloudFormation schema.
+    2. `@notProperty` only has an effect on top-level resource properties, whereas
+       `@cfnExcludeProperty` works on shapes nested in the input, output, or errors
+       of an operation.
+    3. It's possible that something is a resource property that isn't transient
+       and is also not supported in CloudFormation (for example, not yet supported
+       in CloudFormation, or an existing CloudFormation schema already shipped
+       with a schema that differs from the API).
 2. `@property` and `@cfnName` are also similar, but have different uses:
-    1. `@property` is used to map a top-level member name of the *API* to a resource property name, whereas `@cfnName` is used to map a member name to a CloudFormation schema property name.
-    2. New schemas SHOULD use the same name in both the API and CloudFormation. A DANGER event will be emitted when these two traits differ.
-    3. `@property` is used in the Smithy to CloudFormation conversion, but `@cfnName` takes precedence over `@property`. `@property` and `@cfnName` set on the same member to the same value will emit a WARNING that it’s unnecessary.
-    4. `@property` only affects top-level input, output, and error members while `@cfnName` can alter nested properties.
+    1. `@property` is used to map a top-level member name of the *API* to a
+       resource property name, whereas `@cfnName` is used to map a member name
+       to a CloudFormation schema property name.
+    2. New schemas SHOULD use the same name in both the API and CloudFormation.
+       A DANGER event will be emitted when these two traits differ.
+    3. `@property` is used in the Smithy to CloudFormation conversion, but
+       `@cfnName` takes precedence over `@property`. `@property` and `@cfnName`
+       set on the same member to the same value will emit a WARNING that it’s
+       unnecessary.
+    4. `@property` only affects top-level input, output, and error members while
+    `@cfnName` can alter nested properties.
 
 ### Should tags be modeled through resource properties?
 
-Yes. However, normal property constraints apply and tags must appear in at least one resource lifecycle operation’s input or output.[Further AWS tagging trait features are planned.](https://quip-amazon.com/debLAVDHpxvy/Smithy-AWS-resource-tag-modeling)
+Yes. However, normal property constraints apply and tags must appear in at least
+one resource lifecycle operation’s input or output.
+ [Further AWS tagging trait features are planned.](https://quip-amazon.com/debLAVDHpxvy/Smithy-AWS-resource-tag-modeling)
 
 ## Delivery
-
-**Target release:** 6/30/2022  (expected post IDL2 launch, development on top of IDL2 branch)
 
 **Property consistency:**
 
