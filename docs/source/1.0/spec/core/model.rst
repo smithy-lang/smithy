@@ -2183,8 +2183,9 @@ Binding members to properties
 ---------------------------------
 
 *Property bindings* associate top-level members of input or output shapes
-with resource properties, and occurs through a name match between the member
-name and property name.
+with resource properties. The match occurs through a match between member
+name and property name by default. :ref:`property-trait`'s name property
+can be used to specify a property name when the member name is a mismatch.
 
 .. tabs::
 
