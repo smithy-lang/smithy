@@ -221,25 +221,20 @@ to call ``CreateTable`` on a table that already exists will return an error.
 ---------------------
 
 Summary
-    Used to mark an input or output member of an instance operation
-    as not bound to any properties.
+    Used to explicitly mark an input or output member of an instance operation
+    is not bound to a resource property. Can also mark another trait to have
+    same effect.
 Trait selector
     ``:is(operation -[input, output]-> structure > member, [trait|trait])``
 
     *A top level member of an operations input or output, or a trait*
 Value type
-    structure
+    Annotation trait.
 
-By default, ``put`` lifecycle operations are assumed to both create and
-replace an existing resource. Some APIs, however, do not support this
-behavior and require that a resource is first deleted before it can be
-replaced.
-
-For example, this is the behavior of Amazon DynamoDB's CreateTable_
-operation. The "Table" resource identifier, "TableName", is provided by the
-client, making it appropriate to model in Smithy as a ``put`` lifecycle
-operation. However, ``UpdateTable`` is used to update a table and attempting
-to call ``CreateTable`` on a table that already exists will return an error.
+By default, top-level input and output members of a lifecycle operation must
+be bound to a resource property. Members that are an exception must be marked
+with this trait, or another trait that carries it to be excluded from this
+requirement.
 
 .. tabs::
 

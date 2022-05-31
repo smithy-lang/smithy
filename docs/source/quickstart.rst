@@ -192,7 +192,9 @@ resource.
 The state of a resource is represented using 
 :ref:`resource-properties <resource-properties>`. ``City`` contains coordinates
 specifying the physical location and ``Forecast`` has a float representing the
-chance of rain.
+chance of rain. Input and output operation members of lifecycle operations map
+to resource properties, identifiers, otherwise those members must be marked,
+explicitly or implicitly, as non-properties.
 
 .. code-block:: smithy
 
@@ -219,6 +221,8 @@ chance of rain.
     3. Child resources must define the same identifiers as their parents,
        and they can also define additional identifiers.
     4. Resources can define properties.
+    5. Resource properties are set, modified, or read through lifecycle
+       operations.
 
 
 Defining operations
