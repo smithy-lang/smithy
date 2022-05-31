@@ -64,7 +64,7 @@ apply MalformedAcceptWithGenericString @httpMalformedRequestTests([
         protocol: restJson1,
         request: {
             method: "POST",
-            uri: "/MalformedAcceptWithPayload",
+            uri: "/MalformedAcceptWithGenericString",
             headers: {
                 // this should be text/plain
                 "accept": "application/json"
@@ -105,5 +105,5 @@ operation MalformedAcceptWithGenericString {
 
 structure MalformedAcceptWithGenericStringInput {
     @httpPayload
-    payload: Blob
+    payload: String
 }
