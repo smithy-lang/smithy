@@ -329,7 +329,8 @@ Value type
          - Description
        * - name
          - ``string``
-         - Name of the resource property to bind the member to.
+         - Name of the resource property to bind the member to. This field MUST
+           be specified.
 
 By default, top-level input or output shape members are bound to the resource
 property with the same name. In situations where this isn't possible, this
@@ -338,9 +339,9 @@ trait can be used to specify which property the member is bound to.
    .. admonition:: Note
     :class: tip
 
-    This trait should only be used for legacy services to maintain backwards
-    compatibility with existing API input and output structures, while enabling
-    Smithy's resource property modeling and validation.
+    This trait should only be used for existing service APIs that need to
+    maintain backwards compatibility with input and output structures, while
+    enabling Smithy's resource property modeling and validation.
 
 .. tabs::
 
@@ -399,6 +400,102 @@ trait can be used to specify which property the member is bound to.
                 }
             }
         }
+
+
+.. smithy-trait:: smithy.api#nestedProperties
+.. _nested-properties-trait:
+
+--------------------------
+``nestedProperties`` trait
+--------------------------
+
+Summary
+    Allows the binding of resource properties to occur with a members nested
+    deeper than the lifecycle operation's input or output shape.
+Trait selector
+    ``:is(operation -[input, output]-> structure > member)``
+
+    *A member of a top-level input or output structure member*
+Value type
+    Annotation trait.
+
+By default, top-level input and output shape members of lifecycle operations are
+bound to resource properties. If the shape containing the top-level resource
+properties is nested one level deeper than the input and output shape members,
+apply this trait to that member.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        resource Forecast {
+            properties: { chanceOfRain: Float }
+            read: GetForecast
+        }
+
+        @readonly
+        operation GetForecast {
+           output: GetForecastOutput
+        }
+
+        structure GetForecastOutput {
+            @nestedProperties
+            forecastData: ForecastData
+        }
+
+        structure ForecastData {
+            chanceOfRain: Float
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "2.0",
+            "shapes": {
+                "smithy.example#Forecast": {
+                    "type": "resource",
+                    "read": {
+                        "target": "smithy.example#GetForecast"
+                    }
+                },
+                "smithy.example#ForecastData": {
+                    "type": "structure",
+                    "members": {
+                        "chanceOfRain": {
+                            "target": "smithy.api#Float"
+                        }
+                    }
+                },
+                "smithy.example#GetForecast": {
+                    "type": "operation",
+                    "input": {
+                        "target": "smithy.api#Unit"
+                    },
+                    "output": {
+                        "target": "smithy.example#GetForecastOutput"
+                    },
+                    "traits": {
+                        "smithy.api#readonly": {}
+                    }
+                },
+                "smithy.example#GetForecastOutput": {
+                    "type": "structure",
+                    "members": {
+                        "forecastData": {
+                            "target": "smithy.example#ForecastData",
+                            "traits": {
+                                "smithy.api#nestedProperties": {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+The shape targetted by the member marked with this trait will have its members
+used for resource property bindings. These members may not use
+:ref:`property-trait`, or :ref:`notProperty-trait`, and Smithy will not perform
+any resource property binding exclusion , or bindings with mismatched property names.
 
 
 .. smithy-trait:: smithy.api#references

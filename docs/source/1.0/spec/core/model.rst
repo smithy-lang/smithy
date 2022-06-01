@@ -2119,8 +2119,7 @@ Resource Properties
 Properties can be referred to in the top level input and output shapes
 of a resource's instance operations, including create, read, update,
 delete, and put. All declared resource properties MUST appear in at
-least one instance operation's input or output. Additionally, all instance
-operations on a resource must
+least one instance operation's input or output.
 
 For example, the following model defines a ``Forecast`` resource with a
 single property ``chanceOfRain`` read by the GetForecast operation, and
@@ -2184,8 +2183,7 @@ Binding members to properties
 
 *Property bindings* associate top-level members of input or output shapes
 with resource properties. The match occurs through a match between member
-name and property name by default. :ref:`property-trait`'s name property
-can be used to specify a property name when the member name is a mismatch.
+name and property name by default.
 
 .. tabs::
 
@@ -2238,6 +2236,87 @@ can be used to specify a property name when the member name is a mismatch.
                 }
             }
         }
+
+The:ref:`property-trait` can be used, while specifying the `name` property, to
+bind a member to the named property. This is useful if the member name cannot
+changed due to backwards compatibility reasons, but resource property modeling
+is being added to your Smithy model.
+
+The following example demonstrates the ``howLikelyToRain`` member of
+``GetForecastOutput`` can be bound to the ``chanceOfRain`` resource property:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        resource Forecast {
+            properties: { chanceOfRain: Float }
+            read: GetForecast
+        }
+
+        @readonly
+        operation GetForecast {
+           output: GetForecastOutput
+        }
+
+        structure GetForecastOutput {
+            @property(name: "chanceOfRain")
+            howLikelyToRain: Float
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "2.0",
+            "shapes": {
+                "smithy.example#Forecast": {
+                    "type": "resource",
+                    "read": {
+                        "target": "smithy.example#GetForecast"
+                    }
+                },
+                "smithy.example#GetForecast": {
+                    "type": "operation",
+                    "input": {
+                        "target": "smithy.api#Unit"
+                    },
+                    "output": {
+                        "target": "smithy.example#GetForecastOutput"
+                    },
+                    "traits": {
+                        "smithy.api#readonly": {}
+                    }
+                },
+                "smithy.example#GetForecastOutput": {
+                    "type": "structure",
+                    "members": {
+                        "howLikelyToRain": {
+                            "target": "smithy.api#Float",
+                            "traits": {
+                                "smithy.api#property": {
+                                    "name": "chanceOfRain"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+.. rubric:: Resource property binding validation
+
+- All top-level input or output members must bind to a resource property unless
+  marked with :ref:`notProperty-trait` or another trait with it applied.
+- Top-level members of the input and output of resource instance operations MUST
+  only use properties that resolve to declared resource properties except for
+  members marked with the @notProperty trait or marked with traits marked with
+  the @notProperty trait.
+- Defined resource properties that do not resolve to any top-level input or
+  output members are invalid.
+- Members that provide a value for a resource property but use a different
+  target shape are invalid.
+- Members marked with a :ref:`property-trait` using a name that does not map to
+  a declared resource property are invalid.
 
 
 .. _lifecycle-operations:
