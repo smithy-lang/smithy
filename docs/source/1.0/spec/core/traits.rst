@@ -213,82 +213,110 @@ to call ``CreateTable`` on a table that already exists will return an error.
         }
 
 
-.. smithy-trait:: smithy.api#references
-.. _references-trait:
+.. smithy-trait:: smithy.api#notProperty
+.. _notproperty-trait:
 
 ---------------------
 ``notProperty`` trait
 ---------------------
 
 Summary
-    Used to explicitly mark an input or output member of an instance operation
-    is not bound to a resource property. Can also mark another trait to have
-    same effect.
+    Used to explicitly mark a top-level input or output shape member of an
+    instance operation is not bound to a resource property. Can also mark
+    another trait to have same effect.
 Trait selector
     ``:is(operation -[input, output]-> structure > member, [trait|trait])``
 
-    *A top level member of an operations input or output, or a trait*
+    *A top-level member of an operation's input or output shape, or a trait*
 Value type
     Annotation trait.
 
-By default, top-level input and output members of a lifecycle operation must
-be bound to a resource property. Members that are an exception must be marked
-with this trait, or another trait that carries it to be excluded from this
-requirement.
+By default, top-level input and output members of lifecycle operations must
+be bound to a resource property or identifier. Members that are neither, must
+have this trait applied, or be annotated with a different trait that has this
+trait applied.
 
 .. tabs::
 
     .. code-tab:: smithy
 
-        @noReplace
-        resource Table {
-            put: CreateTable
+        resource Forecast {
+            properties: { chanceOfRain: Float }
+            update: UpdateForecast
         }
 
-        @idempotent
-        operation CreateTable {
-            // ...
+        operation UpdateForecast {
+           input: UpdateForecastInput
+        }
+
+        structure UpdateForecastInput {
+            chanceOfRain: Float
+
+            @notProperty
+            dryRun: Boolean
+
+            @idempotencyToken
+            clientToken: String
         }
 
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "shapes": {
-                "smithy.example#Table": {
+                "smithy.example#Forecast": {
                     "type": "resource",
-                    "put": {
-                        "target": "smithy.example#CreateTable"
-                    },
-                    "traits": {
-                        "smithy.api#noReplace": {}
+                    "update": {
+                        "target": "smithy.example#UpdateForecast"
                     }
                 },
-                "smithy.example#CreateTable": {
+                "smithy.example#UpdateForecast": {
                     "type": "operation",
-                    "traits": {
-                        "smithy.api#idempotent": {}
+                    "input": {
+                        "target": "smithy.example#UpdateForecastInput"
+                    },
+                    "output": {
+                        "target": "smithy.api#Unit"
+                    },
+                },
+                "smithy.example#UpdateForecastInput": {
+                    "type": "structure",
+                    "members": {
+                        "chanceOfRain": {
+                            "target": "smithy.api#Float"
+                        },
+                        "dryRun": {
+                            "target": "smithy.api#Boolean",
+                            "traits": {
+                                "smithy.api#notProperty": {}
+                            }
+                        },
+                        "clientToken": {
+                            "target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#idempotencyToken": {}
+                            }
+                        }
                     }
                 }
             }
         }
 
 
-.. smithy-trait:: smithy.api#notProperty
-.. _notproperty-trait:
+.. smithy-trait:: smithy.api#property
+.. _property-trait:
 
 ------------------
 ``property`` trait
 ------------------
 
 Summary
-    Indicates that the :ref:`put lifecycle <put-lifecycle>` operation of a
-    resource can only be used to create a resource and cannot replace an
-    existing resource.
+    Binds a top-level input or output shape member of a structure to a resource
+    property with a different name.
 Trait selector
-    ``resource:test(-[put]->)``
+    ``:is(operation -[input, output]-> structure > member)``
 
-    *A top level member of an operations input or output or a trait*
+    *A top-level member of an operation's input or output shape*
 Value type
     An object with the following properties:
 
@@ -301,62 +329,80 @@ Value type
          - Description
        * - name
          - ``string``
-         - List of shape IDs that protocol implementations MUST understand
-           in order to successfully use the protocol. Each shape MUST exist
-           and MUST be a trait. Code generators SHOULD ensure that they
-           support each listed trait.
+         - Name of the resource property to bind the member to.
 
-By default, ``put`` lifecycle operations are assumed to both create and
-replace an existing resource. Some APIs, however, do not support this
-behavior and require that a resource is first deleted before it can be
-replaced.
+By default, top-level input or output shape members are bound to the resource
+property with the same name. In situations where this isn't possible, this
+trait can be used to specify which property the member is bound to.
 
-For example, this is the behavior of Amazon DynamoDB's CreateTable_
-operation. The "Table" resource identifier, "TableName", is provided by the
-client, making it appropriate to model in Smithy as a ``put`` lifecycle
-operation. However, ``UpdateTable`` is used to update a table and attempting
-to call ``CreateTable`` on a table that already exists will return an error.
+   .. admonition:: Note
+    :class: tip
+
+    This trait should only be used for legacy services to maintain backwards
+    compatibility with existing API input and output structures, while enabling
+    Smithy's resource property modeling and validation.
 
 .. tabs::
 
     .. code-tab:: smithy
 
-        @noReplace
-        resource Table {
-            put: CreateTable
+        resource Forecast {
+            properties: { chanceOfRain: Float }
+            read: GetForecast
         }
 
-        @idempotent
-        operation CreateTable {
-            // ...
+        @readonly
+        operation GetForecast {
+           output: GetForecastOutput
+        }
+
+        structure GetForecastOutput {
+            @property(name: "chanceOfRain")
+            howLikelyToRain: Float
         }
 
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "shapes": {
-                "smithy.example#Table": {
+                "smithy.example#Forecast": {
                     "type": "resource",
-                    "put": {
-                        "target": "smithy.example#CreateTable"
-                    },
-                    "traits": {
-                        "smithy.api#noReplace": {}
+                    "read": {
+                        "target": "smithy.example#GetForecast"
                     }
                 },
-                "smithy.example#CreateTable": {
+                "smithy.example#GetForecast": {
                     "type": "operation",
+                    "input": {
+                        "target": "smithy.api#Unit"
+                    },
+                    "output": {
+                        "target": "smithy.example#GetForecastOutput"
+                    },
                     "traits": {
-                        "smithy.api#idempotent": {}
+                        "smithy.api#readonly": {}
+                    }
+                },
+                "smithy.example#GetForecastOutput": {
+                    "type": "structure",
+                    "members": {
+                        "howLikelyToRain": {
+                            "target": "smithy.api#Float",
+                            "traits": {
+                                "smithy.api#property": {
+                                    "name": "chanceOfRain"
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
 
 
-.. smithy-trait:: smithy.api#property
-.. _property-trait:
+.. smithy-trait:: smithy.api#references
+.. _references-trait:
 
 --------------------
 ``references`` trait

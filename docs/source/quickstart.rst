@@ -189,12 +189,12 @@ needed. Because there is only one forecast per city, no additional identifiers
 were added to the identifiers property that isn't present on the ``City``
 resource.
 
-The state of a resource is represented using 
+The state of a resource is represented through its 
 :ref:`resource-properties <resource-properties>`. ``City`` contains coordinates
-specifying the physical location and ``Forecast`` has a float representing the
-chance of rain. Input and output operation members of lifecycle operations map
-to resource properties, identifiers, otherwise those members must be marked,
-explicitly or implicitly, as non-properties.
+specifyies the physical location, and ``Forecast`` has a chance of rain
+represented as a float. Lifecycle operation input and output members map to
+resource properties or identifiers, unless those members are annotated
+otherwise.
 
 .. code-block:: smithy
 
