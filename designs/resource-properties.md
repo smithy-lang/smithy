@@ -237,7 +237,7 @@ structure property {
 
 ## Addressing properties root misalignment with operation input/output
 
-###  Option 1: Associating top level resource properties to structures with @nestedProperties
+###  Associating top level resource properties to structures with @nestedProperties
 
 #### `@nestedProperties` trait definition
 
@@ -287,52 +287,6 @@ structure PipelineDescription {
 * Member must target a structure shape, and members of that structure shape may
   not use @notProperty
 
-### Option 2: Associating top level resource properties to structures with `@associatedResource`
-
-In order to support existing services migration to resource properties we will
-introduce a new trait named `@associatedResource` to associate a structure shape
-with the top level properties of a specific resource instead of a top level
-lifecycle operation input or output. This trait can only be allowed to structure
-shapes one below the input or output of a resource lifecycle operation.
-
-```
-resource Pipeline {
-...
-     properties: {
-        name: String
-        foo: Baz
-        rank: Integer
-    },
-    create: CreatePipeline
-    ...
-}
-
-operation CreatePipeline {
-    input := CreatePipelineInput
-}
-
-structure CreatePipelineInput {
-     pipeline: PipelineDescription
-}
-
-@associatedResource("Pipeline")
-structure PipelineDescription {
-     name: String
-    foo: Baz
-    @property(name:"rank")
-    ranking: Integer
- }
-```
-
-#### `@` associatedResource trait definition
-
-The `@associatedResource` trait is defined in Smithy’s prelude as:
-
-```
-@trait(selector: "structure") //TODO: How to force off of top level input/output
-string associatedResource
-```
-
 ### Tracking append vs replace with `@cfnCollection`
 
 We will introduce a new trait named `@cfnCollection` to indicate to CloudFormation
@@ -349,67 +303,6 @@ operation AppendTags {
     }
 }
 ```
-
-## Alternative modeling
-
-### Add `ignoredProperties` to resource
-
-Rather than define the `@notProperty` trait on members, it could be defined on
-the resource directly:
-
-```
-resource Config {
-    identifiers: {
-        configId: ConfigId
-    }
-    properties: {
-        configData: ConfigData
-        name: ConfigName
-        tags: TagList
-        configArn: ConfigArg
-        configType: ConfigType
-    }
-    ignoredProperties: {
-        token: String
-    }
-    create: CreateConfig
-}
-```
-
-This could be made more succinct with mixins:
-
-```
-@mixin
-resource BaseResourceMixin {
-    ignoredProperties: {
-        token: String
-    }
-}
-
-resource Config with [BaseResourceMixin] {
-    identifiers: {
-        configId: ConfigId
-    }
-    properties: {
-        configData: ConfigData
-        name: ConfigName
-        tags: TagList
-        configArn: ConfigArg
-        configType: ConfigType
-    }
-    create: CreateConfig
-}
-```
-
-Pros:
-
-* Remove the need to add property traits to members spread across the resource.
-
-Cons:
-
-* The resource shape becomes very verbose.
-* Mixins can also be used with inputs and outputs to mark specific members as
-`@notProperty`, giving the same effect.
 
 ## FAQ
 
@@ -492,4 +385,112 @@ one resource lifecycle operation’s input or output.
 
 * @cfnCollection trait and append versus replace semantics
 * Full design and implementation of tag traits
+
+## Alternative approaches
+
+### (`@notProperty` alternative) Add `ignoredProperties` to resource
+
+Rather than define the `@notProperty` trait on members, it could be defined on
+the resource directly:
+
+```
+resource Config {
+    identifiers: {
+        configId: ConfigId
+    }
+    properties: {
+        configData: ConfigData
+        name: ConfigName
+        tags: TagList
+        configArn: ConfigArg
+        configType: ConfigType
+    }
+    ignoredProperties: {
+        token: String
+    }
+    create: CreateConfig
+}
+```
+
+This could be made more succinct with mixins:
+
+```
+@mixin
+resource BaseResourceMixin {
+    ignoredProperties: {
+        token: String
+    }
+}
+
+resource Config with [BaseResourceMixin] {
+    identifiers: {
+        configId: ConfigId
+    }
+    properties: {
+        configData: ConfigData
+        name: ConfigName
+        tags: TagList
+        configArn: ConfigArg
+        configType: ConfigType
+    }
+    create: CreateConfig
+}
+```
+
+Pros:
+
+* Remove the need to add property traits to members spread across the resource.
+
+Cons:
+* Marks
+
+* The resource shape becomes very verbose.
+* Mixins can also be used with inputs and outputs to mark specific members as
+`@notProperty`, giving the same effect.
+
+### (`@nestedProperties` alternative): Associating top level resource properties to structures with `@associatedResource`
+
+In order to support existing services migration to resource properties we will
+introduce a new trait named `@associatedResource` to associate a structure shape
+with the top level properties of a specific resource instead of a top level
+lifecycle operation input or output. This trait can only be allowed to structure
+shapes one below the input or output of a resource lifecycle operation.
+
+```
+resource Pipeline {
+...
+     properties: {
+        name: String
+        foo: Baz
+        rank: Integer
+    },
+    create: CreatePipeline
+    ...
+}
+
+operation CreatePipeline {
+    input := CreatePipelineInput
+}
+
+structure CreatePipelineInput {
+     pipeline: PipelineDescription
+}
+
+@associatedResource("Pipeline")
+structure PipelineDescription {
+     name: String
+    foo: Baz
+    @property(name:"rank")
+    ranking: Integer
+ }
+```
+
+#### `@associatedResource` trait definition
+
+The `@associatedResource` trait is defined in Smithy’s prelude as:
+
+```
+@trait(selector: "structure") //TODO: How to force off of top level input/output
+string associatedResource
+```
 
