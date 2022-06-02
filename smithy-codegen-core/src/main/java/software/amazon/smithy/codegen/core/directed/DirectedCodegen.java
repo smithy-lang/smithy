@@ -32,7 +32,7 @@ import software.amazon.smithy.codegen.core.WriterDelegator;
  * @param <S> Settings object passed to directed methods as part of the context.
  * @param <I> {@link SmithyIntegration} type to use in directed methods.
  */
-public interface DirectedCodegen<C extends CodegenContext<S, ?>, S, I extends SmithyIntegration<S, ?, ?>> {
+public interface DirectedCodegen<C extends CodegenContext<S, ?, I>, S, I extends SmithyIntegration<S, ?, C>> {
 
     /**
      * Create the {@link SymbolProvider} used to map shapes to code symbols.

@@ -60,7 +60,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
 public final class CodegenDirector<
         W extends SymbolWriter<W, ? extends ImportContainer>,
         I extends SmithyIntegration<S, W, C>,
-        C extends CodegenContext<S, W>,
+        C extends CodegenContext<S, W, I>,
         S> {
 
     private static final Logger LOGGER = Logger.getLogger(DirectedCodegen.class.getName());
@@ -399,7 +399,7 @@ public final class CodegenDirector<
 
     private static class ShapeGenerator<
             W extends SymbolWriter<W, ? extends ImportContainer>,
-            C extends CodegenContext<S, W>,
+            C extends CodegenContext<S, W, ?>,
             S> extends ShapeVisitor.Default<Void> {
 
         private final C context;

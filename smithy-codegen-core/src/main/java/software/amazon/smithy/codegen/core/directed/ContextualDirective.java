@@ -26,7 +26,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
  * @param <C> CodegenContext type.
  * @param <S> Codegen settings type.
  */
-public abstract class ContextualDirective<C extends CodegenContext<S, ?>, S> extends Directive<S> {
+public abstract class ContextualDirective<C extends CodegenContext<S, ?, ?>, S> extends Directive<S> {
 
     private final C context;
 

@@ -26,7 +26,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
  * @see DirectedCodegen#customizeBeforeIntegrations
  * @see DirectedCodegen#customizeAfterIntegrations
  */
-public final class CustomizeDirective<C extends CodegenContext<S, ?>, S> extends ContextualDirective<C, S> {
+public final class CustomizeDirective<C extends CodegenContext<S, ?, ?>, S> extends ContextualDirective<C, S> {
     CustomizeDirective(C context, ServiceShape service) {
         super(context, service);
     }

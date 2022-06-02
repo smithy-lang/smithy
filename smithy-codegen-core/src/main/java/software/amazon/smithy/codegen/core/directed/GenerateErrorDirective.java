@@ -27,7 +27,7 @@ import software.amazon.smithy.model.traits.ErrorTrait;
  * @param <S> Codegen settings type.
  * @see DirectedCodegen#generateError
  */
-public final class GenerateErrorDirective<C extends CodegenContext<S, ?>, S>
+public final class GenerateErrorDirective<C extends CodegenContext<S, ?, ?>, S>
         extends ShapeDirective<StructureShape, C, S> {
 
     GenerateErrorDirective(C context, ServiceShape service, StructureShape shape) {

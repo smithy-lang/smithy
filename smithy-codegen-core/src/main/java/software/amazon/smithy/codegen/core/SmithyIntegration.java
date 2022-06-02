@@ -42,7 +42,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * @param <C> The CodegenContext value used by the generator.
  */
 @SmithyUnstableApi
-public interface SmithyIntegration<S, W extends SymbolWriter<W, ?>, C extends CodegenContext<S, W>> {
+public interface SmithyIntegration<S, W extends SymbolWriter<W, ?>, C extends CodegenContext<S, W, ?>> {
     /**
      * Gets the name of the integration.
      *

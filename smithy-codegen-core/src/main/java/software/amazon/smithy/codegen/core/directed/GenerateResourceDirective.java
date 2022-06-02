@@ -26,7 +26,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
  * @param <S> Codegen settings type.
  * @see DirectedCodegen#generateResource
  */
-public final class GenerateResourceDirective<C extends CodegenContext<S, ?>, S>
+public final class GenerateResourceDirective<C extends CodegenContext<S, ?, ?>, S>
         extends ShapeDirective<ResourceShape, C, S> {
     GenerateResourceDirective(C context, ServiceShape service, ResourceShape shape) {
         super(context, service, shape);

@@ -34,7 +34,7 @@ public class IntegrationTopologicalSortTest {
     private static final class MyIntegration implements SmithyIntegration<
             MySettings,
             MySimpleWriter,
-            CodegenContext<MySettings, MySimpleWriter>
+            CodegenContext<MySettings, MySimpleWriter, MyIntegration>
     > {
         private final String name;
         private final byte priority;

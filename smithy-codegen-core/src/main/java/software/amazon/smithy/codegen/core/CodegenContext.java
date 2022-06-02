@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.codegen.core;
 
+import java.util.List;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 
@@ -24,8 +25,9 @@ import software.amazon.smithy.model.Model;
  *
  * @param <S> The settings object used to configure the generator.
  * @param <W> The type of {@link SymbolWriter} used by the generator.
+ * @param <I> The type of {@link SmithyIntegration}s used by the generator.
  */
-public interface CodegenContext<S, W extends SymbolWriter<W, ?>> {
+public interface CodegenContext<S, W extends SymbolWriter<W, ?>, I extends SmithyIntegration<S, W, ?>> {
     /**
      * @return Gets the model being code generated.
      */
@@ -57,4 +59,9 @@ public interface CodegenContext<S, W extends SymbolWriter<W, ?>> {
      * @return Returns the writer delegator used by the generator.
      */
     WriterDelegator<W> writerDelegator();
+
+    /**
+     * @return Gets the SmithyIntegrations used for code generation.
+     */
+    List<I> integrations();
 }

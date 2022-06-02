@@ -27,7 +27,7 @@ import software.amazon.smithy.model.traits.EnumTrait;
  * @param <S> Codegen settings type.
  * @see DirectedCodegen#generateEnumShape
  */
-public final class GenerateEnumDirective<C extends CodegenContext<S, ?>, S> extends ShapeDirective<Shape, C, S> {
+public final class GenerateEnumDirective<C extends CodegenContext<S, ?, ?>, S> extends ShapeDirective<Shape, C, S> {
 
     GenerateEnumDirective(C context, ServiceShape service, Shape shape) {
         super(context, service, validateShape(shape));
