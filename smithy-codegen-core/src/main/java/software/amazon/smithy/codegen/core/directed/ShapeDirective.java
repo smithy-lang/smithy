@@ -27,7 +27,7 @@ import software.amazon.smithy.model.shapes.Shape;
  * @param <C> CodegenContext type.
  * @param <S> Codegen settings type.
  */
-public abstract class ShapeDirective<T extends Shape, C extends CodegenContext<S, ?>, S>
+public abstract class ShapeDirective<T extends Shape, C extends CodegenContext<S, ?, ?>, S>
         extends ContextualDirective<C, S> {
 
     private final T shape;

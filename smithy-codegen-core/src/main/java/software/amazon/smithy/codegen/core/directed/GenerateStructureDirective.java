@@ -29,7 +29,7 @@ import software.amazon.smithy.model.transform.ModelTransformer;
  * @param <S> Codegen settings type.
  * @see DirectedCodegen#generateStructure
  */
-public final class GenerateStructureDirective<C extends CodegenContext<S, ?>, S>
+public final class GenerateStructureDirective<C extends CodegenContext<S, ?, ?>, S>
         extends ShapeDirective<StructureShape, C, S> {
 
     GenerateStructureDirective(C context, ServiceShape service, StructureShape shape) {

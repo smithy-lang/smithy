@@ -29,7 +29,7 @@ public class SmithyIntegrationTest {
 
     private static final class MySettings {}
 
-    private static final class MyContext implements CodegenContext<MySettings, MySimpleWriter> {
+    private static final class MyContext implements CodegenContext<MySettings, MySimpleWriter, MyIntegration> {
         @Override
         public Model model() {
             return null;
@@ -54,6 +54,9 @@ public class SmithyIntegrationTest {
         public WriterDelegator<MySimpleWriter> writerDelegator() {
             return null;
         }
+
+        @Override
+        public List<MyIntegration> integrations() { return null; }
     }
 
     private static final class MyIntegration implements SmithyIntegration<MySettings, MySimpleWriter, MyContext> {

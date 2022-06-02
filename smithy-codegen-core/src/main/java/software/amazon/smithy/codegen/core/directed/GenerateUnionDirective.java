@@ -27,7 +27,7 @@ import software.amazon.smithy.model.traits.StreamingTrait;
  * @param <S> Codegen settings type.
  * @see DirectedCodegen#generateUnion
  */
-public final class GenerateUnionDirective<C extends CodegenContext<S, ?>, S>
+public final class GenerateUnionDirective<C extends CodegenContext<S, ?, ?>, S>
         extends ShapeDirective<UnionShape, C, S> {
 
     GenerateUnionDirective(C context, ServiceShape service, UnionShape shape) {

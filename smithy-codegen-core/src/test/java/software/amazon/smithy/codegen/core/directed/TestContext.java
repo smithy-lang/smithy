@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.codegen.core.directed;
 
+import java.util.ArrayList;
+import java.util.List;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.MockManifest;
 import software.amazon.smithy.codegen.core.CodegenContext;
@@ -25,7 +27,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
-final class TestContext implements CodegenContext<TestSettings, TestWriter> {
+final class TestContext implements CodegenContext<TestSettings, TestWriter, TestIntegration> {
 
     private final Model model;
     private final TestSettings settings;
@@ -84,6 +86,11 @@ final class TestContext implements CodegenContext<TestSettings, TestWriter> {
     @Override
     public WriterDelegator<TestWriter> writerDelegator() {
         return delegator;
+    }
+
+    @Override
+    public List<TestIntegration> integrations() {
+        return new ArrayList<>();
     }
 
     public ServiceShape service() {
