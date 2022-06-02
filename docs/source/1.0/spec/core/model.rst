@@ -969,6 +969,8 @@ Smithy allows recursive shape definitions with the following limitations:
    a recursive list in Java ``List<List<List....``).
 2. A structure cannot contain a cyclical set of members marked with the
    :ref:`required-trait` that refers back to itself.
+3. A union MUST contain at least one member that does not refer back to
+   itself.
 
 The following recursive shape definition is **valid**:
 

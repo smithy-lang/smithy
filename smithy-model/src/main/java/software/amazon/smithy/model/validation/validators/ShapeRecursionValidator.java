@@ -23,9 +23,11 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.selector.PathFinder;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -50,6 +52,7 @@ public final class ShapeRecursionValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
         validateListMapSetShapes(finder, model, events);
         validateStructurePaths(finder, model, events);
+        validateUnions(model, events);
         return events;
     }
 
@@ -107,5 +110,19 @@ public final class ShapeRecursionValidator extends AbstractValidator {
             }
         }
         return joiner.toString();
+    }
+
+    private void validateUnions(Model model, List<ValidationEvent> events) {
+        nextUnion: for (UnionShape union : model.getUnionShapes()) {
+            // Don't claim the union is recursive if it's empty (which is also invalid).
+            if (!union.getAllMembers().isEmpty()) {
+                for (MemberShape member : union.getAllMembers().values()) {
+                    if (!member.getTarget().equals(member.getContainer())) {
+                        continue nextUnion;
+                    }
+                }
+                events.add(error(union, "Unions must contain at least one member that is not directly recursive"));
+            }
+        }
     }
 }
