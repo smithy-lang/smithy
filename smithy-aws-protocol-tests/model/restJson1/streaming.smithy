@@ -21,7 +21,7 @@ operation StreamingTraits {
 
 apply StreamingTraits @httpRequestTests([
     {
-        id: "RestJsonStreamingTraitsWithBlob",
+        id: "RestJsonStreamingTraitsWithBlobRequest",
         documentation: "Serializes a blob in the HTTP payload",
         protocol: restJson1,
         method: "POST",
@@ -56,7 +56,7 @@ apply StreamingTraits @httpRequestTests([
 
 apply StreamingTraits @httpResponseTests([
     {
-        id: "RestJsonStreamingTraitsWithBlob",
+        id: "RestJsonStreamingTraitsWithBlobResponse",
         documentation: "Serializes a blob in the HTTP payload",
         protocol: restJson1,
         code: 200,
