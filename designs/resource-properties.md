@@ -10,13 +10,15 @@ bound to a resource. The only consistency enforced by Smithy is that the
 identifiers of a resource are present on the input of each instance operation
 bound to the resource. Because of this, it’s very easy for a service team to
 call a property “ids” in one operation and “idList” in another, despite these
-members referring to the same thing.
+members referring to the same thing. Modeling resource properties in Smithy
+ensures a better developer experience and enables a clearer view of resource
+structure when performing model transformations.
 
 ## Proposal
 
 Resource shapes will support a new member named “properties” that defines the
 properties that can be referred to in the top-level input and output shapes of
-a resource’s instance operations, including create, read, update, delete, and put.
+a resource’s instance operations and create operation.
 
 ```
 resource Config {
