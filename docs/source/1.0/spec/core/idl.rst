@@ -2090,7 +2090,7 @@ This example is equivalent to the following:
 
 The following text blocks are ill-formed:
 
-.. code-block:: smithy
+.. code-block::
 
     """foo"""  // missing new line following open delimiter
     """ """    // missing new line following open delimiter
