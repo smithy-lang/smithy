@@ -1,0 +1,2 @@
+[ERROR] smithy.example#GetForecastOutput: This shape contains members with conflicting property names that resolve to 'chanceOfRain': chanceOfRain, chancesOfRain | ResourceOperationInputOutput
+[ERROR] smithy.example#GetForecastInput: This shape contains members with conflicting property names that resolve to 'chanceOfRain': chancesOfRain, howLikelyToRain | ResourceOperationInputOutput
