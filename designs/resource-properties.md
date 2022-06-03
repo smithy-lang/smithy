@@ -123,7 +123,7 @@ operation UpdateConfig {
 The `@notProperty` trait is defined in Smithy’s prelude as:
 
 ```
-@trait(selector: ":is(structure > member, trait|trait")
+@trait(selector: ":is(structure > member, [trait|trait])")
 structure notProperty {}
 ```
 
@@ -152,15 +152,15 @@ structure Foo {
 }
 ```
 
-The `token` member is considered transient because `@idempotencyToken` is
-marked with the `@notProperty` trait.
+Even though `token` is not a resource property, the `token` member is now allowed
+because `@idempotencyToken` is marked with the `@notProperty` trait.
 
 #### Resource properties marked as `@notProperty`
 
 Members marked with `@notProperty` carrying traits can still be used as resource
 properties. Anything declared in the `properties` of a resource are always
 considered resource properties regardless of if a trait marked with the
-`@notProperty` property is defined on a corresponding member.
+`@notProperty` trait is defined on a corresponding member.
 
 In the following resource definition,`token` is a resource property of
 `Tokenator`. Despite the `token` member of `CreateTokenator` being marked with
