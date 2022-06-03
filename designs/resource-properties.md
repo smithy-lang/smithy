@@ -239,14 +239,15 @@ structure property {
 
 ## Addressing properties root misalignment with operation input/output
 
-###  Associating top level resource properties to structures with @nestedProperties
-
 #### `@nestedProperties` trait definition
 
 The `@nestedProperties` trait is defined in Smithy’s prelude as:
 
 ```
-@trait(selector: "structure > member", structurallyExclusive: "member")
+@trait(
+    selector: "structure > member :test(> structure)",
+    structurallyExclusive: "member"
+)
 structure nestedProperties { }
 ```
 
@@ -282,29 +283,12 @@ structure PipelineDescription {
 
 #### @nestedProperties added validation
 
-* Trait can only be applied to members of a top level resource lifecycle
-  operation input or output
-* All other members must have @notProperty trait directly or indirectly applied
-  (@resourceIdentifier, @idempotencyToken)
+* Trait can only be applied to members of a top-level member of a resource
+  instance operation or create operation.
+* All other top-level input/output members must have @notProperty trait directly
+  or indirectly applied. For example @resourceIdentifier, @idempotencyToken)
 * Member must target a structure shape, and members of that structure shape may
   not use @notProperty
-
-### Tracking append vs replace with `@cfnCollection`
-
-We will introduce a new trait named `@cfnCollection` to indicate to CloudFormation
-if a member of an update operation is used to replace a list/set of values or to
-append. This trait can be applied only to top-level input properties of an `update`
-lifecycle operation or a non-lifecycle instance operation of a resource.
-
-```
-// Arbitrary example show how this could work.
-operation AppendTags {
-    input := {
-        @cfnCollection(style: "append")
-        tags: TagList
-    }
-}
-```
 
 ## FAQ
 
@@ -383,11 +367,6 @@ one resource lifecycle operation’s input or output.
 * Implicit and explicit identifier bindings (@resourceIdentifier) added for operation output
 * Design intent/approach for tag property and lifecycle operation modeling, ensuring backwards compatibility
 
-**Out of scope:**
-
-* @cfnCollection trait and append versus replace semantics
-* Full design and implementation of tag traits
-
 ## Alternative approaches
 
 ### (`@notProperty` alternative) Add `ignoredProperties` to resource
@@ -444,15 +423,16 @@ Pros:
 * Remove the need to add property traits to members spread across the resource.
 
 Cons:
-* Marks
 
-* The resource shape becomes very verbose.
-* Mixins can also be used with inputs and outputs to mark specific members as
-`@notProperty`, giving the same effect.
+* The resource shape becomes verbose. It leaks details of create and instance
+  operation input and output members that need to be filtered out.
+* More difficult to process ignoredProperties when model undergoes transformations
+  that may filter the operations on a service or resource. Operation inclusion
+  or exclusion would impact the contents of ignoredProperties.
 
 ### (`@nestedProperties` alternative): Associating top level resource properties to structures with `@associatedResource`
 
-In order to support existing services migration to resource properties we will
+In order to support existing services migration to resource properties we could
 introduce a new trait named `@associatedResource` to associate a structure shape
 with the top level properties of a specific resource instead of a top level
 lifecycle operation input or output. This trait can only be allowed to structure
@@ -496,3 +476,13 @@ The `@associatedResource` trait is defined in Smithy’s prelude as:
 string associatedResource
 ```
 
+Pros:
+
+* Directly associates the resource with the shape to find the properties
+  regardless of how deeply nested it is.
+
+Cons:
+
+* Should not allow nesting of properties beyond 1 level deep.
+* Service author may incidentally associate more than one resource in a input
+  or output shape hierarchy.
