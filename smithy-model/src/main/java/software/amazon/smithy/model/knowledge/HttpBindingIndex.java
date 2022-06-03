@@ -386,6 +386,36 @@ public final class HttpBindingIndex implements KnowledgeIndex {
         return null;
     }
 
+    /**
+     * Returns true if the request has a modeled body.
+     *
+     * @param operation Operation to check.
+     * @return Returns true if the operation has document or payload bindings.
+     */
+    public boolean hasRequestBody(ToShapeId operation) {
+        return hasPayloadBindings(getRequestBindings(operation).values());
+    }
+
+    /**
+     * Returns true if the response has a modeled body.
+     *
+     * @param operation Operation to check.
+     * @return Returns true if the operation has document or payload bindings.
+     */
+    public boolean hasResponseBody(ToShapeId operation) {
+        return hasPayloadBindings(getResponseBindings(operation).values());
+    }
+
+    private boolean hasPayloadBindings(Collection<HttpBinding> bindings) {
+        for (HttpBinding binding : bindings) {
+            if (binding.getLocation() == HttpBinding.Location.DOCUMENT
+                    || binding.getLocation() == HttpBinding.Location.PAYLOAD) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private List<HttpBinding> computeRequestBindings(OperationIndex opIndex, OperationShape shape) {
         return createStructureBindings(opIndex.expectInputShape(shape.getId()), true);
     }

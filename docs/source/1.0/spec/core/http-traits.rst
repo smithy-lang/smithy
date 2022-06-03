@@ -12,10 +12,13 @@ multiple HTTP message locations (e.g., a member cannot be bound to both a URI
 label and to a header). Only top-level members of an operation's input, output,
 and error structures are considered when serializing HTTP messages.
 
-.. contents:: Table of contents
-    :depth: 1
-    :local:
-    :backlinks: none
+.. important::
+
+    Violating `HTTP specifications`_ or relying on poorly-supported HTTP
+    functionality when defining HTTP bindings will limit interoperability
+    and likely lead to undefined behavior across Smithy implementations. For
+    example, avoid defining GET/DELETE requests with payloads, defining
+    response payloads for operations with a 204/205 status, etc.
 
 
 .. smithy-trait:: smithy.api#http
@@ -51,7 +54,9 @@ The ``http`` trait is a structure that supports the following members:
       - ``integer``
       - The HTTP status code of a successful response. Defaults to ``200`` if
         not provided. The provided value SHOULD be between 100 and 599, and
-        it MUST be between 100 and 999.
+        it MUST be between 100 and 999. Status codes that do not allow a body
+        like 204 and 205 SHOULD bind all output members to locations other than
+        the body of the response.
 
 The following example defines an operation that uses HTTP bindings:
 
@@ -1332,3 +1337,4 @@ marked with the ``httpPayload`` trait:
 
 .. _percent-encoded: https://tools.ietf.org/html/rfc3986#section-2.1
 .. _HTTP request line: https://tools.ietf.org/html/rfc7230.html#section-3.1.1
+.. _HTTP specifications: https://datatracker.ietf.org/doc/html/rfc7230

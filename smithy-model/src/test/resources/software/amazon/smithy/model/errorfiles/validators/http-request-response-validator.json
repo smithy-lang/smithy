@@ -324,7 +324,7 @@
                 "smithy.api#http": {
                     "method": "PUT",
                     "uri": "/f",
-                    "code": 204
+                    "code": 201
                 }
             }
         },
