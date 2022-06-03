@@ -133,7 +133,7 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
     }
 
     /**
-     * Gets a map of identifier names associated with either input or output on the operation.
+     * Gets a set of identifier names associated with either input or output on the operation.
      *
      * @param resource Shape ID of a resource.
      * @param operation Shape ID of an operation.
