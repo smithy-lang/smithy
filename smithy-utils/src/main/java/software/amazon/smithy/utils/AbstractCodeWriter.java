@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.utils;
 
+import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
@@ -149,7 +150,8 @@ import java.util.regex.Pattern;
  *
  * <h3>Named parameters</h3>
  *
- * <p>Named parameters are parameters that take a value from the context of
+ * <p>Named parameters are parameters that take a value from the context bag of
+ * the current state or using getters of the {@link CodeSection} associated with
  * the current state. They take the following form {@code $<variable>:<formatter>},
  * where {@code <variable>} is a string that starts with a lowercase letter,
  * followed by any number of {@code [A-Za-z0-9_#$.]} characters, and
@@ -163,6 +165,13 @@ import java.util.regex.Pattern;
  * System.out.println(writer.toString());
  * // Outputs: "a b"
  * }</pre>
+ *
+ * <p>The context bag is checked first, and then if the parameter is not found,
+ * getters of the currently associated CodeSection are checked. If a getter is
+ * found that matches the key exactly, then that getter is invoked and used as
+ * the named parameter. If a getter is found that matches
+ * "get" + uppercase_first_letter(key), then that getter is used as the named
+ * parameter.
  *
  * <h3>Escaping interpolation</h3>
  *
@@ -1888,7 +1897,37 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      * @return Returns the associated value or null if not present.
      */
     public Object getContext(String key) {
-        return currentState.context.peek().get(key);
+        CodeSection section = currentState.sectionValue;
+        Map<String, Object> currentContext = currentState.context.peek();
+        if (currentContext.containsKey(key)) {
+            return currentContext.get(key);
+        } else if (section != null) {
+            Method method = findContextMethod(section, key);
+            if (method != null) {
+                try {
+                    return method.invoke(section);
+                } catch (ReflectiveOperationException e) {
+                    String message = String.format(
+                            "Unable to get context '%s' from a matching method of the current CodeSection: %s %s",
+                            key,
+                            e.getCause() != null ? e.getCause().getMessage() : e.getMessage(),
+                            getDebugInfo());
+                    throw new RuntimeException(message, e);
+                }
+            }
+        }
+        return null;
+    }
+
+    private Method findContextMethod(CodeSection section, String key) {
+        for (Method method : section.getClass().getMethods()) {
+            if (method.getName().equals(key) || method.getName().equals("get" + StringUtils.capitalize(key))) {
+                if (!method.getReturnType().equals(Void.TYPE)) {
+                    return method;
+                }
+            }
+        }
+        return null;
     }
 
     /**

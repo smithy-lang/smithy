@@ -1416,6 +1416,55 @@ public class CodeWriterTest {
         assertThat(writer.toString(), equalTo("Hello\n"));
     }
 
+    @Test
+    public void canAccessCodeSectionGettersFromTemplates() {
+        SimpleCodeWriter writer = new SimpleCodeWriter();
+        writer.pushState(new MySection());
+        writer.write("${foo:L}: ${ten:L}... ${nope:L}.");
+        writer.popState();
+
+        assertThat(writer.toString(), equalTo("foo: 10... .\n"));
+    }
+
+    @Test
+    public void providesContextWhenBadGetterIsCalled() {
+        RuntimeException e = Assertions.assertThrows(RuntimeException.class, () -> {
+            SimpleCodeWriter writer = new SimpleCodeWriter();
+            writer.pushState(new MySection());
+            writer.write("${bad:L}");
+        });
+
+        assertThat(e.getMessage(), containsString("Unable to get context 'bad' from a matching method of the current "
+                                                  + "CodeSection: This was bad! "));
+        // The debug info contains the class name of the section.
+        assertThat(e.getMessage(), containsString(MySection.class.getCanonicalName()));
+    }
+
+    @Test
+    public void namedContextValuesOverrideSectionGetters() {
+        SimpleCodeWriter writer = new SimpleCodeWriter();
+        writer.pushState(new MySection());
+        writer.putContext("bad", "ok actually");
+        writer.write("${foo:L}: ${bad:L}");
+        writer.popState();
+
+        assertThat(writer.toString(), equalTo("foo: ok actually\n"));
+    }
+
+    private static final class MySection implements CodeSection {
+        public String getFoo() {
+            return "foo";
+        }
+
+        public int getTen() {
+            return 10;
+        }
+
+        public String bad() {
+            throw new RuntimeException("This was bad!");
+        }
+    }
+
     private static final class MyCustomWriter extends AbstractCodeWriter<MyCustomWriter> {
         // Ensure that subclass methods are automatically filtered out as irrelevant frames.
         @Override
