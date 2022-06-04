@@ -17,6 +17,7 @@ package software.amazon.smithy.cli.commands;
 
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.Cli;
+import software.amazon.smithy.cli.CliPrinter;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.Parser;
 import software.amazon.smithy.cli.SmithyCli;
@@ -49,9 +50,9 @@ public final class AstCommand implements Command {
     }
 
     @Override
-    public void execute(Arguments arguments, ClassLoader classLoader) {
+    public void execute(Arguments arguments, CliPrinter stdout, CliPrinter stderr, ClassLoader classLoader) {
         // Don't write the summary to STDOUT, but do write errors to STDERR.
-        Model model = CommandUtils.buildModel(arguments, classLoader, SetUtils.of(Validator.Feature.QUIET));
+        Model model = CommandUtils.buildModel(arguments, stderr, classLoader, SetUtils.of(Validator.Feature.QUIET));
         ModelSerializer serializer = ModelSerializer.builder().build();
         Cli.stdout(Node.prettyPrintJson(serializer.serialize(model)));
     }

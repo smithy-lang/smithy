@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.Cli;
+import software.amazon.smithy.cli.CliPrinter;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.Parser;
 import software.amazon.smithy.cli.SmithyCli;
@@ -73,14 +74,14 @@ public final class SelectCommand implements Command {
     }
 
     @Override
-    public void execute(Arguments arguments, ClassLoader classLoader) {
+    public void execute(Arguments arguments, CliPrinter stdout, CliPrinter stderr, ClassLoader classLoader) {
         // Get the selector from --selector or from STDIN/
         Selector selector = arguments.has("--selector")
                 ? Selector.parse(arguments.parameter("--selector"))
                 : Selector.parse(IoUtils.toUtf8String(System.in));
 
         // Don't write the summary to STDOUT, but do write errors to STDERR.
-        Model model = CommandUtils.buildModel(arguments, classLoader, SetUtils.of(Validator.Feature.QUIET));
+        Model model = CommandUtils.buildModel(arguments, stderr, classLoader, SetUtils.of(Validator.Feature.QUIET));
 
         if (!arguments.has("--vars")) {
             sortShapeIds(selector.select(model)).forEach(Cli::stdout);

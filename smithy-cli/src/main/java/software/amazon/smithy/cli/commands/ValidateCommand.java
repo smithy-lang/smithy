@@ -17,7 +17,8 @@ package software.amazon.smithy.cli.commands;
 
 import java.util.List;
 import software.amazon.smithy.cli.Arguments;
-import software.amazon.smithy.cli.Colors;
+import software.amazon.smithy.cli.CliPrinter;
+import software.amazon.smithy.cli.Color;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.Parser;
 import software.amazon.smithy.cli.SmithyCli;
@@ -50,10 +51,10 @@ public final class ValidateCommand implements Command {
     }
 
     @Override
-    public void execute(Arguments arguments, ClassLoader classLoader) {
+    public void execute(Arguments arguments, CliPrinter stdout, CliPrinter stderr, ClassLoader classLoader) {
         List<String> models = arguments.positionalArguments();
-        Colors.BRIGHT_WHITE.out(String.format("Validating Smithy model sources: %s", models));
-        CommandUtils.buildModel(arguments, classLoader, SetUtils.of());
-        Colors.BRIGHT_BOLD_GREEN.out("Smithy validation complete");
+        stderr.println(Color.BRIGHT_WHITE,  String.format("Validating Smithy model sources: %s", models));
+        CommandUtils.buildModel(arguments, stderr, classLoader, SetUtils.of());
+        stderr.println(Color.BRIGHT_BOLD_GREEN, "Smithy validation complete");
     }
 }

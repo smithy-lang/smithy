@@ -30,10 +30,10 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @SmithyUnstableApi
 public final class Parser {
-    private String positionalName;
-    private String positionalHelp;
-    private List<Argument> argumentList;
-    private Map<String, Argument> argumentMap = new HashMap<>();
+    private final String positionalName;
+    private final String positionalHelp;
+    private final List<Argument> argumentList;
+    private final Map<String, Argument> argumentMap = new HashMap<>();
 
     private Parser(Builder builder) {
         this.argumentList = builder.arguments;

@@ -21,7 +21,8 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.Cli;
 import software.amazon.smithy.cli.CliError;
-import software.amazon.smithy.cli.Colors;
+import software.amazon.smithy.cli.CliPrinter;
+import software.amazon.smithy.cli.Color;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.Parser;
 import software.amazon.smithy.diff.ModelDiff;
@@ -55,7 +56,7 @@ public final class DiffCommand implements Command {
     }
 
     @Override
-    public void execute(Arguments arguments, ClassLoader classLoader) {
+    public void execute(Arguments arguments, CliPrinter stdout, CliPrinter stderr, ClassLoader classLoader) {
         List<String> oldModels = arguments.repeatedParameter("--old");
         LOGGER.info(String.format("Setting 'old' Smithy models: %s", String.join(" ", oldModels)));
         List<String> newModels = arguments.repeatedParameter("--new");
@@ -81,11 +82,11 @@ public final class DiffCommand implements Command {
         }
 
         if (hasDanger) {
-            Colors.BRIGHT_BOLD_RED.out("Smithy diff detected danger");
+            stderr.println(Color.BRIGHT_BOLD_RED, "Smithy diff detected danger");
         } else if (hasWarning) {
-            Colors.BRIGHT_BOLD_YELLOW.out("Smithy diff complete with warnings");
+            stderr.println(Color.BRIGHT_BOLD_YELLOW, "Smithy diff complete with warnings");
         } else {
-            Colors.BRIGHT_BOLD_GREEN.out("Smithy diff complete");
+            stderr.println(Color.BRIGHT_BOLD_GREEN, "Smithy diff complete");
         }
     }
 

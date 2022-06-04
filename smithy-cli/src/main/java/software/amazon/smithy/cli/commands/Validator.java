@@ -46,7 +46,7 @@ final class Validator {
     static void validate(ValidatedResult<Model> result, Set<Feature> features) {
         boolean quiet = features.contains(Feature.QUIET);
         boolean stdout = features.contains(Feature.STDOUT);
-        Consumer<String> writer = stdout ? Cli.getStdout() : Cli.getStderr();
+        Consumer<CharSequence> writer = stdout ? Cli.getStdout() : Cli.getStderr();
 
         long errors = result.getValidationEvents(Severity.ERROR).size();
         long dangers = result.getValidationEvents(Severity.DANGER).size();
