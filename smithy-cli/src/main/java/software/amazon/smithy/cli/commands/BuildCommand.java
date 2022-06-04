@@ -34,13 +34,13 @@ import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.Cli;
 import software.amazon.smithy.cli.CliError;
-import software.amazon.smithy.cli.Colors;
+import software.amazon.smithy.cli.CliPrinter;
+import software.amazon.smithy.cli.Color;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.Parser;
 import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.validation.Severity;
-import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -76,7 +76,7 @@ public final class BuildCommand implements Command {
     }
 
     @Override
-    public void execute(Arguments arguments, ClassLoader classLoader) {
+    public void execute(Arguments arguments, CliPrinter stdout, CliPrinter stderr, ClassLoader classLoader) {
         List<String> config = arguments.repeatedParameter("--config", null);
         String output = arguments.parameter("--output", null);
         List<String> models = arguments.positionalArguments();
@@ -109,7 +109,7 @@ public final class BuildCommand implements Command {
         SmithyBuildConfig smithyBuildConfig = configBuilder.build();
 
         // Build the model and fail if there are errors. Prints errors to stdout.
-        Model model = CommandUtils.buildModel(arguments, classLoader, SetUtils.of(Validator.Feature.STDOUT));
+        Model model = CommandUtils.buildModel(arguments, stderr, classLoader, Collections.emptySet());
 
         SmithyBuild smithyBuild = SmithyBuild.create(classLoader)
                 .config(smithyBuildConfig)
@@ -126,14 +126,14 @@ public final class BuildCommand implements Command {
         // Register sources with the builder.
         models.forEach(path -> smithyBuild.registerSources(Paths.get(path)));
 
-        ResultConsumer resultConsumer = new ResultConsumer();
+        ResultConsumer resultConsumer = new ResultConsumer(stderr);
         smithyBuild.build(resultConsumer, resultConsumer);
 
         // Always print out the status of the successful projections.
-        Colors color = resultConsumer.failedProjections.isEmpty()
-                ? Colors.BRIGHT_BOLD_GREEN
-                : Colors.BRIGHT_BOLD_YELLOW;
-        color.out(String.format(
+        Color color = resultConsumer.failedProjections.isEmpty()
+                ? Color.BRIGHT_BOLD_GREEN
+                : Color.BRIGHT_BOLD_YELLOW;
+        stderr.println(color, String.format(
                 "Smithy built %s projection(s), %s plugin(s), and %s artifacts",
                 resultConsumer.projectionCount,
                 resultConsumer.pluginCount,
@@ -154,6 +154,11 @@ public final class BuildCommand implements Command {
         AtomicInteger artifactCount = new AtomicInteger();
         AtomicInteger pluginCount = new AtomicInteger();
         AtomicInteger projectionCount = new AtomicInteger();
+        private CliPrinter stderr;
+
+        ResultConsumer(CliPrinter stderr) {
+            this.stderr = stderr;
+        }
 
         @Override
         public void accept(String name, Throwable exception) {
@@ -182,7 +187,7 @@ public final class BuildCommand implements Command {
                         message.append(event).append(System.lineSeparator());
                     }
                 });
-                Colors.RED.out(message.toString());
+                stderr.println(Color.RED, message.toString());
             } else {
                 // Only increment the projection count if it succeeded.
                 projectionCount.incrementAndGet();
@@ -193,7 +198,7 @@ public final class BuildCommand implements Command {
             // Get the base directory of the projection.
             Iterator<FileManifest> manifestIterator = result.getPluginManifests().values().iterator();
             Path root = manifestIterator.hasNext() ? manifestIterator.next().getBaseDir().getParent() : null;
-            Colors.GREEN.out(String.format(
+            stderr.println(Color.GREEN, String.format(
                     "Completed projection %s (%d shapes): %s",
                     result.getProjectionName(), result.getModel().toSet().size(), root));
 

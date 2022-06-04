@@ -84,7 +84,7 @@ public class CliTest {
         PrintStream out = System.out;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
-        System.setOut(printStream);
+        System.setErr(printStream);
 
         try {
             cli.run(new String[]{"invalid", "--stacktrace"});
@@ -92,7 +92,7 @@ public class CliTest {
         } catch (RuntimeException e) {
         }
 
-        System.setOut(out);
+        System.setErr(out);
         String help = outputStream.toString("UTF-8");
 
         assertThat(help, containsString("Unknown command or argument"));

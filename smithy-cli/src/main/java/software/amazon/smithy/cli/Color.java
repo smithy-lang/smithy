@@ -15,14 +15,13 @@
 
 package software.amazon.smithy.cli;
 
-import java.util.function.Consumer;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Provides an abstraction for printing with ANSI colors if it is supported.
  */
 @SmithyUnstableApi
-public enum Colors {
+public enum Color {
     BLACK(30),
     RED(31),
     BOLD_RED(31, true),
@@ -45,51 +44,19 @@ public enum Colors {
     BRIGHT_CYAN(96),
     BRIGHT_WHITE(97);
 
-    private int escape;
-    private boolean bold;
+    private final int escape;
+    private final boolean bold;
 
-    Colors(int escape) {
+    Color(int escape) {
         this(escape, false);
     }
 
-    Colors(int escape, boolean bold) {
+    Color(int escape, boolean bold) {
         this.escape = escape;
         this.bold = bold;
     }
 
-    /**
-     * Prints to stdout using the Color if ANSI colors are enabled.
-     *
-     * @param message Message to print.
-     */
-    public void out(String message) {
-        write(Cli.getStdout(), message);
-    }
-
-    /**
-     * Prints to stderr using the Color if ANSI colors are enabled.
-     *
-     * @param message Message to print.
-     */
-    public void err(String message) {
-        write(Cli.getStderr(), message);
-    }
-
-    /**
-     * Writes the color output to the given consumer.
-     *
-     * @param consumer Consume to invoke.
-     * @param message Message to write.
-     */
-    public void write(Consumer<String> consumer, String message) {
-        if (Cli.useAnsiColors) {
-            consumer.accept(format(message));
-        } else {
-            consumer.accept(message);
-        }
-    }
-
-    private String format(String message) {
+    public String format(String message) {
         String colored = String.format("\u001b[%dm%s\u001b[0m", escape, message);
         return bold ? String.format("\033[1m%s\033[0m", colored) : colored;
     }

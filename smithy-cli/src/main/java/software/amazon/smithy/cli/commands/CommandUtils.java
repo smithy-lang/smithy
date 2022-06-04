@@ -24,12 +24,11 @@ import java.security.PrivilegedAction;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.logging.Logger;
 import software.amazon.smithy.cli.Arguments;
-import software.amazon.smithy.cli.Cli;
 import software.amazon.smithy.cli.CliError;
-import software.amazon.smithy.cli.Colors;
+import software.amazon.smithy.cli.CliPrinter;
+import software.amazon.smithy.cli.Color;
 import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
@@ -43,14 +42,17 @@ final class CommandUtils {
 
     private CommandUtils() {}
 
-    static Model buildModel(Arguments arguments, ClassLoader classLoader, Set<Validator.Feature> features) {
+    static Model buildModel(
+            Arguments arguments,
+            CliPrinter printer,
+            ClassLoader classLoader,
+            Set<Validator.Feature> features
+    ) {
         List<String> models = arguments.positionalArguments();
         ModelAssembler assembler = CommandUtils.createModelAssembler(classLoader);
 
         ContextualValidationEventFormatter formatter = new ContextualValidationEventFormatter();
-        boolean stdout = features.contains(Validator.Feature.STDOUT);
         boolean quiet = features.contains(Validator.Feature.QUIET);
-        Consumer<String> writer = stdout ? Cli.getStdout() : Cli.getStderr();
 
         // --severity defaults to NOTE.
         Severity minSeverity = arguments.has(SmithyCli.SEVERITY)
@@ -62,12 +64,12 @@ final class CommandUtils {
             if (event.getSeverity().ordinal() >= minSeverity.ordinal()) {
                 if (event.getSeverity() == Severity.WARNING && !quiet) {
                     // Only log warnings when not quiet
-                    Colors.YELLOW.write(writer, formatter.format(event) + System.lineSeparator());
+                    printer.println(Color.YELLOW, formatter.format(event));
                 } else if (event.getSeverity() == Severity.DANGER || event.getSeverity() == Severity.ERROR) {
                     // Always output error and danger events, even when quiet.
-                    Colors.RED.write(writer, formatter.format(event) + System.lineSeparator());
+                    printer.println(Color.RED, formatter.format(event));
                 } else if (!quiet) {
-                    writer.accept(formatter.format(event) + System.lineSeparator());
+                    printer.println(formatter.format(event));
                 }
             }
         });

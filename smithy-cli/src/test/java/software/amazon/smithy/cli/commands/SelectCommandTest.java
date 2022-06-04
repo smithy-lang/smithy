@@ -57,9 +57,7 @@ public class SelectCommandTest {
 
         // STDERR has the validation events.
         assertThat(errorString, containsString("Unable to resolve trait"));
-
-        // STDOUT has the fatal error message
-        assertThat(outputString, containsString("The model is invalid"));
+        assertThat(errorString, containsString("The model is invalid"));
         assertThat(e.getMessage(), containsString("The model is invalid"));
     }
 

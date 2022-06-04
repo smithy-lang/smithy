@@ -61,8 +61,10 @@ public final class Cli {
     static boolean useAnsiColors = isAnsiColorSupported();
 
     // Note that we don't use a method reference here in case System.out or System.err are changed.
-    private static Consumer<String> stdout = s -> System.out.println(s);
-    private static Consumer<String> stderr = s -> System.err.println(s);
+    private static Consumer<CharSequence> stdout = s -> System.out.println(s);
+    private static Consumer<CharSequence> stderr = s -> System.err.println(s);
+    private static CliPrinter stdoutPrinter = CliPrinter.fromConsumer(str -> stdout.accept(str));
+    private static CliPrinter stdErrPrinter = CliPrinter.fromConsumer(str -> stderr.accept(str));
 
     private final String applicationName;
     private final ClassLoader classLoader;
@@ -141,7 +143,7 @@ public final class Cli {
                     printHelp(command, parser);
                 } else {
                     configureLogging(parsedArguments);
-                    command.execute(parsedArguments, classLoader);
+                    command.execute(parsedArguments, stdoutPrinter, stdErrPrinter, classLoader);
                 }
             } else {
                 throw new CliError("Unknown command or argument: '" + argument + "'", 1);
@@ -167,7 +169,7 @@ public final class Cli {
      *
      * @param printer Consumer responsible for writing to STDOUT.
      */
-    public static void setStdout(Consumer<String> printer) {
+    public static void setStdout(Consumer<CharSequence> printer) {
         stdout = printer;
     }
 
@@ -176,7 +178,7 @@ public final class Cli {
      *
      * @param printer Consumer responsible for writing to STDERR.
      */
-    public static void setStderr(Consumer<String> printer) {
+    public static void setStderr(Consumer<CharSequence> printer) {
         stderr = printer;
     }
 
@@ -185,7 +187,7 @@ public final class Cli {
      *
      * @return Returns the stdout consumer.
      */
-    public static Consumer<String> getStdout() {
+    public static Consumer<CharSequence> getStdout() {
         return stdout;
     }
 
@@ -194,7 +196,7 @@ public final class Cli {
      *
      * @return Returns the stderr consumer.
      */
-    public static Consumer<String> getStderr() {
+    public static Consumer<CharSequence> getStderr() {
         return stderr;
     }
 
@@ -250,22 +252,27 @@ public final class Cli {
         }
 
         if (throwable instanceof NullPointerException) {
-            Colors.BOLD_RED.out("A null pointer exception occurred while running the Smithy CLI. The --stacktrace "
-                    + "argument can be used to get more information. Please open an issue with the Smithy team "
-                    + "on GitHub so this can be investigated: https://github.com/awslabs/smithy/issues");
+            stdErrPrinter.println(
+                Color.BOLD_RED,
+                "A null pointer exception occurred while running the Smithy CLI. The --stacktrace argument can be "
+                + "used to get more information. Please open an issue with the Smithy team on GitHub so this can be "
+                + "investigated: https://github.com/awslabs/smithy/issues"
+            );
         }
 
-        Colors.BOLD_RED.out(throwable.getMessage());
+        stdErrPrinter.println(Color.BOLD_RED, throwable.getMessage());
+
         if (hasArgument(args, STACKTRACE)) {
             StringWriter sw = new StringWriter();
             throwable.printStackTrace(new PrintWriter(sw));
             String trace = sw.toString();
-            Colors.RED.out(trace);
+            stdErrPrinter.println(Color.RED, trace);
         }
     }
 
     private void printMainHelp() {
-        Colors.BRIGHT_WHITE.out(String.format("Usage: %s [-h | --help] <command> [<args>]%n", applicationName));
+        stdoutPrinter.println(Color.BRIGHT_WHITE, String.format(
+                "Usage: %s [-h | --help] <command> [<args>]%n", applicationName));
         stdout("commands:");
         Map<String, String> table = new LinkedHashMap<>();
         for (Map.Entry<String, Command> entry : commands.entrySet()) {
@@ -306,7 +313,7 @@ public final class Cli {
 
         // Print the options name if present.
         parser.getPositionalName().ifPresent(name -> example.append(" ").append(name));
-        Colors.BRIGHT_WHITE.out(example.append("\n").toString());
+        stdoutPrinter.println(Color.BRIGHT_WHITE, example.append("\n").toString());
 
         // Print the summary of the command.
         StringBuilder body = new StringBuilder();

@@ -60,7 +60,9 @@ public interface Command {
      * Executes the command using the provided arguments.
      *
      * @param arguments CLI arguments.
+     * @param stdout Standard out writer.
+     * @param stderr Standard error writer.
      * @param classLoader ClassLoader to use in the command.
      */
-    void execute(Arguments arguments, ClassLoader classLoader);
+    void execute(Arguments arguments, CliPrinter stdout, CliPrinter stderr, ClassLoader classLoader);
 }
