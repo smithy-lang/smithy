@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -39,30 +39,57 @@ public interface Command {
     String getSummary();
 
     /**
-     * Gets details help for the command.
+     * Prints help output.
      *
-     * <p>Returning an empty string omits detailed help.
-     *
-     * @return Returns detailed help information.
+     * @param printer Where to write help.
      */
-    default String getHelp() {
-        return "";
-    }
-
-    /**
-     * Gets the parser of the command.
-     *
-     * @return Returns the argument parser.
-     */
-    Parser getParser();
+    void printHelp(CliPrinter printer);
 
     /**
      * Executes the command using the provided arguments.
      *
      * @param arguments CLI arguments.
-     * @param stdout Standard out writer.
-     * @param stderr Standard error writer.
-     * @param classLoader ClassLoader to use in the command.
+     * @param env CLI environment settings like stdout, stderr, etc.
+     * @return Returns the exit code.
      */
-    void execute(Arguments arguments, CliPrinter stdout, CliPrinter stderr, ClassLoader classLoader);
+    int execute(Arguments arguments, Env env);
+
+    /**
+     * Environment settings for the command.
+     *
+     * <p>TODO: Add an ExecutorService to control threading?
+     */
+    final class Env {
+
+        private final CliPrinter stdout;
+        private final CliPrinter stderr;
+        private final ClassLoader classLoader;
+
+        public Env(CliPrinter stdout, CliPrinter stderr, ClassLoader classLoader) {
+            this.stdout = stdout;
+            this.stderr = stderr;
+            this.classLoader = classLoader;
+        }
+
+        /**
+         * @return Returns the configured printer for stdout.
+         */
+        public CliPrinter stdout() {
+            return stdout;
+        }
+
+        /**
+         * @return Returns the configured printer for stderr.
+         */
+        public CliPrinter stderr() {
+            return stderr;
+        }
+
+        /**
+         * @return Returns the configured class loader to use to load additional classes/resources.
+         */
+        public ClassLoader classLoader() {
+            return classLoader;
+        }
+    }
 }

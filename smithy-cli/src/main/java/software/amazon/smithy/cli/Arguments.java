@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,127 +15,183 @@
 
 package software.amazon.smithy.cli;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import software.amazon.smithy.utils.SmithyUnstableApi;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
- * Container for parsed command line arguments meant to be queried by Commands.
+ * Command line arguments list to evaluate.
  *
- * <p>Values parsed for command line arguments are canonicalized to the
- * long-form of an argument if available. This means that an argument
- * with a short name of "-h" and a long name of "--help" would be made
- * available in an {@code Arguments} instance as "--help" and not "-h".
+ * <p>Arguments are parsed on demand. To finalize parsing arguments and
+ * force validation of remaining arguments, call {@link #finishParsing()}.
+ * Note that because arguments are parsed on demand and whole set of
+ * arguments isn't known before {@link #finishParsing()} is called, you
+ * may need to delay configuring parts of the CLI or commands by adding
+ * subscribers via {@link #onComplete(BiConsumer)}. These subscribers are
+ * invoked when all arguments have been parsed.
  */
-@SmithyUnstableApi
 public final class Arguments {
-    private final Map<String, List<String>> arguments;
-    private final List<String> positionalArguments;
 
-    public Arguments(Map<String, List<String>> arguments, List<String> positionalArguments) {
-        this.arguments = Collections.unmodifiableMap(arguments);
-        this.positionalArguments = Collections.unmodifiableList(positionalArguments);
+    private final String[] args;
+    private final Map<Class<? extends ArgumentReceiver>, ArgumentReceiver> receivers = new HashMap<>();
+    private final List<BiConsumer<Arguments, List<String>>> subscribers = new ArrayList<>();
+    private boolean inPositional = false;
+    private int position = 0;
+
+    public Arguments(String[] args) {
+        this.args = args;
     }
 
     /**
-     * Checks if a canonicalized argument name was provided.
+     * Adds an argument receiver to the argument list.
      *
-     * <p>This method should be used for checking if a option is set rather
-     * than calling {@link #parameter} since that method throws when an
-     * argument cannot be found.
-     *
-     * @param arg Argument to check for (e.g., "--help").
-     * @return Returns true if the argument was set.
+     * @param receiver Receiver to add.
      */
-    public boolean has(String arg) {
-        return arguments.containsKey(arg);
+    public <T extends ArgumentReceiver> void addReceiver(T receiver) {
+        receivers.put(receiver.getClass(), receiver);
     }
 
     /**
-     * Gets an argument by name or throws if not present.
+     * Get a receiver by class.
      *
-     * <p>Returns the first value if the argument is repeated.
-     *
-     * @param arg Argument to get (e.g., "-h", "--help").
-     * @return Returns the value of the matching argument.
-     * @throws CliError if the argument cannot be found or if the arg is a option.
+     * @param type Type of receiver to get.
+     * @param <T> Type of receiver to get.
+     * @return Returns the found receiver.
+     * @throws NullPointerException if not found.
      */
-    public String parameter(String arg) {
-        return repeatedParameter(arg).get(0);
+    @SuppressWarnings("unchecked")
+    public <T extends ArgumentReceiver> T getReceiver(Class<T> type) {
+        return (T) Objects.requireNonNull(receivers.get(type));
     }
 
     /**
-     * Gets an argument by name or return a default value if not found.
+     * Adds a subscriber to the arguments that is invoked when arguments
+     * have finished parsing.
      *
-     * @param arg Argument to get (e.g., "-h", "--help").
-     * @param defaultValue Default value to return if not found.
-     * @return Returns the value of the matching argument.
+     * @param consumer Subscriber consumer to add.
      */
-    public String parameter(String arg, String defaultValue) {
-        List<String> values = arguments.get(arg);
-        return values == null || values.isEmpty() ? defaultValue : values.get(0);
+    public void onComplete(BiConsumer<Arguments, List<String>> consumer)  {
+        subscribers.add(consumer);
     }
 
     /**
-     * Gets a repeated argument by name or throws if not present.
+     * Checks if any arguments are remaining.
      *
-     * @param arg Argument to retrieve (e.g., "--help").
-     * @return Returns a list of values for the argument.
-     * @throws CliError if the argument cannot be found or if the arg is a option.
+     * @return Returns true if there are more arguments.
      */
-    public List<String> repeatedParameter(String arg) {
-        if (arguments.containsKey(arg)) {
-            List<String> argVal = arguments.get(arg);
-            if (argVal == null || argVal.isEmpty()) {
-                throw new CliError("Argument " + arg + " was provided no value");
+    public boolean hasNext() {
+        return position < args.length;
+    }
+
+    /**
+     * Peeks at the next value in the arguments list without shifting it.
+     *
+     * <p>Note that arguments consumed by a {@link ArgumentReceiver} are never
+     * peeked.
+     *
+     * @return Returns the next argument or null if no further arguments are present.
+     */
+    public String peek() {
+        String peek = hasNext() ? args[position] : null;
+
+        if (peek != null && !inPositional) {
+            // Automatically skip "--" and consider the remaining arguments positional.
+            if (peek.equals("--")) {
+                inPositional = true;
+                position++;
+                return peek();
             }
-            return argVal;
+
+            for (ArgumentReceiver interceptor : receivers.values()) {
+                if (interceptor.testOption(peek)) {
+                    position++;
+                    return peek();
+                }
+
+                Consumer<String> optionConsumer = interceptor.testParameter(peek);
+                if (optionConsumer != null) {
+                    position++;
+                    optionConsumer.accept(shiftFor(peek));
+                    return peek();
+                }
+            }
         }
 
-        throw new CliError("Missing required argument: " + arg);
+        return peek;
     }
 
     /**
-     * Gets a repeated argument by name or returns a default list if not found.
+     * Shifts off the next value in the arguments list or returns null.
      *
-     * @param arg Argument to retrieve (e.g., "--help").
-     * @param defaultValues Default list of values to return if not found.
-     * @return Returns a list of values for the argument.
+     * @return Returns the next value or null.
      */
-    public List<String> repeatedParameter(String arg, List<String> defaultValues) {
-        List<String> values = arguments.get(arg);
-        return values == null || values.isEmpty() ? defaultValues : values;
+    public String shift() {
+        String peek = peek();
+
+        if (peek != null) {
+            position++;
+        }
+
+        return peek;
     }
 
     /**
-     * Gets the list of positional arguments that came after named arguments.
+     * Expects an argument value for a parameter by name.
      *
-     * @return Returns the trailing positional arguments.
+     * @param parameter Name of the parameter to get the value of.
+     * @return Returns the value of the parameter.
+     * @throws CliError if the parameter is not present.
      */
-    public List<String> positionalArguments() {
-        return positionalArguments;
-    }
-
-    @Override
-    public String toString() {
-        return "Arguments{" + "arguments=" + arguments + ", positionalArguments=" + positionalArguments + '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        } else if (!(o instanceof Arguments)) {
-            return false;
+    public String shiftFor(String parameter) {
+        if (!hasNext()) {
+            throw new CliError("Expected argument for '" + parameter + "'");
         }
-        Arguments other = (Arguments) o;
-        return arguments.equals(other.arguments) && positionalArguments.equals(other.positionalArguments);
+
+        String next = args[position];
+        position++;
+        return next;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(arguments, positionalArguments);
+    /**
+     * Expects that all remaining arguments are positional, and returns them.
+     *
+     * <p>If an argument is "--", then it's skipped and remaining arguments are
+     * considered positional. If any argument is encountered that isn't valid
+     * for a registered Receiver, then an error is raised. Otherwise, all remaining
+     * arguments are returned in a list.
+     *
+     * <p>Subscribers for different receivers are called when this method is called.
+     *
+     * @return Returns remaining arguments.
+     * @throws CliError if the next argument starts with "--" but isn't "--".
+     */
+    public List<String> finishParsing() {
+        List<String> positional = new ArrayList<>();
+
+        while (hasNext()) {
+            String next = shift();
+            if (next != null) {
+                if (!inPositional && next.startsWith("-")) {
+                    throw new CliError("Unexpected CLI argument: " + next);
+                } else {
+                    inPositional = true;
+                    positional.add(next);
+                }
+            }
+        }
+
+        invokeSubscribers(positional);
+
+        return positional;
+    }
+
+    private void invokeSubscribers(List<String> positional) {
+        for (BiConsumer<Arguments, List<String>> subscriber : subscribers) {
+            subscriber.accept(this, positional);
+        }
     }
 }

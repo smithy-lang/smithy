@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -16,17 +16,18 @@
 package software.amazon.smithy.cli.commands;
 
 import java.util.List;
+import java.util.logging.Logger;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliPrinter;
-import software.amazon.smithy.cli.Color;
-import software.amazon.smithy.cli.Command;
-import software.amazon.smithy.cli.Parser;
-import software.amazon.smithy.cli.SmithyCli;
-import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.cli.StandardOptions;
+import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
-public final class ValidateCommand implements Command {
+public final class ValidateCommand extends CommandWithHelp {
+
+    private static final Logger LOGGER = Logger.getLogger(ValidateCommand.class.getName());
+
     @Override
     public String getName() {
         return "validate";
@@ -38,23 +39,33 @@ public final class ValidateCommand implements Command {
     }
 
     @Override
-    public Parser getParser() {
-        return Parser.builder()
-                .option(SmithyCli.ALLOW_UNKNOWN_TRAITS, "Ignores unknown traits when validating models")
-                .option(SmithyCli.DISCOVER, "-d", "Enables model discovery, merging in models found inside of jars")
-                .parameter(SmithyCli.DISCOVER_CLASSPATH, "Enables model discovery using a custom classpath for models")
-                .parameter(SmithyCli.SEVERITY, "Sets a minimum validation event severity to display. "
-                                               + "Defaults to NOTE. Can be set to SUPPRESSED, NOTE, WARNING, "
-                                               + "DANGER, ERROR.")
-                .positional("<MODELS>", "Path to Smithy models or directories")
-                .build();
+    public void printHelp(CliPrinter printer) {
+        printer.println("Usage: smithy validate [-h | --help] [--allow-unknown-traits] [-d | --discover]");
+        printer.println("                       [--discover-classpath JAVA_CLASSPATH]");
+        printer.println("                       [--severity SEVERITY] [--debug] [--quiet] [--stacktrace]");
+        printer.println("                       [--no-color] [--force-color] [--logging LOG_LEVEL]");
+        printer.println("                       <MODELS>...");
+        printer.println("");
+        printer.println(getSummary());
+        printer.println("");
+        StandardOptions.printHelp(printer);
+        BuildOptions.printHelp(printer);
+        printer.println(printer.style("    <MODELS>...", Style.YELLOW));
+        printer.println("        Path to Smithy models or directories to load.");
     }
 
     @Override
-    public void execute(Arguments arguments, CliPrinter stdout, CliPrinter stderr, ClassLoader classLoader) {
-        List<String> models = arguments.positionalArguments();
-        stderr.println(Color.BRIGHT_WHITE,  String.format("Validating Smithy model sources: %s", models));
-        CommandUtils.buildModel(arguments, stderr, classLoader, SetUtils.of());
-        stderr.println(Color.BRIGHT_BOLD_GREEN, "Smithy validation complete");
+    protected List<String> parseArguments(Arguments arguments, Env env) {
+        arguments.addReceiver(new BuildOptions());
+        return arguments.finishParsing();
+    }
+
+    @Override
+    protected int run(Arguments arguments, Env env, List<String> models) {
+        StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
+        LOGGER.info(() -> "Validating Smithy model sources: " + models);
+        CommandUtils.buildModel(arguments, models, env, env.stdout(), standardOptions.quiet());
+        LOGGER.info("Smithy validation complete");
+        return 0;
     }
 }

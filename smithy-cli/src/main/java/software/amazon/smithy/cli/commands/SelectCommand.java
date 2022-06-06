@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -20,13 +20,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
+import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
-import software.amazon.smithy.cli.Cli;
 import software.amazon.smithy.cli.CliPrinter;
-import software.amazon.smithy.cli.Command;
-import software.amazon.smithy.cli.Parser;
-import software.amazon.smithy.cli.SmithyCli;
+import software.amazon.smithy.cli.StandardOptions;
+import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -36,11 +36,10 @@ import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.IoUtils;
-import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
-public final class SelectCommand implements Command {
+public final class SelectCommand extends CommandWithHelp {
     @Override
     public String getName() {
         return "select";
@@ -52,39 +51,85 @@ public final class SelectCommand implements Command {
     }
 
     @Override
-    public String getHelp() {
-        return "This command prints the shapes in a model that match a selector. The\n"
-               + "selector can be passed in using --selector or through stdin.\n\n"
-               + "By default, each matching shape ID is printed to stdout on a new line.\n"
-               + "Pass --vars to print out a JSON array that contains a 'shape' and 'vars'\n"
-               + "property, where the 'vars' property is a map of each variable that was\n"
-               + "captured when the shape was matched.";
+    public void printHelp(CliPrinter printer) {
+        printer.println("Usage: smithy validate [-h | --help] [--allow-unknown-traits] [-d | --discover]");
+        printer.println("                       [--discover-classpath JAVA_CLASSPATH]");
+        printer.println("                       [--severity SEVERITY] [--debug] [--quiet] [--stacktrace]");
+        printer.println("                       [--no-color] [--force-color] [--logging LOG_LEVEL]");
+        printer.println("                       <MODELS>...");
+        printer.println("");
+        printer.println(getSummary());
+        printer.println("");
+        StandardOptions.printHelp(printer);
+        BuildOptions.printHelp(printer);
+        printer.println(printer.style("    --selector <SELECTOR>", Style.YELLOW));
+        printer.println("        The Smithy selector to execute. Reads from STDIN when not provided.");
+        printer.println(printer.style("    --vars", Style.YELLOW));
+        printer.println("        Include the variables that were captured when the shape was matched.");
+        printer.println("        The output of the command is JSON when --vars is passed.");
+        printer.println(printer.style("    <MODELS>...", Style.YELLOW));
+        printer.println("        Path to Smithy models or directories to load.");
+        printer.println("");
+        printer.println("This command prints the shapes in a model that match a selector. The ");
+        printer.println("selector can be passed in using --selector or through stdin.");
+        printer.println("");
+        printer.println("By default, each matching shape ID is printed to stdout on a new line. ");
+        printer.println("Pass --vars to print out a JSON array that contains a 'shape' and 'vars' ");
+        printer.println("property, where the 'vars' property is a map of each variable that was ");
+        printer.println("captured when the shape was matched.");
+    }
+
+    private static final class Options implements ArgumentReceiver {
+        private boolean vars;
+        private Selector selector;
+
+        @Override
+        public boolean testOption(String name) {
+            if (name.equals("--vars")) {
+                vars = true;
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public Consumer<String> testParameter(String name) {
+            if (name.equals("--selector")) {
+                return value -> selector = Selector.parse(value);
+            }
+            return null;
+        }
+
+        public boolean vars() {
+            return vars;
+        }
+
+        public Selector selector() {
+            if (selector == null) {
+                selector = Selector.parse(IoUtils.toUtf8String(System.in));
+            }
+            return selector;
+        }
     }
 
     @Override
-    public Parser getParser() {
-        return Parser.builder()
-                .parameter("--selector", "The Smithy selector to execute. Reads from STDIN when not provided.")
-                .option("--vars", "Include the variables that were captured when the shape was matched. Uses JSON.")
-                .option(SmithyCli.ALLOW_UNKNOWN_TRAITS, "Ignores unknown traits when validating models")
-                .option(SmithyCli.DISCOVER, "-d", "Enables model discovery, merging in models found inside of jars")
-                .parameter(SmithyCli.DISCOVER_CLASSPATH, "Enables model discovery using a custom classpath for models")
-                .positional("<MODELS>", "Path to Smithy models or directories")
-                .build();
+    protected List<String> parseArguments(Arguments arguments, Env env) {
+        arguments.addReceiver(new BuildOptions());
+        arguments.addReceiver(new Options());
+        return arguments.finishParsing();
     }
 
     @Override
-    public void execute(Arguments arguments, CliPrinter stdout, CliPrinter stderr, ClassLoader classLoader) {
-        // Get the selector from --selector or from STDIN/
-        Selector selector = arguments.has("--selector")
-                ? Selector.parse(arguments.parameter("--selector"))
-                : Selector.parse(IoUtils.toUtf8String(System.in));
+    protected int run(Arguments arguments, Env env, List<String> models) {
+        CliPrinter stdout = env.stdout();
+        Options options = arguments.getReceiver(Options.class);
 
-        // Don't write the summary to STDOUT, but do write errors to STDERR.
-        Model model = CommandUtils.buildModel(arguments, stderr, classLoader, SetUtils.of(Validator.Feature.QUIET));
+        // Don't write the summary, but do write danger/errors to STDERR.
+        Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), true);
+        Selector selector = options.selector();
 
-        if (!arguments.has("--vars")) {
-            sortShapeIds(selector.select(model)).forEach(Cli::stdout);
+        if (!options.vars()) {
+            sortShapeIds(selector.select(model)).forEach(stdout::println);
         } else {
             // Show the JSON output for writing with --vars.
             List<Node> result = new ArrayList<>();
@@ -94,8 +139,10 @@ public final class SelectCommand implements Command {
                         .withMember("vars", collectVars(match))
                         .build());
             });
-            Cli.stdout(Node.prettyPrintJson(new ArrayNode(result, SourceLocation.NONE)));
+            stdout.println(Node.prettyPrintJson(new ArrayNode(result, SourceLocation.NONE)));
         }
+
+        return 0;
     }
 
     private Stream<String> sortShapeIds(Collection<Shape> shapes) {
