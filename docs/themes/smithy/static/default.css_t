@@ -390,7 +390,6 @@ header {
   vertical-align: text-bottom;
   padding: 2px 3px 2px 4px;
   border-radius: 6px;
-  background-color: {{ theme_medium_primary }};
   margin-right: 6px;
 }
 
