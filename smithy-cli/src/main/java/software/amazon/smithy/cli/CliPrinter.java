@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.cli;
 
-import java.io.IOException;
 import java.util.function.Consumer;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -23,72 +22,42 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * Handles text output of the CLI.
  */
 @SmithyUnstableApi
-public interface CliPrinter extends Appendable {
-
-    /**
-     * Prints text to the writer.
-     *
-     * @param text Text to print.
-     */
-    default void print(String text) {
-        try {
-            append(text);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Prints text to the writer using a specific color.
-     *
-     * @param text Text to print.
-     */
-    default void print(Color color, String text) {
-        print(color.format(text));
-    }
-
+public interface CliPrinter {
     /**
      * Prints text to the writer and appends a new line.
      *
      * @param text Text to print.
      */
-    default void println(String text) {
-        print(text + System.lineSeparator());
+    void println(String text);
+
+    /**
+     * Styles the given text using ANSI escape sequences.
+     *
+     * <p>It is strongly recommended to use the constants defined in
+     * {@link Style} to provide valid combinations of ANSI color escape
+     * codes.
+     *
+     * @param text Text to style.
+     * @param styles ANSI escape codes.
+     * @return Returns the styled text.
+     */
+    default String style(String text, Style... styles) {
+        return Style.format(text, styles);
     }
 
     /**
-     * Prints text to the writer using a specific color followed by a new line.
-     *
-     * @param text Text to print.
+     * CliPrinter that calls a Consumer that accepts a CharSequence.
      */
-    default void println(Color color, String text) {
-        print(color, text + System.lineSeparator());
-    }
+    final class ConsumerPrinter implements CliPrinter {
+        private final Consumer<CharSequence> consumer;
 
-    /**
-     * Creates a CliPrinter from a Consumer that accepts a CharSequence.
-     *
-     * @param consumer Consumer to wrap.
-     * @return Returns the created CliPrinter.
-     */
-    static CliPrinter fromConsumer(Consumer<CharSequence> consumer) {
-        return new CliPrinter() {
-            @Override
-            public Appendable append(CharSequence csq) {
-                consumer.accept(csq);
-                return this;
-            }
+        public ConsumerPrinter(Consumer<CharSequence> consumer) {
+            this.consumer = consumer;
+        }
 
-            @Override
-            public Appendable append(CharSequence csq, int start, int end) {
-                consumer.accept(csq.subSequence(start, end));
-                return this;
-            }
-
-            @Override
-            public Appendable append(char c) {
-                return append(Character.toString(c));
-            }
-        };
+        @Override
+        public void println(String text) {
+            consumer.accept(text + System.lineSeparator());
+        }
     }
 }

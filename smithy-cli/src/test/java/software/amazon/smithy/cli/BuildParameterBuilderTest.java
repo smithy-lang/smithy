@@ -57,7 +57,7 @@ public class BuildParameterBuilderTest {
                 .allowUnknownTraits(true)
                 .build();
 
-        assertThat(result.args, hasItem(SmithyCli.ALLOW_UNKNOWN_TRAITS));
+        assertThat(result.args, hasItem("--allow-unknown-traits"));
     }
 
     @Test
@@ -96,8 +96,8 @@ public class BuildParameterBuilderTest {
                 .discover(true)
                 .build();
 
-        assertThat(result.args, hasItem(SmithyCli.DISCOVER));
-        assertThat(result.args, not(hasItem(SmithyCli.DISCOVER_CLASSPATH)));
+        assertThat(result.args, hasItem("--discover"));
+        assertThat(result.args, not(hasItem("--discover-classpath")));
     }
 
     @Test

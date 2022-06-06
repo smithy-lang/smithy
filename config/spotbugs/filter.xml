@@ -117,4 +117,9 @@
         <Class name="software.amazon.smithy.model.selector.PathFinder$Path"/>
         <Bug pattern="UC_USELESS_OBJECT"/>
     </Match>
+
+    <Match>
+        <Class name="software.amazon.smithy.cli.Arguments"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
 </FindBugsFilter>

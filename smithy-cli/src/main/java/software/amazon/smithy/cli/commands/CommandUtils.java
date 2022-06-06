@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -19,17 +19,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Paths;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
-import software.amazon.smithy.cli.Color;
-import software.amazon.smithy.cli.SmithyCli;
+import software.amazon.smithy.cli.Command;
+import software.amazon.smithy.cli.StandardOptions;
+import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.validation.ContextualValidationEventFormatter;
@@ -44,70 +41,62 @@ final class CommandUtils {
 
     static Model buildModel(
             Arguments arguments,
+            List<String> models,
+            Command.Env env,
             CliPrinter printer,
-            ClassLoader classLoader,
-            Set<Validator.Feature> features
+            boolean quietValidation
     ) {
-        List<String> models = arguments.positionalArguments();
-        ModelAssembler assembler = CommandUtils.createModelAssembler(classLoader);
-
+        ModelAssembler assembler = CommandUtils.createModelAssembler(env.classLoader());
         ContextualValidationEventFormatter formatter = new ContextualValidationEventFormatter();
-        boolean quiet = features.contains(Validator.Feature.QUIET);
+        StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
+        BuildOptions buildOptions = arguments.getReceiver(BuildOptions.class);
 
-        // --severity defaults to NOTE.
-        Severity minSeverity = arguments.has(SmithyCli.SEVERITY)
-                ? parseSeverity(arguments.parameter(SmithyCli.SEVERITY))
-                : Severity.NOTE;
+        Severity minSeverity = standardOptions.severity();
 
         assembler.validationEventListener(event -> {
-            // Only log events that are >= --severity.
+            // Only log events that are >= --severity. Note that setting --quiet inherently
+            // configures events to need to be >= DANGER.
             if (event.getSeverity().ordinal() >= minSeverity.ordinal()) {
-                if (event.getSeverity() == Severity.WARNING && !quiet) {
+                if (event.getSeverity() == Severity.WARNING) {
                     // Only log warnings when not quiet
-                    printer.println(Color.YELLOW, formatter.format(event));
+                    printer.println(printer.style(formatter.format(event), Style.YELLOW));
                 } else if (event.getSeverity() == Severity.DANGER || event.getSeverity() == Severity.ERROR) {
                     // Always output error and danger events, even when quiet.
-                    printer.println(Color.RED, formatter.format(event));
-                } else if (!quiet) {
+                    printer.println(printer.style(formatter.format(event), Style.RED));
+                } else {
                     printer.println(formatter.format(event));
                 }
             }
         });
 
-        CommandUtils.handleModelDiscovery(arguments, assembler, classLoader);
-        CommandUtils.handleUnknownTraitsOption(arguments, assembler);
+        CommandUtils.handleModelDiscovery(buildOptions, assembler, env.classLoader());
+        CommandUtils.handleUnknownTraitsOption(buildOptions, assembler);
         models.forEach(assembler::addImport);
         ValidatedResult<Model> result = assembler.assemble();
-        Validator.validate(result, features);
+        Validator.validate(quietValidation, env.stderr(), result);
         return result.getResult().orElseThrow(() -> new RuntimeException("Expected Validator to throw"));
-    }
-
-    static Severity parseSeverity(String str) {
-        return Severity.fromString(str).orElseThrow(() -> new IllegalArgumentException(
-                "Invalid severity: " + str + ". Expected one of: " + Arrays.toString(Severity.values())));
     }
 
     static ModelAssembler createModelAssembler(ClassLoader classLoader) {
         return Model.assembler(classLoader).putProperty(ModelAssembler.DISABLE_JAR_CACHE, true);
     }
 
-    private static void handleUnknownTraitsOption(Arguments arguments, ModelAssembler assembler) {
-        if (arguments.has(SmithyCli.ALLOW_UNKNOWN_TRAITS)) {
+    private static void handleUnknownTraitsOption(BuildOptions options, ModelAssembler assembler) {
+        if (options.allowUnknownTraits()) {
             LOGGER.fine("Ignoring unknown traits");
             assembler.putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true);
         }
     }
 
-    private static void handleModelDiscovery(Arguments arguments, ModelAssembler assembler, ClassLoader baseLoader) {
-        if (arguments.has(SmithyCli.DISCOVER_CLASSPATH)) {
-            discoverModelsWithClasspath(arguments, assembler);
-        } else if (arguments.has(SmithyCli.DISCOVER)) {
+    private static void handleModelDiscovery(BuildOptions options, ModelAssembler assembler, ClassLoader baseLoader) {
+        if (options.discoverClasspath() != null) {
+            discoverModelsWithClasspath(options.discoverClasspath(), assembler);
+        } else if (options.discover()) {
             assembler.discoverModels(baseLoader);
         }
     }
 
-    private static void discoverModelsWithClasspath(Arguments arguments, ModelAssembler assembler) {
-        String rawClasspath = arguments.parameter(SmithyCli.DISCOVER_CLASSPATH);
+    private static void discoverModelsWithClasspath(String rawClasspath, ModelAssembler assembler) {
         LOGGER.finer("Discovering models with classpath: " + rawClasspath);
 
         // Use System.getProperty here each time since it allows the value to be changed.
@@ -122,11 +111,7 @@ final class CommandUtils {
             }
         }
 
-        // See http://findbugs.sourceforge.net/bugDescriptions.html#DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED
-        AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
-            URLClassLoader urlClassLoader = new URLClassLoader(urls);
-            assembler.discoverModels(urlClassLoader);
-            return null;
-        });
+        URLClassLoader urlClassLoader = new URLClassLoader(urls);
+        assembler.discoverModels(urlClassLoader);
     }
 }

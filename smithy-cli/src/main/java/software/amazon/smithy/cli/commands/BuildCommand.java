@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -31,20 +31,18 @@ import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.ProjectionResult;
 import software.amazon.smithy.build.SmithyBuild;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
+import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
-import software.amazon.smithy.cli.Cli;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
-import software.amazon.smithy.cli.Color;
-import software.amazon.smithy.cli.Command;
-import software.amazon.smithy.cli.Parser;
-import software.amazon.smithy.cli.SmithyCli;
+import software.amazon.smithy.cli.StandardOptions;
+import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
-public final class BuildCommand implements Command {
+public final class BuildCommand extends CommandWithHelp {
     private static final Logger LOGGER = Logger.getLogger(BuildCommand.class.getName());
 
     @Override
@@ -58,39 +56,79 @@ public final class BuildCommand implements Command {
     }
 
     @Override
-    public Parser getParser() {
-        return Parser.builder()
-                .repeatedParameter("--config", "-c",
-                     "Path to smithy-build.json configuration. Defaults to 'smithy-build.json'.")
-                .parameter("--output", "-o", "Where to write artifacts. Defaults to 'build/smithy'.")
-                .parameter("--projection", "Smithy will only generate artifacts for the given projection name.")
-                .parameter("--plugin", "Smithy will only generate artifacts for the given plugin name.")
-                .option(SmithyCli.DISCOVER, "-d", "Enables model discovery, merging in models found inside of jars")
-                .parameter(SmithyCli.DISCOVER_CLASSPATH, "Enables model discovery using a custom classpath for models")
-                .option(SmithyCli.ALLOW_UNKNOWN_TRAITS, "Ignores unknown traits when building models")
-                .parameter(SmithyCli.SEVERITY, "Sets a minimum validation event severity to display. "
-                                               + "Defaults to NOTE. Can be set to SUPPRESSED, NOTE, WARNING, "
-                                               + "DANGER, ERROR.")
-                .positional("<MODELS>", "Path to Smithy models or directories")
-                .build();
+    public void printHelp(CliPrinter printer) {
+        printer.println("Usage: smithy build [-h | --help] [--allow-unknown-traits] [-d | --discover]");
+        printer.println("                    [--discover-classpath JAVA_CLASSPATH]");
+        printer.println("                    [--severity SEVERITY] [--debug] [--quiet] [--stacktrace]");
+        printer.println("                    [--no-color] [--force-color] [--logging LOG_LEVEL]");
+        printer.println("                    [--config | -c] [--output] [--projection] [--plugin]");
+        printer.println("                    <MODELS>...");
+        printer.println("");
+        printer.println(getSummary());
+        printer.println("");
+        StandardOptions.printHelp(printer);
+        BuildOptions.printHelp(printer);
+        printer.println(printer.style("    --config, -c <config_path...>", Style.YELLOW));
+        printer.println("        Path to smithy-build.json configuration (defaults to './smithy-build.json').");
+        printer.println("        This option can be repeated and each configured will be merged.");
+        printer.println(printer.style("    --projection <projection_name>", Style.YELLOW));
+        printer.println("        Only generate artifacts for this projection.");
+        printer.println(printer.style("    --plugin <plugin_name>", Style.YELLOW));
+        printer.println("        Only generate artifacts for this plugin.");
+        printer.println(printer.style("    --output <output_path>", Style.YELLOW));
+        printer.println("        Where to write artifacts (defaults to './build/smithy').");
+        printer.println(printer.style("    <MODELS>...", Style.YELLOW));
+        printer.println("        Path to Smithy models or directories to load.");
+    }
+
+    private static final class Options implements ArgumentReceiver {
+        private final List<String> config = new ArrayList<>();
+        private String output;
+        private String projection;
+        private String plugin;
+
+        @Override
+        public boolean testOption(String name) {
+            return false;
+        }
+
+        @Override
+        public Consumer<String> testParameter(String name) {
+            switch (name) {
+                case "--config":
+                case "-c":
+                    return config::add;
+                case "--output":
+                    return value -> output = value;
+                case "--projection":
+                    return value -> projection = value;
+                case "--plugin":
+                    return value -> plugin = value;
+                default:
+                    return null;
+            }
+        }
     }
 
     @Override
-    public void execute(Arguments arguments, CliPrinter stdout, CliPrinter stderr, ClassLoader classLoader) {
-        List<String> config = arguments.repeatedParameter("--config", null);
-        String output = arguments.parameter("--output", null);
-        List<String> models = arguments.positionalArguments();
+    protected List<String> parseArguments(Arguments arguments, Env env) {
+        arguments.addReceiver(new BuildOptions());
+        arguments.addReceiver(new Options());
+        return arguments.finishParsing();
+    }
 
-        Cli.stdout(String.format("Building Smithy model sources: %s", models));
+    @Override
+    protected int run(Arguments arguments, Env env, List<String> models) {
+        Options options = arguments.getReceiver(Options.class);
+        StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
+        String output = options.output;
+
+        LOGGER.fine(() -> String.format("Building Smithy model sources: %s", models));
         SmithyBuildConfig.Builder configBuilder = SmithyBuildConfig.builder();
+        List<String> config = getConfig(options);
 
-        // Try to find a smithy-build.json file.
-        if (config == null && Files.exists(Paths.get("smithy-build.json"))) {
-            config = Collections.singletonList("smithy-build.json");
-        }
-
-        if (config != null) {
-            Cli.stdout(String.format("Loading Smithy configs: [%s]", String.join(" ", config)));
+        if (!config.isEmpty()) {
+            LOGGER.fine(() -> String.format("Loading Smithy configs: [%s]", String.join(" ", config)));
             config.forEach(file -> configBuilder.load(Paths.get(file)));
         } else {
             configBuilder.version(SmithyBuild.VERSION);
@@ -100,7 +138,7 @@ public final class BuildCommand implements Command {
             configBuilder.outputDirectory(output);
             try {
                 Files.createDirectories(Paths.get(output));
-                LOGGER.info(String.format("Output directory set to: %s", output));
+                LOGGER.info(() -> "Output directory set to: " + output);
             } catch (IOException e) {
                 throw new CliError("Unable to create Smithy output directory: " + e.getMessage());
             }
@@ -109,35 +147,38 @@ public final class BuildCommand implements Command {
         SmithyBuildConfig smithyBuildConfig = configBuilder.build();
 
         // Build the model and fail if there are errors. Prints errors to stdout.
-        Model model = CommandUtils.buildModel(arguments, stderr, classLoader, Collections.emptySet());
+        // Configure whether the build is quiet or not based on the --quiet option.
+        Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), standardOptions.quiet());
 
-        SmithyBuild smithyBuild = SmithyBuild.create(classLoader)
+        SmithyBuild smithyBuild = SmithyBuild.create(env.classLoader())
                 .config(smithyBuildConfig)
                 .model(model);
 
-        if (arguments.has("--plugin")) {
-            smithyBuild.pluginFilter(name -> name.equals(arguments.parameter("--plugin")));
+        if (options.plugin != null) {
+            smithyBuild.pluginFilter(name -> name.equals(options.plugin));
         }
 
-        if (arguments.has("--projection")) {
-            smithyBuild.projectionFilter(name -> name.equals(arguments.parameter("--projection")));
+        if (options.projection != null) {
+            smithyBuild.projectionFilter(name -> name.equals(options.projection));
         }
 
         // Register sources with the builder.
         models.forEach(path -> smithyBuild.registerSources(Paths.get(path)));
 
-        ResultConsumer resultConsumer = new ResultConsumer(stderr);
+        ResultConsumer resultConsumer = new ResultConsumer(env.stderr(), standardOptions.quiet());
         smithyBuild.build(resultConsumer, resultConsumer);
 
-        // Always print out the status of the successful projections.
-        Color color = resultConsumer.failedProjections.isEmpty()
-                ? Color.BRIGHT_BOLD_GREEN
-                : Color.BRIGHT_BOLD_YELLOW;
-        stderr.println(color, String.format(
-                "Smithy built %s projection(s), %s plugin(s), and %s artifacts",
-                resultConsumer.projectionCount,
-                resultConsumer.pluginCount,
-                resultConsumer.artifactCount));
+        if (!standardOptions.quiet()) {
+            Style ansiColor = resultConsumer.failedProjections.isEmpty()
+                              ? Style.BRIGHT_GREEN
+                              : Style.BRIGHT_YELLOW;
+            env.stderr().println(env.stderr().style(
+                    String.format("Smithy built %s projection(s), %s plugin(s), and %s artifacts",
+                                  resultConsumer.projectionCount,
+                                  resultConsumer.pluginCount,
+                                  resultConsumer.artifactCount),
+                    Style.BOLD, ansiColor));
+        }
 
         // Throw an exception if any errors occurred.
         if (!resultConsumer.failedProjections.isEmpty()) {
@@ -147,17 +188,29 @@ public final class BuildCommand implements Command {
                     resultConsumer.failedProjections.size(),
                     resultConsumer.failedProjections));
         }
+
+        return 0;
+    }
+
+    private List<String> getConfig(Options options) {
+        List<String> config = options.config;
+        if (config.isEmpty() && Files.exists(Paths.get("smithy-build.json"))) {
+            config = Collections.singletonList("smithy-build.json");
+        }
+        return config;
     }
 
     private static final class ResultConsumer implements Consumer<ProjectionResult>, BiConsumer<String, Throwable> {
-        List<String> failedProjections = Collections.synchronizedList(new ArrayList<>());
-        AtomicInteger artifactCount = new AtomicInteger();
-        AtomicInteger pluginCount = new AtomicInteger();
-        AtomicInteger projectionCount = new AtomicInteger();
-        private CliPrinter stderr;
+        private final List<String> failedProjections = Collections.synchronizedList(new ArrayList<>());
+        private final AtomicInteger artifactCount = new AtomicInteger();
+        private final AtomicInteger pluginCount = new AtomicInteger();
+        private final AtomicInteger projectionCount = new AtomicInteger();
+        private final boolean quiet;
+        private final CliPrinter printer;
 
-        ResultConsumer(CliPrinter stderr) {
-            this.stderr = stderr;
+        ResultConsumer(CliPrinter stderr, boolean quiet) {
+            this.printer = stderr;
+            this.quiet = quiet;
         }
 
         @Override
@@ -170,7 +223,8 @@ public final class BuildCommand implements Command {
                 message.append(element).append(System.lineSeparator());
             }
 
-            Cli.stdout(message);
+            // Always print errors.
+            printer.println(printer.style(message.toString(), Style.RED));
         }
 
         @Override
@@ -187,7 +241,8 @@ public final class BuildCommand implements Command {
                         message.append(event).append(System.lineSeparator());
                     }
                 });
-                stderr.println(Color.RED, message.toString());
+                // Always print errors.
+                printer.println(printer.style(message.toString(), Style.RED));
             } else {
                 // Only increment the projection count if it succeeded.
                 projectionCount.incrementAndGet();
@@ -198,9 +253,12 @@ public final class BuildCommand implements Command {
             // Get the base directory of the projection.
             Iterator<FileManifest> manifestIterator = result.getPluginManifests().values().iterator();
             Path root = manifestIterator.hasNext() ? manifestIterator.next().getBaseDir().getParent() : null;
-            stderr.println(Color.GREEN, String.format(
-                    "Completed projection %s (%d shapes): %s",
-                    result.getProjectionName(), result.getModel().toSet().size(), root));
+
+            if (!quiet) {
+                String message = String.format("Completed projection %s (%d shapes): %s",
+                                               result.getProjectionName(), result.getModel().toSet().size(), root);
+                printer.println(printer.style(message, Style.GREEN));
+            }
 
             // Increment the total number of artifacts written.
             for (FileManifest manifest : result.getPluginManifests().values()) {

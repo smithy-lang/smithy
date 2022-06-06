@@ -17,68 +17,71 @@ package software.amazon.smithy.cli.commands;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.cli.CliError;
-import software.amazon.smithy.cli.SmithyCli;
+import software.amazon.smithy.cli.CliUtils;
 import software.amazon.smithy.model.validation.Severity;
 
 public class ValidateCommandTest {
     @Test
-    public void hasValidateCommand() throws Exception {
-        PrintStream out = System.out;
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(outputStream);
-        System.setOut(printStream);
-        SmithyCli.create().run("validate", "--help");
-        System.setOut(out);
-        String help = outputStream.toString("UTF-8");
+    public void hasLongHelpCommand() {
+        CliUtils.Result result = CliUtils.runSmithy("validate", "--help");
 
-        assertThat(help, containsString("Validates"));
+        assertThat(result.code(), equalTo(0));
+        assertThat(result.stdout(), containsString("Validate"));
+    }
+
+    @Test
+    public void hasShortHelpCommand() {
+        CliUtils.Result result = CliUtils.runSmithy("validate", "-h");
+
+        assertThat(result.code(), equalTo(0));
+        assertThat(result.stdout(), containsString("Validate"));
     }
 
     @Test
     public void usesModelDiscoveryWithCustomValidClasspath() throws URISyntaxException {
         String dir = Paths.get(getClass().getResource("valid.jar").toURI()).toString();
-        SmithyCli.create().run("validate", "--debug", "--discover-classpath", dir);
+        CliUtils.Result result = CliUtils.runSmithy("validate", "--debug", "--discover-classpath", dir);
+
+        assertThat(result.code(), equalTo(0));
     }
 
     @Test
-    public void usesModelDiscoveryWithCustomInvalidClasspath() {
-        CliError e = Assertions.assertThrows(CliError.class, () -> {
-            String dir = Paths.get(getClass().getResource("invalid.jar").toURI()).toString();
-            SmithyCli.create().run("validate", "--debug", "--discover-classpath", dir);
-        });
+    public void usesModelDiscoveryWithCustomInvalidClasspath() throws Exception {
+        String dir = Paths.get(getClass().getResource("invalid.jar").toURI()).toString();
+        CliUtils.Result result = CliUtils.runSmithy("validate", "--debug", "--discover-classpath", dir);
 
-        assertThat(e.getMessage(), containsString("1 ERROR(s)"));
+        assertThat(result.code(), not(equalTo(0)));
+        assertThat(result.stderr(), containsString("ERROR: 1"));
     }
 
     @Test
-    public void failsOnUnknownTrait() {
-        CliError e = Assertions.assertThrows(CliError.class, () -> {
-            String model = Paths.get(getClass().getResource("unknown-trait.smithy").toURI()).toString();
-            SmithyCli.create().run("validate", model);
-        });
+    public void failsOnUnknownTrait() throws Exception {
+        String model = Paths.get(getClass().getResource("unknown-trait.smithy").toURI()).toString();
+        CliUtils.Result result = CliUtils.runSmithy("validate", model);
 
-        assertThat(e.getMessage(), containsString("1 ERROR(s)"));
+        assertThat(result.code(), not(equalTo(0)));
+        assertThat(result.stderr(), containsString("ERROR: 1"));
     }
 
     @Test
     public void allowsUnknownTrait() throws URISyntaxException {
         String model = Paths.get(getClass().getResource("unknown-trait.smithy").toURI()).toString();
-        SmithyCli.create().run("validate", "--allow-unknown-traits", model);
+        CliUtils.Result result = CliUtils.runSmithy("validate", "--allow-unknown-traits", model);
+
+        assertThat(result.code(), equalTo(0));
     }
 
     @Test
     public void canSetSeverityToSuppressed() throws Exception {
-        String result = runValidationEventsTest(Severity.SUPPRESSED);
+        CliUtils.Result cliResult = runValidationEventsTest(Severity.SUPPRESSED);
+        String result = cliResult.stdout();
 
         assertThat(result, containsString("EmitSuppressed"));
         assertThat(result, containsString("EmitNotes"));
@@ -89,7 +92,8 @@ public class ValidateCommandTest {
 
     @Test
     public void canSetSeverityToNote() throws Exception {
-        String result = runValidationEventsTest(Severity.NOTE);
+        CliUtils.Result cliResult = runValidationEventsTest(Severity.NOTE);
+        String result = cliResult.stdout();
 
         assertThat(result, not(containsString("EmitSuppressed")));
         assertThat(result, containsString("EmitNotes"));
@@ -100,7 +104,8 @@ public class ValidateCommandTest {
 
     @Test
     public void canSetSeverityToWarning() throws Exception {
-        String result = runValidationEventsTest(Severity.WARNING);
+        CliUtils.Result cliResult = runValidationEventsTest(Severity.WARNING);
+        String result = cliResult.stdout();
 
         assertThat(result, not(containsString("EmitSuppressed")));
         assertThat(result, not(containsString("EmitNotes")));
@@ -111,7 +116,8 @@ public class ValidateCommandTest {
 
     @Test
     public void canSetSeverityToDanger() throws Exception {
-        String result = runValidationEventsTest(Severity.DANGER);
+        CliUtils.Result cliResult = runValidationEventsTest(Severity.DANGER);
+        String result = cliResult.stdout();
 
         assertThat(result, not(containsString("EmitSuppressed")));
         assertThat(result, not(containsString("EmitNotes")));
@@ -122,7 +128,8 @@ public class ValidateCommandTest {
 
     @Test
     public void canSetSeverityToError() throws Exception {
-        String result = runValidationEventsTest(Severity.ERROR);
+        CliUtils.Result cliResult = runValidationEventsTest(Severity.ERROR);
+        String result = cliResult.stdout();
 
         assertThat(result, not(containsString("EmitSuppressed")));
         assertThat(result, not(containsString("EmitNotes")));
@@ -131,27 +138,17 @@ public class ValidateCommandTest {
         assertThat(result, containsString("TraitTarget"));
     }
 
-    private String runValidationEventsTest(Severity severity) throws Exception {
-        PrintStream err = System.err;
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(outputStream);
-        System.setErr(printStream);
-
+    private CliUtils.Result runValidationEventsTest(Severity severity) throws Exception {
         Path validationEventsModel = Paths.get(getClass().getResource("validation-events.smithy").toURI());
-        try {
-            SmithyCli.create().run("validate", "--severity", severity.toString(), validationEventsModel.toString());
-        } catch (RuntimeException e) {
-            // ignore the error since everything we need was captured via stderr.
-        }
-
-        System.setErr(err);
-        return outputStream.toString("UTF-8");
+        return CliUtils.runSmithy("validate", "--debug",
+                                  "--severity", severity.toString(), validationEventsModel.toString());
     }
 
     @Test
     public void validatesSeverity() {
-        Assertions.assertThrows(
-                IllegalArgumentException.class,
-                () -> SmithyCli.create().run("validate", "--severity", "FOO"));
+        CliUtils.Result result = CliUtils.runSmithy("validate", "--severity", "FOO");
+
+        assertThat(result.code(), not(0));
+        assertThat(result.stderr(), containsString("Invalid severity"));
     }
 }
