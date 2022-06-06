@@ -121,7 +121,7 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
     /**
      * Returns true if a member shape positively maps to a property.
      *
-     * {@see #getPropertyName(ShapeId)} will return a non-empty Optional if this method
+     * {@see PropertyBindingIndex#getPropertyName(ShapeId)} will return a non-empty Optional if this method
      * returns true.
      *
      * @param memberShapeId the ShapeId of the member shape to check

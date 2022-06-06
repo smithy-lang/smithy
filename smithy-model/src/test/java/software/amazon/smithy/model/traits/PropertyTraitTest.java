@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -47,7 +46,7 @@ public class PropertyTraitTest {
 
         assertTrue(propertyTrait.getName().isPresent());
         assertEquals("propertyName", propertyTrait.getName().get());
-        
+
         assertThat(propertyTrait.toNode(), equalTo(objectNode));
         assertThat(propertyTrait.toBuilder().build(), equalTo(propertyTrait));
     }
