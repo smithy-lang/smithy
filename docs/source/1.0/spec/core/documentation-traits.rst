@@ -245,12 +245,12 @@ These values use the same semantics and format as
             {
                 title: "Error example for MyOperation",
                 input: {
-                    foo: 1,
+                    foo: "!",
                 },
                 error: {
                     shapeId: MyOperationError,
                     content: {
-                        message: "Invalid 'foo'",
+                        message: "Invalid 'foo'. Special character not allowed.",
                     }
                 }
             },
