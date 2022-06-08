@@ -28,7 +28,7 @@ plugins {
 
 ext {
     // Load the Smithy version from VERSION.
-    libraryVersion = project.file("VERSION").getText('UTF-8').replace(System.lineSeparator(), "")
+    libraryVersion = project.file("VERSION").getText('UTF-8').replace("\r", "").replace("\n", "")
 }
 
 println "Smithy version: '${libraryVersion}'"
