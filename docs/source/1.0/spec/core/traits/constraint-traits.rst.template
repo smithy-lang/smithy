@@ -491,7 +491,7 @@ Conflicts with
 
    * :ref:`structure-nullability`
    * :ref:`default-trait`
-   * :ref:`nullable-trait`
+   * :ref:`clientOptional-trait`
    * :ref:`input-trait`
    * :ref:`recommended-trait`
 

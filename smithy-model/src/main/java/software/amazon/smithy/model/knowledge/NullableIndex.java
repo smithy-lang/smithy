@@ -21,9 +21,9 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.InputTrait;
-import software.amazon.smithy.model.traits.NullableTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
 
@@ -49,13 +49,13 @@ public class NullableIndex implements KnowledgeIndex {
     public enum CheckMode {
         /**
          * A client, or any other kind of non-authoritative model consumer
-         * that must honor the {@link InputTrait} and {@link NullableTrait}.
+         * that must honor the {@link InputTrait} and {@link ClientOptionalTrait}.
          */
         CLIENT,
 
         /**
          * A server, or any other kind of authoritative model consumer
-         * that does not honor the {@link InputTrait} and {@link NullableTrait}.
+         * that does not honor the {@link InputTrait} and {@link ClientOptionalTrait}.
          *
          * <p>This mode should only be used for model consumers that have
          * perfect knowledge of the model because they are built and deployed
@@ -111,7 +111,7 @@ public class NullableIndex implements KnowledgeIndex {
      * <p>A {@code checkMode} parameter is required to declare what kind of
      * model consumer is checking if the member is optional. The authoritative
      * consumers like servers do not need to honor the {@link InputTrait} or
-     * {@link NullableTrait}, while non-authoritative consumers like clients
+     * {@link ClientOptionalTrait}, while non-authoritative consumers like clients
      * must honor these traits.
      *
      * @param member Member to check.
@@ -124,7 +124,7 @@ public class NullableIndex implements KnowledgeIndex {
 
         // Client mode honors the nullable and input trait.
         if (checkMode == CheckMode.CLIENT
-                && (member.hasTrait(NullableTrait.class) || container.hasTrait(InputTrait.class))) {
+                && (member.hasTrait(ClientOptionalTrait.class) || container.hasTrait(InputTrait.class))) {
             return true;
         }
 

@@ -19,20 +19,28 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 
-public final class NullableTrait extends AnnotationTrait {
-    public static final ShapeId ID = ShapeId.from("smithy.api#nullable");
+/**
+ * Indicates that non-authoritative code generators should treat a member
+ * as optional even if it's required or default.
+ *
+ * <p>Because this trait is added by default to the members of a structure
+ * marked with the input trait, this trait can be defined as either
+ * synthetic or non-synthetic.
+ */
+public final class ClientOptionalTrait extends AnnotationTrait {
+    public static final ShapeId ID = ShapeId.from("smithy.api#clientOptional");
 
-    public NullableTrait(ObjectNode node) {
-        super(ID, node);
-    }
-
-    public NullableTrait() {
+    public ClientOptionalTrait() {
         this(Node.objectNode());
     }
 
-    public static final class Provider extends AnnotationTrait.Provider<NullableTrait> {
+    public ClientOptionalTrait(ObjectNode node) {
+        super(ID, node);
+    }
+
+    public static final class Provider extends AnnotationTrait.Provider<ClientOptionalTrait> {
         public Provider() {
-            super(ID, NullableTrait::new);
+            super(ID, ClientOptionalTrait::new);
         }
     }
 }
