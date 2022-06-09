@@ -623,4 +623,17 @@ public final class ModelTransformer {
         return new FlattenAndRemoveMixins().transform(this, model);
     }
 
+    /**
+     * Add the clientOptional trait to members that are effectively nullable because
+     * they are part of a structure marked with the input trait or they aren't required
+     * and don't have a default trait.
+     *
+     * @param model Model to transform.
+     * @param applyWhenNoDefaultValue Set to true to add clientOptional to members that target
+     *                                shapes with no zero value (e.g., structure and union).
+     * @return Returns the transformed model.
+     */
+    public Model addClientOptional(Model model, boolean applyWhenNoDefaultValue) {
+        return new AddClientOptional(applyWhenNoDefaultValue).transform(this, model);
+    }
 }
