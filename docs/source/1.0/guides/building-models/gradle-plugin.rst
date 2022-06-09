@@ -109,7 +109,7 @@ This extension supports the following properties:
       - ``FileCollection``
       - Sets a custom collection of smithy-build.json files to use when
         building the model.
-    * - allowsUnknownTraits
+    * - allowUnknownTraits
       - ``boolean``
       - Sets whether or not unknown traits in the model should be ignored. By
         default, the build will fail if unknown traits are encountered.
