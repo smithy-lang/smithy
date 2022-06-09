@@ -954,7 +954,7 @@ Structure member nullability
 Whether a structure member is nullable is based on if the model consumer
 is authoritative (e.g., a server) or non-authoritative (e.g., a client) and
 determined by evaluating the :ref:`required-trait`, :ref:`default-trait`,
-:ref:`nullable-trait`, and :ref:`input-trait`.
+:ref:`clientOptional-trait`, and :ref:`input-trait`.
 
 
 Requiring members
@@ -1029,7 +1029,7 @@ example, the previous ``TimeSpan`` model can be backward compatibly changed to:
 
 .. rubric:: Requiring members to be nullable
 
-The :ref:`nullable-trait` is used to indicate that a member that is currently
+The :ref:`clientOptional-trait` is used to indicate that a member that is currently
 required by authoritative model consumers like servers MAY become completely
 optional in the future. Non-authoritative model consumers like client code
 generators MUST treat the member as if it is not required and has no default
@@ -1041,7 +1041,7 @@ For example, the following structure:
 
     structure UserData {
         @required
-        @nullable
+        @clientOptional
         summary: String
     }
 
@@ -1053,14 +1053,14 @@ Can be backward-compatibly updated to remove the ``required`` trait:
         summary: String
     }
 
-Replacing the ``required`` and ``nullable`` trait with the ``default`` trait
+Replacing the ``required`` and ``clientOptional`` trait with the ``default`` trait
 is *not* a backward compatible change because model consumers would transition
 from assuming the value is nullable to assuming that it is always present due
 to a default zero value.
 
 .. note::
 
-    Authoritative model consumers MAY choose to ignore the ``nullable`` trait.
+    Authoritative model consumers MAY choose to ignore the ``clientOptional`` trait.
 
 .. rubric:: Using the ``@input`` trait for more model evolution options
 

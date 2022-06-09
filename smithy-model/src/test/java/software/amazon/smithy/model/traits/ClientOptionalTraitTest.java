@@ -25,16 +25,16 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
 
-public class NullableTraitTest {
+public class ClientOptionalTraitTest {
 
     @Test
     public void loadsTrait() {
         TraitFactory provider = TraitFactory.createServiceFactory();
         Optional<Trait> trait = provider.createTrait(
-                ShapeId.from("smithy.api#nullable"), ShapeId.from("ns.qux#foo"), Node.objectNode());
+                ShapeId.from("smithy.api#clientOptional"), ShapeId.from("ns.qux#foo"), Node.objectNode());
 
         assertTrue(trait.isPresent());
-        assertThat(trait.get(), instanceOf(NullableTrait.class));
+        assertThat(trait.get(), instanceOf(ClientOptionalTrait.class));
         assertThat(trait.get().toNode(), equalTo(Node.objectNode()));
     }
 }
