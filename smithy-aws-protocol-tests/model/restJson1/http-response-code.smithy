@@ -101,7 +101,8 @@ apply ResponseCodeRequired @httpResponseTests([
                 This test ensures that servers handle @httpResponseCode being @required.""",
         protocol: restJson1,
         code: 201,
-        body: "",
+        body: "{}",
+        bodyMediaType: "application/json",
         params: {
             responseCode: 201,
         },
@@ -117,7 +118,8 @@ apply ResponseCodeHttpFallback @httpResponseTests([
                 by @http if @httpResponseCode is not set.""",
         protocol: restJson1,
         code: 201,
-        body: "",
+        body: "{}",
+        bodyMediaType: "application/json",
         appliesTo: "server"
     }
 ])
