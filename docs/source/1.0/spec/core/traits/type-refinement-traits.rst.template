@@ -21,14 +21,12 @@ the type of a shape.
 Summary
     Provides a structure member with a default zero value.
 Trait selector
-    ``structure > member :not(> :test(union, structure > :test([trait|required])))``
+    ``structure > member :test(> :is(simpleType, collection, map))``
 
-    A member of a structure that does not target a union or a structure with
-    required members.
+    A member of a structure that targets a simple type, list, set, or map.
 Value type
     Annotation trait.
 Conflicts with
-    * :ref:`nullable-trait`
     * :ref:`required-trait`
 
 The default trait can be applied to structure members to indicate that the targeted
@@ -48,7 +46,7 @@ has a default zero value:
 
    * :ref:`structure-nullability`
    * :ref:`required-trait`
-   * :ref:`nullable-trait`
+   * :ref:`clientOptional-trait`
    * :ref:`input-trait`
 
 
@@ -104,9 +102,8 @@ nullable as this is semantically equivalent to the default zero value.
       - empty map
       -
     * - structure
-      - empty structure
-      - Structures only have a default zero value if none of the members of
-        the structure are marked with the :ref:`required-trait`.
+      - N/A
+      - Structures have no default value.
     * - union
       - N/A
       - Unions have no default value. A union MUST be set to one of its
@@ -149,11 +146,11 @@ best-practices:
    could break previously generated clients.
 
 
-.. smithy-trait:: smithy.api#nullable
-.. _nullable-trait:
+.. smithy-trait:: smithy.api#clientOptional
+.. _clientOptional-trait:
 
-``nullable`` trait
-==================
+``clientOptional`` trait
+========================
 
 Summary
     Requires that non-authoritative generators like clients treat a structure
@@ -163,18 +160,16 @@ Trait selector
     structure > member
 Value type
     Annotation trait
-Conflicts with
-    :ref:`default-trait`
 
 What is required today might not be required tomorrow. For cases when a service
 isn't sure if a member will be required forever, they can mark a ``@required``
-member as ``@nullable`` to ensure that non-authoritative consumers of the model
-treat the member as optional (for example, clients MUST treat such members as
-optional while servers could treat them as always present because they have
+member as ``@clientOptional`` to ensure that non-authoritative consumers of the
+model treat the member as optional (for example, clients MUST treat such members
+as optional while servers could treat them as always present because they have
 perfect knowledge of their own model). The ``@required`` trait can be backward
-compatibly removed from a member marked as ``@nullable`` (and does not need to
-be replaced with the ``@default`` trait). This causes the ``@required`` trait
-to function as server-side validation rather than something that changes
+compatibly removed from a member marked as ``@clientOptional`` (and does not
+need to be replaced with the ``@default`` trait). This causes the ``@required``
+trait to function as server-side validation rather than something that changes
 generated code.
 
 For example, the ``@required`` trait on ``foo`` in the following structure is
@@ -184,7 +179,7 @@ considered a validation constraint rather than a type refinement trait:
 
     structure Foo {
         @required
-        @nullable
+        @clientOptional
         foo: String
     }
 
@@ -203,8 +198,8 @@ considered a validation constraint rather than a type refinement trait:
 
     .. code-block:: smithy
 
-        @nullable
         structure Foo {
+            @clientOptional
             baz: String
         }
 
@@ -320,13 +315,13 @@ ways that would otherwise require complex model transformations.
 .. rubric:: Impact on backward compatibility
 
 Required members of a structure marked with the ``@input`` trait are implicitly
-considered :ref:`nullable <nullable-trait>`. It is backward compatible to
-remove the ``@required`` trait from top-level members of structures marked with
-the ``@input`` trait, and the ``@required`` trait does not need to be replaced
-with the ``@default`` trait (though this is allowed as well). This gives
-service teams the ability to remove the ``@required`` trait from top-level
-input members and loosen requirements without risking breaking previously
-generated clients.
+considered :ref:`clientOptional <clientOptional-trait>`. It is backward
+compatible to remove the ``@required`` trait from top-level members of
+structures marked with the ``@input`` trait, and the ``@required`` trait does
+not need to be replaced with the ``@default`` trait (though this is allowed
+as well). This gives service teams the ability to remove the ``@required``
+trait from top-level input members and loosen requirements without risking
+breaking previously generated clients.
 
 .. seealso:: :ref:`structure-nullability`
 

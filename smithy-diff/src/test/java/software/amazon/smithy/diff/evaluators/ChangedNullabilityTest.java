@@ -13,7 +13,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.InputTrait;
-import software.amazon.smithy.model.traits.NullableTrait;
+import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -137,7 +137,7 @@ public class ChangedNullabilityTest {
                 .target("foo.baz#String")
                 .addTrait(new RequiredTrait())
                 .build();
-        MemberShape member2 = member1.toBuilder().addTrait(new NullableTrait()).build();
+        MemberShape member2 = member1.toBuilder().addTrait(new ClientOptionalTrait()).build();
         StructureShape shapeA1 = StructureShape.builder().id("foo.baz#Baz").addMember(member1).build();
         StructureShape shapeA2 = StructureShape.builder().id("foo.baz#Baz").addMember(member2).build();
         StringShape target = StringShape.builder().id("foo.baz#String").build();
