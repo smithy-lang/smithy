@@ -255,10 +255,8 @@ structure httpApiKeyAuth {
 
 /// Provides a structure member with a default zero value.
 @trait(
-    selector: """
-        structure > member
-        :not(> :test(union, structure > :test([trait|required])))""",
-    conflicts: [nullable, required],
+    selector: "structure > member :test(> :is(simpleType, collection, map))",
+    conflicts: [required],
     // The default trait can never be removed. It can only be added if the
     // member was previously marked as required.
     breakingChanges: [{change: "remove"}]
@@ -267,11 +265,8 @@ structure default {}
 
 /// Requires that non-authoritative generators like clients treat a structure member as
 /// nullable regardless of if the member is also marked with the required trait.
-@trait(
-    selector: "structure > member",
-    conflicts: [default]
-)
-structure nullable {}
+@trait(selector: "structure > member")
+structure clientOptional {}
 
 @private
 enum HttpApiKeyLocations {

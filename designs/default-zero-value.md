@@ -2,7 +2,7 @@
 
 * **Author**: Michael Dowling
 * **Created**: 2021-08-24
-* **Last updated**: 2022-05-03
+* **Last updated**: 2022-06-08
 
 
 ## Abstract
@@ -103,7 +103,7 @@ Nullability in Smithy IDL 1.0 is controlled in the following ways:
    4. All other members are considered nullable.
 
 
-### Why the `@required` trait was unreliable for codegen
+### Why was the `@required` trait unreliable for codegen?
 
 Removing the `@required` trait from a structure member has historically been
 considered backwards compatible in Smithy because it is loosening a restriction.
@@ -152,10 +152,10 @@ can become optional.
 
 ## High-level summary
 
-This proposal introduces a `@default` trait, introduces a `@nullable` trait,
-removes the `@box` trait, and makes the nullability of a structure member
-something that is completely controlled by a member rather than based on the
-shape targeted by a member.
+This proposal introduces a `@default` trait, introduces a `@clientOptional`
+trait, removes the `@box` trait, removes the `Primitive*` shapes from the
+prelude, and makes the nullability of a structure member something that is
+completely controlled by members rather than the shape targeted by a member.
 
 The `@default` trait initializes a structure member with a default, zero value.
 
@@ -208,8 +208,8 @@ nullability controls from shapes to structure members. Smithy IDL 2.0 will:
    Default zero values are no longer controlled based on the shape targeted by
    a member, localizing this concern to members. This makes nullability of a
    member easier to understand for both readers and writers.
-2. Add a `@nullable` trait that can target structure members. This trait is
-   essentially a more constrained and better named `@box` trait. The primary
+2. Add a `@clientOptional` trait that can target structure members. This trait
+   is essentially a more constrained and better named `@box` trait. The primary
    use case for this trait is to apply it to members also marked as
    `@required` to indicate to non-authoritative code generators like clients
    that a service reserves the right to remove the `@required` trait from a
@@ -223,7 +223,7 @@ nullability controls from shapes to structure members. Smithy IDL 2.0 will:
    Smithy 1.0 models alongside Smithy 2.0 models.
    1. Inject the `@default` trait on structure members that targeted shapes
       with a default zero value and were not marked with the `@box` trait.
-   2. Replace the `@box` trait with `@nullable` on structure members.
+   2. Replace the `@box` trait with `@clientOptional` on structure members.
    3. Remove the `@box` trait from non-members.
    4. Rewrite members that target one of the removed Primitive* shapes to
       target the corresponding non-primitive shape in the prelude (for example,
@@ -251,10 +251,8 @@ The `@default` trait is defined in Smithy as:
 ```
 /// Provides a structure member with a default zero value.
 @trait(
-    selector: """
-        structure > member
-        :not(> :test(union, structure > :test([trait|required])))""",
-    conflicts: [nullable, required],
+    selector: "structure > member :test(> :is(simpleType, collection, map))",
+    conflicts: [required],
     // The default trait can never be removed. It can only be added if the
     // member was previously marked as required.
     breakingChanges: [{change: "remove"}]
@@ -282,8 +280,7 @@ value.
 - List: an empty list (`[]`).
 - Set: an empty set (`[]`).
 - Map: an empty map (`{}`).
-- Structure: an empty structure. Structures only have a default zero value if
-  none of the members of the structure are marked with the `@required` trait.
+- Structure: Structures have no default zero value.
 - Union: no default zero value. A union MUST be set to one of its variants for
   it to be valid, and unions have no default variant.
 
@@ -357,13 +354,13 @@ optional members that are not marked with `@default` or `@required` implicitly
 allow for null or omitted values.
 
 
-## `@nullable` trait
+## `@clientOptional` trait
 
 What is required today might not be required tomorrow. For cases when a service
 isn't sure if a member will be required forever, they can mark a `@required`
-member as `@nullable` to ensure that non-authoritative consumers of the model
-like clients treat the member as optional. The `@required` trait can be
-backward compatibly removed from a member marked as `@nullable` (and not
+member as `@clientOptional` to ensure that non-authoritative consumers of the
+model like clients treat the member as optional. The `@required` trait can be
+backward compatibly removed from a member marked as `@clientOptional` (and not
 replaced with the `@default` trait). This causes the `@required` trait to
 function as server-side validation rather than something that changes generated
 code.
@@ -381,12 +378,12 @@ Is equivalent to the following structure:
 
 ```
 structure Foo {
-    @nullable
+    @clientOptional
     baz: String
 }
 ```
 
-The primary use case of the `@nullable` trait is to indicate that while a
+The primary use case of the `@clientOptional` trait is to indicate that while a
 member is _currently_ defined as `@required`, the service reserves the right to
 later remove the `@required` trait and make the member optional in the future.
 
@@ -396,37 +393,56 @@ considered a validation constraint rather than a type refinement trait:
 ```
 structure Foo {
     @required
-    @nullable
+    @clientOptional
     foo: String
 }
 ```
 
-The `@nullable` trait is defined in Smithy as:
+The `@clientOptional` trait is defined in Smithy as:
 
 ```
-@trait(
-    selector: "structure > member",
-    conflicts: [default]
-)
-structure default {}
+@trait(selector: "structure > member")
+structure clientOptional {}
 ```
 
-The `@nullable` trait conflicts with the `@default` trait. The following
-model is invalid:
+The `@clientOptional` trait also causes members marked with the `@default`
+trait to be considered optional:
 
 ```
 structure Message {
-    @default    // ERROR: this trait conflicts with @nullable.
-    @nullable
+    @default
+    @clientOptional
     title: String
 }
 ```
 
+### @input structures apply @clientOptional
+
+Applying the `@input` trait to a structure implicitly applies the
+`@clientOptional` trait to each member of the structure. The `@input` trait
+special-cases a structure as the input of a single operation that cannot be
+referenced in any other place in the model. Structures marked with the `@input`
+have more relaxed backward compatibility guarantees. It is backward compatible
+to remove the `@required` trait from top-level members of structures marked
+with the `@input` trait, and the `@required` trait does not need to be replaced
+with the `@default` trait (though this is allowed as well). This gives service
+teams the ability to remove the `@required` trait from top-level input members
+and loosen requirements without risking breaking previously generated clients.
+
+The practical implication of this backward compatibility affordance is that
+code generated types for members of an `@input` structure MUST all be
+considered nullable regardless of the use of `@required` or `@default`. Not
+observing these nullability affordances runs the risk of previously generated
+code breaking when a model is updated in the future.
+
+Organizations that want stricter nullability controls over inputs can choose to
+not use the `@input` trait.
+
 
 ## Backward compatibility rules
 
-Backward compatibility rules of the `@default`, `@required`, and `@nullable`
-traits are as follows:
+Backward compatibility rules of the `@default`, `@required`, and
+`@clientOptional` traits are as follows:
 
 - The `@default` trait can never be removed from a member.
 - The `@default` trait can only be added to a member if the member was
@@ -434,18 +450,15 @@ traits are as follows:
   member remains non-nullable.
 - The `@required` trait can only be removed under the following conditions:
   - It is replaced with the `@default` trait
-  - The containing structure is marked with the `@input` trait, meaning it is
-    only used as the input of a single operation. This affordance is only given
-    to top-level members of structures marked with the `@input` trait, and it
-    does not apply to nested input members.
-  - The member is also marked with the `@nullable` trait.
+  - The containing structure is marked with the `@input` trait.
+  - The member is also marked with the `@clientOptional` trait.
 - The `@required` trait can only be added to a member if the member is also
-  marked with the `@nullable` trait. This is useful to correct a model that
-  errantly omitted the `@required` trait, but the member is actually required
-  by the service. Adding the `@required` trait to a member but omitting the
-  `@nullable` trait is a breaking change because it transitions the member from
-  nullable to non-nullable in generated code.
-- The `@nullable` trait can only be removed from members that are not also
+  marked with the `@clientOptional` trait. This is useful to correct a model
+  that errantly omitted the `@required` trait, but the member is actually
+  required by the service. Adding the `@required` trait to a member but
+  omitting the `@clientOptional` trait is a breaking change because it
+  transitions the member from nullable to non-nullable in generated code.
+- The `@clientOptional` trait can only be removed from members that are not
   marked as `@required`.
 
 For example, if on _day-1_ the following structure is released:
@@ -480,29 +493,6 @@ implementation will be updated to be aware of these additional backward
 compatibility rules.
 
 
-### Special casing for @input structures
-
-Required members of a structure marked with the `@input` trait are implicitly
-considered `@nullable`. The `@input` trait special-cases a structure as the
-input of a single operation that cannot be referenced in any other place in the
-model. This allows structures marked with the `@input` trait to have more
-relaxed backward compatibility guarantees. It is backward compatible to remove
-the `@required` trait from top-level members of structures marked with the
-`@input` trait, and the `@required` trait does not need to be replaced with the
-`@default` trait (though this is allowed as well). This gives service teams the
-ability to remove the `@required` trait from top-level input members and loosen
-requirements without risking breaking previously generated clients.
-
-The practical implication of this backward compatibility affordance is that
-code generated types for members of an `@input` structure MUST all be
-considered nullable regardless of the use of `@required` or `@default`. Not
-observing these nullability affordances runs the risk of previously generated
-code breaking when a model is updated in the future.
-
-Organizations that want stricter nullability controls over inputs, while risky,
-can choose to not use the `@input` trait.
-
-
 ## Guidance on code generation
 
 Code generated types for structures SHOULD use the `@default` trait and
@@ -511,7 +501,7 @@ values based on the following ordered rules:
 
 1. Accessors for members of a structure marked with the `@input` MUST be
    nullable.
-2. Accessors for members marked as `@nullable` MUST be nullable.
+2. Accessors for members marked as `@clientOptional` MUST be nullable.
 3. Accessors for members marked as `@required` SHOULD always return a non-null
    value.
 4. Accessors for members marked with the `@default` trait SHOULD always return
@@ -590,15 +580,15 @@ AWS SDK team's ability to fully use the required trait for code generation:
 We will work to improve the accuracy and consistency of the required trait in
 AWS API models where possible, but it will take significant time and effort
 from hundreds of different teams within AWS. To accommodate this shift in
-modeling changes, we will use the `@nullable` trait to influence code
+modeling changes, we will use the `@clientOptional` trait to influence code
 generation and provide AWS SDK specific code generation recommendations.
 
-The `@nullable` trait will be backfilled onto AWS models as needed. Services
-with a history of frequently adding or removing the required trait will apply
-the `@nullable` to every `@required` member. Other AWS models will only
-apply the `@nullable` trait to members that target structures or unions. Over
-time, as models are audited and corrected, we can remove the `@nullable` trait
-and release improved AWS SDKs.
+The `@clientOptional` trait will be backfilled onto AWS models as needed.
+Services with a history of frequently adding or removing the required trait
+will apply the `@clientOptional` to every `@required` member. Other AWS models
+will only apply the `@clientOptional` trait to members that target structures
+or unions. Over time, as models are audited and corrected, we can remove the
+`@clientOptional` trait and release improved AWS SDKs.
 
 Backfilling this trait on AWS models is admittedly be an inconvenience for
 developers, but it is less catastrophic than previously generated client code
@@ -761,6 +751,19 @@ See https://github.com/awslabs/smithy/blob/main/designs/operation-input-output-a
 
 ## Updates
 
+* 2022-06-8
+  * Remove default zero values from structures. Assigning zero values to
+    structures adds complexity to serializers that try to omit members set
+    to their zero values (they would have needed to recursively inspect
+    structure member values or generate some kind of "isZeroValue" flag).
+    Rather than add default zero values to structures to aid in migrating
+    required structures to default structures, services can choose to apply
+    the `@clientOptional` trait to the member to ensure that clients generate
+    the member as optional, and the service reserves the right to remove the
+    `@required` trait in the future.
+  * Rename `@nullable` to `@clientOptional`. `@nullable` caused confusion;
+    some assumed it meant that a member accepts explicit null values when it
+    actually is just intended to make clients generate the member as optional.
 * 2022-05-04
   * Move `aws.api#clientOptional` to `smithy.api#nullable`. In order
     for diff tools to understand backward compatible changes, this trait has to
@@ -770,6 +773,6 @@ See https://github.com/awslabs/smithy/blob/main/designs/operation-input-output-a
     require teams to ignore Smithy's built-in diff support that checks for
     allowed `@required` changes.
   * Remove Smithy 2.0 traits and semantics from 1.0. Adding `@default` and
-      allowing `@nullable` in 1.0 made an already complex nullability story
-      impossibly complex. `@default` and `@nullable` is now only be allowed in
-      Smithy 2.0.
+      allowing `@clientOptional` in 1.0 made an already complex nullability
+      story impossibly complex. `@default` and `@clientOptional` is now only be
+      allowed in Smithy 2.0.
