@@ -26,9 +26,9 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NullableIndex;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.InputTrait;
-import software.amazon.smithy.model.traits.NullableTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -102,11 +102,11 @@ public class ChangedNullability extends AbstractDiffEvaluator {
             joiner.add("The @input trait was added to " + newMember.getContainer());
         } else if (!newHasInput) {
             // Can't add nullable to a preexisting required member.
-            if (change.isTraitAdded(NullableTrait.ID) && change.isTraitInBoth(RequiredTrait.ID)) {
+            if (change.isTraitAdded(ClientOptionalTrait.ID) && change.isTraitInBoth(RequiredTrait.ID)) {
                 joiner.add("The @nullable trait was added to a @required member.");
             }
             // Can't add required to a member unless the member is marked as nullable.
-            if (change.isTraitAdded(RequiredTrait.ID) && !newMember.hasTrait(NullableTrait.ID)) {
+            if (change.isTraitAdded(RequiredTrait.ID) && !newMember.hasTrait(ClientOptionalTrait.ID)) {
                 joiner.add("The @required trait was added to a member that is not marked as @nullable.");
             }
             // Can't add the default trait to a member unless the member was previously required.
@@ -116,7 +116,7 @@ public class ChangedNullability extends AbstractDiffEvaluator {
             // Can only remove the required trait if the member was nullable or replaced by the default trait.
             if (change.isTraitRemoved(RequiredTrait.ID)
                     && !newMember.hasTrait(DefaultTrait.ID)
-                    && !oldMember.hasTrait(NullableTrait.ID)) {
+                    && !oldMember.hasTrait(ClientOptionalTrait.ID)) {
                 joiner.add("The @required trait was removed and not replaced with the @default trait.");
             }
         }

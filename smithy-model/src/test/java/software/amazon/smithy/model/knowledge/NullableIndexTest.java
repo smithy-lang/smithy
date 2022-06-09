@@ -36,7 +36,7 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.InputTrait;
-import software.amazon.smithy.model.traits.NullableTrait;
+import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
 
@@ -173,13 +173,13 @@ public class NullableIndexTest {
                 .id("smithy.example#Struct")
                 // This member is technically invalid, but nullable takes precedent here
                 // over the default trait.
-                .addMember("foo", str.getId(), b -> b.addTrait(new NullableTrait())
+                .addMember("foo", str.getId(), b -> b.addTrait(new ClientOptionalTrait())
                         .addTrait(new DefaultTrait())
                         .build())
-                .addMember("bar", str.getId(), b -> b.addTrait(new NullableTrait())
+                .addMember("bar", str.getId(), b -> b.addTrait(new ClientOptionalTrait())
                         .addTrait(new RequiredTrait())
                         .build())
-                .addMember("baz", str.getId(), b -> b.addTrait(new NullableTrait()).build())
+                .addMember("baz", str.getId(), b -> b.addTrait(new ClientOptionalTrait()).build())
                 .addMember("bam", str.getId(), b -> b.addTrait(new RequiredTrait()).build())
                 .addMember("boo", str.getId(), b -> b.addTrait(new DefaultTrait()).build())
                 .build();

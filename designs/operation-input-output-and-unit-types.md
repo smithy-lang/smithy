@@ -2,6 +2,7 @@
 
 * **Author**: Michael Dowling
 * **Created**: 2021-11-11
+* **Updated**: 2022-06-08
 
 ## Abstract
 
@@ -137,6 +138,9 @@ evolve their models over time. Code generators SHOULD take these relaxed
 backward compatibility semantics into account when generating code for
 structures marked with the `@input` trait to avoid breaking previously
 generated clients as models evolve.
+
+In Smithy IDL 2.0, the `@input` trait automatically applies the
+`@clientOptional` trait to each member.
 
 #### Automatic application using inline syntax
 
