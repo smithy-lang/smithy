@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.model.traits;
 
+import java.util.Collections;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -36,6 +38,10 @@ public final class ClientOptionalTrait extends AnnotationTrait {
 
     public ClientOptionalTrait(ObjectNode node) {
         super(ID, node);
+    }
+
+    public ClientOptionalTrait(SourceLocation location) {
+        this(new ObjectNode(Collections.emptyMap(), location));
     }
 
     public static final class Provider extends AnnotationTrait.Provider<ClientOptionalTrait> {
