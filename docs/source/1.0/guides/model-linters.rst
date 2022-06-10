@@ -591,6 +591,83 @@ Configuration
            represent time.
 
 
+.. _MissingClientOptionalTrait:
+
+MissingClientOptionalTrait
+==========================
+
+Allows services to control backward compatibility guarantees for
+members marked as :ref:`@required <required-trait>` and
+:ref:`@default <default-trait>` by requiring the application of the
+:ref:`@clientOptional <clientOptional-trait>` trait.
+
+Rationale
+    Different service providers have different backward compatibility
+    guarantees for :ref:`@required <required-trait>` and
+    :ref:`@default <default-trait>` structure members. Some
+    services wish to reserve the right to remove the ``@required`` trait at
+    any time, while others are able to strictly follow the backward-compatibility
+    guarantees of the ``@required`` trait. For example, it is considered
+    backward compatible to remove the ``@required`` trait from a member and
+    replace it with the ``@default`` trait. However, this isn't possible for
+    members that target structure or union shapes because they have no zero
+    value. The risk associated with such members may be unacceptable for some
+    services.
+
+Default severity
+    ``DANGER``
+
+Configuration
+    .. list-table::
+       :header-rows: 1
+       :widths: 20 20 60
+
+       * - Property
+         - Type
+         - Description
+       * - onRequiredOrDefault
+         - ``boolean``
+         - Requires that members marked with the ``@required`` or ``@default``
+           trait are also marked with the ``@clientOptional`` trait.
+       * - onRequiredStructureOrUnion
+         - ``boolean``
+         - Requires that ``@required`` members that target structure or union
+           shapes are also marked with the ``@clientOptional`` trait.
+           ``@required`` members that target structures and unions are risky
+           because there is no backward compatible way to replace the
+           ``@required`` trait with the ``@default`` trait if the member ever
+           needs to be made optional.
+
+The following example requires that ``@required`` members that target a structure or
+union are marked with the ``@clientOptional`` trait.
+
+.. code-block:: smithy
+
+    metadata validators = [
+        {
+            name: "MissingClientOptionalTrait",
+
+            // Limit validation to a specific set of namespaces.
+            namespaces: ["smithy.example"],
+
+            configuration: {
+                onRequiredStructureOrUnion: true
+            }
+        }
+    ]
+
+This validation can be suppressed for any member that the service provider
+decides is not at risk of ever needing to become optional in the future:
+
+.. code-block:: smithy
+
+    structure Sprocket {
+        @required
+        @suppress(["MissingClientOptionalTrait"])
+        owner: OwnerStructure
+    }
+
+
 -------------------------
 Writing custom validators
 -------------------------
