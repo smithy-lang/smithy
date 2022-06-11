@@ -17,10 +17,14 @@ package software.amazon.smithy.cli.commands;
 
 import java.util.List;
 import java.util.logging.Logger;
+import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
+import software.amazon.smithy.cli.CliPrinter;
 import software.amazon.smithy.cli.Command;
+import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.utils.SmithyInternalApi;
+import software.amazon.smithy.utils.StringUtils;
 
 /**
  * A command that has -h and --help options.
@@ -29,16 +33,26 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  * to stdout and exits with code 0.
  */
 @SmithyInternalApi
-abstract class CommandWithHelp implements Command {
+abstract class SimpleCommand implements Command {
 
-    private static final Logger LOGGER = Logger.getLogger(CommandWithHelp.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SimpleCommand.class.getName());
+    private final String parentCommandName;
+
+    SimpleCommand(String parentCommandName) {
+        this.parentCommandName = parentCommandName;
+    }
 
     @Override
     public final int execute(Arguments arguments, Env env) {
-        List<String> positionalArguments = parseArguments(arguments, env);
+        List<ArgumentReceiver> receivers = createArgumentReceivers();
+        for (ArgumentReceiver receiver : receivers) {
+            arguments.addReceiver(receiver);
+        }
+
+        List<String> positionalArguments = arguments.finishParsing();
 
         if (arguments.getReceiver(StandardOptions.class).help()) {
-            printHelp(env.stdout());
+            printHelp(arguments, env.stdout());
             return 0;
         }
 
@@ -46,15 +60,21 @@ abstract class CommandWithHelp implements Command {
         return run(arguments, env, positionalArguments);
     }
 
+    @Override
+    public void printHelp(Arguments arguments, CliPrinter printer) {
+        String name = StringUtils.isEmpty(parentCommandName) ? getName() : parentCommandName + " " + getName();
+        HelpPrinter.fromArguments(name, arguments)
+                .summary(getSummary())
+                .documentation(getDocumentation(printer))
+                .print(printer);
+    }
+
     /**
-     * Registers all required receivers, and returns the result of calling
-     * {@link Arguments#finishParsing()} on the parser.
+     * Creates argument receivers for the command.
      *
-     * @param arguments Arguments to parse.
-     * @param env Environment being evaluated.
      * @return Returns the parsed positional arguments.
      */
-    protected abstract List<String> parseArguments(Arguments arguments, Env env);
+    protected abstract List<ArgumentReceiver> createArgumentReceivers();
 
     /**
      * Run the non-help command after all arguments have been parsed.

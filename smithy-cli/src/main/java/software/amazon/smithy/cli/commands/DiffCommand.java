@@ -16,6 +16,7 @@
 package software.amazon.smithy.cli.commands;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -24,6 +25,7 @@ import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
+import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.diff.ModelDiff;
@@ -35,8 +37,12 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
-public final class DiffCommand extends CommandWithHelp {
+public final class DiffCommand extends SimpleCommand {
     private static final Logger LOGGER = Logger.getLogger(DiffCommand.class.getName());
+
+    public DiffCommand(String parentCommandName) {
+        super(parentCommandName);
+    }
 
     @Override
     public String getName() {
@@ -46,25 +52,6 @@ public final class DiffCommand extends CommandWithHelp {
     @Override
     public String getSummary() {
         return "Diffs two Smithy models and reports any significant changes";
-    }
-
-    @Override
-    public void printHelp(CliPrinter printer) {
-        printer.println("Usage: smithy diff [-h | --help] [--severity SEVERITY] [--debug] [--quiet] [--stacktrace]");
-        printer.println("                   [--no-color] [--force-color] [--logging LOG_LEVEL]");
-        printer.println("                   --old OLD_MODELS... --new NEW_MODELS...");
-        printer.println("");
-        printer.println(getSummary());
-        printer.println("");
-        StandardOptions.printHelp(printer);
-        printer.println(printer.style("    --old <OLD_MODELS>...", Style.YELLOW));
-        printer.println("        Path to an old Smithy model or directory that contains models.");
-        printer.println("        This option can be repeated to merge multiple files or directories.");
-        printer.println("        (e.g., --old /path/old/one --old /path/old/two)");
-        printer.println(printer.style("    --new <NEW_MODELS>...", Style.YELLOW));
-        printer.println("        Path to the new Smithy model or directory that contains models");
-        printer.println("        This option can be repeated to merge multiple files or directories.");
-        printer.println("        (e.g., --new /path/new/one --new /path/new/two)");
     }
 
     private static final class Options implements ArgumentReceiver {
@@ -86,12 +73,23 @@ public final class DiffCommand extends CommandWithHelp {
                 return null;
             }
         }
+
+        @Override
+        public void registerHelp(HelpPrinter printer) {
+            printer.param("--old", null, "OLD_MODELS...",
+                          "Path to an old Smithy model or directory that contains models. This option can be "
+                          + "repeated to merge multiple files or directories "
+                          + "(e.g., --old /path/old/one --old /path/old/two).");
+            printer.param("--new", null, "NEW_MODELS...",
+                          "Path to the new Smithy model or directory that contains models. This option can be "
+                          + "repeated to merge multiple files or directories."
+                          + "(e.g., --new /path/new/one --new /path/new/two)");
+        }
     }
 
     @Override
-    protected List<String> parseArguments(Arguments arguments, Env env) {
-        arguments.addReceiver(new Options());
-        return arguments.finishParsing();
+    protected List<ArgumentReceiver> createArgumentReceivers() {
+        return Collections.singletonList(new Options());
     }
 
     @Override

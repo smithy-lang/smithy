@@ -16,12 +16,13 @@
 package software.amazon.smithy.cli;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Command line arguments list to evaluate.
@@ -34,10 +35,11 @@ import java.util.function.Consumer;
  * subscribers via {@link #onComplete(BiConsumer)}. These subscribers are
  * invoked when all arguments have been parsed.
  */
+@SmithyUnstableApi
 public final class Arguments {
 
     private final String[] args;
-    private final Map<Class<? extends ArgumentReceiver>, ArgumentReceiver> receivers = new HashMap<>();
+    private final Map<Class<? extends ArgumentReceiver>, ArgumentReceiver> receivers = new LinkedHashMap<>();
     private final List<BiConsumer<Arguments, List<String>>> subscribers = new ArrayList<>();
     private boolean inPositional = false;
     private int position = 0;
@@ -66,6 +68,15 @@ public final class Arguments {
     @SuppressWarnings("unchecked")
     public <T extends ArgumentReceiver> T getReceiver(Class<T> type) {
         return (T) Objects.requireNonNull(receivers.get(type));
+    }
+
+    /**
+     * Get the argument receivers registered with the Arguments list.
+     *
+     * @return Returns the receivers.
+     */
+    public Iterable<ArgumentReceiver> getReceivers() {
+        return receivers.values();
     }
 
     /**

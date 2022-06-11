@@ -16,6 +16,7 @@
 package software.amazon.smithy.cli;
 
 import java.util.function.Consumer;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * A command line argument receiver.
@@ -26,6 +27,7 @@ import java.util.function.Consumer;
  * If a non-positional argument is not accepted by any receiver,
  * the CLI will exit with an error.
  */
+@SmithyUnstableApi
 public interface ArgumentReceiver {
     /**
      * Test if the given value-less option is accepted by the receiver.
@@ -54,5 +56,14 @@ public interface ArgumentReceiver {
      */
     default Consumer<String> testParameter(String name) {
         return null;
+    }
+
+    /**
+     * Registers help information to the given {@link HelpPrinter}.
+     *
+     * @param printer Printer to modify.
+     */
+    default void registerHelp(HelpPrinter printer) {
+        // do nothing by default.
     }
 }
