@@ -751,7 +751,7 @@ See https://github.com/awslabs/smithy/blob/main/designs/operation-input-output-a
 
 ## Updates
 
-* 2022-06-8
+* 2022-06-08
   * Remove default zero values from structures. Assigning zero values to
     structures adds complexity to serializers that try to omit members set
     to their zero values (they would have needed to recursively inspect
