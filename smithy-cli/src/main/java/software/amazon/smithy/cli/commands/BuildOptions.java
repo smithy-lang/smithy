@@ -17,8 +17,7 @@ package software.amazon.smithy.cli.commands;
 
 import java.util.function.Consumer;
 import software.amazon.smithy.cli.ArgumentReceiver;
-import software.amazon.smithy.cli.CliPrinter;
-import software.amazon.smithy.cli.Style;
+import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
@@ -27,27 +26,33 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public final class BuildOptions implements ArgumentReceiver {
 
+    public static final String ALLOW_UNKNOWN_TRAITS = "--allow-unknown-traits";
+    public static final String DISCOVER = "--discover";
+    public static final String DISCOVER_SHORT = "-d";
+    public static final String DISCOVER_CLASSPATH = "--discover-classpath";
+    public static final String MODELS = "<MODELS>";
+
     private String discoverClasspath;
     private boolean allowUnknownTraits;
     private boolean discover;
 
-    public static void printHelp(CliPrinter printer) {
-        printer.println(printer.style("    --allow-unknown-traits", Style.YELLOW));
-        printer.println("        Ignores unknown traits when validating models");
-        printer.println(printer.style("    --discover, -d", Style.YELLOW));
-        printer.println("        Enables model discovery, merging in models found inside of jars");
-        printer.println(printer.style("    --discover-classpath CLASSPATH", Style.YELLOW));
-        printer.println("        Enables model discovery using a custom classpath for models");
+    @Override
+    public void registerHelp(HelpPrinter printer) {
+        printer.option(ALLOW_UNKNOWN_TRAITS, null, "Ignores unknown traits when validating models");
+        printer.option(DISCOVER, "-d", "Enables model discovery, merging in models found inside of jars");
+        printer.param(DISCOVER_CLASSPATH, null, "CLASSPATH",
+                            "Enables model discovery using a custom classpath for models");
+        printer.positional(MODELS, "Model files and directories to load");
     }
 
     @Override
     public boolean testOption(String name) {
         switch (name) {
-            case "--allow-unknown-traits":
+            case ALLOW_UNKNOWN_TRAITS:
                 allowUnknownTraits = true;
                 return true;
-            case "--discover":
-            case "-d":
+            case DISCOVER:
+            case DISCOVER_SHORT:
                 discover = true;
                 return true;
             default:
@@ -57,7 +62,7 @@ public final class BuildOptions implements ArgumentReceiver {
 
     @Override
     public Consumer<String> testParameter(String name) {
-        if ("--discover-classpath".equals(name)) {
+        if (DISCOVER_CLASSPATH.equals(name)) {
             return value -> discoverClasspath = value;
         }
 

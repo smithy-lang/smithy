@@ -29,11 +29,11 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 public class SmithyCommand implements Command {
 
     private final List<Command> commands = Arrays.asList(
-            new ValidateCommand(),
-            new BuildCommand(),
-            new AstCommand(),
-            new SelectCommand(),
-            new DiffCommand());
+            new ValidateCommand(getName()),
+            new BuildCommand(getName()),
+            new AstCommand(getName()),
+            new SelectCommand(getName()),
+            new DiffCommand(getName()));
 
     @Override
     public String getName() {
@@ -46,9 +46,9 @@ public class SmithyCommand implements Command {
     }
 
     @Override
-    public void printHelp(CliPrinter printer) {
-        printer.println(String.format("Usage: %s [-h|--help] <command> [<args>]",
-                                      printer.style("smithy", Style.BRIGHT_WHITE)));
+    public void printHelp(Arguments arguments, CliPrinter printer) {
+        printer.println(String.format("Usage: %s [-h | --help] <command> [<args>]",
+                                      printer.style("smithy", Style.BRIGHT_WHITE, Style.UNDERLINE)));
         printer.println("");
         printer.println("Available commands:");
 
@@ -74,10 +74,10 @@ public class SmithyCommand implements Command {
         if (command == null) {
             arguments.finishParsing();
             if (arguments.getReceiver(StandardOptions.class).help()) {
-                printHelp(env.stdout());
+                printHelp(arguments, env.stdout());
                 return 0;
             } else {
-                printHelp(env.stderr());
+                printHelp(arguments, env.stderr());
                 return 1;
             }
         }

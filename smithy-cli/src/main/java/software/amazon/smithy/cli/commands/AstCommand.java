@@ -15,18 +15,22 @@
 
 package software.amazon.smithy.cli.commands;
 
+import java.util.Collections;
 import java.util.List;
+import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
-import software.amazon.smithy.cli.CliPrinter;
-import software.amazon.smithy.cli.StandardOptions;
-import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ModelSerializer;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
-public final class AstCommand extends CommandWithHelp {
+public final class AstCommand extends SimpleCommand {
+
+    public AstCommand(String parentCommandName) {
+        super(parentCommandName);
+    }
+
     @Override
     public String getName() {
         return "ast";
@@ -38,25 +42,8 @@ public final class AstCommand extends CommandWithHelp {
     }
 
     @Override
-    public void printHelp(CliPrinter printer) {
-        printer.println("Usage: smithy ast [-h | --help] [--allow-unknown-traits] [-d | --discover]");
-        printer.println("                  [--discover-classpath JAVA_CLASSPATH]");
-        printer.println("                  [--severity SEVERITY] [--debug] [--quiet] [--stacktrace]");
-        printer.println("                  [--no-color] [--force-color] [--logging LOG_LEVEL]");
-        printer.println("                  <MODELS>...");
-        printer.println("");
-        printer.println(getSummary());
-        printer.println("");
-        StandardOptions.printHelp(printer);
-        BuildOptions.printHelp(printer);
-        printer.println(printer.style("    <MODELS>...", Style.YELLOW));
-        printer.println("        Path to Smithy models or directories to load.");
-    }
-
-    @Override
-    protected List<String> parseArguments(Arguments arguments, Env env) {
-        arguments.addReceiver(new BuildOptions());
-        return arguments.finishParsing();
+    protected List<ArgumentReceiver> createArgumentReceivers() {
+        return Collections.singletonList(new BuildOptions());
     }
 
     @Override

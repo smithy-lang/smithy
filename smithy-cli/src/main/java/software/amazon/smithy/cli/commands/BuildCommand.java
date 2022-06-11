@@ -35,15 +35,21 @@ import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
+import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.validation.Severity;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
-public final class BuildCommand extends CommandWithHelp {
+public final class BuildCommand extends SimpleCommand {
     private static final Logger LOGGER = Logger.getLogger(BuildCommand.class.getName());
+
+    public BuildCommand(String parentCommandName) {
+        super(parentCommandName);
+    }
 
     @Override
     public String getName() {
@@ -52,33 +58,7 @@ public final class BuildCommand extends CommandWithHelp {
 
     @Override
     public String getSummary() {
-        return "Builds Smithy models and creates plugin artifacts for each projection";
-    }
-
-    @Override
-    public void printHelp(CliPrinter printer) {
-        printer.println("Usage: smithy build [-h | --help] [--allow-unknown-traits] [-d | --discover]");
-        printer.println("                    [--discover-classpath JAVA_CLASSPATH]");
-        printer.println("                    [--severity SEVERITY] [--debug] [--quiet] [--stacktrace]");
-        printer.println("                    [--no-color] [--force-color] [--logging LOG_LEVEL]");
-        printer.println("                    [--config | -c] [--output] [--projection] [--plugin]");
-        printer.println("                    <MODELS>...");
-        printer.println("");
-        printer.println(getSummary());
-        printer.println("");
-        StandardOptions.printHelp(printer);
-        BuildOptions.printHelp(printer);
-        printer.println(printer.style("    --config, -c <config_path...>", Style.YELLOW));
-        printer.println("        Path to smithy-build.json configuration (defaults to './smithy-build.json').");
-        printer.println("        This option can be repeated and each configured will be merged.");
-        printer.println(printer.style("    --projection <projection_name>", Style.YELLOW));
-        printer.println("        Only generate artifacts for this projection.");
-        printer.println(printer.style("    --plugin <plugin_name>", Style.YELLOW));
-        printer.println("        Only generate artifacts for this plugin.");
-        printer.println(printer.style("    --output <output_path>", Style.YELLOW));
-        printer.println("        Where to write artifacts (defaults to './build/smithy').");
-        printer.println(printer.style("    <MODELS>...", Style.YELLOW));
-        printer.println("        Path to Smithy models or directories to load.");
+        return "Builds Smithy models and creates plugin artifacts for each projection found in smithy-build.json.";
     }
 
     private static final class Options implements ArgumentReceiver {
@@ -108,13 +88,22 @@ public final class BuildCommand extends CommandWithHelp {
                     return null;
             }
         }
+
+        @Override
+        public void registerHelp(HelpPrinter printer) {
+            printer.param("--config", "-c", "CONFIG_PATH...",
+                          "Path to smithy-build.json configuration (defaults to './smithy-build.json'). This option "
+                          + "can be repeated and each configured will be merged.");
+            printer.param("--projection", null, "PROJECTION_NAME", "Only generate artifacts for this projection.");
+            printer.param("--plugin", null, "PLUGIN_NAME", "Only generate artifacts for this plugin.");
+            printer.param("--output", null, "OUTPUT_PATH",
+                          "Where to write artifacts (defaults to './build/smithy').");
+        }
     }
 
     @Override
-    protected List<String> parseArguments(Arguments arguments, Env env) {
-        arguments.addReceiver(new BuildOptions());
-        arguments.addReceiver(new Options());
-        return arguments.finishParsing();
+    protected List<ArgumentReceiver> createArgumentReceivers() {
+        return ListUtils.of(new BuildOptions(), new Options());
     }
 
     @Override

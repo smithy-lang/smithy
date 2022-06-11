@@ -26,6 +26,16 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public final class StandardOptions implements ArgumentReceiver {
 
+    public static final String HELP_SHORT = "-h";
+    public static final String HELP = "--help";
+    public static final String DEBUG = "--debug";
+    public static final String QUIET = "--quiet";
+    public static final String STACKTRACE = "--stacktrace";
+    public static final String NO_COLOR = "--no-color";
+    public static final String FORCE_COLOR = "--force-color";
+    public static final String LOGGING = "--logging";
+    public static final String SEVERITY = "--severity";
+
     private boolean help;
     private Severity severity = Severity.WARNING;
     private Level logging = Level.WARNING;
@@ -35,40 +45,36 @@ public final class StandardOptions implements ArgumentReceiver {
     private boolean noColor;
     private boolean forceColor;
 
-    public static void printHelp(CliPrinter printer) {
-        printer.println(printer.style("    --help, -h", Style.YELLOW));
-        printer.println("        Prints this help information.");
-        printer.println(printer.style("    --debug", Style.YELLOW));
-        printer.println("        Display debug information");
-        printer.println(printer.style("    --quiet", Style.YELLOW));
-        printer.println("        Silences all output except errors.");
-        printer.println(printer.style("    --stacktrace", Style.YELLOW));
-        printer.println("        Display a stacktrace on error");
-        printer.println(printer.style("    --no-color", Style.YELLOW));
-        printer.println("        Explicitly disable ANSI colors");
-        printer.println(printer.style("    --force-color", Style.YELLOW));
-        printer.println("        Explicitly enable ANSI colors");
-        printer.println(printer.style("    --logging <LOG_LEVEL>", Style.YELLOW));
-        printer.println("        Sets the log level to one of OFF, SEVERE, WARNING (default), INFO, FINE, ALL");
-        printer.println(printer.style("    --severity <SEVERITY>", Style.YELLOW));
-        printer.println("        Sets the minimum reported validation severity to report. Set to one of");
-        printer.println("        NOTE, WARNING (default), DANGER, ERROR");
+    @Override
+    public void registerHelp(HelpPrinter printer) {
+        printer.option(HELP, HELP_SHORT, "Prints this help output");
+        printer.option(DEBUG, null, "Display debug information");
+        printer.option(QUIET, null, "Silences all output except errors");
+        printer.option(STACKTRACE, null, "Display a stacktrace on error");
+        printer.option(NO_COLOR, null, "Explicitly disable ANSI colors");
+        printer.option(FORCE_COLOR, null, "Explicitly enable ANSI colors");
+        printer.param(LOGGING, null, "LOG_LEVEL",
+                            "Sets the log level (defaults to WARNING). Set to one of OFF, SEVERE, WARNING, INFO, "
+                            + "FINE, ALL.");
+        printer.param(SEVERITY, null, "SEVERITY", "Sets the minimum reported validation severity to "
+                                                      + "report. Set to one of NOTE, WARNING (default), "
+                                                      + "DANGER, ERROR");
     }
 
     @Override
     public boolean testOption(String name) {
         switch (name) {
-            case "--help":
-            case "-h":
+            case HELP:
+            case HELP_SHORT:
                 help = true;
                 return true;
-            case "--debug":
+            case DEBUG:
                 debug = true;
                 quiet = false;
                 // Automatically set logging level to ALL.
                 logging = Level.ALL;
                 return true;
-            case "--quiet":
+            case QUIET:
                 quiet = true;
                 debug = false;
                 // Automatically set logging level to SEVERE.
@@ -76,14 +82,14 @@ public final class StandardOptions implements ArgumentReceiver {
                 // Automatically set severity to DANGER.
                 severity = Severity.DANGER;
                 return true;
-            case "--stacktrace":
+            case STACKTRACE:
                 stackTrace = true;
                 return true;
-            case "--no-color":
+            case NO_COLOR:
                 noColor = true;
                 forceColor = false;
                 return true;
-            case "--force-color":
+            case FORCE_COLOR:
                 noColor = false;
                 forceColor = true;
                 return true;
@@ -95,7 +101,7 @@ public final class StandardOptions implements ArgumentReceiver {
     @Override
     public Consumer<String> testParameter(String name) {
         switch (name) {
-            case "--logging":
+            case LOGGING:
                 return value -> {
                     try {
                         logging = Level.parse(value);
@@ -103,7 +109,7 @@ public final class StandardOptions implements ArgumentReceiver {
                         throw new CliError("Invalid logging level: " + value);
                     }
                 };
-            case "--severity":
+            case SEVERITY:
                 return value -> {
                     severity = Severity.fromString(value).orElseThrow(() -> {
                         return new CliError("Invalid severity level: " + value);

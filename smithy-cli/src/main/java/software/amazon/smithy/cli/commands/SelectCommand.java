@@ -25,8 +25,7 @@ import java.util.stream.Stream;
 import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliPrinter;
-import software.amazon.smithy.cli.StandardOptions;
-import software.amazon.smithy.cli.Style;
+import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -36,10 +35,16 @@ import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.IoUtils;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
-public final class SelectCommand extends CommandWithHelp {
+public final class SelectCommand extends SimpleCommand {
+
+    public SelectCommand(String parentCommandName) {
+        super(parentCommandName);
+    }
+
     @Override
     public String getName() {
         return "select";
@@ -51,32 +56,10 @@ public final class SelectCommand extends CommandWithHelp {
     }
 
     @Override
-    public void printHelp(CliPrinter printer) {
-        printer.println("Usage: smithy validate [-h | --help] [--allow-unknown-traits] [-d | --discover]");
-        printer.println("                       [--discover-classpath JAVA_CLASSPATH]");
-        printer.println("                       [--severity SEVERITY] [--debug] [--quiet] [--stacktrace]");
-        printer.println("                       [--no-color] [--force-color] [--logging LOG_LEVEL]");
-        printer.println("                       <MODELS>...");
-        printer.println("");
-        printer.println(getSummary());
-        printer.println("");
-        StandardOptions.printHelp(printer);
-        BuildOptions.printHelp(printer);
-        printer.println(printer.style("    --selector <SELECTOR>", Style.YELLOW));
-        printer.println("        The Smithy selector to execute. Reads from STDIN when not provided.");
-        printer.println(printer.style("    --vars", Style.YELLOW));
-        printer.println("        Include the variables that were captured when the shape was matched.");
-        printer.println("        The output of the command is JSON when --vars is passed.");
-        printer.println(printer.style("    <MODELS>...", Style.YELLOW));
-        printer.println("        Path to Smithy models or directories to load.");
-        printer.println("");
-        printer.println("This command prints the shapes in a model that match a selector. The ");
-        printer.println("selector can be passed in using --selector or through stdin.");
-        printer.println("");
-        printer.println("By default, each matching shape ID is printed to stdout on a new line. ");
-        printer.println("Pass --vars to print out a JSON array that contains a 'shape' and 'vars' ");
-        printer.println("property, where the 'vars' property is a map of each variable that was ");
-        printer.println("captured when the shape was matched.");
+    public String getDocumentation(CliPrinter printer) {
+        return "By default, each matching shape ID is printed to stdout on a new line. Pass --vars to print out a "
+               + "JSON array that contains a 'shape' and 'vars' property, where the 'vars' property is a map of "
+               + "each variable that was captured when the shape was matched.";
     }
 
     private static final class Options implements ArgumentReceiver {
@@ -100,6 +83,14 @@ public final class SelectCommand extends CommandWithHelp {
             return null;
         }
 
+        @Override
+        public void registerHelp(HelpPrinter printer) {
+            printer.option("--vars", null, "Include the variables that were captured when the shape was matched. "
+                                           + "The output of the command is JSON when --vars is passed.");
+            printer.param("--selector", null, "SELECTOR",
+                          "The Smithy selector to execute. Reads from STDIN when not provided.");
+        }
+
         public boolean vars() {
             return vars;
         }
@@ -113,10 +104,8 @@ public final class SelectCommand extends CommandWithHelp {
     }
 
     @Override
-    protected List<String> parseArguments(Arguments arguments, Env env) {
-        arguments.addReceiver(new BuildOptions());
-        arguments.addReceiver(new Options());
-        return arguments.finishParsing();
+    protected List<ArgumentReceiver> createArgumentReceivers() {
+        return ListUtils.of(new BuildOptions(), new Options());
     }
 
     @Override

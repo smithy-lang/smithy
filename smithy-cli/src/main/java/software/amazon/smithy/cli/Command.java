@@ -39,11 +39,23 @@ public interface Command {
     String getSummary();
 
     /**
+     * Gets the long description of the command.
+     *
+     * @param printer CliPrinter used in case formatting is needed via
+     *                {@link CliPrinter#style(String, Style...)}.
+     * @return Returns the long description.
+     */
+    default String getDocumentation(CliPrinter printer) {
+        return "";
+    }
+
+    /**
      * Prints help output.
      *
+     * @param arguments Arguments that have been parsed so far.
      * @param printer Where to write help.
      */
-    void printHelp(CliPrinter printer);
+    void printHelp(Arguments arguments, CliPrinter printer);
 
     /**
      * Executes the command using the provided arguments.
@@ -56,8 +68,6 @@ public interface Command {
 
     /**
      * Environment settings for the command.
-     *
-     * <p>TODO: Add an ExecutorService to control threading?
      */
     final class Env {
 
