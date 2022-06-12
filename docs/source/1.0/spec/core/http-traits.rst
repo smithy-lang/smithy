@@ -794,10 +794,11 @@ Trait selector
     .. code-block:: none
 
         structure > member
-        :test(> map > member[id|member=value] > string)
+        :test(> map :not([trait|sparse]) > member[id|member=value] > string)
 
     The ``httpPrefixHeaders`` trait can be applied to ``structure`` members
-    that target a ``map`` of ``string``.
+    that target a ``map`` of ``string``. The targeted map MUST NOT be marked
+    with the :ref:`sparse-trait`.
 Value type
     ``string`` value that defines the prefix to prepend to each header field
     name stored in the targeted map member. For example, given a prefix value

@@ -803,7 +803,7 @@ string httpHeader
 @trait(
     selector: """
         structure > member
-        :test(> map > member[id|member=value] > string)""",
+        :test(> map :not([trait|sparse]) > member[id|member=value] > string)""",
     structurallyExclusive: "member",
     conflicts: [httpLabel, httpQuery, httpHeader, httpPayload, httpResponseCode, httpQueryParams],
     breakingChanges: [{change: "any"}]
