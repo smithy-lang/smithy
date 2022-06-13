@@ -59,6 +59,7 @@ public final class Cli {
      *
      * @param args Arguments to parse.
      * @return Returns the exit code.
+     * @throws CliError on error.
      */
     public int run(String[] args) {
         Arguments arguments = new Arguments(args);
@@ -78,11 +79,16 @@ public final class Cli {
         try {
             return command.execute(arguments, new Command.Env(out, err, classLoader));
         } catch (Exception e) {
-            printException(standardOptions, err, e);
-            throw e;
+            printException(standardOptions.stackTrace(), err, e);
+            throw CliError.wrap(e);
         } finally {
-            // Attempt to restore log settings as they were originally before running the CLI.
-            LoggingUtil.restoreLogging();
+            try {
+                LoggingUtil.restoreLogging();
+            } catch (RuntimeException e) {
+                // Show the error, but don't fail the CLI since most invocations are one-time use.
+                err.println(err.style("Unable to restore logging to previous settings", Style.RED));
+                printException(true, err, e);
+            }
         }
     }
 
@@ -103,7 +109,7 @@ public final class Cli {
         return System.console() != null && System.getenv().get("TERM") != null;
     }
 
-    private void printException(StandardOptions options, CliPrinter printer, Throwable throwable) {
+    private void printException(boolean stacktrace, CliPrinter printer, Throwable throwable) {
         if (throwable instanceof NullPointerException) {
             printer.println(stdErrPrinter.style(
                     "A null pointer exception occurred while running the Smithy CLI. The --stacktrace argument can be "
@@ -113,7 +119,7 @@ public final class Cli {
 
         printer.println(printer.style(throwable.getMessage(), Style.RED, Style.BOLD));
 
-        if (options.stackTrace()) {
+        if (stacktrace) {
             printer.println(printer.style(throwable.getClass().getCanonicalName() + ":", Style.RED, Style.UNDERLINE));
             for (StackTraceElement element : throwable.getStackTrace()) {
                 printer.println("\tat " + element.toString());
