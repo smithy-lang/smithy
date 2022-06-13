@@ -38,4 +38,29 @@ public final class CliError extends RuntimeException {
         super(message);
         this.code = code;
     }
+
+    /**
+     * @param message Message to use in the exception.
+     * @param code Exit code to set.
+     * @param previous Previous exception.
+     */
+    public CliError(String message, int code, Throwable previous) {
+        super(message, previous);
+        this.code = code;
+    }
+
+    /**
+     * Wraps the given exception in a CliError (no wrapping is performed
+     * if the given exception is an instance of CliError).
+     *
+     * @param e Exception to wrap.
+     * @return Returns the wrapped exception.
+     */
+    public static CliError wrap(Throwable e) {
+        if (e instanceof CliError) {
+            return (CliError) e;
+        } else {
+            return new CliError(e.getMessage(), 1, e);
+        }
+    }
 }
