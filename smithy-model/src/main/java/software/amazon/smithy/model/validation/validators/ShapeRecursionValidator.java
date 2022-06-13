@@ -17,7 +17,9 @@ package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.StringJoiner;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.selector.PathFinder;
@@ -26,6 +28,7 @@ import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.RequiredTrait;
@@ -113,16 +116,75 @@ public final class ShapeRecursionValidator extends AbstractValidator {
     }
 
     private void validateUnions(Model model, List<ValidationEvent> events) {
-        nextUnion: for (UnionShape union : model.getUnionShapes()) {
-            // Don't claim the union is recursive if it's empty (which is also invalid).
-            if (!union.getAllMembers().isEmpty()) {
-                for (MemberShape member : union.getAllMembers().values()) {
-                    if (!member.getTarget().equals(member.getContainer())) {
-                        continue nextUnion;
+        UnionTerminatesVisitor visitor = new UnionTerminatesVisitor(model);
+        for (UnionShape union : model.getUnionShapes()) {
+            // Don't evaluate empty unions since that's a different error.
+            if (!union.members().isEmpty() && !union.accept(visitor)) {
+                events.add(error(union, "It is impossible to create instances of this recursive union"));
+            }
+            visitor.reset();
+        }
+    }
+
+    private static final class UnionTerminatesVisitor extends ShapeVisitor.Default<Boolean> {
+
+        private final Set<MemberShape> visited = new HashSet<>();
+        private final Model model;
+
+        UnionTerminatesVisitor(Model model) {
+            this.model = model;
+        }
+
+        void reset() {
+            this.visited.clear();
+        }
+
+        @Override
+        protected Boolean getDefault(Shape shape) {
+            return true;
+        }
+
+        @Override
+        public Boolean structureShape(StructureShape shape) {
+            if (shape.members().isEmpty()) {
+                return true;
+            }
+
+            // If the structure has any non-required members, then it terminates.
+            for (MemberShape member : shape.members()) {
+                if (!member.isRequired()) {
+                    return true;
+                }
+            }
+
+            // Now check if any of the required members terminate.
+            for (MemberShape member : shape.members()) {
+                if (member.isRequired()) {
+                    if (memberShape(member)) {
+                        return true;
                     }
                 }
-                events.add(error(union, "Unions must contain at least one member that is not directly recursive"));
             }
+
+            return false;
+        }
+
+        @Override
+        public Boolean unionShape(UnionShape shape) {
+            for (MemberShape member : shape.members()) {
+                if (memberShape(member)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        @Override
+        public Boolean memberShape(MemberShape shape) {
+            return visited.add(shape)
+                   ? model.expectShape(shape.getTarget()).accept(this)
+                   : false;
         }
     }
 }
