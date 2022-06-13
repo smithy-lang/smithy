@@ -967,10 +967,12 @@ Smithy allows recursive shape definitions with the following limitations:
    that shapes that are typically impossible to define in various programming
    languages are not defined in Smithy models (for example, you can't define
    a recursive list in Java ``List<List<List....``).
-2. A structure cannot contain a cyclical set of members marked with the
-   :ref:`required-trait` that refers back to itself.
-3. A union MUST contain at least one member that does not refer back to
-   itself.
+2. To ensure a value can be provided for a structure, recursive member
+   relationship from a structure back to itself MUST NOT be made up of all
+   :ref:`required <required-trait>` structure members.
+3. To ensure a value can be provided for a union, recursive unions MUST
+   contain at least one path through its members that is not recursive
+   or steps through a list, set, map, or optional structure member.
 
 The following recursive shape definition is **valid**:
 

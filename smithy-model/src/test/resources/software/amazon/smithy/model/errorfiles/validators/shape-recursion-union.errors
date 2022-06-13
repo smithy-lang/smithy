@@ -1,0 +1,4 @@
+[ERROR] smithy.example#RecursiveUnionA: It is impossible to create instances of this recursive union | ShapeRecursion
+[ERROR] smithy.example#RecursiveUnionB: It is impossible to create instances of this recursive union | ShapeRecursion
+[ERROR] smithy.example#RecursiveUnion: It is impossible to create instances of this recursive union | ShapeRecursion
+[ERROR] smithy.example#RecursiveNext: It is impossible to create instances of this recursive union | ShapeRecursion

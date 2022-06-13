@@ -5,7 +5,7 @@ union A {
 }
 
 union B {
-  a: A
+  str: String
 }
 
 union C

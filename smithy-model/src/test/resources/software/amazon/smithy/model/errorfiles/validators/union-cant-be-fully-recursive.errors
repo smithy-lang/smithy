@@ -1,1 +1,0 @@
-[ERROR] smithy.example#RecursiveUnion: Unions must contain at least one member that is not directly recursive | ShapeRecursion
