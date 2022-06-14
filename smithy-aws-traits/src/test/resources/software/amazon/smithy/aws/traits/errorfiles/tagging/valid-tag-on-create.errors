@@ -1,0 +1,3 @@
+[WARNING] example.weather#Weather: Service shape annotated with `aws.api#TagEnabled` trait is missing operation 'ListTagsForResource'. | ServiceTaggingApi
+[WARNING] example.weather#Weather: Service shape annotated with `aws.api#TagEnabled` trait is missing operation 'TagResource'. | ServiceTaggingApi
+[WARNING] example.weather#Weather: Service shape annotated with `aws.api#TagEnabled` trait is missing operation 'UntagResource'. | ServiceTaggingApi

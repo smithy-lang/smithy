@@ -78,7 +78,8 @@ public final class TaggableResourceApiValidator extends AbstractValidator {
         boolean isTaggable = false;
         isTaggable = awsTagIndex.isResourceTagOnCreate(resource.getId()) || isTaggable;
         isTaggable = isServiceWideTaggable(service, awsTagIndex) || isTaggable;
-        isTaggable = isTaggableViaInstanceOperations(events, model, resource, service, propertyBindingIndex) || isTaggable;
+        isTaggable = isTaggableViaInstanceOperations(events, model, resource, service, propertyBindingIndex)
+                        || isTaggable;
 
         if (!isTaggable) {
             events.add(error(resource, "Taggable resource must support either tag-on-create or have associated "
@@ -89,7 +90,7 @@ public final class TaggableResourceApiValidator extends AbstractValidator {
     }
 
 
-	private boolean isTaggableViaInstanceOperations(
+    private boolean isTaggableViaInstanceOperations(
             List<ValidationEvent> events,
             Model model,
             ResourceShape resource,
@@ -136,8 +137,10 @@ public final class TaggableResourceApiValidator extends AbstractValidator {
         Optional<ShapeId> listTagsApiId = taggableTrait.getListTagsApi()
             .map(api -> ShapeId.fromOptionalNamespace(service.getId().getNamespace(), api));
         //If listTagApis is specified in the model, it must be a valid reference
-        if (listTagsApiId.isPresent() && !model.getShape(listTagsApiId.get()).map(Shape::asOperationShape).isPresent()) {
-            events.add(error(resource, String.format("%s$listTagsApi must reference an operation shape.", TaggableTrait.ID.toString())));
+        if (listTagsApiId.isPresent()
+                && !model.getShape(listTagsApiId.get()).map(Shape::asOperationShape).isPresent()) {
+            events.add(error(resource, String.format("%s$listTagsApi must reference an operation shape.",
+                                            TaggableTrait.ID.toString())));
         }
         ShapeId resolvedListTagsApi = listTagsApiId.orElse(ShapeId.fromParts(service.getId().getNamespace(),
                                                             TaggingShapeUtils.LIST_TAGS_OPNAME));

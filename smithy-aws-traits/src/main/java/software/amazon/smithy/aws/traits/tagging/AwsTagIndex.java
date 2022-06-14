@@ -74,52 +74,63 @@ public final class AwsTagIndex implements KnowledgeIndex {
         boolean hasUntagApi = false;
         boolean hasListTagsApi = false;
 
-        ShapeId tagResourceId = ShapeId.fromParts(service.getId().getNamespace(), TaggingShapeUtils.TAG_RESOURCE_OPNAME);
-        if (service.getOperations().contains(tagResourceId)) {
-            OperationShape tagResourceOperation = model.expectShape(tagResourceId).asOperationShape().get();
-            Map<String, MemberShape> inputMembers = operationIndex.getInputMembers(tagResourceOperation);
+        ShapeId tagResourceId = ShapeId.fromParts(service.getId().getNamespace(),
+                                    TaggingShapeUtils.TAG_RESOURCE_OPNAME);
+            if (service.getOperations().contains(tagResourceId)) {
+                OperationShape tagResourceOperation = model.expectShape(tagResourceId).asOperationShape().get();
+                Map<String, MemberShape> inputMembers = operationIndex.getInputMembers(tagResourceOperation);
 
-            hasTagApi = inputMembers.entrySet().stream().filter(memberEntry ->
-                    TaggingShapeUtils.isTagDesiredName(memberEntry.getKey())
-                    && TaggingShapeUtils.verifyTagsShape(model, model.expectShape(memberEntry.getValue().getTarget())))
-                .count() == 1
-                    && TaggingShapeUtils.hasResourceArnInput(inputMembers, model);
+                hasTagApi = inputMembers.entrySet().stream().filter(memberEntry ->
+                        TaggingShapeUtils.isTagDesiredName(memberEntry.getKey())
+                        && TaggingShapeUtils.verifyTagsShape(model,
+                            model.expectShape(memberEntry.getValue().getTarget())))
+                    .count() == 1
+                        && TaggingShapeUtils.hasResourceArnInput(inputMembers, model);
+            }
+
+            ShapeId untagResourceId = ShapeId.fromParts(service.getId().getNamespace(),
+                                        TaggingShapeUtils.UNTAG_RESOURCE_OPNAME);
+            if (service.getOperations().contains(untagResourceId)) {
+                OperationShape untagResourceOperation = model.expectShape(untagResourceId).asOperationShape().get();
+                Map<String, MemberShape> inputMembers = operationIndex.getInputMembers(untagResourceOperation);
+                hasUntagApi = inputMembers.entrySet().stream().filter(memberEntry ->
+                        TaggingShapeUtils.isTagKeysDesiredName(memberEntry.getKey())
+                        && TaggingShapeUtils.verifyTagKeysShape(model,
+                            model.expectShape(memberEntry.getValue().getTarget()))
+                    ).count() == 1
+                        && TaggingShapeUtils.hasResourceArnInput(inputMembers, model);
+            }
+
+            ShapeId listTagsResourceId = ShapeId.fromParts(service.getId().getNamespace(),
+                                            TaggingShapeUtils.LIST_TAGS_OPNAME);
+            if (service.getOperations().contains(listTagsResourceId)) {
+                OperationShape listTagsResourceOperation = model.expectShape(listTagsResourceId)
+                                                                .asOperationShape().get();
+                Map<String, MemberShape> inputMembers = operationIndex.getInputMembers(listTagsResourceOperation);
+                Map<String, MemberShape> outputMembers = operationIndex.getOutputMembers(listTagsResourceOperation);
+                hasListTagsApi = outputMembers.entrySet().stream().filter(memberEntry ->
+                        TaggingShapeUtils.isTagDesiredName(memberEntry.getKey())
+                        && TaggingShapeUtils.verifyTagsShape(model,
+                            model.expectShape(memberEntry.getValue().getTarget()))
+                    ).count() == 1
+                        && TaggingShapeUtils.hasResourceArnInput(inputMembers, model);
+            }
+
+            return hasTagApi && hasUntagApi && hasListTagsApi;
         }
 
-        ShapeId untagResourceId = ShapeId.fromParts(service.getId().getNamespace(), TaggingShapeUtils.UNTAG_RESOURCE_OPNAME);
-        if (service.getOperations().contains(untagResourceId)) {
-            OperationShape untagResourceOperation = model.expectShape(untagResourceId).asOperationShape().get();
-            Map<String, MemberShape> inputMembers = operationIndex.getInputMembers(untagResourceOperation);
-            hasUntagApi = inputMembers.entrySet().stream().filter(memberEntry ->
-                    TaggingShapeUtils.isTagKeysDesiredName(memberEntry.getKey())
-                    && TaggingShapeUtils.verifyTagKeysShape(model, model.expectShape(memberEntry.getValue().getTarget()))
-                ).count() == 1
-                    && TaggingShapeUtils.hasResourceArnInput(inputMembers, model);
-        }
-
-        ShapeId listTagsResourceId = ShapeId.fromParts(service.getId().getNamespace(), TaggingShapeUtils.LIST_TAGS_OPNAME);
-        if (service.getOperations().contains(listTagsResourceId)) {
-            OperationShape listTagsResourceOperation = model.expectShape(listTagsResourceId).asOperationShape().get();
-            Map<String, MemberShape> inputMembers = operationIndex.getInputMembers(listTagsResourceOperation);
-            Map<String, MemberShape> outputMembers = operationIndex.getOutputMembers(listTagsResourceOperation);
-            hasListTagsApi = outputMembers.entrySet().stream().filter(memberEntry ->
-                    TaggingShapeUtils.isTagDesiredName(memberEntry.getKey())
-                    && TaggingShapeUtils.verifyTagsShape(model, model.expectShape(memberEntry.getValue().getTarget()))
-                ).count() == 1
-                    && TaggingShapeUtils.hasResourceArnInput(inputMembers, model);
-        }
-
-        return hasTagApi && hasUntagApi && hasListTagsApi;
-    }
-
-	private boolean computeTagOnCreate(Model model, ResourceShape resource, PropertyBindingIndex propertyBindingIndex) {
+    private boolean computeTagOnCreate(
+        Model model,
+        ResourceShape resource,
+        PropertyBindingIndex propertyBindingIndex
+    ) {
         return resource.expectTrait(TaggableTrait.class).getProperty().isPresent()
                 && TaggingShapeUtils.isTagPropertyInInput(resource.getCreate(), model, resource, propertyBindingIndex);
     }
 
     private boolean computeTagOnUpdate(Model model, ResourceShape resource, PropertyBindingIndex propertyBindingIndex) {
         return resource.expectTrait(TaggableTrait.class).getProperty().isPresent()
-                &&TaggingShapeUtils.isTagPropertyInInput(resource.getUpdate(), model, resource, propertyBindingIndex);
+                && TaggingShapeUtils.isTagPropertyInInput(resource.getUpdate(), model, resource, propertyBindingIndex);
     }
 
     public static AwsTagIndex of(Model model) {
