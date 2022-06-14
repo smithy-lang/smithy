@@ -15,23 +15,23 @@
 
 package software.amazon.smithy.aws.cloudformation.traits;
 
-import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.StringTrait;
+import software.amazon.smithy.model.traits.AnnotationTrait;
 
 /**
  * Indicates that the CloudFormation property generated from this member is a
- * default value to be set for a property if no value is provided.
- **/
+ * cfnRootResourceID which is used as the root ID to find child container resources.
+ */
+public final class CfnRootResourceIdTrait extends AnnotationTrait {
+    public static final ShapeId ID = ShapeId.from("aws.cloudformation#cfnRootResourceID");
 
-public final class CfnDefaultValueTrait extends StringTrait {
-    public static final ShapeId ID = ShapeId.from("aws.cloudformation#cfnDefaultValue");
+    public CfnRootResourceIdTrait(ObjectNode node) { super(ID, node); }
 
-    public CfnDefaultValueTrait(String value, SourceLocation sourceLocation) { super(ID, value, sourceLocation); }
+    public CfnRootResourceIdTrait() { this(Node.objectNode()); }
 
-    public CfnDefaultValueTrait(String value) { this(value, SourceLocation.NONE); }
-
-    public static final class Provider extends StringTrait.Provider<CfnDefaultValueTrait> {
-        public Provider() { super(ID, CfnDefaultValueTrait::new); }
+    public static final class Provider extends AnnotationTrait.Provider<CfnRootResourceIdTrait> {
+        public Provider() { super(ID, CfnRootResourceIdTrait::new); }
     }
 }

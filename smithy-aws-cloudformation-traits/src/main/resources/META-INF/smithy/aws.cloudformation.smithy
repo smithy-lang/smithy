@@ -43,6 +43,16 @@ string cfnDefaultValue
     breakingChanges: [{change: "presence"}]
 )
 
+structure cfnRootResourceId {}
+
+/// The cloudFormationName trait allows a CloudFormation resource property name
+/// to differ from a structure member name used in the model.
+@unstable
+@trait(
+    selector: "structure > member",
+    breakingChanges: [{change: "presence"}]
+)
+
 structure cfnExcludeProperty {}
 
 /// Indicates an explicit CloudFormation mutability of the structure member
