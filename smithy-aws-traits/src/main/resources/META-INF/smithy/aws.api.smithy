@@ -219,14 +219,6 @@ structure service {
 @trait(selector: "service")
 structure tagEnabled {}
 
-/// Reference to an operation that must be present in the same model.
-///@idRef(
-///    failWhenMissing: false
-///    selector: "operation"
-///    errorMessage: "Tagging API must target an operation in the model."
-///)
-string OperationReference
-
 /// Indicates a resource supports CRUD operations for tags. Either through
 /// resource lifecycle or instance operations or tagging operations on the
 /// service.
@@ -239,17 +231,17 @@ structure taggable {
     /// The `tagApi` property is a string value that references a non-instance
     /// or create operation that creates or updates tags on the resource.
     /// Default value is 'TagResource.'
-    tagApi: OperationReference
+    tagApi: String
 
     /// The `untagApi` property is a string value that references a non-lifecycle
     /// operation that removes tags on the resource. Default value is
     /// 'UntagResource.'
-    untagApi: OperationReference
+    untagApi: String
 
     /// The `listTagsApi` property is a string value that references a non-
     /// instance operation which gets the current tags on the resource.
     /// Default value is 'ListTagsForResource.'
-    listTagsApi: OperationReference
+    listTagsApi: String
 
     /// Flag indicating whether or not the resource is able to carry AWS
     /// system level tags. Used by service principals.

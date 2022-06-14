@@ -201,7 +201,7 @@ public final class TaggableResourceApiValidator extends AbstractValidator {
         return model.expectShape(ioShapeId).members().stream()
                 .map(memberShape ->
                     new AbstractMap.SimpleImmutableEntry<>(memberShape, model.expectShape(memberShape.getTarget())))
-                .collect(Collectors.toUnmodifiableSet());
+                .collect(Collectors.toSet());
     }
 
     private boolean isServiceWideTaggable(ServiceShape service, AwsTagIndex awsTagIndex) {
