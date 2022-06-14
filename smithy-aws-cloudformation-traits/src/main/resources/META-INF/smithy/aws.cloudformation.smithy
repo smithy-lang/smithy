@@ -32,6 +32,17 @@ string cfnName
     ],
     breakingChanges: [{change: "add"}]
 )
+
+string cfnDefaultValue
+
+/// Indicates that a structure member should not be included in generated
+/// CloudFormation resource definitions.
+@unstable
+@trait(
+    selector: "structure > member",
+    breakingChanges: [{change: "presence"}]
+)
+
 structure cfnExcludeProperty {}
 
 /// Indicates an explicit CloudFormation mutability of the structure member
