@@ -64,26 +64,23 @@ public final class TaggableResourceApiValidator extends AbstractValidator {
         if (awsTagIndex.isResourceTagOnUpdate(resource.getId())) {
             Shape updateOperation = model.expectShape(resource.getUpdate().get());
             events.add(danger(updateOperation, "Update resource lifecycle operation should not support updating tags "
-                    + " because it is considered a privileged operation."));
+                    + " because it is a privileged operation that modifies access."));
         }
         // A valid taggable resource must support one of the following:
-        // 1. Support tag-on-create through valid tag property.
-        // 2. Tagging via service-wide TagResource/UntagResource/ListTagsForResource
+        // 1. Tagging via service-wide TagResource/UntagResource/ListTagsForResource
         //    APIs that have input which targets a resource ARN and have expected tag
         //    list or tag keys input or output member
-        // 3. Tagging via APIs specified in the @taggable trait which are validated
+        // 2. Tagging via APIs specified in the @taggable trait which are validated
         //    through the tag property, and must be resource instance operations
         // Note: Cannot mix and match #2 and #3 within the same service but a resource
         //    can support all three.
         boolean isTaggable = false;
-        isTaggable = awsTagIndex.isResourceTagOnCreate(resource.getId()) || isTaggable;
         isTaggable = isServiceWideTaggable(service, awsTagIndex) || isTaggable;
         isTaggable = isTaggableViaInstanceOperations(events, model, resource, service, propertyBindingIndex)
                         || isTaggable;
 
         if (!isTaggable) {
-            events.add(error(resource, "Taggable resource must support either tag-on-create or have associated "
-                                        + "tag CRUD operations."));
+            events.add(error(resource, "Taggable resource must have associated tag CRUD operations."));
         }
 
         return events;
