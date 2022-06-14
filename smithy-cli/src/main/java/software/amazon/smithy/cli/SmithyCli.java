@@ -43,8 +43,11 @@ public final class SmithyCli {
      */
     public static void main(String... args) {
         try {
-            SmithyCli cli = SmithyCli.create();
-            System.exit(cli.run(args));
+            int exitCode = SmithyCli.create().run(args);
+            // Only exit with a non-zero status on error since 0 is the default exit code.
+            if (exitCode != 0) {
+                System.exit(exitCode);
+            }
         } catch (CliError e) {
             System.exit(e.code);
         } catch (Exception e) {
