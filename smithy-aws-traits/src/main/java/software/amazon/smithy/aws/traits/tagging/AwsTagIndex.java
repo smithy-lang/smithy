@@ -28,15 +28,12 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Index of AWS tagging trait information in a service closure.
  */
 public final class AwsTagIndex implements KnowledgeIndex {
-    private final Set<ShapeId> tagEnabledServices = new HashSet<>();
     private final Set<ShapeId> servicesWithAllTagOperations = new HashSet<>();
-    private final Map<ShapeId, Set<ShapeId>> serviceToTaggableResources = new HashMap<>();
     private final Map<ShapeId, Boolean> resourceIsTagOnCreate = new HashMap<>();
     private final Map<ShapeId, Boolean> resourceIsTagOnUpdate = new HashMap<>();
 
@@ -45,7 +42,6 @@ public final class AwsTagIndex implements KnowledgeIndex {
         OperationIndex operationIndex = OperationIndex.of(model);
 
         for (ServiceShape service : model.getServiceShapesWithTrait(TagEnabledTrait.class)) {
-            tagEnabledServices.add(service.getId());
             for (ShapeId resourceId : service.getResources()) {
                 ResourceShape resource = model.expectShape(resourceId)
                         .asResourceShape().get();
@@ -58,10 +54,7 @@ public final class AwsTagIndex implements KnowledgeIndex {
                     // Check if tag property is specified on update.
                     resourceIsTagOnUpdate.put(resourceId, computeTagOnUpdate(model, resource, propertyBindingIndex));
                 }
-                serviceToTaggableResources.put(service.toShapeId(),
-                        SetUtils.copyOf(taggableResources));
             }
-
             //Check if service has the three service-wide tagging operations unbound to any resource.
             if (verifyTagApis(model, service, operationIndex)) {
                 servicesWithAllTagOperations.add(service.getId());
@@ -135,14 +128,6 @@ public final class AwsTagIndex implements KnowledgeIndex {
 
     public static AwsTagIndex of(Model model) {
         return new AwsTagIndex(model);
-    }
-
-    public Set<ShapeId> getTagEnabledServices() {
-        return SetUtils.copyOf(tagEnabledServices);
-    }
-
-    public Set<ShapeId> getTaggableResources(ShapeId serviceShapeId) {
-        return serviceToTaggableResources.getOrDefault(serviceShapeId, SetUtils.of());
     }
 
     public boolean isResourceTagOnCreate(ShapeId resourceId) {
