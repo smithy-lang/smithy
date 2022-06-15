@@ -64,7 +64,13 @@ public final class SmithyIdlModelSerializer {
 
     private SmithyIdlModelSerializer(Builder builder) {
         metadataFilter = builder.metadataFilter;
-        shapeFilter = builder.shapeFilter.and(FunctionalUtils.not(Prelude::isPreludeShape));
+        // If prelude serializing has been enabled, only use the given shape filter.
+        if (builder.serializePrelude) {
+            shapeFilter = builder.shapeFilter;
+        // Default to using the given shape filter and filtering prelude shapes.
+        } else {
+            shapeFilter = builder.shapeFilter.and(FunctionalUtils.not(Prelude::isPreludeShape));
+        }
         // Never serialize synthetic traits.
         traitFilter = builder.traitFilter.and(FunctionalUtils.not(Trait::isSynthetic));
         basePath = builder.basePath;
@@ -236,6 +242,7 @@ public final class SmithyIdlModelSerializer {
         private Predicate<Trait> traitFilter = FunctionalUtils.alwaysTrue();
         private Function<Shape, Path> shapePlacer = SmithyIdlModelSerializer::placeShapesByNamespace;
         private Path basePath = null;
+        private boolean serializePrelude = false;
 
         public Builder() {}
 
@@ -299,6 +306,16 @@ public final class SmithyIdlModelSerializer {
          */
         public Builder basePath(Path basePath) {
             this.basePath = basePath;
+            return this;
+        }
+
+        /**
+         * Enables serializing shapes in the Smithy prelude.
+         * Defaults to false.
+         * @return Returns the builder.
+         */
+        public Builder serializePrelude() {
+            this.serializePrelude = true;
             return this;
         }
 

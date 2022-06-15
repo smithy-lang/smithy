@@ -78,6 +78,7 @@ public class SmithyIdlModelSerializerTest {
         assertThat(serialized, hasKey(Paths.get("ns.structures.smithy")));
         assertThat(serialized.get(Paths.get("ns.structures.smithy")),
                 containsString("namespace ns.structures"));
+        assertThat(serialized, not(hasKey(Paths.get("smithy.api.smithy"))));
     }
 
     @Test
@@ -167,5 +168,18 @@ public class SmithyIdlModelSerializerTest {
 
         assertThat(results.get(Paths.get("com.foo.smithy")),
                    not(containsString(OriginalShapeIdTrait.ID.toString())));
+    }
+
+    @Test
+    public void canEnableSerializingPrelude() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("idl-serialization/test-model.json"))
+                .assemble()
+                .unwrap();
+        SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder()
+                .serializePrelude()
+                .build();
+        Map<Path, String> serialized = serializer.serialize(model);
+        assertThat(serialized.get(Paths.get("smithy.api.smithy")), containsString("namespace smithy.api"));
     }
 }
