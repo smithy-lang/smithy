@@ -138,15 +138,17 @@ final class TaggingShapeUtils {
         ShapeId tagResourceId = ShapeId.fromParts(service.getId().getNamespace(),
                                     TaggingShapeUtils.TAG_RESOURCE_OPNAME);
         if (service.getOperations().contains(tagResourceId)) {
-            OperationShape tagResourceOperation = model.expectShape(tagResourceId).asOperationShape().get();
+            OperationShape tagResourceOperation = model.expectShape(tagResourceId, OperationShape.class);
             Map<String, MemberShape> inputMembers = operationIndex.getInputMembers(tagResourceOperation);
-
-            return inputMembers.entrySet().stream().filter(memberEntry ->
-                    TaggingShapeUtils.isTagDesiredName(memberEntry.getKey())
+            int taglistMemberCount = 0;
+            for (Map.Entry<String, MemberShape> memberEntry : inputMembers.entrySet()) {
+                if (TaggingShapeUtils.isTagDesiredName(memberEntry.getKey())
                     && TaggingShapeUtils.verifyTagsShape(model,
-                        model.expectShape(memberEntry.getValue().getTarget())))
-                .count() == 1
-                    && TaggingShapeUtils.hasResourceArnInput(inputMembers, model);
+                        model.expectShape(memberEntry.getValue().getTarget()))) {
+                    ++taglistMemberCount;
+                }
+            }
+            return taglistMemberCount == 1 && TaggingShapeUtils.hasResourceArnInput(inputMembers, model);
         }
         return false;
     }
@@ -155,14 +157,17 @@ final class TaggingShapeUtils {
         ShapeId untagResourceId = ShapeId.fromParts(service.getId().getNamespace(),
                                     TaggingShapeUtils.UNTAG_RESOURCE_OPNAME);
         if (service.getOperations().contains(untagResourceId)) {
-            OperationShape untagResourceOperation = model.expectShape(untagResourceId).asOperationShape().get();
+            OperationShape untagResourceOperation = model.expectShape(untagResourceId, OperationShape.class);
             Map<String, MemberShape> inputMembers = operationIndex.getInputMembers(untagResourceOperation);
-            return inputMembers.entrySet().stream().filter(memberEntry ->
-                    TaggingShapeUtils.isTagKeysDesiredName(memberEntry.getKey())
+            int untagKeyMemberCount = 0;
+            for (Map.Entry<String, MemberShape> memberEntry : inputMembers.entrySet()) {
+                if (TaggingShapeUtils.isTagKeysDesiredName(memberEntry.getKey())
                     && TaggingShapeUtils.verifyTagKeysShape(model,
-                        model.expectShape(memberEntry.getValue().getTarget()))
-                ).count() == 1
-                    && TaggingShapeUtils.hasResourceArnInput(inputMembers, model);
+                        model.expectShape(memberEntry.getValue().getTarget()))) {
+                    ++untagKeyMemberCount;
+                }
+            }
+            return untagKeyMemberCount == 1 && TaggingShapeUtils.hasResourceArnInput(inputMembers, model);
         }
         return false;
     }
@@ -171,16 +176,18 @@ final class TaggingShapeUtils {
         ShapeId listTagsResourceId = ShapeId.fromParts(service.getId().getNamespace(),
                                         TaggingShapeUtils.LIST_TAGS_OPNAME);
         if (service.getOperations().contains(listTagsResourceId)) {
-            OperationShape listTagsResourceOperation = model.expectShape(listTagsResourceId)
-                                                            .asOperationShape().get();
+            OperationShape listTagsResourceOperation = model.expectShape(listTagsResourceId, OperationShape.class);
             Map<String, MemberShape> inputMembers = operationIndex.getInputMembers(listTagsResourceOperation);
             Map<String, MemberShape> outputMembers = operationIndex.getOutputMembers(listTagsResourceOperation);
-            return outputMembers.entrySet().stream().filter(memberEntry ->
-                    TaggingShapeUtils.isTagDesiredName(memberEntry.getKey())
+            int taglistMemberCount = 0;
+            for (Map.Entry<String, MemberShape> memberEntry : outputMembers.entrySet()) {
+                if (TaggingShapeUtils.isTagDesiredName(memberEntry.getKey())
                     && TaggingShapeUtils.verifyTagsShape(model,
-                        model.expectShape(memberEntry.getValue().getTarget()))
-                ).count() == 1
-                    && TaggingShapeUtils.hasResourceArnInput(inputMembers, model);
+                        model.expectShape(memberEntry.getValue().getTarget()))) {
+                    ++taglistMemberCount;
+                }
+            }
+            return taglistMemberCount == 1 && TaggingShapeUtils.hasResourceArnInput(inputMembers, model);
         }
         return false;
     }

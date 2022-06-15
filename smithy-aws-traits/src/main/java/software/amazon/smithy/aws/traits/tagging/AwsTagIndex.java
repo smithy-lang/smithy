@@ -15,9 +15,7 @@
 
 package software.amazon.smithy.aws.traits.tagging;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
@@ -32,8 +30,8 @@ import software.amazon.smithy.model.shapes.ShapeId;
  */
 public final class AwsTagIndex implements KnowledgeIndex {
     private final Set<ShapeId> servicesWithAllTagOperations = new HashSet<>();
-    private final Map<ShapeId, Boolean> resourceIsTagOnCreate = new HashMap<>();
-    private final Map<ShapeId, Boolean> resourceIsTagOnUpdate = new HashMap<>();
+    private final Set<ShapeId> resourceIsTagOnCreate = new HashSet<>();
+    private final Set<ShapeId> resourceIsTagOnUpdate = new HashSet<>();
 
     private AwsTagIndex(Model model) {
         PropertyBindingIndex propertyBindingIndex = PropertyBindingIndex.of(model);
@@ -41,13 +39,20 @@ public final class AwsTagIndex implements KnowledgeIndex {
 
         for (ServiceShape service : model.getServiceShapesWithTrait(TagEnabledTrait.class)) {
             for (ShapeId resourceId : service.getResources()) {
-                ResourceShape resource = model.expectShape(resourceId)
-                        .asResourceShape().get();
-                if (resource.hasTrait(TaggableTrait.class)) {
+                ResourceShape resource = model.expectShape(resourceId, ResourceShape.class);
+                if (resource.hasTrait(TaggableTrait.class)
+                        && resource.expectTrait(TaggableTrait.class).getProperty().isPresent()) {
+
                     // Check if tag property is specified on create.
-                    resourceIsTagOnCreate.put(resourceId, computeTagOnCreate(model, resource, propertyBindingIndex));
+                    if (TaggingShapeUtils.isTagPropertyInInput(resource.getCreate(), model, resource,
+                            propertyBindingIndex)) {
+                        resourceIsTagOnCreate.add(resourceId);
+                    }
                     // Check if tag property is specified on update.
-                    resourceIsTagOnUpdate.put(resourceId, computeTagOnUpdate(model, resource, propertyBindingIndex));
+                    if (TaggingShapeUtils.isTagPropertyInInput(resource.getUpdate(), model, resource,
+                            propertyBindingIndex)) {
+                        resourceIsTagOnUpdate.add(resourceId);
+                    }
                 }
             }
             //Check if service has the three service-wide tagging operations unbound to any resource.
@@ -71,30 +76,16 @@ public final class AwsTagIndex implements KnowledgeIndex {
         return hasTagApi && hasUntagApi && hasListTagsApi;
     }
 
-    private boolean computeTagOnCreate(
-        Model model,
-        ResourceShape resource,
-        PropertyBindingIndex propertyBindingIndex
-    ) {
-        return resource.expectTrait(TaggableTrait.class).getProperty().isPresent()
-                && TaggingShapeUtils.isTagPropertyInInput(resource.getCreate(), model, resource, propertyBindingIndex);
-    }
-
-    private boolean computeTagOnUpdate(Model model, ResourceShape resource, PropertyBindingIndex propertyBindingIndex) {
-        return resource.expectTrait(TaggableTrait.class).getProperty().isPresent()
-                && TaggingShapeUtils.isTagPropertyInInput(resource.getUpdate(), model, resource, propertyBindingIndex);
-    }
-
     public static AwsTagIndex of(Model model) {
         return new AwsTagIndex(model);
     }
 
     public boolean isResourceTagOnCreate(ShapeId resourceId) {
-        return resourceIsTagOnCreate.getOrDefault(resourceId, Boolean.FALSE);
+        return resourceIsTagOnCreate.contains(resourceId);
     }
 
     public boolean isResourceTagOnUpdate(ShapeId resourceId) {
-        return resourceIsTagOnUpdate.getOrDefault(resourceId, Boolean.FALSE);
+        return resourceIsTagOnUpdate.contains(resourceId);
     }
 
     public boolean serviceHasTagApis(ShapeId serviceShapeId) {
