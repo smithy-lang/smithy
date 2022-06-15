@@ -58,7 +58,7 @@ public final class HttpResponseCodeSemanticsValidator extends AbstractValidator 
 
         if (trait.getCode() == 204 || trait.getCode() == 205) {
             if (HttpBindingIndex.of(model).hasResponseBody(operation)) {
-                return Optional.of(danger(operation, String.format(
+                return Optional.of(warning(operation, String.format(
                         "The HTTP %d status code does not allow a response body. To use this status code, all output "
                         + "members need to be bound to @httpHeader, @httpPrefixHeaders, @httpResponseCode, etc.",
                         trait.getCode())));
