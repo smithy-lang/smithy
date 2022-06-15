@@ -1,4 +1,4 @@
-[WARNING] example.weather#Weather: Service shape annotated with `aws.api#TagEnabled` trait is missing operation 'ListTagsForResource'. | ServiceTaggingApi
-[WARNING] example.weather#Weather: Service shape annotated with `aws.api#TagEnabled` trait is missing operation 'TagResource'. | ServiceTaggingApi
-[WARNING] example.weather#Weather: Service shape annotated with `aws.api#TagEnabled` trait is missing operation 'UntagResource'. | ServiceTaggingApi
-[ERROR] example.weather#City: Taggable resource must have associated tag CRUD operations. | TaggableResourceApi
+[WARNING] example.weather#Weather: Service shape annotated with `aws.api#TagEnabled` trait does not have a qualifying 'TagResource' operation. | ServiceTaggingApi
+[WARNING] example.weather#Weather: Service shape annotated with `aws.api#TagEnabled` trait does not have a qualifying 'UntagResource' operation. | ServiceTaggingApi
+[WARNING] example.weather#Weather: Service shape annotated with `aws.api#TagEnabled` trait does not have a qualifying 'ListTagsForResource' operation. | ServiceTaggingApi
+[ERROR] example.weather#City: Resource does not have necessary tag CRUD operations. | TaggableResourceApi

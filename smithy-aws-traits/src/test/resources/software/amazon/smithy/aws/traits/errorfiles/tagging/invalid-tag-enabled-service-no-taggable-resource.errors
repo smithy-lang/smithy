@@ -1,3 +1,4 @@
 [WARNING] example.weather#Weather: Service shape annotated with `aws.api#TagEnabled` trait does not have a qualifying 'TagResource' operation. | ServiceTaggingApi
 [WARNING] example.weather#Weather: Service shape annotated with `aws.api#TagEnabled` trait does not have a qualifying 'UntagResource' operation. | ServiceTaggingApi
 [WARNING] example.weather#Weather: Service shape annotated with `aws.api#TagEnabled` trait does not have a qualifying 'ListTagsForResource' operation. | ServiceTaggingApi
+[ERROR] example.weather#Weather: Service shape annotated with `aws.api#TagEnabled` trait must have at least one `aws.api#taggable` resource. | TagEnabledService

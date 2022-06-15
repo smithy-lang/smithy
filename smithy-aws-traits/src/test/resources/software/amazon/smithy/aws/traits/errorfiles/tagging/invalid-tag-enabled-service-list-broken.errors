@@ -1,0 +1,2 @@
+[WARNING] example.weather#Weather: Service shape annotated with `aws.api#TagEnabled` trait does not have a qualifying 'ListTagsForResource' operation. | ServiceTaggingApi
+[ERROR] example.weather#City: Resource does not have necessary tag CRUD operations. | TaggableResourceApi

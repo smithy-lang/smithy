@@ -23,8 +23,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.knowledge.PropertyBindingIndex;
-import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -64,50 +62,14 @@ public final class AwsTagIndex implements KnowledgeIndex {
         boolean hasUntagApi = false;
         boolean hasListTagsApi = false;
 
-        ShapeId tagResourceId = ShapeId.fromParts(service.getId().getNamespace(),
-                                    TaggingShapeUtils.TAG_RESOURCE_OPNAME);
-            if (service.getOperations().contains(tagResourceId)) {
-                OperationShape tagResourceOperation = model.expectShape(tagResourceId).asOperationShape().get();
-                Map<String, MemberShape> inputMembers = operationIndex.getInputMembers(tagResourceOperation);
+        hasTagApi = TaggingShapeUtils.verifyTagResourceOperation(model, service, operationIndex);
 
-                hasTagApi = inputMembers.entrySet().stream().filter(memberEntry ->
-                        TaggingShapeUtils.isTagDesiredName(memberEntry.getKey())
-                        && TaggingShapeUtils.verifyTagsShape(model,
-                            model.expectShape(memberEntry.getValue().getTarget())))
-                    .count() == 1
-                        && TaggingShapeUtils.hasResourceArnInput(inputMembers, model);
-            }
+        hasUntagApi = TaggingShapeUtils.verifyUntagResourceOperation(model, service, operationIndex);
 
-            ShapeId untagResourceId = ShapeId.fromParts(service.getId().getNamespace(),
-                                        TaggingShapeUtils.UNTAG_RESOURCE_OPNAME);
-            if (service.getOperations().contains(untagResourceId)) {
-                OperationShape untagResourceOperation = model.expectShape(untagResourceId).asOperationShape().get();
-                Map<String, MemberShape> inputMembers = operationIndex.getInputMembers(untagResourceOperation);
-                hasUntagApi = inputMembers.entrySet().stream().filter(memberEntry ->
-                        TaggingShapeUtils.isTagKeysDesiredName(memberEntry.getKey())
-                        && TaggingShapeUtils.verifyTagKeysShape(model,
-                            model.expectShape(memberEntry.getValue().getTarget()))
-                    ).count() == 1
-                        && TaggingShapeUtils.hasResourceArnInput(inputMembers, model);
-            }
+        hasListTagsApi = TaggingShapeUtils.verifyListTagsOperation(model, service, operationIndex);
 
-            ShapeId listTagsResourceId = ShapeId.fromParts(service.getId().getNamespace(),
-                                            TaggingShapeUtils.LIST_TAGS_OPNAME);
-            if (service.getOperations().contains(listTagsResourceId)) {
-                OperationShape listTagsResourceOperation = model.expectShape(listTagsResourceId)
-                                                                .asOperationShape().get();
-                Map<String, MemberShape> inputMembers = operationIndex.getInputMembers(listTagsResourceOperation);
-                Map<String, MemberShape> outputMembers = operationIndex.getOutputMembers(listTagsResourceOperation);
-                hasListTagsApi = outputMembers.entrySet().stream().filter(memberEntry ->
-                        TaggingShapeUtils.isTagDesiredName(memberEntry.getKey())
-                        && TaggingShapeUtils.verifyTagsShape(model,
-                            model.expectShape(memberEntry.getValue().getTarget()))
-                    ).count() == 1
-                        && TaggingShapeUtils.hasResourceArnInput(inputMembers, model);
-            }
-
-            return hasTagApi && hasUntagApi && hasListTagsApi;
-        }
+        return hasTagApi && hasUntagApi && hasListTagsApi;
+    }
 
     private boolean computeTagOnCreate(
         Model model,

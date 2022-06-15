@@ -18,7 +18,9 @@ package software.amazon.smithy.aws.traits.tagging;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -46,9 +48,20 @@ public final class ServiceTaggingApiValidator extends AbstractValidator {
         //Check for standard operation presence in non-resource bound operations.
         //This is intentional as conventional AWS tag APIs should not be resource-bound.
         Set<ShapeId> operations = service.getOperations();
-        addEventIfMissingOperation(events, operations, TAG_RESOURCE_OPNAME, service);
-        addEventIfMissingOperation(events, operations, UNTAG_RESOURCE_OPNAME, service);
-        addEventIfMissingOperation(events, operations, LISTTAGS_OPNAME, service);
+        OperationIndex operationIndex = OperationIndex.of(model);
+
+        Predicate<ServiceShape> verifyTagResourceOp = (s) -> {
+            return TaggingShapeUtils.verifyTagResourceOperation(model, s, operationIndex);
+        };
+        addEventIfMissingOperation(events, operations, TAG_RESOURCE_OPNAME, service, verifyTagResourceOp);
+        Predicate<ServiceShape> verifyUntagResourceOp = (s) -> {
+            return TaggingShapeUtils.verifyUntagResourceOperation(model, s, operationIndex);
+        };
+        addEventIfMissingOperation(events, operations, UNTAG_RESOURCE_OPNAME, service, verifyUntagResourceOp);
+        Predicate<ServiceShape> verifyListTagsOp = (s) -> {
+            return TaggingShapeUtils.verifyListTagsOperation(model, s, operationIndex);
+        };
+        addEventIfMissingOperation(events, operations, LISTTAGS_OPNAME, service, verifyListTagsOp);
 
         return events;
     }
@@ -57,11 +70,13 @@ public final class ServiceTaggingApiValidator extends AbstractValidator {
         List<ValidationEvent> events,
         Set<ShapeId> operationIds,
         String operationName,
-        ServiceShape service
+        ServiceShape service,
+        Predicate<ServiceShape> operationValidator
     ) {
-        if (!operationIds.contains(ShapeId.fromParts(service.getId().getNamespace(), operationName))) {
-            events.add(warning(service, "Service shape annotated with `aws.api#TagEnabled` trait is missing "
-                                            + "operation '" + operationName + "'."));
+        if (!operationIds.contains(ShapeId.fromParts(service.getId().getNamespace(), operationName))
+                || !operationValidator.test(service)) {
+            events.add(warning(service, "Service shape annotated with `aws.api#TagEnabled` trait does not have a "
+                                            + "qualifying '" + operationName + "' operation."));
         }
     }
 }
