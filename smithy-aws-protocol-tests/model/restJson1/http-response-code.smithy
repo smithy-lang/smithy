@@ -19,6 +19,26 @@ structure HttpResponseCodeOutput {
     Status: Integer
 }
 
+@http(method: "GET", uri: "/responseCodeRequired", code: 200)
+operation ResponseCodeRequired {
+    output: ResponseCodeRequiredOutput,
+}
+
+@output
+structure ResponseCodeRequiredOutput {
+    @required
+    @httpResponseCode
+    responseCode: Integer,
+}
+
+@http(method: "GET", uri: "/responseCodeHttpFallback", code: 201)
+operation ResponseCodeHttpFallback {
+    input: ResponseCodeHttpFallbackInputOutput,
+    output: ResponseCodeHttpFallbackInputOutput,
+}
+
+structure ResponseCodeHttpFallbackInputOutput {}
+
 apply HttpResponseCode @httpResponseTests([
     {
         id: "RestJsonHttpResponseCode",
@@ -72,4 +92,40 @@ apply HttpResponseCode @httpResponseTests([
         },
         appliesTo: "client"
     },
+])
+
+apply ResponseCodeRequired @httpResponseTests([
+    {
+        id: "RestJsonHttpResponseCodeRequired",
+        documentation: """
+                This test ensures that servers handle @httpResponseCode being @required.""",
+        protocol: restJson1,
+        code: 201,
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: "{}",
+        bodyMediaType: "application/json",
+        params: {
+            responseCode: 201,
+        },
+        appliesTo: "server"
+    }
+])
+
+apply ResponseCodeHttpFallback @httpResponseTests([
+    {
+        id: "RestJsonHttpResponseCodeNotSetFallsBackToHttpCode",
+        documentation: """
+                This test ensures that servers fall back to the code set
+                by @http if @httpResponseCode is not set.""",
+        protocol: restJson1,
+        code: 201,
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: "{}",
+        bodyMediaType: "application/json",
+        appliesTo: "server"
+    }
 ])
