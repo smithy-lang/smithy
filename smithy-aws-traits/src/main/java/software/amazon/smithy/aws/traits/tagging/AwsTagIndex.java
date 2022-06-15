@@ -45,10 +45,7 @@ public final class AwsTagIndex implements KnowledgeIndex {
             for (ShapeId resourceId : service.getResources()) {
                 ResourceShape resource = model.expectShape(resourceId)
                         .asResourceShape().get();
-                Set<ShapeId> taggableResources = new HashSet<>();
                 if (resource.hasTrait(TaggableTrait.class)) {
-                    taggableResources.add(resourceId);
-
                     // Check if tag property is specified on create.
                     resourceIsTagOnCreate.put(resourceId, computeTagOnCreate(model, resource, propertyBindingIndex));
                     // Check if tag property is specified on update.
