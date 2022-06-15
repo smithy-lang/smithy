@@ -46,7 +46,9 @@ public final class TaggableResourceApiValidator extends AbstractValidator {
         for (ServiceShape service : model.getServiceShapesWithTrait(TagEnabledTrait.class)) {
             for (ShapeId resourceId : service.getResources()) {
                 ResourceShape resource = model.expectShape(resourceId).asResourceShape().get();
-                events.addAll(validateResource(model, resource, service, tagIndex, propertyBindingIndex));
+                if (resource.hasTrait(TaggableTrait.class)) {
+                    events.addAll(validateResource(model, resource, service, tagIndex, propertyBindingIndex));
+                }
             }
         }
         return events;
