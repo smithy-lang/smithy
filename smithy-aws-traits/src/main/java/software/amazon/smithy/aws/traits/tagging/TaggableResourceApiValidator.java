@@ -107,7 +107,7 @@ public final class TaggableResourceApiValidator extends AbstractValidator {
             events.add(error(resource, String.format("%s$tagApi must reference an operation shape.",
                 TaggableTrait.ID.toString())));
         }
-        ShapeId resolvedTagApiId = tagApiId.orElse(ShapeId.fromParts(service.getId().getNamespace(),
+        ShapeId resolvedTagApiId = tagApiId.orElse(ShapeId.fromOptionalNamespace(service.getId().getNamespace(),
                                                             TaggingShapeUtils.TAG_RESOURCE_OPNAME));
         Optional<Shape> tagApi = model.getShape(resolvedTagApiId);
         if (tagApi.isPresent()) {
@@ -124,7 +124,7 @@ public final class TaggableResourceApiValidator extends AbstractValidator {
             events.add(error(resource, String.format("%s$untagApi must reference an operation shape.",
                 TaggableTrait.ID.toString())));
         }
-        ShapeId resolvedUntagApiId = untagApiId.orElse(ShapeId.fromParts(service.getId().getNamespace(),
+        ShapeId resolvedUntagApiId = untagApiId.orElse(ShapeId.fromOptionalNamespace(service.getId().getNamespace(),
                                                         TaggingShapeUtils.UNTAG_RESOURCE_OPNAME));
         Optional<Shape> untagApi = model.getShape(resolvedUntagApiId);
         if (untagApi.isPresent()) {
@@ -140,7 +140,7 @@ public final class TaggableResourceApiValidator extends AbstractValidator {
             events.add(error(resource, String.format("%s$listTagsApi must reference an operation shape.",
                                             TaggableTrait.ID.toString())));
         }
-        ShapeId resolvedListTagsApi = listTagsApiId.orElse(ShapeId.fromParts(service.getId().getNamespace(),
+        ShapeId resolvedListTagsApi = listTagsApiId.orElse(ShapeId.fromOptionalNamespace(service.getId().getNamespace(),
                                                             TaggingShapeUtils.LIST_TAGS_OPNAME));
         Optional<Shape> listTagsApi = model.getShape(resolvedListTagsApi);
         if (listTagsApi.isPresent()) {

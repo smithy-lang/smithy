@@ -135,7 +135,7 @@ final class TaggingShapeUtils {
     }
 
     static boolean verifyTagResourceOperation(Model model, ServiceShape service, OperationIndex operationIndex) {
-        ShapeId tagResourceId = ShapeId.fromParts(service.getId().getNamespace(),
+        ShapeId tagResourceId = ShapeId.fromOptionalNamespace(service.getId().getNamespace(),
                                     TaggingShapeUtils.TAG_RESOURCE_OPNAME);
         if (service.getOperations().contains(tagResourceId)) {
             OperationShape tagResourceOperation = model.expectShape(tagResourceId, OperationShape.class);
@@ -154,7 +154,7 @@ final class TaggingShapeUtils {
     }
 
     static boolean verifyUntagResourceOperation(Model model, ServiceShape service, OperationIndex operationIndex) {
-        ShapeId untagResourceId = ShapeId.fromParts(service.getId().getNamespace(),
+        ShapeId untagResourceId = ShapeId.fromOptionalNamespace(service.getId().getNamespace(),
                                     TaggingShapeUtils.UNTAG_RESOURCE_OPNAME);
         if (service.getOperations().contains(untagResourceId)) {
             OperationShape untagResourceOperation = model.expectShape(untagResourceId, OperationShape.class);
@@ -173,7 +173,7 @@ final class TaggingShapeUtils {
     }
 
     static boolean verifyListTagsOperation(Model model, ServiceShape service, OperationIndex operationIndex) {
-        ShapeId listTagsResourceId = ShapeId.fromParts(service.getId().getNamespace(),
+        ShapeId listTagsResourceId = ShapeId.fromOptionalNamespace(service.getId().getNamespace(),
                                         TaggingShapeUtils.LIST_TAGS_OPNAME);
         if (service.getOperations().contains(listTagsResourceId)) {
             OperationShape listTagsResourceOperation = model.expectShape(listTagsResourceId, OperationShape.class);

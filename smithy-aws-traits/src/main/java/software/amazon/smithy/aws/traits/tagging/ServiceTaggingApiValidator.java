@@ -54,10 +54,12 @@ public final class ServiceTaggingApiValidator extends AbstractValidator {
             return TaggingShapeUtils.verifyTagResourceOperation(model, s, operationIndex);
         };
         addEventIfMissingOperation(events, operations, TAG_RESOURCE_OPNAME, service, verifyTagResourceOp);
+
         Predicate<ServiceShape> verifyUntagResourceOp = (s) -> {
             return TaggingShapeUtils.verifyUntagResourceOperation(model, s, operationIndex);
         };
         addEventIfMissingOperation(events, operations, UNTAG_RESOURCE_OPNAME, service, verifyUntagResourceOp);
+
         Predicate<ServiceShape> verifyListTagsOp = (s) -> {
             return TaggingShapeUtils.verifyListTagsOperation(model, s, operationIndex);
         };
@@ -73,7 +75,7 @@ public final class ServiceTaggingApiValidator extends AbstractValidator {
         ServiceShape service,
         Predicate<ServiceShape> operationValidator
     ) {
-        if (!operationIds.contains(ShapeId.fromParts(service.getId().getNamespace(), operationName))
+        if (!operationIds.contains(ShapeId.fromOptionalNamespace(service.getId().getNamespace(), operationName))
                 || !operationValidator.test(service)) {
             events.add(warning(service, "Service shape annotated with `aws.api#TagEnabled` trait does not have a "
                                             + "qualifying '" + operationName + "' operation."));
