@@ -120,8 +120,7 @@ to convert each shape type:
     * - ``structure``
       - JSON object. Each member value provided for the structure is
         serialized as a JSON property where the property name is the same
-        as the member name. The :ref:`jsonName-trait` can be used to serialize
-        a property using a custom name. A null value MAY be provided or
+        as the member name. A null value MAY be provided or
         omitted for a :ref:`boxed <box-trait>` member with no observable
         difference.
     * - ``union``
