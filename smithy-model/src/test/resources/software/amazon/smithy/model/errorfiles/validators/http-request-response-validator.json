@@ -792,9 +792,12 @@
             }
         },
         "ns.foo#StringSet": {
-            "type": "set",
+            "type": "list",
             "member": {
                 "target": "ns.foo#String"
+            },
+            "traits": {
+                "smithy.api#uniqueItems": {}
             }
         },
         "ns.foo#Structure": {

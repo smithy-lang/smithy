@@ -34,7 +34,6 @@ import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
-import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -51,9 +50,6 @@ public final class TargetValidator extends AbstractValidator {
     private static final int MAX_EDIT_DISTANCE_FOR_SUGGESTIONS = 2;
     private static final Set<ShapeType> INVALID_MEMBER_TARGETS = SetUtils.of(
             ShapeType.SERVICE, ShapeType.RESOURCE, ShapeType.OPERATION, ShapeType.MEMBER);
-    private static final Set<ShapeType> VALID_SET_TARGETS = SetUtils.of(
-            ShapeType.STRING, ShapeType.BYTE, ShapeType.SHORT, ShapeType.INTEGER, ShapeType.LONG,
-            ShapeType.BIG_INTEGER, ShapeType.BIG_DECIMAL, ShapeType.BLOB);
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -93,8 +89,6 @@ public final class TargetValidator extends AbstractValidator {
                 }
             case MAP_KEY:
                 return target.asMemberShape().flatMap(m -> validateMapKey(shape, m.getTarget(), model));
-            case SET_MEMBER:
-                return target.asMemberShape().flatMap(m -> validateSetMember(shape, m.getTarget(), model));
             case RESOURCE:
                 if (target.getType() != ShapeType.RESOURCE) {
                     return Optional.of(badType(shape, target, relType, ShapeType.RESOURCE));
@@ -148,30 +142,6 @@ public final class TargetValidator extends AbstractValidator {
                 .filter(FunctionalUtils.not(Shape::isStringShape))
                 .map(resolved -> error(shape, format(
                         "Map key member targets %s, but is expected to target a string", resolved)));
-    }
-
-    private Optional<ValidationEvent> validateSetMember(Shape shape, ShapeId target, Model model) {
-        Shape targetShape = model.getShape(target).orElse(null);
-
-        if (targetShape == null) {
-            return Optional.empty();
-        }
-
-        if (!VALID_SET_TARGETS.contains(targetShape.getType())) {
-            return Optional.of(error(shape, format(
-                    "Set member targets %s, but sets can target only %s. You can model a collection of %s shapes "
-                    + "by changing this shape to a list. Modeling a set of values of other types is problematic "
-                    + "to support across a wide range of programming languages.",
-                    targetShape,
-                    VALID_SET_TARGETS.stream().map(ShapeType::toString).sorted().collect(Collectors.joining(", ")),
-                    targetShape.getType())));
-        } else if (targetShape.hasTrait(StreamingTrait.class)) {
-            return Optional.of(error(shape, format("Set member targets %s, a shape marked with the @streaming trait. "
-                                                   + "Sets do not support unbounded values.",
-                                                   targetShape)));
-        }
-
-        return Optional.empty();
     }
 
     private Optional<ValidationEvent> validateIdentifier(Shape shape, Shape target) {

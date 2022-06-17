@@ -31,7 +31,6 @@ import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
@@ -267,13 +266,6 @@ final class ReplaceShapes {
 
         @Override
         public Optional<Shape> listShape(ListShape shape) {
-            return shape.getMember() == member
-                   ? Optional.empty()
-                   : Optional.of(shape.toBuilder().member(member).build());
-        }
-
-        @Override
-        public Optional<Shape> setShape(SetShape shape) {
             return shape.getMember() == member
                    ? Optional.empty()
                    : Optional.of(shape.toBuilder().member(member).build());

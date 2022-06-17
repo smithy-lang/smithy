@@ -78,7 +78,8 @@ Shapes can be matched by type using the following tokens:
     * - ``simpleType``
       - Matches all :ref:`simple types <simple-types>`
     * - ``collection``
-      - Matches both a ``list`` and ``set`` shape
+      - Deprecated: Matches both a ``list`` and ``set`` shape.
+        This is considered an alias for ``list``.
     * - ``blob``
       - Matches blob shapes
     * - ``boolean``
@@ -106,9 +107,10 @@ Shapes can be matched by type using the following tokens:
     * - ``timestamp``
       -  Matches timestamp shapes
     * - ``list``
-      - Matches list shapes
+      - Matches list shapes. Note that set shapes also match ``list`` because
+        they are considered sub-types of list.
     * - ``set``
-      - Matches set shapes
+      - Deprecated: Matches set shapes. This is considered an alias for ``list``.
     * - ``map``
       -  Matches map shapes
     * - ``structure``

@@ -1,0 +1,15 @@
+[WARNING] smithy.example#StringSet: Set shapes are deprecated and will be removed in Smithy IDL v2. Use a list shape with the @uniqueItems trait instead. | Set
+[WARNING] smithy.example#BlobSet: Set shapes are deprecated and will be removed in Smithy IDL v2. Use a list shape with the @uniqueItems trait instead. | Set
+[WARNING] smithy.example#ByteSet: Set shapes are deprecated and will be removed in Smithy IDL v2. Use a list shape with the @uniqueItems trait instead. | Set
+[WARNING] smithy.example#ShortSet: Set shapes are deprecated and will be removed in Smithy IDL v2. Use a list shape with the @uniqueItems trait instead. | Set
+[WARNING] smithy.example#IntegerSet: Set shapes are deprecated and will be removed in Smithy IDL v2. Use a list shape with the @uniqueItems trait instead. | Set
+[WARNING] smithy.example#LongSet: Set shapes are deprecated and will be removed in Smithy IDL v2. Use a list shape with the @uniqueItems trait instead. | Set
+[WARNING] smithy.example#BigIntSet: Set shapes are deprecated and will be removed in Smithy IDL v2. Use a list shape with the @uniqueItems trait instead. | Set
+[WARNING] smithy.example#BigDecimalSet: Set shapes are deprecated and will be removed in Smithy IDL v2. Use a list shape with the @uniqueItems trait instead. | Set
+[WARNING] smithy.example#TimestampSet: Set shapes are deprecated and will be removed in Smithy IDL v2. Use a list shape with the @uniqueItems trait instead. | Set
+[WARNING] smithy.example#BooleanSet: Set shapes are deprecated and will be removed in Smithy IDL v2. Use a list shape with the @uniqueItems trait instead. | Set
+[WARNING] smithy.example#ListSet: Set shapes are deprecated and will be removed in Smithy IDL v2. Use a list shape with the @uniqueItems trait instead. | Set
+[WARNING] smithy.example#SetSet: Set shapes are deprecated and will be removed in Smithy IDL v2. Use a list shape with the @uniqueItems trait instead. | Set
+[WARNING] smithy.example#MapSet: Set shapes are deprecated and will be removed in Smithy IDL v2. Use a list shape with the @uniqueItems trait instead. | Set
+[WARNING] smithy.example#StructSet: Set shapes are deprecated and will be removed in Smithy IDL v2. Use a list shape with the @uniqueItems trait instead. | Set
+[WARNING] smithy.example#UnionSet: Set shapes are deprecated and will be removed in Smithy IDL v2. Use a list shape with the @uniqueItems trait instead. | Set

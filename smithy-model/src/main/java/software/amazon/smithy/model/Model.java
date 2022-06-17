@@ -523,6 +523,7 @@ public final class Model implements ToSmithyBuilder<Model> {
      *
      * @return Returns the Set of {@code set}s.
      */
+    @Deprecated
     public Set<SetShape> getSetShapes() {
         return toSet(SetShape.class);
     }
@@ -533,6 +534,7 @@ public final class Model implements ToSmithyBuilder<Model> {
      * @param trait The exact trait class to look for on shapes.
      * @return Returns the set of {@code set}s that have a specific trait.
      */
+    @Deprecated
     public Set<SetShape> getSetShapesWithTrait(Class<? extends Trait> trait) {
         return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), SetShape.class);
     }
@@ -733,7 +735,7 @@ public final class Model implements ToSmithyBuilder<Model> {
         return (Set<T>) cachedTypes.computeIfAbsent(shapeType, t -> {
             Set<T> result = new HashSet<>();
             for (Shape shape : shapeMap.values()) {
-                if (shape.getClass() == shapeType) {
+                if (shapeType.isInstance(shape)) {
                     result.add((T) shape);
                 }
             }

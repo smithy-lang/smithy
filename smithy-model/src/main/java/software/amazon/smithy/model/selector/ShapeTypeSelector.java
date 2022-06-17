@@ -31,11 +31,17 @@ final class ShapeTypeSelector implements InternalSelector {
 
     @Override
     public boolean push(Context ctx, Shape shape, Receiver next) {
-        if (shape.getType() == shapeType) {
+        if (shape.getType() == shapeType || isSetMatchForList(shape)) {
             return next.apply(ctx, shape);
         }
 
         return true;
+    }
+
+    private boolean isSetMatchForList(Shape shape) {
+        ShapeType other = shape.getType();
+        return (shapeType == ShapeType.SET && other == ShapeType.LIST)
+                || (shapeType == ShapeType.LIST && other == ShapeType.SET);
     }
 
     @Override

@@ -6,21 +6,21 @@ use aws.protocols#restJson1
 use smithy.test#httpMalformedRequestTests
 
 @suppress(["UnstableTrait"])
-@http(uri: "/MalformedSet", method: "POST")
-operation MalformedSet {
-    input: MalformedSetInput
+@http(uri: "/MalformedUniqueItems", method: "POST")
+operation MalformedUniqueItems {
+    input: MalformedUniqueItemsInput
 }
 
-apply MalformedSet @httpMalformedRequestTests([
+apply MalformedUniqueItems @httpMalformedRequestTests([
     {
-        id: "RestJsonMalformedSetDuplicateItems",
+        id: "RestJsonMalformedUniqueItemsDuplicateItems",
         documentation: """
-        When the set has duplicated items, the response should be a 400
+        When the list has duplicated items, the response should be a 400
         SerializationException.""",
         protocol: restJson1,
         request: {
             method: "POST",
-            uri: "/MalformedSet",
+            uri: "/MalformedUniqueItems",
             body: """
             { "set" : ["a", "a", "b", "c"] }""",
             headers: {
@@ -35,16 +35,16 @@ apply MalformedSet @httpMalformedRequestTests([
         }
     },
     {
-        id: "RestJsonMalformedSetDuplicateBlobs",
+        id: "RestJsonMalformedUniqueItemsDuplicateBlobs",
         documentation: """
-        When the set has duplicated blobs, the response should be a 400
+        When the list has duplicated blobs, the response should be a 400
         SerializationException.""",
         protocol: restJson1,
         request: {
             method: "POST",
-            uri: "/MalformedSet",
+            uri: "/MalformedUniqueItems",
             body: """
-            { "blobSet" : ["YmxvYg==", "b3RoZXJibG9i", "YmxvYg=="] }""",
+            { "complexSet" : [{"foo": true, "blob": "YmxvYg=="}, {"foo": true, "blob": "b3RoZXJibG9i"}, {"foo": true, "blob": "YmxvYg=="}] }""",
             headers: {
                 "content-type": "application/json"
             }
@@ -57,14 +57,14 @@ apply MalformedSet @httpMalformedRequestTests([
         }
     },
     {
-        id: "RestJsonMalformedSetNullItem",
+        id: "RestJsonMalformedUniqueItemsNullItem",
         documentation: """
-        When the set contains null, the response should be a 400
+        When the list contains null, the response should be a 400
         SerializationException.""",
         protocol: restJson1,
         request: {
             method: "POST",
-            uri: "/MalformedSet",
+            uri: "/MalformedUniqueItems",
             body: """
             { "set" : ["a", null, "b", "c"] }""",
             headers: {
@@ -80,15 +80,22 @@ apply MalformedSet @httpMalformedRequestTests([
     },
 ])
 
-structure MalformedSetInput {
+structure MalformedUniqueItemsInput {
     set: SimpleSet,
-    blobSet: BlobSet
+    complexSet: ComplexSet
 }
 
-set SimpleSet {
+@uniqueItems
+list SimpleSet {
     member: String
 }
 
-set BlobSet {
-    member: Blob
+@uniqueItems
+list ComplexSet {
+    member: ComplexSetStruct
+}
+
+structure ComplexSetStruct {
+    foo: Boolean,
+    blob: Blob
 }

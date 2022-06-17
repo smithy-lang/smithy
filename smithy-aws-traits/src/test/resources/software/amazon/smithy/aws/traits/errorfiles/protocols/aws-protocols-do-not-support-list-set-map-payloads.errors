@@ -1,3 +1,4 @@
 [ERROR] smithy.example#InvalidBindingOperationInput$listBinding: AWS Protocols only support binding the following shape types to the payload: string, blob, structure, union, and document | ProtocolHttpPayload
 [ERROR] smithy.example#InvalidBindingOperationOutput$mapBinding: AWS Protocols only support binding the following shape types to the payload: string, blob, structure, union, and document | ProtocolHttpPayload
 [ERROR] smithy.example#InvalidBindingError$setBinding: AWS Protocols only support binding the following shape types to the payload: string, blob, structure, union, and document | ProtocolHttpPayload
+[WARNING] smithy.example#StringSet: Set shapes are deprecated and will be removed in Smithy IDL v2. Use a list shape with the @uniqueItems trait instead. | Set

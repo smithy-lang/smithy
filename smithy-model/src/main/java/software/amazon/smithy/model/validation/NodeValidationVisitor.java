@@ -31,7 +31,6 @@ import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
-import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.FloatShape;
@@ -43,7 +42,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
@@ -250,17 +248,9 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     @Override
     public List<ValidationEvent> listShape(ListShape shape) {
-        return processCollection(shape, shape.getMember());
-    }
-
-    @Override
-    public List<ValidationEvent> setShape(SetShape shape) {
-        return processCollection(shape, shape.getMember());
-    }
-
-    private List<ValidationEvent> processCollection(CollectionShape shape, MemberShape member) {
         return value.asArrayNode()
                 .map(array -> {
+                    MemberShape member = shape.getMember();
                     List<ValidationEvent> events = applyPlugins(shape);
                     // Each element creates a context with a numeric index (e.g., "foo.0.baz", "foo.1.baz", etc.).
                     for (int i = 0; i < array.getElements().size(); i++) {

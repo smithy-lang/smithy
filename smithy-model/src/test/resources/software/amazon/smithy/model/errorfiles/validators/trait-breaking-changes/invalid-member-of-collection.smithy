@@ -7,7 +7,8 @@ list badList {
     member: String
 }
 
+@uniqueItems
 @trait(breakingChanges: [{path: "/foo", change: "any"}])
-set badSet {
+list badSet {
     member: String
 }

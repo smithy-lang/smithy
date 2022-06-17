@@ -75,7 +75,7 @@ public abstract class CollectionShape extends Shape {
         private MemberShape member;
 
         @Override
-        public final B id(ShapeId shapeId) {
+        public B id(ShapeId shapeId) {
             if (member != null) {
                 // Update the member name so it isn't pointing to the old shape id.
                 member(member.toBuilder().id(shapeId.withMember(member.getMemberName())).build());
@@ -127,7 +127,7 @@ public abstract class CollectionShape extends Shape {
         }
 
         @Override
-        public final B addMember(MemberShape member) {
+        public B addMember(MemberShape member) {
             return member(member);
         }
     }

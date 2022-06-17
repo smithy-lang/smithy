@@ -162,6 +162,7 @@ public enum RelationshipType {
      * Relationships that exist on {@link SetShape set} shapes to their
      * {@link MemberShape member shapes}.
      */
+    @Deprecated
     SET_MEMBER("member", RelationshipDirection.DIRECTED),
 
     /**

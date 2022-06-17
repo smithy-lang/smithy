@@ -458,7 +458,7 @@ reference other shapes using :ref:`members <member>`.
     * - :ref:`list`
       - Ordered collection of homogeneous values
     * - :ref:`set`
-      - Ordered collection of unique homogeneous values
+      - (Deprecated) Ordered collection of unique homogeneous values
     * - :ref:`map`
       - Map data structure that maps string keys to homogeneous values
     * - :ref:`structure`
@@ -565,10 +565,19 @@ example is ``smithy.example#MyList$member``.
 Set
 ===
 
+.. danger::
+
+    Sets are deprecated. Use a list with the :ref:`uniqueItems-trait` instead.
+
 The :dfn:`set` type represents an ordered collection of unique values. A set
-shape requires a single member named ``member``, and the member MUST target
-either a string, blob, byte, short, integer, long, bigInteger, or bigDecimal
-shape. The targeted shape MUST NOT be marked with the :ref:`streaming-trait`.
+shape requires a single member named ``member``. Sets are implicitly considered
+to be marked with the :ref:`uniqueItems-trait`, and as such MUST NOT transitively
+contain floats, doubles, or documents.
+
+.. important::
+
+    Sets are considered sub-type of lists; any place a list is accepted, a set
+    is accepted.
 
 Sets are defined in the IDL using a :ref:`set_statement <idl-set>`. The
 following example defines a set of strings:
@@ -614,11 +623,14 @@ The shape ID of the member of a set is the set shape ID followed by
 ``$member``. For example, the shape ID of the set member in the above
 example is ``smithy.example#StringSet$member``.
 
-.. rubric:: Language support for insertion ordered sets
+.. rubric:: Use insertion order
 
-Not all programming languages support an insertion ordered set data
-structure. Such languages SHOULD store the values of a set data
-structure in a list and rely on validation to ensure uniqueness.
+Implementations SHOULD use insertion ordered sets to ensure that clients and
+servers both agree on element ordering so that error messages about specific
+items in a set are actionable by clients. If a client and server don't agree
+on ordering, then pointing to where a validation error occurs becomes very
+challenging. Programming languages that do not support insertion ordered sets
+SHOULD store the values of a set in a list.
 
 
 .. _map:

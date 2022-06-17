@@ -17,5 +17,4 @@ public class SetShapeTest {
         assertThat(shape.getMember().getId(), equalTo(ShapeId.from("ns.bar#bar$member")));
         assertThat(shape.getMember().getTarget(), equalTo(ShapeId.from("ns.foo#bam")));
     }
-
 }

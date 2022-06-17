@@ -41,7 +41,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
@@ -130,19 +129,10 @@ final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
 
     @Override
     public Object listShape(ListShape shape) {
-        return createListOrSet(shape, shape.getMember());
-    }
-
-    @Override
-    public Object setShape(SetShape shape) {
-        return createListOrSet(shape, shape.getMember());
-    }
-
-    private Object createListOrSet(Shape shape, MemberShape member) {
         return withCopiedVisitors(() -> {
             int size = computeLength(shape);
             List<Object> result = new ArrayList<>(size);
-            Object memberValue = member.accept(this);
+            Object memberValue = shape.getMember().accept(this);
             if (memberValue != null) {
                 for (int i = 0; i < size; i++) {
                     result.add(memberValue);

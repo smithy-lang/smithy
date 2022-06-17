@@ -58,7 +58,7 @@ structure Unit {}
 
 /// Makes a shape a trait.
 @trait(
-    selector: ":is(simpleType, list, map, set, structure, union)",
+    selector: ":is(simpleType, list, map, structure, union)",
     breakingChanges: [
         {change: "presence"},
         {path: "/structurallyExclusive", change: "any"},
@@ -208,7 +208,8 @@ map externalDocumentation {
 
 /// Defines the list of authentication schemes supported by a service or operation.
 @trait(selector: ":is(service, operation)")
-set auth {
+@uniqueItems
+list auth {
     member: AuthTraitReference
 }
 
@@ -436,7 +437,7 @@ structure xmlAttribute {}
 
 /// Unwraps the values of a list, set, or map into the containing structure/union.
 @trait(
-    selector: ":is(structure, union) > :test(member > :test(collection, map))",
+    selector: ":is(structure, union) > :test(member > :test(list, map))",
     breakingChanges: [{change: "any"}]
 )
 structure xmlFlattened {}
@@ -451,7 +452,7 @@ string xmlName
 
 /// Adds an xmlns namespace definition URI to an XML element.
 @trait(
-    selector: ":is(service, member, simpleType, collection, map, structure, union)",
+    selector: ":is(service, member, simpleType, list, map, structure, union)",
     conflicts: [xmlAttribute],
     breakingChanges: [{change: "any"}]
 )
@@ -617,7 +618,7 @@ structure EnumDefinition {
 string EnumConstantBodyName
 
 /// Constrains a shape to minimum and maximum number of elements or size.
-@trait(selector: ":test(collection, map, string, blob, member > :is(collection, map, string, blob))")
+@trait(selector: ":test(list, map, string, blob, member > :is(list, map, string, blob))")
 structure length {
     /// Integer value that represents the minimum inclusive length of a shape.
     min: Long,
@@ -677,8 +678,11 @@ structure recommended {
 structure sparse {}
 
 /// Indicates that the items in a list MUST be unique.
-@trait(selector: ":test(list > member > :test(string, blob, byte, short, integer, long, bigDecimal, bigInteger))")
-@deprecated(message: "The uniqueItems trait has been deprecated in favor of using sets.", since: "2.0")
+@trait(
+    selector: "list :not(> member ~> :is(float, double, document))",
+    conflicts: [sparse],
+    breakingChanges: [{change: "presence", severity: "WARNING"}]
+)
 structure uniqueItems {}
 
 /// Indicates that the shape is unstable and could change in the future.
@@ -770,7 +774,7 @@ structure httpLabel {}
     selector: """
         structure > member
         :test(> :test(string, number, boolean, timestamp),
-              > collection > member > :test(string, number, boolean, timestamp))""",
+              > list > member > :test(string, number, boolean, timestamp))""",
     conflicts: [httpLabel, httpHeader, httpPrefixHeaders, httpPayload, httpResponseCode, httpQueryParams],
     breakingChanges: [{change: "any"}]
 )
@@ -781,7 +785,7 @@ string httpQuery
 @trait(
     selector: """
         structure > member
-        :test(> map > member[id|member=value] > :test(string, collection > member > string))""",
+        :test(> map > member[id|member=value] > :test(string, list > member > string))""",
         structurallyExclusive: "member",
     conflicts: [httpLabel, httpQuery, httpHeader, httpPayload, httpResponseCode, httpPrefixHeaders],
     breakingChanges: [{change: "any"}]
@@ -792,7 +796,7 @@ structure httpQueryParams {}
 @trait(
     selector: """
         structure > :test(member > :test(boolean, number, string, timestamp,
-                collection > member > :test(boolean, number, string, timestamp)))""",
+                list > member > :test(boolean, number, string, timestamp)))""",
     conflicts: [httpLabel, httpQuery, httpPrefixHeaders, httpPayload, httpResponseCode, httpQueryParams],
     breakingChanges: [{change: "any"}]
 )
@@ -812,7 +816,7 @@ string httpPrefixHeaders
 
 /// Binds a single structure member to the body of an HTTP request.
 @trait(
-    selector: "structure > :test(member > :test(string, blob, structure, union, document, list, set, map))",
+    selector: "structure > :test(member > :test(string, blob, structure, union, document, list, map))",
     conflicts: [httpLabel, httpQuery, httpHeader, httpPrefixHeaders, httpResponseCode, httpQueryParams],
     structurallyExclusive: "member",
     breakingChanges: [{change: "presence"}]

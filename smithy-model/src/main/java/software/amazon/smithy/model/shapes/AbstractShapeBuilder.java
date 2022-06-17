@@ -79,7 +79,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<?, ?>,
      * @throws ShapeIdSyntaxException if the shape ID is invalid.
      */
     @SuppressWarnings("unchecked")
-    public final B id(String shapeId) {
+    public B id(String shapeId) {
         return id(ShapeId.from(shapeId));
     }
 
@@ -90,7 +90,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<?, ?>,
      * @return Returns the builder.
      */
     @SuppressWarnings("unchecked")
-    public final B source(SourceLocation sourceLocation) {
+    public B source(SourceLocation sourceLocation) {
         if (sourceLocation == null) {
             throw new IllegalArgumentException("source must not be null");
         }
@@ -106,8 +106,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<?, ?>,
      * @param column Column number of the line where the shape was defined.
      * @return Returns the builder.
      */
-    @SuppressWarnings("unchecked")
-    public final B source(String filename, int line, int column) {
+    public B source(String filename, int line, int column) {
         return source(new SourceLocation(filename, line, column));
     }
 
@@ -118,7 +117,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<?, ?>,
      * @return Returns the builder.
      */
     @SuppressWarnings("unchecked")
-    public final B traits(Collection<Trait> traitsToSet) {
+    public B traits(Collection<Trait> traitsToSet) {
         clearTraits();
         traitsToSet.forEach(this::addTrait);
         return (B) this;
@@ -132,7 +131,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<?, ?>,
      * @return Returns the builder.
      */
     @SuppressWarnings("unchecked")
-    public final B addTraits(Collection<Trait> traitsToAdd) {
+    public B addTraits(Collection<Trait> traitsToAdd) {
         traitsToAdd.forEach(this::addTrait);
         return (B) this;
     }
@@ -144,7 +143,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<?, ?>,
      * @return Returns the builder.
      */
     @SuppressWarnings("unchecked")
-    public final B addTrait(Trait trait) {
+    public B addTrait(Trait trait) {
         if (trait == null) {
             throw new IllegalArgumentException("trait must not be null");
         }
@@ -162,7 +161,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<?, ?>,
      * @param traitId Absolute or relative ID of the trait to remove.
      * @return Returns the builder.
      */
-    public final B removeTrait(String traitId) {
+    public B removeTrait(String traitId) {
         return removeTrait(ShapeId.from(Trait.makeAbsoluteName(traitId)));
     }
 
@@ -173,7 +172,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<?, ?>,
      * @return Returns the builder.
      */
     @SuppressWarnings("unchecked")
-    public final B removeTrait(ShapeId traitId) {
+    public B removeTrait(ShapeId traitId) {
         if (traits.hasValue()) {
             traits.get().remove(traitId);
         }
@@ -186,7 +185,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<?, ?>,
      * @return Returns the builder.
      */
     @SuppressWarnings("unchecked")
-    public final B clearTraits() {
+    public B clearTraits() {
         traits.clear();
         return (B) this;
     }
