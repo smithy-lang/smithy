@@ -1451,7 +1451,7 @@ Target Elision
 --------------
 
 Having to completely redefine a :ref:`resource identifier <resource-identifiers>`
-to use it in a structure or redefine a member from a :ref:`mixin` to add
+to use it in a structure or redefine a member from a :ref:`mixin <mixins>` to add
 additional traits can be cumbersome and potentially error-prone. The
 :token:`type elision syntax <smithy:shape_member_elided>` can be used to cut
 down on that repetition by prefixing the member name with a ``$``. If a member
