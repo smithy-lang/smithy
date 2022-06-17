@@ -29,7 +29,10 @@ public interface ShapeVisitor<R> {
 
     R listShape(ListShape shape);
 
-    R setShape(SetShape shape);
+    @Deprecated
+    default R setShape(SetShape shape) {
+        return listShape(shape);
+    }
 
     R mapShape(MapShape shape);
 
@@ -95,11 +98,6 @@ public interface ShapeVisitor<R> {
 
         @Override
         public R listShape(ListShape shape) {
-            return getDefault(shape);
-        }
-
-        @Override
-        public R setShape(SetShape shape) {
             return getDefault(shape);
         }
 

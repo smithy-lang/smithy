@@ -518,11 +518,11 @@ Trait selector
     .. code-block:: none
 
         structure > :test(member > :test(boolean, number, string, timestamp,
-                collection > member > :test(boolean, number, string, timestamp)))
+                list > member > :test(boolean, number, string, timestamp)))
 
     The ``httpHeader`` trait can be applied to ``structure`` members that
     target a ``boolean``, ``number``, ``string``, or ``timestamp``; or a
-    ``structure`` member that targets a list/set of these types.
+    ``structure`` member that targets a list of these types.
 Value type
     ``string`` value defining a valid HTTP header field name according to
     :rfc:`section 3.2 of RFC7230 <7230#section-3.2>`. The value MUST NOT be
@@ -875,7 +875,7 @@ Trait selector
 
         structure > member
         :test(> :test(string, number, boolean, timestamp),
-              > collection > member > :test(string, number, boolean, timestamp))
+              > list > member > :test(string, number, boolean, timestamp))
 
     The ``httpQuery`` trait can be applied to ``structure`` members that
     target a ``string``, ``number``, ``boolean``, or ``timestamp``; or a
@@ -932,7 +932,7 @@ request:
   with a value of ``["a", "b"]``, the value is serialized in the query string
   as ``foo=a&foo=b``.
 * When deserializing, server implementations SHOULD use the first encountered
-  value in the query string for non-collection members. For example, given a
+  value in the query string for non-list members. For example, given a
   member bound to ``foo`` that targets a string and a query string of
   ``foo=a&foo=b``, the deserialized value of ``foo`` should be ``a``.
 
@@ -975,10 +975,10 @@ Trait selector
     .. code-block:: none
 
         structure > member
-        :test(> map > member[id|member=value] > :test(string, collection > member > string))
+        :test(> map > member[id|member=value] > :test(string, list > member > string))
 
     The ``httpQueryParams`` trait can be applied to ``structure`` members
-    that target a ``map`` of ``string``, or a ``map`` of ``list``/``set`` of
+    that target a ``map`` of ``string``, or a ``map`` of ``list`` of
     ``string``.
 
 Value type

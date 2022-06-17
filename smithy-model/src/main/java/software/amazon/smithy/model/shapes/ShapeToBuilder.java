@@ -106,11 +106,6 @@ final class ShapeToBuilder implements ShapeVisitor<AbstractShapeBuilder> {
     }
 
     @Override
-    public AbstractShapeBuilder setShape(SetShape shape) {
-        return shape.toBuilder();
-    }
-
-    @Override
     public AbstractShapeBuilder stringShape(StringShape shape) {
         return shape.toBuilder();
     }

@@ -21,9 +21,9 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 /**
  * Represents a {@code list} shape.
  */
-public final class ListShape extends CollectionShape implements ToSmithyBuilder<ListShape> {
+public class ListShape extends CollectionShape implements ToSmithyBuilder<ListShape> {
 
-    private ListShape(Builder builder) {
+    ListShape(CollectionShape.Builder<? extends CollectionShape.Builder<?, ?>, ?> builder) {
         super(builder);
     }
 
@@ -54,7 +54,7 @@ public final class ListShape extends CollectionShape implements ToSmithyBuilder<
     /**
      * Builder used to create a {@link ListShape}.
      */
-    public static final class Builder extends CollectionShape.Builder<Builder, ListShape> {
+    public static class Builder extends CollectionShape.Builder<Builder, ListShape> {
         @Override
         public ListShape build() {
             return new ListShape(this);

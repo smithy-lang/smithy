@@ -29,7 +29,8 @@ list SparseStringList {
     member: String
 }
 
-set StringSet {
+@uniqueItems
+list StringSet {
     member: String,
 }
 
@@ -58,7 +59,8 @@ list IntegerList {
     member: Integer,
 }
 
-set IntegerSet {
+@uniqueItems
+list IntegerSet {
     member: Integer,
 }
 
@@ -102,7 +104,8 @@ list FooEnumList {
     member: FooEnum,
 }
 
-set FooEnumSet {
+@uniqueItems
+list FooEnumSet {
     member: FooEnum,
 }
 

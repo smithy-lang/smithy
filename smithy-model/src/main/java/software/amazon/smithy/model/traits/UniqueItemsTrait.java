@@ -22,16 +22,31 @@ import software.amazon.smithy.model.shapes.ShapeId;
 /**
  * Indicates that the members of a list must be unique.
  */
-@Deprecated
 public final class UniqueItemsTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#uniqueItems");
 
-    public UniqueItemsTrait(ObjectNode node) {
+    private final boolean isSynthetic;
+
+    private UniqueItemsTrait(ObjectNode node, boolean isSynthetic) {
         super(ID, node);
+        this.isSynthetic = isSynthetic;
+    }
+
+    public UniqueItemsTrait(ObjectNode node) {
+        this(node, false);
     }
 
     public UniqueItemsTrait() {
         this(Node.objectNode());
+    }
+
+    public UniqueItemsTrait(boolean isSynthetic) {
+        this(Node.objectNode(), isSynthetic);
+    }
+
+    @Override
+    public boolean isSynthetic() {
+        return isSynthetic;
     }
 
     public static final class Provider extends AnnotationTrait.Provider<UniqueItemsTrait> {

@@ -332,6 +332,7 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
     /**
      * @return Optionally returns the shape as a {@link SetShape}.
      */
+    @Deprecated
     public Optional<SetShape> asSetShape() {
         return Optional.empty();
     }
@@ -479,6 +480,7 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
     /**
      * @return Returns true if the shape is a {@link SetShape} shape.
      */
+    @Deprecated
     public final boolean isSetShape() {
         return getType() == ShapeType.SET;
     }

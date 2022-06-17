@@ -268,7 +268,7 @@
             }
         },
         "aws.protocols#ChecksumAlgorithmSet": {
-            "type": "set",
+            "type": "list",
             "member": {
                 "target": "aws.protocols#ChecksumAlgorithm"
             },
@@ -276,6 +276,7 @@
                 "smithy.api#length": {
                     "min": 1
                 },
+                "smithy.api#uniqueItems": {},
                 "smithy.api#private": {}
             }
         },

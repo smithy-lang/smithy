@@ -15,25 +15,33 @@
 
 package software.amazon.smithy.model.shapes;
 
+import java.util.Collection;
 import java.util.Optional;
-import software.amazon.smithy.utils.ToSmithyBuilder;
+import java.util.function.Consumer;
+import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.traits.UniqueItemsTrait;
 
 /**
  * Represents a {@code set} shape.
+ *
+ * <p>Sets are deprecated. Use list shapes with the uniqueItems trait instead.
  */
-public final class SetShape extends CollectionShape implements ToSmithyBuilder<SetShape> {
+@Deprecated
+public final class SetShape extends ListShape {
 
     private SetShape(Builder builder) {
         super(builder);
     }
 
     public static Builder builder() {
-        return new Builder();
+        // Always add a synthetic UniqueItems trait.
+        return new Builder().addTrait(new UniqueItemsTrait(true));
     }
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this).member(getMember());
+        return (Builder) builder().from(this).member(getMember());
     }
 
     @Override
@@ -54,7 +62,7 @@ public final class SetShape extends CollectionShape implements ToSmithyBuilder<S
     /**
      * Builder used to create a {@link SetShape}.
      */
-    public static final class Builder extends CollectionShape.Builder<Builder, SetShape> {
+    public static final class Builder extends ListShape.Builder {
         @Override
         public SetShape build() {
             return new SetShape(this);
@@ -63,6 +71,76 @@ public final class SetShape extends CollectionShape implements ToSmithyBuilder<S
         @Override
         public ShapeType getShapeType() {
             return ShapeType.SET;
+        }
+
+        @Override
+        public Builder member(MemberShape member) {
+            return (Builder) super.member(member);
+        }
+
+        @Override
+        public Builder member(ShapeId target) {
+            return (Builder) super.member(target);
+        }
+
+        @Override
+        public Builder member(ShapeId target, Consumer<MemberShape.Builder> memberUpdater) {
+            return (Builder) super.member(target, memberUpdater);
+        }
+
+        @Override
+        public Builder id(ShapeId shapeId) {
+            return (Builder) super.id(shapeId);
+        }
+
+        @Override
+        public Builder addMember(MemberShape member) {
+            return (Builder) super.addMember(member);
+        }
+
+        @Override
+        public Builder id(String shapeId) {
+            return (Builder) super.id(shapeId);
+        }
+
+        @Override
+        public Builder source(SourceLocation sourceLocation) {
+            return (Builder) super.source(sourceLocation);
+        }
+
+        @Override
+        public Builder source(String filename, int line, int column) {
+            return (Builder) super.source(filename, line, column);
+        }
+
+        @Override
+        public Builder traits(Collection<Trait> traitsToSet) {
+            return (Builder) super.traits(traitsToSet);
+        }
+
+        @Override
+        public Builder addTraits(Collection<Trait> traitsToAdd) {
+            return (Builder) super.addTraits(traitsToAdd);
+        }
+
+        @Override
+        public Builder addTrait(Trait trait) {
+            return (Builder) super.addTrait(trait);
+        }
+
+        @Override
+        public Builder removeTrait(String traitId) {
+            return (Builder) super.removeTrait(traitId);
+        }
+
+        @Override
+        public Builder removeTrait(ShapeId traitId) {
+            return (Builder) super.removeTrait(traitId);
+        }
+
+        @Override
+        public Builder clearTraits() {
+            return (Builder) super.clearTraits();
         }
     }
 }
