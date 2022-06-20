@@ -15,23 +15,34 @@
 
 package software.amazon.smithy.aws.traits.tagging;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.knowledge.PropertyBindingIndex;
+import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
- * Index of AWS tagging trait information in a service closure.
+ * Index of AWS tagging trait information in a service closure and convenient
+ * access to tag operations by name in service closures.
  */
 public final class AwsTagIndex implements KnowledgeIndex {
     private final Set<ShapeId> servicesWithAllTagOperations = new HashSet<>();
     private final Set<ShapeId> resourceIsTagOnCreate = new HashSet<>();
     private final Set<ShapeId> resourceIsTagOnUpdate = new HashSet<>();
+    private final Map<ShapeId, ShapeId> serviceToTagOperation = new HashMap<>();
+    private final Set<ShapeId> serviceToTagOperationIsValid = new HashSet<>();
+    private final Map<ShapeId, ShapeId> serviceToUntagOperation = new HashMap<>();
+    private final Set<ShapeId> serviceToUntagOperationIsValid = new HashSet<>();
+    private final Map<ShapeId, ShapeId> serviceToListTagsOperation = new HashMap<>();
+    private final Set<ShapeId> serviceToListTagsOperationIsValid = new HashSet<>();
 
     private AwsTagIndex(Model model) {
         PropertyBindingIndex propertyBindingIndex = PropertyBindingIndex.of(model);
@@ -67,11 +78,42 @@ public final class AwsTagIndex implements KnowledgeIndex {
         boolean hasUntagApi = false;
         boolean hasListTagsApi = false;
 
-        hasTagApi = TaggingShapeUtils.verifyTagResourceOperation(model, service, operationIndex);
+        Map<String, ShapeId> operationMap = new HashMap<>();
+        for (ShapeId operationId : service.getOperations()) {
+            operationMap.put(operationId.getName(), operationId);
+        }
 
-        hasUntagApi = TaggingShapeUtils.verifyUntagResourceOperation(model, service, operationIndex);
+        if (operationMap.containsKey(TaggingShapeUtils.TAG_RESOURCE_OPNAME)) {
+            ShapeId tagOperationId = operationMap.get(TaggingShapeUtils.TAG_RESOURCE_OPNAME);
+            serviceToTagOperation.put(service.getId(), tagOperationId);
+            OperationShape tagOperation = model.expectShape(tagOperationId, OperationShape.class);
+            hasTagApi = TaggingShapeUtils.verifyTagResourceOperation(model, service, tagOperation, operationIndex);
+            if (hasTagApi) {
+                serviceToTagOperationIsValid.add(service.getId());
+            }
+        }
 
-        hasListTagsApi = TaggingShapeUtils.verifyListTagsOperation(model, service, operationIndex);
+        if (operationMap.containsKey(TaggingShapeUtils.UNTAG_RESOURCE_OPNAME)) {
+            ShapeId untagOperationId = operationMap.get(TaggingShapeUtils.UNTAG_RESOURCE_OPNAME);
+            serviceToUntagOperation.put(service.getId(), untagOperationId);
+            OperationShape untagOperation = model.expectShape(untagOperationId, OperationShape.class);
+            hasUntagApi = TaggingShapeUtils.verifyUntagResourceOperation(model, service, untagOperation,
+                                                    operationIndex);
+            if (hasUntagApi) {
+                serviceToUntagOperationIsValid.add(service.getId());
+            }
+        }
+
+        if (operationMap.containsKey(TaggingShapeUtils.LIST_TAGS_OPNAME)) {
+            ShapeId listTagsOperationId = operationMap.get(TaggingShapeUtils.LIST_TAGS_OPNAME);
+            serviceToListTagsOperation.put(service.getId(), listTagsOperationId);
+            OperationShape listTagsOperation = model.expectShape(listTagsOperationId, OperationShape.class);
+            hasListTagsApi = TaggingShapeUtils.verifyListTagsOperation(model, service, listTagsOperation,
+                                                    operationIndex);
+            if (hasListTagsApi) {
+                serviceToListTagsOperationIsValid.add(service.getId());
+            }
+        }
 
         return hasTagApi && hasUntagApi && hasListTagsApi;
     }
@@ -90,5 +132,29 @@ public final class AwsTagIndex implements KnowledgeIndex {
 
     public boolean serviceHasTagApis(ShapeId serviceShapeId) {
         return servicesWithAllTagOperations.contains(serviceShapeId);
+    }
+
+    public Optional<ShapeId> getTagResourceOperation(ShapeId serviceId) {
+        return Optional.ofNullable(serviceToTagOperation.get(serviceId));
+    }
+
+    public Optional<ShapeId> getUntagResourceOperation(ShapeId serviceId) {
+        return Optional.ofNullable(serviceToUntagOperation.get(serviceId));
+    }
+
+    public Optional<ShapeId> getListTagsForResourceOperation(ShapeId serviceId) {
+        return Optional.ofNullable(serviceToListTagsOperation.get(serviceId));
+    }
+
+    public boolean serviceHasValidTagResourceOperation(ShapeId serviceId) {
+        return serviceToTagOperationIsValid.contains(serviceId);
+    }
+
+    public boolean serviceHasValidUntagResourceOperation(ShapeId serviceId) {
+        return serviceToUntagOperationIsValid.contains(serviceId);
+    }
+
+    public boolean serviceHasValidListTagsForResourceOperation(ShapeId serviceId) {
+        return serviceToListTagsOperationIsValid.contains(serviceId);
     }
 }

@@ -57,7 +57,7 @@ operation ListTagsForCity {
     }
 }
 
-@taggable(property: "tags", tagApi: "TagCity", untagApi: "UntagCity", listTagsApi: "ListTagsForCity")
+@taggable(property: "tags", tagApi: TagCity, untagApi: UntagCity, listTagsApi: ListTagsForCity)
 resource City {
     identifiers: { cityId: CityId },
     properties: {

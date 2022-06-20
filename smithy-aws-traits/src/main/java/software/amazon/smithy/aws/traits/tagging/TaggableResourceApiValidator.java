@@ -76,12 +76,12 @@ public final class TaggableResourceApiValidator extends AbstractValidator {
         //    through the tag property, and must be resource instance operations
         boolean isTaggable = false;
         //Caution: avoid short circuiting behavior.
-        isTaggable = isServiceWideTaggable(service, awsTagIndex) || isTaggable;
+        isTaggable = awsTagIndex.serviceHasTagApis(service.getId()) || isTaggable;
         isTaggable = isTaggableViaInstanceOperations(events, model, resource, service, propertyBindingIndex)
                         || isTaggable;
 
         if (!isTaggable) {
-            events.add(error(resource, "Resource does not have necessary tag CRUD operations."));
+            events.add(error(resource, "Resource does not have available tag CRUD operations."));
         }
 
         return events;
@@ -200,9 +200,5 @@ public final class TaggableResourceApiValidator extends AbstractValidator {
                 .map(memberShape ->
                     new AbstractMap.SimpleImmutableEntry<>(memberShape, model.expectShape(memberShape.getTarget())))
                 .collect(Collectors.toSet());
-    }
-
-    private boolean isServiceWideTaggable(ServiceShape service, AwsTagIndex awsTagIndex) {
-        return awsTagIndex.serviceHasTagApis(service.getId());
     }
 }
