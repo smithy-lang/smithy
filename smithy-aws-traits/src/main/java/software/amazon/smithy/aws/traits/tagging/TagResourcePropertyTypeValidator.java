@@ -26,7 +26,7 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 /**
- * Validates tagging property  used for a taggable resource to encourage consistency.
+ * Validates tagging property used for a taggable resource to encourage consistency.
  */
 public final class TagResourcePropertyTypeValidator extends AbstractValidator {
     @Override

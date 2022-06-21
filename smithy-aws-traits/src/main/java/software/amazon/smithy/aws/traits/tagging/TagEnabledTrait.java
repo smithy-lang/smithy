@@ -21,7 +21,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AnnotationTrait;
 
 /**
- *
+ * Trait annotating a service shape as having taggable resources. Should also contain consistent tagging operations.
  */
 public final class TagEnabledTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("aws.api#tagEnabled");

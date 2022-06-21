@@ -38,11 +38,11 @@ public final class AwsTagIndex implements KnowledgeIndex {
     private final Set<ShapeId> resourceIsTagOnCreate = new HashSet<>();
     private final Set<ShapeId> resourceIsTagOnUpdate = new HashSet<>();
     private final Map<ShapeId, ShapeId> serviceToTagOperation = new HashMap<>();
-    private final Set<ShapeId> serviceToTagOperationIsValid = new HashSet<>();
+    private final Set<ShapeId> serviceTagOperationIsValid = new HashSet<>();
     private final Map<ShapeId, ShapeId> serviceToUntagOperation = new HashMap<>();
-    private final Set<ShapeId> serviceToUntagOperationIsValid = new HashSet<>();
+    private final Set<ShapeId> serviceUntagOperationIsValid = new HashSet<>();
     private final Map<ShapeId, ShapeId> serviceToListTagsOperation = new HashMap<>();
-    private final Set<ShapeId> serviceToListTagsOperationIsValid = new HashSet<>();
+    private final Set<ShapeId> serviceListTagsOperationIsValid = new HashSet<>();
 
     private AwsTagIndex(Model model) {
         PropertyBindingIndex propertyBindingIndex = PropertyBindingIndex.of(model);
@@ -73,55 +73,6 @@ public final class AwsTagIndex implements KnowledgeIndex {
         }
     }
 
-    private boolean verifyTagApis(Model model, ServiceShape service, OperationIndex operationIndex) {
-        boolean hasTagApi = false;
-        boolean hasUntagApi = false;
-        boolean hasListTagsApi = false;
-
-        Map<String, ShapeId> operationMap = new HashMap<>();
-        for (ShapeId operationId : service.getOperations()) {
-            operationMap.put(operationId.getName(), operationId);
-        }
-
-        if (operationMap.containsKey(TaggingShapeUtils.TAG_RESOURCE_OPNAME)) {
-            ShapeId tagOperationId = operationMap.get(TaggingShapeUtils.TAG_RESOURCE_OPNAME);
-            serviceToTagOperation.put(service.getId(), tagOperationId);
-            OperationShape tagOperation = model.expectShape(tagOperationId, OperationShape.class);
-            hasTagApi = TaggingShapeUtils.verifyTagResourceOperation(model, service, tagOperation, operationIndex);
-            if (hasTagApi) {
-                serviceToTagOperationIsValid.add(service.getId());
-            }
-        }
-
-        if (operationMap.containsKey(TaggingShapeUtils.UNTAG_RESOURCE_OPNAME)) {
-            ShapeId untagOperationId = operationMap.get(TaggingShapeUtils.UNTAG_RESOURCE_OPNAME);
-            serviceToUntagOperation.put(service.getId(), untagOperationId);
-            OperationShape untagOperation = model.expectShape(untagOperationId, OperationShape.class);
-            hasUntagApi = TaggingShapeUtils.verifyUntagResourceOperation(model, service, untagOperation,
-                                                    operationIndex);
-            if (hasUntagApi) {
-                serviceToUntagOperationIsValid.add(service.getId());
-            }
-        }
-
-        if (operationMap.containsKey(TaggingShapeUtils.LIST_TAGS_OPNAME)) {
-            ShapeId listTagsOperationId = operationMap.get(TaggingShapeUtils.LIST_TAGS_OPNAME);
-            serviceToListTagsOperation.put(service.getId(), listTagsOperationId);
-            OperationShape listTagsOperation = model.expectShape(listTagsOperationId, OperationShape.class);
-            hasListTagsApi = TaggingShapeUtils.verifyListTagsOperation(model, service, listTagsOperation,
-                                                    operationIndex);
-            if (hasListTagsApi) {
-                serviceToListTagsOperationIsValid.add(service.getId());
-            }
-        }
-
-        return hasTagApi && hasUntagApi && hasListTagsApi;
-    }
-
-    public static AwsTagIndex of(Model model) {
-        return new AwsTagIndex(model);
-    }
-
     public boolean isResourceTagOnCreate(ShapeId resourceId) {
         return resourceIsTagOnCreate.contains(resourceId);
     }
@@ -147,14 +98,63 @@ public final class AwsTagIndex implements KnowledgeIndex {
     }
 
     public boolean serviceHasValidTagResourceOperation(ShapeId serviceId) {
-        return serviceToTagOperationIsValid.contains(serviceId);
+        return serviceTagOperationIsValid.contains(serviceId);
     }
 
     public boolean serviceHasValidUntagResourceOperation(ShapeId serviceId) {
-        return serviceToUntagOperationIsValid.contains(serviceId);
+        return serviceUntagOperationIsValid.contains(serviceId);
     }
 
     public boolean serviceHasValidListTagsForResourceOperation(ShapeId serviceId) {
-        return serviceToListTagsOperationIsValid.contains(serviceId);
+        return serviceListTagsOperationIsValid.contains(serviceId);
+    }
+
+    private boolean verifyTagApis(Model model, ServiceShape service, OperationIndex operationIndex) {
+        boolean hasTagApi = false;
+        boolean hasUntagApi = false;
+        boolean hasListTagsApi = false;
+
+        Map<String, ShapeId> operationMap = new HashMap<>();
+        for (ShapeId operationId : service.getOperations()) {
+            operationMap.put(operationId.getName(), operationId);
+        }
+
+        if (operationMap.containsKey(TaggingShapeUtils.TAG_RESOURCE_OPNAME)) {
+            ShapeId tagOperationId = operationMap.get(TaggingShapeUtils.TAG_RESOURCE_OPNAME);
+            serviceToTagOperation.put(service.getId(), tagOperationId);
+            OperationShape tagOperation = model.expectShape(tagOperationId, OperationShape.class);
+            hasTagApi = TaggingShapeUtils.verifyTagResourceOperation(model, service, tagOperation, operationIndex);
+            if (hasTagApi) {
+                serviceTagOperationIsValid.add(service.getId());
+            }
+        }
+
+        if (operationMap.containsKey(TaggingShapeUtils.UNTAG_RESOURCE_OPNAME)) {
+            ShapeId untagOperationId = operationMap.get(TaggingShapeUtils.UNTAG_RESOURCE_OPNAME);
+            serviceToUntagOperation.put(service.getId(), untagOperationId);
+            OperationShape untagOperation = model.expectShape(untagOperationId, OperationShape.class);
+            hasUntagApi = TaggingShapeUtils.verifyUntagResourceOperation(model, service, untagOperation,
+                                                    operationIndex);
+            if (hasUntagApi) {
+                serviceUntagOperationIsValid.add(service.getId());
+            }
+        }
+
+        if (operationMap.containsKey(TaggingShapeUtils.LIST_TAGS_OPNAME)) {
+            ShapeId listTagsOperationId = operationMap.get(TaggingShapeUtils.LIST_TAGS_OPNAME);
+            serviceToListTagsOperation.put(service.getId(), listTagsOperationId);
+            OperationShape listTagsOperation = model.expectShape(listTagsOperationId, OperationShape.class);
+            hasListTagsApi = TaggingShapeUtils.verifyListTagsOperation(model, service, listTagsOperation,
+                                                    operationIndex);
+            if (hasListTagsApi) {
+                serviceListTagsOperationIsValid.add(service.getId());
+            }
+        }
+
+        return hasTagApi && hasUntagApi && hasListTagsApi;
+    }
+
+    public static AwsTagIndex of(Model model) {
+        return new AwsTagIndex(model);
     }
 }

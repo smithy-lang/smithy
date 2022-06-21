@@ -18,6 +18,8 @@ package software.amazon.smithy.aws.traits.tagging;
 import java.util.LinkedList;
 import java.util.List;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.TopDownIndex;
+import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -29,19 +31,25 @@ public final class TagEnabledServiceValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new LinkedList<>();
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
         for (ServiceShape service : model.getServiceShapesWithTrait(TagEnabledTrait.class)) {
-            events.addAll(validateService(model, service));
+            events.addAll(validateService(model, service, topDownIndex));
         }
         return events;
     }
 
-    private List<ValidationEvent> validateService(Model model, ServiceShape service) {
+    private List<ValidationEvent> validateService(Model model, ServiceShape service, TopDownIndex topDownIndex) {
         List<ValidationEvent> events = new LinkedList<>();
 
+        int taggableResourceCount = 0;
+        for (ResourceShape resource : topDownIndex.getContainedResources(service)) {
+            if (resource.hasTrait(TaggableTrait.class)) {
+                ++taggableResourceCount;
+            }
+        }
         // Service must at least have one aws.api#taggable resource in its closure.
-        if (!service.getResources().stream().map(resourceId -> model.expectShape(resourceId).asResourceShape().get())
-                .filter(resource -> resource.hasTrait(TaggableTrait.class)).findAny().isPresent()) {
-            events.add(error(service, "Service shape annotated with `aws.api#TagEnabled` trait must have at least one "
+        if (taggableResourceCount == 0) {
+            events.add(error(service, "Service shape annotated with `aws.api#tagEnabled` trait must have at least one "
                                         + "`aws.api#taggable` resource."));
         }
 
