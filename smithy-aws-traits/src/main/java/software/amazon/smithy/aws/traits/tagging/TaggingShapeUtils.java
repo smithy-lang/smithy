@@ -80,18 +80,18 @@ final class TaggingShapeUtils {
 
     static boolean hasResourceArnInput(Map<String, MemberShape> inputMembers, Model model) {
         return inputMembers.entrySet().stream().filter(memberEntry ->
-            TaggingShapeUtils.isArnMemberDesiredName(memberEntry.getKey())
-            && model.expectShape(memberEntry.getValue().getTarget()).isStringShape()
-        ).count() == 1;
+                    TaggingShapeUtils.isArnMemberDesiredName(memberEntry.getKey())
+                    && model.expectShape(memberEntry.getValue().getTarget()).isStringShape()
+                ).count() == 1;
     }
 
     /**
      * Returns true if and only if a provided shape meets criteria that appears to
-     * represent a collection or map of tag key value pairs.
+     * represent a list or map of tag key value pairs.
      *
      * @param model Model to retrieve target shapes from when examining
      *              targets.
-     * @param tagShape shape to examine if it appears to be a TagList.
+     * @param tagShape shape to examine if it appears to be tags.
      * @return true if and only if shape meets the criteria for being a TagList
      */
     static boolean verifyTagsShape(Model model, Shape tagShape) {
@@ -108,7 +108,7 @@ final class TaggingShapeUtils {
                 if (memberStructureShape.members().size() == 2) {
                     boolean allStrings = true;
                     for (MemberShape member : memberStructureShape.members()) {
-                        allStrings = allStrings || model.expectShape(member.getTarget()).isStringShape();
+                        allStrings |= model.expectShape(member.getTarget()).isStringShape();
                     }
                     return allStrings;
                 }

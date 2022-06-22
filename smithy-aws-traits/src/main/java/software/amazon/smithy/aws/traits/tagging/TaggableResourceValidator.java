@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.PropertyBindingIndex;
+import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
@@ -35,17 +35,17 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 /**
- * Validates service satisfies AWS tagging requirements.
+ * Validates that service satisfies the AWS tagging requirements.
  */
-public final class TaggableResourceApiValidator extends AbstractValidator {
+public final class TaggableResourceValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new LinkedList<>();
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
         AwsTagIndex tagIndex = AwsTagIndex.of(model);
         PropertyBindingIndex propertyBindingIndex = PropertyBindingIndex.of(model);
         for (ServiceShape service : model.getServiceShapesWithTrait(TagEnabledTrait.class)) {
-            for (ShapeId resourceId : service.getResources()) {
-                ResourceShape resource = model.expectShape(resourceId).asResourceShape().get();
+            for (ResourceShape resource : topDownIndex.getContainedResources(service)) {
                 if (resource.hasTrait(TaggableTrait.class)) {
                     events.addAll(validateResource(model, resource, service, tagIndex, propertyBindingIndex));
                 }
@@ -62,7 +62,7 @@ public final class TaggableResourceApiValidator extends AbstractValidator {
             PropertyBindingIndex propertyBindingIndex
     ) {
         List<ValidationEvent> events = new LinkedList<>();
-        // Generate warning if resource has tag property in update API.
+        // Generate danger if resource has tag property in update API.
         if (awsTagIndex.isResourceTagOnUpdate(resource.getId())) {
             Shape updateOperation = model.expectShape(resource.getUpdate().get());
             events.add(danger(updateOperation, "Update resource lifecycle operation should not support updating tags "
@@ -78,7 +78,7 @@ public final class TaggableResourceApiValidator extends AbstractValidator {
         //Caution: avoid short circuiting behavior.
         isTaggable = awsTagIndex.serviceHasTagApis(service.getId()) || isTaggable;
         isTaggable = isTaggableViaInstanceOperations(events, model, resource, service, propertyBindingIndex)
-                        || isTaggable;
+                || isTaggable;
 
         if (!isTaggable) {
             events.add(error(resource, "Resource does not have available tag CRUD operations."));
@@ -87,6 +87,26 @@ public final class TaggableResourceApiValidator extends AbstractValidator {
         return events;
     }
 
+    private Optional<OperationShape> resolveTagOperation(
+        List<ValidationEvent> events,
+        Optional<String> operation,
+        Model model,
+        ServiceShape service,
+        ResourceShape resource,
+        String defaultOpName,
+        String fieldName
+    ) {
+        Optional<ShapeId> tagApiId = operation
+            .map(api -> ShapeId.fromOptionalNamespace(service.getId().getNamespace(), api));
+        // If operation is specified in the model, it must be a valid reference.
+        if (tagApiId.isPresent() && !model.getShape(tagApiId.get()).map(Shape::asOperationShape).isPresent()) {
+            events.add(error(resource, String.format("%s$%s must reference an operation shape.",
+                    fieldName, TaggableTrait.ID.toString())));
+        }
+        ShapeId resolvedTagApiId = tagApiId.orElse(ShapeId.fromOptionalNamespace(service.getId().getNamespace(),
+                                                            defaultOpName));
+        return model.getShape(resolvedTagApiId).flatMap(shape -> shape.asOperationShape());
+    }
 
     private boolean isTaggableViaInstanceOperations(
             List<ValidationEvent> events,
@@ -100,52 +120,25 @@ public final class TaggableResourceApiValidator extends AbstractValidator {
         boolean untagApiVerified = false;
         boolean listTagsApiVerified = false;
 
-        Optional<ShapeId> tagApiId = taggableTrait.getTagApi()
-            .map(api -> ShapeId.fromOptionalNamespace(service.getId().getNamespace(), api));
-        //If tagApi is specified in the model, it must be a valid reference
-        if (tagApiId.isPresent() && !model.getShape(tagApiId.get()).map(Shape::asOperationShape).isPresent()) {
-            events.add(error(resource, String.format("%s$tagApi must reference an operation shape.",
-                TaggableTrait.ID.toString())));
-        }
-        ShapeId resolvedTagApiId = tagApiId.orElse(ShapeId.fromOptionalNamespace(service.getId().getNamespace(),
-                                                            TaggingShapeUtils.TAG_RESOURCE_OPNAME));
-        Optional<Shape> tagApi = model.getShape(resolvedTagApiId);
+        Optional<OperationShape> tagApi = resolveTagOperation(events, taggableTrait.getTagApi(), model, service,
+                                            resource, TaggingShapeUtils.TAG_RESOURCE_OPNAME, "tagApi");
         if (tagApi.isPresent()) {
-            OperationShape tagApiOperationShape = tagApi.get().asOperationShape().get();
             tagApiVerified = TaggingShapeUtils.isTagPropertyInInput(Optional.of(
-                                    tagApiOperationShape.getId()), model, resource, propertyBindingIndex)
-                                         && verifyTagApi(tagApiOperationShape, model, service, resource);
+                    tagApi.get().getId()), model, resource, propertyBindingIndex)
+                    && verifyTagApi(tagApi.get(), model, service, resource);
         }
 
-        Optional<ShapeId> untagApiId = taggableTrait.getUntagApi()
-            .map(api -> ShapeId.fromOptionalNamespace(service.getId().getNamespace(), api));
-        //If tagApi is specified in the model, it must be a valid reference
-        if (untagApiId.isPresent() && !model.getShape(untagApiId.get()).map(Shape::asOperationShape).isPresent()) {
-            events.add(error(resource, String.format("%s$untagApi must reference an operation shape.",
-                TaggableTrait.ID.toString())));
-        }
-        ShapeId resolvedUntagApiId = untagApiId.orElse(ShapeId.fromOptionalNamespace(service.getId().getNamespace(),
-                                                        TaggingShapeUtils.UNTAG_RESOURCE_OPNAME));
-        Optional<Shape> untagApi = model.getShape(resolvedUntagApiId);
+        Optional<OperationShape> untagApi = resolveTagOperation(events, taggableTrait.getUntagApi(), model, service,
+                resource, TaggingShapeUtils.UNTAG_RESOURCE_OPNAME, "untagApi");
         if (untagApi.isPresent()) {
-            OperationShape untagApiOperationShape = untagApi.get().asOperationShape().get();
-            untagApiVerified = verifyUntagApi(untagApiOperationShape, model, service, resource);
+            untagApiVerified = verifyUntagApi(untagApi.get(), model, service, resource);
         }
 
-        Optional<ShapeId> listTagsApiId = taggableTrait.getListTagsApi()
-            .map(api -> ShapeId.fromOptionalNamespace(service.getId().getNamespace(), api));
-        //If listTagApis is specified in the model, it must be a valid reference
-        if (listTagsApiId.isPresent()
-                && !model.getShape(listTagsApiId.get()).map(Shape::asOperationShape).isPresent()) {
-            events.add(error(resource, String.format("%s$listTagsApi must reference an operation shape.",
-                                            TaggableTrait.ID.toString())));
-        }
-        ShapeId resolvedListTagsApi = listTagsApiId.orElse(ShapeId.fromOptionalNamespace(service.getId().getNamespace(),
-                                                            TaggingShapeUtils.LIST_TAGS_OPNAME));
-        Optional<Shape> listTagsApi = model.getShape(resolvedListTagsApi);
+
+        Optional<OperationShape> listTagsApi = resolveTagOperation(events, taggableTrait.getListTagsApi(), model,
+                                                service, resource, TaggingShapeUtils.LIST_TAGS_OPNAME, "listTagsApi");
         if (listTagsApi.isPresent()) {
-            OperationShape listTagsApiOperationShape = listTagsApi.get().asOperationShape().get();
-            listTagsApiVerified = verifyListTagsApi(listTagsApiOperationShape, model, service, resource);
+            listTagsApiVerified = verifyListTagsApi(listTagsApi.get(), model, service, resource);
         }
 
         return tagApiVerified && untagApiVerified && listTagsApiVerified;
@@ -159,8 +152,8 @@ public final class TaggableResourceApiValidator extends AbstractValidator {
     ) {
         // Verify Tags map or list member but on the output.
         return exactlyOne(collectMemberTargetShapes(listTagsApi.getOutputShape(), model),
-                            memberEntry -> TaggingShapeUtils.isTagDesiredName(memberEntry.getKey().getMemberName())
-                                            && TaggingShapeUtils.verifyTagsShape(model, memberEntry.getValue()));
+                memberEntry -> TaggingShapeUtils.isTagDesiredName(memberEntry.getKey().getMemberName())
+                && TaggingShapeUtils.verifyTagsShape(model, memberEntry.getValue()));
     }
 
     private boolean verifyUntagApi(
@@ -172,8 +165,8 @@ public final class TaggableResourceApiValidator extends AbstractValidator {
         // Tag API has a tags property on its input AND has exactly one member targetting a tag shape with an
         // appropriate name.
         return exactlyOne(collectMemberTargetShapes(untagApi.getInputShape(), model),
-                            memberEntry -> TaggingShapeUtils.isTagKeysDesiredName(memberEntry.getKey().getMemberName())
-                                            && TaggingShapeUtils.verifyTagKeysShape(model, memberEntry.getValue()));
+                memberEntry -> TaggingShapeUtils.isTagKeysDesiredName(memberEntry.getKey().getMemberName())
+                && TaggingShapeUtils.verifyTagKeysShape(model, memberEntry.getValue()));
     }
 
     private boolean verifyTagApi(
@@ -182,23 +175,31 @@ public final class TaggableResourceApiValidator extends AbstractValidator {
         ServiceShape service,
         ResourceShape resource
     ) {
-        // Tag API has has exactly one member targetting a tag list or map shape with an appropriate name.
+        // Tag API has exactly one member targetting a tag list or map shape with an appropriate name.
         return exactlyOne(collectMemberTargetShapes(tagApi.getInputShape(), model),
-                            memberEntry -> TaggingShapeUtils.isTagDesiredName(memberEntry.getKey().getMemberName())
-                                            && TaggingShapeUtils.verifyTagsShape(model, memberEntry.getValue()));
+                memberEntry -> TaggingShapeUtils.isTagDesiredName(memberEntry.getKey().getMemberName())
+                && TaggingShapeUtils.verifyTagsShape(model, memberEntry.getValue()));
     }
 
     private boolean exactlyOne(
         Collection<Map.Entry<MemberShape, Shape>> collection,
         Predicate<Map.Entry<MemberShape, Shape>> test
     ) {
-         return collection.stream().filter(test).count() == 1;
+        int count = 0;
+        for (Map.Entry<MemberShape, Shape> entry : collection) {
+            if (test.test(entry)) {
+                ++count;
+            }
+        }
+        return count == 1;
     }
 
     private Collection<Map.Entry<MemberShape, Shape>> collectMemberTargetShapes(ShapeId ioShapeId, Model model) {
-        return model.expectShape(ioShapeId).members().stream()
-                .map(memberShape ->
-                    new AbstractMap.SimpleImmutableEntry<>(memberShape, model.expectShape(memberShape.getTarget())))
-                .collect(Collectors.toSet());
+        Collection<Map.Entry<MemberShape, Shape>> collection = new LinkedList<>();
+        for (MemberShape memberShape : model.expectShape(ioShapeId).members()) {
+            collection.add(new AbstractMap.SimpleImmutableEntry<>(
+                    memberShape, model.expectShape(memberShape.getTarget())));
+        }
+        return collection;
     }
 }

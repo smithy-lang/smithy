@@ -17,6 +17,7 @@ package software.amazon.smithy.aws.traits.tagging;
 
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
@@ -24,13 +25,11 @@ import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.TraitService;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
-import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
- *
+ * Marks a resource shape as taggable for further model validation.
  */
-@SmithyUnstableApi
 public final class TaggableTrait extends AbstractTrait implements ToSmithyBuilder<TaggableTrait> {
     public static final ShapeId ID = ShapeId.from("aws.api#taggable");
     private final String property;
@@ -155,20 +154,8 @@ public final class TaggableTrait extends AbstractTrait implements ToSmithyBuilde
 
         @Override
         public TaggableTrait createTrait(ShapeId target, Node value) {
-            ObjectNode objectNode = value.expectObjectNode();
-            String property = objectNode.getStringMemberOrDefault("property", null);
-            String tagApi = objectNode.getStringMemberOrDefault("tagApi", null);
-            String untagApi = objectNode.getStringMemberOrDefault("untagApi", null);
-            String listTagsApi = objectNode.getStringMemberOrDefault("listTagsApi", null);
-            Boolean supportsSystemTags = objectNode.getBooleanMemberOrDefault("supportsSystemTags", null);
-            TaggableTrait result = builder()
-                    .property(property)
-                    .tagApi(tagApi)
-                    .untagApi(untagApi)
-                    .listTagsApi(listTagsApi)
-                    .supportsSystemTags(supportsSystemTags)
-                    .sourceLocation(value)
-                    .build();
+            NodeMapper nodeMapper = new NodeMapper();
+            TaggableTrait result = nodeMapper.deserialize(value, TaggableTrait.class);
             result.setNodeCache(value);
             return result;
         }
