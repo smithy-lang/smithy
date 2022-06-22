@@ -21,13 +21,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.node.ObjectNode.Builder;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitFactory;
@@ -36,13 +34,13 @@ public class TaggableTraitTest {
     @Test
     public void loadsTrait() {
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Map<StringNode, Node> values = new HashMap<>();
-        values.put(Node.from("property"), Node.from("propertyName"));
-        values.put(Node.from("tagApi"), Node.from("TagIt"));
-        values.put(Node.from("untagApi"), Node.from("Untag"));
-        values.put(Node.from("listTagsApi"), Node.from("ListTags"));
-        values.put(Node.from("supportsSystemTags"), Node.from(false));
-        ObjectNode objectNode = Node.objectNode(values);
+        Builder objectNodeBuilder = Node.objectNodeBuilder();
+        objectNodeBuilder.withMember("property", "propertyName");
+        objectNodeBuilder.withMember("tagApi", "TagIt");
+        objectNodeBuilder.withMember("untagApi", "Untag");
+        objectNodeBuilder.withMember("listTagsApi", "ListTags");
+        objectNodeBuilder.withMember("supportsSystemTags", false);
+        ObjectNode objectNode = objectNodeBuilder.build();
         Optional<Trait> trait = provider.createTrait(ShapeId.from("aws.api#taggable"),
             ShapeId.from("ns.qux#foo"), objectNode);
 
@@ -64,8 +62,7 @@ public class TaggableTraitTest {
     @Test
     public void loadsEmptySpecificationDefaults() {
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Map<StringNode, Node> values = new HashMap<>();
-        ObjectNode objectNode = Node.objectNode(values);
+        ObjectNode objectNode = Node.objectNode();
         Optional<Trait> trait = provider.createTrait(ShapeId.from("aws.api#taggable"),
             ShapeId.from("ns.qux#foo"), objectNode);
 

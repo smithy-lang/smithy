@@ -196,11 +196,10 @@ final class TaggingShapeUtils {
     ) {
         Optional<String> property = resource.expectTrait(TaggableTrait.class).getProperty();
         if (property.isPresent()) {
-            String tagPropertyName = property.get();
             if (operationId.isPresent()) {
                 OperationShape operation = model.expectShape(operationId.get()).asOperationShape().get();
                 Shape inputShape = model.expectShape(operation.getInputShape());
-                return isTagPropertyInShape(tagPropertyName, inputShape, propertyBindingIndex);
+                return isTagPropertyInShape(property.get(), inputShape, propertyBindingIndex);
             }
         }
         return false;
@@ -214,11 +213,10 @@ final class TaggingShapeUtils {
     ) {
         Optional<String> property = resource.expectTrait(TaggableTrait.class).getProperty();
         if (property.isPresent()) {
-            String tagPropertyName = property.get();
             if (operationId.isPresent()) {
                 OperationShape operation = model.expectShape(operationId.get()).asOperationShape().get();
                 Shape outputShape = model.expectShape(operation.getOutputShape());
-                return isTagPropertyInShape(tagPropertyName, outputShape, propertyBindingIndex);
+                return isTagPropertyInShape(property.get(), outputShape, propertyBindingIndex);
             }
         }
         return false;
@@ -231,7 +229,7 @@ final class TaggingShapeUtils {
     ) {
         for (MemberShape member : shape.members()) {
             Optional<Boolean> isMatch = propertyBindingIndex.getPropertyName(member.getId())
-            .map(name -> name.equals(tagPropertyName));
+                    .map(name -> name.equals(tagPropertyName));
             if (isMatch.isPresent() && isMatch.get()) {
                 return true;
             }
