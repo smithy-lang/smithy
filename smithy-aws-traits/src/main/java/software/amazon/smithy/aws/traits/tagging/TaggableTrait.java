@@ -33,9 +33,9 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class TaggableTrait extends AbstractTrait implements ToSmithyBuilder<TaggableTrait> {
     public static final ShapeId ID = ShapeId.from("aws.api#taggable");
     private final String property;
-    private final String tagApi;
-    private final String untagApi;
-    private final String listTagsApi;
+    private final ShapeId tagApi;
+    private final ShapeId untagApi;
+    private final ShapeId listTagsApi;
     private final Boolean supportsSystemTags;
 
     private TaggableTrait(Builder builder) {
@@ -47,49 +47,59 @@ public final class TaggableTrait extends AbstractTrait implements ToSmithyBuilde
         supportsSystemTags = builder.supportsSystemTags;
     }
 
+    /**
+     * Gets a boolean indicating whether or not the service supports the resource carrying system tags.
+     *
+     * @return Returns true if the service supports the resource carrying system tags.
+     *
+     */
     public Optional<Boolean> getSupportsSystemTags() {
         return Optional.ofNullable(supportsSystemTags);
     }
 
-    public Optional<String> getListTagsApi() {
+    /**
+     * Gets the operation referenced that satisfies the ListTagsForResource behavior.
+     *
+     * @return Return the ShapeId of the operation specified for the ListTags API.
+     */
+    public Optional<ShapeId> getListTagsApi() {
         return Optional.ofNullable(listTagsApi);
     }
 
-    public Optional<String> getUntagApi() {
+    /**
+     * Gets the operation referenced that satisfies the UntagResource behavior.
+     *
+     * @return Return the ShapeId of the operation specified for the Untag API.
+     */
+    public Optional<ShapeId> getUntagApi() {
         return Optional.ofNullable(untagApi);
     }
 
-    public Optional<String> getTagApi() {
+    /**
+     * Gets the operation referenced that satisfies the TagResource behavior.
+     *
+     * @return Return the ShapeId of the operation specified for the Tag API.
+     */
+    public Optional<ShapeId> getTagApi() {
         return Optional.ofNullable(tagApi);
     }
 
+    /**
+     * Gets the rame of the property that represents the tags on the resource, if any.
+     *
+     * @return Return the name of the property that represents the tags of the resource.
+     */
     public Optional<String> getProperty() {
         return Optional.ofNullable(property);
-    }
-
-    public Boolean resolveSupportsSystemTags() {
-        return supportsSystemTags != null ? supportsSystemTags : Boolean.TRUE;
-    }
-
-    public String resolveListTagsApi() {
-        return listTagsApi != null ? listTagsApi : "ListTagsForResource";
-    }
-
-    public String resolveUntagApi() {
-        return untagApi != null ? untagApi : "UntagResource";
-    }
-
-    public String resolveTagApi() {
-        return tagApi != null ? tagApi : "TagResource";
     }
 
     @Override
     protected Node createNode() {
         return new ObjectNode(MapUtils.of(), getSourceLocation())
                 .withOptionalMember("property", getProperty().map(Node::from))
-                .withOptionalMember("tagApi", getTagApi().map(Node::from))
-                .withOptionalMember("untagApi", getUntagApi().map(Node::from))
-                .withOptionalMember("listTagsApi", getListTagsApi().map(Node::from))
+                .withOptionalMember("tagApi", getTagApi().map(id -> Node.from(id.toString())))
+                .withOptionalMember("untagApi", getUntagApi().map(id -> Node.from(id.toString())))
+                .withOptionalMember("listTagsApi", getListTagsApi().map(id -> Node.from(id.toString())))
                 .withOptionalMember("supportsSystemTags", getSupportsSystemTags().map(Node::from));
     }
 
@@ -110,9 +120,9 @@ public final class TaggableTrait extends AbstractTrait implements ToSmithyBuilde
 
     public static final class Builder extends AbstractTraitBuilder<TaggableTrait, Builder> {
         private String property;
-        private String tagApi;
-        private String untagApi;
-        private String listTagsApi;
+        private ShapeId tagApi;
+        private ShapeId untagApi;
+        private ShapeId listTagsApi;
         private Boolean supportsSystemTags;
 
         public Builder property(String property) {
@@ -120,17 +130,17 @@ public final class TaggableTrait extends AbstractTrait implements ToSmithyBuilde
             return this;
         }
 
-        public Builder tagApi(String tagApi) {
+        public Builder tagApi(ShapeId tagApi) {
             this.tagApi = tagApi;
             return this;
         }
 
-        public Builder untagApi(String untagApi) {
+        public Builder untagApi(ShapeId untagApi) {
             this.untagApi = untagApi;
             return this;
         }
 
-        public Builder listTagsApi(String listTagsApi) {
+        public Builder listTagsApi(ShapeId listTagsApi) {
             this.listTagsApi = listTagsApi;
             return this;
         }

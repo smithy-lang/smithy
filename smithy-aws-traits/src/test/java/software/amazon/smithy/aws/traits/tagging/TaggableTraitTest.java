@@ -36,9 +36,9 @@ public class TaggableTraitTest {
         TraitFactory provider = TraitFactory.createServiceFactory();
         Builder objectNodeBuilder = Node.objectNodeBuilder();
         objectNodeBuilder.withMember("property", "propertyName");
-        objectNodeBuilder.withMember("tagApi", "TagIt");
-        objectNodeBuilder.withMember("untagApi", "Untag");
-        objectNodeBuilder.withMember("listTagsApi", "ListTags");
+        objectNodeBuilder.withMember("tagApi", "ns.qux#TagIt");
+        objectNodeBuilder.withMember("untagApi", "ns.qux#Untag");
+        objectNodeBuilder.withMember("listTagsApi", "ns.qux#ListTags");
         objectNodeBuilder.withMember("supportsSystemTags", false);
         ObjectNode objectNode = objectNodeBuilder.build();
         Optional<Trait> trait = provider.createTrait(ShapeId.from("aws.api#taggable"),
@@ -50,10 +50,10 @@ public class TaggableTraitTest {
 
         assertTrue(taggableTrait.getProperty().isPresent());
         assertEquals("propertyName", taggableTrait.getProperty().get());
-        assertEquals("TagIt", taggableTrait.resolveTagApi());
-        assertEquals("Untag", taggableTrait.resolveUntagApi());
-        assertEquals("ListTags", taggableTrait.resolveListTagsApi());
-        assertFalse(taggableTrait.resolveSupportsSystemTags());
+        assertEquals(ShapeId.from("ns.qux#TagIt"), taggableTrait.getTagApi().get());
+        assertEquals(ShapeId.from("ns.qux#Untag"), taggableTrait.getUntagApi().get());
+        assertEquals(ShapeId.from("ns.qux#ListTags"), taggableTrait.getListTagsApi().get());
+        assertFalse(taggableTrait.getSupportsSystemTags().get());
 
         assertThat(taggableTrait.toNode(), equalTo(objectNode));
         assertThat(taggableTrait.toBuilder().build(), equalTo(taggableTrait));
@@ -71,10 +71,10 @@ public class TaggableTraitTest {
         TaggableTrait taggableTrait = (TaggableTrait) trait.get();
 
         assertFalse(taggableTrait.getProperty().isPresent());
-        assertEquals("TagResource", taggableTrait.resolveTagApi());
-        assertEquals("UntagResource", taggableTrait.resolveUntagApi());
-        assertEquals("ListTagsForResource", taggableTrait.resolveListTagsApi());
-        assertTrue(taggableTrait.resolveSupportsSystemTags());
+        assertEquals(Optional.empty(), taggableTrait.getTagApi());
+        assertEquals(Optional.empty(), taggableTrait.getUntagApi());
+        assertEquals(Optional.empty(), taggableTrait.getListTagsApi());
+        assertEquals(Optional.empty(), taggableTrait.getSupportsSystemTags());
         assertThat(taggableTrait.toNode(), equalTo(objectNode));
         assertThat(taggableTrait.toBuilder().build(), equalTo(taggableTrait));
     }

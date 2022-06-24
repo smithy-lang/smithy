@@ -222,7 +222,7 @@ structure tagEnabled {}
     /// Points to an operation designated for a tagging APi
 @idRef(
     failWhenMissing: true
-    selector: "operation"
+    selector: "resource > operation"
 )
 string TagOperationReference
 

@@ -89,15 +89,13 @@ public final class TaggableResourceValidator extends AbstractValidator {
 
     private Optional<OperationShape> resolveTagOperation(
         List<ValidationEvent> events,
-        Optional<String> operation,
+        Optional<ShapeId> tagApiId,
         Model model,
         ServiceShape service,
         ResourceShape resource,
         String defaultOpName,
         String fieldName
     ) {
-        Optional<ShapeId> tagApiId = operation
-            .map(api -> ShapeId.fromOptionalNamespace(service.getId().getNamespace(), api));
         // If operation is specified in the model, it must be a valid reference.
         if (tagApiId.isPresent() && !model.getShape(tagApiId.get()).map(Shape::asOperationShape).isPresent()) {
             events.add(error(resource, String.format("%s$%s must reference an operation shape.",
