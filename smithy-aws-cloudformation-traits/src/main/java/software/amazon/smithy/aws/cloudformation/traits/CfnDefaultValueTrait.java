@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -20,18 +20,23 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.StringTrait;
 
 /**
- * Indicates that the CloudFormation property generated from this member is a
+ * Indicates that the CloudFormation property generated from this member has a
  * default value to be set for a property if no value is provided.
- **/
-
+ */
 public final class CfnDefaultValueTrait extends StringTrait {
     public static final ShapeId ID = ShapeId.from("aws.cloudformation#cfnDefaultValue");
 
-    public CfnDefaultValueTrait(String value, SourceLocation sourceLocation) { super(ID, value, sourceLocation); }
+    public CfnDefaultValueTrait(String value, SourceLocation sourceLocation) {
+        super(ID, value, sourceLocation);
+    }
 
-    public CfnDefaultValueTrait(String value) { this(value, SourceLocation.NONE); }
+    public CfnDefaultValueTrait(String value) {
+        this(value, SourceLocation.NONE);
+    }
 
     public static final class Provider extends StringTrait.Provider<CfnDefaultValueTrait> {
-        public Provider() { super(ID, CfnDefaultValueTrait::new); }
+        public Provider() {
+            super(ID, CfnDefaultValueTrait::new);
+        }
     }
 }
