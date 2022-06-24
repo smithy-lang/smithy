@@ -49,7 +49,7 @@ public class Upgrade1to2CommandTest {
         Path expectedPath = parentDir.resolve(expectedFileName);
 
         Model model = Model.assembler().addImport(initialPath).assemble().unwrap();
-        String actual = new Upgrade1to2Command().upgradeFile(model, initialPath);
+        String actual = new Upgrade1to2Command("smithy").upgradeFile(model, initialPath);
         String expected = IoUtils.readUtf8File(expectedPath);
         assertThat(actual, equalTo(expected));
     }

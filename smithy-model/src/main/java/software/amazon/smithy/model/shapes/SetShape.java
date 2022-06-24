@@ -42,7 +42,7 @@ public final class SetShape extends ListShape {
 
     @Override
     public Builder toBuilder() {
-        return (Builder) builder().from(this).member(getMember());
+        return (Builder) updateBuilder(builder()).member(getMember());
     }
 
     @Override
