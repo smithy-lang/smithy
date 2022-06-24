@@ -188,7 +188,8 @@ list StringList {
 
 @length(min: 1)
 @private
-set ChecksumAlgorithmSet {
+@uniqueItems
+list ChecksumAlgorithmSet {
     member: ChecksumAlgorithm
 }
 

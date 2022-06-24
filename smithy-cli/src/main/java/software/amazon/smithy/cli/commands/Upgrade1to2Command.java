@@ -39,10 +39,10 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.build.ProjectionResult;
 import software.amazon.smithy.build.SmithyBuild;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
+import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
-import software.amazon.smithy.cli.Command;
-import software.amazon.smithy.cli.SmithyCli;
+import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.loader.ModelAssembler;
@@ -60,14 +60,13 @@ import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.transform.ModelTransformer;
-import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.SimpleParser;
 import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
 @SmithyInternalApi
-public final class Upgrade1to2Command implements Command {
+public final class Upgrade1to2Command extends SimpleCommand {
     private static final Logger LOGGER = Logger.getLogger(Upgrade1to2Command.class.getName());
     private static final Pattern VERSION_1 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"1\\.0\"\\s*$");
     private static final Pattern VERSION_2 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"2\\.0\"\\s*$");
@@ -80,6 +79,40 @@ public final class Upgrade1to2Command implements Command {
             ShapeType.DOUBLE,
             ShapeType.BOOLEAN);
 
+    public Upgrade1to2Command(String parentCommandName) {
+        super(parentCommandName);
+    }
+
+    private static final class Options implements ArgumentReceiver {
+        private String config = "smithy-build.json";
+
+        @Override
+        public boolean testOption(String name) {
+            return false;
+        }
+
+        @Override
+        public Consumer<String> testParameter(String name) {
+            switch (name) {
+                case "--config":
+                case "-c":
+                    return c -> this.config = c;
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public void registerHelp(HelpPrinter printer) {
+            printer.param("--config", "-c", "CONFIG_PATH", "Path to smithy-build.json configuration.");
+        }
+    }
+
+    @Override
+    protected List<ArgumentReceiver> createArgumentReceivers() {
+        return Arrays.asList(new Options(), new BuildOptions());
+    }
+
     @Override
     public String getName() {
         return "upgrade-1-to-2";
@@ -91,35 +124,14 @@ public final class Upgrade1to2Command implements Command {
     }
 
     @Override
-    public Parser getParser() {
-        return Parser.builder()
-                .repeatedParameter("--config", "-c",
-                        "Path to smithy-build.json configuration. Defaults to 'smithy-build.json'.")
-                .option(SmithyCli.DISCOVER, "-d", "Enables model discovery, merging in models found inside of jars")
-                .parameter(SmithyCli.DISCOVER_CLASSPATH, "Enables model discovery using a custom classpath for models")
-                .positional("<MODELS>", "Path to Smithy models or directories")
-                .build();
-    }
+    protected int run(Arguments arguments, Env env, List<String> models) {
+        Options commandOptions = arguments.getReceiver(Options.class);
 
-    @Override
-    public void execute(Arguments arguments, ClassLoader classLoader) {
-        upgradeFiles(
-                arguments.positionalArguments(),
-                arguments.parameter(SmithyCli.DISCOVER_CLASSPATH, null),
-                arguments.parameter("--config"),
-                classLoader
-        );
-    }
-
-    private void upgradeFiles(
-            List<String> modelFilesOrDirectories,
-            String discoverPath,
-            String config,
-            ClassLoader classLoader
-    ) {
         // Use the provided smithy-build.json file
         SmithyBuildConfig.Builder configBuilder = SmithyBuildConfig.builder();
-        configBuilder.load(Paths.get(config).toAbsolutePath());
+        if (Files.exists(Paths.get(commandOptions.config))) {
+            configBuilder.load(Paths.get(commandOptions.config).toAbsolutePath());
+        }
 
         // Set an output into a temporary directory - we don't actually care about
         // the serialized output.
@@ -131,16 +143,9 @@ public final class Upgrade1to2Command implements Command {
         }
         configBuilder.outputDirectory(tempDir.toString());
 
-        Model initialModel = CommandUtils.buildModel(
-                modelFilesOrDirectories,
-                classLoader,
-                Severity.DANGER,
-                false,
-                discoverPath,
-                true
-        );
+        Model initialModel = CommandUtils.buildModel(arguments, models, env, env.stderr(), true);
 
-        SmithyBuild smithyBuild = SmithyBuild.create(classLoader)
+        SmithyBuild smithyBuild = SmithyBuild.create(env.classLoader())
                 .config(configBuilder.build())
                 // Only build the source projection
                 .projectionFilter(name -> name.equals("source"))
@@ -158,9 +163,11 @@ public final class Upgrade1to2Command implements Command {
         smithyBuild.build(resultConsumer, resultConsumer);
         Model finalizedModel = resultConsumer.getResult().getModel();
 
-        for (Path modelFile : resolveModelFiles(finalizedModel, modelFilesOrDirectories)) {
+        for (Path modelFile : resolveModelFiles(finalizedModel, models)) {
             writeUpgradedFile(finalizedModel, modelFile);
         }
+
+        return 0;
     }
 
     private List<Path> resolveModelFiles(Model model, List<String> modelFilesOrDirectories) {
