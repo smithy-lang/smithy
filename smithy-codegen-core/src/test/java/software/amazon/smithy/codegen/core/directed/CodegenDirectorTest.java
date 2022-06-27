@@ -178,7 +178,6 @@ public class CodegenDirectorTest {
         runner.run();
 
         assertThat(testDirected.generatedShapes, contains(
-                ShapeId.from("smithy.example#Foo"),
                 ShapeId.from("smithy.example#D"),
                 ShapeId.from("smithy.example#C"),
                 ShapeId.from("smithy.example#B"),
@@ -186,7 +185,8 @@ public class CodegenDirectorTest {
                 ShapeId.from("smithy.example#FooOperationOutput"),
                 ShapeId.from("smithy.example#RecursiveA"),
                 ShapeId.from("smithy.example#RecursiveB"),
-                ShapeId.from("smithy.example#FooOperationInput")
+                ShapeId.from("smithy.example#FooOperationInput"),
+                ShapeId.from("smithy.example#Foo")
         ));
     }
 }

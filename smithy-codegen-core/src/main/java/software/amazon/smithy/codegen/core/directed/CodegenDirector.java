@@ -63,7 +63,7 @@ public final class CodegenDirector<
         C extends CodegenContext<S, W, I>,
         S> {
 
-    private static final Logger LOGGER = Logger.getLogger(DirectedCodegen.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CodegenDirector.class.getName());
 
     private Class<I> integrationClass;
     private ShapeId service;
@@ -278,10 +278,12 @@ public final class CodegenDirector<
 
         registerInterceptors(context, integrations);
 
-        LOGGER.finest(() -> "Generating service " + serviceShape.getId());
-        directedCodegen.generateService(new GenerateServiceDirective<>(context, serviceShape));
+        LOGGER.fine("All setup done. Beginning code generation");
 
         generateShapesInService(context, serviceShape);
+
+        LOGGER.finest(() -> "Generating service " + serviceShape.getId());
+        directedCodegen.generateService(new GenerateServiceDirective<>(context, serviceShape));
 
         CustomizeDirective<C, S> postProcess = new CustomizeDirective<>(context, serviceShape);
 
