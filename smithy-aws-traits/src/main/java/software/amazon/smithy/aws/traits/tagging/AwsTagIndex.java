@@ -73,38 +73,115 @@ public final class AwsTagIndex implements KnowledgeIndex {
         }
     }
 
+    public static AwsTagIndex of(Model model) {
+        return new AwsTagIndex(model);
+    }
+
+    /**
+     * Checks if the given ShapeID references a resource shape that meets tag on create criteria.
+     * If the given ShapeID does not reference a resource shape, will always return false.
+     *
+     * Tag on create is satisfied when a resource shape has a property representing tags via
+     * the {@see TaggableTrait}, and that property is an input on the resource's create lifecycle
+     * operation.
+     *
+     * @param resourceId ShapeID of the resource to check.
+     * @return true iff the resourceId references a resource shape that has tag-on create behavior.
+     */
     public boolean isResourceTagOnCreate(ShapeId resourceId) {
         return resourceIsTagOnCreate.contains(resourceId);
     }
 
+    /**
+     * Checks if the given ShapeID references a resource shape that meets tag on update criteria.
+     * If the given ShapeID does not reference to a resource shape, will always return false.
+     *
+     * Tag on update is satisfied when a resource shape has a property representing tags via
+     * the {@see TaggableTrait}, and that property is an input on the resource's create lifecycle
+     * operation.
+     *
+     * @param resourceId ShapeID of the resource to check.
+     * @return true iff the resourceId references a resource shape that has tag-on update behavior.
+     */
     public boolean isResourceTagOnUpdate(ShapeId resourceId) {
         return resourceIsTagOnUpdate.contains(resourceId);
     }
 
+    /**
+     * Checks if a given ShapeID references a service shape that meets the criteria for having the three
+     * expected service-wide tagging APIs.
+     *
+     * @param serviceShapeId ShapeID of the shape to check.
+     * @return true iff the serviceShapeId references a service shape that has the necessary tagging APIs.
+     */
     public boolean serviceHasTagApis(ShapeId serviceShapeId) {
         return servicesWithAllTagOperations.contains(serviceShapeId);
     }
 
+    /**
+     * Gets the ShapeID of the TagResource operation on the shape if one is found by name.
+     *
+     * @param serviceId ShapeID of the service shape to retrieve the qualifying TagResource operation for.
+     * @return The ShapeID of a qualifying TagResource operation if one is found. Returns an empty optional otherwise.
+     */
     public Optional<ShapeId> getTagResourceOperation(ShapeId serviceId) {
         return Optional.ofNullable(serviceToTagOperation.get(serviceId));
     }
 
+    /**
+     * Gets the ShapeID of the UntagResource operation on the shape if one is found meeting the criteria.
+     *
+     * @param serviceId ShapeID of the service shape to retrieve the qualifying UntagResource operation for.
+     * @return The ShapeID of a qualifying UntagResource operation if one is found. Returns an empty optional
+     *   otherwise.
+     */
     public Optional<ShapeId> getUntagResourceOperation(ShapeId serviceId) {
         return Optional.ofNullable(serviceToUntagOperation.get(serviceId));
     }
 
+    /**
+     * Gets the ShapeID of the ListTagsForResource operation on the shape if one is found meeting the criteria.
+     *
+     * @param serviceId ShapeID of the service shape to retrieve the qualifying ListTagsForResource operation for.
+     * @return The ShapeID of a qualifying ListTagsForResource operation if one is found. Returns an empty optional
+     *   otherwise.
+     */
     public Optional<ShapeId> getListTagsForResourceOperation(ShapeId serviceId) {
         return Optional.ofNullable(serviceToListTagsOperation.get(serviceId));
     }
 
+    /**
+     * Gets the verification result of whether or not the service has a named TagResource operation that meets the
+     * expected critiera for TagResource.
+     *
+     * @param serviceId the ShapeID of the service shape the TagResource operation should be bound to.
+     * @return True iff the service shape has a service bound operation named 'TagResource' that also satisfies
+     *   the criteria for a valid TagResource operation.
+     */
     public boolean serviceHasValidTagResourceOperation(ShapeId serviceId) {
         return serviceTagOperationIsValid.contains(serviceId);
     }
 
+    /**
+     * Gets the verification result of whether or not the service has a named UntagResource operation that meets the
+     * expected critiera for UntagResource.
+     *
+     * @param serviceId the ShapeID of the service shape the UntagResource operation should be bound to.
+     * @return True iff the service shape has a service bound operation named 'UntagResource' that also satisfies
+     *   the criteria for a valid UntagResource operation.
+     */
     public boolean serviceHasValidUntagResourceOperation(ShapeId serviceId) {
         return serviceUntagOperationIsValid.contains(serviceId);
     }
 
+    /**
+     * Gets the verification result of whether or not the service has a named ListTagsForResource operation that meets
+     * the expected critiera for ListTagsForResource.
+     *
+     * @param serviceId the ShapeID of the service shape the ListTagsForResource operation should be bound to.
+     * @return True iff the service shape has a service bound operation named 'ListTagsForResource' that also satisfies
+     *   the criteria for a valid ListTagsForResource operation.
+     */
     public boolean serviceHasValidListTagsForResourceOperation(ShapeId serviceId) {
         return serviceListTagsOperationIsValid.contains(serviceId);
     }
@@ -152,9 +229,5 @@ public final class AwsTagIndex implements KnowledgeIndex {
         }
 
         return hasTagApi && hasUntagApi && hasListTagsApi;
-    }
-
-    public static AwsTagIndex of(Model model) {
-        return new AwsTagIndex(model);
     }
 }
