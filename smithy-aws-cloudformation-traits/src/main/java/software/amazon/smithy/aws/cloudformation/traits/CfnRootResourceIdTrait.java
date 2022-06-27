@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -22,16 +22,24 @@ import software.amazon.smithy.model.traits.AnnotationTrait;
 
 /**
  * Indicates that the CloudFormation property generated from this member is a
- * cfnRootResourceID which is used as the root ID to find child container resources.
+ * cfnRootResourceID. This cfnRootResourceID trait should be included
+ * in the List Operation for a parent container resource so that
+ * all child resources can be listed as well.
  */
 public final class CfnRootResourceIdTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("aws.cloudformation#cfnRootResourceID");
 
-    public CfnRootResourceIdTrait(ObjectNode node) { super(ID, node); }
+    public CfnRootResourceIdTrait(ObjectNode node) {
+        super(ID, node);
+    }
 
-    public CfnRootResourceIdTrait() { this(Node.objectNode()); }
+    public CfnRootResourceIdTrait() {
+        this(Node.objectNode());
+    }
 
     public static final class Provider extends AnnotationTrait.Provider<CfnRootResourceIdTrait> {
-        public Provider() { super(ID, CfnRootResourceIdTrait::new); }
+        public Provider() {
+            super(ID, CfnRootResourceIdTrait::new);
+        }
     }
 }
