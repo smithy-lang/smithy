@@ -1256,7 +1256,7 @@ is equivalent to the following JSON AST model:
                 "type": "structure",
                 "traits": {
                     "smithy.api#trait": {},
-                    "smithy.api#documentation": "This is documentation about a trait shapes.\n  More docs here."
+                    "smithy.api#documentation": "This is documentation about a trait shape.\n  More docs here."
                 }
             }
         }
@@ -1877,7 +1877,7 @@ is removed from a text block. The following example uses "." to denote spaces:
 
     """
     ..<div>
-    ....<p>Hi\\n....bar</p>
+    ....<p>Hi\n....bar</p>
     ..</div>
     .."""
 
