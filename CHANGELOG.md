@@ -1,5 +1,54 @@
 # Smithy Changelog
 
+## 1.22.0 (2022-06-29)
+
+### Breaking changes
+
+* Disallowed `@sensitive` trait on members. It must be applied the shape targeted by members. ([#1226](https://github.com/awslabs/smithy/pull/1226))
+* Deprecated `set` in favor of `@uniqueItems`. `@uniqueItems` can no longer target `float`, `double` and `document`. ([#1278](https://github.com/awslabs/smithy/pull/1278))
+
+### Features
+
+* Added `breakingChanges` property to `@trait` to specify more complex backward compatibility rules. ([#1193](https://github.com/awslabs/smithy/pull/1193))
+* Added automatic casing detection to CamelCaseValidator. ([#1217](https://github.com/awslabs/smithy/pull/1217))
+* Added `--quiet` flag to all CLI commands. ([#1257](https://github.com/awslabs/smithy/pull/1257))
+* Added CodeWriter support to pull named parameters from CodeSections. ([#1256](https://github.com/awslabs/smithy/pull/1256))
+* Added stack trace comment support to code writer. ([#1198](https://github.com/awslabs/smithy/pull/1198))
+* Added an automatic topological sorting of shape in DirectedCodegen. ([#1214](https://github.com/awslabs/smithy/pull/1214))
+* Updated CodegenDirector to generate shapes before generating service. ([#1289](https://github.com/awslabs/smithy/pull/1289))
+* Updated CodegenDirector to automatically use `SymbolProvider.cache`. ([#1233](https://github.com/awslabs/smithy/pull/1233))
+* Made SmithyIntegrations available from CodegenContext. ([#1237](https://github.com/awslabs/smithy/pull/1237))
+* Added helper to convert `Symbol` to `SymbolReference`. ([#1220](https://github.com/awslabs/smithy/pull/1220))
+* Updated NodeDiff to sort results to make them easier to understand. ([#1238](https://github.com/awslabs/smithy/pull/1238))
+* Implemented `Comparable` in `SourceLocation`. ([#1192](https://github.com/awslabs/smithy/pull/1192))
+* Added missing validation to ensure that unions have at least one member. ([#1229](https://github.com/awslabs/smithy/pull/1229))
+* Added validation to forbid impossibly recursive shapes. ([#1200](https://github.com/awslabs/smithy/pull/1200),
+  [#1212](https://github.com/awslabs/smithy/pull/1212), [#1253](https://github.com/awslabs/smithy/pull/1253),
+  [#1269](https://github.com/awslabs/smithy/pull/1269))
+* Added validation to warn when HTTP 204/205 responses have bodies. ([#1254](https://github.com/awslabs/smithy/pull/1254),
+  [#1276](https://github.com/awslabs/smithy/pull/1276))
+* Added validation to forbid sparse maps with httpPrefixHeaders. ([#1268](https://github.com/awslabs/smithy/pull/1268))
+* Added ability to serialize the prelude. ([#1275](https://github.com/awslabs/smithy/pull/1275))
+* Added protocol tests for httpResponseCode. ([#1241](https://github.com/awslabs/smithy/pull/1241))
+
+### Bug fixes
+
+* Enabled the PostUnionWithJsonName protocol test. ([#1239](https://github.com/awslabs/smithy/pull/1239))
+* Fixed the MalformedAcceptWithGenericString compliance test. ([#1243](https://github.com/awslabs/smithy/pull/1243))
+
+### Documentation
+
+* Added definition for value equality for `@uniqueItems`. ([#1278](https://github.com/awslabs/smithy/pull/1278))
+* Added documentation for Smithy Server Generator for TypeScript. ([#1119](https://github.com/awslabs/smithy/pull/1119))
+* Added link to Smithy Diff from Evolving Models guide. ([#1208](https://github.com/awslabs/smithy/pull/1208))
+* Fixed constraint traits doc regarding non-structure members. ([#1205](https://github.com/awslabs/smithy/pull/1205))
+* Fixed typo in `uniqueItems` warning. ([#1201](https://github.com/awslabs/smithy/pull/1201))
+* Clarified `@deprecated` javadocs in `smithy-codegen-core`. ([#1197](https://github.com/awslabs/smithy/pull/1197))
+* Clarified Selectors documentation. ([#1196](https://github.com/awslabs/smithy/pull/1196))
+* Clarified meaning of Language in implementations. ([#1191](https://github.com/awslabs/smithy/pull/1191))
+* Clarified that constraint traits cascade for all members. ([#1205](https://github.com/awslabs/smithy/pull/1205))
+* Removed jsonName note from awsJson protocols. ([#1279](https://github.com/awslabs/smithy/pull/1279))
+
 ## 1.21.0 (2022-04-13)
 
 ### Features
