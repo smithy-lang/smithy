@@ -81,7 +81,7 @@ public class NodeParserTest {
         Node result = Node.parse("1.5");
 
         assertThat(result.isNumberNode(), is(true));
-        assertThat(result.expectNumberNode().getValue(), equalTo(new BigDecimal("1.5")));
+        assertThat(result.expectNumberNode().getValue(), equalTo(1.5));
         assertThat(result.getSourceLocation().getLine(), is(1));
         assertThat(result.getSourceLocation().getColumn(), is(1));
     }

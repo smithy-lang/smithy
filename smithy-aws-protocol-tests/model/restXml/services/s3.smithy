@@ -460,6 +460,5 @@ string Token
 
 enum BucketLocationConstraint {
     @suppress(["EnumShape"])
-    @enumValue("us-west-2")
-    us_west_2
+    us_west_2 = "us-west-2"
 }

@@ -4,24 +4,18 @@ namespace com.example
 
 @internal
 enum TraitAfterEnum {
-    @enumValue("foo")
-    FOO
-    @enumValue("bar")
-    BAR
+    FOO = "foo"
+    BAR = "bar"
 }
 
 @internal
 enum TraitBeforeEnum {
-    @enumValue("foo")
-    FOO
-    @enumValue("bar")
-    BAR
+    FOO = "foo"
+    BAR = "bar"
 }
 
 @internal()
 enum AnnotationTraitWithParens {
-    @enumValue("foo")
-    FOO
-    @enumValue("bar")
-    BAR
+    FOO = "foo"
+    BAR = "bar"
 }

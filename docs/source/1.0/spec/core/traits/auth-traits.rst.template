@@ -104,8 +104,9 @@ can also support configuration settings.
     }
 
     @private
-    @enum([{value: "SHA-2"}])
-    string AlgorithmAuthAlgorithm
+    enum AlgorithmAuthAlgorithm {
+        SHA2 = "SHA-2"
+    }
 
     @algorithmAuth(algorithm: "SHA-2")
     service WeatherService {

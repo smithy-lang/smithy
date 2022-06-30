@@ -189,23 +189,24 @@ The Smithy IDL is defined by the following ABNF:
                            :/ "bigDecimal" / "timestamp"
     enum_shape_statement   :`enum_type_name` `ws` `identifier` [`mixins`] `ws` `enum_shape_members`
     enum_type_name         :"enum" / "intEnum"
-    enum_shape_members     :"{" `ws` 1*(`trait_statements` `identifier` `ws`) "}"
+    enum_shape_members     :"{" `ws` 1*(`trait_statements` `identifier` [`value_assignment`] `ws`) "}"
+    value_assignment       :*`sp` "=" `ws` `node_value`
     shape_members          :"{" `ws` *(`trait_statements` `shape_member` `ws`) "}"
-    shape_member           :`shape_member_kvp` / `shape_member_elided`
+    shape_member           :(`shape_member_kvp` / `shape_member_elided`) [`value_assignment`]
     shape_member_kvp       :`identifier` `ws` ":" `ws` `shape_id`
     shape_member_elided    :"$" `identifier`
-    list_statement :"list" `ws` `identifier` [`mixins`] `ws` `shape_members`
-    set_statement :"set" `ws` `identifier` [`mixins`] `ws` `shape_members`
-    map_statement :"map" `ws` `identifier` [`mixins`] `ws` `shape_members`
-    structure_statement     :"structure" `ws` `identifier` ["for" `shape_id`] [`mixins`] `ws` `shape_members`
-    union_statement :"union" `ws` `identifier` [`mixins`] `ws` `shape_members`
-    service_statement :"service" `ws` `identifier` [`mixins`] `ws` `node_object`
-    operation_statement :"operation" `ws` `identifier` [`mixins`] `ws` `inlineable_properties`
+    list_statement         :"list" `ws` `identifier` [`mixins`] `ws` `shape_members`
+    set_statement          :"set" `ws` `identifier` [`mixins`] `ws` `shape_members`
+    map_statement          :"map" `ws` `identifier` [`mixins`] `ws` `shape_members`
+    structure_statement    :"structure" `ws` `identifier` ["for" `shape_id`] [`mixins`] `ws` `shape_members`
+    union_statement        :"union" `ws` `identifier` [`mixins`] `ws` `shape_members`
+    service_statement      :"service" `ws` `identifier` [`mixins`] `ws` `node_object`
+    operation_statement    :"operation" `ws` `identifier` [`mixins`] `ws` `inlineable_properties`
     inlineable_properties  :"{" *(`inlineable_property` `ws`) `ws` "}"
     inlineable_property    :`node_object_kvp` / `inline_structure`
     inline_structure       :`node_object_key` `ws` ":=" `ws` `inline_structure_value`
     inline_structure_value :`trait_statements` [`mixins` ws] shape_members
-    resource_statement :"resource" `ws` `identifier` [`mixins`] `ws` `node_object`
+    resource_statement     :"resource" `ws` `identifier` [`mixins`] `ws` `node_object`
 
 .. rubric:: Traits
 
@@ -733,7 +734,9 @@ The following example defines an :ref:`enum` shape:
         SPADE
     }
 
-The following defines an :ref:`enum` shape with traits:
+Syntactic sugar can be used to assign an :ref:`enumvalue-trait` to an enum
+member. The following example defines an enum shape with custom values and
+traits:
 
 .. code-block:: smithy
 
@@ -742,16 +745,34 @@ The following defines an :ref:`enum` shape with traits:
     namespace smithy.example
 
     enum Suit {
-        @enumValue("DIAMOND")
+        @deprecated
+        DIAMOND = "diamond"
+
+        CLUB = "club"
+        HEART = "heart"
+        SPADE = "spade"
+    }
+
+The above enum is exactly equivalent to the following enum:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+
+    namespace smithy.example
+
+    enum Suit {
+        @deprecated
+        @enumValue("diamond")
         DIAMOND
 
-        @enumValue("CLUB")
+        @enumValue("club")
         CLUB
 
-        @enumValue("HEART")
+        @enumValue("heart")
         HEART
 
-        @enumValue("SPADE")
+        @enumValue("spade")
         SPADE
     }
 
@@ -768,7 +789,23 @@ The :ref:`intEnum` shape is defined using an
     The :ref:`enumValue trait <enumValue-trait>` is required for :ref:`intEnum`
     shapes.
 
-The following example defines an :ref:`intEnum` shape:
+Syntactic sugar can be used to assign an :ref:`enumvalue-trait` to an intEnum
+member. The following example defines an :ref:`intEnum` shape:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+
+    namespace smithy.example
+
+    intEnum Suit {
+        DIAMOND = 1
+        CLUB = 2
+        HEART = 3
+        SPADE = 4
+    }
+
+The above intEnum is exactly equivalent to the following intEnum:
 
 .. code-block:: smithy
 
@@ -1044,6 +1081,24 @@ Traits can be applied to structure members:
                 }
             }
         }
+
+Syntactic sugar can be used to apply the :ref:`default-trait` to a structure
+member. The following example:
+
+.. code-block:: smithy
+
+    structure Example {
+        normative: Boolean = true
+    }
+
+Is exactly equivalent to:
+
+.. code-block:: smithy
+
+    structure Example {
+        @default(true)
+        normative: Boolean
+    }
 
 
 .. _idl-union:
@@ -1476,8 +1531,6 @@ be checked first. The following example is invalid:
     structure UserSummary for User with [UserIdentifiers] {
         $uuid
     }
-
-
 
 
 .. _documentation-comment:

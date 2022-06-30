@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.BooleanNode;
+import software.amazon.smithy.model.node.NumberNode;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -125,7 +128,14 @@ final class ModelUpgrader {
                                         + "Smithy IDL 2.0")
                                .build());
             builder = createOrReuseBuilder(member, builder);
-            builder.addTrait(new DefaultTrait(builder.getSourceLocation()));
+
+            if (target.isBooleanShape()) {
+                builder.addTrait(new DefaultTrait(new BooleanNode(false, builder.getSourceLocation())));
+            } else if (target.isBlobShape()) {
+                builder.addTrait(new DefaultTrait(new StringNode("", builder.getSourceLocation())));
+            } else {
+                builder.addTrait(new DefaultTrait(new NumberNode(0, builder.getSourceLocation())));
+            }
         }
 
         if (builder != null) {

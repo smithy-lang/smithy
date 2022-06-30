@@ -28,12 +28,12 @@ structure Waiter {
     /// This value defaults to 2 if not specified. If specified, this value
     /// MUST be greater than or equal to 1 and less than or equal to
     /// `maxDelay`.
-    minDelay: WaiterDelay,
+    minDelay: WaiterDelay = 2,
 
     /// The maximum amount of time in seconds to delay between each retry.
     /// This value defaults to 120 if not specified (or, 2 minutes). If
     /// specified, this value MUST be greater than or equal to 1.
-    maxDelay: WaiterDelay,
+    maxDelay: WaiterDelay = 120,
 
     /// Indicates if the waiter is considered deprecated. A waiter SHOULD
     /// be marked as deprecated if it has been replaced by another waiter or
@@ -72,18 +72,15 @@ structure Acceptor {
 enum AcceptorState {
     /// The waiter successfully finished waiting. This is a terminal
     /// state that causes the waiter to stop.
-    @enumValue("success")
-    SUCCESS
+    SUCCESS = "success"
 
     /// The waiter failed to enter into the desired state. This is a
     /// terminal state that causes the waiter to stop.
-    @enumValue("failure")
-    FAILURE
+    FAILURE = "failure"
 
     /// The waiter will retry the operation. This state transition is
     /// implicit if no accepter causes a state transition.
-    @enumValue("retry")
-    RETRY
+    RETRY = "retry"
 }
 
 /// Defines how an acceptor determines if it matches the current state of
@@ -136,20 +133,16 @@ structure PathMatcher {
 @private
 enum PathComparator {
     /// Matches if the return value is a string that is equal to the expected string.
-    @enumValue("stringEquals")
-    STRING_EQUALS
+    STRING_EQUALS = "stringEquals"
 
     /// Matches if the return value is a boolean that is equal to the string literal 'true' or 'false'.
-    @enumValue("booleanEquals")
-    BOOLEAN_EQUALS
+    BOOLEAN_EQUALS = "booleanEquals"
 
     /// Matches if all values in the list matches the expected string.
-    @enumValue("allStringEquals")
-    ALL_STRING_EQUALS
+    ALL_STRING_EQUALS = "allStringEquals"
 
     /// Matches if any value in the list matches the expected string.
-    @enumValue("anyStringEquals")
-    ANY_STRING_EQUALS
+    ANY_STRING_EQUALS = "anyStringEquals"
 }
 
 @private

@@ -3,10 +3,8 @@ $version: "2.0"
 namespace ns.foo
 
 intEnum IntEnum {
-    @enumValue(1)
-    FOO
-    @enumValue(2)
-    BAR
+    FOO = 1
+    BAR = 2
 }
 
 enum StringEnum {
@@ -15,8 +13,6 @@ enum StringEnum {
 }
 
 enum StringEnumWithExplicitValues {
-    @enumValue("foo")
-    FOO
-    @enumValue("bar")
-    BAR
+    FOO = "foo"
+    BAR = "bar"
 }

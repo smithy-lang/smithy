@@ -26,6 +26,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.SetShape;
@@ -34,9 +35,9 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.BoxTrait;
+import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.InputTrait;
-import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
 
@@ -171,17 +172,17 @@ public class NullableIndexTest {
         StringShape str = StringShape.builder().id("smithy.example#Str").build();
         StructureShape struct = StructureShape.builder()
                 .id("smithy.example#Struct")
-                // This member is technically invalid, but nullable takes precedent here
+                // This member is technically invalid, but clientOptional takes precedent here
                 // over the default trait.
                 .addMember("foo", str.getId(), b -> b.addTrait(new ClientOptionalTrait())
-                        .addTrait(new DefaultTrait())
+                        .addTrait(new DefaultTrait(Node.from("a")))
                         .build())
                 .addMember("bar", str.getId(), b -> b.addTrait(new ClientOptionalTrait())
                         .addTrait(new RequiredTrait())
                         .build())
                 .addMember("baz", str.getId(), b -> b.addTrait(new ClientOptionalTrait()).build())
                 .addMember("bam", str.getId(), b -> b.addTrait(new RequiredTrait()).build())
-                .addMember("boo", str.getId(), b -> b.addTrait(new DefaultTrait()).build())
+                .addMember("boo", str.getId(), b -> b.addTrait(new DefaultTrait(Node.from("boo"))).build())
                 .build();
 
         Model model = Model.builder().addShapes(str, struct).build();
@@ -208,7 +209,7 @@ public class NullableIndexTest {
         StructureShape struct = StructureShape.builder()
                 .id("smithy.example#Struct")
                 .addTrait(new InputTrait())
-                .addMember("foo", str.getId(), b -> b.addTrait(new DefaultTrait()).build())
+                .addMember("foo", str.getId(), b -> b.addTrait(new DefaultTrait(Node.from("foo"))).build())
                 .addMember("bar", str.getId(), b -> b.addTrait(new RequiredTrait()).build())
                 .addMember("baz", str.getId())
                 .build();

@@ -3,26 +3,26 @@ $version: "2.0"
 namespace com.example
 
 structure PrimitiveBearer {
-    @default
+    @default(0)
     int: Integer,
-    @default
+    @default(false)
     bool: Boolean,
-    @default
+    @default(0)
     byte: Byte,
-    @default
+    @default(0)
     double: Double,
-    @default
+    @default(0)
     float: Float,
-    @default
+    @default(0)
     long: Long,
-    @default
+    @default(0)
     short: Short,
 
-    @default
+    @default(0)
     handlesComments: // Nobody actually does this right?
         Short,
 
-    @default
+    @default(0)
     handlesPreexistingDefault: Short,
 
     @required

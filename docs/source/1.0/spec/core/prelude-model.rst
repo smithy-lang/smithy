@@ -39,40 +39,19 @@ Prelude shapes
 
     document Document
 
-    @box
     boolean Boolean
 
-    boolean PrimitiveBoolean
-
-    @box
     byte Byte
 
-    byte PrimitiveByte
-
-    @box
     short Short
 
-    short PrimitiveShort
-
-    @box
     integer Integer
 
-    integer PrimitiveInteger
-
-    @box
     long Long
 
-    long PrimitiveLong
-
-    @box
     float Float
 
-    float PrimitiveFloat
-
-    @box
     double Double
-
-    double PrimitiveDouble
 
     /// The single unit type shape, similar to Void and None in other
     /// languages, used to represent no meaningful value.

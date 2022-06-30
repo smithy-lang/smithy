@@ -465,21 +465,21 @@ of the targeted numeric shape to which it is applied.
 
 Summary
     Marks a structure member as required, meaning a value for the member MUST
-    be present and not set to ``null``.
+    be provided.
 Trait selector
     ``structure > member``
 
     *Member of a structure*
 Value type
     Annotation trait.
-Conflicts with
-    :ref:`default-trait`
+See also
+    * :ref:`structure-optionality`
+    * :ref:`default-trait`
+    * :ref:`clientOptional-trait`
+    * :ref:`input-trait`
+    * :ref:`recommended-trait`
 
-.. important:: The required trait isn't just for inputs
-
-    The required trait indicates that value MUST always be present for a
-    member. It applies to all shapes, including inputs of operations, outputs
-    of operations, and errors.
+The following example defines a structure with a required member.
 
 .. code-block:: smithy
 
@@ -488,13 +488,32 @@ Conflicts with
         foo: FooString
     }
 
-.. seealso::
+.. important:: The required trait isn't just for inputs
 
-   * :ref:`structure-nullability`
-   * :ref:`default-trait`
-   * :ref:`clientOptional-trait`
-   * :ref:`input-trait`
-   * :ref:`recommended-trait`
+    The required trait indicates that value MUST always be present for a
+    member. It applies to all shapes, including inputs of operations, outputs
+    of operations, and errors.
+
+
+Client error correction
+-----------------------
+
+If a mis-configured server fails to serialize a value for a required member,
+to avoid downtime, clients MAY attempt to fill in an appropriate default value
+for the member:
+
+* ``@default``: If the member has the ``@default`` trait, use its value
+* boolean: false
+* numbers: 0
+* timestamp: 0 seconds since the Unix epoch
+* string and blob: ""
+* document: null
+* list: []
+* map: {}
+* enum, intEnum, union: The unknown variant. These types SHOULD define an
+  unknown variant to account for receiving unknown members.
+* structure: {} if possible, otherwise a deserialization error.
+* union: a deserialization error.
 
 
 .. smithy-trait:: smithy.api#uniqueItems

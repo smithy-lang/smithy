@@ -1,0 +1,2 @@
+[ERROR] smithy.example#Foo$f: The @default value of a document cannot be a non-empty array | DefaultTrait
+[ERROR] smithy.example#Foo$g: The @default value of a document cannot be a non-empty object | DefaultTrait

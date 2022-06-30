@@ -43,6 +43,7 @@ import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.AnnotationTrait;
+import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.model.traits.IdRefTrait;
@@ -467,7 +468,11 @@ public final class SmithyIdlModelSerializer {
                 codeWriter.openBlock("{", "}", () -> {
                     for (MemberShape member : members) {
                         serializeTraits(member.getAllTraits());
-                        codeWriter.write("$L: $I", member.getMemberName(), member.getTarget());
+                        String assignment = "";
+                        if (member.hasTrait(DefaultTrait.class)) {
+                            assignment = " = " + Node.printJson(member.expectTrait(DefaultTrait.class).toNode());
+                        }
+                        codeWriter.write("$L: $I$L", member.getMemberName(), member.getTarget(), assignment);
                     }
                 });
             }
@@ -483,11 +488,14 @@ public final class SmithyIdlModelSerializer {
                 for (MemberShape member : members) {
                     Map<ShapeId, Trait> traits = new LinkedHashMap<>(member.getAllTraits());
                     Optional<String> stringValue = member.expectTrait(EnumValueTrait.class).getStringValue();
-                    if (stringValue.isPresent() && member.getMemberName().equals(stringValue.get())) {
-                        traits.remove(EnumValueTrait.ID);
+                    boolean hasNormalName = stringValue.isPresent() && member.getMemberName().equals(stringValue.get());
+                    String assignment = "";
+                    if (!hasNormalName) {
+                        assignment = " = " + Node.printJson(member.expectTrait(EnumValueTrait.class).toNode());
                     }
+                    traits.remove(EnumValueTrait.ID);
                     serializeTraits(traits);
-                    codeWriter.write("$L", member.getMemberName());
+                    codeWriter.write("$L$L", member.getMemberName(), assignment);
                 }
             });
         }
@@ -525,6 +533,8 @@ public final class SmithyIdlModelSerializer {
 
             traits.values().stream()
                     .filter(trait -> noSpecialDocsSyntax || !(trait instanceof DocumentationTrait))
+                    // The default and enumValue traits are serialized using the assignment syntactic sugar.
+                    .filter(trait -> !(trait instanceof DefaultTrait) && !(trait instanceof EnumValueTrait))
                     .filter(traitFilter)
                     .sorted(Comparator.comparing(Trait::toShapeId))
                     .forEach(this::serializeTrait);
