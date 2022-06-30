@@ -432,7 +432,9 @@ public final class SmithyIdlModelSerializer {
             }
 
             serializeTraits(shape);
-            codeWriter.writeInline("$L $L ", shape.getType(), shape.getId().getName());
+            // IDL V2 does not support sets, so convert set to list when serializing.
+            String v2Type = shape.getType() == ShapeType.SET ? ShapeType.LIST.toString() : shape.getType().toString();
+            codeWriter.writeInline("$L $L ", v2Type, shape.getId().getName());
 
             writeMixins(shape);
             if (isEnum) {

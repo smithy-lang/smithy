@@ -133,18 +133,6 @@
                 }
             }
         },
-        "ns.foo#Set": {
-            "type": "set",
-            "member": {
-                "target": "ns.foo#String"
-            },
-            "traits": {
-                "smithy.api#length": {
-                    "min": 1,
-                    "max": 2
-                }
-            }
-        },
         "ns.foo#String": {
             "type": "string"
         },

@@ -18,10 +18,6 @@ list List {
     member: String
 }
 
-set Set {
-    member: String
-}
-
 map Map {
     key: String
     value: String

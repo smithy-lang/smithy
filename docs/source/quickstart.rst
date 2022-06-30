@@ -72,8 +72,6 @@ Smithy supports the following types:
       - An untyped JSON-like value.
     * - :ref:`list`
       - Homogeneous collection of values
-    * - :ref:`set`
-      - Unordered collection of unique homogeneous values
     * - :ref:`map`
       - Map data structure that maps string keys to homogeneous values
     * - :ref:`structure`

@@ -708,11 +708,11 @@ Summary
 Trait selector
     .. code-block:: none
 
-        structure > :test(member > :test(string, blob, structure, union, document, list, set, map))
+        structure > :test(member > :test(string, blob, structure, union, document, list, map))
 
     The ``httpPayload`` trait can be applied to ``structure`` members that
     target a ``string``, ``blob``, ``structure``, ``union``, ``document``,
-    ``set``, ``map``, or ``list``.
+    ``map``, or ``list``.
 
 Value type
     Annotation trait.
@@ -778,9 +778,9 @@ or :ref:`httpPrefixHeaders-trait`.
 #. When a string or blob member is referenced, the raw value is serialized
    as the body of the message.
 #. When a :ref:`structure <structure>`, :ref:`union <union>`, :ref:`list <list>`,
-   :ref:`set <set>`, :ref:`map <map>`, or document type is targeted,
-   the shape value is serialized as a :ref:`protocol-specific <protocolDefinition-trait>`
-   document that is sent as the body of the message.
+   :ref:`map <map>`, or document type is targeted, the shape value is serialized
+   as a :ref:`protocol-specific <protocolDefinition-trait>` document that is sent
+   as the body of the message.
 
 
 .. smithy-trait:: smithy.api#httpPrefixHeaders
@@ -880,7 +880,7 @@ Trait selector
 
     The ``httpQuery`` trait can be applied to ``structure`` members that
     target a ``string``, ``number``, ``boolean``, or ``timestamp``; or a
-    ``list``/``set`` of these types.
+    ``list`` of these types.
 Value type
     A non-empty ``string`` value that defines the name of the query string
     parameter. The query string parameter name MUST be case-sensitively unique
@@ -927,7 +927,7 @@ request:
   and with percent-encoding, ``1985-04-12T23%3A20%3A50.52Z``). The
   :ref:`timestampFormat-trait` MAY be used to use a custom serialization
   format.
-* :ref:`list` and :ref:`set <set>` members are serialized by adding multiple
+* :ref:`list` members are serialized by adding multiple
   query string parameters to the query string using the same name. For
   example, given a member bound to ``foo`` that targets a list of strings
   with a value of ``["a", "b"]``, the value is serialized in the query string

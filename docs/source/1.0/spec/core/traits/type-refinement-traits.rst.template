@@ -23,7 +23,7 @@ Summary
 Trait selector
     ``structure > member :test(> :is(simpleType, collection, map))``
 
-    A member of a structure that targets a simple type, list, set, or map.
+    A member of a structure that targets a simple type, list, or map.
 Value type
     Annotation trait.
 Conflicts with
@@ -94,9 +94,6 @@ nullable as this is semantically equivalent to the default zero value.
       - A null document value.
     * - list
       - empty list
-      -
-    * - set
-      - empty set
       -
     * - map
       - empty map

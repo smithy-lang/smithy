@@ -243,8 +243,9 @@ enum AstModelLoader {
     ) {
         LoaderUtils.checkForAdditionalProperties(node, id, COLLECTION_PROPERTY_NAMES, modelFile.events());
         applyShapeTraits(id, node, modelFile);
-        loadOptionalMember(modelFile, id.withMember("member"), node, "member");
+        // Add the container before members to ensure sets are rejected before adding unreferenced members.
         modelFile.onShape(builder.id(id).source(node.getSourceLocation()));
+        loadOptionalMember(modelFile, id.withMember("member"), node, "member");
         addMixins(id, node, modelFile);
     }
 

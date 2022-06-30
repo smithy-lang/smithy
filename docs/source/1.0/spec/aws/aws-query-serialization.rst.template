@@ -93,10 +93,7 @@ to the input's key.
     * - Smithy type
       - Request entity
     * - ``list``
-      - |query collection text|
-    * - ``set``
-      - A set is serialized identically to a ``list`` shape, but only contains
-        unique values.
+      - |query list text|
     * - ``map``
       - |query map text|
     * - ``structure``
