@@ -51,7 +51,7 @@ public final class PropertyTrait extends AbstractTrait implements ToSmithyBuilde
 
     @Override
     public SmithyBuilder<PropertyTrait> toBuilder() {
-        return builder().name(name).sourceLocation(getSourceLocation());
+        return builder();
     }
 
     public static final class Builder extends AbstractTraitBuilder<PropertyTrait, Builder> {
