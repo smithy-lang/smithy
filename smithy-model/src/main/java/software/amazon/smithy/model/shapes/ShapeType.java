@@ -15,8 +15,8 @@
 
 package software.amazon.smithy.model.shapes;
 
+import java.util.Objects;
 import java.util.Optional;
-import java.util.function.BiFunction;
 
 /** An enumeration of the different types in a model. */
 public enum ShapeType {
@@ -34,12 +34,30 @@ public enum ShapeType {
     DOUBLE("double", DoubleShape.class, Category.SIMPLE),
     BIG_DECIMAL("bigDecimal", BigDecimalShape.class, Category.SIMPLE),
     BIG_INTEGER("bigInteger", BigIntegerShape.class, Category.SIMPLE),
-
-    ENUM("enum", EnumShape.class, Category.SIMPLE, (a, b) -> b == a || b == STRING),
-    INT_ENUM("intEnum", IntEnumShape.class, Category.SIMPLE, (a, b) -> b == a || b == INTEGER),
-
-    LIST("list", ListShape.class, Category.AGGREGATE),
-    SET("set", SetShape.class, Category.AGGREGATE),
+    ENUM("enum", EnumShape.class, Category.SIMPLE) {
+        @Override
+        public boolean isShapeType(ShapeType other) {
+            return this == other || other == STRING;
+        }
+    },
+    INT_ENUM("intEnum", IntEnumShape.class, Category.SIMPLE) {
+        @Override
+        public boolean isShapeType(ShapeType other) {
+            return this == other || other == INTEGER;
+        }
+    },
+    LIST("list", ListShape.class, Category.AGGREGATE) {
+        @Override
+        public boolean isShapeType(ShapeType other) {
+            return this == other || other == SET;
+        }
+    },
+    SET("set", SetShape.class, Category.AGGREGATE) {
+        @Override
+        public boolean isShapeType(ShapeType other) {
+            return this == other || other == LIST;
+        }
+    },
     MAP("map", MapShape.class, Category.AGGREGATE),
     STRUCTURE("structure", StructureShape.class, Category.AGGREGATE),
     UNION("union", UnionShape.class, Category.AGGREGATE),
@@ -55,22 +73,11 @@ public enum ShapeType {
     private final String stringValue;
     private final Class<? extends Shape> shapeClass;
     private final Category category;
-    private final BiFunction<ShapeType, ShapeType, Boolean> isShapeType;
 
     ShapeType(String stringValue, Class<? extends Shape> shapeClass, Category category) {
-        this(stringValue, shapeClass, category, Enum::equals);
-    }
-
-    ShapeType(
-            String stringValue,
-            Class<? extends Shape> shapeClass,
-            Category category,
-            BiFunction<ShapeType, ShapeType, Boolean> isShapeType
-    ) {
         this.stringValue = stringValue;
         this.shapeClass = shapeClass;
         this.category = category;
-        this.isShapeType = isShapeType;
     }
 
     @Override
@@ -98,15 +105,14 @@ public enum ShapeType {
     }
 
     /**
-     * Returns whether this shape type is equivalent to the given shape type.
-     *
-     * This accounts for things like enums being considered specializations of strings.
+     * Returns whether this shape type is equivalent to the given shape type,
+     * accounting for things like enums being considered specializations of strings.
      *
      * @param other The other shape type to compare against.
      * @return Returns true if the shape types are equivalent.
      */
     public boolean isShapeType(ShapeType other) {
-        return isShapeType.apply(this, other);
+        return Objects.equals(this, other);
     }
 
     /**

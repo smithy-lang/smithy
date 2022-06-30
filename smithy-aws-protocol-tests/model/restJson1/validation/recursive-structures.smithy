@@ -86,11 +86,8 @@ structure RecursiveStructuresInput {
 }
 
 enum RecursiveEnumString {
-    @enumValue("abc")
-    ABC
-
-    @enumValue("def")
-    DEF
+    ABC = "abc"
+    DEF = "def"
 }
 
 union RecursiveUnionOne {

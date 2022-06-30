@@ -42,6 +42,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.LengthTrait;
@@ -99,7 +100,9 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
         if (converter.isInlined(member)) {
             return member.accept(this);
         } else {
-            return Schema.builder().ref(converter.toPointer(member.getTarget())).build();
+            Schema.Builder builder = Schema.builder().ref(converter.toPointer(member.getTarget()));
+            member.getTrait(DefaultTrait.class).ifPresent(trait -> builder.defaultValue(trait.toNode()));
+            return builder.build();
         }
     }
 
@@ -308,6 +311,9 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
         shape.getTrait(EnumTrait.class)
                 .map(EnumTrait::getEnumDefinitionValues)
                 .ifPresent(builder::enumValues);
+
+        shape.getTrait(DefaultTrait.class)
+                .ifPresent(trait -> builder.defaultValue(trait.toNode()));
 
         return builder;
     }

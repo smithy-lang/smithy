@@ -49,12 +49,12 @@ import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.loader.ParserUtils;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.SmithyIdlModelSerializer;
 import software.amazon.smithy.model.shapes.StringShape;
-import software.amazon.smithy.model.traits.AnnotationTrait;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.EnumTrait;
@@ -289,7 +289,18 @@ public final class Upgrade1to2Command extends SimpleCommand {
                 if (memberLocation.getColumn() > 1) {
                     padding = StringUtils.repeat(' ', memberLocation.getColumn() - 1);
                 }
-                writer.insertLine(shape.getSourceLocation().getLine(), padding + "@default");
+                Shape target = completeModel.expectShape(shape.getTarget());
+                String defaultValue = "";
+                if (target.isBooleanShape()) {
+                    defaultValue = "false";
+                } else if (target instanceof NumberShape) {
+                    defaultValue = "0";
+                } else if (target.isBlobShape() || target.isStringShape()) {
+                    defaultValue = "\"\"";
+                } else {
+                    throw new UnsupportedOperationException("Unexpected default: " + target);
+                }
+                writer.insertLine(shape.getSourceLocation().getLine(), padding + "@default(" + defaultValue + ")");
             }
 
             if (shape.hasTrait(BoxTrait.class)) {
@@ -322,7 +333,7 @@ public final class Upgrade1to2Command extends SimpleCommand {
 
         private boolean hasSyntheticDefault(MemberShape shape) {
             Optional<SourceLocation> defaultLocation = shape.getTrait(DefaultTrait.class)
-                    .map(AnnotationTrait::getSourceLocation);
+                    .map(Trait::getSourceLocation);
             // When Smithy injects the default trait, it sets the source
             // location equal to the shape's source location. This is
             // impossible in any other scenario, so we can use this info

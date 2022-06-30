@@ -77,20 +77,11 @@ list TimestampList {
 }
 
 enum FooEnum {
-    @enumValue("Foo")
-    FOO
-
-    @enumValue("Baz")
-    BAZ
-
-    @enumValue("Bar")
-    BAR
-
-    @enumValue("1")
-    ONE
-
-    @enumValue("0")
-    ZERO
+    FOO = "Foo"
+    BAZ = "Baz"
+    BAR = "Bar"
+    ONE = "1"
+    ZERO = "0"
 }
 
 list FooEnumList {

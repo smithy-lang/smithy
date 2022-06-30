@@ -1,4 +1,4 @@
-// Defining structures inline with the `:=` syntax may only be used when defining operation input and output shapes.
+// Parse error at line 6, column 14 near `= `: Expected a valid identifier character, but found '='
 $version: "2.0"
 namespace smithy.example
 

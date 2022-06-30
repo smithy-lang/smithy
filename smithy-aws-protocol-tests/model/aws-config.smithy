@@ -98,24 +98,14 @@ structure RetryConfig {
 
 /// Controls the S3 addressing bucket style.
 enum S3AddressingStyle {
-    @enumValue("auto")
-    AUTO
-
-    @enumValue("path")
-    PATH
-
-    @enumValue("virtual")
-    VIRTUAL
+    AUTO = "auto"
+    PATH = "path"
+    VIRTUAL = "virtual"
 }
 
 /// Controls the strategy used for retries.
 enum RetryMode {
-    @enumValue("legacy")
-    LEGACY
-
-    @enumValue("standard")
-    STANDARD
-
-    @enumValue("adaptive")
-    ADAPTIVE
+    LEGACY = "legacy"
+    STANDARD = "standard"
+    ADAPTIVE = "adaptive"
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.diff.ModelDiff;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -28,7 +29,7 @@ public class ChangedNullabilityTest {
                 .build();
         StructureShape b = StructureShape.builder()
                 .id("smithy.example#A")
-                .addMember("foo", s.getId(), b2 -> b2.addTrait(new DefaultTrait()))
+                .addMember("foo", s.getId(), b2 -> b2.addTrait(new DefaultTrait(Node.from(""))))
                 .build();
         Model model1 = Model.builder().addShapes(s, a).build();
         Model model2 = Model.builder().addShapes(s, b).build();
@@ -48,7 +49,7 @@ public class ChangedNullabilityTest {
                 .build();
         StructureShape b = StructureShape.builder()
                 .id("smithy.example#A")
-                .addMember("foo", s.getId(), builder -> builder.addTrait(new DefaultTrait()))
+                .addMember("foo", s.getId(), builder -> builder.addTrait(new DefaultTrait(Node.from(""))))
                 .build();
         Model model1 = Model.builder().addShapes(s, a).build();
         Model model2 = Model.builder().addShapes(s, b).build();

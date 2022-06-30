@@ -36,8 +36,7 @@ structure EnumPayloadInput {
 }
 
 enum StringEnum {
-    @enumValue("enumvalue")
-    V
+    V = "enumvalue"
 }
 
 @http(uri: "/StringPayload", method: "POST")

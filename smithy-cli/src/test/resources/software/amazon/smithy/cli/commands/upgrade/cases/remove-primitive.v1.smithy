@@ -14,7 +14,7 @@ structure PrimitiveBearer {
     handlesComments: // Nobody actually does this right?
         PrimitiveShort,
 
-    @default
+    @default(0)
     handlesPreexistingDefault: PrimitiveShort,
 
     @required
