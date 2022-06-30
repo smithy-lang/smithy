@@ -1,6 +1,6 @@
 # Smithy Changelog
 
-## 1.22.0 (2022-06-29)
+## 1.22.0 (2022-06-30)
 
 ### Breaking changes
 
