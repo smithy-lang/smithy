@@ -36,10 +36,6 @@ list MixedList {
     member: String
 }
 
-set MixedSet {
-    member: String
-}
-
 map MixedMap {
     key: String
     value: String

@@ -222,16 +222,17 @@
             }]
         },
         "smithy.example#MixinSet": {
-            "type": "set",
+            "type": "list",
             "member": {
                 "target": "smithy.api#String"
             },
             "traits": {
-                "smithy.api#mixin": {}
+                "smithy.api#mixin": {},
+                "smithy.api#uniqueItems": {}
             }
         },
         "smithy.example#MixedSet": {
-            "type": "set",
+            "type": "list",
             "mixins": [{
                 "target": "smithy.example#MixinSet"
             }]

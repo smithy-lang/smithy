@@ -255,7 +255,7 @@ structure httpApiKeyAuth {
 
 /// Provides a structure member with a default zero value.
 @trait(
-    selector: "structure > member :test(> :is(simpleType, collection, map))",
+    selector: "structure > member :test(> :is(simpleType, list, map))",
     conflicts: [required],
     // The default trait can never be removed. It can only be added if the
     // member was previously marked as required.

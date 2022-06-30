@@ -28,7 +28,9 @@ import software.amazon.smithy.model.node.NodeVisitor;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ModelSerializer;
+import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.utils.Pair;
 
@@ -61,6 +63,12 @@ final class RenameShapes {
                 .map(ShapeId::toString)
                 .collect(Collectors.toSet());
 
+        // TODO: this transform serializes the model, then deserializes it. Because of this, if the model
+        //  contained sets via loading a 1.0 model, then the set will be serialized in a 2.0 as a list.
+        //  To restore them to sets, this track the sets, then change the types after renaming. We should
+        //  update this to eventually not need to serialize an intermediate model.
+        Set<SetShape> sets = model.getSetShapes();
+
         // This transformer converts the model into an ObjectNode. This approach was chosen because the
         // JSON AST format includes fully qualified shape ID values, making it possible rename shapes across
         // the model by only needing to compare and replace StringNode values.
@@ -74,7 +82,28 @@ final class RenameShapes {
 
         // Transformers shouldn't perform validation ideally. They should only throw errors if the model
         // can't be transformed.
-        return result.getResult().orElseGet(result::unwrap);
+        Model modelResult = result.getResult().orElseGet(result::unwrap);
+
+        return retypeListsBackToSets(transformer, modelResult, sets, renamed);
+    }
+
+    private Model retypeListsBackToSets(
+            ModelTransformer transformer,
+            Model model,
+            Set<SetShape> sets,
+            Map<ShapeId, ShapeId> renamed
+    ) {
+        if (sets.isEmpty()) {
+            return model;
+        }
+
+        Map<ShapeId, ShapeType> retype = new HashMap<>(sets.size());
+        for (SetShape shape : sets) {
+            ShapeId renamedId = renamed.getOrDefault(shape.getId(), shape.getId());
+            retype.put(renamedId, ShapeType.SET);
+        }
+
+        return transformer.changeShapeType(model, retype);
     }
 
     private static final class RenameShapeVisitor extends NodeVisitor.Default<Node> {

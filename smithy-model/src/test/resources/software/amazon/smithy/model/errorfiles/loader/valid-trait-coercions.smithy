@@ -7,30 +7,24 @@ list a {
   member: String,
 }
 
-@trait(selector: "*")
-set b {
-  member: String,
-}
-
 @trait
-structure c {}
+structure b {}
 
 @trait(selector: "*")
-map d {
+map c {
   key: String,
   value: String,
 }
 
 @trait(selector: "*")
-structure e {}
+structure d {}
 
 @trait
-structure f {}
+structure e {}
 
 @a
 @b
 @c
 @d
-@e
-@f()
+@e()
 structure Test {}

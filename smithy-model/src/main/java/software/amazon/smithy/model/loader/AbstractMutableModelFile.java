@@ -86,7 +86,7 @@ abstract class AbstractMutableModelFile implements ModelFile {
 
         if (!getVersion().isShapeTypeSupported(builder.getShapeType())) {
             throw new SourceException(String.format(
-                    "%s shapes may only be used with Smithy version 2 or later.", builder.getShapeType().toString()),
+                    "%s shapes cannot be used in Smithy version " + getVersion(), builder.getShapeType().toString()),
                     builder.getSourceLocation());
         }
 

@@ -20,6 +20,8 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
@@ -180,5 +182,20 @@ public class SmithyIdlModelSerializerTest {
                 .build();
         Map<Path, String> serialized = serializer.serialize(model);
         assertThat(serialized.get(Paths.get("smithy.api.smithy")), containsString("namespace smithy.api"));
+    }
+
+    @Test
+    public void serializesSetsAsListsWithUniqueItems() {
+        SetShape set = SetShape.builder()
+                .id("smithy.example#Set")
+                .member(ShapeId.from("smithy.api#String"))
+                .build();
+        Model model = Model.assembler().addShape(set).assemble().unwrap();
+        SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder().build();
+        Map<Path, String> models = serializer.serialize(model);
+        String modelResult = models.get(Paths.get("smithy.example.smithy"));
+
+        assertThat(modelResult, containsString("list Set"));
+        assertThat(modelResult, containsString("@uniqueItems"));
     }
 }

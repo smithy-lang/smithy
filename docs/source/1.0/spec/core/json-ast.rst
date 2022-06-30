@@ -161,12 +161,12 @@ example defines a shape for each simple type:
     }
 
 
--------------------
-List and set shapes
--------------------
+-----------
+List shapes
+-----------
 
-:ref:`list` and :ref:`set <set>` shapes have a required ``member`` property
-that is an :ref:`AST member <ast-member>`.
+:ref:`list` shapes have a required ``member`` property that is an
+:ref:`AST member <ast-member>`.
 
 The following example defines a list with a string member:
 
@@ -177,22 +177,6 @@ The following example defines a list with a string member:
         "shapes": {
             "smithy.example#MyList": {
                 "type": "list",
-                "member": {
-                    "target": "smithy.api#String"
-                }
-            }
-        }
-    }
-
-The following example defines a set with a string member:
-
-.. code-block:: json
-
-    {
-        "smithy": "1.0",
-        "shapes": {
-            "smithy.example#MySet": {
-                "type": "set",
                 "member": {
                     "target": "smithy.api#String"
                 }

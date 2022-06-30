@@ -178,11 +178,6 @@ public class RenameShapesTest {
         ShapeId toMap = ShapeId.from("ns.corge#MyNewMap");
         renamed.put(fromMap, toMap);
 
-        // Set
-        ShapeId fromSet = ShapeId.from("ns.foo#MySet");
-        ShapeId toSet = ShapeId.from("ns.grault#MyNewSet");
-        renamed.put(fromSet, toSet);
-
         // Union
         ShapeId fromUnion = ShapeId.from("ns.foo#MyUnion");
         ShapeId toUnion = ShapeId.from("ns.garply#MyNewUnion");
@@ -203,7 +198,6 @@ public class RenameShapesTest {
         assertTrue(result.getShape(toStructure).isPresent());
         assertTrue(result.getShape(toList).isPresent());
         assertTrue(result.getShape(toMap).isPresent());
-        assertTrue(result.getShape(toSet).isPresent());
         assertTrue(result.getShape(toUnion).isPresent());
         assertTrue(result.getShape(toId).isPresent());
 
@@ -221,12 +215,10 @@ public class RenameShapesTest {
         MemberShape struct = operationInput.getMember("struct").get();
         MemberShape list = operationInput.getMember("list").get();
         MemberShape map = operationInput.getMember("map").get();
-        MemberShape set = operationInput.getMember("set").get();
         MemberShape union = operationInput.getMember("union").get();
         assertEquals(struct.getTarget(), toStructure);
         assertEquals(list.getTarget(), toList);
         assertEquals(map.getTarget(), toMap);
-        assertEquals(set.getTarget(), toSet);
         assertEquals(union.getTarget(), toUnion);
 
         // All old names have been removed.
@@ -236,7 +228,6 @@ public class RenameShapesTest {
         assertFalse(result.getShape(fromStructure).isPresent());
         assertFalse(result.getShape(fromList).isPresent());
         assertFalse(result.getShape(fromMap).isPresent());
-        assertFalse(result.getShape(fromSet).isPresent());
         assertFalse(result.getShape(fromUnion).isPresent());
         assertFalse(result.getShape(fromId).isPresent());
     }

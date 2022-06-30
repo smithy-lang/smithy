@@ -8,19 +8,20 @@ list ListTrait {
 }
 
 @trait
-set SetTrait {
+@uniqueItems
+list UniqueItemsListTrait {
     member: String
 }
 
 @ListTrait([])
-@SetTrait([])
+@UniqueItemsListTrait([])
 string Bar
 
 @ListTrait([
     "first"
     "second"
 ])
-@SetTrait([
+@UniqueItemsListTrait([
     "first"
     "second"
 ])

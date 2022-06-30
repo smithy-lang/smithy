@@ -10,14 +10,6 @@ list MixinList {
     member: String
 }
 
-set MixedSet with [MixinSet] {}
-
-@internal
-@mixin
-set MixinSet {
-    member: String
-}
-
 map MixedMap with [MixinMap] {}
 
 @internal

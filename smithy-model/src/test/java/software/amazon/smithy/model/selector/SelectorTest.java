@@ -230,13 +230,10 @@ public class SelectorTest {
 
     @Test
     public void selectsCollections() {
+        // "collection" is just an alias for "list".
         Set<Shape> result = Selector.parse("collection").select(modelJson);
 
         assertThat(result, containsInAnyOrder(
-                SetShape.builder()
-                        .id("ns.foo#Set")
-                        .member(MemberShape.builder().id("ns.foo#Set$member").target("ns.foo#String").build())
-                        .build(),
                 ListShape.builder()
                         .id("ns.foo#List")
                         .member(MemberShape.builder().id("ns.foo#List$member").target("ns.foo#String").build())

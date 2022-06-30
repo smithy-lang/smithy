@@ -29,15 +29,6 @@ list SizedStringList {
     member: String,
 }
 
-set StringSet {
-    member: String,
-}
-
-@length(min: 5, max: 1000)
-set SizedStringSet {
-    member: String,
-}
-
 map StringListMap {
     key: String,
     value: StringList,

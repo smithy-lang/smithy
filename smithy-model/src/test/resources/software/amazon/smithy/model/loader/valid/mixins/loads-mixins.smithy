@@ -91,13 +91,6 @@ list MixinList {
 list MixedList with [MixinList] {}
 
 @mixin
-set MixinSet {
-    member: String
-}
-
-set MixedSet with [MixinSet] {}
-
-@mixin
 map MixinMap {
     key: String
     value: String
