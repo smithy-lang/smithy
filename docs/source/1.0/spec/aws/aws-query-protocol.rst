@@ -95,8 +95,8 @@ that affect serialization:
 
 .. |quoted shape name| replace:: ``awsQuery``
 .. |name resolution text| replace:: The :ref:`xmlName-trait` can be used to serialize a property using a custom name
-.. |query collection text| replace::
-    Each value provided in the collection is serialized as a separate key with
+.. |query list text| replace::
+    Each value provided in the list is serialized as a separate key with
     a "." separator, the string "member", a "." separator, and a "1" indexed
     incrementing counter appended to the container's key.
     |name resolution text| instead of "member". The :ref:`xmlFlattened-trait`
@@ -138,8 +138,6 @@ resolved using the following process:
        * - Member location
          - Default value
        * - ``list`` member
-         - The string literal "member"
-       * - ``set`` member
          - The string literal "member"
        * - ``map`` key
          - The string literal "key"
@@ -201,7 +199,7 @@ The ``application/x-www-form-urlencoded`` serialization is:
 Collections
 ===========
 
-|query collection text|
+|query list text|
 
 For example, given the following:
 

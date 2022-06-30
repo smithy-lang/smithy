@@ -208,8 +208,8 @@ that affect serialization:
 .. |quoted shape name| replace:: ``ec2Query``
 .. |name resolution text| replace:: See :ref:`aws.protocols#ec2QueryName-query-key-naming`
    for how to serialize a property using a custom name
-.. |query collection text| replace::
-    Each value provided in the collection is serialized as a separate key with
+.. |query list text| replace::
+    Each value provided in the list is serialized as a separate key with
     a "." separator and a "1" indexed incrementing counter appended to the
     container's key.
 .. |query map text| replace::
@@ -273,10 +273,10 @@ The ``x-www-form-urlencoded`` serialization is:
     &Baz.Temp=example3
 
 
-Collections
-===========
+Lists
+=====
 
-|query collection text|
+|query list text|
 
 For example, given the following:
 

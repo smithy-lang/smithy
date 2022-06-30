@@ -119,9 +119,6 @@ to convert each shape type:
       - Any JSON value
     * - ``list``
       - JSON array
-    * - ``set``
-      - JSON array. A set is serialized identically as a ``list`` shape,
-        but only contains unique values.
     * - ``map``
       - JSON object
     * - ``structure``

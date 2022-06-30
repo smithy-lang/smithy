@@ -476,8 +476,9 @@ final class IdlModelParser extends SimpleParser {
     private void parseCollection(ShapeId id, SourceLocation location, CollectionShape.Builder builder) {
         builder.id(id).source(location);
         parseMixins(id);
-        parseMembers(id, SetUtils.of("member"));
+        // Add the shape before parsing and adding members to ensure sets are rejected before adding a member.
         modelFile.onShape(builder.id(id));
+        parseMembers(id, SetUtils.of("member"));
         clearPendingDocs();
     }
 

@@ -207,14 +207,6 @@ public class NodeValidationVisitorTest {
                 {"ns.foo#List", "[10]", new String[] {"0: Expected string value for string shape, `ns.foo#String`; found number value, `10`"}},
                 {"ns.foo#List", "10", new String[] {"Expected array value for list shape, `ns.foo#List`; found number value, `10`"}},
 
-                // set
-                {"ns.foo#Set", "[\"a\"]", null},
-                {"ns.foo#Set", "[\"a\", \"b\"]", null},
-                {"ns.foo#Set", "[]", new String[] {"Value provided for `ns.foo#Set` must have at least 1 elements, but the provided value only has 0 elements"}},
-                {"ns.foo#Set", "[\"a\", \"b\", \"c\"]", new String[] {"Value provided for `ns.foo#Set` must have no more than 2 elements, but the provided value has 3 elements"}},
-                {"ns.foo#Set", "[10]", new String[] {"0: Expected string value for string shape, `ns.foo#String`; found number value, `10`"}},
-                {"ns.foo#Set", "10", new String[] {"Expected array value for set shape, `ns.foo#Set`; found number value, `10`"}},
-
                 // map
                 {"ns.foo#Map", "{\"a\":[\"b\"]}", null},
                 {"ns.foo#Map", "{\"a\":[\"b\"], \"c\":[\"d\"]}", null},

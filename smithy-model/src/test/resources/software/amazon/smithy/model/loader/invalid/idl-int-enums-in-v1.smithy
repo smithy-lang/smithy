@@ -1,4 +1,4 @@
-// intEnum shapes may only be used with Smithy version 2 or later.
+// intEnum shapes cannot be used in Smithy version 1.0
 $version: "1.0"
 
 namespace ns.foo

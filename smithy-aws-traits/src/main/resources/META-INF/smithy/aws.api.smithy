@@ -118,7 +118,7 @@ structure clientEndpointDiscoveryId {}
 structure controlPlane {}
 
 /// Designates the target as containing data of a known classification level.
-@trait(selector: ":test(simpleType, collection, structure, union, member)")
+@trait(selector: ":test(simpleType, list, structure, union, member)")
 enum data {
     /// Customer content means any software (including machine images), data,
     /// text, audio, video or images that customers or any customer end user

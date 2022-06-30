@@ -95,10 +95,15 @@ enum Version {
      * @return Returns true if the shape type is supported in this version.
      */
     boolean isShapeTypeSupported(ShapeType shapeType) {
-        if (this == VERSION_2_0) {
-            return true;
+        switch (shapeType) {
+            case SET:
+                return this == VERSION_1_0;
+            case ENUM:
+            case INT_ENUM:
+                return this == VERSION_2_0;
+            default:
+                return true;
         }
-        return shapeType != ShapeType.ENUM && shapeType != ShapeType.INT_ENUM;
     }
 
     /**
