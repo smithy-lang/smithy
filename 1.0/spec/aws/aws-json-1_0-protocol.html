@@ -32,7 +32,7 @@
         <div class="header-flex width-wrapper">
             <div class="site-logo">
                 <a href="../../../index.html">
-                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                    <img class="logo-icon" alt="Smithy" src="../../../_static/favicon.png" height="28"/><span class="logo-text">Smithy</span>
                 </a>
                 <span class="version-text">1.0</span>
             </div>
@@ -90,7 +90,7 @@
 responses with JSON documents.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
 <dt>Value type</dt><dd>Structure</dd>
-<dt>See</dt><dd><a class="reference external" href="https://github.com/awslabs/smithy/tree/1.21.0/smithy-aws-protocol-tests/model/awsJson1_0">Protocol tests</a></dd>
+<dt>See</dt><dd><a class="reference external" href="https://github.com/awslabs/smithy/tree/1.22.0/smithy-aws-protocol-tests/model/awsJson1_0">Protocol tests</a></dd>
 </dl>
 <p><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsJson1_0</span></code> is a structure that supports the following
 members:</p>
@@ -350,8 +350,7 @@ but only contains unique values.</td>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">structure</span></code></td>
 <td>JSON object. Each member value provided for the structure is
 serialized as a JSON property where the property name is the same
-as the member name. The <a class="reference internal" href="../core/protocol-traits.html#jsonname-trait"><span class="std std-ref">jsonName trait</span></a> can be used to serialize
-a property using a custom name. A null value MAY be provided or
+as the member name. A null value MAY be provided or
 omitted for a <a class="reference internal" href="../core/type-refinement-traits.html#box-trait"><span class="std std-ref">boxed</span></a> member with no observable
 difference.</td>
 </tr>

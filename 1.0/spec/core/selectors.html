@@ -31,7 +31,7 @@
         <div class="header-flex width-wrapper">
             <div class="site-logo">
                 <a href="../../../index.html">
-                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                    <img class="logo-icon" alt="Smithy" src="../../../_static/favicon.png" height="28"/><span class="logo-text">Smithy</span>
                 </a>
                 <span class="version-text">1.0</span>
             </div>
@@ -146,7 +146,8 @@ selector results.</p>
 <td>Matches all <a class="reference internal" href="model.html#simple-types"><span class="std std-ref">simple types</span></a></td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">collection</span></code></td>
-<td>Matches both a <code class="docutils literal notranslate"><span class="pre">list</span></code> and <code class="docutils literal notranslate"><span class="pre">set</span></code> shape</td>
+<td>Deprecated: Matches both a <code class="docutils literal notranslate"><span class="pre">list</span></code> and <code class="docutils literal notranslate"><span class="pre">set</span></code> shape.
+This is considered an alias for <code class="docutils literal notranslate"><span class="pre">list</span></code>.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">blob</span></code></td>
 <td>Matches blob shapes</td>
@@ -188,10 +189,11 @@ selector results.</p>
 <td>Matches timestamp shapes</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">list</span></code></td>
-<td>Matches list shapes</td>
+<td>Matches list shapes. Note that set shapes also match <code class="docutils literal notranslate"><span class="pre">list</span></code> because
+they are considered sub-types of list.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">set</span></code></td>
-<td>Matches set shapes</td>
+<td>Deprecated: Matches set shapes. This is considered an alias for <code class="docutils literal notranslate"><span class="pre">list</span></code>.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">map</span></code></td>
 <td>Matches map shapes</td>
@@ -402,7 +404,7 @@ is not a valid number:</p>
 </div>
 <div class="section" id="attributes">
 <span id="selector-attributes"></span><h2><a href="#attributes"><span class="section-number">14.5. </span>Attributes</a></h2>
-<p>Selector attributes return objects that MAY have nested properties. Objects
+<p>Attribute selectors return objects that MAY have nested properties. Objects
 returned from selectors MAY be available to cast to a string. Shapes support
 the following attributes:</p>
 <table border="1" class="colwidths-given docutils align-default">

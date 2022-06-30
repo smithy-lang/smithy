@@ -32,7 +32,7 @@
         <div class="header-flex width-wrapper">
             <div class="site-logo">
                 <a href="../../../index.html">
-                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                    <img class="logo-icon" alt="Smithy" src="../../../_static/favicon.png" height="28"/><span class="logo-text">Smithy</span>
                 </a>
                 <span class="version-text">1.0</span>
             </div>
@@ -72,22 +72,13 @@ explicitly configure HTTP request and response messages.</p>
 multiple HTTP message locations (e.g., a member cannot be bound to both a URI
 label and to a header). Only top-level members of an operation's input, output,
 and error structures are considered when serializing HTTP messages.</p>
-<div class="contents local topic" id="table-of-contents">
-<p class="topic-title">Table of contents</p>
-<ul class="simple">
-<li><a class="reference internal" href="#http-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">http</span></code> trait</a></li>
-<li><a class="reference internal" href="#httperror-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait</a></li>
-<li><a class="reference internal" href="#httpheader-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait</a></li>
-<li><a class="reference internal" href="#httplabel-trait" id="id15"><code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait</a></li>
-<li><a class="reference internal" href="#httppayload-trait" id="id16"><code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait</a></li>
-<li><a class="reference internal" href="#httpprefixheaders-trait" id="id17"><code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait</a></li>
-<li><a class="reference internal" href="#httpquery-trait" id="id18"><code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait</a></li>
-<li><a class="reference internal" href="#httpqueryparams-trait" id="id19"><code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait</a></li>
-<li><a class="reference internal" href="#httpresponsecode-trait" id="id20"><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait</a></li>
-<li><a class="reference internal" href="#cors-trait" id="id21"><code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></li>
-<li><a class="reference internal" href="#serializing-http-messages" id="id22">Serializing HTTP messages</a></li>
-<li><a class="reference internal" href="#event-streams" id="id23">Event streams</a></li>
-</ul>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">Violating <a class="reference external" href="https://datatracker.ietf.org/doc/html/rfc7230">HTTP specifications</a> or relying on poorly-supported HTTP
+functionality when defining HTTP bindings will limit interoperability
+and likely lead to undefined behavior across Smithy implementations. For
+example, avoid defining GET/DELETE requests with payloads, defining
+response payloads for operations with a 204/205 status, etc.</p>
 </div>
 <div class="section" id="http-trait">
 <span id="smithy-api-http-trait"></span><span id="id1"></span><h2><a href="#http-trait"><span class="section-number">11.1. </span><code class="docutils literal notranslate"><span class="pre">http</span></code> trait</a></h2>
@@ -123,7 +114,9 @@ URI pattern are used to bind operation input members to the URI.</td>
 <td><code class="docutils literal notranslate"><span class="pre">integer</span></code></td>
 <td>The HTTP status code of a successful response. Defaults to <code class="docutils literal notranslate"><span class="pre">200</span></code> if
 not provided. The provided value SHOULD be between 100 and 599, and
-it MUST be between 100 and 999.</td>
+it MUST be between 100 and 999. Status codes that do not allow a body
+like 204 and 205 SHOULD bind all output members to locations other than
+the body of the response.</td>
 </tr>
 </tbody>
 </table>
@@ -623,12 +616,12 @@ HTTP status code of the <a class="reference internal" href="type-refinement-trai
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds a structure member to an HTTP header.</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; :test(member &gt; :test(boolean, number, string, timestamp,
-        collection &gt; member &gt; :test(boolean, number, string, timestamp)))
+        list &gt; member &gt; :test(boolean, number, string, timestamp)))
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait can be applied to <code class="docutils literal notranslate"><span class="pre">structure</span></code> members that
 target a <code class="docutils literal notranslate"><span class="pre">boolean</span></code>, <code class="docutils literal notranslate"><span class="pre">number</span></code>, <code class="docutils literal notranslate"><span class="pre">string</span></code>, or <code class="docutils literal notranslate"><span class="pre">timestamp</span></code>; or a
-<code class="docutils literal notranslate"><span class="pre">structure</span></code> member that targets a list/set of these types.</p>
+<code class="docutils literal notranslate"><span class="pre">structure</span></code> member that targets a list of these types.</p>
 </dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code> value defining a valid HTTP header field name according to
 <span class="target" id="index-2"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc7230.html#section-3.2"><strong>section 3.2 of RFC7230</strong></a>. The value MUST NOT be
@@ -877,11 +870,12 @@ document that is sent as the body of the message.</li>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds a map of key-value pairs to prefixed HTTP headers.</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; member
-:test(&gt; map &gt; member[id|member=value] &gt; string)
+:test(&gt; map :not([trait|sparse]) &gt; member[id|member=value] &gt; string)
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait can be applied to <code class="docutils literal notranslate"><span class="pre">structure</span></code> members
-that target a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code>.</p>
+that target a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code>. The targeted map MUST NOT be marked
+with the <a class="reference internal" href="type-refinement-traits.html#sparse-trait"><span class="std std-ref">sparse trait</span></a>.</p>
 </dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code> value that defines the prefix to prepend to each header field
 name stored in the targeted map member. For example, given a prefix value
@@ -940,7 +934,7 @@ bound to <code class="docutils literal notranslate"><span class="pre">headers</s
 <dt>Summary</dt><dd>Binds an operation input structure member to a query string parameter.</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; member
 :test(&gt; :test(string, number, boolean, timestamp),
-      &gt; collection &gt; member &gt; :test(string, number, boolean, timestamp))
+      &gt; list &gt; member &gt; :test(string, number, boolean, timestamp))
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait can be applied to <code class="docutils literal notranslate"><span class="pre">structure</span></code> members that
@@ -995,7 +989,7 @@ example, given a member bound to <code class="docutils literal notranslate"><spa
 with a value of <code class="docutils literal notranslate"><span class="pre">[&quot;a&quot;,</span> <span class="pre">&quot;b&quot;]</span></code>, the value is serialized in the query string
 as <code class="docutils literal notranslate"><span class="pre">foo=a&amp;foo=b</span></code>.</li>
 <li>When deserializing, server implementations SHOULD use the first encountered
-value in the query string for non-collection members. For example, given a
+value in the query string for non-list members. For example, given a
 member bound to <code class="docutils literal notranslate"><span class="pre">foo</span></code> that targets a string and a query string of
 <code class="docutils literal notranslate"><span class="pre">foo=a&amp;foo=b</span></code>, the deserialized value of <code class="docutils literal notranslate"><span class="pre">foo</span></code> should be <code class="docutils literal notranslate"><span class="pre">a</span></code>.</li>
 </ul>
@@ -1028,11 +1022,11 @@ an HTTP query string or path.</p>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds a map of key-value pairs to query string parameters.</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; member
-:test(&gt; map &gt; member[id|member=value] &gt; :test(string, collection &gt; member &gt; string))
+:test(&gt; map &gt; member[id|member=value] &gt; :test(string, list &gt; member &gt; string))
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait can be applied to <code class="docutils literal notranslate"><span class="pre">structure</span></code> members
-that target a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code>, or a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">list</span></code>/<code class="docutils literal notranslate"><span class="pre">set</span></code> of
+that target a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code>, or a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">list</span></code> of
 <code class="docutils literal notranslate"><span class="pre">string</span></code>.</p>
 </dd>
 <dt>Value type</dt><dd>Annotation trait.</dd>

@@ -32,7 +32,7 @@
         <div class="header-flex width-wrapper">
             <div class="site-logo">
                 <a href="../../../index.html">
-                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                    <img class="logo-icon" alt="Smithy" src="../../../_static/favicon.png" height="28"/><span class="logo-text">Smithy</span>
                 </a>
                 <span class="version-text">1.0</span>
             </div>
@@ -71,15 +71,15 @@ for a shape.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#enum-trait" id="id9"><code class="docutils literal notranslate"><span class="pre">enum</span></code> trait</a></li>
-<li><a class="reference internal" href="#idref-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">idRef</span></code> trait</a></li>
-<li><a class="reference internal" href="#length-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">length</span></code> trait</a></li>
-<li><a class="reference internal" href="#pattern-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">pattern</span></code> trait</a></li>
-<li><a class="reference internal" href="#private-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">private</span></code> trait</a></li>
-<li><a class="reference internal" href="#range-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">range</span></code> trait</a></li>
-<li><a class="reference internal" href="#required-trait" id="id15"><code class="docutils literal notranslate"><span class="pre">required</span></code> trait</a></li>
-<li><a class="reference internal" href="#uniqueitems-trait" id="id16"><code class="docutils literal notranslate"><span class="pre">uniqueItems</span></code> trait</a></li>
-<li><a class="reference internal" href="#trait-precedence" id="id17">Trait precedence</a></li>
+<li><a class="reference internal" href="#enum-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">enum</span></code> trait</a></li>
+<li><a class="reference internal" href="#idref-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">idRef</span></code> trait</a></li>
+<li><a class="reference internal" href="#length-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">length</span></code> trait</a></li>
+<li><a class="reference internal" href="#pattern-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">pattern</span></code> trait</a></li>
+<li><a class="reference internal" href="#private-trait" id="id15"><code class="docutils literal notranslate"><span class="pre">private</span></code> trait</a></li>
+<li><a class="reference internal" href="#range-trait" id="id16"><code class="docutils literal notranslate"><span class="pre">range</span></code> trait</a></li>
+<li><a class="reference internal" href="#required-trait" id="id17"><code class="docutils literal notranslate"><span class="pre">required</span></code> trait</a></li>
+<li><a class="reference internal" href="#uniqueitems-trait" id="id18"><code class="docutils literal notranslate"><span class="pre">uniqueItems</span></code> trait</a></li>
+<li><a class="reference internal" href="#trait-precedence" id="id19">Trait precedence</a></li>
 </ul>
 </div>
 <div class="section" id="enum-trait">
@@ -653,49 +653,63 @@ in a response.</p>
 </div>
 </div>
 <div class="section" id="uniqueitems-trait">
-<span id="uniqueitems"></span><span id="smithy-api-uniqueitems-trait"></span><h2><a href="#uniqueitems-trait"><span class="section-number">3.8. </span><code class="docutils literal notranslate"><span class="pre">uniqueItems</span></code> trait</a></h2>
+<span id="smithy-api-uniqueitems-trait"></span><span id="id9"></span><h2><a href="#uniqueitems-trait"><span class="section-number">3.8. </span><code class="docutils literal notranslate"><span class="pre">uniqueItems</span></code> trait</a></h2>
 <dl class="docutils">
-<dt>Summary</dt><dd>Indicates that the items in a <a class="reference internal" href="model.html#list"><span class="std std-ref">List</span></a> MUST be unique.</dd>
-<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:test(list</span> <span class="pre">&gt;</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">simpleType)</span></code></p>
-<p><em>A list that targets any simple type.</em></p>
+<dt>Summary</dt><dd>Indicates that the items in a <a class="reference internal" href="model.html#list"><span class="std std-ref">list</span></a> MUST be unique
+based on <a class="reference internal" href="#value-equality"><span class="std std-ref">Value equality</span></a>.</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">:not(&gt;</span> <span class="pre">member</span> <span class="pre">~&gt;</span> <span class="pre">:is(float,</span> <span class="pre">double,</span> <span class="pre">document))</span></code></p>
+<p><em>A list that does not transitively contain floats, doubles, or documents</em></p>
+</dd>
+<dt>Conflicts with</dt><dd><ul class="simple">
+<li><a class="reference internal" href="type-refinement-traits.html#sparse-trait"><span class="std std-ref">sparse trait</span></a></li>
+</ul>
 </dd>
 <dt>Value type</dt><dd>Annotation trait.</dd>
 </dl>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-7-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-7-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-7-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-7-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@uniqueItems</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@uniqueItems</span><span class="w"></span>
 <span class="kd">list</span><span class="nc"> MyList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">member:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">member:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
 }<span class="w"></span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-7-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-7-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;smithy.example#MyList&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;member&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;smithy.api#uniqueItems&quot;</span><span class="p">:</span> <span class="p">{}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
+<div class="section" id="value-equality">
+<span id="id10"></span><h3><a href="#value-equality"><span class="section-number">3.8.1. </span>Value equality</a></h3>
+<p>Two values are considered equal if:</p>
+<ul class="simple">
+<li>They are the same type.</li>
+<li>Both are strings and are the same codepoint-for-codepoint.</li>
+<li>Both are blobs and are the same byte-for-byte.</li>
+<li>Both are booleans and are both true or are both false.</li>
+<li>Both are timestamps and refer to the same instant in time.</li>
+<li>Both are lists and have an equal value item-for-item. Note that
+sets, a deprecated data type, are treated exactly like lists.</li>
+<li>Both are maps, have the same number of entries, and each key value
+pair in one map has an equal key value pair in the other map. The
+order of entries does not matter.</li>
+<li>Both are numbers of the same type and have the same mathematical value.</li>
+<li>Both are structures of the same type and have the same members with
+equal values.</li>
+<li>Both are unions of the same type, are set to the same member, and the
+set members have the same value.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Floats, doubles, and documents are not allowed in <code class="docutils literal notranslate"><span class="pre">&#64;uniqueItems</span></code> lists
+because they only allow for partial equivalence and require special care
+to determine if two values are considered equal.</p>
 </div>
-</div></div>
+</div>
 </div>
 <div class="section" id="trait-precedence">
 <span id="precedence"></span><h2><a href="#trait-precedence"><span class="section-number">3.9. </span>Trait precedence</a></h2>
-<p>Some constraints can be applied to shapes as well as structure members. If a
-constraint of the same type is applied to a structure member and the shape
-that the member targets, the trait applied to the member takes precedence.</p>
+<p>Some constraint traits can be applied to shapes as well as members.
+Constraint traits applied to members take precedence over constraint
+traits applied to the shape targeted by members.</p>
 <p>In the below example, the <code class="docutils literal notranslate"><span class="pre">range</span></code> trait applied to <code class="docutils literal notranslate"><span class="pre">numberOfItems</span></code>
 takes precedence over the one applied to <code class="docutils literal notranslate"><span class="pre">PositiveInteger</span></code>. The resolved
 minimum will be <code class="docutils literal notranslate"><span class="pre">7</span></code>, and the maximum <code class="docutils literal notranslate"><span class="pre">12</span></code>.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-8-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-8-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-8-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-8-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> ShoppingCart</span><span class="w"> </span>{<span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-7-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-7-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-7-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-7-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> ShoppingCart</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nd">@range</span>(<span class="nl">min:</span><span class="w"> </span><span class="m">7</span><span class="p">,</span><span class="w"> </span><span class="nl">max:</span><span class="m">12</span>)<span class="w"></span>
 <span class="w">    </span><span class="nl">numberOfItems:</span><span class="w"> </span><span class="vc">PositiveInteger</span><span class="w"></span>
 }<span class="w"></span>
@@ -704,7 +718,7 @@ minimum will be <code class="docutils literal notranslate"><span class="pre">7</
 <span class="kd">integer</span><span class="nc"> PositiveInteger</span><span class="w"></span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-8-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-8-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div><div aria-labelledby="tab-7-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-7-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;smithy.example#MyStructure&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -766,7 +780,10 @@ minimum will be <code class="docutils literal notranslate"><span class="pre">7</
 <li><a class="reference internal" href="#private-trait">3.5. <code class="docutils literal notranslate"><span class="pre">private</span></code> trait</a></li>
 <li><a class="reference internal" href="#range-trait">3.6. <code class="docutils literal notranslate"><span class="pre">range</span></code> trait</a></li>
 <li><a class="reference internal" href="#required-trait">3.7. <code class="docutils literal notranslate"><span class="pre">required</span></code> trait</a></li>
-<li><a class="reference internal" href="#uniqueitems-trait">3.8. <code class="docutils literal notranslate"><span class="pre">uniqueItems</span></code> trait</a></li>
+<li><a class="reference internal" href="#uniqueitems-trait">3.8. <code class="docutils literal notranslate"><span class="pre">uniqueItems</span></code> trait</a><ul>
+<li><a class="reference internal" href="#value-equality">3.8.1. Value equality</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#trait-precedence">3.9. Trait precedence</a></li>
 </ul>
 </li>

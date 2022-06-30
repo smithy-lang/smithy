@@ -32,7 +32,7 @@
         <div class="header-flex width-wrapper">
             <div class="site-logo">
                 <a href="../../../index.html">
-                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                    <img class="logo-icon" alt="Smithy" src="../../../_static/favicon.png" height="28"/><span class="logo-text">Smithy</span>
                 </a>
                 <span class="version-text">1.0</span>
             </div>
@@ -658,14 +658,14 @@ previous example:</p>
 <span id="aws-api-data-trait"></span><span id="id4"></span><h2><a href="#aws-api-data-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that the target contains data of the specified classification.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(simpleType,</span> <span class="pre">collection,</span> <span class="pre">structure,</span> <span class="pre">union,</span> <span class="pre">member)</span></code></dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(simpleType,</span> <span class="pre">list,</span> <span class="pre">structure,</span> <span class="pre">union,</span> <span class="pre">member)</span></code></dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code> that is one of: <code class="docutils literal notranslate"><span class="pre">content</span></code>, <code class="docutils literal notranslate"><span class="pre">account</span></code>, <code class="docutils literal notranslate"><span class="pre">usage</span></code>,
 <code class="docutils literal notranslate"><span class="pre">tagging</span></code>, or <code class="docutils literal notranslate"><span class="pre">permissions</span></code>. See <a class="reference internal" href="#data-classifications"><span class="std std-ref">Data Classifications</span></a> for more
 information.</dd>
 </dl>
 <p>Data classifications are resolved hierarchically: the data classification
 of a member inherits the effective data classification applied to a parent
-structure, union, or collection unless overridden.</p>
+structure, union, or list unless overridden.</p>
 <div class="sphinx-tabs docutils container">
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-6-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-6-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-6-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-6-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.api#data</span><span class="w"></span>
 

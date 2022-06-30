@@ -32,7 +32,7 @@
         <div class="header-flex width-wrapper">
             <div class="site-logo">
                 <a href="../../../index.html">
-                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                    <img class="logo-icon" alt="Smithy" src="../../../_static/favicon.png" height="28"/><span class="logo-text">Smithy</span>
                 </a>
                 <span class="version-text">1.0</span>
             </div>
@@ -301,12 +301,12 @@ These values use the same semantics and format as
 <span class="w">    </span>{<span class="w"></span>
 <span class="w">        </span><span class="nl">title:</span><span class="w"> </span><span class="s2">&quot;Error example for MyOperation&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">        </span><span class="nl">input:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="nl">foo:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nl">foo:</span><span class="w"> </span><span class="s2">&quot;!&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">        </span>}<span class="p">,</span><span class="w"></span>
 <span class="w">        </span><span class="nl">error:</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">            </span><span class="nl">shapeId:</span><span class="w"> </span><span class="vc">MyOperationError</span><span class="p">,</span><span class="w"></span>
 <span class="w">            </span><span class="nl">content:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">                </span><span class="nl">message:</span><span class="w"> </span><span class="s2">&quot;Invalid &#39;foo&#39;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="nl">message:</span><span class="w"> </span><span class="s2">&quot;Invalid &#39;foo&#39;. Special character not allowed.&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">            </span>}<span class="w"></span>
 <span class="w">        </span>}<span class="w"></span>
 <span class="w">    </span>}<span class="p">,</span><span class="w"></span>
@@ -436,10 +436,10 @@ or cannot be made required backward compatibly.</dd>
 <div class="section" id="sensitive-trait">
 <span id="smithy-api-sensitive-trait"></span><span id="id8"></span><h2><a href="#sensitive-trait"><span class="section-number">4.7. </span><code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait</a></h2>
 <dl class="docutils">
-<dt>Summary</dt><dd>Indicates that the data stored in the shape or member is sensitive
-and MUST be handled with care.</dd>
-<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:not(:is(service,</span> <span class="pre">operation,</span> <span class="pre">resource))</span></code></p>
-<p><em>Any shape that is not a service, operation, or resource.</em></p>
+<dt>Summary</dt><dd>Indicates that the data stored in the shape is sensitive and MUST be
+handled with care.</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:not(:is(service,</span> <span class="pre">operation,</span> <span class="pre">resource,</span> <span class="pre">member))</span></code></p>
+<p><em>Any shape that is not a service, operation, resource, or member.</em></p>
 </dd>
 <dt>Value type</dt><dd>Annotation trait</dd>
 </dl>

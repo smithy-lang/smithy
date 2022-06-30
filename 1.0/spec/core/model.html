@@ -32,7 +32,7 @@
         <div class="header-flex width-wrapper">
             <div class="site-logo">
                 <a href="../../../index.html">
-                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                    <img class="logo-icon" alt="Smithy" src="../../../_static/favicon.png" height="28"/><span class="logo-text">Smithy</span>
                 </a>
                 <span class="version-text">1.0</span>
             </div>
@@ -71,16 +71,16 @@ create it. Smithy models are used to describe services and data structures.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#smithy-overview" id="id34">Smithy overview</a></li>
-<li><a class="reference internal" href="#the-semantic-model" id="id35">The semantic model</a></li>
-<li><a class="reference internal" href="#shapes" id="id36">Shapes</a></li>
-<li><a class="reference internal" href="#simple-shapes" id="id37">Simple shapes</a></li>
-<li><a class="reference internal" href="#aggregate-shapes" id="id38">Aggregate shapes</a></li>
-<li><a class="reference internal" href="#service-shapes" id="id39">Service shapes</a></li>
-<li><a class="reference internal" href="#traits" id="id40">Traits</a></li>
-<li><a class="reference internal" href="#model-metadata" id="id41">Model metadata</a></li>
-<li><a class="reference internal" href="#node-values" id="id42">Node values</a></li>
-<li><a class="reference internal" href="#merging-model-files" id="id43">Merging model files</a></li>
+<li><a class="reference internal" href="#smithy-overview" id="id35">Smithy overview</a></li>
+<li><a class="reference internal" href="#the-semantic-model" id="id36">The semantic model</a></li>
+<li><a class="reference internal" href="#shapes" id="id37">Shapes</a></li>
+<li><a class="reference internal" href="#simple-shapes" id="id38">Simple shapes</a></li>
+<li><a class="reference internal" href="#aggregate-shapes" id="id39">Aggregate shapes</a></li>
+<li><a class="reference internal" href="#service-shapes" id="id40">Service shapes</a></li>
+<li><a class="reference internal" href="#traits" id="id41">Traits</a></li>
+<li><a class="reference internal" href="#model-metadata" id="id42">Model metadata</a></li>
+<li><a class="reference internal" href="#node-values" id="id43">Node values</a></li>
+<li><a class="reference internal" href="#merging-model-files" id="id44">Merging model files</a></li>
 </ul>
 </div>
 <div class="section" id="smithy-overview">
@@ -537,7 +537,7 @@ reference other shapes using <a class="reference internal" href="#member"><span 
 <td>Ordered collection of homogeneous values</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#set"><span class="std std-ref">Set</span></a></td>
-<td>Ordered collection of unique homogeneous values</td>
+<td>(Deprecated) Ordered collection of unique homogeneous values</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#map"><span class="std std-ref">Map</span></a></td>
 <td>Map data structure that maps string keys to homogeneous values</td>
@@ -628,10 +628,19 @@ example is <code class="docutils literal notranslate"><span class="pre">smithy.e
 </div>
 <div class="section" id="set">
 <span id="id7"></span><h3><a href="#set"><span class="section-number">1.5.3. </span>Set</a></h3>
+<div class="admonition danger">
+<p class="first admonition-title">Danger</p>
+<p class="last">Sets are deprecated. Use a list with the <a class="reference internal" href="constraint-traits.html#uniqueitems-trait"><span class="std std-ref">uniqueItems trait</span></a> instead.</p>
+</div>
 <p>The <em class="dfn">set</em> type represents an ordered collection of unique values. A set
-shape requires a single member named <code class="docutils literal notranslate"><span class="pre">member</span></code>, and the member MUST target
-either a string, blob, byte, short, integer, long, bigInteger, or bigDecimal
-shape. The targeted shape MUST NOT be marked with the <a class="reference internal" href="stream-traits.html#streaming-trait"><span class="std std-ref">streaming trait</span></a>.</p>
+shape requires a single member named <code class="docutils literal notranslate"><span class="pre">member</span></code>. Sets are implicitly considered
+to be marked with the <a class="reference internal" href="constraint-traits.html#uniqueitems-trait"><span class="std std-ref">uniqueItems trait</span></a>, and as such MUST NOT transitively
+contain floats, doubles, or documents.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">Sets are considered sub-type of lists; any place a list is accepted, a set
+is accepted.</p>
+</div>
 <p>Sets are defined in the IDL using a <a class="reference internal" href="idl.html#idl-set"><span class="std std-ref">set_statement</span></a>. The
 following example defines a set of strings:</p>
 <div class="sphinx-tabs docutils container">
@@ -668,10 +677,13 @@ request.</p>
 <p>The shape ID of the member of a set is the set shape ID followed by
 <code class="docutils literal notranslate"><span class="pre">$member</span></code>. For example, the shape ID of the set member in the above
 example is <code class="docutils literal notranslate"><span class="pre">smithy.example#StringSet$member</span></code>.</p>
-<p class="rubric">Language support for insertion ordered sets</p>
-<p>Not all programming languages support an insertion ordered set data
-structure. Such languages SHOULD store the values of a set data
-structure in a list and rely on validation to ensure uniqueness.</p>
+<p class="rubric">Use insertion order</p>
+<p>Implementations SHOULD use insertion ordered sets to ensure that clients and
+servers both agree on element ordering so that error messages about specific
+items in a set are actionable by clients. If a client and server don't agree
+on ordering, then pointing to where a validation error occurs becomes very
+challenging. Programming languages that do not support insertion ordered sets
+SHOULD store the values of a set in a list.</p>
 </div>
 <div class="section" id="map">
 <span id="id8"></span><h3><a href="#map"><span class="section-number">1.5.4. </span>Map</a></h3>
@@ -955,13 +967,21 @@ model that can be marked with the <code class="docutils literal notranslate"><sp
 </div>
 <div class="section" id="recursive-shape-definitions">
 <h3><a href="#recursive-shape-definitions"><span class="section-number">1.5.8. </span>Recursive shape definitions</a></h3>
-<p>Smithy allows for recursive shape definitions with the following constraint:
-the member of a list, set, or map cannot directly or transitively target its
-containing shape unless one or more members in the path from the container
-back to itself targets a structure or union shape. This ensures that shapes
-that are typically impossible to define in various programming languages are
-not defined in Smithy models (for example, you can't define a recursive list
-in Java <code class="docutils literal notranslate"><span class="pre">List&lt;List&lt;List....</span></code>).</p>
+<p>Smithy allows recursive shape definitions with the following limitations:</p>
+<ol class="arabic simple">
+<li>The member of a list, set, or map cannot directly or transitively target
+its containing shape unless one or more members in the path from the
+container back to itself targets a structure or union shape. This ensures
+that shapes that are typically impossible to define in various programming
+languages are not defined in Smithy models (for example, you can't define
+a recursive list in Java <code class="docutils literal notranslate"><span class="pre">List&lt;List&lt;List....</span></code>).</li>
+<li>To ensure a value can be provided for a structure, recursive member
+relationship from a structure back to itself MUST NOT be made up of all
+<a class="reference internal" href="constraint-traits.html#required-trait"><span class="std std-ref">required</span></a> structure members.</li>
+<li>To ensure a value can be provided for a union, recursive unions MUST
+contain at least one path through its members that is not recursive
+or steps through a list, set, map, or optional structure member.</li>
+</ol>
 <p>The following recursive shape definition is <strong>valid</strong>:</p>
 <div class="sphinx-tabs docutils container">
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-8-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-8-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-8-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-8-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
@@ -1020,6 +1040,21 @@ in Java <code class="docutils literal notranslate"><span class="pre">List&lt;Lis
 </pre></div>
 </div>
 </div></div>
+<p>The following recursive shape definition is <strong>invalid</strong> due to mutual
+recursion and the <a class="reference internal" href="constraint-traits.html#required-trait"><span class="std std-ref">required trait</span></a>.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+
+<span class="kd">structure</span><span class="nc"> RecursiveShape1</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nl">recursiveMember:</span><span class="w"> </span><span class="vc">RecursiveShape2</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure</span><span class="nc"> RecursiveShape2</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nl">recursiveMember:</span><span class="w"> </span><span class="vc">RecursiveShape1</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="service-shapes">
@@ -2382,6 +2417,10 @@ member of a structure can be marked with the trait. When set to
 &quot;target&quot;, only a single member of a structure can target a shape
 marked with this trait.</td>
 </tr>
+<tr class="row-odd"><td>breakingChanges</td>
+<td>[<a class="reference internal" href="#trait-breaking-change-rules"><span class="std std-ref">BreakingChangeRule</span></a>]</td>
+<td>Defines the backward compatibility rules of the trait.</td>
+</tr>
 </tbody>
 </table>
 <p>The following example defines two custom traits: <code class="docutils literal notranslate"><span class="pre">beta</span></code> and
@@ -2565,6 +2604,239 @@ after adding a member to the <code class="docutils literal notranslate"><span cl
 </div>
 </div></div>
 </div>
+<div class="section" id="trait-breaking-change-rules">
+<span id="id30"></span><h4><a href="#trait-breaking-change-rules"><span class="section-number">1.7.4.2. </span>Trait breaking change rules</a></h4>
+<p>Backward compatibility rules of a trait can be defined in the <code class="docutils literal notranslate"><span class="pre">breakingChanges</span></code>
+member of a trait definition. This member is a list of diff rules. Smithy
+tooling that performs semantic diff analysis between two versions of the same
+model can use these rules to detect breaking or risky changes.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Not every kind of breaking change can be described using the
+<code class="docutils literal notranslate"><span class="pre">breakingChanges</span></code> property. Such backward compatibility rules SHOULD
+instead be described through documentation and ideally enforced through
+custom diff tooling.</p>
+</div>
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>change</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first"><strong>Required</strong>. The type of change. This value can be set to one of the
+following:</p>
+<ul class="last simple">
+<li><code class="docutils literal notranslate"><span class="pre">add</span></code>: The trait or value at the given path was added.</li>
+<li><code class="docutils literal notranslate"><span class="pre">remove</span></code>: The trait or value at the given path was removed.</li>
+<li><code class="docutils literal notranslate"><span class="pre">update</span></code>: The trait or value at the given path was changed.</li>
+<li><code class="docutils literal notranslate"><span class="pre">any</span></code>: The trait or value at the given path was added, removed,
+or changed.</li>
+<li><code class="docutils literal notranslate"><span class="pre">presence</span></code>: The trait or value at the given path was either
+added or removed.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>path</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>A JSON pointer as described in <span class="target" id="index-2"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc6901.html"><strong>RFC 6901</strong></a> that points to the values
+to compare from the original model to the updated model. If omitted
+or if an empty string is provided (<code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>), the entire trait is used
+as the value for comparison. The provided pointer MUST correctly
+correspond to shapes in the model.</td>
+</tr>
+<tr class="row-even"><td>severity</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">Defines the severity of the change. This value can be set to:</p>
+<ul class="last simple">
+<li><code class="docutils literal notranslate"><span class="pre">ERROR</span></code>: The change is backward incompatible. This is the default
+assumed severity.</li>
+<li><code class="docutils literal notranslate"><span class="pre">DANGER</span></code>: The change is very likely backward incompatible.</li>
+<li><code class="docutils literal notranslate"><span class="pre">WARNING</span></code>: The change might be backward incompatible.</li>
+<li><code class="docutils literal notranslate"><span class="pre">NOTICE</span></code>: The change is likely ok, but should be noted during
+things like code reviews.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>message</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Provides an optional plain text message that provides information about
+why the detected change could be problematic.</td>
+</tr>
+</tbody>
+</table>
+<p>It is a backward incompatible change to add the following trait to an
+existing shape:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@trait</span>(<span class="nl">breakingChanges:</span><span class="w"> </span>[{<span class="nl">change:</span><span class="w"> </span><span class="s2">&quot;add&quot;</span>}])<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> cannotAdd</span><span class="w"> </span>{}<span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>The above trait definition is equivalent to the following:</p>
+<div class="last highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@trait</span>(<span class="w"></span>
+<span class="w">    </span><span class="nl">breakingChanges:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">        </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">change:</span><span class="w"> </span><span class="s2">&quot;add&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nl">path:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nl">severity:</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>]<span class="w"></span>
+)<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> cannotAdd</span><span class="w"> </span>{}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<p>It is a backward incompatible change to add or remove the following trait from
+an existing shape:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@trait</span>(<span class="nl">breakingChanges:</span><span class="w"> </span>[{<span class="nl">change:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>}])<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> cannotToAddOrRemove</span><span class="w"> </span>{}<span class="w"></span>
+</pre></div>
+</div>
+<p>It is very likely backward incompatible to change the &quot;foo&quot; member of the
+following trait or to remove the &quot;baz&quot; member:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@trait</span>(<span class="w"></span>
+<span class="w">    </span><span class="nl">breakingChanges:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">        </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">change:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nl">path:</span><span class="w"> </span><span class="s2">&quot;/foo&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nl">severity:</span><span class="w"> </span><span class="s2">&quot;DANGER&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">        </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">change:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nl">path:</span><span class="w"> </span><span class="s2">&quot;/baz&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nl">severity:</span><span class="w"> </span><span class="s2">&quot;DANGER&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>]<span class="w"></span>
+)<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> fooBaz</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">foo:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">baz:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>So for example, if the following shape:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@fooBaz</span>(<span class="nl">foo:</span><span class="w"> </span><span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">baz:</span><span class="w"> </span><span class="s2">&quot;b&quot;</span>)<span class="w"></span>
+<span class="kd">string</span><span class="nc"> Example</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Is changed to:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@fooBaz</span>(<span class="nl">foo:</span><span class="w"> </span><span class="s2">&quot;b&quot;</span>)<span class="w"></span>
+<span class="kd">string</span><span class="nc"> Example</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Then the change to the <code class="docutils literal notranslate"><span class="pre">foo</span></code> member from &quot;a&quot; to &quot;b&quot; is backward
+incompatible, as is the removal of the <code class="docutils literal notranslate"><span class="pre">baz</span></code> member.</p>
+<p class="rubric">Referring to list and set members</p>
+<p>The JSON pointer can path into the members of a list or set using a <code class="docutils literal notranslate"><span class="pre">member</span></code>
+segment.</p>
+<p>In the following example, it is a breaking change to change values of lists
+or sets in instances of the <code class="docutils literal notranslate"><span class="pre">names</span></code> trait:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@trait</span>(<span class="w"></span>
+<span class="w">    </span><span class="nl">breakingChanges:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">        </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">change:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nl">path:</span><span class="w"> </span><span class="s2">&quot;/names/member&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>]<span class="w"></span>
+)<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> names</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">names:</span><span class="w"> </span><span class="vc">NameList</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nd">@private</span><span class="w"></span>
+<span class="kd">list</span><span class="nc"> NameList</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">member:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>So for example, if the following shape:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@names</span>(<span class="nl">names:</span><span class="w"> </span>[<span class="s2">&quot;Han&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Luke&quot;</span>])<span class="w"></span>
+<span class="kd">string</span><span class="nc"> Example</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Is changed to:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@names</span>(<span class="nl">names:</span><span class="w"> </span>[<span class="s2">&quot;Han&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Chewy&quot;</span>])<span class="w"></span>
+<span class="kd">string</span><span class="nc"> Example</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Then the change to the second value of the <code class="docutils literal notranslate"><span class="pre">names</span></code> member is
+backward incompatible because it changed from <code class="docutils literal notranslate"><span class="pre">Luke</span></code> to <code class="docutils literal notranslate"><span class="pre">Chewy</span></code>.</p>
+<p class="rubric">Referring to map members</p>
+<p>Members of a map shape can be referenced in a JSON pointer using
+<code class="docutils literal notranslate"><span class="pre">key</span></code> and <code class="docutils literal notranslate"><span class="pre">value</span></code>.</p>
+<p>The following example defines a trait where it is backward incompatible
+to remove a key value pair from a map:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@trait</span>(<span class="w"></span>
+<span class="w">    </span><span class="nl">breakingChanges:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">        </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">change:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nl">path:</span><span class="w"> </span><span class="s2">&quot;/key&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>]<span class="w"></span>
+)<span class="w"></span>
+<span class="kd">map</span><span class="nc"> jobs</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">key:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">value:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>So for example, if the following shape:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@jobs</span>(<span class="nl">Han:</span><span class="w"> </span><span class="s2">&quot;Smuggler&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">Luke:</span><span class="w"> </span><span class="s2">&quot;Jedi&quot;</span>)<span class="w"></span>
+<span class="kd">string</span><span class="nc"> Example</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Is changed to:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@jobs</span>(<span class="nl">Luke:</span><span class="w"> </span><span class="s2">&quot;Jedi&quot;</span>)<span class="w"></span>
+<span class="kd">string</span><span class="nc"> Example</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Then the removal of the &quot;Han&quot; entry of the map is flagged as backward
+incompatible.</p>
+<p>The following example detects when values of a map change.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@trait</span>(<span class="w"></span>
+<span class="w">    </span><span class="nl">breakingChanges:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">        </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">change:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nl">path:</span><span class="w"> </span><span class="s2">&quot;/value&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>]<span class="w"></span>
+)<span class="w"></span>
+<span class="kd">map</span><span class="nc"> jobs</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">key:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">value:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>So for example, if the following shape:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@jobs</span>(<span class="nl">Han:</span><span class="w"> </span><span class="s2">&quot;Smuggler&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">Luke:</span><span class="w"> </span><span class="s2">&quot;Jedi&quot;</span>)<span class="w"></span>
+<span class="kd">string</span><span class="nc"> Example</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Is changed to:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@jobs</span>(<span class="nl">Han:</span><span class="w"> </span><span class="s2">&quot;Smuggler&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">Luke:</span><span class="w"> </span><span class="s2">&quot;Ghost&quot;</span>)<span class="w"></span>
+<span class="kd">string</span><span class="nc"> Example</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Then the change to Luke's mapping from &quot;Jedi&quot; to &quot;Ghost&quot; is
+backward incompatible.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>Using the &quot;update&quot; <code class="docutils literal notranslate"><span class="pre">change</span></code> type with a map key has no effect.</li>
+<li>Using any <code class="docutils literal notranslate"><span class="pre">change</span></code> type other than &quot;update&quot; with map values has no
+effect.</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 <div class="section" id="model-metadata">
@@ -2575,7 +2847,7 @@ metadata to an entire model. For example, metadata is used to define
 <a class="reference internal" href="model-validation.html#suppression-definition"><span class="std std-ref">suppressions</span></a>. Metadata is defined
 using an <code class="docutils literal notranslate"><span class="pre">object</span></code> <a class="reference internal" href="#node-value"><span class="std std-ref">node value</span></a>.</p>
 <div class="section" id="merging-metadata">
-<span id="id30"></span><h3><a href="#merging-metadata"><span class="section-number">1.8.1. </span>Merging metadata</a></h3>
+<span id="id31"></span><h3><a href="#merging-metadata"><span class="section-number">1.8.1. </span>Merging metadata</a></h3>
 <p>When a conflict occurs between top-level metadata key-value pairs,
 metadata is merged using the following logic:</p>
 <ol class="arabic simple">
@@ -2591,16 +2863,16 @@ arrays, and the values are not equal, then the key is invalid and there
 is a metadata conflict error.</li>
 </ol>
 <p>Given the following two Smithy models:</p>
-<div class="literal-block-wrapper docutils container" id="id32">
-<div class="code-block-caption"><span class="caption-text">model-a.smithy</span><a class="headerlink" href="#id32" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id33">
+<div class="code-block-caption"><span class="caption-text">model-a.smithy</span><a class="headerlink" href="#id33" title="Permalink to this code">¶</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> &quot;foo&quot; </span><span class="nd">=</span><span class="w"> </span>[<span class="s2">&quot;baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;bar&quot;</span>]<span class="w"></span>
 <span class="kd">metadata</span><span class="nc"> &quot;qux&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="w"></span>
 <span class="kd">metadata</span><span class="nc"> &quot;validConflict&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;hi!&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 </div>
-<div class="literal-block-wrapper docutils container" id="id33">
-<div class="code-block-caption"><span class="caption-text">model-b.smithy</span><a class="headerlink" href="#id33" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id34">
+<div class="code-block-caption"><span class="caption-text">model-b.smithy</span><a class="headerlink" href="#id34" title="Permalink to this code">¶</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> &quot;foo&quot; </span><span class="nd">=</span><span class="w"> </span>[<span class="s2">&quot;lorem&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;ipsum&quot;</span>]<span class="w"></span>
 <span class="kd">metadata</span><span class="nc"> &quot;lorem&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;ipsum&quot;</span><span class="w"></span>
 <span class="kd">metadata</span><span class="nc"> &quot;validConflict&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;hi!&quot;</span><span class="w"></span>
@@ -2843,6 +3115,7 @@ absolute shape IDs until <em>all</em> model files are loaded.</p>
 <li><a class="reference internal" href="#trait-node-values">1.7.3. Trait node values</a></li>
 <li><a class="reference internal" href="#defining-traits">1.7.4. Defining traits</a><ul>
 <li><a class="reference internal" href="#annotation-traits">1.7.4.1. Annotation traits</a></li>
+<li><a class="reference internal" href="#trait-breaking-change-rules">1.7.4.2. Trait breaking change rules</a></li>
 </ul>
 </li>
 </ul>

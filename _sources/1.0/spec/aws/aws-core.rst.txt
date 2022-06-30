@@ -622,7 +622,7 @@ previous example:
 Summary
     Indicates that the target contains data of the specified classification.
 Trait selector
-    ``:test(simpleType, collection, structure, union, member)``
+    ``:test(simpleType, list, structure, union, member)``
 Value type
     ``string`` that is one of: ``content``, ``account``, ``usage``,
     ``tagging``, or ``permissions``. See :ref:`data-classifications` for more
@@ -630,7 +630,7 @@ Value type
 
 Data classifications are resolved hierarchically: the data classification
 of a member inherits the effective data classification applied to a parent
-structure, union, or collection unless overridden.
+structure, union, or list unless overridden.
 
 .. tabs::
 
