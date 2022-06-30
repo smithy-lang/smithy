@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
-import software.amazon.smithy.model.traits.EnumDefaultTrait;
 import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.EnumValueTrait;
@@ -66,10 +65,6 @@ public final class EnumShape extends StringShape implements NamedMembers {
         if (enumValues == null) {
             Map<String, String> values = new LinkedHashMap<>(members.size());
             for (MemberShape member : members()) {
-                if (member.hasTrait(EnumDefaultTrait.ID)) {
-                    values.put(member.getMemberName(), "");
-                    continue;
-                }
                 values.put(member.getMemberName(), member.expectTrait(EnumValueTrait.class).expectStringValue());
             }
             enumValues = Collections.unmodifiableMap(values);
@@ -311,15 +306,11 @@ public final class EnumShape extends StringShape implements NamedMembers {
     static EnumDefinition enumDefinitionFromMember(MemberShape member) {
         EnumDefinition.Builder builder = EnumDefinition.builder().name(member.getMemberName());
 
-        Optional<String> traitValue = member.getTrait(EnumValueTrait.class).flatMap(EnumValueTrait::getStringValue);
-        if (member.hasTrait(EnumDefaultTrait.class)) {
-            builder.value("");
-        } else if (traitValue.isPresent()) {
-            builder.value(traitValue.get());
-        } else {
-            throw new IllegalStateException("Enum definitions can only be made for string enums.");
-        }
-
+        String traitValue = member
+                .getTrait(EnumValueTrait.class)
+                .flatMap(EnumValueTrait::getStringValue)
+                .orElseThrow(() -> new IllegalStateException("Enum definitions can only be made for string enums."));
+        builder.value(traitValue);
         member.getTrait(DocumentationTrait.class).ifPresent(docTrait -> builder.documentation(docTrait.getValue()));
         member.getTrait(TagsTrait.class).ifPresent(tagsTrait -> builder.tags(tagsTrait.getValues()));
         member.getTrait(DeprecatedTrait.class).ifPresent(deprecatedTrait -> builder.deprecated(true));
@@ -460,7 +451,7 @@ public final class EnumShape extends StringShape implements NamedMembers {
                         "Enum members may only target `smithy.api#Unit`, but found `%s`", member.getTarget()
                 ), getSourceLocation());
             }
-            if (!member.hasTrait(EnumValueTrait.ID) && !member.hasTrait(EnumDefaultTrait.ID)) {
+            if (!member.hasTrait(EnumValueTrait.ID)) {
                 member = member.toBuilder()
                         .addTrait(EnumValueTrait.builder().stringValue(member.getMemberName()).build())
                         .build();
@@ -498,40 +489,6 @@ public final class EnumShape extends StringShape implements NamedMembers {
                     .target(UnitTypeTrait.UNIT)
                     .id(getId().withMember(memberName))
                     .addTrait(EnumValueTrait.builder().stringValue(enumValue).build());
-
-            if (memberUpdater != null) {
-                memberUpdater.accept(builder);
-            }
-
-            return addMember(builder.build());
-        }
-
-        /**
-         * Adds the default member to the builder.
-         *
-         * @param memberName Member name to add.
-         * @return Returns the builder.
-         */
-        public Builder addDefaultMember(String memberName) {
-            return addDefaultMember(memberName, null);
-        }
-
-        /**
-         * Adds the default member to the builder.
-         *
-         * @param memberName Member name to add.
-         * @param memberUpdater Consumer that can update the created member shape.
-         * @return Returns the builder.
-         */
-        public Builder addDefaultMember(String memberName, Consumer<MemberShape.Builder> memberUpdater) {
-            if (getId() == null) {
-                throw new IllegalStateException("An id must be set before setting a member with a target");
-            }
-
-            MemberShape.Builder builder = MemberShape.builder()
-                    .target(UnitTypeTrait.UNIT)
-                    .id(getId().withMember(memberName))
-                    .addTrait(new EnumDefaultTrait());
 
             if (memberUpdater != null) {
                 memberUpdater.accept(builder);

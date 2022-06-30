@@ -125,4 +125,8 @@ enum Version {
                     .build();
         }
     }
+
+    boolean isDefaultSupported() {
+        return this == VERSION_2_0;
+    }
 }

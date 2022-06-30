@@ -1293,6 +1293,14 @@ Other traits that influence API Gateway
     .. seealso:: See :ref:`authorizers`
 
 
+Amazon API Gateway limitations
+==============================
+
+The ``default`` property in OpenAPI is not currently supported by Amazon
+API Gateway. The ``default`` property is automatically removed from OpenAPI
+models when they are generated for Amazon API Gateway.
+
+
 -------------------------------
 Converting to OpenAPI with code
 -------------------------------

@@ -19,7 +19,7 @@
                 "Body": {
                     "target": "ns.foo#StreamingBlob",
                     "traits": {
-                        "smithy.api#default": {}
+                        "smithy.api#default": ""
                     }
                 }
             },
@@ -33,7 +33,7 @@
                 "Body": {
                     "target": "ns.foo#StreamingBlob",
                     "traits": {
-                        "smithy.api#default": {}
+                        "smithy.api#default": ""
                     }
                 }
             },

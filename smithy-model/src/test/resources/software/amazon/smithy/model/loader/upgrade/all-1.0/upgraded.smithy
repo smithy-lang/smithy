@@ -5,7 +5,7 @@ namespace smithy.example
 structure Bytes {
     nullable: Byte,
 
-    @default
+    @default(0)
     nonNull: Byte,
 
     nullable2: Byte,
@@ -14,7 +14,7 @@ structure Bytes {
 structure Shorts {
     nullable: Short,
 
-    @default
+    @default(0)
     nonNull: Short,
 
     nullable2: Short,
@@ -23,14 +23,14 @@ structure Shorts {
 structure Integers {
     nullable: Integer,
 
-    @default
+    @default(0)
     nonNull: Integer,
 
     nullable2: Integer
 }
 
 structure BlobPayload {
-    @default
+    @default("")
     payload: StreamingBlob
 }
 

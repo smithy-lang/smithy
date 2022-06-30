@@ -7,8 +7,7 @@ operation PatchFoo {
         @required
         id: String
 
-        @default
-        description: String
+        description: String = ""
     }
     output := {}
 }

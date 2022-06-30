@@ -72,7 +72,7 @@ your models.
 
 .. seealso::
 
-    :ref:`structure-nullability`
+    :ref:`structure-optionality`
 
 
 Replace Primitive prelude shape targets
@@ -114,8 +114,7 @@ Needs to be updated to:
 .. code-block:: smithy
 
     structure User {
-        @default
-        name: String
+        name: String = ""
     }
 
 
@@ -160,8 +159,7 @@ Needs to be updated to:
     namespace smithy.example
 
     structure OptionalStream {
-        @default
-        payload: StreamingBlob
+        payload: StreamingBlob = ""
     }
 
     structure RequiredStream {
@@ -455,15 +453,8 @@ can be updated to:
     namespace smithy.example
 
     enum Suit {
-        @enumValue("diamond")
-        DIAMOND
-
-        @enumValue("club")
-        CLUB
-
-        @enumValue("heart")
-        HEART
-
-        @enumValue("spade")
-        SPADE
+        DIAMOND = "diamond"
+        CLUB = "club"
+        HEART = "heart"
+        SPADE = "spade"
     }

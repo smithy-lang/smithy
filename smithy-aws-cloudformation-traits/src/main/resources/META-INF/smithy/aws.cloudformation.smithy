@@ -46,36 +46,31 @@ enum cfnMutability {
     /// member does not have any mutability restrictions, meaning that it
     /// can be specified by the user and returned in a `read` or `list`
     /// request.
-    @enumValue("full")
-    FULL
+    FULL = "full"
 
     /// Indicates that the CloudFormation property generated from this
     /// member can be specified only during resource creation and can be
     /// returned in a `read` or `list` request.
-    @enumValue("create-and-read")
-    CREATE_AND_READ
+    CREATE_AND_READ = "create-and-read"
 
     /// Indicates that the CloudFormation property generated from this
     /// member can be specified only during resource creation and cannot
     /// be returned in a `read` or `list` request. MUST NOT be set if the
     /// member is also marked with the `@additionalIdentifier` trait.
-    @enumValue("create")
-    CREATE
+    CREATE = "create"
 
 
     /// Indicates that the CloudFormation property generated from this
     /// member can be returned by a `read` or `list` request, but
     /// cannot be set by the user.
-    @enumValue("read")
-    READ
+    READ = "read"
 
 
     /// Indicates that the CloudFormation property generated from this
     /// member can be specified by the user, but cannot be returned by a
     /// `read` or `list` request. MUST NOT be set if the member is also
     /// marked with the `@additionalIdentifier` trait.
-    @enumValue("write")
-    WRITE
+    WRITE = "write"
 }
 
 /// Indicates that a Smithy resource is a CloudFormation resource.

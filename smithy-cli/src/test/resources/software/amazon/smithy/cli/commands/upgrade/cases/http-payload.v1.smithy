@@ -7,11 +7,6 @@ structure RequiredPayload {
     payload: StreamingBlob
 }
 
-structure DefaultPayload {
-    @default
-    payload: StreamingBlob
-}
-
 structure NeitherRequiredNorDefaultPayload {
     payload: StreamingBlob
 }

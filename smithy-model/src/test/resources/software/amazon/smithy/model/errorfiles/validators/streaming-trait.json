@@ -19,7 +19,7 @@
                 "Body": {
                     "target": "ns.foo#StreamingBlob",
                     "traits": {
-                        "smithy.api#default": {}
+                        "smithy.api#default": ""
                     }
                 }
             },
@@ -33,7 +33,7 @@
                 "Body": {
                     "target": "ns.foo#StreamingBlob",
                     "traits": {
-                        "smithy.api#default": {}
+                        "smithy.api#default": ""
                     }
                 }
             },
@@ -71,7 +71,7 @@
                 "Body": {
                     "target": "ns.foo#StreamingBlob",
                     "traits": {
-                        "smithy.api#default": {}
+                        "smithy.api#default": ""
                     }
                 }
             },
@@ -100,13 +100,13 @@
                 "StreamingBlob1": {
                     "target": "ns.foo#StreamingBlob",
                     "traits": {
-                        "smithy.api#default": {}
+                        "smithy.api#default": ""
                     }
                 },
                 "StreamingBlob2": {
                     "target": "ns.foo#StreamingBlob",
                     "traits": {
-                        "smithy.api#default": {}
+                        "smithy.api#default": ""
                     }
                 }
             },
@@ -144,7 +144,7 @@
                 "nested": {
                     "target": "ns.foo#StreamingBlob",
                     "traits": {
-                        "smithy.api#default": {}
+                        "smithy.api#default": ""
                     }
                 }
             }
@@ -163,7 +163,7 @@
                 "foo": {
                     "target": "ns.foo#StreamingBlob",
                     "traits": {
-                        "smithy.api#default": {}
+                        "smithy.api#default": ""
                     }
                 }
             },

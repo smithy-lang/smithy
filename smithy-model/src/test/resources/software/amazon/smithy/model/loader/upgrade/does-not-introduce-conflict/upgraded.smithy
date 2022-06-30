@@ -3,7 +3,7 @@ $version: "2.0"
 namespace smithy.example
 
 structure Foo {
-    @default
+    @default(0)
     alreadyDefault: Integer,
 
     @required

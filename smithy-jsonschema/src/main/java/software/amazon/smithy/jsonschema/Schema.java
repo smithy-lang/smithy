@@ -46,7 +46,6 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  *     <li>if</li>
  *     <li>then</li>
  *     <li>else</li>
- *     <li>default</li>
  *     <li>examples</li>
  * </ul>
  *

@@ -18,7 +18,7 @@ operation DefaultStreamOperation {
 }
 
 structure DefaultStream {
-    @default
+    @default("")
     payload: StreamingBlob
 }
 

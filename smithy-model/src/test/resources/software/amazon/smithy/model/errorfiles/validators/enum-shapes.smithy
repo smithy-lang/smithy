@@ -11,9 +11,6 @@ enum StringEnum {
     @enumValue("")
     EMPTY_STRING
 
-    @enumDefault
-    DEFAULT_VALUE
-
     @enumValue(1)
     INT_VALUE
 
@@ -31,20 +28,6 @@ enum EnumWithEnumTrait {
     BAR
 }
 
-enum MultipleDefaults {
-    @enumDefault
-    DEFAULT1
-
-    @enumDefault
-    DEFAULT2
-}
-
-enum DefaultWithExplicitValue {
-    @enumDefault
-    @enumValue("foo")
-    DEFAULT
-}
-
 intEnum IntEnum {
     IMPLICIT_VALUE
 
@@ -53,9 +36,6 @@ intEnum IntEnum {
 
     @enumValue(0)
     ZERO
-
-    @enumDefault
-    DEFAULT_VALUE
 
     @enumValue("foo")
     STRING_VALUE

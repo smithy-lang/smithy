@@ -70,6 +70,7 @@ class SmithyLexer(RegexLexer):
             (r'"', String.Double, "string"),
             (r"[:,]+", Punctuation),
             (r"\s+", Whitespace),
+            (r"=", Punctuation)
         ],
         "textblock": [
             (r"\\(.|$)", String.Escape),

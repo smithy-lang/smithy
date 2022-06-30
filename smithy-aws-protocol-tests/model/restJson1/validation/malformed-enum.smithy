@@ -192,11 +192,8 @@ structure MalformedEnumInput {
 }
 
 enum EnumString {
-    @enumValue("abc")
-    ABC
-
-    @enumValue("def")
-    DEF
+    ABC = "abc"
+    DEF = "def"
 }
 
 list EnumList {

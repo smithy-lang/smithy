@@ -610,9 +610,9 @@ Rationale
     guarantees of the ``@required`` trait. For example, it is considered
     backward compatible to remove the ``@required`` trait from a member and
     replace it with the ``@default`` trait. However, this isn't possible for
-    members that target structure or union shapes because they have no zero
-    value. The risk associated with such members may be unacceptable for some
-    services.
+    members that target structure or union shapes because they can have no
+    default value. The risk associated with such members may be unacceptable
+    for some services.
 
 Default severity
     ``DANGER``

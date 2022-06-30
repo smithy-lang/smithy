@@ -12,8 +12,7 @@ metadata validators = [
 namespace smithy.example
 
 structure Foo {
-    @default
-    bar: String,
+    bar: String = "",
 
     @required
     baz: String,

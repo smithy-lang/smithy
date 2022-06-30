@@ -647,4 +647,20 @@ public class JsonSchemaConverterTest {
         assertThat(properties.getValue(document.toNode()).expectObjectNode().getStringMap().keySet(),
                    containsInAnyOrder("foo", "baz"));
     }
+
+    @Test
+    public void appliesDefaults() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("default-values.smithy"))
+                .assemble()
+                .unwrap();
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .model(model)
+                .build()
+                .convert();
+
+        Node expected = Node.parse(
+                IoUtils.toUtf8String(getClass().getResourceAsStream("default-values.jsonschema.json")));
+        Node.assertEquals(document.toNode(), expected);
+    }
 }

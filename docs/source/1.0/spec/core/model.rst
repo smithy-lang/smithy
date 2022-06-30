@@ -397,8 +397,7 @@ The following example defines a shape for each simple type in the
             FOO
         }
         intEnum IntEnum {
-            @enumValue(1)
-            FOO
+            FOO = 1
         }
 
     .. code-tab:: json
@@ -499,17 +498,10 @@ applying the :ref:`enumValue trait <enumValue-trait>`.
 .. code-block:: smithy
 
     enum Suit {
-        @enumValue("diamond")
-        DIAMOND
-
-        @enumValue("club")
-        CLUB
-
-        @enumValue("heart")
-        HEART
-
-        @enumValue("spade")
-        SPADE
+        DIAMOND = "diamond"
+        CLUB = "club"
+        HEART = "heart"
+        SPADE = "spade"
     }
 
 Enums do not support aliasing; all values MUST be unique.
@@ -531,9 +523,8 @@ enum members always have a value
 --------------------------------
 
 If an enum member doesn't have an explicit :ref:`enumValue <enumValue-trait>`
-or :ref:`enumDefault <enumDefault-trait>` trait, an :ref:`enumValue-trait`
-will be automatically added to the member where the trait value is the member's
-name.
+trait, an :ref:`enumValue-trait` is implicitly added to the member with the
+trait value set to the member's name.
 
 The following model:
 
@@ -551,17 +542,10 @@ Is equivalent to:
 .. code-block:: smithy
 
     enum Suit {
-        @enumValue("DIAMOND")
-        DIAMOND
-
-        @enumValue("CLUB")
-        CLUB
-
-        @enumValue("HEART")
-        HEART
-
-        @enumValue("SPADE")
-        SPADE
+        DIAMOND = "DIAMOND"
+        CLUB = "CLUB"
+        HEART = "HEART"
+        SPADE = "SPADE"
     }
 
 .. _intEnum:
@@ -576,20 +560,11 @@ set to a unique integer value. The following example defines an intEnum shape:
 .. code-block:: smithy
 
     intEnum FaceCard {
-        @enumValue(1)
-        JACK
-
-        @enumValue(2)
-        QUEEN
-
-        @enumValue(3)
-        KING
-
-        @enumValue(4)
-        ACE
-
-        @enumValue(5)
-        JOKER
+        JACK = 1
+        QUEEN = 2
+        KING = 3
+        ACE = 4
+        JOKER = 5
     }
 
 intEnum member names SHOULD NOT contain any lowercase ASCII Latin letters
@@ -827,8 +802,9 @@ each member name maps to exactly one :ref:`member <member>` definition.
 Structures are defined in the IDL using a
 :ref:`structure_statement <idl-structure>`.
 
-The following example defines a structure with two members, one of which
-is marked with the :ref:`required-trait`.
+The following example defines a structure with three members, one of which
+is marked with the :ref:`required-trait`, and one that is marked with the
+:ref:`default-trait` using IDL syntactic sugar.
 
 .. tabs::
 
@@ -841,6 +817,8 @@ is marked with the :ref:`required-trait`.
 
             @required
             baz: Integer
+
+            greeting = "Hello"
         }
 
     .. code-tab:: json
@@ -859,6 +837,12 @@ is marked with the :ref:`required-trait`.
                             "traits": {
                                 "smithy.api#required": {}
                             }
+                        },
+                        "greeting": {
+                            "target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#default": "Hello"
+                            }
                         }
                     }
                 }
@@ -871,7 +855,8 @@ is marked with the :ref:`required-trait`.
 
 .. rubric:: Adding new members
 
-New members added to existing structures SHOULD be added to the end of the
+Members MAY be added to structures. New members MUST NOT be marked with the
+:ref:`required-trait`. New members SHOULD be added to the end of the
 structure. This ensures that programming languages that require a specific
 data structure layout or alignment for code generated from Smithy models are
 able to maintain backward compatibility.
@@ -883,23 +868,23 @@ by ``$``, followed by the member name. For example, the shape ID of the ``foo``
 member in the above example is ``smithy.example#MyStructure$foo``.
 
 
-.. _structure-nullability:
+.. _structure-optionality:
 
-Structure member nullability
+Structure member optionality
 ----------------------------
 
-Whether a structure member is nullable is based on if the model consumer
+Whether a structure member is optional is based on if the model consumer
 is authoritative (e.g., a server) or non-authoritative (e.g., a client) and
 determined by evaluating the :ref:`required-trait`, :ref:`default-trait`,
 :ref:`clientOptional-trait`, and :ref:`input-trait`.
 
 
-Requiring members
-~~~~~~~~~~~~~~~~~
+Required members
+~~~~~~~~~~~~~~~~
 
 The :ref:`required-trait` indicates that a value MUST always be present for a
-member in order to create a valid structure. Model transformations like code
-generators can generate accessors for these members that always return a value.
+member in order to create a valid structure. Code generators SHOULD generate
+accessors for these members that always return a value.
 
 .. code-block:: smithy
 
@@ -910,11 +895,12 @@ generators can generate accessors for these members that always return a value.
     }
 
 
-Default zero values
-~~~~~~~~~~~~~~~~~~~
+Default values
+~~~~~~~~~~~~~~
 
-A structure member can be given a default zero value using the
-:ref:`default-trait`.
+A structure member can be given a default value using the :ref:`default-trait`.
+The following example uses syntactic sugar in the Smithy IDL allows to assign
+a default value.
 
 .. code-block:: smithy
 
@@ -922,55 +908,41 @@ A structure member can be given a default zero value using the
         @required
         years: Integer
 
-        // Defaults to 0
-        @default
-        days: Integer
+        days: Integer = 0
     }
-
-.. important::
-
-   An explicitly provided default zero value and a member that defaults to
-   the zero value are indistinguishable.
-
-.. seealso::
-
-    :ref:`default-values` for a list of shapes and their default zero values
 
 
 Evolving requirements and members
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Business requirements change; what is required today might not be required
-tomorrow. Smithy provides several ways to make it so that required members no
-longer need to be provided without breaking previously generated code.
+Requirements change; what is required today might not be required tomorrow.
+Smithy provides several ways to make it so that required members no longer
+need to be provided without breaking previously generated code.
 
 .. rubric:: Migrating ``@required`` to ``@default``
 
-If a ``required`` member can no longer be required due to a change in business
-requirements, the ``required`` trait MAY be removed and replaced with the
-:ref:`default-trait`. The member is still considered always present to tools
-like code generators, but instead of requiring the value to be provided by an
-end-user, a default zero value is automatically provided if missing. For
-example, the previous ``TimeSpan`` model can be backward compatibly changed to:
+If a ``required`` member no longer needs to be be required, the ``required``
+trait MAY be removed and replaced with the :ref:`default-trait`. The member
+is still considered always present to tools like code generators, but instead
+of requiring the value to be provided by an end-user, a default value is
+automatically provided if missing. For example, the previous ``TimeSpan``
+model can be backward compatibly changed to:
 
 .. code-block:: smithy
 
     structure TimeSpan {
         // @required is replaced with @default
-        @default
-        years: Integer
-
-        @default
-        days: Integer
+        years: Integer = 0
+        days: Integer = 0
     }
 
-.. rubric:: Requiring members to be nullable
+.. rubric:: Requiring members to be optional
 
-The :ref:`clientOptional-trait` is used to indicate that a member that is currently
-required by authoritative model consumers like servers MAY become completely
-optional in the future. Non-authoritative model consumers like client code
-generators MUST treat the member as if it is not required and has no default
-zero value.
+The :ref:`clientOptional-trait` is used to indicate that a member that is
+currently required by authoritative model consumers like servers MAY become
+completely optional in the future. Non-authoritative model consumers like
+client code generators MUST treat the member as if it is not required and
+has no default value.
 
 For example, the following structure:
 
@@ -990,16 +962,17 @@ Can be backward-compatibly updated to remove the ``required`` trait:
         summary: String
     }
 
-Replacing the ``required`` and ``clientOptional`` trait with the ``default`` trait
-is *not* a backward compatible change because model consumers would transition
-from assuming the value is nullable to assuming that it is always present due
-to a default zero value.
+Replacing the ``required`` and ``clientOptional`` trait with the ``default``
+trait is *not* a backward compatible change because model consumers would
+transition from assuming the value is nullable to assuming that it is always
+present due to a default value.
 
 .. note::
 
-    Authoritative model consumers MAY choose to ignore the ``clientOptional`` trait.
+    Authoritative model consumers MAY choose to ignore the ``clientOptional``
+    trait.
 
-.. rubric:: Using the ``@input`` trait for more model evolution options
+.. rubric:: Model evolution and the ``@input`` trait
 
 The :ref:`input-trait` specializes a structure as the input of a single
 operation. Transitioning top-level members from ``required`` to optional is

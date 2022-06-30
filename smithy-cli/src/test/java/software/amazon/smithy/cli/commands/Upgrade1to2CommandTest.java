@@ -110,13 +110,13 @@ public class Upgrade1to2CommandTest {
 
     }
 
-    private void assertDirEqual(Path actualDir, Path excpectedDir) throws Exception {
+    private void assertDirEqual(Path actualDir, Path expectedDir) throws Exception {
         Set<Path> files = Files.walk(actualDir)
                 .filter(Files::isRegularFile)
                 .filter(path -> path.toString().endsWith(".smithy"))
                 .collect(Collectors.toSet());
         for (Path actual : files) {
-            Path expected = excpectedDir.resolve(actualDir.relativize(actual));
+            Path expected = expectedDir.resolve(actualDir.relativize(actual));
             assertThat(IoUtils.readUtf8File(actual), equalTo(IoUtils.readUtf8File(expected)));
         }
     }
