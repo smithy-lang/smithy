@@ -2,7 +2,7 @@
 
 * **Authors**: Michael Dowling, Jordon Phillips
 * **Created**: 2022-02-14
-* **Last updated**: 2022-02-14
+* **Last updated**: 2022-06-22
 
 ## Abstract
 
@@ -49,7 +49,19 @@ enum Suit {
 Each value listed in the enum is a member that implicitly targets
 `smithy.api#Unit`. The string representation of an enum member defaults to the
 member name. The string representation can be customized by applying the
-`@enumValue` trait.
+`@enumValue` trait. We will introduce syntactic sugar to assign the
+`@enumValue` trait to enums and intEnums.
+
+```
+enum Suit {
+    DIAMOND = "diamond"
+    CLUB = "club"
+    HEART = "heart"
+    SPADE = "spade"
+}
+```
+
+The above enum definition is exactly equivalent to:
 
 ```
 enum Suit {
@@ -58,50 +70,16 @@ enum Suit {
 
     @enumValue("club")
     CLUB
-    
+
     @enumValue("heart")
     HEART
-    
+
     @enumValue("spade")
     SPADE
 }
 ```
 
 Enums do not support aliasing; all values MUST be unique.
-
-#### enum default values
-
-The default value of the enum shape is an empty string "", regardless of if
-the enum defines a member with a value of "".
-
-```
-structure GetFooInput {
-    @default
-    suit: Suit
-}
-```
-
-To account for this, enums MAY define a default member by setting the
-`@enumDefault` trait on a member:
-
-```
-enum Suit {
-    @enumDefault
-    UNKNOWN
-
-    @enumValue("diamond")
-    DIAMOND
-    
-    @enumValue("club")
-    CLUB
-    
-    @enumValue("heart")
-    HEART
-    
-    @enumValue("spade")
-    SPADE
-}
-```
 
 #### enum is  a specialization of string
 
@@ -127,11 +105,11 @@ Every enum shape MUST define at least one member.
 
 #### enum members always have a value
 
-If an enum member doesn't have an explicit `@enumValue` or `@enumDefault` trait,
-an `@enumValue` trait will be automatically added to the member where the trait
-value is the member's name. This means that enum members that have neither the
-`@enumValue` nor the `@enumDefault` trait are indistinguishable from enum members
-that have the `@enumValue` trait explicitly set.
+If an enum member doesn't have an explicit `@enumValue` trait, an `@enumValue`
+trait will be automatically added to the member where the trait value is the
+member's name. This means that enum members that have no `@enumValue` trait
+are indistinguishable from enum members that have the `@enumValue` trait
+explicitly set.
 
 The following model:
 
@@ -148,19 +126,14 @@ Is equivalent to:
 
 ```
 enum Suit {
-    @enumValue("DIAMOND")
-    DIAMOND
-
-    @enumValue("CLUB")
-    CLUB
-
-    @enumValue("HEART")
-    HEART
-
-    @enumValue("SPADE")
-    SPADE
+    DIAMOND = "DIAMOND"
+    CLUB = "CLUB"
+    HEART = "HEART"
+    SPADE = "SPADE"
 }
 ```
+
+The value of an enum cannot be set to an empty string.
 
 ### intEnum shape
 
@@ -170,61 +143,15 @@ integer value. The following example defines an intEnum shape:
 
 ```
 intEnum FaceCard {
-    @enumValue(1)
-    JACK
-
-    @enumValue(2)
-    QUEEN
-    
-    @enumValue(3)
-    KING
-    
-    @enumValue(4)
-    ACE
-    
-    @enumValue(5)
-    JOKER
+    JACK = 1
+    QUEEN = 2
+    KING = 3
+    ACE = 4
+    JOKER = 5
 }
 ```
 
-#### intEnum default values
-
-The default value of the intEnum shape is 0, regardless of if the enum defines
-a member with a value of 0.
-
-```
-structure GetFooInput {
-    @default
-    suit: Suit
-}
-```
-
-intEnums MAY define a member to represent the default value of the shape by
-setting the `@enumDefault` trait on a member:
-
-```
-intEnum FaceCard {
-    @enumDefault
-    UNKNOWN
-
-    @enumValue(1)
-    JACK
-    
-    @enumValue(2)
-    QUEEN
-    
-    @enumValue(3)
-    KING
-    
-    @enumValue(4)
-    ACE
-    
-    @enumValue(5)
-    JOKER
-}
-```
-
-#### intEnum is  a specialization of integer
+#### intEnum is a specialization of integer
 
 Like enums, intEnums are considered open, meaning it is a backward compatible
 change to add new members. Previously generated clients MUST NOT fail when
@@ -289,7 +216,7 @@ intEnum and enum shape, client implementations can reliably receive and
 round-trip unknown enum values because the unknown value is wire-compatible
 with an integer or enum.
 
-### Why do enums contain members but you can’t define the shape they target?
+### Why do enums contain members, but you can’t define the shape they target?
 
 Every value of an enum and intEnum is considered a member so that they have a
 shape ID and can have traits, but the shape targeted by each enum member is

@@ -71,7 +71,7 @@ structure TraitDiffRule {
     change: TraitChangeType,
 
     /// Defines the severity of the change. Defaults to ERROR if not defined.
-    severity: TraitChangeSeverity,
+    severity: TraitChangeSeverity = "ERROR",
 
     /// Provides a reason why the change is potentially backward incompatible.
     message: String
@@ -80,24 +80,19 @@ structure TraitDiffRule {
 @private
 enum TraitChangeType {
     /// Emit when a trait already existed, continues to exist, but it is modified.
-    @enumValue("update")
-    UPDATE
+    UPDATE = "update"
 
     /// Emit when a trait or value is added that previously did not exist
-    @enumValue("add")
-    ADD
+    ADD = "add"
 
     /// Emit when a trait or value is removed.
-    @enumValue("remove")
-    REMOVE
+    REMOVE = "remove"
 
     /// Emit when a trait is added or removed.
-    @enumValue("presence")
-    PRESENCE
+    PRESENCE = "presence"
 
     /// Emit when any change occurs.
-    @enumValue("any")
-    ANY
+    ANY = "any"
 }
 
 @private
@@ -118,12 +113,10 @@ enum TraitChangeSeverity {
 @private
 enum StructurallyExclusive {
     /// Only a single member of a shape can be marked with the trait.
-    @enumValue("member")
-    MEMBER
+    MEMBER = "member"
 
     /// Only a single member of a shape can target a shape marked with this trait.
-    @enumValue("target")
-    TARGET
+    TARGET = "target"
 }
 
 /// Marks a shape or member as deprecated.
@@ -253,15 +246,18 @@ structure httpApiKeyAuth {
     scheme: NonEmptyString,
 }
 
-/// Provides a structure member with a default zero value.
+/// Provides a structure member with a default value.
 @trait(
     selector: "structure > member :test(> :is(simpleType, list, map))",
     conflicts: [required],
     // The default trait can never be removed. It can only be added if the
-    // member was previously marked as required.
-    breakingChanges: [{change: "remove"}]
+    // member is or was previously marked as required.
+    breakingChanges: [
+        {change: "remove"},
+        {change: "update", severity: "DANGER", message: "Default values should only be changed when absolutely necessary."}
+    ]
 )
-structure default {}
+document default
 
 /// Requires that non-authoritative generators like clients treat a structure member as
 /// nullable regardless of if the member is also marked with the required trait.
@@ -270,11 +266,8 @@ structure clientOptional {}
 
 @private
 enum HttpApiKeyLocations {
-    @enumValue("header")
-    HEADER
-
-    @enumValue("query")
-    QUERY
+    HEADER = "header"
+    QUERY = "query"
 }
 
 /// Indicates that an operation can be called without authentication.
@@ -322,11 +315,8 @@ structure ExampleError {
     breakingChanges: [{change: "any"}]
 )
 enum error {
-    @enumValue("client")
-    CLIENT
-
-    @enumValue("server")
-    SERVER
+    CLIENT = "client"
+    SERVER = "server"
 }
 
 /// Indicates that an error MAY be retried by the client.
@@ -579,15 +569,6 @@ string EnumConstantBodyName
 @tags(["diff.error.const"])
 document enumValue
 
-/// Sets an enum member as the default value member.
-@trait(
-    selector: ":is(enum, intEnum) > member"
-    structurallyExclusive: "member"
-    conflicts: [enumValue]
-)
-@tags(["diff.error.const"])
-structure enumDefault {}
-
 /// Constrains a shape to minimum and maximum number of elements or size.
 @trait(selector: ":test(list, map, string, blob, member > :is(list, map, string, blob))")
 structure length {
@@ -723,10 +704,8 @@ structure http {
     uri: NonEmptyString,
 
     /// The HTTP status code of a successful response.
-    ///
-    /// Defaults to 200 if not provided.
     @range(min: 100, max: 999)
-    code: Integer,
+    code: Integer = 200,
 }
 
 /// Binds an operation input structure member to an HTTP label.
@@ -816,16 +795,14 @@ structure httpResponseCode {}
 )
 structure cors {
     /// The origin from which browser script-originating requests will be allowed.
-    ///
-    /// Defaults to *.
-    origin: NonEmptyString,
+    origin: NonEmptyString = "*",
 
     /// The maximum number of seconds for which browsers are allowed to cache
     /// the results of a preflight OPTIONS request.
     ///
     /// Defaults to 600, the maximum age permitted by several browsers.
     /// Set to -1 to disable caching entirely.
-    maxAge: Integer,
+    maxAge: Integer = 600,
 
     /// The names of headers that should be included in the
     /// Access-Control-Allow-Headers header in responses to preflight OPTIONS
@@ -876,9 +853,7 @@ structure eventHeader {}
 @trait(selector: ":test(string, member > string)")
 structure idRef {
     /// Defines the selector that the resolved shape, if found, MUST match.
-    ///
-    /// selector defaults to * when not defined.
-    selector: String,
+    selector: String = "*",
 
     /// When set to `true`, the shape ID MUST target a shape that can be
     /// found in the model.
@@ -899,19 +874,16 @@ enum timestampFormat {
 
     /// Date time as defined by the date-time production in RFC3339 section 5.6
     /// with no UTC offset (for example, 1985-04-12T23:20:50.52Z).
-    @enumValue("date-time")
-    DATE_TIME
+    DATE_TIME = "date-time"
 
     /// Also known as Unix time, the number of seconds that have elapsed since
     /// 00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970,
     /// with decimal precision (for example, 1515531081.1234).
-    @enumValue("epoch-seconds")
-    EPOCH_SECONDS
+    EPOCH_SECONDS = "epoch-seconds"
 
     /// An HTTP date as defined by the IMF-fixdate production in
     /// RFC 7231#section-7.1.1.1 (for example, Tue, 29 Apr 2014 18:30:38 GMT).
-    @enumValue("http-date")
-    HTTP_DATE
+    HTTP_DATE = "http-date"
 }
 
 /// Configures a custom operation endpoint.

@@ -126,9 +126,9 @@ Build tooling
       - The Smithy SBT plugin transforms Smithy specifications into
         protocol-agnostic Scala clients and servers.
 
----------------
+----------------------
 Client code generators
----------------
+----------------------
 
 The following code generators are in early development. There's no guarantee
 of polish or that they work for all use cases.

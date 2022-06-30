@@ -126,30 +126,25 @@ enum data {
     /// connection with the customer’s accounts and any computational results
     /// that customers or any customer end user derive from the foregoing
     /// through their use of AWS services.
-    @enumValue("content")
-    CUSTOMER_CONTENT
+    CUSTOMER_CONTENT = "content"
 
     /// Account information means information about customers that customers
     /// provide to AWS in connection with the creation or administration of
     /// customers’ accounts.
-    @enumValue("account")
-    CUSTOMER_ACCOUNT_INFORMATION
+    CUSTOMER_ACCOUNT_INFORMATION = "account"
 
     /// Service Attributes means service usage data related to a customer’s
     /// account, such as resource identifiers, metadata tags, security and
     /// access roles, rules, usage policies, permissions, usage statistics,
     /// logging data, and analytics.
-    @enumValue("usage")
-    SERVICE_ATTRIBUTES
+    SERVICE_ATTRIBUTES = "usage"
 
     /// Designates metadata tags applied to AWS resources.
-    @enumValue("tagging")
-    TAG_DATA
+    TAG_DATA = "tagging"
 
     /// Designates security and access roles, rules, usage policies, and
     /// permissions.
-    @enumValue("permissions")
-    PERMISSIONS_DATA
+    PERMISSIONS_DATA = "permissions"
 }
 
 /// Defines a service, resource, or operation as operating on the data plane.

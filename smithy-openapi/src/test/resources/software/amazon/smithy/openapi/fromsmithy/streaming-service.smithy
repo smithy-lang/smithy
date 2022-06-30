@@ -15,9 +15,8 @@ operation StreamingOperation {
 }
 
 structure Output {
-    @default
     @httpPayload
-    body: StreamingPayload,
+    body: StreamingPayload = ""
 }
 
 @streaming

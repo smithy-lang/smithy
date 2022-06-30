@@ -7,7 +7,4 @@
 [WARNING] ns.foo#IntEnum$undesirableName: The name `undesirableName` does not match the recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores. | EnumShape
 [WARNING] ns.foo#EnumWithEnumTrait: This shape applies a trait that is deprecated: smithy.api#enum | DeprecatedTrait
 [ERROR] ns.foo#EnumWithEnumTrait: Trait `enum` cannot be applied to `ns.foo#EnumWithEnumTrait`. This trait may only be applied to shapes that match the following selector: string :not(enum) | TraitTarget
-[ERROR] ns.foo#StringEnum$EMPTY_STRING: enum values may not be empty because an empty string is the default value of enum shapes. Instead, use `smithy.api#enumDefault` to set an explicit name for the default value. | EnumShape
-[ERROR] ns.foo#MultipleDefaults: The `enumDefault` trait can be applied to only a single member of a shape, but it was found on the following members: `DEFAULT1`, `DEFAULT2` | ExclusiveStructureMemberTrait
-[ERROR] ns.foo#DefaultWithExplicitValue$DEFAULT: Found conflicting traits on member shape: `enumDefault` conflicts with `enumValue` | TraitConflict
-[ERROR] ns.foo#IntEnum$ZERO: intEnum values may not be set to 0 because 0 is the default value of intEnum shapes. Instead, use `smithy.api#enumDefault` to set an explicit name for the default value. | EnumShape
+[ERROR] ns.foo#StringEnum$EMPTY_STRING: enum values may not be empty. | EnumShape

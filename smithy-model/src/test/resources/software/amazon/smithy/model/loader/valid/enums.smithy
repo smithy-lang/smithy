@@ -19,11 +19,6 @@ enum EnumWithValueTraits {
     BAZ
 }
 
-enum EnumWithDefaultBound {
-    @enumDefault
-    DEFAULT
-}
-
 intEnum IntEnum {
     @enumValue(1)
     FOO
@@ -33,9 +28,4 @@ intEnum IntEnum {
 
     @enumValue(3)
     BAZ
-}
-
-intEnum IntEnumWithDefaultBound {
-    @enumDefault
-    DEFAULT
 }

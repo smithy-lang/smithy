@@ -150,6 +150,8 @@ Consider the following *abridged* model of S3's ``GetBucketLocation`` operation:
 
 .. code-block:: smithy
 
+    $version: "2.0"
+
     use aws.customizations#s3UnwrappedXmlOutput
 
     @http(uri: "/GetBucketLocation", method: "GET")
@@ -165,10 +167,9 @@ Consider the following *abridged* model of S3's ``GetBucketLocation`` operation:
         LocationConstraint: BucketLocationConstraint
     }
 
-    @enum([
-        { value: "us-west-2", name: "us_west_2" }
-    ])
-    string BucketLocationConstraint
+    enum BucketLocationConstraint {
+        us_west_2 = "us-west-2"
+    }
 
 Since this operation is modeled with ``@s3UnwrappedXmlOutput``,
 an Amazon S3 client should expect the response from S3 to be unwrapped as shown below:

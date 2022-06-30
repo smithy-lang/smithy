@@ -15,7 +15,9 @@
 
 package software.amazon.smithy.model.shapes;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 import java.util.Optional;
@@ -24,7 +26,6 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
-import software.amazon.smithy.model.traits.EnumDefaultTrait;
 import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.EnumValueTrait;
@@ -70,26 +71,6 @@ public class EnumShapeTest {
                 EnumDefinition.builder()
                         .name("foo")
                         .value("bar")
-                        .build()
-        ));
-    }
-
-    @Test
-    public void addDefaultMember() {
-        EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
-        EnumShape shape = builder.addDefaultMember("foo").build();
-        assertEquals(shape.getMember("foo").get(),
-                MemberShape.builder()
-                        .id(shape.getId().withMember("foo"))
-                        .target(UnitTypeTrait.UNIT)
-                        .addTrait(new EnumDefaultTrait())
-                        .build());
-
-        assertTrue(shape.hasTrait(EnumTrait.class));
-        assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(
-                EnumDefinition.builder()
-                        .name("foo")
-                        .value("")
                         .build()
         ));
     }
@@ -459,12 +440,9 @@ public class EnumShapeTest {
     @Test
     public void getEnumValues() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
-        EnumShape shape = builder.addDefaultMember("FOO").addMember("BAR", "bar").build();
+        EnumShape shape = builder.addMember("BAR", "bar").build();
 
-        Map<String, String> expected = MapUtils.of(
-                "FOO", "",
-                "BAR", "bar"
-        );
+        Map<String, String> expected = MapUtils.of("BAR", "bar");
         assertEquals(expected, shape.getEnumValues());
     }
 }

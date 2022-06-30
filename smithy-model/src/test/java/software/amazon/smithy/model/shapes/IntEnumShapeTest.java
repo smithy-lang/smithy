@@ -15,13 +15,14 @@
 
 package software.amazon.smithy.model.shapes;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceException;
-import software.amazon.smithy.model.traits.EnumDefaultTrait;
 import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.utils.MapUtils;
@@ -55,18 +56,6 @@ public class IntEnumShapeTest {
                         .id(shape.getId().withMember("foo"))
                         .target(UnitTypeTrait.UNIT)
                         .addTrait(EnumValueTrait.builder().intValue(1).build())
-                        .build());
-    }
-
-    @Test
-    public void addDefaultMember() {
-        IntEnumShape.Builder builder = (IntEnumShape.Builder) IntEnumShape.builder().id("ns.foo#bar");
-        IntEnumShape shape = builder.addDefaultMember("foo").build();
-        assertEquals(shape.getMember("foo").get(),
-                MemberShape.builder()
-                        .id(shape.getId().withMember("foo"))
-                        .target(UnitTypeTrait.UNIT)
-                        .addTrait(new EnumDefaultTrait())
                         .build());
     }
 
@@ -160,12 +149,9 @@ public class IntEnumShapeTest {
     @Test
     public void getEnumValues() {
         IntEnumShape.Builder builder = (IntEnumShape.Builder) IntEnumShape.builder().id("ns.foo#bar");
-        IntEnumShape shape = builder.addDefaultMember("FOO").addMember("BAR", 1).build();
+        IntEnumShape shape = builder.addMember("FOO", 0).addMember("BAR", 1).build();
 
-        Map<String, Integer> expected = MapUtils.of(
-                "FOO", 0,
-                "BAR", 1
-        );
+        Map<String, Integer> expected = MapUtils.of("FOO", 0, "BAR", 1);
         assertEquals(expected, shape.getEnumValues());
     }
 }

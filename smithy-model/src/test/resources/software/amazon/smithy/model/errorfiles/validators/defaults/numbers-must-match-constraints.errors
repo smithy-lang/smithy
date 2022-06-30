@@ -1,0 +1,1 @@
+[ERROR] smithy.example#Foo$baz: Error validating @default trait: Value provided for `smithy.example#Baz` must be greater than or equal to 1, but found 0 | DefaultTrait

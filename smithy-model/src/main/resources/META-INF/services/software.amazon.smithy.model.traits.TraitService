@@ -6,7 +6,6 @@ software.amazon.smithy.model.traits.DefaultTrait$Provider
 software.amazon.smithy.model.traits.DeprecatedTrait$Provider
 software.amazon.smithy.model.traits.DocumentationTrait$Provider
 software.amazon.smithy.model.traits.EndpointTrait$Provider
-software.amazon.smithy.model.traits.EnumDefaultTrait$Provider
 software.amazon.smithy.model.traits.EnumTrait$Provider
 software.amazon.smithy.model.traits.EnumValueTrait$Provider
 software.amazon.smithy.model.traits.ErrorTrait$Provider

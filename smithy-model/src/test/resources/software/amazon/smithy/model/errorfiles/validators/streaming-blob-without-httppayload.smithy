@@ -30,7 +30,7 @@ structure StreamingOperationOutput {
     @required
     streamId: String,
 
-    @default
+    @default("")
     output: StreamingBlob,
 }
 

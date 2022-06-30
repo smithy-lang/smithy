@@ -19,128 +19,106 @@ the type of a shape.
 =================
 
 Summary
-    Provides a structure member with a default zero value.
+    Provides a structure member with a default value.
 Trait selector
-    ``structure > member :test(> :is(simpleType, collection, map))``
+    ``structure > member :test(> :is(simpleType, list, map))``
 
     A member of a structure that targets a simple type, list, or map.
 Value type
-    Annotation trait.
+    Document type.
 Conflicts with
     * :ref:`required-trait`
+See also
+    * :ref:`structure-optionality`
+    * :ref:`required-trait`
+    * :ref:`clientOptional-trait`
+    * :ref:`input-trait`
 
-The default trait can be applied to structure members to indicate that the targeted
-shape has a default, zero value.
-
-The following example defines a structure with a ``@default`` "title" member that
-has a default zero value:
+The ``@default`` trait assigns a default value to a structure member using
+a document type. The following example defines a structure with a "language"
+member that has a default value:
 
 .. code-block:: smithy
 
     structure Message {
-        @default
-        title: String // defaults to ""
+        @required
+        title: String
+
+        language: Language = "en"
     }
 
-.. seealso::
+    enum Language {
+        EN = "en"
+    }
 
-   * :ref:`structure-nullability`
-   * :ref:`required-trait`
-   * :ref:`clientOptional-trait`
-   * :ref:`input-trait`
+The above example uses syntactic sugar to apply the ``@default`` trait. The
+``Message`` definition is exactly equivalent to:
 
+.. code-block:: smithy
 
-.. _default-values:
+    structure Message {
+        @required
+        title: String
 
-Default zero values
--------------------
-
-The following table describes the default zero value of each kind of shape.
-Programming languages and code generators that cannot initialize structure
-members with the following default values SHOULD represent those members as
-nullable as this is semantically equivalent to the default zero value.
-
-.. list-table::
-    :header-rows: 1
-    :widths: 10 10 80
-
-    * - Shape Type
-      - Zero Value
-      - Description
-    * - boolean
-      - ``false``
-      - Boolean false.
-    * - numbers
-      - ``0``
-      - Numeric zero.
-    * - intEnum
-      - ``0``
-      - Numeric zero.
-    * - string
-      - empty string
-      -
-    * - enum
-      - empty string
-      -
-    * - blob
-      - empty blob
-      - This includes blob shapes marked with the :ref:`streaming-trait`.
-    * - timestamp
-      - Unix epoch
-      - Zero seconds since the epoch (for example, ``0`` or
-        ``1970-01-01T00:00:00Z``).
-    * - document
-      - ``null``
-      - A null document value.
-    * - list
-      - empty list
-      -
-    * - map
-      - empty map
-      -
-    * - structure
-      - N/A
-      - Structures have no default value.
-    * - union
-      - N/A
-      - Unions have no default value. A union MUST be set to one of its
-        variants for it to be valid, and unions have no default variant.
+        @default("en")
+        language: Language
+    }
 
 
-Constraint validation
----------------------
+Default value constraints
+-------------------------
 
-Constraint traits are not evaluated on structure members marked with the
-default trait when the value of the member is the default value.
+The value of the ``@default`` trait MUST be compatible with the shape targeted
+by the member and any applied constraint traits (for example, values for
+numeric types MUST be numbers that fit within the targeted type and match any
+:ref:`range <range-trait>` constraints, string types match any
+:ref:`length <length-trait>` or :ref:`pattern <pattern-trait>` traits, etc).
+
+The following shapes have restrictions on their default values:
+
+* enum: can be set to any valid string *value* of the enum.
+* intEnum: can be set to any valid integer *value* of the enum.
+* document: can be set to ``null``, ```true``, ``false``, string, numbers,
+  an empty list, or an empty map.
+* list: can only be set to an empty list.
+* map: can only be set to an empty map.
+* structure: no default value.
+* union: no default value.
 
 
-Guidance on protocol design
+Impact on API design
+--------------------
+
+The ``@default`` trait SHOULD NOT be used for partial updates or patch style
+operations where it is necessary to differentiate between omitted values and
+explicitly set values. Assigning default values is typically something that
+occurs during deserialization, and as such, it is impossible for a server to
+differentiate between whether a property was set to its default value or if a
+property was omitted.
+
+
+Updating default values
+-----------------------
+
+The default value of a member SHOULD NOT be changed. However, it MAY be
+necessary in extreme cases to change a default value if changing the default
+value addresses a customer-impacting issue or availability issue for a service.
+Changing default values can result in parties disagreeing on the default value
+of a member because they are using different versions of the same model.
+
+
+Default value serialization
 ---------------------------
 
-Protocols MAY choose if and how the default trait impacts serialization and
-deserialization. However, protocol designers should consider the following
-best-practices:
+Authoritative model consumers like servers SHOULD always serialize default
+values to remove any ambiguity about the value of the most up to default
+value. However, to avoid information disclosure, servers SHOULD NOT serialize
+default values if the member is marked with the :ref:`internal-trait`.
 
-1. Serializing the default zero value of a member marked with the default
-   trait can lead to unintended information disclosure. For example, consider
-   a newly introduced structure member marked with the default trait that is
-   only exposed to customers of a service that are allowlisted into a private
-   beta. Serializing the zero values of these members could expose the feature
-   to customers that are not part of the private beta because they would see
-   the member serialized in messages they receive from the service.
-2. Protocol deserialization implementations SHOULD tolerate receiving a
-   serialized default zero value. This also accounts for older clients that
-   think a structure member is required, but the service has since transitioned
-   the member to use the default trait.
-3. Client implementations SHOULD tolerate structure members marked as
-   :ref:`required <required-trait>` that have no serialized value. For example,
-   if a service migrates a member from required to default, then older clients
-   SHOULD gracefully handle the zero value of the member being omitted on the
-   wire. In this case, rather than failing, a client SHOULD set the member
-   value to its default zero value. Failing to deserialize the structure is a
-   bad outcome because what the service perceived as a backward compatible
-   change (i.e., replacing the :ref:`required-trait` with the default trait)
-   could break previously generated clients.
+To allow servers to change default values if necessary, clients SHOULD NOT
+serialize default values unless the member is explicitly set to the default
+value. This implies that clients SHOULD implement a kind of "presence tracking"
+of defaulted members.
 
 
 .. smithy-trait:: smithy.api#clientOptional
@@ -151,26 +129,28 @@ best-practices:
 
 Summary
     Requires that non-authoritative generators like clients treat a structure
-    member as nullable regardless of if the member is also marked with the
-    :ref:`required-trait`.
+    member as optional regardless of if the member is also marked with the
+    :ref:`required-trait` or :ref:`default-trait`.
 Trait selector
-    structure > member
+    ``structure > member``
 Value type
     Annotation trait
+See also
+    * :ref:`structure-optionality`
+    * :ref:`required-trait`
+    * :ref:`default-trait`
+    * :ref:`input-trait`
 
-What is required today might not be required tomorrow. For cases when a service
-isn't sure if a member will be required forever, they can mark a ``@required``
-member as ``@clientOptional`` to ensure that non-authoritative consumers of the
-model treat the member as optional (for example, clients MUST treat such members
-as optional while servers could treat them as always present because they have
-perfect knowledge of their own model). The ``@required`` trait can be backward
-compatibly removed from a member marked as ``@clientOptional`` (and does not
-need to be replaced with the ``@default`` trait). This causes the ``@required``
-trait to function as server-side validation rather than something that changes
-generated code.
+For cases when a service is unsure if a member will be required forever, the
+member can be marked with the ``@clientOptional`` trait to ensure that
+non-authoritative consumers of the model like clients treat the member as
+optional. The ``@required`` trait can be backward compatibly removed from a
+member marked as ``@clientOptional`` (and does not need to be replaced with
+the ``@default`` trait). This causes the ``@required`` and ``@default`` traits
+to function only as a server-side concern.
 
-For example, the ``@required`` trait on ``foo`` in the following structure is
-considered a validation constraint rather than a type refinement trait:
+The ``@required`` trait on ``foo`` in the following structure is considered a
+validation constraint rather than a type refinement trait:
 
 .. code-block:: smithy
 
@@ -182,7 +162,7 @@ considered a validation constraint rather than a type refinement trait:
 
 .. note::
 
-    Structure members in Smithy are automatically considered nullable. For example,
+    Structure members in Smithy are automatically considered optional. For example,
     the following structure:
 
     .. code-block:: smithy
@@ -199,13 +179,6 @@ considered a validation constraint rather than a type refinement trait:
             @clientOptional
             baz: String
         }
-
-.. seealso::
-
-   * :ref:`structure-nullability`
-   * :ref:`required-trait`
-   * :ref:`default-trait`
-   * :ref:`input-trait`
 
 
 .. smithy-trait:: smithy.api#error
@@ -295,6 +268,20 @@ Value type
 Conflicts with
     * :ref:`output-trait`
     * :ref:`error-trait`
+See also
+    * :ref:`structure-optionality`
+
+The following example defines an ``@input`` structure:
+
+.. code-block:: smithy
+
+    @input
+    structure SomeOperationInput {
+        @required
+        name: String
+    }
+
+.. rubric:: ``@input`` structure constraints
 
 Structure shapes marked with the ``@input`` trait MUST adhere to the
 following constraints:
@@ -319,8 +306,6 @@ not need to be replaced with the ``@default`` trait (though this is allowed
 as well). This gives service teams the ability to remove the ``@required``
 trait from top-level input members and loosen requirements without risking
 breaking previously generated clients.
-
-.. seealso:: :ref:`structure-nullability`
 
 
 .. smithy-trait:: smithy.api#output

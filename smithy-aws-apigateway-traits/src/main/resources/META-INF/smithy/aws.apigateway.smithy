@@ -78,7 +78,7 @@ structure integration {
     /// valid value is `INTERNET` for connections through the public routable
     /// internet or `VPC_LINK` for private connections between API Gateway and
     /// a network load balancer in a VPC. The default value is `INTERNET`.
-    connectionType: ConnectionType
+    connectionType: ConnectionType = "INTERNET"
 
     /// An API-specific tag group of related cached parameters.
     cacheNamespace: String
@@ -301,20 +301,16 @@ enum IntegrationType {
     /// An integration with AWS Lambda functions or other AWS services such as
     /// Amazon DynamoDB, Amazon Simple Notification Service or Amazon Simple
     /// Queue Service.
-    @enumValue("aws")
-    AWS
+    AWS = "aws"
 
     /// An integration with AWS Lambda functions.
-    @enumValue("aws_proxy")
-    AWS_PROXY
+    AWS_PROXY = "aws_proxy"
 
     /// An integration with an HTTP backend.
-    @enumValue("http")
-    HTTP
+    HTTP = "http"
 
     /// An integration with an HTTP backend.
-    @enumValue("http_proxy")
-    HTTP_PROXY
+    HTTP_PROXY = "http_proxy"
 }
 
 /// Defines the passThroughBehavior for the integration
@@ -325,21 +321,18 @@ enum PassThroughBehavior {
     /// the integration request. If a template is defined when this option is
     /// selected, the method request of an unmapped content-type will be
     /// rejected with an HTTP 415 Unsupported Media Type response.
-    @enumValue("when_no_templates")
-    WHEN_NO_TEMPLATES
+    WHEN_NO_TEMPLATES = "when_no_templates"
 
     /// Passes the method request body through the integration request to the
     /// back end without transformation when the method request content type
     /// does not match any content type associated with the mapping templates
     /// defined in the integration request.
-    @enumValue("when_no_match")
-    WHEN_NO_MATCH
+    WHEN_NO_MATCH = "when_no_match"
 
     /// Rejects the method request with an HTTP 415 Unsupported Media Type
     /// response when either the method request content type does not match any
     /// content type associated with the mapping templates defined in the
     /// integration request or no mapping template is defined in the integration
     /// request.
-    @enumValue("never")
-    NEVER
+    NEVER = "never"
 }
