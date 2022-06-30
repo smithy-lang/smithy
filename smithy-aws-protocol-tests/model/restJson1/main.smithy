@@ -102,7 +102,6 @@ service RestJson {
         MalformedInteger,
         MalformedUnion,
         MalformedBoolean,
-        MalformedUniqueItems,
         MalformedList,
         MalformedMap,
         MalformedBlob,
