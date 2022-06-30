@@ -1,4 +1,4 @@
-// enum shapes may only be used with Smithy version 2 or later.
+// enum shapes cannot be used in Smithy version 1.0
 $version: "1.0"
 
 namespace ns.foo

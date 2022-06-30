@@ -174,23 +174,23 @@ Shapes are visualized using the following diagram:
     └──────────┘  │  └──────────┘      │    ├────────────┤  │    ├─────────────────────────┤
     ┌──────────┐  │  ┌──────────┐      │    │member      │  │    │version                  │
     │document  │──┼──│string    │      │    └────────────┘  ├────│operations: [Operation]? │
-    └──────────┘  │  └──────────┘      │    ┌────────────┐  │    │resources: [Resource]?   │
-    ┌──────────┐  │       △            ├────│    Set     │  │    └─────────────────────────┘
-    │timestamp │──┤       │            │    ├────────────┤  │    ┌─────────────────────────┐
-    └──────────┘  │  ┌──────────┐      │    │member      │  │    │        Operation        │
-                  │  │enum      │      │    └────────────┘  │    ├─────────────────────────┤
-                  │  └──────────┘      │    ┌────────────┐  │    │input: Structure         │
-          ┌───────────────┐            ├────│    Map     │  ├────│output: Structure        │
-          │  «abstract»   │            │    ├────────────┤  │    │errors: [Structure]?     │
-          │    Number     │            │    │key         │  │    └─────────────────────────┘
-          └───────────────┘            │    │value       │  │    ┌─────────────────────────┐
+    └──────────┘  │  └──────────┘      │                    │    │resources: [Resource]?   │
+    ┌──────────┐  │       △            │    ┌────────────┐  │    └─────────────────────────┘
+    │timestamp │──┤       │            ├────│    Map     │  │    ┌─────────────────────────┐
+    └──────────┘  │  ┌──────────┐      │    ├────────────┤  │    │        Operation        │
+                  │  │enum      │      │    │key         │  │    ├─────────────────────────┤
+                  │  └──────────┘      │    │value       │  │    │input: Structure         │
+          ┌───────────────┐            │    └────────────┘  ├────│output: Structure        │
+          │  «abstract»   │            │                    |    │errors: [Structure]?     │
+          │    Number     │            │    ┌────────────┐  │    └─────────────────────────┘
+          └───────────────┘            ├────│ Structure  │  │    ┌─────────────────────────┐
                   △                    │    └────────────┘  │    │        Resource         │
     ┌──────────┐  │  ┌──────────┐      │    ┌────────────┐  │    ├─────────────────────────┤
-    │float     │──┼──│double    │      ├────│ Structure  │  │    │identifiers?             │
-    └──────────┘  │  └──────────┘      │    └────────────┘  │    │create: Operation?       │
-    ┌──────────┐  │  ┌──────────┐      │    ┌────────────┐  │    │put: Operation?          │
-    │bigInteger│──┼──│bigDecimal│      └────│   Union    │  │    │read: Operation?         │
-    └──────────┘  │  └──────────┘           └────────────┘  └────│update: Operation?       │
+    │float     │──┼──│double    │      └────│   Union    │  │    │identifiers?             │
+    └──────────┘  │  └──────────┘           └────────────┘  │    │create: Operation?       │
+    ┌──────────┐  │  ┌──────────┐                           │    │put: Operation?          │
+    │bigInteger│──┼──│bigDecimal│                           │    │read: Operation?         │
+    └──────────┘  │  └──────────┘                           └────│update: Operation?       │
     ┌──────────┐  │  ┌──────────┐                                │delete: Operation?       │
     │byte      │──┼──│short     │                                │list: : Operation?       │
     └──────────┘  │  └──────────┘                                │operations: [Operation]? │
@@ -633,8 +633,6 @@ Aggregate types are shapes that can contain more than one value.
       - Description
     * - :ref:`list`
       - Ordered collection of homogeneous values
-    * - :ref:`set`
-      - (Deprecated) Ordered collection of unique homogeneous values
     * - :ref:`map`
       - Map data structure that maps string keys to homogeneous values
     * - :ref:`structure`
@@ -721,79 +719,6 @@ reject the request.
 The shape ID of the member of a list is the list shape ID followed by
 ``$member``. For example, the shape ID of the list member in the above
 example is ``smithy.example#MyList$member``.
-
-
-.. _set:
-
-Set
-===
-
-.. danger::
-
-    Sets are deprecated. Use a list with the :ref:`uniqueItems-trait` instead.
-
-The :dfn:`set` type represents an ordered collection of unique values. A set
-shape requires a single member named ``member``. Sets are implicitly considered
-to be marked with the :ref:`uniqueItems-trait`, and as such MUST NOT transitively
-contain floats, doubles, or documents.
-
-.. important::
-
-    Sets are considered sub-type of lists; any place a list is accepted, a set
-    is accepted.
-
-Sets are defined in the IDL using a :ref:`set_statement <idl-set>`. The
-following example defines a set of strings:
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        namespace smithy.example
-
-        set StringSet {
-            member: String
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#StringSet": {
-                    "type": "set",
-                    "member": {
-                        "target": "smithy.api#String"
-                    }
-                }
-            }
-        }
-
-.. rubric:: Sets MUST NOT contain ``null`` values
-
-The values contained in a set are not permitted to be ``null``. ``null`` set
-values do not provide much, if any, utility, and set implementations across
-programming languages often do not support ``null`` values.
-
-If a client encounters a ``null`` value when deserializing a set returned
-from a service, the client MUST discard the ``null`` value. If a service
-receives a ``null`` value for a set from a client, it SHOULD reject the
-request.
-
-.. rubric:: Set member shape ID
-
-The shape ID of the member of a set is the set shape ID followed by
-``$member``. For example, the shape ID of the set member in the above
-example is ``smithy.example#StringSet$member``.
-
-.. rubric:: Use insertion order
-
-Implementations SHOULD use insertion ordered sets to ensure that clients and
-servers both agree on element ordering so that error messages about specific
-items in a set are actionable by clients. If a client and server don't agree
-on ordering, then pointing to where a validation error occurs becomes very
-challenging. Programming languages that do not support insertion ordered sets
-SHOULD store the values of a set in a list.
 
 
 .. _map:
@@ -1267,7 +1192,7 @@ Recursive shape definitions
 
 Smithy allows recursive shape definitions with the following limitations:
 
-1. The member of a list, set, or map cannot directly or transitively target
+1. The member of a list or map cannot directly or transitively target
    its containing shape unless one or more members in the path from the
    container back to itself targets a structure or union shape. This ensures
    that shapes that are typically impossible to define in various programming
@@ -1278,7 +1203,7 @@ Smithy allows recursive shape definitions with the following limitations:
    :ref:`required <required-trait>` structure members.
 3. To ensure a value can be provided for a union, recursive unions MUST
    contain at least one path through its members that is not recursive
-   or steps through a list, set, map, or optional structure member.
+   or steps through a list, map, or optional structure member.
 
 The following recursive shape definition is **valid**:
 
@@ -1631,13 +1556,12 @@ idiomatic.
 
 .. rubric:: Shape types allowed to conflict in a closure
 
-:ref:`Simple types <simple-types>` and :ref:`lists <list>` or
-:ref:`sets <set>` of compatible simple types are allowed to conflict because
-a conflict for these type would rarely have an impact on generated artifacts.
-These kinds of conflicts are only allowed if both conflicting shapes are the
-same type and have the exact same traits. In the case of a list or set, a
-conflict is only allowed if the members of the conflicting shapes target
-compatible shapes.
+:ref:`Simple types <simple-types>` and :ref:`lists <list>` of compatible simple
+types are allowed to conflict because a conflict for these type would rarely
+have an impact on generated artifacts. These kinds of conflicts are only
+allowed if both conflicting shapes are the same type and have the exact same
+traits. In the case of a list, a conflict is only allowed if the members
+of the conflicting shapes target compatible shapes.
 
 .. rubric:: Disambiguating shapes with ``rename``
 
@@ -2716,7 +2640,7 @@ target from traits and how their values are defined in
         millisecond precision. If a string is provided, it MUST be a valid
         :rfc:`3339` string with no UTC offset and optional fractional
         precision (for example, ``1985-04-12T23:20:50.52Z``).
-    * - list and set
+    * - list
       - array
       - Each value in the array MUST be compatible with the targeted member.
     * - map
@@ -3123,9 +3047,9 @@ Is changed to:
 Then the change to the ``foo`` member from "a" to "b" is backward
 incompatible, as is the removal of the ``baz`` member.
 
-.. rubric:: Referring to list and set members
+.. rubric:: Referring to list members
 
-The JSON pointer can path into the members of a list or set using a ``member``
+The JSON pointer can path into the members of a list using a ``member``
 segment.
 
 In the following example, it is a breaking change to change values of lists

@@ -245,6 +245,8 @@ public final class ModelSerializer {
         @Override
         public Node listShape(ListShape shape) {
             ObjectNode.Builder result = createTypedBuilder(shape);
+            // This visitor covers sets and lists. Sets aren't supported in IDL v2, so convert to list.
+            result.withMember("type", ShapeType.LIST.toString());
             mixinMember(result, shape.getMember(), "member");
             return serializeAllTraits(shape, result).build();
         }

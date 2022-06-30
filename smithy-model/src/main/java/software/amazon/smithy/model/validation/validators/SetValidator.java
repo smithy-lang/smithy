@@ -29,7 +29,7 @@ public final class SetValidator extends AbstractValidator {
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
         for (SetShape set : model.getSetShapes()) {
-            events.add(warning(set, "Set shapes are deprecated and will be removed in Smithy IDL v2. "
+            events.add(warning(set, "Set shapes are deprecated and have been removed in Smithy IDL v2. "
                                     + "Use a list shape with the @uniqueItems trait instead."));
         }
         return events;

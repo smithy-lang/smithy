@@ -215,21 +215,6 @@
                 "target": "smithy.example#MixinList"
             }]
         },
-        "smithy.example#MixinSet": {
-            "type": "set",
-            "member": {
-                "target": "smithy.api#String"
-            },
-            "traits": {
-                "smithy.api#mixin": {}
-            }
-        },
-        "smithy.example#MixedSet": {
-            "type": "set",
-            "mixins": [{
-                "target": "smithy.example#MixinSet"
-            }]
-        },
         "smithy.example#MixinMap": {
             "type": "map",
             "key": {

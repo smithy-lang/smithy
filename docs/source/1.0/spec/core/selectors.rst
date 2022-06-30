@@ -78,8 +78,7 @@ Shapes can be matched by type using the following tokens:
     * - ``simpleType``
       - Matches all :ref:`simple types <simple-types>`
     * - ``collection``
-      - Deprecated: Matches both a ``list`` and ``set`` shape.
-        This is considered an alias for ``list``.
+      - Deprecated: An alias of ``list``. Also matches ``set`` shapes in Smithy IDL 1.0.
     * - ``blob``
       - Matches blob shapes
     * - ``boolean``

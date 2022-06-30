@@ -29,10 +29,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
@@ -220,5 +218,20 @@ public class ModelSerializerTest {
         ObjectNode result = serializer.serialize(model);
 
         assertTrue(NodePointer.parse("/shapes/com.foo#Str/traits").getValue(result).isNullNode());
+    }
+
+    @Test
+    public void serializesSetsAsListsWithUniqueItems() {
+        SetShape set = SetShape.builder()
+                .id("smithy.example#Set")
+                .member(ShapeId.from("smithy.example#String"))
+                .build();
+        Model model = Model.builder().addShape(set).build();
+        Node node = ModelSerializer.builder().build().serialize(model);
+
+        assertThat(NodePointer.parse("/shapes/smithy.example#Set/type")
+                           .getValue(node).expectStringNode().getValue(), equalTo("list"));
+        assertThat(NodePointer.parse("/shapes/smithy.example#Set/traits/smithy.api#uniqueItems")
+                           .getValue(node).isNullNode(), equalTo(false));
     }
 }

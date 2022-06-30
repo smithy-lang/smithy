@@ -203,19 +203,19 @@ The following table defines how simple types are serialized in XML documents.
             Document shapes are not recommended for use in XML based protocols.
 
 
-.. _xml-list-and-set-serialization:
+.. _xml-list-serialization:
 
-List and set serialization
---------------------------
+List serialization
+------------------
 
-List and set shapes use the same serialization semantics. List and set shapes
+List shapes use the same serialization semantics. List shapes
 can be serialized as wrapped lists (the default behavior) or flattened lists.
 
 
 Wrapped list serialization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A wrapped list or set is serialized in an XML element where each value is
+A wrapped list is serialized in an XML element where each value is
 serialized in a nested element named ``member``. For example, given the
 following:
 
@@ -241,7 +241,7 @@ The XML serialization of ``Foo`` is:
         </values>
     </Foo>
 
-The :ref:`xmlname-trait` can be applied to the member of a list or set to
+The :ref:`xmlname-trait` can be applied to the member of a list to
 change the nested element name. For example, given the following:
 
 .. tabs::
@@ -298,7 +298,7 @@ The XML serialization of ``Foo`` is:
 Flattened list serialization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The :ref:`xmlflattened-trait` can be used to unwrap the values of list/set
+The :ref:`xmlflattened-trait` can be used to unwrap the values of list
 into a containing structure/union. The name of the elements repeated within
 the structure/union is based on the structure/union member name. For
 example, given the following:
@@ -328,10 +328,10 @@ the name of the repeated XML element. For example, given the following:
     union Choice {
         @xmlFlattened
         @xmlName("Hi")
-        flat: MySet
+        flat: MyList
     }
 
-    set MySet {
+    list MyList {
         member: String
     }
 
@@ -345,7 +345,7 @@ The XML serialization of ``Choice`` is:
         <Hi>example3</Hi>
     </Choice>
 
-The ``xmlName`` trait applied to the member of a list/set has no effect when
+The ``xmlName`` trait applied to the member of a list has no effect when
 serializing a flattened list into a structure/union. For example, given the
 following:
 
@@ -353,10 +353,10 @@ following:
 
     union Choice {
         @xmlFlattened
-        flat: MySet
+        flat: MyList
     }
 
-    set MySet {
+    list MyList {
         @xmlName("Hi")
         member: String
     }
@@ -708,9 +708,9 @@ Summary
 Trait selector
     .. code-block:: none
 
-        :is(structure, union) > :test(member > :test(collection, map))
+        :is(structure, union) > :test(member > :test(list, map))
 
-    *Member of a structure or union that targets a list, set, or map*
+    *Member of a structure or union that targets a list or map*
 Value type
     Annotation trait
 
@@ -942,9 +942,9 @@ The XML serialization is:
 Summary
     Adds an `XML namespace`_ to an XML element.
 Trait selector
-    ``:is(service, member, simpleType, collection, map, structure, union)``
+    ``:is(service, member, simpleType, list, map, structure, union)``
 
-    *Service, simple types, list, map, set, structure, or union*
+    *Service, simple types, list, map, structure, or union*
 Value type
     ``structure``
 Conflicts with
