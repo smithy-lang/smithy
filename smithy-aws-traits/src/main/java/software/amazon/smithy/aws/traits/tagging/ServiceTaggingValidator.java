@@ -28,7 +28,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 /**
  * Validates service satisfies AWS tagging requirements.
  */
-public final class ServiceTaggingApiValidator extends AbstractValidator {
+public final class ServiceTaggingValidator extends AbstractValidator {
     private static final String TAG_RESOURCE_OPNAME = "TagResource";
     private static final String UNTAG_RESOURCE_OPNAME = "UntagResource";
     private static final String LISTTAGS_OPNAME = "ListTagsForResource";

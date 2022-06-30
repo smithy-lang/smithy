@@ -1,4 +1,4 @@
-[WARNING] example.weather#Weather: Service marked `aws.api#TagEnabled` is missing an operation named 'ListTagsForResource.' | ServiceTaggingApi
-[WARNING] example.weather#Weather: Service marked `aws.api#TagEnabled` is missing an operation named 'TagResource.' | ServiceTaggingApi
-[WARNING] example.weather#Weather: Service marked `aws.api#TagEnabled` is missing an operation named 'UntagResource.' | ServiceTaggingApi
+[WARNING] example.weather#Weather: Service marked `aws.api#TagEnabled` is missing an operation named 'ListTagsForResource.' | ServiceTagging
+[WARNING] example.weather#Weather: Service marked `aws.api#TagEnabled` is missing an operation named 'TagResource.' | ServiceTagging
+[WARNING] example.weather#Weather: Service marked `aws.api#TagEnabled` is missing an operation named 'UntagResource.' | ServiceTagging
 [ERROR] example.weather#City: Resource does not have available tag CRUD operations. | TaggableResource
