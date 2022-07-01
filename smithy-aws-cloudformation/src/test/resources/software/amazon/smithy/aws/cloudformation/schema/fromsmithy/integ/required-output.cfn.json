@@ -1,0 +1,45 @@
+{
+    "typeName": "Smithy::TestService::RequiredOutput",
+    "description": "Definition of Smithy::TestService::RequiredOutput Resource Type",
+    "properties": {
+        "FooId": {
+            "type": "string"
+        },
+        "LastUpdate": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "Tags": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        }
+    },
+    "required": [
+        "Tags"
+    ],
+    "readOnlyProperties": [
+        "/properties/FooId",
+        "/properties/LastUpdate"
+    ],
+    "createOnlyProperties": [
+        "/properties/Tags"
+    ],
+    "primaryIdentifier": [
+        "/properties/FooId"
+    ],
+    "handlers": {
+        "create": {
+            "permissions": [
+                "testservice:CreateFoo"
+            ]
+        },
+        "read": {
+            "permissions": [
+                "testservice:ReadFoo"
+            ]
+        }
+    },
+    "additionalProperties": false
+}
