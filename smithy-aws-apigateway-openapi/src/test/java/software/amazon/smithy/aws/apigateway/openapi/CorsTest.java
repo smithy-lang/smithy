@@ -68,7 +68,7 @@ public class CorsTest {
     /**
      * This test asserts two things: First, it ensures that any existing CORS headers
      * set on an explicitly added API Gateway integration are not overwritten
-     * (i.e., the "Access-Control-Allow-Origin" is "domain.com" intsead of https://foo.com).
+     * (i.e., the "Access-Control-Allow-Origin" is "domain.com" instead of https://foo.com).
      * Next, it asserts that any other headers in the gateway response show up in the
      * injected Access-Control-Expose-Headers header.
      */
