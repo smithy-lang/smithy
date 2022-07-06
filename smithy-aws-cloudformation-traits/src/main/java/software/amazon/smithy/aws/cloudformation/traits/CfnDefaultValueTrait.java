@@ -15,26 +15,27 @@
 
 package software.amazon.smithy.aws.cloudformation.traits;
 
-import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.StringTrait;
+import software.amazon.smithy.model.traits.AnnotationTrait;
 
 /**
  * Indicates that the CloudFormation property generated from this member has a
  * default value to be set for a property if no value is provided.
  */
-public final class CfnDefaultValueTrait extends StringTrait {
+public final class CfnDefaultValueTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("aws.cloudformation#cfnDefaultValue");
 
-    public CfnDefaultValueTrait(String value, SourceLocation sourceLocation) {
-        super(ID, value, sourceLocation);
+    public CfnDefaultValueTrait(ObjectNode node) {
+        super(ID, node);
     }
 
-    public CfnDefaultValueTrait(String value) {
-        this(value, SourceLocation.NONE);
+    public CfnDefaultValueTrait() {
+        this(Node.objectNode());
     }
 
-    public static final class Provider extends StringTrait.Provider<CfnDefaultValueTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<CfnDefaultValueTrait> {
         public Provider() {
             super(ID, CfnDefaultValueTrait::new);
         }

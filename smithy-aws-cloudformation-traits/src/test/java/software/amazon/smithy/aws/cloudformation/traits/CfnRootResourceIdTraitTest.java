@@ -21,18 +21,18 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
 
-public final class CfnDefaultValueTraitTest {
+public final class CfnRootResourceIdTraitTest {
 
     @Test
-    public void detectsDefaultValue() {
+    public void detectsCfnRootResourceId() {
         Model result = Model.assembler()
                 .discoverModels(getClass().getClassLoader())
                 .addImport(getClass().getResource("test-service.smithy"))
                 .assemble()
                 .unwrap();
 
-        assertTrue(result.getShape(ShapeId.from("smithy.example#UpdateFooRequest$fooId"))
-                .flatMap(shape -> shape.getTrait(CfnDefaultValueTrait.class))
+        assertTrue(result.getShape(ShapeId.from("smithy.example#ListFooOperationInput$fooId"))
+                .flatMap(shape -> shape.getTrait(CfnRootResourceIdTrait.class))
                 .isPresent());
     }
 }

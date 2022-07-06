@@ -21,13 +21,14 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AnnotationTrait;
 
 /**
- * Indicates that the CloudFormation property generated from this member is a
- * cfnRootResourceID. This cfnRootResourceID trait should be included
- * in the List Operation for a parent container resource so that
- * all child resources can be listed as well.
+ * In a List Operation, this trait indicates that the CloudFormation
+ * member is the cfnRootResourceID for this resource. If a
+ * CloudFormation member is annotated with this trait, the List
+ * Operation will return the parent resource and/or child resources
+ * for this resource.
  */
 public final class CfnRootResourceIdTrait extends AnnotationTrait {
-    public static final ShapeId ID = ShapeId.from("aws.cloudformation#cfnRootResourceID");
+    public static final ShapeId ID = ShapeId.from("aws.cloudformation#cfnRootResourceId");
 
     public CfnRootResourceIdTrait(ObjectNode node) {
         super(ID, node);
