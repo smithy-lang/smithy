@@ -21,8 +21,8 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AnnotationTrait;
 
 /**
- * Indicates that the CloudFormation property generated from this member has a
- * default value to be set for a property if no value is provided.
+ * Indicates that the CloudFormation property generated from this member is the
+ * default value to be used for a property.
  */
 public final class CfnDefaultValueTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("aws.cloudformation#cfnDefaultValue");

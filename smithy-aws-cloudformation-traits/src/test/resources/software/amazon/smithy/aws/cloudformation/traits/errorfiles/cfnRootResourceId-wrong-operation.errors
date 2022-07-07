@@ -1,2 +1,0 @@
-[ERROR] smithy.example#CreateFooOperationInput$fooId: Member with CfnRootResourceId is not marked within a List Operation | CfnRootResourceIdTrait
-[WARNING] smithy.example#CreateFooOperationInput$fooId: This shape applies a trait that is unstable: aws.cloudformation#cfnRootResourceId | UnstableTrait

@@ -34,23 +34,14 @@ string cfnName
 )
 structure cfnExcludeProperty {}
 
-/// Indicates that a structure member is the default value for the
-/// CloudFormation property.
+/// Indicates that a structure member is the default value to be used
+/// for the CloudFormation property.
 @unstable
 @trait(
     selector: "structure > member",
     breakingChanges: [{change: "presence"}]
 )
 structure cfnDefaultValue {}
-
-/// The cfnRootResourceId trait allows the list operation for this resource to
-/// return the parent and/or the direct child resources for this resource
-@unstable
-@trait(
-    selector: "resource > operation -[input, output]-> structure > member",
-    breakingChanges: [{change: "presence"}]
-)
-structure cfnRootResourceId {}
 
 /// Indicates an explicit CloudFormation mutability of the structure member
 /// when part of a CloudFormation resource.

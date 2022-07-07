@@ -1,4 +1,3 @@
-software.amazon.smithy.aws.cloudformation.traits.CfnRootResourceIdTrait$Provider
 software.amazon.smithy.aws.cloudformation.traits.CfnDefaultValueTrait$Provider
 software.amazon.smithy.aws.cloudformation.traits.CfnAdditionalIdentifierTrait$Provider
 software.amazon.smithy.aws.cloudformation.traits.CfnExcludePropertyTrait$Provider

@@ -7,7 +7,6 @@ use aws.cloudformation#cfnAdditionalIdentifier
 use aws.cloudformation#cfnExcludeProperty
 use aws.cloudformation#cfnMutability
 use aws.cloudformation#cfnDefaultValue
-use aws.cloudformation#cfnRootResourceId
 
 service TestService {
     version: "2020-07-02",
@@ -26,7 +25,6 @@ resource FooResource {
     create: CreateFooOperation,
     read: GetFooOperation,
     update: UpdateFooOperation,
-    list: ListFooOperation,
 }
 
 operation CreateFooOperation {
@@ -54,6 +52,7 @@ operation GetFooOperation {
 
 structure GetFooRequest {
     @required
+    @cfnDefaultValue
     fooId: FooId,
 }
 
@@ -74,7 +73,6 @@ operation UpdateFooOperation {
 
 structure UpdateFooRequest {
     @required
-    @cfnDefaultValue
     fooId: FooId,
 
     @cfnMutability("write")
@@ -89,31 +87,6 @@ structure UpdateFooResponse {
     fooValidReadProperty: String,
 
     fooValidFullyMutableProperty: ComplexProperty,
-}
-
-@readonly
-operation ListFooOperation {
-    input: ListFooOperationInput,
-    output: ListFooOperationOutput,
-}
-
- @input
-structure ListFooOperationInput {
-    @cfnRootResourceId
-    fooId: FooId,
-    maxResults: Integer,
-    nextToken: String
-}
-
-@output
-structure ListFooOperationOutput {
-    nextToken: String,
-    @required
-    foos: FooList
-}
-
-list FooList {
-    member: FooId,
 }
 
 /// A Bar resource, not that kind of bar though.

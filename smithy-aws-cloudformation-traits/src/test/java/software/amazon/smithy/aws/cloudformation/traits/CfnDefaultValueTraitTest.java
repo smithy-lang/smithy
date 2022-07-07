@@ -31,7 +31,7 @@ public final class CfnDefaultValueTraitTest {
                 .assemble()
                 .unwrap();
 
-        assertTrue(result.getShape(ShapeId.from("smithy.example#UpdateFooRequest$fooId"))
+        assertTrue(result.getShape(ShapeId.from("smithy.example#GetFooRequest$fooId"))
                 .flatMap(shape -> shape.getTrait(CfnDefaultValueTrait.class))
                 .isPresent());
     }
