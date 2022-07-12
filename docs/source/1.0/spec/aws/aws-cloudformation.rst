@@ -648,10 +648,7 @@ The following example defines a CloudFormation resource that has the
 ----------------------------------------
 
 Summary
-    Indicates that the member annotated is the default value for this
-    property of the resource. This trait is useful for cases of drift
-    detection - if the actual configuration of the resource, differs
-    from the expected, or ``cfnDefaultValue`` configuration.
+    Indicates that the member annotated has a default value for the resource.
 Trait selector
     ``structure > member``
 
@@ -659,9 +656,9 @@ Trait selector
 Value type
     Annotation trait
 
-Given the following example, it can be derived that the ``fooAlias``
-property is a ``cfnDefaultValue``. Note: It is possible to have multiple
-members annotated as ``cfnDefaultValue``.
+Given the following example, because the ``fooAlias``
+member is annotated with ``cfnDefaultValue``, it can be derived
+that the ``fooAlias`` member has a default value for this resource.
 
 .. code-block:: smithy
 

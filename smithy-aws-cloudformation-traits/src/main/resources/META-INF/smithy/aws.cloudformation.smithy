@@ -34,8 +34,8 @@ string cfnName
 )
 structure cfnExcludeProperty {}
 
-/// Indicates that a structure member is the default value to be used
-/// for the CloudFormation property.
+/// Indicates that a structure member has a default value
+/// for the property of the CloudFormation resource.
 @unstable
 @trait(
     selector: "structure > member",
