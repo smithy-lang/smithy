@@ -640,6 +640,71 @@ The following example defines a CloudFormation resource that has the
         fooAlias: String,
     }
 
+.. smithy-trait:: aws.cloudformation#cfnDefaultValue
+.. _aws.cloudformation#cfnDefaultValue-trait:
+
+----------------------------------------
+``aws.cloudformation#cfnDefaultValue`` trait
+----------------------------------------
+
+Summary
+    Indicates that the member annotated is the default value for this
+    property of the resource. This trait is useful for cases of drift
+    detection - if the actual configuration of the resource, differs
+    from the expected, or ``cfnDefaultValue`` configuration.
+Trait selector
+    ``structure > member``
+
+    *Any structure member*
+Value type
+    Annotation trait
+
+Given the following example, it can be derived that the ``fooAlias``
+property is a ``cfnDefaultValue``. Note: It is possible to have multiple
+members annotated as ``cfnDefaultValue``.
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    use aws.cloudformation#cfnDefaultValue
+    use aws.cloudformation#cfnResource
+
+    @cfnResource
+    resource Foo {
+        identifiers: {
+            fooId: String,
+        },
+        read: GetFoo,
+    }
+
+    @readonly
+    @http(method: "GET", uri: "/foos/{fooId}", code: 200)
+    operation GetFoo {
+        input: GetFooRequest,
+        output: GetFooResponse,
+    }
+
+    @input
+    structure GetFooRequest {
+        @httpLabel
+        @required
+        fooId: String,
+
+        @cfnDefaultValue
+        fooAlias: String,
+    }
+
+    @output
+    structure GetFooResponse {
+        fooId: String,
+
+        fooAlias: String,
+
+        @httpResponseCode
+        responseCode: Integer,
+    }
+
 
 -------------
 Example model
@@ -656,6 +721,7 @@ Given the following model,
 
     namespace smithy.example
 
+    use aws.cloudformation#cfnDefaultValue
     use aws.cloudformation#cfnAdditionalIdentifier
     use aws.cloudformation#cfnExcludeProperty
     use aws.cloudformation#cfnMutability
@@ -713,6 +779,7 @@ Given the following model,
 
         @httpQuery("fooAlias")
         @cfnAdditionalIdentifier
+        @cfnDefaultValue
         fooAlias: String,
     }
 
