@@ -15,9 +15,13 @@
 
 package software.amazon.smithy.aws.cloudformation.schema.fromsmithy.mappers;
 
+import java.util.Optional;
 import software.amazon.smithy.aws.cloudformation.schema.fromsmithy.CfnMapper;
 import software.amazon.smithy.aws.cloudformation.schema.fromsmithy.Context;
 import software.amazon.smithy.aws.cloudformation.schema.model.ResourceSchema;
+import software.amazon.smithy.aws.cloudformation.traits.CfnResource;
+import software.amazon.smithy.aws.cloudformation.traits.CfnResourceIndex;
+import software.amazon.smithy.aws.cloudformation.traits.CfnResourceProperty;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -38,15 +42,27 @@ public final class RequiredMapper implements CfnMapper {
         if (context.getConfig().getDisableRequiredPropertyGeneration()) {
             return;
         }
-
-        // If any of the pseudo-resource structure's members are required,
-        // then require the CFN property as well.
+        // If any of the pseudo-resource structure's members are
+        // required and are not only used in output structures then
+        // require the CFN property as well.
         Model model = context.getModel();
         StructureShape resourceStructure = context.getResourceStructure();
         for (MemberShape member : resourceStructure.members()) {
             if (member.getMemberTrait(model, RequiredTrait.class).isPresent()) {
-                resourceSchema.addRequired(context.getJsonSchemaConverter().toPropertyName(member));
+                if (hasWriteOrCreateMutability(context, member)) {
+                    resourceSchema.addRequired(context.getJsonSchemaConverter().toPropertyName(member));
+                }
             }
         }
+    }
+
+    private boolean hasWriteOrCreateMutability(Context context, MemberShape member) {
+        CfnResource cfnResource = context.getCfnResource();
+        String memberId = member.getId().toShapeId().getMember().get();
+        Optional<CfnResourceProperty> cfnResourceProperty = cfnResource.getProperty(memberId);
+        return cfnResourceProperty.map(CfnResourceProperty::getMutabilities)
+                .map(mutabilities -> mutabilities.contains(CfnResourceIndex.Mutability.WRITE)
+                        || mutabilities.contains(CfnResourceIndex.Mutability.CREATE))
+                .orElse(false);
     }
 }
