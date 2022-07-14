@@ -6,6 +6,7 @@ use aws.cloudformation#cfnResource
 use aws.cloudformation#cfnAdditionalIdentifier
 use aws.cloudformation#cfnExcludeProperty
 use aws.cloudformation#cfnMutability
+use aws.cloudformation#cfnDefaultValue
 
 service TestService {
     version: "2020-07-02",
@@ -55,6 +56,7 @@ structure GetFooRequest {
 }
 
 structure GetFooResponse {
+    @cfnDefaultValue
     fooId: FooId,
 
     fooValidReadProperty: String,
