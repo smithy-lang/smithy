@@ -28,7 +28,7 @@ Smithy meta model
       - Description
     * - :ref:`specification`
       - N/A
-      - 1.x
+      - 2.0
       - The Smithy specification defines Smithy and its capabilities.
     * - `Reference implementation <https://github.com/awslabs/smithy>`_
       - Java
