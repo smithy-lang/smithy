@@ -25,6 +25,9 @@ structure Integers {
 
     nonNull: PrimitiveInteger,
 
+    @range(min: 0, max: 1)
+    ranged: PrimitiveInteger,
+
     @box
     nullable2: PrimitiveInteger
 }
