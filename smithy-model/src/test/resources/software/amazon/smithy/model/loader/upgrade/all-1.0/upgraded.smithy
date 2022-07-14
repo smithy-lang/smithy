@@ -26,6 +26,10 @@ structure Integers {
     @default(0)
     nonNull: Integer,
 
+    @default(0)
+    @range(min: 0, max: 1)
+    ranged: Integer,
+
     nullable2: Integer
 }
 

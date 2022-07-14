@@ -15,11 +15,13 @@
 
 package software.amazon.smithy.model.loader;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.BooleanNode;
@@ -31,6 +33,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
+import software.amazon.smithy.model.traits.RangeTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
@@ -133,7 +136,7 @@ final class ModelUpgrader {
                 builder.addTrait(new DefaultTrait(new BooleanNode(false, builder.getSourceLocation())));
             } else if (target.isBlobShape()) {
                 builder.addTrait(new DefaultTrait(new StringNode("", builder.getSourceLocation())));
-            } else {
+            } else if (isZeroValidDefault(member)) {
                 builder.addTrait(new DefaultTrait(new NumberNode(0, builder.getSourceLocation())));
             }
         }
@@ -141,6 +144,39 @@ final class ModelUpgrader {
         if (builder != null) {
             shapeUpgrades.add(builder.build());
         }
+    }
+
+    private boolean isZeroValidDefault(MemberShape member) {
+        Optional<RangeTrait> rangeTraitOptional = member.getMemberTrait(model, RangeTrait.class);
+        // No range means 0 is fine.
+        if (!rangeTraitOptional.isPresent()) {
+            return true;
+        }
+        RangeTrait rangeTrait = rangeTraitOptional.get();
+
+        // Min is greater than 0.
+        if (rangeTrait.getMin().isPresent() && rangeTrait.getMin().get().compareTo(BigDecimal.ZERO) > 0) {
+            events.add(ValidationEvent.builder()
+                    .id(UPGRADE_MODEL)
+                    .severity(Severity.WARNING)
+                    .shape(member)
+                    .message("Cannot add the @default trait to this member due to a minimum range constraint.")
+                    .build());
+            return false;
+        }
+
+        // Max is less than 0.
+        if (rangeTrait.getMax().isPresent() && rangeTrait.getMax().get().compareTo(BigDecimal.ZERO) < 0) {
+            events.add(ValidationEvent.builder()
+                    .id(UPGRADE_MODEL)
+                    .severity(Severity.WARNING)
+                    .shape(member)
+                    .message("Cannot add the @default trait to this member due to a maximum range constraint.")
+                    .build());
+            return false;
+        }
+
+        return true;
     }
 
     private boolean shouldV1MemberHaveDefaultTrait(ShapeType containerType, MemberShape member, Shape target) {
