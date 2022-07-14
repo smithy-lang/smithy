@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restjson.validation
 
@@ -191,8 +191,10 @@ structure MalformedEnumInput {
     union: EnumUnion
 }
 
-@enum([{value: "abc", name: "ABC"}, {value: "def", name: "DEF"}])
-string EnumString
+enum EnumString {
+    ABC = "abc"
+    DEF = "def"
+}
 
 list EnumList {
     member: EnumString

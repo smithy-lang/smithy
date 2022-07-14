@@ -41,7 +41,9 @@ import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.FloatShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
@@ -75,7 +77,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class Model implements ToSmithyBuilder<Model> {
 
     /** Specifies the highest supported version of the IDL. */
-    public static final String MODEL_VERSION = "1.0";
+    public static final String MODEL_VERSION = "2.0";
 
     /** The map of metadata keys to their "node" values. */
     private final Map<String, Node> metadata;
@@ -386,6 +388,25 @@ public final class Model implements ToSmithyBuilder<Model> {
     }
 
     /**
+     * Gets an immutable set of all intEnums in the Model.
+     *
+     * @return Returns the Set of {@code intEnum}s.
+     */
+    public Set<IntEnumShape> getIntEnumShapes() {
+        return toSet(IntEnumShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all intEnums in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code intEnum}s that have a specific trait.
+     */
+    public Set<IntEnumShape> getIntEnumShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), IntEnumShape.class);
+    }
+
+    /**
      * Gets an immutable set of all lists in the Model.
      *
      * @return Returns the Set of {@code list}s.
@@ -523,6 +544,7 @@ public final class Model implements ToSmithyBuilder<Model> {
      *
      * @return Returns the Set of {@code set}s.
      */
+    @Deprecated
     public Set<SetShape> getSetShapes() {
         return toSet(SetShape.class);
     }
@@ -533,6 +555,7 @@ public final class Model implements ToSmithyBuilder<Model> {
      * @param trait The exact trait class to look for on shapes.
      * @return Returns the set of {@code set}s that have a specific trait.
      */
+    @Deprecated
     public Set<SetShape> getSetShapesWithTrait(Class<? extends Trait> trait) {
         return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), SetShape.class);
     }
@@ -573,6 +596,25 @@ public final class Model implements ToSmithyBuilder<Model> {
      */
     public Set<StringShape> getStringShapesWithTrait(Class<? extends Trait> trait) {
         return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), StringShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all enums in the Model.
+     *
+     * @return Returns the Set of {@code enum}s.
+     */
+    public Set<EnumShape> getEnumShapes() {
+        return toSet(EnumShape.class);
+    }
+
+    /**
+     * Gets an immutable set of all enums in the Model that have a specific trait.
+     *
+     * @param trait The exact trait class to look for on shapes.
+     * @return Returns the set of {@code enum}s that have a specific trait.
+     */
+    public Set<EnumShape> getEnumShapesWithTrait(Class<? extends Trait> trait) {
+        return new ShapeTypeFilteredSet<>(getShapesWithTrait(trait), EnumShape.class);
     }
 
     /**
@@ -733,7 +775,7 @@ public final class Model implements ToSmithyBuilder<Model> {
         return (Set<T>) cachedTypes.computeIfAbsent(shapeType, t -> {
             Set<T> result = new HashSet<>();
             for (Shape shape : shapeMap.values()) {
-                if (shape.getClass() == shapeType) {
+                if (shapeType.isInstance(shape)) {
                     result.add((T) shape);
                 }
             }

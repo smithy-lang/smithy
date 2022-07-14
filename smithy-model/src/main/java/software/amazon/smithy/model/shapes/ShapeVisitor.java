@@ -29,7 +29,10 @@ public interface ShapeVisitor<R> {
 
     R listShape(ListShape shape);
 
-    R setShape(SetShape shape);
+    @Deprecated
+    default R setShape(SetShape shape) {
+        return listShape(shape);
+    }
 
     R mapShape(MapShape shape);
 
@@ -38,6 +41,10 @@ public interface ShapeVisitor<R> {
     R shortShape(ShortShape shape);
 
     R integerShape(IntegerShape shape);
+
+    default R intEnumShape(IntEnumShape shape) {
+        return integerShape(shape);
+    }
 
     R longShape(LongShape shape);
 
@@ -58,6 +65,10 @@ public interface ShapeVisitor<R> {
     R serviceShape(ServiceShape shape);
 
     R stringShape(StringShape shape);
+
+    default R enumShape(EnumShape shape) {
+        return stringShape(shape);
+    }
 
     R structureShape(StructureShape shape);
 
@@ -95,11 +106,6 @@ public interface ShapeVisitor<R> {
 
         @Override
         public R listShape(ListShape shape) {
-            return getDefault(shape);
-        }
-
-        @Override
-        public R setShape(SetShape shape) {
             return getDefault(shape);
         }
 

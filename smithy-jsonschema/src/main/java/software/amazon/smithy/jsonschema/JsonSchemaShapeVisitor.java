@@ -27,7 +27,6 @@ import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
-import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.FloatShape;
@@ -36,7 +35,6 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
@@ -44,6 +42,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.LengthTrait;
@@ -90,23 +89,20 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
 
     @Override
     public Schema listShape(ListShape shape) {
-        return buildSchema(shape, createCollectionType(shape));
-    }
-
-    @Override
-    public Schema setShape(SetShape shape) {
-        return buildSchema(shape, createCollectionType(shape).uniqueItems(true));
-    }
-
-    private Schema.Builder createCollectionType(CollectionShape shape) {
-        return createBuilder(shape, "array").items(createRef(shape.getMember()));
+        Schema.Builder builder = createBuilder(shape, "array").items(createRef(shape.getMember()));
+        if (shape.hasTrait(UniqueItemsTrait.class)) {
+            builder.uniqueItems(true);
+        }
+        return buildSchema(shape, builder);
     }
 
     private Schema createRef(MemberShape member) {
         if (converter.isInlined(member)) {
             return member.accept(this);
         } else {
-            return Schema.builder().ref(converter.toPointer(member.getTarget())).build();
+            Schema.Builder builder = Schema.builder().ref(converter.toPointer(member.getTarget()));
+            member.getTrait(DefaultTrait.class).ifPresent(trait -> builder.defaultValue(trait.toNode()));
+            return builder.build();
         }
     }
 
@@ -315,6 +311,9 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
         shape.getTrait(EnumTrait.class)
                 .map(EnumTrait::getEnumDefinitionValues)
                 .ifPresent(builder::enumValues);
+
+        shape.getTrait(DefaultTrait.class)
+                .ifPresent(trait -> builder.defaultValue(trait.toNode()));
 
         return builder;
     }

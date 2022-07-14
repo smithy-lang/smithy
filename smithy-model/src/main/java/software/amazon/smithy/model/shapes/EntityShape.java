@@ -16,6 +16,8 @@
 package software.amazon.smithy.model.shapes;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import software.amazon.smithy.utils.BuilderRef;
 
@@ -25,12 +27,38 @@ import software.amazon.smithy.utils.BuilderRef;
 public abstract class EntityShape extends Shape {
 
     private final Set<ShapeId> resources;
+    private final Set<ShapeId> introducedResources;
     private final Set<ShapeId> operations;
+    private final Set<ShapeId> introducedOperations;
 
     EntityShape(Builder<?, ?> builder) {
         super(builder, false);
-        resources = builder.resources.copy();
-        operations = builder.operations.copy();
+
+        if (getMixins().isEmpty()) {
+            resources = builder.resources.copy();
+            introducedResources = resources;
+            operations = builder.operations.copy();
+            introducedOperations = operations;
+        } else {
+            Set<ShapeId> computedResources = new LinkedHashSet<>();
+            Set<ShapeId> computedOperations = new LinkedHashSet<>();
+
+            for (Shape shape : builder.getMixins().values()) {
+                // validateMixins should have already assured that this is an EntityShape.
+                EntityShape mixin = (EntityShape) shape;
+                computedResources.addAll(mixin.getResources());
+                computedOperations.addAll(mixin.getOperations());
+            }
+
+            introducedResources = builder.resources.copy();
+            introducedOperations = builder.operations.copy();
+
+            computedResources.addAll(introducedResources);
+            computedOperations.addAll(introducedOperations);
+
+            resources = Collections.unmodifiableSet(computedResources);
+            operations = Collections.unmodifiableSet(computedOperations);
+        }
     }
 
     /**
@@ -38,6 +66,16 @@ public abstract class EntityShape extends Shape {
      */
     public final Set<ShapeId> getResources() {
         return resources;
+    }
+
+    /**
+     * Gets all the directly-bound resources introduced by this shape and
+     * not inherited from mixins.
+     *
+     * @return Gets the introduced resources directly-bound to the shape.
+     */
+    public final Set<ShapeId> getIntroducedResources() {
+        return introducedResources;
     }
 
     /**
@@ -53,6 +91,20 @@ public abstract class EntityShape extends Shape {
      */
     public final Set<ShapeId> getOperations() {
         return operations;
+    }
+
+    /**
+     * Gets operations bound through the "operations" property that
+     * were not inherited from mixins.
+     *
+     * <p>This will not include operations bound to resources using
+     * a lifecycle operation binding. This will also not include
+     * operations bound to this entity through sub-resources.
+     *
+     * @return Gets the introduced operations.
+     */
+    public final Set<ShapeId> getIntroducedOperations() {
+        return introducedOperations;
     }
 
     /**
@@ -84,7 +136,7 @@ public abstract class EntityShape extends Shape {
      * @param <B> Concrete builder type.
      * @param <S> Shape type being created.
      */
-    public abstract static class Builder<B extends Builder<?, ?>, S extends EntityShape>
+    public abstract static class Builder<B extends Builder<B, S>, S extends EntityShape>
             extends AbstractShapeBuilder<B, S> {
 
         private final BuilderRef<Set<ShapeId>> resources = BuilderRef.forOrderedSet();
@@ -146,6 +198,25 @@ public abstract class EntityShape extends Shape {
         public B clearResources() {
             resources.clear();
             return (B) this;
+        }
+
+        @Override
+        public B flattenMixins() {
+            Set<ShapeId> flatResources = new LinkedHashSet<>();
+            Set<ShapeId> flatOperations = new LinkedHashSet<>();
+
+            for (Shape shape : getMixins().values()) {
+                EntityShape mixin = (EntityShape) shape;
+                flatResources.addAll(mixin.getResources());
+                flatOperations.addAll(mixin.getOperations());
+            }
+
+            flatResources.addAll(resources.peek());
+            flatOperations.addAll(operations.peek());
+            resources(flatResources);
+            operations(flatOperations);
+
+            return super.flattenMixins();
         }
     }
 }

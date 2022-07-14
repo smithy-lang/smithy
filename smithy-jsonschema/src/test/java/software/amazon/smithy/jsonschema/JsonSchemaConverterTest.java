@@ -33,6 +33,7 @@ import java.util.function.Predicate;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodePointer;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BlobShape;
@@ -623,5 +624,43 @@ public class JsonSchemaConverterTest {
         public void setBaz(String baz) {
             this.baz = baz;
         }
+    }
+
+    @Test
+    public void removesMixins() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("model-with-mixins.smithy"))
+                .assemble()
+                .unwrap();
+        JsonSchemaConverter converter = JsonSchemaConverter.builder()
+                .model(model)
+                .build();
+
+        NodePointer mixin = NodePointer.parse("/definitions/Mixin");
+        NodePointer properties = NodePointer.parse("/definitions/UsesMixin/properties");
+        SchemaDocument document = converter.convert();
+
+        // Mixin isn't there.
+        assertThat(mixin.getValue(document.toNode()), equalTo(Node.nullNode()));
+
+        // The mixin was flattened.
+        assertThat(properties.getValue(document.toNode()).expectObjectNode().getStringMap().keySet(),
+                   containsInAnyOrder("foo", "baz"));
+    }
+
+    @Test
+    public void appliesDefaults() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("default-values.smithy"))
+                .assemble()
+                .unwrap();
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .model(model)
+                .build()
+                .convert();
+
+        Node expected = Node.parse(
+                IoUtils.toUtf8String(getClass().getResourceAsStream("default-values.jsonschema.json")));
+        Node.assertEquals(document.toNode(), expected);
     }
 }

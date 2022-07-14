@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace com.amazonaws.machinelearning
 
@@ -135,17 +135,10 @@ map ScoreValuePerLabelMap {
     value: ScoreValue,
 }
 
-@enum([
-    {
-        value: "PredictiveModelType",
-        name: "PREDICTIVE_MODEL_TYPE",
-    },
-    {
-        value: "Algorithm",
-        name: "ALGORITHM",
-    },
-])
-string DetailsAttributes
+enum DetailsAttributes {
+    PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+    ALGORITHM = "Algorithm"
+}
 
 @length(
     min: 1,

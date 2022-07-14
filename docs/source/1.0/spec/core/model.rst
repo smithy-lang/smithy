@@ -174,31 +174,34 @@ Shapes are visualized using the following diagram:
     └──────────┘  │  └──────────┘      │    ├────────────┤  │    ├─────────────────────────┤
     ┌──────────┐  │  ┌──────────┐      │    │member      │  │    │version                  │
     │document  │──┼──│string    │      │    └────────────┘  ├────│operations: [Operation]? │
-    └──────────┘  │  └──────────┘      │    ┌────────────┐  │    │resources: [Resource]?   │
-    ┌──────────┐  │                    ├────│    Set     │  │    └─────────────────────────┘
-    │timestamp │──┤                    │    ├────────────┤  │    ┌─────────────────────────┐
-    └──────────┘  │                    │    │member      │  │    │        Operation        │
-                  │                    │    └────────────┘  │    ├─────────────────────────┤
-          ┌───────────────┐            │    ┌────────────┐  │    │input: Structure         │
-          │  «abstract»   │            ├────│    Map     │  ├────│output: Structure        │
-          │    Number     │            │    ├────────────┤  │    │errors: [Structure]?     │
-          └───────────────┘            │    │key         │  │    └─────────────────────────┘
-                  △                    │    │value       │  │    ┌─────────────────────────┐
-    ┌──────────┐  │  ┌──────────┐      │    └────────────┘  │    │        Resource         │
-    │byte      │──┼──│short     │      │    ┌────────────┐  │    ├─────────────────────────┤
-    └──────────┘  │  └──────────┘      ├────│ Structure  │  │    │identifiers?             │
-    ┌──────────┐  │  ┌──────────┐      │    └────────────┘  │    │create: Operation?       │
-    │integer   │──┼──│long      │      │    ┌────────────┐  │    │put: Operation?          │
-    └──────────┘  │  └──────────┘      └────│   Union    │  │    │read: Operation?         │
-    ┌──────────┐  │  ┌──────────┐           └────────────┘  └────│update: Operation?       │
-    │float     │──┼──│double    │                                │delete: Operation?       │
-    └──────────┘  │  └──────────┘                                │list: : Operation?       │
-    ┌──────────┐  │  ┌──────────┐                                │operations: [Operation]? │
-    │bigInteger│──┴──│bigDecimal│                                │collectionOperations:    │
-    └──────────┘     └──────────┘                                │    [Operation]?         │
-                                                                 │resources: [Resource]?   │
-                                                                 └─────────────────────────┘
-
+    └──────────┘  │  └──────────┘      │                    │    │resources: [Resource]?   │
+    ┌──────────┐  │       △            │    ┌────────────┐  │    └─────────────────────────┘
+    │timestamp │──┤       │            ├────│    Map     │  │    ┌─────────────────────────┐
+    └──────────┘  │  ┌──────────┐      │    ├────────────┤  │    │        Operation        │
+                  │  │enum      │      │    │key         │  │    ├─────────────────────────┤
+                  │  └──────────┘      │    │value       │  │    │input: Structure         │
+          ┌───────────────┐            │    └────────────┘  ├────│output: Structure        │
+          │  «abstract»   │            │                    |    │errors: [Structure]?     │
+          │    Number     │            │    ┌────────────┐  │    └─────────────────────────┘
+          └───────────────┘            ├────│ Structure  │  │    ┌─────────────────────────┐
+                  △                    │    └────────────┘  │    │        Resource         │
+    ┌──────────┐  │  ┌──────────┐      │    ┌────────────┐  │    ├─────────────────────────┤
+    │float     │──┼──│double    │      └────│   Union    │  │    │identifiers?             │
+    └──────────┘  │  └──────────┘           └────────────┘  │    │create: Operation?       │
+    ┌──────────┐  │  ┌──────────┐                           │    │put: Operation?          │
+    │bigInteger│──┼──│bigDecimal│                           │    │read: Operation?         │
+    └──────────┘  │  └──────────┘                           └────│update: Operation?       │
+    ┌──────────┐  │  ┌──────────┐                                │delete: Operation?       │
+    │byte      │──┼──│short     │                                │list: : Operation?       │
+    └──────────┘  │  └──────────┘                                │operations: [Operation]? │
+    ┌──────────┐  │  ┌──────────┐                                │collectionOperations:    │
+    │integer   │──┴──│long      │                                │    [Operation]?         │
+    └──────────┘     └──────────┘                                │resources: [Resource]?   │
+         △                                                       └─────────────────────────┘
+         │
+    ┌──────────┐
+    │intEnum   │
+    └──────────┘
 
 .. _shape-id:
 
@@ -353,6 +356,11 @@ Simple shapes
         serialization format of a document is an implementation detail of a
         protocol and MUST NOT have any effect on the types exposed by tooling
         to represent a document value.
+    * - enum
+      - A UTF-8 encoded string with a fixed set of values.
+    * - intEnum
+      - A 32-bit signed integer with a fixed set of values that can range from
+        -2^31 to (2^31)-1 (inclusive).
 
 Simple shapes are defined in the IDL using a :ref:`simple_shape_statement <idl-simple>`.
 
@@ -385,6 +393,12 @@ The following example defines a shape for each simple type in the
         bigDecimal BigDecimal
         timestamp Timestamp
         document Document
+        enum Enum {
+            FOO
+        }
+        intEnum IntEnum {
+            FOO = 1
+        }
 
     .. code-tab:: json
 
@@ -429,6 +443,28 @@ The following example defines a shape for each simple type in the
                 },
                 "smithy.example#Document": {
                     "type": "document"
+                },
+                "smithy.example#Enum": {
+                    "type": "enum",
+                    "members": {
+                        "FOO": {
+                            "target": "smithy.api#Unit",
+                            "traits": {
+                                "smithy.api#enumValue": "FOO"
+                            }
+                        }
+                    }
+                },
+                "smithy.example#IntEnum": {
+                    "type": "intEnum",
+                    "members": {
+                        "FOO": {
+                            "target": "smithy.api#Unit",
+                            "traits": {
+                                "smithy.api#enumValue": 1
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -437,6 +473,124 @@ The following example defines a shape for each simple type in the
 
     When defining shapes in the IDL, a namespace MUST first be declared.
 
+.. _enum:
+
+Enum
+====
+
+The enum shape is used to represent a fixed set of one or more string values.
+The following example defines an enum shape:
+
+.. code-block: smithy
+
+    enum Suit {
+        DIAMOND
+        CLUB
+        HEART
+        SPADE
+    }
+
+Each value listed in the enum is a :ref:`member` that implicitly targets
+the :ref:`unit type <unit-type>`. The string representation of an enum member
+defaults to the member name. The string representation can be customized by
+applying the :ref:`enumValue trait <enumValue-trait>`.
+
+.. code-block:: smithy
+
+    enum Suit {
+        DIAMOND = "diamond"
+        CLUB = "club"
+        HEART = "heart"
+        SPADE = "spade"
+    }
+
+Enums do not support aliasing; all values MUST be unique.
+
+Enum member names SHOULD NOT contain any lowercase ASCII Latin letters
+(``a-z``) and SHOULD NOT start with an ASCII underscore (``_``).
+That is, enum names SHOULD match the following regular expression:
+``^[A-Z]+[A-Z_0-9]*$``.
+
+enum is a specialization of string
+----------------------------------
+
+Enums are considered open, meaning it is a backward compatible change to add
+new members. Previously generated clients MUST NOT fail when they encounter an
+unknown enum value. Client implementations MUST provide the capability of
+sending and receiving unknown enum values.
+
+enum members always have a value
+--------------------------------
+
+If an enum member doesn't have an explicit :ref:`enumValue <enumValue-trait>`
+trait, an :ref:`enumValue-trait` is implicitly added to the member with the
+trait value set to the member's name.
+
+The following model:
+
+.. code-block:: smithy
+
+    enum Suit {
+        DIAMOND
+        CLUB
+        HEART
+        SPADE
+    }
+
+Is equivalent to:
+
+.. code-block:: smithy
+
+    enum Suit {
+        DIAMOND = "DIAMOND"
+        CLUB = "CLUB"
+        HEART = "HEART"
+        SPADE = "SPADE"
+    }
+
+.. _intEnum:
+
+IntEnum
+=======
+
+An intEnum is used to represent an enumerated set of one or more integer
+values. The members of intEnum MUST be marked with the :ref:`enumValue-trait`
+set to a unique integer value. The following example defines an intEnum shape:
+
+.. code-block:: smithy
+
+    intEnum FaceCard {
+        JACK = 1
+        QUEEN = 2
+        KING = 3
+        ACE = 4
+        JOKER = 5
+    }
+
+intEnum member names SHOULD NOT contain any lowercase ASCII Latin letters
+(``a-z``) and SHOULD NOT start with an ASCII underscore (``_``).
+That is, enum names SHOULD match the following regular expression:
+``^[A-Z]+[A-Z_0-9]*$``.
+
+intEnum is a specialization of integer
+--------------------------------------
+
+intEnums are considered open, meaning it is a backward compatible change to add
+new members. Previously generated clients MUST NOT fail when they encounter an
+unknown intEnum value. Client implementations MUST provide the capability of
+sending and receiving unknown intEnum values.
+
+.. _member:
+
+-------------
+Member shapes
+-------------
+
+:dfn:`Members` are defined in shapes to reference other shapes using
+a :ref:`shape ID <shape-id>`. The shape referenced by a member is called its
+"target". A member MUST NOT target a :ref:`trait <trait-shapes>`, ``operation``,
+``resource``, ``service``, or ``member``.
+
 
 .. _aggregate-types:
 
@@ -444,8 +598,7 @@ The following example defines a shape for each simple type in the
 Aggregate shapes
 ----------------
 
-Aggregate types define shapes that are composed of other shapes. Aggregate shapes
-reference other shapes using :ref:`members <member>`.
+Aggregate types are shapes that can contain more than one value.
 
 .. list-table::
     :header-rows: 1
@@ -453,12 +606,8 @@ reference other shapes using :ref:`members <member>`.
 
     * - Type
       - Description
-    * - :ref:`member`
-      - Defined in aggregate shapes to reference other shapes
     * - :ref:`list`
       - Ordered collection of homogeneous values
-    * - :ref:`set`
-      - Ordered collection of unique homogeneous values
     * - :ref:`map`
       - Map data structure that maps string keys to homogeneous values
     * - :ref:`structure`
@@ -466,17 +615,6 @@ reference other shapes using :ref:`members <member>`.
     * - :ref:`union`
       - Tagged union data structure that can take on one of several
         different, but fixed, types
-
-
-.. _member:
-
-Member
-======
-
-:dfn:`Members` are defined in aggregate shapes to reference other shapes using
-a :ref:`shape ID <shape-id>`. The shape referenced by a member is called its
-"target". A member MUST NOT target a :ref:`trait <trait-shapes>`, ``operation``,
-``resource``, ``service``, or ``member``.
 
 
 .. _list:
@@ -517,10 +655,8 @@ The following example defines a list with a string member from the
 .. rubric:: List member nullability
 
 Lists are considered *dense* by default, meaning they MAY NOT contain ``null``
-values. A list MAY be made *sparse* by applying the :ref:`sparse-trait`.
-The :ref:`box-trait` is not used to determine if a list is dense or sparse;
-a list with no ``@sparse`` trait is always considered dense. The following
-example defines a sparse list:
+values. A list MAY be made *sparse* by applying the :ref:`sparse-trait`. The
+following example defines a sparse list:
 
 .. tabs::
 
@@ -560,67 +696,6 @@ The shape ID of the member of a list is the list shape ID followed by
 example is ``smithy.example#MyList$member``.
 
 
-.. _set:
-
-Set
-===
-
-The :dfn:`set` type represents an ordered collection of unique values. A set
-shape requires a single member named ``member``, and the member MUST target
-either a string, blob, byte, short, integer, long, bigInteger, or bigDecimal
-shape. The targeted shape MUST NOT be marked with the :ref:`streaming-trait`.
-
-Sets are defined in the IDL using a :ref:`set_statement <idl-set>`. The
-following example defines a set of strings:
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        namespace smithy.example
-
-        set StringSet {
-            member: String
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#StringSet": {
-                    "type": "set",
-                    "member": {
-                        "target": "smithy.api#String"
-                    }
-                }
-            }
-        }
-
-.. rubric:: Sets MUST NOT contain ``null`` values
-
-The values contained in a set are not permitted to be ``null``. ``null`` set
-values do not provide much, if any, utility, and set implementations across
-programming languages often do not support ``null`` values.
-
-If a client encounters a ``null`` value when deserializing a set returned
-from a service, the client MUST discard the ``null`` value. If a service
-receives a ``null`` value for a set from a client, it SHOULD reject the
-request.
-
-.. rubric:: Set member shape ID
-
-The shape ID of the member of a set is the set shape ID followed by
-``$member``. For example, the shape ID of the set member in the above
-example is ``smithy.example#StringSet$member``.
-
-.. rubric:: Language support for insertion ordered sets
-
-Not all programming languages support an insertion ordered set data
-structure. Such languages SHOULD store the values of a set data
-structure in a list and rely on validation to ensure uniqueness.
-
-
 .. _map:
 
 Map
@@ -639,7 +714,7 @@ The following example defines a map of strings to integers:
         namespace smithy.example
 
         map IntegerMap {
-            key: String,
+            key: String
             value: Integer
         }
 
@@ -670,9 +745,7 @@ across programming languages often do not allow ``null`` keys in maps.
 
 Maps values are considered *dense* by default, meaning they MAY NOT contain
 ``null`` values. A map MAY be made *sparse* by applying the
-:ref:`sparse-trait`. The :ref:`box-trait` is not used to determine if a map
-is dense or sparse; a map with no ``@sparse`` trait is always considered
-dense. The following example defines a sparse map:
+:ref:`sparse-trait`. The following example defines a sparse map:
 
 .. tabs::
 
@@ -680,7 +753,7 @@ dense. The following example defines a sparse map:
 
         @sparse
         map SparseMap {
-            key: String,
+            key: String
             value: String
         }
 
@@ -729,8 +802,9 @@ each member name maps to exactly one :ref:`member <member>` definition.
 Structures are defined in the IDL using a
 :ref:`structure_statement <idl-structure>`.
 
-The following example defines a structure with two members, one of which
-is marked with the :ref:`required-trait`.
+The following example defines a structure with three members, one of which
+is marked with the :ref:`required-trait`, and one that is marked with the
+:ref:`default-trait` using IDL syntactic sugar.
 
 .. tabs::
 
@@ -739,10 +813,12 @@ is marked with the :ref:`required-trait`.
         namespace smithy.example
 
         structure MyStructure {
-            foo: String,
+            foo: String
 
             @required
-            baz: Integer,
+            baz: Integer
+
+            greeting = "Hello"
         }
 
     .. code-tab:: json
@@ -761,6 +837,12 @@ is marked with the :ref:`required-trait`.
                             "traits": {
                                 "smithy.api#required": {}
                             }
+                        },
+                        "greeting": {
+                            "target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#default": "Hello"
+                            }
                         }
                     }
                 }
@@ -773,7 +855,8 @@ is marked with the :ref:`required-trait`.
 
 .. rubric:: Adding new members
 
-New members added to existing structures SHOULD be added to the end of the
+Members MAY be added to structures. New members MUST NOT be marked with the
+:ref:`required-trait`. New members SHOULD be added to the end of the
 structure. This ensures that programming languages that require a specific
 data structure layout or alignment for code generated from Smithy models are
 able to maintain backward compatibility.
@@ -785,22 +868,143 @@ by ``$``, followed by the member name. For example, the shape ID of the ``foo``
 member in the above example is ``smithy.example#MyStructure$foo``.
 
 
-.. _default-values:
+.. _structure-optionality:
 
-Default structure member values
--------------------------------
+Structure member optionality
+----------------------------
 
-The values provided for structure members are either always present and set to
-a default value when necessary or *boxed*, meaning a value is optionally present
-with no default value. Members are considered boxed if the member is marked with
-the :ref:`box-trait` or the shape targeted by the member is marked with the box
-trait. Members that target strings, timestamps, and aggregate shapes are always
-considered boxed and have no default values.
+Whether a structure member is optional is based on if the model consumer
+is authoritative (e.g., a server) or non-authoritative (e.g., a client) and
+determined by evaluating the :ref:`required-trait`, :ref:`default-trait`,
+:ref:`clientOptional-trait`, and :ref:`input-trait`.
 
-- The default value of a ``byte``, ``short``, ``integer``, ``long``,
-  ``float``, and ``double`` shape that is not boxed is zero.
-- The default value of a ``boolean`` shape that is not boxed is ``false``.
-- All other shapes are always considered boxed and have no default value.
+
+Required members
+~~~~~~~~~~~~~~~~
+
+The :ref:`required-trait` indicates that a value MUST always be present for a
+member in order to create a valid structure. Code generators SHOULD generate
+accessors for these members that always return a value.
+
+.. code-block:: smithy
+
+    structure TimeSpan {
+        // years must always be present to make a TimeSpan
+        @required
+        years: Integer
+    }
+
+
+Default values
+~~~~~~~~~~~~~~
+
+A structure member can be given a default value using the :ref:`default-trait`.
+The following example uses syntactic sugar in the Smithy IDL allows to assign
+a default value.
+
+.. code-block:: smithy
+
+    structure TimeSpan {
+        @required
+        years: Integer
+
+        days: Integer = 0
+    }
+
+
+Evolving requirements and members
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Requirements change; what is required today might not be required tomorrow.
+Smithy provides several ways to make it so that required members no longer
+need to be provided without breaking previously generated code.
+
+.. rubric:: Migrating ``@required`` to ``@default``
+
+If a ``required`` member no longer needs to be be required, the ``required``
+trait MAY be removed and replaced with the :ref:`default-trait`. The member
+is still considered always present to tools like code generators, but instead
+of requiring the value to be provided by an end-user, a default value is
+automatically provided if missing. For example, the previous ``TimeSpan``
+model can be backward compatibly changed to:
+
+.. code-block:: smithy
+
+    structure TimeSpan {
+        // @required is replaced with @default
+        years: Integer = 0
+        days: Integer = 0
+    }
+
+.. rubric:: Requiring members to be optional
+
+The :ref:`clientOptional-trait` is used to indicate that a member that is
+currently required by authoritative model consumers like servers MAY become
+completely optional in the future. Non-authoritative model consumers like
+client code generators MUST treat the member as if it is not required and
+has no default value.
+
+For example, the following structure:
+
+.. code-block:: smithy
+
+    structure UserData {
+        @required
+        @clientOptional
+        summary: String
+    }
+
+Can be backward-compatibly updated to remove the ``required`` trait:
+
+.. code-block:: smithy
+
+    structure UserData {
+        summary: String
+    }
+
+Replacing the ``required`` and ``clientOptional`` trait with the ``default``
+trait is *not* a backward compatible change because model consumers would
+transition from assuming the value is nullable to assuming that it is always
+present due to a default value.
+
+.. note::
+
+    Authoritative model consumers MAY choose to ignore the ``clientOptional``
+    trait.
+
+.. rubric:: Model evolution and the ``@input`` trait
+
+The :ref:`input-trait` specializes a structure as the input of a single
+operation. Transitioning top-level members from ``required`` to optional is
+allowed for such structures because it is loosening an input constraint.
+Non-authoritative model consumers like clients MUST treat each member as
+nullable regardless of the ``required`` or ``default`` trait. This means that
+it is a backward compatible change to remove the ``required`` trait from a
+member of a structure marked with the ``input`` trait, and the ``default``
+trait does not need to be added in its place.
+
+The special ":=" syntax for the operation input property automatically applies
+the ``input`` trait:
+
+.. code-block::
+
+    operation PutTimeSpan {
+        input := {
+            @required
+            years: String
+        }
+    }
+
+Because of the ``input`` trait, the operation can be updated to remove the
+``required`` trait without breaking things like previously generated clients:
+
+.. code-block::
+
+    operation PutTimeSpan {
+        input := {
+            years: String
+        }
+    }
 
 
 .. _union:
@@ -826,7 +1030,7 @@ The following example defines a union shape with several members:
         namespace smithy.example
 
         union MyUnion {
-            i32: Integer,
+            i32: Integer
 
             @length(min: 1, max: 100)
             string: String,
@@ -961,7 +1165,7 @@ Recursive shape definitions
 
 Smithy allows recursive shape definitions with the following limitations:
 
-1. The member of a list, set, or map cannot directly or transitively target
+1. The member of a list or map cannot directly or transitively target
    its containing shape unless one or more members in the path from the
    container back to itself targets a structure or union shape. This ensures
    that shapes that are typically impossible to define in various programming
@@ -972,7 +1176,7 @@ Smithy allows recursive shape definitions with the following limitations:
    :ref:`required <required-trait>` structure members.
 3. To ensure a value can be provided for a union, recursive unions MUST
    contain at least one path through its members that is not recursive
-   or steps through a list, set, map, or optional structure member.
+   or steps through a list, map, or optional structure member.
 
 The following recursive shape definition is **valid**:
 
@@ -1223,8 +1427,8 @@ that do not fit within a resource hierarchy.
         namespace smithy.example
 
         service MyService {
-            version: "2017-02-11",
-            operations: [GetServerTime],
+            version: "2017-02-11"
+            operations: [GetServerTime]
         }
 
         @readonly
@@ -1271,8 +1475,8 @@ shape ID of a resource to the ``resources`` property of a service.
         namespace smithy.example
 
         service MyService {
-            version: "2017-02-11",
-            resources: [MyResource],
+            version: "2017-02-11"
+            resources: [MyResource]
         }
 
         resource MyResource {}
@@ -1325,13 +1529,12 @@ idiomatic.
 
 .. rubric:: Shape types allowed to conflict in a closure
 
-:ref:`Simple types <simple-types>` and :ref:`lists <list>` or
-:ref:`sets <set>` of compatible simple types are allowed to conflict because
-a conflict for these type would rarely have an impact on generated artifacts.
-These kinds of conflicts are only allowed if both conflicting shapes are the
-same type and have the exact same traits. In the case of a list or set, a
-conflict is only allowed if the members of the conflicting shapes target
-compatible shapes.
+:ref:`Simple types <simple-types>` and :ref:`lists <list>` of compatible simple
+types are allowed to conflict because a conflict for these type would rarely
+have an impact on generated artifacts. These kinds of conflicts are only
+allowed if both conflicting shapes are the same type and have the exact same
+traits. In the case of a list, a conflict is only allowed if the members
+of the conflicting shapes target compatible shapes.
 
 .. rubric:: Disambiguating shapes with ``rename``
 
@@ -1356,15 +1559,15 @@ the conflicting shapes.
     namespace smithy.example
 
     service MyService {
-        version: "2017-02-11",
-        operations: [GetSomething],
+        version: "2017-02-11"
+        operations: [GetSomething]
         rename: {
             "foo.example#Widget": "FooWidget"
         }
     }
 
     operation GetSomething {
-        input: GetSomethingInput,
+        input: GetSomethingInput
         output: GetSomethingOutput
     }
 
@@ -1373,8 +1576,8 @@ the conflicting shapes.
 
     @output
     structure GetSomethingOutput {
-        widget1: Widget,
-        fooWidget: foo.example#Widget,
+        widget1: Widget
+        fooWidget: foo.example#Widget
     }
 
     structure Widget {}
@@ -1452,8 +1655,8 @@ named ``MyOperationInput``, returns an output structure named
     namespace smithy.example
 
     operation MyOperation {
-        input: MyOperationInput,
-        output: MyOperationOutput,
+        input: MyOperationInput
+        output: MyOperationOutput
         errors: [NotFoundError, BadRequestError]
     }
 
@@ -1582,9 +1785,7 @@ single identifier named ``forecastId`` that targets the ``ForecastId`` shape:
         namespace smithy.example
 
         resource Forecast {
-            identifiers: {
-                forecastId: ForecastId
-            }
+            identifiers: { forecastId: ForecastId }
         }
 
         string ForecastId
@@ -1628,23 +1829,23 @@ For example, given the following model,
         resource ResourceA {
             identifiers: {
                 a: String
-            },
-            resources: [ResourceB],
+            }
+            resources: [ResourceB]
         }
 
         resource ResourceB {
             identifiers: {
-                a: String,
-                b: String,
-            },
-            resources: [ResourceC],
+                a: String
+                b: String
+            }
+            resources: [ResourceC]
         }
 
         resource ResourceC {
             identifiers: {
-                a: String,
-                b: String,
-                c: String,
+                a: String
+                b: String
+                c: String
             }
         }
 
@@ -1712,25 +1913,25 @@ define an ``identifiers`` property that is compatible with their parents:
 
         resource ResourceA {
             identifiers: {
-                a: String,
-                b: String,
-            },
-            resources: [Invalid1, Invalid2],
+                a: String
+                b: String
+            }
+            resources: [Invalid1, Invalid2]
         }
 
         resource Invalid1 {
             // Invalid: missing "a".
             identifiers: {
-                b: String,
-            },
+                b: String
+            }
         }
 
         resource Invalid2 {
             identifiers: {
-                a: String,
+                a: String
                 // Invalid: does not target the same shape.
-                b: SomeOtherString,
-            },
+                b: SomeOtherString
+            }
         }
 
     .. code-tab:: json
@@ -1831,27 +2032,27 @@ For example, given the following model,
 
     resource Forecast {
         identifiers: {
-            forecastId: ForecastId,
-        },
-        read: GetForecast,
+            forecastId: ForecastId
+        }
+        read: GetForecast
     }
 
     @readonly
     operation GetForecast {
-        input: GetForecastInput,
+        input: GetForecastInput
         output: GetForecastOutput
     }
 
     @input
     structure GetForecastInput {
         @required
-        forecastId: ForecastId,
+        forecastId: ForecastId
     }
 
     @output
     structure GetForecastOutput {
         @required
-        weather: WeatherData,
+        weather: WeatherData
     }
 
 ``GetForecast`` forms a valid instance operation because the operation is
@@ -1869,20 +2070,20 @@ Given the following model,
 
     resource Forecast {
         identifiers: {
-            forecastId: ForecastId,
-        },
-        collectionOperations: [BatchPutForecasts],
+            forecastId: ForecastId
+        }
+        collectionOperations: [BatchPutForecasts]
     }
 
     operation BatchPutForecasts {
-        input: BatchPutForecastsInput,
+        input: BatchPutForecastsInput
         output: BatchPutForecastsOutput
     }
 
     @input
     structure BatchPutForecastsInput {
         @required
-        forecasts: BatchPutForecastList,
+        forecasts: BatchPutForecastList
     }
 
 ``BatchPutForecasts`` forms a valid collection operation with implicit
@@ -1905,21 +2106,21 @@ For example, given the following,
 
     resource Forecast {
         // continued from above
-        resources: [HistoricalForecast],
+        resources: [HistoricalForecast]
     }
 
     resource HistoricalForecast {
         identifiers: {
-            forecastId: ForecastId,
-            historicalId: HistoricalForecastId,
-        },
-        read: GetHistoricalForecast,
-        list: ListHistoricalForecasts,
+            forecastId: ForecastId
+            historicalId: HistoricalForecastId
+        }
+        read: GetHistoricalForecast
+        list: ListHistoricalForecasts
     }
 
     @readonly
     operation GetHistoricalForecast {
-        input: GetHistoricalForecastInput,
+        input: GetHistoricalForecastInput
         output: GetHistoricalForecastOutput
     }
 
@@ -1927,7 +2128,7 @@ For example, given the following,
     structure GetHistoricalForecastInput {
         @required
         @resourceIdentifier("forecastId")
-        customForecastIdName: ForecastId,
+        customForecastIdName: ForecastId
 
         @required
         @resourceIdentifier("historicalId")
@@ -1960,15 +2161,13 @@ The following example defines a resource with each lifecycle method:
     namespace smithy.example
 
     resource Forecast {
-        identifiers: {
-            forecastId: ForecastId,
-        },
-        put: PutForecast,
-        create: CreateForecast,
-        read: GetForecast,
-        update: UpdateForecast,
-        delete: DeleteForecast,
-        list: ListForecasts,
+        identifiers: { forecastId: ForecastId }
+        put: PutForecast
+        create: CreateForecast
+        read: GetForecast
+        update: UpdateForecast
+        delete: DeleteForecast
+        list: ListForecasts
     }
 
 
@@ -1990,7 +2189,7 @@ The following example defines the ``PutForecast`` operation.
 
     @idempotent
     operation PutForecast {
-        input: PutForecastInput,
+        input: PutForecastInput
         output: PutForecastOutput
     }
 
@@ -1998,7 +2197,7 @@ The following example defines the ``PutForecast`` operation.
     structure PutForecastInput {
         // The client provides the resource identifier.
         @required
-        forecastId: ForecastId,
+        forecastId: ForecastId
 
         chanceOfRain: Float
     }
@@ -2033,12 +2232,12 @@ The following example defines the ``CreateForecast`` operation.
 .. code-block:: smithy
 
     operation CreateForecast {
-        input: CreateForecastInput,
+        input: CreateForecastInput
         output: CreateForecastOutput
     }
 
     operation CreateForecast {
-        input: CreateForecastInput,
+        input: CreateForecastInput
         output: CreateForecastOutput
     }
 
@@ -2046,7 +2245,7 @@ The following example defines the ``CreateForecast`` operation.
     structure CreateForecastInput {
         // No identifier is provided by the client, so the service is
         // responsible for providing the identifier of the resource.
-        chanceOfRain: Float,
+        chanceOfRain: Float
     }
 
 
@@ -2067,15 +2266,15 @@ For example:
 
     @readonly
     operation GetForecast {
-        input: GetForecastInput,
-        output: GetForecastOutput,
+        input: GetForecastInput
+        output: GetForecastOutput
         errors: [ResourceNotFound]
     }
 
     @input
     structure GetForecastInput {
         @required
-        forecastId: ForecastId,
+        forecastId: ForecastId
     }
 
 
@@ -2095,17 +2294,17 @@ For example:
 .. code-block:: smithy
 
     operation UpdateForecast {
-        input: UpdateForecastInput,
-        output: UpdateForecastOutput,
+        input: UpdateForecastInput
+        output: UpdateForecastOutput
         errors: [ResourceNotFound]
     }
 
     @input
     structure UpdateForecastInput {
         @required
-        forecastId: ForecastId,
+        forecastId: ForecastId
 
-        chanceOfRain: Float,
+        chanceOfRain: Float
     }
 
 
@@ -2126,15 +2325,15 @@ For example:
 
     @idempotent
     operation DeleteForecast {
-        input: DeleteForecastInput,
-        output: DeleteForecastOutput,
+        input: DeleteForecastInput
+        output: DeleteForecastOutput
         errors: [ResourceNotFound]
     }
 
     @input
     structure DeleteForecastInput {
         @required
-        forecastId: ForecastId,
+        forecastId: ForecastId
     }
 
 
@@ -2158,19 +2357,19 @@ For example:
 
     @readonly @paginated
     operation ListForecasts {
-        input: ListForecastsInput,
+        input: ListForecastsInput
         output: ListForecastsOutput
     }
 
     @input
     structure ListForecastsInput {
-        maxResults: Integer,
+        maxResults: Integer
         nextToken: String
     }
 
     @output
     structure ListForecastsOutput {
-        nextToken: String,
+        nextToken: String
         @required
         forecasts: ForecastList
     }
@@ -2414,7 +2613,7 @@ target from traits and how their values are defined in
         millisecond precision. If a string is provided, it MUST be a valid
         :rfc:`3339` string with no UTC offset and optional fractional
         precision (for example, ``1985-04-12T23:20:50.52Z``).
-    * - list and set
+    * - list
       - array
       - Each value in the array MUST be compatible with the targeted member.
     * - map
@@ -2446,9 +2645,10 @@ shape being validated.
 Defining traits
 ===============
 
-Traits are defined inside of a namespace by applying ``smithy.api#trait`` to
-a shape. This trait can only be applied to simple types, ``list``, ``map``,
-``set``, ``structure``, and ``union`` shapes.
+Traits are defined inside of a namespace by applying
+:ref:`smithy.api#trait <trait-trait>` to a shape. This trait can only be
+applied to simple types, ``list``, ``map``, ``set``, ``structure``, and
+``union`` shapes.
 
 The following example defines a trait with a :ref:`shape ID <shape-id>` of
 ``smithy.example#myTraitName`` and applies it to ``smithy.example#MyString``:
@@ -2487,40 +2687,6 @@ The following example defines a trait with a :ref:`shape ID <shape-id>` of
             }
         }
 
-.. rubric:: Trait properties
-
-``smithy.api#trait`` is a structure that supports the following members:
-
-.. list-table::
-    :header-rows: 1
-    :widths: 10 20 70
-
-    * - Property
-      - Type
-      - Description
-    * - selector
-      - ``string``
-      - A valid :ref:`selector <selectors>` that defines where the trait
-        can be applied. For example, a ``selector`` set to ``:test(list, map)``
-        means that the trait can be applied to a :ref:`list <list>` or
-        :ref:`map <map>` shape. This value defaults to ``*`` if not set,
-        meaning the trait can be applied to any shape.
-    * - conflicts
-      - [``string``]
-      - Defines the shape IDs of traits that MUST NOT be applied to the same
-        shape as the trait being defined. This allows traits to be defined as
-        mutually exclusive. Provided shape IDs MAY target unknown traits
-        that are not defined in the model.
-    * - structurallyExclusive
-      - ``string``
-      - One of "member" or "target". When set to "member", only a single
-        member of a structure can be marked with the trait. When set to
-        "target", only a single member of a structure can target a shape
-        marked with this trait.
-    * - breakingChanges
-      - [:ref:`BreakingChangeRule <trait-breaking-change-rules>`]
-      - Defines the backward compatibility rules of the trait.
-
 The following example defines two custom traits: ``beta`` and
 ``structuredTrait``:
 
@@ -2538,24 +2704,24 @@ The following example defines two custom traits: ``beta`` and
         @trait(selector: "string", conflicts: [beta])
         structure structuredTrait {
             @required
-            lorem: StringShape,
+            lorem: StringShape
 
             @required
-            ipsum: StringShape,
+            ipsum: StringShape
 
-            dolor: StringShape,
+            dolor: StringShape
         }
 
         // Apply the "beta" trait to the "foo" member.
         structure MyShape {
             @required
             @beta
-            foo: StringShape,
+            foo: StringShape
         }
 
         // Apply the structuredTrait to the string.
         @structuredTrait(
-            lorem: "This is a custom trait!",
+            lorem: "This is a custom trait!"
             ipsum: "lorem and ipsum are both required values.")
         string StringShape
 
@@ -2688,7 +2854,7 @@ after adding a member to the ``foo`` trait:
 
         @trait
         structure foo {
-            baz: String,
+            baz: String
         }
 
         @foo(baz: "bar")
@@ -2854,9 +3020,9 @@ Is changed to:
 Then the change to the ``foo`` member from "a" to "b" is backward
 incompatible, as is the removal of the ``baz`` member.
 
-.. rubric:: Referring to list and set members
+.. rubric:: Referring to list members
 
-The JSON pointer can path into the members of a list or set using a ``member``
+The JSON pointer can path into the members of a list using a ``member``
 segment.
 
 In the following example, it is a breaking change to change values of lists
@@ -2977,6 +3143,599 @@ backward incompatible.
     * Using the "update" ``change`` type with a map key has no effect.
     * Using any ``change`` type other than "update" with map values has no
       effect.
+
+
+.. _mixins:
+
+------
+Mixins
+------
+
+A mixin is a shape that has the :ref:`mixin-trait`. Adding a mixin to a shape
+causes the members and traits of the mixin shape to be copied into the local
+shape.
+
+.. code-block:: smithy
+
+    @mixin
+    structure UserIdentifiersMixin {
+        id: String
+    }
+
+    structure UserDetails with [UserIdentifiersMixin] {
+        alias: String
+    }
+
+Multiple mixins can be applied:
+
+.. code-block:: smithy
+
+    @mixin
+    structure UserIdentifiersMixin {
+        id: String
+    }
+
+    @mixin
+    structure AccessDetailsMixin {
+        firstAccess: Timestamp
+        lastAccess: Timestamp
+    }
+
+    structure UserDetails with [
+        UserIdentifiersMixin
+        AccessDetailsMixin
+    ] {
+        alias: String
+    }
+
+Mixins can be composed of other mixins:
+
+.. code-block:: smithy
+
+    @mixin
+    structure MixinA {
+        a: String
+    }
+
+    @mixin
+    structure MixinB with [MixinA] {
+        b: String
+    }
+
+    structure C with [MixinB] {
+        c: String
+    }
+
+When a member is copied from a mixin into a target shape, the shape ID of the
+copied member takes on the containing shape ID of the target shape. This
+ensures that members defined via mixins are treated the same way as members
+defined directly in a shape, and it allows members of a shape to be backward
+compatibly refactored and moved into a mixin or for a shape to remove a mixin
+and replace it with members defined directly in the shape.
+
+The above `C` structure is equivalent to the following flattened structure
+without mixins:
+
+.. code-block:: smithy
+
+    structure C {
+        a: String
+        b: String
+        c: String
+    }
+
+Mixins be any shape type, but they MUST NOT be applied to a shape of a
+different type. For example, a string mixin can be applied to a string
+shape, but not to a blob shape.
+
+.. code-block:: smithy
+
+    @mixin
+    @pattern("[a-zA-Z0-1]*")
+    string AlphaNumericMixin
+
+    @length(min: 8, max: 32)
+    string Username with [AlphaNumericMixin]
+
+
+Traits and mixins
+=================
+
+Shapes that use mixins inherit the traits applied to their mixins, except for
+the :ref:`mixin-trait` and *mixin local traits*. Traits applied directly to a
+shape take precedence over traits applied to its mixins.
+
+For example, the definition of ``UserSummary`` in the following model:
+
+.. code-block:: smithy
+
+    /// Generic mixin documentation.
+    @tags(["a"])
+    @mixin
+    structure UserInfoMixin {
+        userId: String
+    }
+
+    structure UserSummary with [UserInfoMixin] {}
+
+Is equivalent to the following flattened structure because it inherits the
+traits of ``UserInfo``:
+
+.. code-block:: smithy
+
+    /// Generic mixin documentation.
+    @tags(["a"])
+    structure UserSummary {
+        userId: String
+    }
+
+The definition of ``UserSummary`` in the following model:
+
+.. code-block:: smithy
+
+    /// Generic mixin documentation.
+    @tags(["a"])
+    @mixin
+    structure UserInfoMixin {
+        userId: String
+    }
+
+    /// Specific documentation
+    @tags(["replaced-tags"])
+    structure UserSummary with [UserInfoMixin] {}
+
+Is equivalent to the following flattened structure because it inherits the
+traits of ``UserInfo`` and traits applied to ``UserSummary`` take precedence
+over traits it inherits:
+
+.. code-block:: smithy
+
+    /// Specific documentation
+    @tags(["replaced-tags"])
+    structure UserSummary {
+        userId: String
+    }
+
+The order in which mixins are applied to a shape controls the inheritance
+precedence of traits. For each mixin applied to a shape, traits applied
+directly to the mixin override traits applied to any of its mixins. Traits
+applied to mixins that come later in the list of mixins applied to a shape take
+precedence over traits applied to mixins that come earlier in the list of
+mixins. For example, the definition of `StructD` in the following model:
+
+.. code-block:: smithy
+
+    /// A
+    @foo(1)
+    @oneTrait
+    @mixin
+    structure StructA {}
+
+    /// B
+    @foo(2)
+    @twoTrait
+    @mixin
+    structure StructB {}
+
+    /// C
+    @threeTrait
+    @mixin
+    structure StructC with [StructA, StructB] {}
+
+    /// D
+    @fourTrait
+    structure StructD with [StructC] {}
+
+Is equivalent to the following flattened structure:
+
+.. code-block:: smithy
+
+    // (1)
+    /// D
+    @fourTrait    // (2)
+    @threeTrait   // (3)
+    @foo(2)       // (4)
+    @twoTrait     // (5)
+    @oneTrait     // (6)
+    structure StructD {}
+
+1. The :ref:`documentation-trait` applied to ``StructD`` takes precedence over
+   any inherited traits.
+2. ``fourTrait`` is applied directly to ``StructD``.
+3. ``threeTrait`` is applied to ``StructC``, ``StructC`` is a mixin of
+   ``StructD``, and `StructD` inherits the resolved traits of each applied
+   mixin.
+4. Because the `StructB` mixin applied to ``StructC`` comes after the
+   ``StructA`` mixin in the list of mixins applied to ``StructC``, ``foo(2)``
+   takes precedence over ``foo(1)``.
+5. ``StructC`` inherits the resolved traits of ``StructB``.
+6. ``StructC`` inherits the resolved traits of ``StructA``.
+
+
+Mixin local traits
+------------------
+
+Sometimes it's necessary to apply traits to a mixin that are not copied onto
+shapes that use the mixin. For example, if a mixin is an implementation detail
+of a model, then it is recommended to apply the :ref:`private-trait` to the
+mixin so that shapes outside of the namespace the mixin is defined within
+cannot refer to the mixin. However, every shape that uses the mixin doesn't
+necessarily need to be marked as private. The ``localTraits`` property of
+the :ref:`mixin-trait` can be used to ensure that a list of traits applied to
+the mixin are not copied onto shapes that use the mixin (note that this has
+no effect on the traits applied to members contained within a mixin).
+
+Consider the following model:
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    @private
+    @mixin(localTraits: [private])
+    structure PrivateMixin {
+        foo: String
+    }
+
+    structure PublicShape with [PrivateMixin] {}
+
+``PublicShape`` is equivalent to the following flattened structure:
+
+.. code-block:: smithy
+
+    structure PublicShape {
+        foo: String
+    }
+
+The ``PrivateMixin`` shape can only be referenced from the ``smithy.example``
+namespace. Because the :ref:`private-trait` is present in the ``localTraits``
+property of the :ref:`mixin-trait`, ``PublicShape`` is not marked with the
+:ref:`private-trait` and can be referred to outside of ``smithy.example``.
+
+
+Adding and replacing traits on copied members
+---------------------------------------------
+
+The members and traits applied to members of a mixin are copied onto the target
+shape. It is sometimes necessary to provide a more specific trait value for a
+copied member or to add traits only to a specific copy of a member. Traits can
+be added on to these members like any other member. Additionally, traits can be
+applied to these members in the JSON AST using the :ref:`apply type <ast-apply>`
+and in the Smithy IDL using :ref:`apply statements <apply-statement>`.
+
+.. note::
+
+    Traits applied to shapes supersede any traits inherited from mixins.
+
+For example:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+    namespace smithy.example
+
+    @mixin
+    structure MyMixin {
+        /// Generic docs
+        mixinMember: String
+    }
+
+    structure MyStruct with [MyMixin] {}
+    apply MyStruct$mixinMember @documentation("Specific docs")
+
+Alternatively, the member can be redefined if it targets the same shape:
+
+.. code-block::
+
+    $version: "2.0"
+    namespace smithy.example
+
+    @mixin
+    structure MyMixin {
+        /// Generic docs
+        mixinMember: String
+    }
+
+    structure MyStruct with [MyMixin] {
+        /// Specific docs
+        mixinMember: String
+    }
+
+
+Mixins are an implementation detail of the model
+================================================
+
+Mixins are an implementation detail of models and are only intended to reduce
+duplication in Smithy shape definitions. Mixins do not provide any kind of
+runtime polymorphism for types generated from Smithy models. Smithy model
+transformations like code generation or converting to other model formats
+like OpenAPI SHOULD completely elide mixins by flattening the model.
+
+It is a backward compatible change to remove a mixin from a shape as long as
+equivalent traits and members of the mixin are applied directly to the shape.
+Such a change should have no impact on generated artifacts like code or
+OpenAPI models.
+
+
+Mixins cannot be referenced other than as mixins to other shapes
+================================================================
+
+To ensure that mixins are not code generated, mixins MUST NOT be referenced
+from any other shapes except to mix them into other shapes. Mixins MUST NOT be
+used as operation input, output, or errors, and they MUST NOT be targeted by
+members.
+
+The following model is invalid because a structure member targets a mixin:
+
+.. code-block:: smithy
+
+    @mixin
+    structure GreetingMixin {
+        greeting: String
+    }
+
+    structure InvalidStructure {
+        notValid: GreetingMixin // <- this is invalid
+    }
+
+The following model is invalid because an operation attempts to use a mixin
+as input:
+
+.. code-block:: smithy
+
+    @mixin
+    structure InputMixin {}
+
+    operation InvalidOperation {
+        input: InputMixin // <- this is invalid
+    }
+
+
+Mixins MUST NOT introduce cycles
+================================
+
+Mixins MUST NOT introduce circular references. The following model is invalid:
+
+.. code-block:: smithy
+
+    @mixin
+    structure CycleA with [CycleB] {}
+
+    @mixin
+    structure CycleB with [CycleA] {}
+
+
+Mixin members MUST NOT conflict
+===============================
+
+The list of mixins applied to a shape MUST NOT attempt to define members that
+use the same member name with different targets. The following model is
+invalid:
+
+.. code-block:: smithy
+
+    @mixin
+    structure A1 {
+        a: String
+    }
+
+    @mixin
+    structure A2 {
+        a: Integer
+    }
+
+    structure Invalid with [A1, A2] {}
+
+The following model is also invalid, but not specifically because of mixins.
+This model is invalid because the member name ``a`` and ``A`` case
+insensitively conflict.
+
+.. code-block:: smithy
+
+    @mixin
+    structure A1 {
+        a: String
+    }
+
+    @mixin
+    structure A2 {
+        A: Integer
+    }
+
+    structure Invalid with [A1, A2] {}
+
+Members that are mixed into shapes MAY be redefined if and only if each
+redefined member targets the same shape. Traits applied to redefined members
+supersede any traits inherited from mixins.
+
+.. code-block:: smithy
+
+    @mixin
+    structure A1 {
+        @private
+        a: String
+    }
+
+    @mixin
+    structure A2 {
+        @required
+        a: String
+    }
+
+    structure Valid with [A1, A2] {}
+
+
+Member ordering
+===============
+
+The order of structure and union members is important for languages like C
+that require a stable ABI. Mixins provide a deterministic member ordering.
+Members inherited from mixins come before members defined directly in the
+shape.
+
+Members are ordered in a kind of depth-first, preorder traversal of mixins
+that are applied to a structure or union. To resolve the member order of a
+shape, iterate over each mixin applied to the shape in the order in which they
+are applied, from left to right. For each mixin, iterate over the mixins
+applied to the mixin in the order in which mixins are applied. When the
+evaluated shape has no mixins, the members of that shape are added to the
+resolved list of ordered members. After evaluating all the mixins of a shape,
+the members of the shape are added onto the resolved list of ordered members.
+This process continues until all mixins and the members of the starting shape
+are added to the ordered list.
+
+Given the following model:
+
+.. code-block:: smithy
+
+    @mixin
+    structure FilteredByNameMixin {
+        nameFilter: String
+    }
+
+    @mixin
+    structure PaginatedInputMixin {
+        nextToken: String
+        pageSize: Integer
+    }
+
+    structure ListSomethingInput with [
+        PaginatedInputMixin
+        FilteredByNameMixin
+    ] {
+        sizeFilter: Integer
+    }
+
+The members are ordered as follows:
+
+1. ``nextToken``
+2. ``pageSize``
+3. ``nameFilter``
+4. ``sizeFilter``
+
+
+Mixins on shapes with non-member properties
+===========================================
+
+Some shapes don't have members, but do have other properties. Adding a mixin
+to such a shape merges the properties of each mixin into the local shape. Only
+certain properties may be defined in the mixin shapes. See the sections below
+for which properties are permitted for each shape type.
+
+Scalar properties defined in the local shape are kept, and non-scalar
+properties are merged. When merging map properties, the values for local keys
+are kept. The ordering of merged lists / sets follows the same ordering as
+members.
+
+Service mixins
+--------------
+
+Service shapes with the :ref:`mixin-trait` may define any property. For
+example, in the following model:
+
+.. code-block:: smithy
+
+    operation OperationA {}
+
+    @mixin
+    service A {
+        version: "A"
+        operations: [OperationA]
+    }
+
+    operation OperationB {}
+
+    @mixin
+    service B with [A] {
+        version: "B"
+        rename: {
+            "smithy.example#OperationA": "OperA"
+            "smithy.example#OperationB": "OperB"
+        }
+        operations: [OperationB]
+    }
+
+    operation OperationC {}
+
+    service C with [B] {
+        version: "C"
+        rename: {
+            "smithy.example#OperationA": "OpA"
+            "smithy.example#OperationC": "OpC"
+        }
+        operations: [OperationC]
+    }
+
+The flattened equivalent of ``C`` with no mixins is:
+
+.. code-block:: smithy
+
+    operation OperationA {}
+
+    operation OperationB {}
+
+    operation OperationC {}
+
+    service C {
+        version: "C"
+        rename: {
+            "smithy.example#OperationA": "OpA"
+            "smithy.example#OperationB": "OperB"
+            "smithy.example#OperationC": "OpC"
+        }
+        operations: [OperationA, OperationB, OperationC]
+    }
+
+
+Resource mixins
+---------------
+
+Resource shapes with the :ref:`mixin-trait` MAY NOT define any properties. This
+is because every property of a resource shape is intrinsically tied to its set
+of identifiers. Changing these identifiers would invalidate every other
+property of a given resource. For example:
+
+.. code-block:: smithy
+
+    @mixin
+    @internal
+    resource MixinResource {}
+
+    resource MixedResource with [MixinResource] {}
+
+
+Operation mixins
+----------------
+
+Operation shapes with the :ref:`mixin-trait` MAY NOT define an ``input`` or
+``output`` shape other than the :ref:`unit-type`. This is because allowing
+input and output shapes to be shared goes against the goal of the
+:ref:`input-trait` and :ref:`output-trait`.
+
+Operation shapes with the :ref:`mixin-trait` MAY define errors.
+
+.. code-block:: smithy
+
+    @mixin
+    operation ValidatedOperation {
+        errors: [ValidationError]
+    }
+
+    @error("client")
+    structure ValidationError {}
+
+    operation GetUsername with [ValidatedOperation] {
+        input := {
+            id: String
+        }
+        output := {
+            name: String
+        }
+        error: [NotFoundError]
+    }
+
+    @error("client")
+    structure NotFoundError {}
 
 
 .. _metadata:

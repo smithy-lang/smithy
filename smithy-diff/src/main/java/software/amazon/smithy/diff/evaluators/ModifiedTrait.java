@@ -25,11 +25,9 @@ import software.amazon.smithy.diff.Differences;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
@@ -400,17 +398,6 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
 
         @Override
         public Void listShape(ListShape shape) {
-            crawlSequence(shape);
-            return null;
-        }
-
-        @Override
-        public Void setShape(SetShape shape) {
-            crawlSequence(shape);
-            return null;
-        }
-
-        private void crawlSequence(CollectionShape shape) {
             if (leftValue != null && rightValue != null && leftValue.isArrayNode() && rightValue.isArrayNode()) {
                 List<Node> leftValues = leftValue.expectArrayNode().getElements();
                 List<Node> rightValues = rightValue.expectArrayNode().getElements();
@@ -436,6 +423,7 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                     }
                 }
             }
+            return null;
         }
 
         @Override

@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.EntityShape;
+import software.amazon.smithy.model.shapes.EnumShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -172,6 +174,24 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
     }
 
     @Override
+    public List<Relationship> enumShape(EnumShape shape) {
+        List<Relationship> result = new ArrayList<>();
+        for (MemberShape member : shape.getAllMembers().values()) {
+            result.add(relationship(shape, RelationshipType.ENUM_MEMBER, member));
+        }
+        return result;
+    }
+
+    @Override
+    public List<Relationship> intEnumShape(IntEnumShape shape) {
+        List<Relationship> result = new ArrayList<>();
+        for (MemberShape member : shape.getAllMembers().values()) {
+            result.add(relationship(shape, RelationshipType.INT_ENUM_MEMBER, member));
+        }
+        return result;
+    }
+
+    @Override
     public List<Relationship> listShape(ListShape shape) {
         return ListUtils.of(relationship(shape, RelationshipType.LIST_MEMBER, shape.getMember()));
     }
@@ -192,6 +212,9 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
     @Override
     public List<Relationship> structureShape(StructureShape shape) {
         List<Relationship> result = new ArrayList<>();
+        for (ShapeId mixin : shape.getMixins()) {
+            result.add(relationship(shape, RelationshipType.MIXIN, mixin));
+        }
         for (MemberShape member : shape.getAllMembers().values()) {
             result.add(Relationship.create(shape, RelationshipType.STRUCTURE_MEMBER, member));
         }
@@ -201,6 +224,9 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
     @Override
     public List<Relationship> unionShape(UnionShape shape) {
         List<Relationship> result = new ArrayList<>();
+        for (ShapeId mixin : shape.getMixins()) {
+            result.add(relationship(shape, RelationshipType.MIXIN, mixin));
+        }
         for (MemberShape member : shape.getAllMembers().values()) {
             result.add(Relationship.create(shape, RelationshipType.UNION_MEMBER, member));
         }

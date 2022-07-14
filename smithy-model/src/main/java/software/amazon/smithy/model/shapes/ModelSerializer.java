@@ -15,11 +15,15 @@
 
 package software.amazon.smithy.model.shapes;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,7 +36,6 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.FunctionalUtils;
-import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -50,7 +53,6 @@ public final class ModelSerializer {
     private final Predicate<String> metadataFilter;
     private final Predicate<Shape> shapeFilter;
     private final Predicate<Trait> traitFilter;
-    private final ShapeSerializer shapeSerializer = new ShapeSerializer();
 
     private ModelSerializer(Builder builder) {
         metadataFilter = builder.metadataFilter;
@@ -64,20 +66,38 @@ public final class ModelSerializer {
     }
 
     public ObjectNode serialize(Model model) {
+        ShapeSerializer shapeSerializer = new ShapeSerializer();
+
         ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .withMember("smithy", Node.from(Model.MODEL_VERSION))
                 .withOptionalMember("metadata", createMetadata(model).map(Node::withDeepSortedKeys));
 
-        ObjectNode.Builder shapesBuilder = Node.objectNodeBuilder();
-        model.shapes()
-                // Members are serialized inside of other shapes, so filter them out.
-                .filter(FunctionalUtils.not(Shape::isMemberShape))
-                .filter(shapeFilter)
-                .map(shape -> Pair.of(shape, shape.accept(shapeSerializer)))
-                .sorted(Comparator.comparing(pair -> pair.getLeft().getId().getName()))
-                .forEach(pair -> shapesBuilder.withMember(pair.getLeft().getId().toString(), pair.getRight()));
+        // Sort shapes by ID.
+        Map<StringNode, Node> shapes = new TreeMap<>();
+        for (Shape shape : model.toSet()) {
+            // Members are serialized inside of other shapes, so filter them out.
+            if (!shape.isMemberShape() && shapeFilter.test(shape)) {
+                Node value = shape.accept(shapeSerializer);
+                shapes.put(Node.from(shape.getId().toString()), value);
+                // Add any necessary apply statements to inherited mixin members that added traits.
+                // Apply statements are used here instead of redefining members on structures because
+                // apply statements are more resilient to change over time if the shapes targeted by
+                // an inherited member changes.
+                if (!shapeSerializer.mixinMemberTraits.isEmpty()) {
+                    for (MemberShape member : shapeSerializer.mixinMemberTraits) {
+                        ObjectNode.Builder applyBuilder = Node.objectNodeBuilder();
+                        applyBuilder.withMember("type", "apply");
+                        shapes.put(
+                            Node.from(member.getId().toString()),
+                            serializeTraits(applyBuilder, member.getIntroducedTraits().values()).build()
+                        );
+                    }
+                }
+            }
+        }
 
-        builder.withMember("shapes", shapesBuilder.build());
+        builder.withMember("shapes", new ObjectNode(shapes, SourceLocation.NONE));
+
         return builder.build();
     }
 
@@ -167,59 +187,92 @@ public final class ModelSerializer {
         }
     }
 
-    private final class ShapeSerializer extends ShapeVisitor.Default<Node> {
-
-        private ObjectNode.Builder createTypedNode(Shape shape) {
-            return Node.objectNodeBuilder().withMember("type", Node.from(shape.getType().toString()));
-        }
-
-        private ObjectNode.Builder withTraits(Shape shape, ObjectNode.Builder shapeBuilder) {
-            if (shape.getAllTraits().isEmpty()) {
-                return shapeBuilder;
+    private ObjectNode.Builder serializeTraits(ObjectNode.Builder builder, Collection<Trait> traits) {
+        if (!traits.isEmpty()) {
+            Map<StringNode, Node> traitsToAdd = new TreeMap<>();
+            for (Trait trait : traits) {
+                if (traitFilter.test(trait)) {
+                    traitsToAdd.put(Node.from(trait.toShapeId().toString()), trait.toNode());
+                }
             }
 
-            ObjectNode.Builder traitBuilder = Node.objectNodeBuilder();
-            shape.getAllTraits().values().stream()
-                    .filter(traitFilter)
-                    .sorted(Comparator.comparing(Trait::toShapeId))
-                    .forEach(trait -> traitBuilder.withMember(trait.toShapeId().toString(), trait.toNode()));
+            if (!traitsToAdd.isEmpty()) {
+                builder.withMember("traits", new ObjectNode(traitsToAdd, SourceLocation.none()));
+            }
+        }
 
-            return shapeBuilder.withMember("traits", traitBuilder.build());
+        return builder;
+    }
+
+    private final class ShapeSerializer extends ShapeVisitor.Default<Node> {
+
+        private final Set<MemberShape> mixinMemberTraits = new TreeSet<>();
+
+        private ObjectNode.Builder createTypedBuilder(Shape shape) {
+            ObjectNode.Builder builder = Node.objectNodeBuilder()
+                    .withMember("type", Node.from(shape.getType().toString()));
+
+            if (!shape.getMixins().isEmpty()) {
+                List<Node> mixins = new ArrayList<>(shape.getMixins().size());
+                for (ShapeId mixin : shape.getMixins()) {
+                    mixins.add(serializeReference(mixin));
+                }
+                builder.withMember("mixins", Node.fromNodes(mixins));
+            }
+
+            return builder;
+        }
+
+        private ObjectNode.Builder serializeAllTraits(Shape shape, ObjectNode.Builder builder) {
+            return serializeTraits(builder, shape.getIntroducedTraits().values());
         }
 
         @Override
         protected ObjectNode getDefault(Shape shape) {
-            return withTraits(shape, createTypedNode(shape)).build();
+            return serializeAllTraits(shape, createTypedBuilder(shape)).build();
+        }
+
+        @Override
+        public Node enumShape(EnumShape shape) {
+            return createNamedMemberShape(shape, shape.getAllMembers());
+        }
+
+        @Override
+        public Node intEnumShape(IntEnumShape shape) {
+            return createNamedMemberShape(shape, shape.getAllMembers());
         }
 
         @Override
         public Node listShape(ListShape shape) {
-            return withTraits(shape, createTypedNode(shape)
-                    .withMember("member", shape.getMember().accept(this)))
-                    .build();
+            ObjectNode.Builder result = createTypedBuilder(shape);
+            // This visitor covers sets and lists. Sets aren't supported in IDL v2, so convert to list.
+            result.withMember("type", ShapeType.LIST.toString());
+            mixinMember(result, shape.getMember(), "member");
+            return serializeAllTraits(shape, result).build();
         }
 
-        @Override
-        public Node setShape(SetShape shape) {
-            return withTraits(shape, createTypedNode(shape)
-                    .withMember("member", shape.getMember().accept(this)))
-                    .build();
+        private void mixinMember(ObjectNode.Builder builder, MemberShape member, String key) {
+            if (member.getMixins().isEmpty()) {
+                builder.withMember(key, member.accept(this));
+            } else if (!member.getIntroducedTraits().isEmpty()) {
+                mixinMemberTraits.add(member);
+            }
         }
 
         @Override
         public Node mapShape(MapShape shape) {
-            return withTraits(shape, createTypedNode(shape)
-                    .withMember("key", shape.getKey().accept(this))
-                    .withMember("value", shape.getValue().accept(this)))
-                    .build();
+            ObjectNode.Builder result = createTypedBuilder(shape);
+            mixinMember(result, shape.getKey(), "key");
+            mixinMember(result, shape.getValue(), "value");
+            return serializeAllTraits(shape, result).build();
         }
 
         @Override
         public Node operationShape(OperationShape shape) {
-            return withTraits(shape, createTypedNode(shape)
+            return serializeAllTraits(shape, createTypedBuilder(shape)
                     .withMember("input", serializeReference(shape.getInputShape()))
                     .withMember("output", serializeReference(shape.getOutputShape()))
-                    .withOptionalMember("errors", createOptionalIdList(shape.getErrors())))
+                    .withOptionalMember("errors", createOptionalIdList(shape.getIntroducedErrors())))
                     .build();
         }
 
@@ -233,7 +286,7 @@ public final class ModelSerializer {
                         entry -> serializeReference(entry.getValue()))));
             }
 
-            return withTraits(shape, createTypedNode(shape)
+            return serializeAllTraits(shape, createTypedBuilder(shape)
                     .withOptionalMember("identifiers", identifiers)
                     .withOptionalMember("put", shape.getPut().map(this::serializeReference))
                     .withOptionalMember("create", shape.getCreate().map(this::serializeReference))
@@ -241,33 +294,34 @@ public final class ModelSerializer {
                     .withOptionalMember("update", shape.getUpdate().map(this::serializeReference))
                     .withOptionalMember("delete", shape.getDelete().map(this::serializeReference))
                     .withOptionalMember("list", shape.getList().map(this::serializeReference))
-                    .withOptionalMember("operations", createOptionalIdList(shape.getOperations()))
+                    .withOptionalMember("operations", createOptionalIdList(shape.getIntroducedOperations()))
                     .withOptionalMember("collectionOperations", createOptionalIdList(shape.getCollectionOperations()))
-                    .withOptionalMember("resources", createOptionalIdList(shape.getResources())))
+                    .withOptionalMember("resources", createOptionalIdList(shape.getIntroducedResources())))
                     .build();
         }
 
         @Override
         public Node serviceShape(ServiceShape shape) {
-            ObjectNode.Builder serviceBuilder = withTraits(shape, createTypedNode(shape));
+            ObjectNode.Builder serviceBuilder = createTypedBuilder(shape);
 
-            if (!StringUtils.isBlank(shape.getVersion())) {
-                serviceBuilder.withMember("version", Node.from(shape.getVersion()));
+            if (!StringUtils.isBlank(shape.getIntroducedVersion())) {
+                serviceBuilder.withMember("version", Node.from(shape.getIntroducedVersion()));
             }
 
-            serviceBuilder.withOptionalMember("operations", createOptionalIdList(shape.getOperations()));
-            serviceBuilder.withOptionalMember("resources", createOptionalIdList(shape.getResources()));
-            serviceBuilder.withOptionalMember("errors", createOptionalIdList(shape.getErrors()));
+            serviceBuilder.withOptionalMember("operations", createOptionalIdList(shape.getIntroducedOperations()));
+            serviceBuilder.withOptionalMember("resources", createOptionalIdList(shape.getIntroducedResources()));
+            serviceBuilder.withOptionalMember("errors", createOptionalIdList(shape.getIntroducedErrors()));
 
-            if (!shape.getRename().isEmpty()) {
+            if (!shape.getIntroducedRename().isEmpty()) {
                 ObjectNode.Builder renameBuilder = Node.objectNodeBuilder();
-                for (Map.Entry<ShapeId, String> entry : shape.getRename().entrySet()) {
+                for (Map.Entry<ShapeId, String> entry : shape.getIntroducedRename().entrySet()) {
                     renameBuilder.withMember(entry.getKey().toString(), entry.getValue());
                 }
                 serviceBuilder.withMember("rename", renameBuilder.build());
             }
 
-            return serviceBuilder.build();
+            // Serialize traits last, after named structure properties.
+            return serializeAllTraits(shape, serviceBuilder).build();
         }
 
         private Optional<Node> createOptionalIdList(Collection<ShapeId> list) {
@@ -284,38 +338,39 @@ public final class ModelSerializer {
 
         @Override
         public Node structureShape(StructureShape shape) {
-            return createStructureAndUnion(shape, shape.getAllMembers());
+            return createNamedMemberShape(shape, shape.getAllMembers());
         }
 
         @Override
         public Node unionShape(UnionShape shape) {
-            return createStructureAndUnion(shape, shape.getAllMembers());
+            return createNamedMemberShape(shape, shape.getAllMembers());
         }
 
-        private ObjectNode createStructureAndUnion(Shape shape, Map<String, MemberShape> members) {
-            ObjectNode.Builder builder = createTypedNode(shape);
+        private ObjectNode createNamedMemberShape(Shape shape, Map<String, MemberShape> members) {
+            ObjectNode.Builder result = createTypedBuilder(shape);
 
-            ObjectNode.Builder memberBuilder = ObjectNode.objectNodeBuilder();
+            ObjectNode.Builder membersBuilder = ObjectNode.objectNodeBuilder();
             for (MemberShape member : members.values()) {
-                Node memberValue = member.accept(this);
-                memberBuilder.withMember(member.getMemberName(), memberValue);
+                mixinMember(membersBuilder, member, member.getMemberName());
             }
+            result.withMember("members", membersBuilder.build());
 
-            builder.withMember("members", memberBuilder.build());
-            withTraits(shape, builder);
-
-            return builder.build();
+            return serializeTraits(result, shape.getIntroducedTraits().values()).build();
         }
 
         @Override
         public Node memberShape(MemberShape shape) {
-            ObjectNode.Builder builder = serializeReference(shape.getTarget()).toBuilder();
-            withTraits(shape, builder);
-            return builder.build();
+            // Only serialize traits introduced by the member.
+            Collection<Trait> introducedTraits = shape.getIntroducedTraits().values();
+            return serializeTraits(serializeReferenceBuilder(shape.getTarget()), introducedTraits).build();
+        }
+
+        private ObjectNode.Builder serializeReferenceBuilder(ShapeId id) {
+            return Node.objectNodeBuilder().withMember("target", id.toString());
         }
 
         private ObjectNode serializeReference(ShapeId id) {
-            return Node.objectNode().withMember("target", id.toString());
+            return serializeReferenceBuilder(id).build();
         }
     }
 }

@@ -22,6 +22,8 @@ parser.
     :backlinks: none
 
 
+.. _ast-top-level-properties:
+
 --------------------
 Top level properties
 --------------------
@@ -159,12 +161,12 @@ example defines a shape for each simple type:
     }
 
 
--------------------
-List and set shapes
--------------------
+-----------
+List shapes
+-----------
 
-:ref:`list` and :ref:`set <set>` shapes have a required ``member`` property
-that is an :ref:`AST member <ast-member>`.
+:ref:`list` shapes have a required ``member`` property that is an
+:ref:`AST member <ast-member>`.
 
 The following example defines a list with a string member:
 
@@ -175,22 +177,6 @@ The following example defines a list with a string member:
         "shapes": {
             "smithy.example#MyList": {
                 "type": "list",
-                "member": {
-                    "target": "smithy.api#String"
-                }
-            }
-        }
-    }
-
-The following example defines a set with a string member:
-
-.. code-block:: json
-
-    {
-        "smithy": "1.0",
-        "shapes": {
-            "smithy.example#MySet": {
-                "type": "set",
                 "member": {
                     "target": "smithy.api#String"
                 }
@@ -307,18 +293,19 @@ The following example defines a map of strings to numbers:
     }
 
 
---------------------------
-Structure and union shapes
---------------------------
+------------------------------------------
+Structure, union, enum, and intEnum shapes
+------------------------------------------
 
-:ref:`Structure <structure>` and :ref:`union <union>` shapes are defined
-with a ``members`` property that contains a map of member names to
-:ref:`AST member <ast-member>` definitions. A union shape requires at least
-one member, and a structure shape MAY omit the ``members`` property
-entirely if the structure contains no members.
+:ref:`Structure <structure>`, :ref:`union <union>`, :ref:`enum <enum>`, and
+:ref:`intEnum <intEnum>` shapes are defined with a ``members`` property that
+contains a map of member names to :ref:`AST member <ast-member>` definitions.
+Unions, enums, and intEnums all require at least one member, and a structure
+shape MAY omit the ``members`` property entirely if the structure contains no
+members.
 
-Structure and union member names MUST be case-insensitively unique across the
-entire set of members. Each member name MUST adhere to the :token:`smithy:identifier`
+Each shape's member names MUST be case-insensitively unique across the entire
+set of members. Each member name MUST adhere to the :token:`smithy:identifier`
 ABNF grammar.
 
 The following example defines a structure with one required and one optional
@@ -327,7 +314,7 @@ member:
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "smithy": "2.0",
         "shapes": {
             "smithy.example#MyStructure": {
                 "type": "structure",
@@ -351,7 +338,7 @@ The following example defines a union:
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "smithy": "2.0",
         "shapes": {
             "smithy.example#MyUnion": {
                 "type": "union",
@@ -361,6 +348,48 @@ The following example defines a union:
                     },
                     "b": {
                         "target": "smithy.api#Integer"
+                    }
+                }
+            }
+        }
+    }
+
+The following example defines an :ref:`enum`:
+
+.. code-block:: json
+
+    {
+        "smithy": "2.0",
+        "shapes": {
+            "smithy.example#MyEnum": {
+                "type": "enum",
+                "members": {
+                    "FOO": {
+                        "target": "smithy.api#Unit"
+                        "traits": {
+                            "smithy.api#enumValue": "foo"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+The following example defines an :ref:`intEnum`:
+
+.. code-block:: json
+
+    {
+        "smithy": "2.0",
+        "shapes": {
+            "smithy.example#MyIntEnum": {
+                "type": "intEnum",
+                "members": {
+                    "FOO": {
+                        "target": "smithy.api#Unit"
+                        "traits": {
+                            "smithy.api#enumValue": 1
+                        }
                     }
                 }
             }
@@ -633,6 +662,50 @@ The following example defines an operation, its input, output, and errors:
                 "traits": {
                     "smithy.api#error": "client"
                 }
+            }
+        }
+    }
+
+
+.. ast-mixins:
+
+------
+Mixins
+------
+
+All shapes in the ``shapes`` map can contain a ``mixins`` property that
+defines the :ref:`mixins` that are added to the shape. ``mixins`` is an
+array of :ref:`shape references <ast-shape-reference>` that target shapes
+marked with the :ref:`mixin trait <mixin-trait>`.
+
+.. code-block:: json
+
+    {
+        "smithy": "2.0",
+        "shapes": {
+            "smithy.example#BaseUser": {
+                "type": "structure",
+                "members": {
+                    "userId": {
+                        "target": "smithy.api#String"
+                    }
+                },
+                "traits": {
+                    "smithy.api#mixin": {}
+                }
+            },
+            "smithy.example#UserDetails": {
+                "type": "structure",
+                "members": {
+                    "username": {
+                        "target": "smithy.api#String"
+                    }
+                },
+                "mixins": [
+                    {
+                        "target": "smithy.example#BaseUser"
+                    }
+                ]
             }
         }
     }

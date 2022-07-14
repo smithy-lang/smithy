@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace smithy.example
 
@@ -7,7 +7,8 @@ list badList {
     member: String
 }
 
+@uniqueItems
 @trait(breakingChanges: [{path: "/foo", change: "any"}])
-set badSet {
+list badSet {
     member: String
 }

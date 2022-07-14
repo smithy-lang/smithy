@@ -1,0 +1,138 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#A": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "A.a"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "A",
+                "smithy.api#mixin": {},
+                "smithy.api#sensitive": {}
+            }
+        },
+        "smithy.example#B": {
+            "type": "structure",
+            "mixins": [
+                {
+                    "target": "smithy.example#A"
+                }
+            ],
+            "members": {
+                "b": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "B.b"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "B",
+                "smithy.api#deprecated": {},
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#C": {
+            "type": "structure",
+            "members": {
+                "c": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "C.c"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "C",
+                "smithy.api#mixin": {},
+                "smithy.api#tags": ["a"]
+            }
+        },
+        "smithy.example#D": {
+            "type": "structure",
+            "mixins": [
+                {
+                    "target": "smithy.example#C"
+                }
+            ],
+            "members": {
+                "d": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "D.d"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "D",
+                "smithy.api#mixin": {},
+                "smithy.api#externalDocumentation": {
+                    "web": "http://example.com"
+                }
+            }
+        },
+        "smithy.example#D$c": {
+            "type": "apply",
+            "traits": {
+                "smithy.api#documentation": "I've changed",
+                "smithy.api#internal": {}
+            }
+        },
+        "smithy.example#E": {
+            "type": "structure",
+            "mixins": [
+                {
+                    "target": "smithy.example#D"
+                }
+            ],
+            "members": {
+                "e": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "E.e"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "E",
+                "smithy.api#mixin": {},
+                "smithy.api#since": "X"
+            }
+        },
+        "smithy.example#F": {
+            "type": "structure",
+            "mixins": [
+                {
+                    "target": "smithy.example#B"
+                },
+                {
+                    "target": "smithy.example#E"
+                }
+            ],
+            "members": {
+                "f": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "F.f"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "F",
+                "smithy.api#internal": {}
+            }
+        },
+        "smithy.example#F$a": {
+            "type": "apply",
+            "traits": {
+                "smithy.api#documentation": "I've changed"
+            }
+        }
+    }
+}

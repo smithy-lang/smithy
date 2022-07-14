@@ -25,6 +25,8 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
+import software.amazon.smithy.model.shapes.EnumShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -37,9 +39,12 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.IdempotentTrait;
+import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.ReadonlyTrait;
+import software.amazon.smithy.model.traits.SensitiveTrait;
 
 public class NeighborVisitorTest {
 
@@ -71,6 +76,42 @@ public class NeighborVisitorTest {
         List<Relationship> relationships = shape.accept(neighborVisitor);
 
         assertThat(relationships, empty());
+    }
+
+    @Test
+    public void enumShape() {
+        EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#name");
+        EnumShape shape = builder
+                .addMember("foo", "bar")
+                .addMember("baz", "bam")
+                .build();
+        MemberShape member1Target = shape.getMember("foo").get();
+        MemberShape member2Target = shape.getMember("baz").get();
+        Model model = Model.builder().addShape(shape).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
+        List<Relationship> relationships = shape.accept(neighborVisitor);
+
+        assertThat(relationships, containsInAnyOrder(
+                Relationship.create(shape, RelationshipType.ENUM_MEMBER, member1Target),
+                Relationship.create(shape, RelationshipType.ENUM_MEMBER, member2Target)));
+    }
+
+    @Test
+    public void intEnumShape() {
+        IntEnumShape.Builder builder = (IntEnumShape.Builder) IntEnumShape.builder().id("ns.foo#name");
+        IntEnumShape shape = builder
+                .addMember("foo", 1)
+                .addMember("baz", 2)
+                .build();
+        MemberShape member1Target = shape.getMember("foo").get();
+        MemberShape member2Target = shape.getMember("baz").get();
+        Model model = Model.builder().addShape(shape).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
+        List<Relationship> relationships = shape.accept(neighborVisitor);
+
+        assertThat(relationships, containsInAnyOrder(
+                Relationship.create(shape, RelationshipType.INT_ENUM_MEMBER, member1Target),
+                Relationship.create(shape, RelationshipType.INT_ENUM_MEMBER, member2Target)));
     }
 
     @Test
@@ -154,6 +195,34 @@ public class NeighborVisitorTest {
         assertThat(relationships, containsInAnyOrder(
                 Relationship.create(struct, RelationshipType.STRUCTURE_MEMBER, member1Target),
                 Relationship.create(struct, RelationshipType.STRUCTURE_MEMBER, member2Target)));
+    }
+
+    @Test
+    public void structureShapeWithMixins() {
+        StringShape string = StringShape.builder().id("smithy.example#String").build();
+        StructureShape mixin1 = StructureShape.builder()
+                .id("smithy.example#TestMixin1")
+                .addTrait(MixinTrait.builder().build())
+                .addTrait(DeprecatedTrait.builder().build())
+                .addMember("a", string.getId(), builder -> builder.addTrait(new SensitiveTrait()))
+                .addMember("b", string.getId())
+                .build();
+        StructureShape concrete = StructureShape.builder()
+                .id("smithy.example#Concrete")
+                .addTrait(new SensitiveTrait())
+                .addMixin(mixin1)
+                .addMember("b", string.getId(), builder -> builder.addTrait(DeprecatedTrait.builder().build()))
+                .addMember("c", string.getId())
+                .build();
+        Model model = Model.builder().addShapes(mixin1, concrete, string).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
+        List<Relationship> relationships = concrete.accept(neighborVisitor);
+
+        assertThat(relationships, containsInAnyOrder(
+                Relationship.create(concrete, RelationshipType.STRUCTURE_MEMBER, concrete.getMember("a").get()),
+                Relationship.create(concrete, RelationshipType.STRUCTURE_MEMBER, concrete.getMember("b").get()),
+                Relationship.create(concrete, RelationshipType.STRUCTURE_MEMBER, concrete.getMember("c").get()),
+                Relationship.create(concrete, RelationshipType.MIXIN, mixin1)));
     }
 
     @Test

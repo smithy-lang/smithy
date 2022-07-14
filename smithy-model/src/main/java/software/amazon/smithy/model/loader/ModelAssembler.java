@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -104,6 +105,7 @@ public final class ModelAssembler {
     private final Map<String, Object> properties = new HashMap<>();
     private boolean disablePrelude;
     private Consumer<ValidationEvent> validationEventListener = DEFAULT_EVENT_LISTENER;
+    private Version parsedShapesVersion;
 
     // Lazy initialization holder class idiom to hold a default trait factory.
     static final class LazyTraitFactoryHolder {
@@ -367,6 +369,20 @@ public final class ModelAssembler {
     }
 
     /**
+     * Sets the Smithy version to use for parsed shapes added directly to the
+     * assembler.
+     *
+     * If unset, the default version of 1.0 will be assumed.
+     *
+     * @param version A Smithy IDL version.
+     * @return Returns the assembler.
+     */
+    public ModelAssembler setParsedShapesVersion(String version) {
+        this.parsedShapesVersion = Version.fromString(version);
+        return this;
+    }
+
+    /**
      * Explicitly adds a trait to a shape in the assembled model.
      *
      * @param target Shape to add the trait to.
@@ -544,22 +560,68 @@ public final class ModelAssembler {
             traitFactory = LazyTraitFactoryHolder.INSTANCE;
         }
 
+        List<ModelFile> files = createModelFiles();
         // Create "model files" for the prelude, manually added shapes, imports, etc.
-        CompositeModelFile composite = new CompositeModelFile(traitFactory, createModelFiles());
+        CompositeModelFile composite = new CompositeModelFile(traitFactory, files);
 
         try {
             TraitContainer traits = composite.resolveShapes(composite.shapeIds(), composite::getShapeType);
             Model model = Model.builder()
                     .metadata(composite.metadata())
-                    .addShapes(composite.createShapes(traits))
+                    .addShapes(composite.createShapes(traits).getCreatedShapes())
                     .build();
-            return validate(model, traits, composite.events());
+
+            List<ValidationEvent> compositeEvents = composite.events();
+
+            // Always perform trait validation before 1.0 -> 2.0 transforms.
+            validateTraits(model.getShapeIds(), traits, compositeEvents);
+
+            // If ERROR validation events occur while loading, then performing more
+            // granular semantic validation will only obscure the root cause of errors.
+            if (LoaderUtils.containsErrorEvents(compositeEvents)) {
+                return returnOnlyErrors(model, compositeEvents);
+            }
+
+            // Do the 1.0 -> 2.0 transform before full model validation.
+            ValidatedResult<Model> transformedModel = upgradeModel(model, compositeEvents, files);
+
+            if (disableValidation || LoaderUtils.containsErrorEvents(transformedModel.getValidationEvents())) {
+                // Don't continue to validate the model if the upgrade raised ERROR events.
+                return transformedModel;
+            }
+
+            return validate(transformedModel.getResult().get(), transformedModel.getValidationEvents());
         } catch (SourceException e) {
             List<ValidationEvent> events = new ArrayList<>();
             events.add(ValidationEvent.fromSourceException(e));
             events.addAll(composite.events());
             return ValidatedResult.fromErrors(events);
         }
+    }
+
+    private ValidatedResult<Model> returnOnlyErrors(Model model, List<ValidationEvent> events) {
+        return new ValidatedResult<>(model, events.stream()
+                .filter(event -> event.getSeverity() == Severity.ERROR)
+                .peek(validationEventListener)
+                .collect(Collectors.toList()));
+    }
+
+    private ValidatedResult<Model> upgradeModel(Model model, List<ValidationEvent> events, List<ModelFile> files) {
+        // Create a mapping of filename -> version so that the SourceLocation of each shape and
+        // trait can be tracked back to a version. Note that the map might contain files that start with
+        // "file:/", "jar:", etc, and others might not. That doesn't matter because shapes are bound to
+        // files, and files are defined within a version, so normalizing filenames here would have no effect.
+        Map<String, Version> modelVersions = new HashMap<>(files.size());
+        for (ModelFile file : files) {
+            modelVersions.put(file.getFilename(), file.getVersion());
+            // Warn when any model file is 1.0 and it isn't the default source location. We assume 1.0 by default.
+            if (file.getVersion() == Version.VERSION_1_0
+                    && !file.getFilename().equals(SourceLocation.none().getFilename())) {
+                events.add(LoaderUtils.onDeprecatedIdlVersion(file.getVersion(), file.getFilename()));
+            }
+        }
+
+        return new ModelUpgrader(model, events, modelVersions).transform();
     }
 
     private List<ModelFile> createModelFiles() {
@@ -570,7 +632,9 @@ public final class ModelAssembler {
         }
 
         // A modelFile is created for the assembler to capture anything that was manually added.
-        FullyResolvedModelFile assemblerModelFile = FullyResolvedModelFile.fromShapes(traitFactory, shapes);
+        FullyResolvedModelFile assemblerModelFile = FullyResolvedModelFile.fromShapes(
+                traitFactory, shapes, parsedShapesVersion);
+
         modelFiles.add(assemblerModelFile);
         metadata.forEach(assemblerModelFile::putMetadata);
         for (Pair<ShapeId, Trait> pendingTrait : pendingTraits) {
@@ -584,7 +648,11 @@ public final class ModelAssembler {
             List<Shape> nonPrelude = model.shapes()
                     .filter(FunctionalUtils.not(Prelude::isPreludeShape))
                     .collect(Collectors.toList());
-            FullyResolvedModelFile resolvedFile = FullyResolvedModelFile.fromShapes(traitFactory, nonPrelude);
+            // Since we're pulling from a loaded model, we know that it has been converted to the latest
+            // supported version. We include that here to ensure we don't hit any validation issues from
+            // using new features.
+            FullyResolvedModelFile resolvedFile = FullyResolvedModelFile.fromShapes(
+                    traitFactory, nonPrelude, Version.fromString(Model.MODEL_VERSION));
             model.getMetadata().forEach(resolvedFile::putMetadata);
             modelFiles.add(resolvedFile);
         }
@@ -601,11 +669,11 @@ public final class ModelAssembler {
         // Load model files and merge them into the assembler.
         for (Map.Entry<String, Supplier<InputStream>> entry : inputStreamModels.entrySet()) {
             try {
-                ModelFile loaded = ModelLoader.load(traitFactory, properties, entry.getKey(), entry.getValue());
-                if (loaded == null) {
+                List<ModelFile> loaded = ModelLoader.load(traitFactory, properties, entry.getKey(), entry.getValue());
+                if (loaded.isEmpty()) {
                     LOGGER.warning(() -> "No ModelLoader was able to load " + entry.getKey());
                 } else {
-                    modelFiles.add(loaded);
+                    modelFiles.addAll(loaded);
                 }
             } catch (SourceException e) {
                 assemblerModelFile.events().add(ValidationEvent.fromSourceException(e));
@@ -615,19 +683,7 @@ public final class ModelAssembler {
         return modelFiles;
     }
 
-    private ValidatedResult<Model> validate(Model model, TraitContainer traits, List<ValidationEvent> events) {
-        validateTraits(model.getShapeIds(), traits, events);
-
-        // If ERROR validation events occur while loading, then performing more
-        // granular semantic validation will only obscure the root cause of errors.
-        if (disableValidation || LoaderUtils.containsErrorEvents(events)) {
-            // Only return and emit events for errors.
-            return new ValidatedResult<>(model, events.stream()
-                    .filter(event -> event.getSeverity() == Severity.ERROR)
-                    .peek(validationEventListener)
-                    .collect(Collectors.toList()));
-        }
-
+    private ValidatedResult<Model> validate(Model model, List<ValidationEvent> events) {
         // Validate the model based on the explicit validators and model metadata.
         // Note the ModelValidator handles emitting events to the validationEventListener.
         List<ValidationEvent> mergedEvents = new ModelValidator()

@@ -1,5 +1,8 @@
 software.amazon.smithy.model.validation.validators.AuthTraitValidator
+software.amazon.smithy.model.validation.validators.DefaultValueInUpdateValidator
+software.amazon.smithy.model.validation.validators.DefaultTraitValidator
 software.amazon.smithy.model.validation.validators.DeprecatedTraitValidator
+software.amazon.smithy.model.validation.validators.EnumShapeValidator
 software.amazon.smithy.model.validation.validators.EnumTraitValidator
 software.amazon.smithy.model.validation.validators.EventPayloadTraitValidator
 software.amazon.smithy.model.validation.validators.ExamplesTraitValidator
@@ -20,6 +23,7 @@ software.amazon.smithy.model.validation.validators.HttpUriFormatValidator
 software.amazon.smithy.model.validation.validators.JsonNameValidator
 software.amazon.smithy.model.validation.validators.LengthTraitValidator
 software.amazon.smithy.model.validation.validators.MediaTypeValidator
+software.amazon.smithy.model.validation.validators.MixinValidator
 software.amazon.smithy.model.validation.validators.NoInlineDocumentSupportValidator
 software.amazon.smithy.model.validation.validators.OperationValidator
 software.amazon.smithy.model.validation.validators.PaginatedTraitValidator
@@ -32,6 +36,7 @@ software.amazon.smithy.model.validation.validators.ResourceIdentifierBindingVali
 software.amazon.smithy.model.validation.validators.ResourceIdentifierValidator
 software.amazon.smithy.model.validation.validators.ResourceLifecycleValidator
 software.amazon.smithy.model.validation.validators.ServiceValidator
+software.amazon.smithy.model.validation.validators.SetValidator
 software.amazon.smithy.model.validation.validators.ShapeIdConflictValidator
 software.amazon.smithy.model.validation.validators.ShapeRecursionValidator
 software.amazon.smithy.model.validation.validators.SingleOperationBindingValidator

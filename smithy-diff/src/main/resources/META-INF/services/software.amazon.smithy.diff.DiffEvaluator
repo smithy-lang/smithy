@@ -1,3 +1,4 @@
+
 software.amazon.smithy.diff.evaluators.AddedEntityBinding
 software.amazon.smithy.diff.evaluators.AddedMetadata
 software.amazon.smithy.diff.evaluators.AddedOperationError
@@ -9,6 +10,7 @@ software.amazon.smithy.diff.evaluators.ChangedLengthTrait
 software.amazon.smithy.diff.evaluators.ChangedMemberOrder
 software.amazon.smithy.diff.evaluators.ChangedMemberTarget
 software.amazon.smithy.diff.evaluators.ChangedMetadata
+software.amazon.smithy.diff.evaluators.ChangedNullability
 software.amazon.smithy.diff.evaluators.ChangedOperationInput
 software.amazon.smithy.diff.evaluators.ChangedOperationOutput
 software.amazon.smithy.diff.evaluators.ChangedRangeTrait

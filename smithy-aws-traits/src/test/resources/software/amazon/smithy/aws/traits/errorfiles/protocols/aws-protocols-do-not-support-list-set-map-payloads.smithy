@@ -1,5 +1,8 @@
 // AWS protocols do not currently support applying the http payload trait to
 // sets, lists, or maps.
+//
+// This uses version 1.0 to test forbidding sets.
+$version: "1.0"
 
 namespace smithy.example
 

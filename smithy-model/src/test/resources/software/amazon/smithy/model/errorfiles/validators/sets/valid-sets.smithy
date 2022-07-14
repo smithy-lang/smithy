@@ -33,3 +33,46 @@ set BigIntSet {
 set BigDecimalSet {
     member: BigDecimal
 }
+
+set TimestampSet {
+    member: Timestamp
+}
+
+set BooleanSet {
+    member: Boolean
+}
+
+set ListSet {
+    member: StringList
+}
+
+list StringList {
+    member: String
+}
+
+set SetSet {
+    member: StringSet
+}
+
+set MapSet {
+    member: StringMap
+}
+
+map StringMap {
+    key: String,
+    value: String
+}
+
+set StructSet {
+    member: StructureExample
+}
+
+structure StructureExample {}
+
+set UnionSet {
+    member: UnionExample
+}
+
+union UnionExample {
+    foo: String
+}

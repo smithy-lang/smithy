@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,111 +15,138 @@
 
 package software.amazon.smithy.model.knowledge;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.lang.ref.WeakReference;
+import java.util.Objects;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ToShapeId;
-import software.amazon.smithy.model.traits.BoxTrait;
+import software.amazon.smithy.model.traits.ClientOptionalTrait;
+import software.amazon.smithy.model.traits.DefaultTrait;
+import software.amazon.smithy.model.traits.InputTrait;
+import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
-import software.amazon.smithy.utils.SetUtils;
 
 /**
- * An index that checks if a shape can be set to null.
+ * An index that checks if a member is nullable.
  */
 public class NullableIndex implements KnowledgeIndex {
 
-    private static final Set<ShapeType> INHERENTLY_BOXED = SetUtils.of(
-            ShapeType.STRING,
-            ShapeType.BLOB,
-            ShapeType.TIMESTAMP,
-            ShapeType.BIG_DECIMAL,
-            ShapeType.BIG_INTEGER,
-            ShapeType.LIST,
-            ShapeType.SET,
-            ShapeType.MAP,
-            ShapeType.STRUCTURE,
-            ShapeType.UNION,
-            ShapeType.DOCUMENT);
-
-    private final Set<ShapeId> nullableShapes = new HashSet<>();
+    private final WeakReference<Model> model;
 
     public NullableIndex(Model model) {
-        for (ShapeType type : INHERENTLY_BOXED) {
-            model.shapes(type.getShapeClass()).forEach(shape -> nullableShapes.add(shape.getId()));
-        }
-
-        for (Shape shape : model.getShapesWithTrait(BoxTrait.class)) {
-            // Only structure members honor the box trait, so defer to the
-            // isMemberNullable method to determine member nullability.
-            if (!shape.isMemberShape()) {
-                nullableShapes.add(shape.getId());
-            }
-        }
-
-        for (MemberShape member : model.getMemberShapes()) {
-            if (isMemberNullable(model, member)) {
-                nullableShapes.add(member.getId());
-            }
-        }
+        this.model = new WeakReference<>(model);
     }
 
     public static NullableIndex of(Model model) {
         return model.getKnowledge(NullableIndex.class, NullableIndex::new);
     }
 
-    private static boolean isMemberNullable(Model model, MemberShape member) {
-        Shape container = model.getShape(member.getContainer()).orElse(null);
+    /**
+     * Defines the type of model consumer to assume when determining if
+     * a member should be considered nullable or always present.
+     */
+    public enum CheckMode {
+        /**
+         * A client, or any other kind of non-authoritative model consumer
+         * that must honor the {@link InputTrait} and {@link ClientOptionalTrait}.
+         */
+        CLIENT,
 
-        // Ignore broken models in this index. Other validators handle these checks.
-        if (container == null) {
-            return false;
+        /**
+         * A server, or any other kind of authoritative model consumer
+         * that does not honor the {@link InputTrait} and {@link ClientOptionalTrait}.
+         *
+         * <p>This mode should only be used for model consumers that have
+         * perfect knowledge of the model because they are built and deployed
+         * in lock-step with model updates. A client does not have perfect
+         * knowledge of a model because it has to be generated, deployed,
+         * and then migrated to when model updates are released. However, a
+         * server is required to be updated in order to implement newly added
+         * model components.
+         */
+        SERVER
+    }
+
+    /**
+     * Checks if the given shape is optional using {@link CheckMode#CLIENT}.
+     *
+     * @param shape Shape or shape ID to check.
+     * @return Returns true if the shape is nullable.
+     */
+    public final boolean isNullable(ToShapeId shape) {
+        return isNullable(shape, CheckMode.CLIENT);
+    }
+
+    /**
+     * Checks if the given shape is nullable.
+     *
+     * @param shape Shape or shape ID to check.
+     * @param checkMode The mode used when checking if the shape is considered nullable.
+     * @return Returns true if the shape is nullable.
+     */
+    public final boolean isNullable(ToShapeId shape, CheckMode checkMode) {
+        Model m = Objects.requireNonNull(model.get());
+        Shape s = m.expectShape(shape.toShapeId());
+        MemberShape member = s.asMemberShape().orElse(null);
+        // Non-members should always be considered nullable.
+        return member == null || isMemberNullable(member, checkMode);
+    }
+
+    /**
+     * Checks if a member is nullable using {@link CheckMode#CLIENT}.
+     *
+     * @param member Member to check.
+     * @return Returns true if the member is optional in
+     *  non-authoritative consumers of the model like clients.
+     * @see #isMemberNullable(MemberShape, CheckMode)
+     */
+    public boolean isMemberNullable(MemberShape member) {
+        return isMemberNullable(member, CheckMode.CLIENT);
+    }
+
+    /**
+     * Checks if a member is nullable.
+     *
+     * <p>A {@code checkMode} parameter is required to declare what kind of
+     * model consumer is checking if the member is optional. The authoritative
+     * consumers like servers do not need to honor the {@link InputTrait} or
+     * {@link ClientOptionalTrait}, while non-authoritative consumers like clients
+     * must honor these traits.
+     *
+     * @param member Member to check.
+     * @param checkMode The mode used when checking if the member is considered nullable.
+     * @return Returns true if the member is optional.
+     */
+    public boolean isMemberNullable(MemberShape member, CheckMode checkMode) {
+        Model m = Objects.requireNonNull(model.get());
+        Shape container = m.expectShape(member.getContainer());
+
+        // Client mode honors the nullable and input trait.
+        if (checkMode == CheckMode.CLIENT
+                && (member.hasTrait(ClientOptionalTrait.class) || container.hasTrait(InputTrait.class))) {
+            return true;
         }
 
         switch (container.getType()) {
             case STRUCTURE:
-                // Only structure shapes look at the box trait.
-                return member.hasTrait(BoxTrait.class)
-                       || model.getShape(member.getTarget()).filter(NullableIndex::isShapeBoxed).isPresent();
+                // Structure members are nullable by default; non-null when marked as @default / @required.
+                return !member.hasTrait(DefaultTrait.class) && !member.hasTrait(RequiredTrait.class);
+            case UNION:
+            case SET:
+                // Union and set members are never null.
+                return false;
             case MAP:
-                // Map keys can never be null.
+                // Map keys are never null.
                 if (member.getMemberName().equals("key")) {
                     return false;
-                } // fall-through
+                }
+                // fall-through.
             case LIST:
-                // Sparse lists and maps are considered nullable.
+                // Map values and list members are only null if they have the @sparse trait.
                 return container.hasTrait(SparseTrait.class);
             default:
                 return false;
         }
-    }
-
-    private static boolean isShapeBoxed(Shape shape) {
-        return INHERENTLY_BOXED.contains(shape.getType()) || shape.hasTrait(BoxTrait.class);
-    }
-
-    /**
-     * Checks if the given shape can be set to null.
-     *
-     * <p>When given a list member or map value member, this method will
-     * return true if and only if the container of the member is marked with
-     * the {@link SparseTrait}. When given a member of a structure, this
-     * method will return true if and only if the member is marked with the
-     * {@link BoxTrait}, the targeted shape is marked with the {@code box}
-     * trait, or if the targeted shape is inherently boxed. When given a set
-     * member, union member, or map key member, this method will always
-     * return false. When given any other shape, this method will return
-     * true if the shape is inherently boxed, meaning the shape is either
-     * marked with the {@code box} trait, or the shape is a string, blob,
-     * timestamp, bigDecimal, bigInteger, list, set, map, structure, union or document.
-     *
-     * @param shape Shape or shape ID to check.
-     * @return Returns true if the shape can be set to null.
-     */
-    public final boolean isNullable(ToShapeId shape) {
-        return nullableShapes.contains(shape.toShapeId());
     }
 }

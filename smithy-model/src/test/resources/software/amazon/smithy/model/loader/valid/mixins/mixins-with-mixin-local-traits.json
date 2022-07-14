@@ -1,0 +1,27 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#PrivateMixin": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#mixin": {
+                    "localTraits": ["smithy.api#private", "smithy.api#documentation"]
+                },
+                "smithy.api#private": {},
+                "smithy.api#documentation": "This mixin is used to make things have a foo member,\nbut it can't be used outside of this namespace.",
+                "smithy.api#sensitive": {}
+            },
+            "members": {
+                "foo": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "smithy.example#PublicShape": {
+            "type": "structure",
+            "mixins": [
+                {"target": "smithy.example#PrivateMixin"}
+            ]
+        }
+    }
+}

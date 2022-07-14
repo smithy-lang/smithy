@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -29,44 +29,35 @@ import software.amazon.smithy.utils.ListUtils;
  * <p>The order of members in structures and unions are the same as the
  * order that they are defined in the model.
  */
-abstract class NamedMembersShape extends Shape {
+public abstract class NamedMembersShape extends Shape implements NamedMembers {
 
     private final Map<String, MemberShape> members;
     private volatile List<String> memberNames;
 
     NamedMembersShape(NamedMembersShape.Builder<?, ?> builder) {
         super(builder, false);
-        assert builder.members != null;
-
-        // Copy the members to make them immutable and ensure that each
-        // member has a valid ID that is prefixed with the shape ID.
-        members = builder.members.copy();
-
-        for (MemberShape member : members.values()) {
-            if (!member.getId().toString().startsWith(getId().toString())) {
-                ShapeId expected = getId().withMember(member.getMemberName());
-                throw new IllegalArgumentException(String.format(
-                        "Expected the `%s` member of `%s` to have an ID of `%s` but found `%s`",
-                        member.getMemberName(), getId(), expected, member.getId()));
-            }
-        }
+        members = NamedMemberUtils.computeMixinMembers(
+                builder.getMixins(), builder.members, getId(), getSourceLocation());
+        validateMemberShapeIds();
     }
 
     /**
-     * Gets the members of the shape.
+     * Gets the members of the shape, including mixin members.
      *
      * @return Returns the immutable member map.
      */
+    @Override
     public Map<String, MemberShape> getAllMembers() {
         return members;
     }
 
     /**
      * Returns an ordered list of member names based on the order they are
-     * defined in the model.
+     * defined in the model, including mixin members.
      *
      * @return Returns an immutable list of member names.
      */
+    @Override
     public List<String> getMemberNames() {
         List<String> names = memberNames;
         if (names == null) {
@@ -77,8 +68,14 @@ abstract class NamedMembersShape extends Shape {
         return names;
     }
 
+    /**
+     * Get a specific member by name.
+     *
+     * @param name Name of the member to retrieve.
+     * @return Returns the optional member.
+     */
     @Override
-    public final Optional<MemberShape> getMember(String name) {
+    public Optional<MemberShape> getMember(String name) {
         return Optional.ofNullable(members.get(name));
     }
 
@@ -103,7 +100,7 @@ abstract class NamedMembersShape extends Shape {
      * @param <B> Concrete builder type.
      * @param <S> Shape type being created.
      */
-    abstract static class Builder<B extends Builder<?, ?>, S extends NamedMembersShape>
+    public abstract static class Builder<B extends Builder<B, S>, S extends NamedMembersShape>
             extends AbstractShapeBuilder<B, S> {
 
         private final BuilderRef<Map<String, MemberShape>> members = BuilderRef.forOrderedMap();
@@ -125,7 +122,7 @@ abstract class NamedMembersShape extends Shape {
          */
         @SuppressWarnings("unchecked")
         public B members(Collection<MemberShape> members) {
-            this.members.clear();
+            clearMembers();
             for (MemberShape member : members) {
                 addMember(member);
             }
@@ -143,12 +140,6 @@ abstract class NamedMembersShape extends Shape {
             return (B) this;
         }
 
-        /**
-         * Adds a member to the builder.
-         *
-         * @param member Shape targeted by the member.
-         * @return Returns the builder.
-         */
         @Override
         @SuppressWarnings("unchecked")
         public B addMember(MemberShape member) {
@@ -192,6 +183,10 @@ abstract class NamedMembersShape extends Shape {
         /**
          * Removes a member by name.
          *
+         * <p>Note that removing a member that was added by a mixin results in
+         * an inconsistent model. It's best to use ModelTransform to ensure
+         * that the model remains consistent when removing members.
+         *
          * @param member Member name to remove.
          * @return Returns the builder.
          */
@@ -201,6 +196,35 @@ abstract class NamedMembersShape extends Shape {
                 members.get().remove(member);
             }
             return (B) this;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public B addMixin(Shape shape) {
+            if (getId() == null) {
+                throw new IllegalStateException("An id must be set before adding a mixin");
+            }
+            super.addMixin(shape);
+            NamedMemberUtils.cleanMixins(shape, members.get());
+            return (B) this;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public B removeMixin(ToShapeId shape) {
+            super.removeMixin(shape);
+            NamedMemberUtils.removeMixin(shape, members.get());
+            return (B) this;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public B flattenMixins() {
+            if (getMixins().isEmpty()) {
+                return (B) this;
+            }
+            members(NamedMemberUtils.flattenMixins(members.get(), getMixins(), getId(), getSourceLocation()));
+            return super.flattenMixins();
         }
     }
 }

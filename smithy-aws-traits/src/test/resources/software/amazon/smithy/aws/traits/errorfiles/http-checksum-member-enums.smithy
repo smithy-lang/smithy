@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace smithy.example
 
 use aws.protocols#httpChecksum
@@ -80,50 +82,25 @@ structure NoMemberInput {}
 @output
 structure NoMemberOutput {}
 
-@enum([
-    {
-        value: "CRC32C",
-        name: "CRC32C"
-    },
-    {
-        value: "CRC32",
-        name: "CRC32"
-    },
-    {
-        value: "SHA1",
-        name: "SHA1"
-    },
-    {
-        value: "SHA256",
-        name: "SHA256"
-    }
-])
-string ChecksumAlgorithm
+enum ChecksumAlgorithm {
+    CRC32C
+    CRC32
+    SHA1
+    SHA256
+}
 
-@enum([
-    {
-        value: "ENABLED",
-        name: "ENABLED"
-    }
-])
-string ValidationMode
+enum ValidationMode {
+    ENABLED
+}
 
 
-@enum([
-    {
-        value: "SHA2",
-        name: "SHA2"
-    }
-])
-string BadChecksumAlgorithm
+enum BadChecksumAlgorithm {
+    SHA2
+}
 
-@enum([
-    {
-        value: "DISABLED",
-        name: "DISABLED"
-    }
-])
-string BadValidationMode
+enum BadValidationMode {
+    DISABLED
+}
 
 map StringMap {
     key: String,

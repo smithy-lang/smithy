@@ -1,4 +1,4 @@
-aws.api.json
-aws.auth.json
-aws.customizations.json
-aws.protocols.json
+aws.api.smithy
+aws.auth.smithy
+aws.customizations.smithy
+aws.protocols.smithy

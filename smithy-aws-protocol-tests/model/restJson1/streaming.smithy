@@ -1,7 +1,7 @@
 // This file defines test cases that test HTTP streaming bindings.
 // See: https://awslabs.github.io/smithy/1.0/spec/core/stream-traits.html?highlight=streaming#streaming-trait
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restjson
 
@@ -92,7 +92,7 @@ structure StreamingTraitsInputOutput {
     foo: String,
 
     @httpPayload
-    blob: StreamingBlob,
+    blob: StreamingBlob = "",
 }
 
 @streaming
@@ -152,7 +152,7 @@ structure StreamingTraitsRequireLengthInput {
     foo: String,
 
     @httpPayload
-    blob: FiniteStreamingBlob,
+    blob: FiniteStreamingBlob = "",
 }
 
 @streaming
@@ -213,7 +213,7 @@ structure StreamingTraitsWithMediaTypeInputOutput {
     foo: String,
 
     @httpPayload
-    blob: StreamingTextPlainBlob,
+    blob: StreamingTextPlainBlob = ""
 }
 
 @streaming

@@ -3,7 +3,7 @@
 // configuration settings. See the following for a more comprehensive overview:
 // https://docs.aws.amazon.com/credref/latest/refdocs/overview.html
 
-$version: "1.0"
+$version: "2.0"
 
 metadata suppressions = [{
     id: "UnreferencedShape",
@@ -97,35 +97,15 @@ structure RetryConfig {
 }
 
 /// Controls the S3 addressing bucket style.
-@enum([
-    {
-        value: "auto",
-        name: "AUTO",
-    },
-    {
-        value: "path",
-        name: "PATH",
-    },
-    {
-        value: "virtual",
-        name: "VIRTUAL",
-    }
-])
-string S3AddressingStyle
+enum S3AddressingStyle {
+    AUTO = "auto"
+    PATH = "path"
+    VIRTUAL = "virtual"
+}
 
 /// Controls the strategy used for retries.
-@enum([
-    {
-        value: "legacy",
-        name: "LEGACY",
-    },
-    {
-        value: "standard",
-        name: "STANDARD",
-    },
-    {
-        value: "adaptive",
-        name: "ADAPTIVE",
-    }
-])
-string RetryMode
+enum RetryMode {
+    LEGACY = "legacy"
+    STANDARD = "standard"
+    ADAPTIVE = "adaptive"
+}

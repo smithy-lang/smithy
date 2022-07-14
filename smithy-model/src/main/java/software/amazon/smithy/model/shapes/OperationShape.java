@@ -17,12 +17,15 @@ package software.amazon.smithy.model.shapes;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.knowledge.OperationIndex;
+import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -34,12 +37,37 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
     private final ShapeId input;
     private final ShapeId output;
     private final List<ShapeId> errors;
+    private final List<ShapeId> introducedErrors;
 
     private OperationShape(Builder builder) {
         super(builder, false);
-        errors = builder.errors.copy();
+
         input = Objects.requireNonNull(builder.input);
         output = Objects.requireNonNull(builder.output);
+
+        if (getMixins().isEmpty()) {
+            errors = builder.errors.copy();
+            introducedErrors = errors;
+        } else {
+            // Compute mixin properties of the operation. Input / output are
+            // forbidden in operation mixins, so we don't bother with them
+            // here.
+            Set<ShapeId> computedErrors = new LinkedHashSet<>();
+            for (Shape shape : builder.getMixins().values()) {
+                shape.asOperationShape().ifPresent(mixin -> computedErrors.addAll(mixin.getErrors()));
+            }
+            introducedErrors = builder.errors.copy();
+            computedErrors.addAll(introducedErrors);
+            errors = Collections.unmodifiableList(new ArrayList<>(computedErrors));
+        }
+
+        if (hasTrait(MixinTrait.ID) && (!input.equals(UnitTypeTrait.UNIT) || !output.equals(UnitTypeTrait.UNIT))) {
+            throw new SourceException(String.format(
+                    "Operation shapes with the mixin trait MUST target `%s` for their input and output. Operation "
+                            + "mixin shape `%s` defines one or both of these properties.",
+                    UnitTypeTrait.UNIT, getId()
+            ), builder.getSourceLocation());
+        }
     }
 
     public static Builder builder() {
@@ -48,10 +76,10 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this)
+        return updateBuilder(builder())
                 .input(input)
                 .output(output)
-                .errors(errors);
+                .errors(getIntroducedErrors());
     }
 
     @Override
@@ -137,6 +165,16 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
      */
     public List<ShapeId> getErrors() {
         return errors;
+    }
+
+    /**
+     * Gets the errors introduced by the shape and not inherited
+     * from mixins.
+     *
+     * @return Returns the introduced errors.
+     */
+    public List<ShapeId> getIntroducedErrors() {
+        return introducedErrors;
     }
 
     /**
@@ -270,6 +308,17 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
         @Override
         public OperationShape build() {
             return new OperationShape(this);
+        }
+
+        @Override
+        public Builder flattenMixins() {
+            Set<ShapeId> computedErrors = new LinkedHashSet<>();
+            for (Shape shape : getMixins().values()) {
+                shape.asOperationShape().ifPresent(mixin -> computedErrors.addAll(mixin.getErrors()));
+            }
+            computedErrors.addAll(errors.peek());
+            errors(computedErrors);
+            return super.flattenMixins();
         }
     }
 }

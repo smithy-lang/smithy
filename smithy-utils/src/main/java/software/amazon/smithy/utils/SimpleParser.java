@@ -103,6 +103,12 @@ public class SimpleParser {
         return column;
     }
 
+    public final void rewind(int position, int line, int column) {
+        this.column = column;
+        this.line = line;
+        this.position = position;
+    }
+
     /**
      * Checks if the parser has reached the end of the expression.
      *
@@ -206,27 +212,26 @@ public class SimpleParser {
      * Skip 0 or more whitespace characters (that is, ' ', '\t', '\r', and '\n').
      */
     public void ws() {
-        while (!eof()) {
-            char c = peek();
-            if (!(c == ' ' || c == '\t' || c == '\r' || c == '\n')) {
-                break;
-            } else {
-                skip();
-            }
+        while (!eof() && isWhitespace(peek())) {
+            skip();
         }
+    }
+
+    private boolean isWhitespace(char c) {
+        return c == ' ' || c == '\t' || c == '\r' || c == '\n';
     }
 
     /**
      * Skip 0 or more spaces (that is, ' ' and '\t').
      */
     public void sp() {
-        while (!eof()) {
-            char c = peek();
-            if (!(c == ' ' || c == '\t')) {
-                break;
-            }
+        while (!eof() && isSpace(peek())) {
             skip();
         }
+    }
+
+    private boolean isSpace(char c) {
+        return c == ' ' || c == '\t';
     }
 
     /**

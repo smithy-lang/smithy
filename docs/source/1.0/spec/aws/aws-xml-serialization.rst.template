@@ -45,11 +45,8 @@
         used to serialize a property using a custom name. The
         :ref:`xmlFlattened-trait` can be used to unwrap the values into a
         containing structure or union, with the value XML element using the
-        structure or union member name. See :ref:`xml-list-and-set-serialization`
+        structure or union member name. See :ref:`xml-list-serialization`
         for more.
-    * - ``set``
-      - XML element. A set is serialized identically to a ``list`` shape,
-        but only contains unique values.
     * - ``map``
       - XML element. Each key-value pair provided in the map is serialized in
         a nested XML element with the name ``entry`` that contains nested

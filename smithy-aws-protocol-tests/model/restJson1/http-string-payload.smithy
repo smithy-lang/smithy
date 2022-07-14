@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restjson
 
@@ -35,8 +35,9 @@ structure EnumPayloadInput {
     payload: StringEnum
 }
 
-@enum([{"value": "enumvalue", "name": "V"}])
-string StringEnum
+enum StringEnum {
+    V = "enumvalue"
+}
 
 @http(uri: "/StringPayload", method: "POST")
 @httpRequestTests([

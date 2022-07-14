@@ -1,0 +1,1139 @@
+---------------
+Behavior traits
+---------------
+
+Behavior traits are used to alter the behavior of operations.
+
+.. contents:: Table of contents
+    :depth: 1
+    :local:
+    :backlinks: none
+
+
+.. smithy-trait:: smithy.api#idempotencyToken
+.. _idempotencyToken-trait:
+
+``idempotencyToken`` trait
+==========================
+
+Summary
+    Defines the input member of an operation that is used by the server to
+    identify and discard replayed requests.
+Trait selector
+    ``structure > :test(member > string)``
+
+    *Any structure member that targets a string*
+Value type
+    Annotation trait
+
+Only a single member of the input of an operation can be targeted by the
+``idempotencyToken`` trait; only top-level structure members of the input of an
+operation are considered.
+
+A unique identifier (typically a UUID_) SHOULD be used by the client when
+providing the value for the request token member. When the request token is
+present, the service MUST ensure that the request is not replayed within a
+service-defined period of time. This allows the client to safely retry
+operation invocations, including operations that are not read-only, that fail
+due to networking issues or internal server errors. The service uses the
+provided request token to identify and discard duplicate requests.
+
+Client implementations MAY automatically provide a value for a request token
+member if and only if the member is not explicitly provided.
+
+.. code-block::
+
+    operation AllocateWidget {
+        input: AllocateWidgetInput
+    }
+
+    @input
+    structure AllocateWidgetInput {
+        @idempotencyToken
+        clientToken: String
+    }
+
+
+.. smithy-trait:: smithy.api#idempotent
+.. _idempotent-trait:
+
+``idempotent`` trait
+====================
+
+Summary
+    Indicates that the intended effect on the server of multiple identical
+    requests with an operation is the same as the effect for a single such
+    request.
+Trait selector
+    ``operation``
+Value type
+    Annotation trait
+Conflicts with
+    :ref:`readonly-trait`
+
+.. code-block:: smithy
+
+    @idempotent
+    operation DeleteSomething {
+        input: DeleteSomethingInput
+        output: DeleteSomethingOutput
+    }
+
+.. note::
+
+    All operations that are marked as :ref:`readonly-trait` are inherently
+    idempotent.
+
+
+.. smithy-trait:: smithy.api#readonly
+.. _readonly-trait:
+
+``readonly`` trait
+==================
+
+Summary
+    Indicates that an operation is effectively read-only.
+Trait selector
+    ``operation``
+Value type
+    Annotation trait
+Conflicts with
+    :ref:`idempotent-trait`
+
+.. code-block:: smithy
+
+    @readonly
+    operation GetSomething {
+        input: GetSomethingInput
+        output: GetSomethingOutput
+    }
+
+
+.. smithy-trait:: smithy.api#retryable
+.. _retryable-trait:
+
+``retryable`` trait
+===================
+
+Summary
+    Indicates that an error MAY be retried by the client.
+Trait selector
+    ``structure[trait|error]``
+
+    *A structure shape with the error trait*
+Value type
+    ``structure``
+
+The retryable trait is a structure that contains the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Property
+      - Type
+      - Description
+    * - throttling
+      - ``boolean``
+      - Indicates that the error is a retryable throttling error.
+
+.. code-block:: smithy
+
+    @error("server")
+    @retryable
+    @httpError(503)
+    structure ServiceUnavailableError {}
+
+    @error("client")
+    @retryable(throttling: true)
+    @httpError(429)
+    structure ThrottlingError {}
+
+
+.. _pagination:
+
+.. smithy-trait:: smithy.api#paginated
+.. _paginated-trait:
+
+``paginated`` trait
+===================
+
+Summary
+    The ``paginated`` trait indicates that an operation intentionally limits
+    the number of results returned in a single response and that multiple
+    invocations might be necessary to retrieve all results.
+Trait selector
+    ``:is(operation, service)``
+
+    *An operation or service*
+Value type
+    ``structure``
+
+Pagination is the process of dividing large result sets into discrete
+pages. Smithy provides a built-in pagination mechanism that utilizes a
+cursor.
+
+The ``paginated`` trait is a structure that contains the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Property
+      - Type
+      - Description
+    * - inputToken
+      - ``string``
+      - The name of the operation input member that contains a continuation
+        token. When this value is provided as input, the service returns
+        results from where the previous response left off. This input member
+        MUST NOT be marked as ``required`` and SHOULD target a string shape.
+        It can, but SHOULD NOT target a map shape.
+
+        When contained within a service, a paginated operation MUST either
+        configure ``inputToken`` on the operation itself or inherit it from
+        the service that contains the operation.
+    * - outputToken
+      - ``string``
+      - The path to the operation output member that contains an optional
+        continuation token. When this value is present and not empty in
+        operation output, it indicates that there are more results to retrieve.
+        To get the next page of results, the client passes the received output
+        continuation token to the input continuation token of the next request.
+        This output member MUST NOT be marked as ``required`` and SHOULD target
+        a string shape. It can, but SHOULD NOT target a map shape.
+
+        When contained within a service, a paginated operation MUST either
+        configure ``outputToken`` on the operation itself or inherit it from
+        the service that contains the operation.
+    * - items
+      - ``string``
+      - The path to an output member of the operation that contains
+        the data that is being paginated across many responses. The named
+        output member, if specified, MUST target a list or map.
+    * - pageSize
+      - ``string``
+      - The name of an operation input member that limits the maximum number
+        of results to include in the operation output. This input member
+        SHOULD NOT be required and MUST target an integer shape.
+
+        .. warning::
+
+            Do not attempt to fill response pages to meet the value provided
+            for the ``pageSize`` member of a paginated operation. Attempting to
+            match a target number of elements results in an unbounded API with
+            an unpredictable latency.
+
+The following example defines a paginated operation that sets each value
+explicitly on the operation.
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    @readonly
+    @paginated(inputToken: "nextToken", outputToken: "nextToken",
+               pageSize: "maxResults", items: "foos")
+    operation GetFoos {
+        input: GetFoosInput
+        output: GetFoosOutput
+    }
+
+    @input
+    structure GetFoosInput {
+        maxResults: Integer
+        nextToken: String
+    }
+
+    @output
+    structure GetFoosOutput {
+        nextToken: String
+
+        @required
+        foos: StringList
+    }
+
+    list StringList {
+        member: String
+    }
+
+Attaching the ``paginated`` trait to a service provides default pagination
+configuration settings to all operations bound within the closure of the
+service. Pagination settings configured on an operation override any inherited
+service setting.
+
+The following example defines a paginated operation that inherits some
+settings from a service.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        namespace smithy.example
+
+        @paginated(inputToken: "nextToken", outputToken: "nextToken",
+                   pageSize: "maxResults")
+        service Example {
+            version: "2019-06-27"
+            operations: [GetFoos]
+        }
+
+        @readonly @paginated(items: "foos")
+        operation GetFoos {
+            input: GetFoosInput
+            output: GetFoosOutput
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#Example": {
+                    "type": "service",
+                    "version": "2019-06-27",
+                    "traits": {
+                        "smithy.api#paginated": {
+                            "inputToken": "nextToken",
+                            "outputToken": "nextToken",
+                            "pageSize": "maxResults"
+                        }
+                    }
+                },
+                "smithy.example#GetFoos": {
+                    "type": "operation",
+                    "input": {
+                        "target": "smithy.example#GetFoosInput"
+                    },
+                    "output": {
+                        "target": "smithy.example#GetFoosOutput"
+                    },
+                    "traits": {
+                        "smithy.api#readonly": {},
+                        "smithy.api#paginated": {
+                            "items": "foos"
+                        }
+                    }
+                }
+            }
+        }
+
+The values for ``outputToken`` and ``items`` are paths. :dfn:`Paths` are a series of
+identifiers separated by dots (``.``) where each identifier represents a
+member name in a structure. The first member name MUST correspond to a member
+of the output structure and each subsequent member name MUST correspond to a
+member in the previously referenced structure. Paths MUST adhere to the
+following ABNF.
+
+.. productionlist:: smithy
+    path    :`identifier` *("." `identifier`)
+
+The following example defines a paginated operation which uses a result
+wrapper where the output token and items are referenced by paths.
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    @readonly
+    @paginated(inputToken: "nextToken", outputToken: "result.nextToken",
+               pageSize: "maxResults", items: "result.foos")
+    operation GetFoos {
+        input: GetFoosInput,
+        output: GetFoosOutput
+    }
+
+    @input
+    structure GetFoosInput {
+        maxResults: Integer,
+        nextToken: String
+    }
+
+    @output
+    structure GetFoosOutput {
+        @required
+        result: ResultWrapper
+    }
+
+    structure ResultWrapper {
+        nextToken: String,
+
+        @required
+        foos: StringList,
+    }
+
+    list StringList {
+        member: String
+    }
+
+
+Pagination Behavior
+-------------------
+
+#. If an operation returns a naturally size-limited subset of data
+   (e.g., a top-ten list of users sorted by rank), then the operation
+   SHOULD NOT be paginated.
+
+#. Only one list or map per operation can be paginated.
+
+#. Paginated responses SHOULD NOT return the same item of a paginated result
+   set more than once.
+
+#. Services SHOULD NOT return items in a paginated result set that have been
+   deleted during the pagination process, but before reaching the relevant
+   page.
+
+#. Services MAY include newly created items in a paginated result set on a
+   not yet seen page. If pagination is ordered and newly created items are
+   returned, then newly created items MUST appear in order on the appropriate
+   page.
+
+
+Client behavior
+---------------
+
+Smithy clients SHOULD provide abstractions that can be used to automatically
+iterate over paginated responses. The following steps describe the process a
+client MUST follow when iterating over paginated API calls:
+
+#. Send the initial request to a paginated operation. This request MAY
+   include input parameters that are used to influence the starting point
+   at which pagination occurs.
+
+#. If the received response does not contain a continuation token in the
+   referenced ``outputToken`` member (either the member is not set or is set to
+   an empty value), then there are no more results to retrieve and the process
+   is complete.
+
+#. If there is a continuation token in the referenced ``outputToken`` member
+   of the response, then the client sends a subsequent request using the same
+   input parameters as the original call, but including the last received
+   continuation token. Clients are free to change the designated ``pageSize``
+   input parameter at this step as needed.
+
+#. If a client receives an identical continuation token from a service in back
+   to back calls, then the client MAY choose to stop sending requests. This
+   scenario implies a "tail" style API operation where clients are running in
+   an infinite loop to send requests to a service in order to retrieve results
+   as they are available.
+
+#. Return to step 2.
+
+
+Continuation tokens
+-------------------
+
+The ``paginated`` trait indicates that an operation utilizes cursor-based
+pagination. When a paginated operation truncates its output, it MUST return a
+continuation token in the operation output that can be used to get the next
+page of results. This token can then be provided along with the original input
+to request additional results from the operation.
+
+#. **Continuation tokens SHOULD be opaque.**
+
+   Plain text continuation tokens inappropriately expose implementation details
+   to the client, resulting in consumers building systems that manually
+   construct continuation tokens. Making backwards compatible changes to a
+   plain text continuation token format is extremely hard to manage.
+
+#. **Continuation tokens SHOULD be versioned.**
+
+   The parameters and context needed to paginate an API call can evolve over
+   time. To future-proof these APIs, services SHOULD include some kind of
+   version identifier in their continuation tokens. Once the version identifier
+   of a token is recognized, a service will then know the appropriate operation
+   for decoding and returning the next response for a paginated request.
+
+#. **Continuation tokens SHOULD expire after a period of time.**
+
+   Continuation tokens SHOULD expire after a short period of time (e.g., 24
+   hours is a reasonable default for many services). This allows services
+   to quickly phase out deprecated continuation token formats, and helps to set
+   the expectation that continuation tokens are ephemeral and MUST NOT be used
+   after extended periods of time. Services MUST reject a request with a client
+   error when a client uses an expired continuation token.
+
+#. **Continuation tokens MUST be bound to a fixed set of filtering parameters.**
+
+   Services MUST reject a request that changes filtering input parameters while
+   paging through responses. Services MUST require clients to send the same
+   filtering request parameters used in the initial pagination request to all
+   subsequent pagination requests.
+
+   :dfn:`Filtering parameters` are defined as parameters that remove certain
+   elements from appearing in the result set of a paginated API call. Filtering
+   parameters do not influence the presentation of results (e.g., the
+   designated ``pageSize`` input parameter partitions a result set into smaller
+   subsets but does not change the sum of the parts). Services MUST allow
+   clients to change presentation based parameters while paginating through a
+   result set.
+
+#. **Continuation tokens MUST NOT influence authorization.**
+
+   A service MUST NOT evaluate authorization differently depending on the
+   presence, absence, or contents of a continuation token.
+
+
+Backward compatibility
+----------------------
+
+Many tools use the ``paginated`` trait to expose additional functionality to
+things like generated code. To support these use cases, the following changes
+to the ``paginated`` trait are considered backward incompatible:
+
+1. Removing the ``paginated`` trait.
+2. Adding, removing, or changing the ``inputToken``, ``outputToken``, or
+   ``items`` members.
+3. Removing or changing the ``pageSize`` member.
+
+The following changes are considered backward compatible:
+
+1. Adding the ``paginated`` trait to an existing operation.
+2. Adding the ``pageSize`` member to an existing ``paginated`` trait.
+
+
+.. _UUID: https://tools.ietf.org/html/rfc4122
+
+
+.. smithy-trait:: smithy.api#httpChecksumRequired
+.. _httpChecksumRequired-trait:
+
+``httpChecksumRequired`` trait
+==============================
+
+Summary
+    Indicates that an operation requires a checksum in its HTTP request. By
+    default, the checksum used for a service is a MD5 checksum passed in the
+    Content-MD5 header.
+Trait selector
+    ``operation``
+Value type
+    Annotation trait.
+See
+    :rfc:`1864`
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @httpChecksumRequired
+        operation PutSomething {
+            input: PutSomethingInput
+            output: PutSomethingOutput
+        }
+
+
+.. _stream-traits:
+
+.. smithy-trait:: smithy.api#streaming
+.. _streaming-trait:
+
+``streaming`` trait
+===================
+
+Summary
+    Indicates that the data represented by the shape needs to be streamed.
+
+    When applied to a blob, this simply means that the data could be very
+    large and thus should not be stored in memory or that the size is unknown
+    at the start of the request.
+
+    .. warning::
+        Members targeting streaming blobs MUST be marked with the
+        :ref:`required-trait` or :ref:`default-trait`.
+
+    When applied to a union, it indicates that shape represents an
+    :ref:`event stream <event-streams>`.
+Trait selector::
+    ``:is(blob, union)``
+Value type
+    Annotation trait
+Validation
+    * ``streaming`` shapes can only be referenced from top-level members
+      of operation input or output structures.
+    * Structures that contain a member that targets a ``streaming`` shape
+      MUST NOT be targeted by other members.
+    * The ``streaming`` trait is *structurally exclusive by target*, meaning
+      only a single member of a structure can target a shape marked as
+      ``streaming``.
+
+.. code-block:: smithy
+
+    operation StreamingOperation {
+        input: StreamingOperationInput
+        output: StreamingOperationOutput
+    }
+
+    @input
+    structure StreamingOperationInput {}
+
+    @output
+    structure StreamingOperationOutput {
+        @required
+        streamId: String
+        output: StreamingBlob
+    }
+
+    @streaming
+    blob StreamingBlob
+
+
+.. smithy-trait:: smithy.api#requiresLength
+.. _requiresLength-trait:
+
+``requiresLength`` trait
+========================
+
+Summary
+    Indicates that the streaming blob MUST be finite and have a known
+    size when sending data from a client to a server.
+
+    In an HTTP-based protocol, this trait indicates that the
+    ``Content-Length`` header MUST be sent prior to a client sending the
+    payload of a request. This can be useful for services that need to
+    determine if a request will be accepted based on its size or where to
+    store data based on the size of the stream.
+Trait selector::
+    ``blob[trait|streaming]``
+
+    *A blob shape marked with the streaming trait*
+Value type
+    ``structure``
+Validation
+    * ``requiresLength`` shapes can only be referenced from top-level members
+      of operation input structures.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @streaming
+        @requiresLength
+        blob FiniteStreamingBlob
+
+
+.. _event-streams:
+
+Event streams
+=============
+
+An event stream is an abstraction that allows multiple messages to be sent
+asynchronously between a client and server. Event streams support both duplex
+and simplex streaming. The serialization format and framing of messages sent
+over event streams is defined by the :ref:`protocol <protocolDefinition-trait>`
+of a service.
+
+An event stream is formed when an input or output member of an operation
+targets a union marked with the :ref:`streaming-trait`. An event stream is
+capable of streaming any number of named event structure shapes defined by a
+union. Each member of the targeted union MUST target a structure shape. The
+member names of the union define the name that is used to identify each event
+that is sent over the event stream.
+
+.. _input-eventstream:
+
+The following example defines an operation that uses an event
+stream in its input by referencing a member that targets a union:
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    operation PublishMessages {
+        input: PublishMessagesInput
+    }
+
+    @input
+    structure PublishMessagesInput {
+        room: String
+        messages: PublishEvents
+    }
+
+    @streaming
+    union PublishEvents {
+        message: Message
+        leave: LeaveEvent
+    }
+
+    structure Message {
+        message: String
+    }
+
+    structure LeaveEvent {}
+
+
+.. _output-eventstream:
+
+The following example defines an operation that uses an event
+stream in its output:
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    operation SubscribeToMovements {
+        input: SubscribeToMovementsInput,
+        output: SubscribeToMovementsOutput
+    }
+
+    @input
+    structure SubscribeToMovementsInput {}
+
+    @output
+    structure SubscribeToMovementsOutput {
+        movements: MovementEvents
+    }
+
+    @streaming
+    union MovementEvents {
+        up: Movement
+        down: Movement
+        left: Movement
+        right: Movement
+        throttlingError: ThrottlingError
+    }
+
+    structure Movement {
+        velocity: Float
+    }
+
+    /// An example error emitted when the client is throttled
+    /// and should terminate the event stream.
+    @error("client")
+    @retryable(throttling: true)
+    structure ThrottlingError {}
+
+
+Modeled errors in event streams
+-------------------------------
+
+Event streams MAY target shapes marked with the :ref:`error-trait`. These
+events are considered terminal errors and MUST terminate the event stream
+when received.
+
+
+.. _initial-messages:
+
+Initial messages
+----------------
+
+An *initial message* is comprised of the top-level input or output members
+of an operation that do not target the event stream union. Initial
+messages provide an opportunity for a client or server to provide metadata
+about an event stream before transmitting events.
+
+
+.. _initial-request:
+
+Initial-request
+~~~~~~~~~~~~~~~
+
+An *initial-request* is an initial message that can be sent from a client to
+a server for an operation with an input event stream. The structure of an
+initial-request is the input of an operation with no value provided for the
+event stream member. An initial-request, if sent, is sent from a client to a
+server before sending any event stream events.
+
+When using :ref:`HTTP bindings <http-traits>`, initial-request fields are
+mapped to specific locations in the HTTP request such as headers or the
+URI. In other bindings or protocols, the initial-request can be
+sent however is necessary for the protocol.
+
+The following example defines an operation with an input event stream with
+an initial-request. The client will first send the initial-request to the
+service, followed by the events sent in the payload of the HTTP message.
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    @http(method: "POST", uri: "/messages/{room}")
+    operation PublishMessages {
+        input: PublishMessagesInput
+    }
+
+    @input
+    structure PublishMessagesInput {
+        @httpLabel
+        @required
+        room: String
+
+        @httpPayload
+        messages: MessageStream
+    }
+
+    @streaming
+    union MessageStream {
+        message: Message
+    }
+
+    structure Message {
+        message: String
+    }
+
+
+.. _initial-response:
+
+Initial-response
+~~~~~~~~~~~~~~~~
+
+An *initial-response* is an initial message that can be sent from a server
+to a client for an operation with an output event stream. The structure of
+an initial-response is the output of an operation with no value provided for
+the event stream member. An initial-response, if sent, is sent from the
+server to the client before sending any event stream events.
+
+When using :ref:`HTTP bindings <http-traits>`, initial-response fields are
+mapped to HTTP headers. In other protocols, the initial-response can be sent
+however is necessary for the protocol.
+
+The following example defines an operation with an output event stream with
+an initial-response. The client will first receive and process the
+initial-response, followed by the events sent in the payload of the HTTP
+message.
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    @http(method: "GET", uri: "/messages/{room}")
+    operation SubscribeToMessages {
+        input: SubscribeToMessagesInput
+        output: SubscribeToMessagesOutput
+    }
+
+    @input
+    structure SubscribeToMessagesInput {
+        @httpLabel
+        @required
+        room: String
+    }
+
+    @output
+    structure SubscribeToMessagesOutput {
+        @httpHeader("X-Connection-Lifetime")
+        connectionLifetime: Integer
+
+        @httpPayload
+        messages: MessageStream
+    }
+
+
+Initial message client and server behavior
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Initial messages, if received, MUST be provided to applications
+before event stream events.
+
+It is a backward compatible change to add an initial-request or
+initial-response to an existing operation; clients MUST NOT fail if an
+unexpected initial-request or initial-response is received. Clients and
+servers MUST NOT fail if an initial-request or initial-response is not
+received for an initial message that contains only optional members.
+
+
+.. _event-stream-client-behavior:
+
+Client behavior
+---------------
+
+Clients that send or receive event streams are expected to
+provide an abstraction to end-users that allows values to be produced or
+consumed asynchronously for each named member of the targeted union. Adding
+new events to an event stream union is considered a backward compatible
+change; clients SHOULD NOT fail when an unknown event is received. Clients
+MUST provide access to the :ref:`initial-message <initial-messages>` of an
+event stream when necessary.
+
+Clients SHOULD expose type-safe functionality that is used to dispatch based
+on the name of an event. For example, given the following event stream:
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    operation SubscribeToEvents {
+        input: SubscribeToEventsInput,
+        output: SubscribeToEventsOutput
+    }
+
+    @input
+    structure SubscribeToEventsInput {}
+
+    @output
+    structure SubscribeToEventsOutput {
+        events: Events
+    }
+
+    @streaming
+    union Events {
+        a: Event1
+        b: Event2
+        c: Event3
+    }
+
+    structure Event1 {}
+    structure Event2 {}
+    structure Event3 {}
+
+An abstraction SHOULD be provided that is used to dispatch based on the
+name of an event (that is, ``a``, ``b``, or ``c``) and provide the associated
+type (for example, when ``a`` is received, an event of type ``Event1`` is
+provided).
+
+
+.. _event-message-serialization:
+
+Event message serialization
+---------------------------
+
+While the framing and serialization of an event stream is protocol-specific,
+traits can be used to influence the serialization of an event stream event.
+Structure members that are sent as part of an event stream are serialized
+in either a header or the payload of an event.
+
+The :ref:`eventHeader-trait` is used to serialize a structure member as an
+event header. The payload of an event is defined by either marking a single
+member with the :ref:`eventpayload-trait`, or by combining all members that
+are not marked with the ``eventHeader`` or ``eventPayload`` trait into a
+protocol-specific document.
+
+The following example serializes the "a" and "b" members as event
+headers and the "c" member as the payload.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        structure ExampleEvent {
+            @eventHeader
+            a: String
+
+            @eventHeader
+            b: String
+
+            @eventPayload
+            c: Blob
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#ExampleEvent": {
+                    "type": "structure",
+                    "members": {
+                        "a": {
+                            "target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#eventPayload": {}
+                            }
+                        },
+                        "b": {
+                            "target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#eventPayload": {}
+                            }
+                        },
+                        "c": {
+                            "target": "smithy.api#Blob",
+                            "traits": {
+                                "smithy.api#eventPayload": {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+The following example serializes the "a", "b", and "c" members as the payload
+of the event using a protocol-specific document. For example, when using a JSON
+based protocol, the event payload is serialized as a JSON object:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        structure ExampleEvent {
+            a: String
+            b: String
+            c: Blob
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#ExampleEvent": {
+                    "type": "structure",
+                    "members": {
+                        "a": {
+                            "target": "smithy.api#String"
+                        },
+                        "b": {
+                            "target": "smithy.api#String"
+                        },
+                        "c": {
+                            "target": "smithy.api#Blob"
+                        }
+                    }
+                }
+            }
+        }
+
+Event stream traits
+-------------------
+
+.. smithy-trait:: smithy.api#eventHeader
+.. _eventheader-trait:
+
+``eventHeader`` trait
+~~~~~~~~~~~~~~~~~~~~~
+
+Summary
+    Binds a member of a structure to be serialized as an event header when
+    sent through an event stream.
+Trait selector
+    .. code-block:: none
+
+        structure >
+        :test(member > :test(boolean, byte, short, integer, long, blob, string, timestamp))
+
+    *Member of a structure that targets a boolean, byte, short, integer, long, blob, string, or timestamp shape*
+Value type
+    Annotation trait.
+Conflicts with
+   :ref:`eventpayload-trait`
+
+.. important::
+
+    Not all protocols support event headers. For example, MQTT version 3.1.1
+    does not support custom message headers. It is a protocol-level concern
+    as to if and how event stream headers are serialized.
+
+The following example defines multiple event headers:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        structure ExampleEvent {
+            @eventHeader
+            a: String
+
+            @eventHeader
+            b: String
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#ExampleEvent": {
+                    "type": "structure",
+                    "members": {
+                        "a": {
+                            "target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#eventHeader": {}
+                            }
+                        },
+                        "b": {
+                            "target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#eventHeader": {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+.. smithy-trait:: smithy.api#eventPayload
+.. _eventpayload-trait:
+
+``eventPayload`` trait
+~~~~~~~~~~~~~~~~~~~~~~
+
+Summary
+    Binds a member of a structure to be serialized as the payload of an
+    event sent through an event stream.
+Trait selector
+    .. code-block:: none
+
+        structure > :test(member > :test(blob, string, structure, union))
+
+    *Structure member that targets a blob, string, structure, or union*
+Value type
+    Annotation trait.
+Conflicts with
+   :ref:`eventheader-trait`
+Validation
+    1. This trait is *structurally exclusive by member*, meaning only a
+       single member of a structure can be targeted by the trait.
+    2. If the ``eventPayload`` trait is applied to a structure member,
+       then all other members of the structure MUST be marked with the
+       ``eventHeader`` trait.
+
+Event payload is serialized using the following logic:
+
+* A blob and string is serialized using the bytes of the string or blob.
+* A structure and union is serialized as a protocol-specific document.
+
+The following example defines an event header and sends a blob as the payload
+of an event:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        structure ExampleEvent {
+            @eventPayload
+            a: String
+
+            @eventHeader
+            b: String
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#ExampleEvent": {
+                    "type": "structure",
+                    "members": {
+                        "a": {
+                            "target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#eventPayload": {}
+                            }
+                        },
+                        "b": {
+                            "target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#eventHeader": {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+The following structure is **invalid** because the "a" member is bound to the
+``eventPayload``, and the "b" member is not bound to an ``eventHeader``.
+
+.. code-block:: smithy
+
+    structure ExampleEvent {
+        @eventPayload
+        a: String
+
+        b: String
+        // ^ Error: not bound to an eventHeader.
+    }
+

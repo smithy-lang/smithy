@@ -1,0 +1,99 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#BaseEnum": {
+            "type": "enum",
+            "members": {
+                "FOO": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "FOO"
+                    }
+                },
+                "BAR": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "BAR",
+                        "smithy.api#documentation": "Documentation"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {},
+                "smithy.api#private": {},
+                "smithy.api#documentation": "Base enum"
+            }
+        },
+        "smithy.example#MixedEnum": {
+            "type": "enum",
+            "members": {
+                "BAR": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#documentation": "Docs"
+                    }
+                },
+                "BAZ": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "BAZ"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#sensitive": {},
+                "smithy.api#documentation": "Mixed enum"
+            },
+            "mixins": [{
+                "target": "smithy.example#BaseEnum"
+            }]
+        },
+        "smithy.example#BaseIntEnum": {
+            "type": "intEnum",
+            "members": {
+                "FOO": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": 1
+                    }
+                },
+                "BAR": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": 2,
+                        "smithy.api#documentation": "Documentation"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {},
+                "smithy.api#private": {},
+                "smithy.api#documentation": "Base int enum"
+            }
+        },
+        "smithy.example#MixedIntEnum": {
+            "type": "intEnum",
+            "members": {
+                "BAR": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#documentation": "Docs"
+                    }
+                },
+                "BAZ": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": 3
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#sensitive": {},
+                "smithy.api#documentation": "Mixed int enum"
+            },
+            "mixins": [{
+                "target": "smithy.example#BaseIntEnum"
+            }]
+        }
+    }
+}

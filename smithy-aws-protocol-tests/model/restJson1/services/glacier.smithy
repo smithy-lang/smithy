@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 metadata suppressions = [{
     id: "HttpMethodSemantics",
@@ -207,7 +207,7 @@ structure UploadArchiveInput {
     @httpHeader("x-amz-sha256-tree-hash")
     checksum: string,
     @httpPayload
-    body: Stream,
+    body: Stream = "",
 }
 
 structure UploadMultipartPartInput {
@@ -225,7 +225,7 @@ structure UploadMultipartPartInput {
     @httpHeader("Content-Range")
     range: string,
     @httpPayload
-    body: Stream,
+    body: Stream = "",
 }
 
 structure UploadMultipartPartOutput {

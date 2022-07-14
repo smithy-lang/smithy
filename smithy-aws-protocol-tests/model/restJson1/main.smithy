@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restjson
 
@@ -102,7 +102,7 @@ service RestJson {
         MalformedInteger,
         MalformedUnion,
         MalformedBoolean,
-        MalformedSet,
+        MalformedUniqueItems,
         MalformedList,
         MalformedMap,
         MalformedBlob,

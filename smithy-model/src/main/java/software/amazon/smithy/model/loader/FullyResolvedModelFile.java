@@ -18,6 +18,7 @@ package software.amazon.smithy.model.loader;
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Function;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -36,10 +37,11 @@ import software.amazon.smithy.model.traits.TraitFactory;
 final class FullyResolvedModelFile extends AbstractMutableModelFile {
 
     /**
+     * @param filename File being parsed.
      * @param traitFactory Factory used to create traits when merging traits.
      */
-    FullyResolvedModelFile(TraitFactory traitFactory) {
-        super(traitFactory);
+    FullyResolvedModelFile(String filename, TraitFactory traitFactory) {
+        super(filename, traitFactory);
     }
 
     /**
@@ -50,7 +52,25 @@ final class FullyResolvedModelFile extends AbstractMutableModelFile {
      * @return Returns the create {@code FullyResolvedModelFile} containing the shapes.
      */
     static FullyResolvedModelFile fromShapes(TraitFactory traitFactory, Collection<Shape> shapes) {
-        FullyResolvedModelFile modelFile = new FullyResolvedModelFile(traitFactory);
+        return fromShapes(traitFactory, shapes, null);
+    }
+
+
+    /**
+     * Create a {@code FullyResolvedModelFile} from already built shapes.
+     *
+     * @param traitFactory Factory used to create traits when merging traits.
+     * @param shapes Shapes to convert into builders and treat as a ModelFile.
+     * @return Returns the create {@code FullyResolvedModelFile} containing the shapes.
+     */
+    static FullyResolvedModelFile fromShapes(TraitFactory traitFactory, Collection<Shape> shapes, Version version) {
+        FullyResolvedModelFile modelFile = new FullyResolvedModelFile(
+                SourceLocation.none().getFilename(), traitFactory);
+
+        if (version != null) {
+            modelFile.setVersion(version);
+        }
+
         for (Shape shape : shapes) {
             // Convert the shape to a builder and remove all the traits.
             // These traits are added to the trait container so that they

@@ -1,14 +1,8 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#String": {
             "type": "string"
-        },
-        "ns.foo#Set": {
-            "type": "set",
-            "member": {
-                "target": "ns.foo#String"
-            }
         },
         "ns.foo#List": {
             "type": "list",

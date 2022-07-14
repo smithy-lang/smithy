@@ -77,8 +77,9 @@ public final class NodeHandler extends JsonHandler<ArrayNode.Builder, ObjectNode
             double doubleValue = Double.parseDouble(string);
             if (Double.isFinite(doubleValue)) {
                 value = new NumberNode(doubleValue, location);
+            } else {
+                value = new NumberNode(new BigDecimal(string), location);
             }
-            value = new NumberNode(new BigDecimal(string), location);
         } else {
             try {
                 value = new NumberNode(Long.parseLong(string), location);

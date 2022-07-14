@@ -97,8 +97,8 @@ public final class EnumDefinition implements ToNode, ToSmithyBuilder<EnumDefinit
                 .value(value.expectStringMember(EnumDefinition.VALUE).getValue())
                 .name(value.getStringMember(EnumDefinition.NAME).map(StringNode::getValue).orElse(null))
                 .documentation(value.getStringMember(EnumDefinition.DOCUMENTATION)
-                                       .map(StringNode::getValue)
-                                       .orElse(null))
+                        .map(StringNode::getValue)
+                        .orElse(null))
                 .deprecated(value.getBooleanMemberOrDefault(EnumDefinition.DEPRECATED));
 
         value.getMember(EnumDefinition.TAGS).ifPresent(tags -> {
@@ -194,3 +194,4 @@ public final class EnumDefinition implements ToNode, ToSmithyBuilder<EnumDefinit
         }
     }
 }
+

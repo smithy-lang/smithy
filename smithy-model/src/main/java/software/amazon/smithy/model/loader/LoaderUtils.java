@@ -55,16 +55,6 @@ final class LoaderUtils {
     }
 
     /**
-     * Checks if the given version string is supported.
-     *
-     * @param versionString Version string to check (e.g., 1, 1.0).
-     * @return Returns true if this is a supported model version.
-     */
-    static boolean isVersionSupported(String versionString) {
-        return versionString.equals("1") || versionString.equals("1.0");
-    }
-
-    /**
      * Create a {@link ValidationEvent} for a shape conflict.
      *
      * @param id Shape ID in conflict.
@@ -109,5 +99,14 @@ final class LoaderUtils {
             }
         }
         return false;
+    }
+
+    static ValidationEvent onDeprecatedIdlVersion(Version version, String filename) {
+        return ValidationEvent.builder()
+                .id(Validator.MODEL_ERROR)
+                .severity(Severity.WARNING)
+                .message("Smithy IDL " + version + " is deprecated. Please upgrade to Smithy IDL 2.0.")
+                .sourceLocation(new SourceLocation(filename, 1, 1))
+                .build();
     }
 }

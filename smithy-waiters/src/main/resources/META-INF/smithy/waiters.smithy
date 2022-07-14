@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace smithy.waiters
 
 /// Indicates that an operation has various named "waiters" that can be used
@@ -26,25 +28,24 @@ structure Waiter {
     /// This value defaults to 2 if not specified. If specified, this value
     /// MUST be greater than or equal to 1 and less than or equal to
     /// `maxDelay`.
-    minDelay: WaiterDelay,
+    minDelay: WaiterDelay = 2,
 
     /// The maximum amount of time in seconds to delay between each retry.
     /// This value defaults to 120 if not specified (or, 2 minutes). If
     /// specified, this value MUST be greater than or equal to 1.
-    maxDelay: WaiterDelay,
+    maxDelay: WaiterDelay = 120,
 
     /// Indicates if the waiter is considered deprecated. A waiter SHOULD
     /// be marked as deprecated if it has been replaced by another waiter or
     /// if it is no longer needed (for example, if a resource changes from
     /// eventually consistent to strongly consistent).
-    deprecated: PrimitiveBoolean,
+    deprecated: Boolean,
 
     /// A list of tags associated with the waiter that allow waiters to be
     /// categorized and grouped.
     tags: NonEmptyStringList,
 }
 
-@box
 @range(min: 1)
 integer WaiterDelay
 
@@ -68,30 +69,19 @@ structure Acceptor {
 
 /// The transition state of a waiter.
 @private
-@enum([
-    {
-        "name": "SUCCESS",
-        "value": "success",
-        "documentation": """
-                The waiter successfully finished waiting. This is a terminal
-                state that causes the waiter to stop."""
-    },
-    {
-        "name": "FAILURE",
-        "value": "failure",
-        "documentation": """
-                The waiter failed to enter into the desired state. This is a
-                terminal state that causes the waiter to stop."""
-    },
-    {
-        "name": "RETRY",
-        "value": "retry",
-        "documentation": """
-                The waiter will retry the operation. This state transition is
-                implicit if no accepter causes a state transition."""
-    },
-])
-string AcceptorState
+enum AcceptorState {
+    /// The waiter successfully finished waiting. This is a terminal
+    /// state that causes the waiter to stop.
+    SUCCESS = "success"
+
+    /// The waiter failed to enter into the desired state. This is a
+    /// terminal state that causes the waiter to stop.
+    FAILURE = "failure"
+
+    /// The waiter will retry the operation. This state transition is
+    /// implicit if no accepter causes a state transition.
+    RETRY = "retry"
+}
 
 /// Defines how an acceptor determines if it matches the current state of
 /// a resource.
@@ -140,30 +130,20 @@ structure PathMatcher {
 }
 
 /// Defines a comparison to perform in a PathMatcher.
-@enum([
-    {
-        "name": "STRING_EQUALS",
-        "value": "stringEquals",
-        "documentation": "Matches if the return value is a string that is equal to the expected string."
-    },
-    {
-        "name": "BOOLEAN_EQUALS",
-        "value": "booleanEquals",
-        "documentation": "Matches if the return value is a boolean that is equal to the string literal 'true' or 'false'."
-    },
-    {
-        "name": "ALL_STRING_EQUALS",
-        "value": "allStringEquals",
-        "documentation": "Matches if all values in the list matches the expected string."
-    },
-    {
-        "name": "ANY_STRING_EQUALS",
-        "value": "anyStringEquals",
-        "documentation": "Matches if any value in the list matches the expected string."
-    }
-])
 @private
-string PathComparator
+enum PathComparator {
+    /// Matches if the return value is a string that is equal to the expected string.
+    STRING_EQUALS = "stringEquals"
+
+    /// Matches if the return value is a boolean that is equal to the string literal 'true' or 'false'.
+    BOOLEAN_EQUALS = "booleanEquals"
+
+    /// Matches if all values in the list matches the expected string.
+    ALL_STRING_EQUALS = "allStringEquals"
+
+    /// Matches if any value in the list matches the expected string.
+    ANY_STRING_EQUALS = "anyStringEquals"
+}
 
 @private
 list NonEmptyStringList {

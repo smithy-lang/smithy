@@ -207,14 +207,6 @@ public class NodeValidationVisitorTest {
                 {"ns.foo#List", "[10]", new String[] {"0: Expected string value for string shape, `ns.foo#String`; found number value, `10`"}},
                 {"ns.foo#List", "10", new String[] {"Expected array value for list shape, `ns.foo#List`; found number value, `10`"}},
 
-                // set
-                {"ns.foo#Set", "[\"a\"]", null},
-                {"ns.foo#Set", "[\"a\", \"b\"]", null},
-                {"ns.foo#Set", "[]", new String[] {"Value provided for `ns.foo#Set` must have at least 1 elements, but the provided value only has 0 elements"}},
-                {"ns.foo#Set", "[\"a\", \"b\", \"c\"]", new String[] {"Value provided for `ns.foo#Set` must have no more than 2 elements, but the provided value has 3 elements"}},
-                {"ns.foo#Set", "[10]", new String[] {"0: Expected string value for string shape, `ns.foo#String`; found number value, `10`"}},
-                {"ns.foo#Set", "10", new String[] {"Expected array value for set shape, `ns.foo#Set`; found number value, `10`"}},
-
                 // map
                 {"ns.foo#Map", "{\"a\":[\"b\"]}", null},
                 {"ns.foo#Map", "{\"a\":[\"b\"], \"c\":[\"d\"]}", null},
@@ -279,13 +271,7 @@ public class NodeValidationVisitorTest {
                 {"ns.foo#Structure2", "{\"b\": \"12345678910\"}", null},
                 {"ns.foo#Structure2", "{\"b\": \"123\"}", new String[] {"b: String value provided for `ns.foo#Structure2$b` must be >= 10 characters, but the provided value is only 3 characters."}},
                 {"ns.foo#Structure2", "{\"c\": 11}", null},
-                {"ns.foo#Structure2", "{\"c\": 5}", new String[] {"c: Value provided for `ns.foo#Structure2$c` must be greater than or equal to 10, but found 5"}},
-
-                // Boxed members
-                {"ns.foo#Structure3", "{\"requiredInt\": 1, \"optionalInt\": 1, \"requiredInt2\": 2}", null},
-                {"ns.foo#Structure3", "{\"requiredInt\": 1, \"requiredInt2\": 2}", null},
-                {"ns.foo#Structure3", "{\"requiredInt2\": 2}", null},
-                {"ns.foo#Structure3", "{}", new String[] {"Missing required structure member `requiredInt2` for `ns.foo#Structure3`"}},
+                {"ns.foo#Structure2", "{\"c\": 5}", new String[] {"c: Value provided for `ns.foo#Structure2$c` must be greater than or equal to 10, but found 5"}}
         });
     }
 
@@ -335,7 +321,7 @@ public class NodeValidationVisitorTest {
         NodeValidationVisitor visitor = NodeValidationVisitor.builder()
                 .value(Node.nullNode())
                 .model(MODEL)
-                .allowBoxedNull(true)
+                .allowOptionalNull(true)
                 .build();
         List<ValidationEvent> events = MODEL
                 .expectShape(ShapeId.from("smithy.api#String"))

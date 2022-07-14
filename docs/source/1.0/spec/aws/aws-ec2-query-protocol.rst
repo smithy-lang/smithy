@@ -208,8 +208,8 @@ that affect serialization:
 .. |quoted shape name| replace:: ``ec2Query``
 .. |name resolution text| replace:: See :ref:`aws.protocols#ec2QueryName-query-key-naming`
    for how to serialize a property using a custom name
-.. |query collection text| replace::
-    Each value provided in the collection is serialized as a separate key with
+.. |query list text| replace::
+    Each value provided in the list is serialized as a separate key with
     a "." separator and a "1" indexed incrementing counter appended to the
     container's key.
 .. |query map text| replace::
@@ -241,23 +241,23 @@ For example, given the following:
 
     @input
     structure Ec2QueryStructuresInput {
-        foo: String,
+        foo: String
 
         @ec2QueryName("A")
-        HasQueryName: String,
+        HasQueryName: String
 
         @ec2QueryName("B")
         @xmlName("IgnoreMe")
-        HasQueryAndXmlName: String,
+        HasQueryAndXmlName: String
 
         @xmlName("c")
-        UsesXmlName: String,
+        UsesXmlName: String
 
-        baz: MyStructure,
+        baz: MyStructure
     }
 
     structure MyStructure {
-        temp: String,
+        temp: String
     }
 
 The ``x-www-form-urlencoded`` serialization is:
@@ -273,10 +273,10 @@ The ``x-www-form-urlencoded`` serialization is:
     &Baz.Temp=example3
 
 
-Collections
-===========
+Lists
+=====
 
-|query collection text|
+|query list text|
 
 For example, given the following:
 
@@ -284,12 +284,12 @@ For example, given the following:
 
     @input
     structure Ec2QueryListsInput {
-        ListArg: StringList,
-        ComplexListArg: GreetingList,
+        ListArg: StringList
+        ComplexListArg: GreetingList
 
         @ec2QueryName("Renamed")
         @xmlName("IgnoreMe")
-        RenamedListArg: StringList,
+        RenamedListArg: StringList
     }
 
     list StringList {
@@ -301,7 +301,7 @@ For example, given the following:
     }
 
     structure GreetingStruct {
-        hi: String,
+        hi: String
     }
 
 The ``application/x-www-form-urlencoded`` serialization is:

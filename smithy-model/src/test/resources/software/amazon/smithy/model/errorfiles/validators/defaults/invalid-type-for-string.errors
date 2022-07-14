@@ -1,0 +1,1 @@
+[ERROR] smithy.example#Foo$bar: Error validating @default trait: Expected string value for string shape, `smithy.api#String`; found number value, `10` | DefaultTrait

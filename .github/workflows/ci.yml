@@ -2,9 +2,9 @@ name: ci
 
 on:
   push:
-    branches: [main]
+    branches: [main, idl-2.0]
   pull_request:
-    branches: [main]
+    branches: [main, idl-2.0]
 
 jobs:
   build:
@@ -27,6 +27,12 @@ jobs:
 
       - name: Clean and build
         run: ./gradlew clean build -Plog-tests
+
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: java-${{ matrix.java }}-${{ matrix.os }}-test-report
+          path: '**/build/reports/tests'
 
   build-docs:
     runs-on: ubuntu-latest

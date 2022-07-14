@@ -1,27 +1,28 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace ns.foo
 
 @trait
 list ListTrait {
-    member: String,
+    member: String
 }
 
 @trait
-set SetTrait {
-    member: String,
+@uniqueItems
+list UniqueItemsListTrait {
+    member: String
 }
 
 @ListTrait([])
-@SetTrait([])
+@UniqueItemsListTrait([])
 string Bar
 
 @ListTrait([
-    "first",
-    "second",
+    "first"
+    "second"
 ])
-@SetTrait([
-    "first",
-    "second",
+@UniqueItemsListTrait([
+    "first"
+    "second"
 ])
 string Foo

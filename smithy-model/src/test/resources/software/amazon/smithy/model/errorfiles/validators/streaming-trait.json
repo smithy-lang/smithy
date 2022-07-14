@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#Blob": {
             "type": "blob"
@@ -17,7 +17,10 @@
             "type": "structure",
             "members": {
                 "Body": {
-                    "target": "ns.foo#StreamingBlob"
+                    "target": "ns.foo#StreamingBlob",
+                    "traits": {
+                        "smithy.api#default": ""
+                    }
                 }
             },
             "traits": {
@@ -28,7 +31,10 @@
             "type": "structure",
             "members": {
                 "Body": {
-                    "target": "ns.foo#StreamingBlob"
+                    "target": "ns.foo#StreamingBlob",
+                    "traits": {
+                        "smithy.api#default": ""
+                    }
                 }
             },
             "traits": {
@@ -39,6 +45,38 @@
             "type": "blob",
             "traits": {
                 "smithy.api#streaming": {}
+            }
+        },
+        "ns.foo#MixedStreamingOperation": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#MixedStreamingOperationInput"
+            }
+        },
+        "ns.foo#MixedStreamingOperationInput": {
+            "type": "structure",
+            "members": {},
+            "mixins": [
+                {
+                    "target": "ns.foo#MixinStream"
+                }
+            ],
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#MixinStream": {
+            "type": "structure",
+            "members": {
+                "Body": {
+                    "target": "ns.foo#StreamingBlob",
+                    "traits": {
+                        "smithy.api#default": ""
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
             }
         },
         "ns.foo#InvalidStreamingOperation": {
@@ -60,10 +98,16 @@
             "type": "structure",
             "members": {
                 "StreamingBlob1": {
-                    "target": "ns.foo#StreamingBlob"
+                    "target": "ns.foo#StreamingBlob",
+                    "traits": {
+                        "smithy.api#default": ""
+                    }
                 },
                 "StreamingBlob2": {
-                    "target": "ns.foo#StreamingBlob"
+                    "target": "ns.foo#StreamingBlob",
+                    "traits": {
+                        "smithy.api#default": ""
+                    }
                 }
             },
             "traits": {
@@ -76,14 +120,55 @@
                 "NestedStream": {
                     "target": "ns.foo#NestedStreamContainer"
                 }
+            },
+            "mixins": [
+                {
+                    "target": "ns.foo#NestedMixinStream"
+                }
+            ]
+        },
+        "ns.foo#NestedMixinStream": {
+            "type": "structure",
+            "members": {
+                "Body": {
+                    "target": "ns.foo#NestedStreamContainer"
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
             }
         },
         "ns.foo#NestedStreamContainer": {
             "type": "structure",
             "members": {
                 "nested": {
-                    "target": "ns.foo#StreamingBlob"
+                    "target": "ns.foo#StreamingBlob",
+                    "traits": {
+                        "smithy.api#default": ""
+                    }
                 }
+            }
+        },
+        "ns.foo#BadOperation": {
+            "type": "operation",
+            "errors": [
+                {
+                    "target": "ns.foo#BadError"
+                }
+            ]
+        },
+        "ns.foo#BadError": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "ns.foo#StreamingBlob",
+                    "traits": {
+                        "smithy.api#default": ""
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#error": "client"
             }
         }
     }

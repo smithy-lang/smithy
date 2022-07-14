@@ -3,7 +3,6 @@ package software.amazon.smithy.model.shapes;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
@@ -21,6 +20,8 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
@@ -45,7 +46,7 @@ public class SmithyIdlModelSerializerTest {
         }
 
         String serializedString = serialized.entrySet().iterator().next().getValue();
-        Assertions.assertEquals(serializedString, IoUtils.readUtf8File(path).replaceAll("\\R", "\n"));
+        Assertions.assertEquals(IoUtils.readUtf8File(path).replaceAll("\\R", "\n"), serializedString);
     }
 
     @Test
@@ -78,6 +79,7 @@ public class SmithyIdlModelSerializerTest {
         assertThat(serialized, hasKey(Paths.get("ns.structures.smithy")));
         assertThat(serialized.get(Paths.get("ns.structures.smithy")),
                 containsString("namespace ns.structures"));
+        assertThat(serialized, not(hasKey(Paths.get("smithy.api.smithy"))));
     }
 
     @Test
@@ -167,5 +169,33 @@ public class SmithyIdlModelSerializerTest {
 
         assertThat(results.get(Paths.get("com.foo.smithy")),
                    not(containsString(OriginalShapeIdTrait.ID.toString())));
+    }
+
+    @Test
+    public void canEnableSerializingPrelude() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("idl-serialization/test-model.json"))
+                .assemble()
+                .unwrap();
+        SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder()
+                .serializePrelude()
+                .build();
+        Map<Path, String> serialized = serializer.serialize(model);
+        assertThat(serialized.get(Paths.get("smithy.api.smithy")), containsString("namespace smithy.api"));
+    }
+
+    @Test
+    public void serializesSetsAsListsWithUniqueItems() {
+        SetShape set = SetShape.builder()
+                .id("smithy.example#Set")
+                .member(ShapeId.from("smithy.api#String"))
+                .build();
+        Model model = Model.assembler().addShape(set).assemble().unwrap();
+        SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder().build();
+        Map<Path, String> models = serializer.serialize(model);
+        String modelResult = models.get(Paths.get("smithy.example.smithy"));
+
+        assertThat(modelResult, containsString("list Set"));
+        assertThat(modelResult, containsString("@uniqueItems"));
     }
 }

@@ -35,9 +35,11 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.StringTrait;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
@@ -66,6 +68,26 @@ public class IdlModelLoaderTest {
                 assertThat(shape.getSourceLocation().getColumn(), equalTo(1));
             }
         });
+    }
+
+    @Test
+    public void loadsAppropriateTraitSourceLocations() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("valid/trait-locations.smithy"))
+                .assemble()
+                .unwrap();
+
+        Shape shape = model.expectShape(ShapeId.from("com.example#TraitBearer"));
+
+        for (Trait trait : shape.getAllTraits().values()) {
+            assertThat(trait.getSourceLocation().getColumn(), equalTo(1));
+        }
+
+        for (MemberShape member : shape.members()) {
+            for (Trait trait : member.getAllTraits().values()) {
+                assertThat(trait.getSourceLocation().getColumn(), equalTo(5));
+            }
+        }
     }
 
     @Test
@@ -148,7 +170,8 @@ public class IdlModelLoaderTest {
     @Test
     public void warnsWhenInvalidSyntacticShapeIdIsFound() {
         ValidatedResult<Model> result = Model.assembler()
-                .addUnparsedModel("foo.smithy", "namespace smithy.example\n"
+                .addUnparsedModel("foo.smithy", "$version: \"2.0\"\n"
+                                                + "namespace smithy.example\n"
                                                 + "@tags([nonono])\n"
                                                 + "string Foo\n")
                 .assemble();

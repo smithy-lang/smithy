@@ -1,13 +1,13 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace ns.foo
 
 service EmptyService {
-    version: "2020-02-18",
+    version: "2020-02-18"
     errors: [
-        Common1,
-        Common2,
-    ],
+        Common1
+        Common2
+    ]
 }
 
 @error("client")

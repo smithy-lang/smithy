@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "aws.protocols#restJson1": {
             "type": "structure",
@@ -268,7 +268,7 @@
             }
         },
         "aws.protocols#ChecksumAlgorithmSet": {
-            "type": "set",
+            "type": "list",
             "member": {
                 "target": "aws.protocols#ChecksumAlgorithm"
             },
@@ -276,30 +276,39 @@
                 "smithy.api#length": {
                     "min": 1
                 },
+                "smithy.api#uniqueItems": {},
                 "smithy.api#private": {}
             }
         },
         "aws.protocols#ChecksumAlgorithm": {
-            "type": "string",
-            "traits": {
-                "smithy.api#enum": [
-                    {
-                        "value": "CRC32C",
-                        "name": "CRC32C"
-                    },
-                    {
-                        "value": "CRC32",
-                        "name": "CRC32"
-                    },
-                    {
-                        "value": "SHA1",
-                        "name": "SHA1"
-                    },
-                    {
-                        "value": "SHA256",
-                        "name": "SHA256"
+            "type": "enum",
+            "members": {
+                "CRC32C": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "CRC32C"
                     }
-                ],
+                },
+                "CRC32": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "CRC32"
+                    }
+                },
+                "SHA1": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "SHA1"
+                    }
+                },
+                "SHA256": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "SHA256"
+                    }
+                }
+            },
+            "traits": {
                 "smithy.api#private": {}
             }
         }

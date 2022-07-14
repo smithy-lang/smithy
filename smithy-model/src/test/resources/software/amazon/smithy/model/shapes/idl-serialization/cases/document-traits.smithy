@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace ns.foo
 
@@ -9,12 +9,12 @@ document DocumentTrait
 string Boolean
 
 @DocumentTrait([
-    "foo",
+    "foo"
 ])
 string List
 
 @DocumentTrait(
-    foo: "bar",
+    foo: "bar"
 )
 string Map
 

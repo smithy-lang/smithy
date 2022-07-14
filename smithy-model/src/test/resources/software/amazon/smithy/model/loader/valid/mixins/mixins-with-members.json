@@ -1,0 +1,91 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#A": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#B": {
+            "type": "structure",
+            "mixins": [
+                {
+                    "target": "smithy.example#A"
+                }
+            ],
+            "members": {
+                "b": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#C": {
+            "type": "structure",
+            "members": {
+                "c": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#D": {
+            "type": "structure",
+            "mixins": [
+                {
+                    "target": "smithy.example#C"
+                }
+            ],
+            "members": {
+                "d": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#E": {
+            "type": "structure",
+            "mixins": [
+                {
+                    "target": "smithy.example#D"
+                }
+            ],
+            "members": {
+                "e": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#F": {
+            "type": "structure",
+            "mixins": [
+                {
+                    "target": "smithy.example#B"
+                },
+                {
+                    "target": "smithy.example#E"
+                }
+            ],
+            "members": {
+                "f": {
+                    "target": "smithy.api#String"
+                }
+            }
+        }
+    }
+}

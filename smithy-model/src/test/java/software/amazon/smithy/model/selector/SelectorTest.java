@@ -230,13 +230,10 @@ public class SelectorTest {
 
     @Test
     public void selectsCollections() {
+        // "collection" is just an alias for "list".
         Set<Shape> result = Selector.parse("collection").select(modelJson);
 
         assertThat(result, containsInAnyOrder(
-                SetShape.builder()
-                        .id("ns.foo#Set")
-                        .member(MemberShape.builder().id("ns.foo#Set$member").target("ns.foo#String").build())
-                        .build(),
                 ListShape.builder()
                         .id("ns.foo#List")
                         .member(MemberShape.builder().id("ns.foo#List$member").target("ns.foo#String").build())
@@ -1041,5 +1038,31 @@ public class SelectorTest {
         Set<Shape> result = selector.select(model);
 
         assertThat(result, containsInAnyOrder(errorShape));
+    }
+
+    @Test
+    public void selectsStructuresWithMixins() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("structure-with-mixins.smithy"))
+                .assemble()
+                .unwrap();
+        Selector hasMixins = Selector.parse("structure :test(-[mixin]->)");
+        Selector isUsedMixin = Selector.parse("structure -[mixin]->");
+        Selector noMixins = Selector.parse("structure[id|namespace='smithy.example'] :not(-[mixin]->)");
+        Selector unusedMixin = Selector.parse("[trait|mixin][id|namespace='smithy.example'] :not(<-[mixin]-)");
+
+        assertThat(hasMixins.select(model).stream().map(Shape::toShapeId).collect(Collectors.toSet()),
+                   containsInAnyOrder(ShapeId.from("smithy.example#Mixin2"), ShapeId.from("smithy.example#Concrete")));
+
+        assertThat(isUsedMixin.select(model).stream().map(Shape::toShapeId).collect(Collectors.toSet()),
+                   containsInAnyOrder(ShapeId.from("smithy.example#Mixin1"), ShapeId.from("smithy.example#Mixin2")));
+
+        assertThat(noMixins.select(model).stream().map(Shape::toShapeId).collect(Collectors.toSet()),
+                   containsInAnyOrder(ShapeId.from("smithy.example#Mixin1"),
+                                      ShapeId.from("smithy.example#NoMixins"),
+                                      ShapeId.from("smithy.example#UnusedMixin")));
+
+        assertThat(unusedMixin.select(model).stream().map(Shape::toShapeId).collect(Collectors.toSet()),
+                   contains(ShapeId.from("smithy.example#UnusedMixin")));
     }
 }

@@ -1,0 +1,74 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#EnumWithoutValueTraits": {
+            "type": "enum",
+            "members": {
+                "FOO": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "FOO"
+                    }
+                },
+                "BAR": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "BAR"
+                    }
+                },
+                "BAZ": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "BAZ"
+                    }
+                }
+            }
+        },
+        "smithy.example#EnumWithValueTraits": {
+            "type": "enum",
+            "members": {
+                "FOO": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "foo"
+                    }
+                },
+                "BAR": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "bar"
+                    }
+                },
+                "BAZ": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "baz"
+                    }
+                }
+            }
+        },
+        "smithy.example#IntEnum": {
+            "type": "intEnum",
+            "members": {
+                "FOO": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": 1
+                    }
+                },
+                "BAR": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": 2
+                    }
+                },
+                "BAZ": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": 3
+                    }
+                }
+            }
+        }
+    }
+}

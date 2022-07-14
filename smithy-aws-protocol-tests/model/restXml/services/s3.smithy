@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 metadata suppressions = [
     {
@@ -408,13 +408,10 @@ string Delimiter
 
 string DisplayName
 
-@enum([
-    {
-        value: "url",
-        name: "url",
-    },
-])
-string EncodingType
+enum EncodingType {
+    @suppress(["EnumShape"])
+    url
+}
 
 string ETag
 
@@ -437,51 +434,23 @@ string NextToken
 )
 string ObjectKey
 
-@enum([
-    {
-        value: "STANDARD",
-        name: "STANDARD",
-    },
-    {
-        value: "REDUCED_REDUNDANCY",
-        name: "REDUCED_REDUNDANCY",
-    },
-    {
-        value: "GLACIER",
-        name: "GLACIER",
-    },
-    {
-        value: "STANDARD_IA",
-        name: "STANDARD_IA",
-    },
-    {
-        value: "ONEZONE_IA",
-        name: "ONEZONE_IA",
-    },
-    {
-        value: "INTELLIGENT_TIERING",
-        name: "INTELLIGENT_TIERING",
-    },
-    {
-        value: "DEEP_ARCHIVE",
-        name: "DEEP_ARCHIVE",
-    },
-    {
-        value: "OUTPOSTS",
-        name: "OUTPOSTS",
-    },
-])
-string ObjectStorageClass
+enum ObjectStorageClass {
+    STANDARD
+    REDUCED_REDUNDANCY
+    GLACIER
+    STANDARD_IA
+    ONEZONE_IA
+    INTELLIGENT_TIERING
+    DEEP_ARCHIVE
+    OUTPOSTS
+}
 
 string Prefix
 
-@enum([
-    {
-        value: "requester",
-        name: "requester",
-    },
-])
-string RequestPayer
+enum RequestPayer {
+    @suppress(["EnumShape"])
+    requester
+}
 
 integer Size
 
@@ -489,7 +458,7 @@ string StartAfter
 
 string Token
 
-@enum([
-    { value: "us-west-2", name: "us_west_2" }
-])
-string BucketLocationConstraint
+enum BucketLocationConstraint {
+    @suppress(["EnumShape"])
+    us_west_2 = "us-west-2"
+}

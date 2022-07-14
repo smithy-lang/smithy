@@ -33,7 +33,8 @@ public class SmithyCommand implements Command {
             new BuildCommand(getName()),
             new AstCommand(getName()),
             new SelectCommand(getName()),
-            new DiffCommand(getName()));
+            new DiffCommand(getName()),
+            new Upgrade1to2Command(getName()));
 
     @Override
     public String getName() {

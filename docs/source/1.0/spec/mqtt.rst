@@ -102,13 +102,13 @@ and ``{second}``, in the MQTT topic template:
     structure ExampleOperationInput {
         @required
         @topicLabel
-        first: String,
+        first: String
 
         @required
         @topicLabel
-        second: String,
+        second: String
 
-        message: String,
+        message: String
     }
 
 MQTT topic templates MUST adhere to the following constraints:
@@ -170,7 +170,7 @@ The following example defines an operation that publishes messages to the
 
     @publish("foo/{bar}")
     operation PostFoo {
-        input: PostFooInput,
+        input: PostFooInput
         output: Unit
     }
 
@@ -178,10 +178,10 @@ The following example defines an operation that publishes messages to the
     structure PostFooInput {
         @required
         @topicLabel
-        bar: String,
+        bar: String
 
-        someValue: String,
-        anotherValue: Boolean,
+        someValue: String
+        anotherValue: Boolean
     }
 
 The "bar" member of the above ``PostFoo`` operation is marked with the
@@ -252,7 +252,7 @@ topic using an :ref:`event stream <event-streams>`:
 
     @subscribe("events/{id}")
     operation SubscribeForEvents {
-        input: SubscribeForEventsInput,
+        input: SubscribeForEventsInput
         output: SubscribeForEventsOutput
     }
 
@@ -260,21 +260,21 @@ topic using an :ref:`event stream <event-streams>`:
     structure SubscribeForEventsInput {
         @required
         @topicLabel
-        id: String,
+        id: String
     }
 
     @output
     structure SubscribeForEventsOutput {
-        events: EventStream,
+        events: EventStream
     }
 
     @streaming
     union EventStream {
-        message: Event,
+        message: Event
     }
 
     structure Event {
-        message: String,
+        message: String
     }
 
 
@@ -405,15 +405,19 @@ MQTT protocol bindings.
     @protocolDefinition
     structure mqttJson {}
 
-    @trait(selector: "operation:not(-[output]-> * > member)",
-           conflicts: ["smithy.mqtt#subscribe"])
+    @trait(
+        selector: "operation:not(-[output]-> * > member)"
+        conflicts: ["smithy.mqtt#subscribe"]
+    )
     @tags(["diff.error.const"])
     // Matches one or more characters that are not "#" or "+".
     @pattern("^[^#+]+$")
     string publish
 
-    @trait(selector: "operation:test(-[output]-> structure > member > union[trait|streaming])",
-           conflicts: ["smithy.mqtt#publish"])
+    @trait(
+        selector: "operation:test(-[output]-> structure > member > union[trait|streaming])"
+        conflicts: [publish]
+    )
     @tags(["diff.error.const"])
     // Matches one or more characters that are not "#" or "+".
     @pattern("^[^#+]+$")

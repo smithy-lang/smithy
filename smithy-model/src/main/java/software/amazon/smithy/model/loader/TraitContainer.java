@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -52,6 +52,11 @@ public interface TraitContainer {
         }
 
         @Override
+        public void clearTraitsForShape(ShapeId shape) {
+            // Do nothing.
+        }
+
+        @Override
         public Map<ShapeId, Map<ShapeId, Trait>> getTraitsAppliedToPrelude() {
             return Collections.emptyMap();
         }
@@ -79,6 +84,17 @@ public interface TraitContainer {
      * @return Returns the traits of the shape.
      */
     Map<ShapeId, Trait> getTraitsForShape(ShapeId shape);
+
+    /**
+     * Clears the traits applied to a shape.
+     *
+     * <p>This is useful in the event of errors that occur while attempting to
+     * create a shape so that validation events about traits applied to shapes
+     * that couldn't be created are not emitted.
+     *
+     * @param shape Shape to clear the traits for.
+     */
+    void clearTraitsForShape(ShapeId shape);
 
     /**
      * Gets all traits applied to the prelude.
@@ -132,6 +148,11 @@ public interface TraitContainer {
         @Override
         public Map<ShapeId, Trait> getTraitsForShape(ShapeId shape) {
             return targetToTraits.getOrDefault(shape, Collections.emptyMap());
+        }
+
+        @Override
+        public void clearTraitsForShape(ShapeId shape) {
+            targetToTraits.remove(shape);
         }
 
         @Override
@@ -223,6 +244,73 @@ public interface TraitContainer {
                                    .build());
                 return null;
             }
+        }
+    }
+
+    /**
+     * Performs version-specific validation on traits as they are added.
+     *
+     * <p>For example, this class will throw a {@link ModelSyntaxException} if
+     * the mixin trait is used in Smithy IDL 1.0.
+     */
+    final class VersionAwareTraitContainer implements TraitContainer {
+        private final TraitContainer delegate;
+
+        // If a model specifies no version, we by default assume it's for 1.0.
+        private Version version = Version.VERSION_1_0;
+
+        VersionAwareTraitContainer(TraitContainer delegate) {
+            this.delegate = delegate;
+        }
+
+        /**
+         * Sets the version being tracked.
+         *
+         * @param version Version to set.
+         */
+        void setVersion(Version version) {
+            this.version = version;
+        }
+
+        /**
+         * Gets the currently configured version.
+         *
+         * @return Returns the configured version.
+         */
+        Version getVersion() {
+            return version;
+        }
+
+        @Override
+        public Map<ShapeId, Map<ShapeId, Trait>> traits() {
+            return delegate.traits();
+        }
+
+        @Override
+        public Map<ShapeId, Trait> getTraitsForShape(ShapeId shape) {
+            return delegate.getTraitsForShape(shape);
+        }
+
+        @Override
+        public void clearTraitsForShape(ShapeId shape) {
+            delegate.clearTraitsForShape(shape);
+        }
+
+        @Override
+        public Map<ShapeId, Map<ShapeId, Trait>> getTraitsAppliedToPrelude() {
+            return delegate.getTraitsAppliedToPrelude();
+        }
+
+        @Override
+        public void onTrait(ShapeId target, Trait value) {
+            version.validateVersionedTrait(target, value.toShapeId(), value.toNode());
+            delegate.onTrait(target, value);
+        }
+
+        @Override
+        public void onTrait(ShapeId target, ShapeId traitId, Node value) {
+            version.validateVersionedTrait(target, traitId, value);
+            delegate.onTrait(target, traitId, value);
         }
     }
 }

@@ -78,7 +78,7 @@ Shapes can be matched by type using the following tokens:
     * - ``simpleType``
       - Matches all :ref:`simple types <simple-types>`
     * - ``collection``
-      - Matches both a ``list`` and ``set`` shape
+      - Deprecated: An alias of ``list``. Also matches ``set`` shapes in Smithy IDL 1.0.
     * - ``blob``
       - Matches blob shapes
     * - ``boolean``
@@ -106,9 +106,10 @@ Shapes can be matched by type using the following tokens:
     * - ``timestamp``
       -  Matches timestamp shapes
     * - ``list``
-      - Matches list shapes
+      - Matches list shapes. Note that set shapes also match ``list`` because
+        they are considered sub-types of list.
     * - ``set``
-      - Matches set shapes
+      - Deprecated: Matches set shapes. This is considered an alias for ``list``.
     * - ``map``
       -  Matches map shapes
     * - ``structure``
@@ -731,17 +732,17 @@ in the closure of a service.
 
     @trait(selector: "service")
     list allowedTags {
-        member: String,
+        member: String
     }
 
     @allowedTags(["internal", "external"])
     service MyService {
-        version: "2020-04-28",
+        version: "2020-04-28"
         operations: [OperationA, OperationB, OperationC, OperationD]
     }
 
     operation OperationA {
-        input: OperationAInput,
+        input: OperationAInput
     }
 
     @tags(["internal"])
@@ -755,20 +756,20 @@ in the closure of a service.
 
     @input
     structure OperationAInput {
-        badValue: BadEnum,
-        goodValue: GoodEnum,
+        badValue: BadEnum
+        goodValue: GoodEnum
     }
 
     @enum([
-        {value: "a", tags: ["internal"]},
-        {value: "b", tags: ["invalid"]},
+        {value: "a", tags: ["internal"]}
+        {value: "b", tags: ["invalid"]}
     ])
     string BadEnum
 
     @enum([
-        {value: "a"},
-        {value: "b", tags: ["internal", "external"]},
-        {value: "c", tags: ["internal"]},
+        {value: "a"}
+        {value: "b", tags: ["internal", "external"]}
+        {value: "c", tags: ["internal"]}
     ])
     string GoodEnum
 
@@ -1229,20 +1230,20 @@ The table below lists the labeled directed relationships from each shape.
       - Each error structure referenced by the operation (if present).
     * - list
       - member
-      - The :ref:`member` of the list. Note that this is not the shape targeted
-        by the member.
+      - The :ref:`member` of the list, including if it was inherited from a
+        mixin. Note that this is not the shape targeted by the member.
     * - map
       - member
-      - The key and value members of the map. Note that these are not the
-        shapes targeted by the member.
+      - The key and value members of the map, including those inherited from
+        mixins. Note that these are not the shapes targeted by the member.
     * - structure
       - member
-      - Each structure member. Note that these are not the shapes targeted by
-        the members.
+      - Each structure member, including members inherited from mixins. Note
+        that these are not the shapes targeted by the members.
     * - union
       - member
-      - Each union member. Note that these are not the shapes targeted by
-        the members.
+      - Each union member, including members inherited from mixins. Note that
+        these are not the shapes targeted by the members.
     * - member
       -
       - The shape targeted by the member. Note that member targets have no
@@ -1253,6 +1254,14 @@ The table below lists the labeled directed relationships from each shape.
         defines the trait. This kind of relationship is only traversed if the
         ``trait`` relationship is explicitly stated as a desired directed
         neighbor relationship type.
+    * - ``*``
+      - mixin
+      - Every mixin applied to the shape.
+
+        .. note::
+
+            A normal ``member`` relationship exists from a given shape to all
+            its inherited mixin members.
 
 .. important::
 
@@ -1449,9 +1458,9 @@ matches the disqualifier selector.
 
     @aws.api#dataPlane
     service Example {
-        version: "2020-09-08",
-        resources: [Foo],
-        operations: [OperationA],
+        version: "2020-09-08"
+        resources: [Foo]
+        operations: [OperationA]
     }
 
     operation OperationA {}
@@ -1542,7 +1551,7 @@ operation:
     @httpBasicAuth
     @httpBearerAuth
     service MyService {
-        version: "2020-04-21",
+        version: "2020-04-21"
         operations: [HasDigestAuth, HasBasicAuth, NoAuth]
     }
 

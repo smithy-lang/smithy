@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace smithy.test
 
@@ -272,19 +272,15 @@ list NonEmptyStringList {
 string NonEmptyString
 
 @private
-@enum([
-    {
-        value: "client",
-        name: "CLIENT",
-        documentation: "The test only applies to client implementations."
-    },
-    {
-        value: "server",
-        name: "SERVER",
-        documentation: "The test only applies to server implementations."
-    },
-])
-string AppliesTo
+enum AppliesTo {
+    /// The test only applies to client implementations.
+    @enumValue("client")
+    CLIENT
+
+    /// The test only applies to server implementations.
+    @enumValue("server")
+    SERVER
+}
 
 /// Define how a malformed HTTP request is rejected by a server given a specific protocol
 @trait(selector: "operation")

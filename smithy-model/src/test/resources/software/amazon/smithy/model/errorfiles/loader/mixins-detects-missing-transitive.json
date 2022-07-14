@@ -1,0 +1,29 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#A": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#mixin": {}
+            },
+            "mixins": [
+                {"target": "smithy.example#Missing"}
+            ]
+        },
+        "smithy.example#B": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#mixin": {}
+            },
+            "mixins": [
+                {"target": "smithy.example#A"}
+            ]
+        },
+        "smithy.example#C": {
+            "type": "structure",
+            "mixins": [
+                {"target": "smithy.example#B"}
+            ]
+        }
+    }
+}

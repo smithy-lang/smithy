@@ -22,6 +22,7 @@ import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.transform.ChangeShapeTypeOption;
 
 /**
  * {@code changeType} is used to change the type of one or more shapes.
@@ -34,6 +35,7 @@ public final class ChangeTypes extends ConfigurableProjectionTransformer<ChangeT
     public static final class Config {
 
         private final Map<ShapeId, ShapeType> shapeTypes = new LinkedHashMap<>();
+        private boolean synthesizeEnumNames = false;
 
         /**
          * Sets the map of shape IDs to shape types to set.
@@ -47,6 +49,19 @@ public final class ChangeTypes extends ConfigurableProjectionTransformer<ChangeT
 
         public Map<ShapeId, ShapeType> getShapeTypes() {
             return shapeTypes;
+        }
+
+        /**
+         * Sets whether to synthesize names for enums that don't already have them.
+         *
+         * @param synthesizeEnumNames Whether to synthesize enum names.
+         */
+        public void setSynthesizeEnumNames(boolean synthesizeEnumNames) {
+            this.synthesizeEnumNames = synthesizeEnumNames;
+        }
+
+        public boolean getSynthesizeEnumNames() {
+            return synthesizeEnumNames;
         }
     }
 
@@ -66,6 +81,13 @@ public final class ChangeTypes extends ConfigurableProjectionTransformer<ChangeT
             throw new SmithyBuildException(getName() + ": shapeTypes must not be empty");
         }
 
-        return context.getTransformer().changeShapeType(context.getModel(), config.getShapeTypes());
+        if (config.getSynthesizeEnumNames()) {
+            return context.getTransformer().changeShapeType(
+                    context.getModel(), config.getShapeTypes(),
+                    ChangeShapeTypeOption.SYNTHESIZE_ENUM_NAMES);
+        }
+
+        return context.getTransformer().changeShapeType(
+                context.getModel(), config.getShapeTypes());
     }
 }

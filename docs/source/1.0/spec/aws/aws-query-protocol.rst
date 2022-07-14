@@ -95,8 +95,8 @@ that affect serialization:
 
 .. |quoted shape name| replace:: ``awsQuery``
 .. |name resolution text| replace:: The :ref:`xmlName-trait` can be used to serialize a property using a custom name
-.. |query collection text| replace::
-    Each value provided in the collection is serialized as a separate key with
+.. |query list text| replace::
+    Each value provided in the list is serialized as a separate key with
     a "." separator, the string "member", a "." separator, and a "1" indexed
     incrementing counter appended to the container's key.
     |name resolution text| instead of "member". The :ref:`xmlFlattened-trait`
@@ -139,8 +139,6 @@ resolved using the following process:
          - Default value
        * - ``list`` member
          - The string literal "member"
-       * - ``set`` member
-         - The string literal "member"
        * - ``map`` key
          - The string literal "key"
        * - ``map`` value
@@ -170,16 +168,16 @@ For example, given the following:
 
     @input
     structure QueryStructuresInput {
-        foo: String,
+        foo: String
 
         @xmlName("Custom")
-        bar: String,
+        bar: String
 
-        baz: MyStructure,
+        baz: MyStructure
     }
 
     structure MyStructure {
-        temp: String,
+        temp: String
     }
 
 The ``application/x-www-form-urlencoded`` serialization is:
@@ -201,7 +199,7 @@ The ``application/x-www-form-urlencoded`` serialization is:
 Collections
 ===========
 
-|query collection text|
+|query list text|
 
 For example, given the following:
 
@@ -209,18 +207,18 @@ For example, given the following:
 
     @input
     structure QueryListsInput {
-        ListArg: StringList,
-        ComplexListArg: GreetingList,
+        ListArg: StringList
+        ComplexListArg: GreetingList
 
         @xmlFlattened
-        FlattenedListArg: StringList,
+        FlattenedListArg: StringList
 
-        ListArgWithXmlNameMember: ListWithXmlName,
+        ListArgWithXmlNameMember: ListWithXmlName
 
         // Notice that the xmlName on the targeted list member is ignored.
         @xmlFlattened
         @xmlName("Hi")
-        FlattenedListArgWithXmlName: ListWithXmlName,
+        FlattenedListArgWithXmlName: ListWithXmlName
     }
 
     list ListWithXmlName {
@@ -237,7 +235,7 @@ For example, given the following:
     }
 
     structure GreetingStruct {
-        hi: String,
+        hi: String
     }
 
 The ``application/x-www-form-urlencoded`` serialization is:
@@ -274,36 +272,36 @@ For example, given the following:
 
     @input
     structure QueryMapsInput {
-        MapArg: StringMap,
+        MapArg: StringMap
 
         @xmlName("reNamed")
-        RenamedMapArg: StringMap,
+        RenamedMapArg: StringMap
 
-        ComplexMapArg: ComplexMap,
+        ComplexMapArg: ComplexMap
 
-        MapWithXmlMemberName: MapWithXmlName,
+        MapWithXmlMemberName: MapWithXmlName
     }
 
     map StringMap {
-        key: String,
+        key: String
         value: String
     }
 
     map ComplexMap {
-        key: String,
-        value: GreetingStruct,
+        key: String
+        value: GreetingStruct
     }
 
     map MapWithXmlName {
         @xmlName("K")
-        key: String,
+        key: String
 
         @xmlName("V")
         value: String
     }
 
     structure GreetingStruct {
-        hi: String,
+        hi: String
     }
 
 The ``application/x-www-form-urlencoded`` serialization is:

@@ -77,8 +77,12 @@ The following example defines a model file with each section:
 Lexical notes
 -------------
 
-Smithy models MUST be encoded using UTF-8 and SHOULD use Unix style
-line endings (``\n``). The Smithy ABNF is whitespace sensitive.
+* Smithy models MUST be encoded using UTF-8 and SHOULD use Unix style
+  line endings (``\n``).
+* The Smithy ABNF is whitespace sensitive.
+* Except for within strings, commas in the Smithy IDL are considered
+  whitespace. Commas can be used anywhere where they make the model
+  easier to read (for example, in complex traits defined on a single line).
 
 
 .. _smithy-idl-abnf:
@@ -95,7 +99,7 @@ The Smithy IDL is defined by the following ABNF:
 .. rubric:: Whitespace
 
 .. productionlist:: smithy
-    ws      :*(`sp` / `newline` / `comment`) ; whitespace
+    ws      :*(`sp` / `newline` / `comment` / ",") ; whitespace
     sp      :*(%x20  / %x09) ; " " and \t
     br      :`sp` (`comment` / `newline`) `sp` ; break
     newline :%x0A / %x0D.0A ; \n and \r\n
@@ -112,13 +116,13 @@ The Smithy IDL is defined by the following ABNF:
 
 .. productionlist:: smithy
     control_section   :*(`control_statement`)
-    control_statement :"$" `ws` `node_object_key` `ws` ":" `ws` `node_value` `br`
+    control_statement :"$" `ws` `node_object_key` `ws` ":" `ws` `node_value` `ws`
 
 .. rubric:: Metadata
 
 .. productionlist:: smithy
     metadata_section   :*(`metadata_statement`)
-    metadata_statement :"metadata" `ws` `node_object_key` `ws` "=" `ws` `node_value` `br`
+    metadata_statement :"metadata" `ws` `node_object_key` `ws` "=" `ws` `node_value` `ws`
 
 .. rubric:: Node values
 
@@ -128,18 +132,8 @@ The Smithy IDL is defined by the following ABNF:
                :/ `number`
                :/ `node_keywords`
                :/ `node_string_value`
-    node_array          :`empty_node_array` / `populated_node_array`
-    empty_node_array    :"[" `ws` "]"
-    populated_node_array:"[" `ws` `node_value` `ws`
-                        :       *(`comma` `node_value` `ws`)
-                        :       `trailing_comma` "]"
-    trailing_comma      :[`comma`]
-    comma               :"," `ws`
-    node_object          :`empty_node_object` / `populated_node_object`
-    empty_node_object    :"{" `ws` "}"
-    populated_node_object:"{" `ws` `node_object_kvp` `ws`
-                         :       *(`comma` `node_object_kvp` `ws`)
-                         :       `trailing_comma` "}"
+    node_array           :"[" `ws` *(`node_value` `ws`) "]"
+    node_object          :"{" `ws` *(`node_object_kvp` `ws`) "}"
     node_object_kvp      :`node_object_key` `ws` ":" `ws` `node_value`
     node_object_key      :`quoted_text` / `identifier`
     number              :[`minus`] `int` [`frac`] [`exp`]
@@ -172,12 +166,13 @@ The Smithy IDL is defined by the following ABNF:
 
 .. productionlist:: smithy
     shape_section :[`namespace_statement` [`use_section`] [`shape_statements`]]
-    namespace_statement :"namespace" `ws` `namespace` `br`
+    namespace_statement :"namespace" `ws` `namespace` `ws`
     use_section   :*(`use_statement`)
-    use_statement :"use" `ws` `absolute_root_shape_id` `br`
+    use_statement :"use" `ws` `absolute_root_shape_id` `ws`
     shape_statements             :*(`shape_statement` / `apply_statement`)
-    shape_statement              :`trait_statements` `shape_body` `br`
+    shape_statement              :`trait_statements` `shape_body` `ws`
     shape_body                   :`simple_shape_statement`
+                                 :/ `enum_shape_statement`
                                  :/ `list_statement`
                                  :/ `set_statement`
                                  :/ `map_statement`
@@ -186,24 +181,32 @@ The Smithy IDL is defined by the following ABNF:
                                  :/ `service_statement`
                                  :/ `operation_statement`
                                  :/ `resource_statement`
-    simple_shape_statement :`simple_type_name` `ws` `identifier`
+    mixins                 :`sp` "with" `ws` "[" 1*(`ws` `shape_id`) `ws` "]"
+    simple_shape_statement :`simple_type_name` `ws` `identifier` [`mixins`]
     simple_type_name       :"blob" / "boolean" / "document" / "string"
                            :/ "byte" / "short" / "integer" / "long"
                            :/ "float" / "double" / "bigInteger"
                            :/ "bigDecimal" / "timestamp"
-    shape_members           :`empty_shape_members` / `populated_shape_members`
-    empty_shape_members     :"{" `ws` "}"
-    populated_shape_members :"{" `ws` `shape_member_kvp`
-                            :  *(`comma` `shape_member_kvp` `ws`) `trailing_comma` "}"
-    shape_member_kvp        :`trait_statements` `identifier` `ws` ":" `ws` `shape_id`
-    list_statement :"list" `ws` `identifier` `ws` `shape_members`
-    set_statement :"set" `ws` `identifier` `ws` `shape_members`
-    map_statement :"map" `ws` `identifier` `ws` `shape_members`
-    structure_statement     :"structure" `ws` `identifier` `ws` `shape_members`
-    union_statement :"union" `ws` `identifier` `ws` `shape_members`
-    service_statement :"service" `ws` `identifier` `ws` `node_object`
-    operation_statement :"operation" `ws` `identifier` `ws` `node_object`
-    resource_statement :"resource" `ws` `identifier` `ws` `node_object`
+    enum_shape_statement   :`enum_type_name` `ws` `identifier` [`mixins`] `ws` `enum_shape_members`
+    enum_type_name         :"enum" / "intEnum"
+    enum_shape_members     :"{" `ws` 1*(`trait_statements` `identifier` [`value_assignment`] `ws`) "}"
+    value_assignment       :*`sp` "=" `ws` `node_value`
+    shape_members          :"{" `ws` *(`trait_statements` `shape_member` `ws`) "}"
+    shape_member           :(`shape_member_kvp` / `shape_member_elided`) [`value_assignment`]
+    shape_member_kvp       :`identifier` `ws` ":" `ws` `shape_id`
+    shape_member_elided    :"$" `identifier`
+    list_statement         :"list" `ws` `identifier` [`mixins`] `ws` `shape_members`
+    set_statement          :"set" `ws` `identifier` [`mixins`] `ws` `shape_members`
+    map_statement          :"map" `ws` `identifier` [`mixins`] `ws` `shape_members`
+    structure_statement    :"structure" `ws` `identifier` ["for" `shape_id`] [`mixins`] `ws` `shape_members`
+    union_statement        :"union" `ws` `identifier` [`mixins`] `ws` `shape_members`
+    service_statement      :"service" `ws` `identifier` [`mixins`] `ws` `node_object`
+    operation_statement    :"operation" `ws` `identifier` [`mixins`] `ws` `inlineable_properties`
+    inlineable_properties  :"{" *(`inlineable_property` `ws`) `ws` "}"
+    inlineable_property    :`node_object_kvp` / `inline_structure`
+    inline_structure       :`node_object_key` `ws` ":=" `ws` `inline_structure_value`
+    inline_structure_value :`trait_statements` [`mixins` ws] shape_members
+    resource_statement     :"resource" `ws` `identifier` [`mixins`] `ws` `node_object`
 
 .. rubric:: Traits
 
@@ -212,9 +215,11 @@ The Smithy IDL is defined by the following ABNF:
     trait               :"@" `shape_id` [`trait_body`]
     trait_body          :"(" `ws` `trait_body_value` `ws` ")"
     trait_body_value    :`trait_structure` / `node_value`
-    trait_structure     :`trait_structure_kvp` *(`ws` `comma` `trait_structure_kvp`)
+    trait_structure     :`trait_structure_kvp` *(`ws` `trait_structure_kvp`)
     trait_structure_kvp :`node_object_key` `ws` ":" `ws` `node_value`
-    apply_statement :"apply" `ws` `shape_id` `ws` `trait` `br`
+    apply_statement     :`apply_statement_singular` / `apply_statement_block`
+    apply_statement_singular: "apply" `ws` `shape_id` `ws` `trait` `ws`
+    apply_statement_block: "apply" `ws` `shape_id` `ws` "{" `trait_statements` "}"
 
 .. rubric:: Shape ID
 
@@ -257,11 +262,30 @@ The :token:`control section <smithy:control_section>` of a model contains
 :token:`control statements <smithy:control_statement>` that apply parser directives
 to a *specific IDL file*. Because control statements influence parsing, they
 MUST appear at the beginning of a file before any other statements and have
-no effect on the :ref:`semantic model <semantic-model>`
+no effect on the :ref:`semantic model <semantic-model>` The following control
+statements are currently supported:
 
-The :ref:`version <smithy-version>` statement is currently the only control
-statement defined in the Smithy IDL. Implementations MUST ignore unknown
-control statements.
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Name
+      - Type
+      - Description
+    * - version
+      - string
+      - Defines the :ref:`version <smithy-version>` of the Smithy IDL used in
+        the model file.
+    * - operationInputSuffix
+      - string
+      - Defines the suffix used when generating names for
+        :ref:`inline operation input <idl-inline-input-output>`.
+    * - operationOutputSuffix
+      - string
+      - Defines the suffix used when generating names for
+        :ref:`inline operation output <idl-inline-input-output>`.
+
+Implementations MUST ignore unknown control statements.
 
 
 .. _smithy-version:
@@ -415,9 +439,9 @@ so that they can be referred to using only ``Foo`` and ``Baz``.
 
     map MyMap {
         // Resolves to smithy.example#Foo
-        key: Foo,
+        key: Foo
         // Resolves to smithy.example#Baz
-        value: Baz,
+        value: Baz
     }
 
 A use statement can refer to :ref:`traits <traits>` too. The following example
@@ -472,34 +496,34 @@ to.
     structure MyStructure {
         // Resolves to smithy.example#MyString
         // There is a shape named MyString defined in the same namespace.
-        a: MyString,
+        a: MyString
 
         // Resolves to smithy.example#MyString
         // Absolute shape IDs do not perform namespace resolution.
-        b: smithy.example#MyString,
+        b: smithy.example#MyString
 
         // Resolves to foo.baz#Bar
         // The "use foo.baz#Bar" statement imported the Bar symbol,
         // allowing the shape to be referenced using a relative shape ID.
-        c: Bar,
+        c: Bar
 
         // Resolves to smithy.api#String
         // No shape named String was imported through a use statement
         // the smithy.example namespace does not contain a shape named
         // String, and the prelude model contains a shape named String.
-        d: String,
+        d: String
 
         // Resolves to smithy.example#MyBoolean.
         // There is a shape named MyBoolean defined in the same namespace.
         // Forward references are supported both within the same file and
         // across multiple files.
-        e: MyBoolean,
+        e: MyBoolean
 
         // Resolves to smithy.example#InvalidShape. A shape by this name has
         // not been imported through a use statement, a shape by this name
         // does not exist in the current namespace, and a shape by this name
         // does not exist in the prelude model.
-        f: InvalidShape,
+        f: InvalidShape
     }
 
     boolean MyBoolean
@@ -688,6 +712,122 @@ The following example defines an ``integer`` shape with a :ref:`range-trait`:
         }
 
 
+.. _idl-enum:
+
+Enum shapes
+-----------
+
+The :ref:`enum` shape is defined using an :token:`smithy:enum_shape_statement`.
+
+The following example defines an :ref:`enum` shape:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+
+    namespace smithy.example
+
+    enum Suit {
+        DIAMOND
+        CLUB
+        HEART
+        SPADE
+    }
+
+Syntactic sugar can be used to assign an :ref:`enumvalue-trait` to an enum
+member. The following example defines an enum shape with custom values and
+traits:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+
+    namespace smithy.example
+
+    enum Suit {
+        @deprecated
+        DIAMOND = "diamond"
+
+        CLUB = "club"
+        HEART = "heart"
+        SPADE = "spade"
+    }
+
+The above enum is exactly equivalent to the following enum:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+
+    namespace smithy.example
+
+    enum Suit {
+        @deprecated
+        @enumValue("diamond")
+        DIAMOND
+
+        @enumValue("club")
+        CLUB
+
+        @enumValue("heart")
+        HEART
+
+        @enumValue("spade")
+        SPADE
+    }
+
+
+.. _idl-int-enum:
+
+IntEnum shapes
+--------------
+
+The :ref:`intEnum` shape is defined using an
+:token:`smithy:enum_shape_statement`.
+
+.. note::
+    The :ref:`enumValue trait <enumValue-trait>` is required for :ref:`intEnum`
+    shapes.
+
+Syntactic sugar can be used to assign an :ref:`enumvalue-trait` to an intEnum
+member. The following example defines an :ref:`intEnum` shape:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+
+    namespace smithy.example
+
+    intEnum Suit {
+        DIAMOND = 1
+        CLUB = 2
+        HEART = 3
+        SPADE = 4
+    }
+
+The above intEnum is exactly equivalent to the following intEnum:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+
+    namespace smithy.example
+
+    intEnum Suit {
+        @enumValue(1)
+        DIAMOND
+
+        @enumValue(2)
+        CLUB
+
+        @enumValue(3)
+        HEART
+
+        @enumValue(4)
+        SPADE
+    }
+
+
 .. _idl-list:
 
 List shapes
@@ -757,74 +897,6 @@ Traits can be applied to the list shape and its member:
                             "min": 3,
                             "max": 10
                         }
-                    }
-                }
-            }
-        }
-
-
-.. _idl-set:
-
-Set shapes
-----------
-
-A :ref:`set <set>` set shape is defined using a :token:`smithy:set_statement`.
-
-The following example defines a set of strings:
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        namespace smithy.example
-
-        set StringSet {
-            member: String
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#StringSet": {
-                    "type": "set",
-                    "member": {
-                        "target": "smithy.api#String"
-                    }
-                }
-            }
-        }
-
-Traits can be applied to the set shape and its members:
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        namespace smithy.example
-
-        @deprecated
-        set StringSet {
-            @pattern("\\w+")
-            member: String
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#StringSet": {
-                    "type": "set",
-                    "member": {
-                        "target": "smithy.api#String",
-                        "traits": {
-                            "smithy.api#pattern": "\\w+"
-                        }
-                    },
-                    "traits": {
-                        "smithy.api#deprecated": {}
                     }
                 }
             }
@@ -938,8 +1010,8 @@ The following example defines a structure with two members:
         namespace smithy.example
 
         structure MyStructure {
-            foo: String,
-            baz: Integer,
+            foo: String
+            baz: Integer
         }
 
     .. code-tab:: json
@@ -973,11 +1045,11 @@ Traits can be applied to structure members:
         structure MyStructure {
             /// This is documentation for `foo`.
             @required
-            foo: String,
+            foo: String
 
             /// This is documentation for `baz`.
             @deprecated
-            baz: Integer,
+            baz: Integer
         }
 
     .. code-tab:: json
@@ -1010,6 +1082,24 @@ Traits can be applied to structure members:
             }
         }
 
+Syntactic sugar can be used to apply the :ref:`default-trait` to a structure
+member. The following example:
+
+.. code-block:: smithy
+
+    structure Example {
+        normative: Boolean = true
+    }
+
+Is exactly equivalent to:
+
+.. code-block:: smithy
+
+    structure Example {
+        @default(true)
+        normative: Boolean
+    }
+
 
 .. _idl-union:
 
@@ -1027,12 +1117,12 @@ The following example defines a union shape with several members:
         namespace smithy.example
 
         union MyUnion {
-            i32: Integer,
+            i32: Integer
 
             @length(min: 1, max: 100)
-            string: String,
+            string: String
 
-            time: Timestamp,
+            time: Timestamp
         }
 
     .. code-tab:: json
@@ -1114,8 +1204,8 @@ Operation shape
 ---------------
 
 An operation shape is defined using an :token:`smithy:operation_statement` and the
-provided :token:`smithy:node_object` supports the same properties defined in the
-:ref:`operation specification <operation>`.
+provided :token:`smithy:inlineable_properties` supports the same properties defined
+in the :ref:`operation specification <operation>`.
 
 The following example defines an operation shape that accepts an input
 structure named ``Input``, returns an output structure named ``Output``, and
@@ -1158,6 +1248,109 @@ can potentially return the ``Unavailable`` or ``BadRequest``
                 }
             }
         }
+
+
+.. _idl-inline-input-output:
+
+Inline input / output shapes
+++++++++++++++++++++++++++++
+
+The input and output properties of operations can be defined using a more
+succinct, inline syntax.
+
+A structure defined using inline syntax is automatically marked with the
+:ref:`input-trait` for inputs and the :ref:`output-trait` for outputs.
+
+A structure defined using inline syntax is given a generated shape name. For
+inputs, the generated name is the name of the operation shape with the suffix
+``Input`` added. For outputs, the generated name is the name of the operation
+shape with the ``Output`` suffix added.
+
+For example, the following model:
+
+.. code-block:: smithy
+
+    operation GetUser {
+        // The generated shape name is GetUserInput
+        input := {
+            userId: String
+        }
+
+        // The generated shape name is GetUserOutput
+        output := {
+            username: String
+            userId: String
+        }
+    }
+
+Is equivalent to:
+
+.. code-block:: smithy
+
+    operation GetUser {
+        input: GetUserInput
+        output: GetUserOutput
+    }
+
+    @input
+    structure GetUserInput {
+        userId: String
+    }
+
+    @output
+    structure GetUserOutput {
+        username: String
+        userId: String
+    }
+
+Traits and mixins can be applied to the inline structure:
+
+.. code-block:: smithy
+
+    @mixin
+    structure BaseUser {
+        userId: String
+    }
+
+    operation GetUser {
+        input := @references([{resource: User}]) {
+            userId: String
+        }
+
+        output := with [BaseUser] {
+            username: String
+        }
+    }
+
+    operation PutUser {
+        input :=
+            @references([{resource: User}])
+            with [BaseUser] {}
+    }
+
+The suffixes for the generated names can be customized using the
+``operationInputSuffix`` and ``operationOutputSuffix`` control statements.
+
+.. code-block:: smithy
+
+    $version: "2.0"
+    $operationInputSuffix: "Request"
+    $operationInputSuffix: "Response"
+
+    namespace smithy.example
+
+    operation GetUser {
+        // The generated shape name is GetUserRequest
+        input := {
+            userId: String
+        }
+
+        // The generated shape name is GetUserResponse
+        output := {
+            username: String
+            userId: String
+        }
+    }
 
 
 .. _idl-resource:
@@ -1203,6 +1396,141 @@ and defines a :ref:`read <read-lifecycle>` operation:
                 }
             }
         }
+
+.. seealso::
+
+    The :ref:`target elision syntax <idl-target-elision>` for an easy way to
+    define structures that reference resource identifiers without having to
+    repeat the target definition.
+
+.. _idl-mixins:
+
+Mixins
+------
+
+:ref:`Mixins <mixins>` can be added to a shape using the optional
+:token:`smithy:mixins` clause of a shape definition.
+
+For example:
+
+.. code-block:: smithy
+
+    @mixin
+    structure BaseUser {
+        userId: String
+    }
+
+    structure UserDetails with [BaseUser] {
+        username: String
+    }
+
+    @mixin
+    @sensitive
+    string SensitiveString
+
+    @pattern("^[a-zA-Z\.]*$")
+    string SensitiveText with [SensitiveString]
+
+
+.. _idl-target-elision:
+
+Target Elision
+--------------
+
+Having to completely redefine a :ref:`resource identifier <resource-identifiers>`
+to use it in a structure or redefine a member from a :ref:`mixin <mixins>` to add
+additional traits can be cumbersome and potentially error-prone. The
+:token:`type elision syntax <smithy:shape_member_elided>` can be used to cut
+down on that repetition by prefixing the member name with a ``$``. If a member
+is prefixed this way, its target will automatically be set to the target of a
+mixin member with the same name. The following example shows how to elide the
+target for a member inherited from a mixin:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+
+    namespace smithy.example
+
+    @mixin
+    structure IdBearer {
+        id: String
+    }
+
+    structure IdRequired with [IdBearer] {
+        @required
+        $id
+    }
+
+Additionally, structure shapes can reference a :ref:`resource <idl-resource>`
+shape to define members that represent the resource's identifiers without having
+to redefine the target shape. In addition to prefixing a member with ``$``, the
+structure must also add ``for`` followed by the resource referenced in
+the shape's definition before any mixins are specified.
+
+To resolve elided types, first check if any bound resource defines an
+identifier that case-sensitively matches the elided member name. If a match is
+found, the type targeted by that identifier is used for the elided type. If no
+identifier matches the elided member name, mixin members are case-sensitively
+checked, and if a match is found, the type targeted by the mixin member is
+used as the elided type. It is an error if neither the resource or mixin
+members matches an elided member name.
+
+The following example shows a structure reusing an identifier definition from
+a resource:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+
+    namespace smithy.example
+
+    resource User {
+        identifiers: {
+            name: String
+            uuid: String
+        }
+    }
+
+    structure UserSummary for User {
+        $name
+        age: Short
+    }
+
+Note that the ``UserSummary`` structure does not attempt to define the
+``uuid`` identifier. When referencing a resource in this way, only the
+identifiers that are explicitly referenced are added to the structure. This
+allows structures to define subsets of identifiers, which can be useful for
+operations like create operations where some of those identifiers may be
+generated by the service.
+
+Structures may only reference one resource shape in this way.
+
+When using both mixins and a resource reference, the referenced resource will
+be checked first. The following example is invalid:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+
+    namespace smithy.example
+
+    resource User {
+        identifiers: {
+            uuid: String
+        }
+    }
+
+    @mixin
+    structure UserIdentifiers {
+        uuid: Blob
+    }
+
+    // This is invalid because the `uuid` member's target is set to
+    // String, which then conflicts with the UserIdentifiers mixin.
+    structure UserSummary for User with [UserIdentifiers] {
+        $uuid
+    }
 
 
 .. _documentation-comment:
@@ -1464,22 +1792,52 @@ Apply statement
 Traits can be applied to shapes outside of a shape's definition using an
 :token:`smithy:apply_statement`.
 
-The following example applies the :ref:`documentation-trait` and
-:ref:`length-trait` to the ``smithy.example#MyString`` shape:
+The following example applies the :ref:`documentation-trait` to the
+``smithy.example#MyString`` shape:
 
 .. tabs::
 
     .. code-tab:: smithy
 
+        $version: "2.0"
         namespace smithy.example
 
         apply MyString @documentation("This is my string!")
-        apply MyString @length(min: 1, max: 10)
 
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
+            "shapes": {
+                "smithy.example#MyString": {
+                    "type": "apply",
+                    "traits": {
+                        "smithy.api#documentation": "This is my string!"
+                    }
+                }
+            }
+        }
+
+Multiple traits can be applied to the same shape using a block apply
+statement. The following example applies the :ref:`documentation-trait`
+and :ref:`length-trait` to the ``smithy.example#MyString`` shape:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        $version: "2.0"
+        namespace smithy.example
+
+        apply MyString {
+            @documentation("This is my string!")
+            @length(min: 1, max: 10)
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "2.0",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "apply",
@@ -1498,6 +1856,7 @@ Traits can be applied to members too:
 
 .. code-block:: smithy
 
+    $version: "2.0"
     namespace smithy.example
 
     apply MyStructure$foo @documentation("Structure member documentation")
@@ -1716,7 +2075,7 @@ This example is equivalent to the following:
 
 The following text blocks are ill-formed:
 
-.. code-block:: smithy
+.. code-block::
 
     """foo"""  // missing new line following open delimiter
     """ """    // missing new line following open delimiter

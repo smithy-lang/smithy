@@ -1,0 +1,10 @@
+[ERROR] ns.foo#StringEnum$INT_VALUE: The enumValue trait must use the string option when applied to enum shapes. | EnumShape
+[ERROR] ns.foo#StringEnum$DUPLICATE_VALUE: Multiple enum members found with duplicate value `explicit` | EnumShape
+[WARNING] ns.foo#StringEnum$undesirableName: The name `undesirableName` does not match the recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores. | EnumShape
+[ERROR] ns.foo#IntEnum$IMPLICIT_VALUE: intEnum members must have the enumValue trait with the `int` member set | EnumShape
+[ERROR] ns.foo#IntEnum$STRING_VALUE: intEnum members must have the enumValue trait with the `int` member set | EnumShape
+[ERROR] ns.foo#IntEnum$DUPLICATE_VALUE: Multiple enum members found with duplicate value `1` | EnumShape
+[WARNING] ns.foo#IntEnum$undesirableName: The name `undesirableName` does not match the recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores. | EnumShape
+[WARNING] ns.foo#EnumWithEnumTrait: This shape applies a trait that is deprecated: smithy.api#enum | DeprecatedTrait
+[ERROR] ns.foo#EnumWithEnumTrait: Trait `enum` cannot be applied to `ns.foo#EnumWithEnumTrait`. This trait may only be applied to shapes that match the following selector: string :not(enum) | TraitTarget
+[ERROR] ns.foo#StringEnum$EMPTY_STRING: enum values may not be empty. | EnumShape

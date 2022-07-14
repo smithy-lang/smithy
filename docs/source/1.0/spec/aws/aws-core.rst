@@ -47,7 +47,7 @@ The following example defines an AWS service that uses the default values of
 
         @service(sdkId: "Some Value")
         service FooBaz {
-            version: "2018-03-17",
+            version: "2018-03-17"
         }
 
     .. code-tab:: json
@@ -79,14 +79,14 @@ The following example provides explicit values for all properties:
         use aws.api#service
 
         @service(
-            sdkId: "Some Value",
-            cloudFormationName: "FooBaz",
-            arnNamespace: "myservice",
-            cloudTrailEventSource: "myservice.amazon.aws",
+            sdkId: "Some Value"
+            cloudFormationName: "FooBaz"
+            arnNamespace: "myservice"
+            cloudTrailEventSource: "myservice.amazon.aws"
             endpointPrefix: "my-endpoint"
         )
         service FooBaz {
-            version: "2018-03-17",
+            version: "2018-03-17"
         }
 
     .. code-tab:: json
@@ -388,13 +388,13 @@ For example, given the following service:
 
         @service(sdkId: "Some Value")
         service FooBaz {
-            version: "2018-03-17",
-            resources: [MyResource],
+            version: "2018-03-17"
+            resources: [MyResource]
         }
 
         @arn(template: "myresource/{myId}")
         resource MyResource {
-            identifiers: {myId: MyResourceId},
+            identifiers: {myId: MyResourceId}
         }
 
     .. code-tab:: json
@@ -558,8 +558,8 @@ referenced resource.
         use aws.api#arnReference
 
         @arnReference(
-            type: "AWS::SomeService::SomeResource",
-            service: com.foo#SomeService,
+            type: "AWS::SomeService::SomeResource"
+            service: com.foo#SomeService
             resource: com.foo#SomeResource)
         string SomeResourceId
 
@@ -622,7 +622,7 @@ previous example:
 Summary
     Indicates that the target contains data of the specified classification.
 Trait selector
-    ``:test(simpleType, collection, structure, union, member)``
+    ``:test(simpleType, list, structure, union, member)``
 Value type
     ``string`` that is one of: ``content``, ``account``, ``usage``,
     ``tagging``, or ``permissions``. See :ref:`data-classifications` for more
@@ -630,7 +630,7 @@ Value type
 
 Data classifications are resolved hierarchically: the data classification
 of a member inherits the effective data classification applied to a parent
-structure, union, or collection unless overridden.
+structure, union, or list unless overridden.
 
 .. tabs::
 
@@ -640,12 +640,12 @@ structure, union, or collection unless overridden.
 
         @data("permissions")
         structure MyStructure {
-            name: String,
+            name: String
 
             @data("content")
-            content: String,
+            content: String
 
-            tags: TagList,
+            tags: TagList
         }
 
         @data("tagging")
@@ -776,7 +776,7 @@ plane unless an operation or resource is marked with the
 
         @controlPlane
         operation PutThings {
-            input: PutThingsInput,
+            input: PutThingsInput
             output: PutThingsOutput
         }
 
@@ -832,7 +832,7 @@ plane unless an operation or resource is marked with the
 
         @dataPlane
         operation PutThings {
-            input: PutThingsInput,
+            input: PutThingsInput
             output: PutThingsOutput
         }
 
@@ -976,17 +976,17 @@ using an ``clientEndpointDiscoveryId``.
 .. code-block:: smithy
 
     @aws.api#clientEndpointDiscovery(
-        operation: DescribeEndpoints,
-        error: InvalidEndpointError,
+        operation: DescribeEndpoints
+        error: InvalidEndpointError
     )
     service FooService {
-      version: "2019-09-10",
+      version: "2019-09-10"
       operations: [DescribeEndpoints, GetObject]
     }
 
     operation DescribeEndpoints {
-        input: DescribeEndpointsInput,
-        output: DescribeEndpointsOutput,
+        input: DescribeEndpointsInput
+        output: DescribeEndpointsOutput
         errors: [InvalidEndpointError]
     }
 
@@ -996,18 +996,18 @@ using an ``clientEndpointDiscoveryId``.
 
     @input
     structure DescribeEndpointsInput {
-      Operation: String,
-      Identifiers: Identifiers,
+      Operation: String
+      Identifiers: Identifiers
     }
 
     map Identifiers {
-      key: String,
+      key: String
       value: String
     }
 
     @output
     structure DescribeEndpointsOutput {
-      Endpoints: Endpoints,
+      Endpoints: Endpoints
     }
 
     list Endpoints {
@@ -1015,13 +1015,13 @@ using an ``clientEndpointDiscoveryId``.
     }
 
     structure Endpoint {
-      Address: String,
-      CachePeriodInMinutes: Long,
+      Address: String
+      CachePeriodInMinutes: Long
     }
 
     @aws.api#clientDiscoveredEndpoint(required: true)
     operation GetObject {
-        input: GetObjectInput,
+        input: GetObjectInput
         output: GetObjectOutput
     }
 
@@ -1029,12 +1029,12 @@ using an ``clientEndpointDiscoveryId``.
     structure GetObjectInput {
       @clientEndpointDiscoveryId
       @required
-      Id: String,
+      Id: String
     }
 
     @output
     structure GetObjectOutput {
-      Object: Blob,
+      Object: Blob
     }
 
 
@@ -1171,48 +1171,31 @@ setting the ``validationMode`` input property to "ENABLED".
         responseAlgorithms: ["CRC32C", "CRC32", "SHA1", "SHA256"]
     )
     operation PutSomething {
-        input: PutSomethingInput,
+        input: PutSomethingInput
         output: PutSomethingOutput
     }
 
     structure PutSomethingInput {
         @httpHeader("x-amz-request-algorithm")
-        checksumAlgorithm: ChecksumAlgorithm,
+        checksumAlgorithm: ChecksumAlgorithm
 
         @httpHeader("x-amz-response-validation-mode")
-        validationMode: ValidationMode,
+        validationMode: ValidationMode
 
         @httpPayload
-        content: Blob,
+        content: Blob
     }
 
-    @enum([
-        {
-            value: "CRC32C",
-            name: "CRC32C"
-        },
-        {
-            value: "CRC32",
-            name: "CRC32"
-        },
-        {
-            value: "SHA1",
-            name: "SHA1"
-        },
-        {
-            value: "SHA256",
-            name: "SHA256"
-        }
-    ])
-    string ChecksumAlgorithm
+    enum ChecksumAlgorithm {
+        CRC32C
+        CRC32
+        SHA1
+        SHA256
+    }
 
-    @enum([
-        {
-            value: "ENABLED",
-            name: "ENABLED"
-        }
-    ])
-    string ValidationMode
+    enum ValidationMode {
+        ENABLED
+    }
 
 
 The following trait, which does not define request or response checksum
@@ -1222,7 +1205,7 @@ behavior, will fail validation.
 
     @httpChecksum()
     operation PutSomething {
-        input: PutSomethingInput,
+        input: PutSomethingInput
         output: PutSomethingOutput
     }
 

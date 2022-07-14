@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restjson.validation
 
@@ -85,8 +85,10 @@ structure RecursiveStructuresInput {
     union: RecursiveUnionOne
 }
 
-@enum([{value: "abc", name: "ABC"}, {value: "def", name: "DEF"}])
-string RecursiveEnumString
+enum RecursiveEnumString {
+    ABC = "abc"
+    DEF = "def"
+}
 
 union RecursiveUnionOne {
     string: RecursiveEnumString,

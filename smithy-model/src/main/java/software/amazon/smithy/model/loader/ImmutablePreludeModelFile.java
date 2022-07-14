@@ -16,7 +16,6 @@
 package software.amazon.smithy.model.loader;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +45,16 @@ final class ImmutablePreludeModelFile implements ModelFile {
     }
 
     @Override
+    public Version getVersion() {
+        return Version.VERSION_2_0;
+    }
+
+    @Override
+    public String getFilename() {
+        return Prelude.class.getResource("prelude.smithy").toString();
+    }
+
+    @Override
     public Set<ShapeId> shapeIds() {
         return prelude.getShapeIds();
     }
@@ -61,7 +70,7 @@ final class ImmutablePreludeModelFile implements ModelFile {
     }
 
     @Override
-    public Collection<Shape> createShapes(TraitContainer resolvedTraits) {
+    public CreatedShapes createShapes(TraitContainer resolvedTraits) {
         // Create error events for each trait applied outside of the prelude.
         Map<ShapeId, Map<ShapeId, Trait>> invalidTraits = resolvedTraits.getTraitsAppliedToPrelude();
 
@@ -80,7 +89,7 @@ final class ImmutablePreludeModelFile implements ModelFile {
             }
         }
 
-        return prelude.toSet();
+        return new CreatedShapes(prelude.toSet());
     }
 
     @Override

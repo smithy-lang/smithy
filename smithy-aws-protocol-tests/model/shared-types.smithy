@@ -5,7 +5,7 @@
 // structures or other test-case specific shapes should be defined closer to
 // the test case and in its same file.
 
-$version: "1.0"
+$version: "2.0"
 
 metadata suppressions = [
     {
@@ -29,7 +29,8 @@ list SparseStringList {
     member: String
 }
 
-set StringSet {
+@uniqueItems
+list StringSet {
     member: String,
 }
 
@@ -58,7 +59,8 @@ list IntegerList {
     member: Integer,
 }
 
-set IntegerSet {
+@uniqueItems
+list IntegerSet {
     member: Integer,
 }
 
@@ -67,42 +69,27 @@ list DoubleList {
 }
 
 list BooleanList {
-    member: PrimitiveBoolean,
+    member: Boolean,
 }
 
 list TimestampList {
     member: Timestamp,
 }
 
-@enum([
-    {
-        name: "FOO",
-        value: "Foo",
-    },
-    {
-        name: "BAZ",
-        value: "Baz",
-    },
-    {
-        name: "BAR",
-        value: "Bar",
-    },
-    {
-        name: "ONE",
-        value: "1",
-    },
-    {
-        name: "ZERO",
-        value: "0",
-    },
-])
-string FooEnum
+enum FooEnum {
+    FOO = "Foo"
+    BAZ = "Baz"
+    BAR = "Bar"
+    ONE = "1"
+    ZERO = "0"
+}
 
 list FooEnumList {
     member: FooEnum,
 }
 
-set FooEnumSet {
+@uniqueItems
+list FooEnumSet {
     member: FooEnum,
 }
 
