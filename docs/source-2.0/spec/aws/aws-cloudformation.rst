@@ -279,7 +279,7 @@ Given the following model without mutability traits applied,
 
     @output
     structure GetFooResponse {
-        fooId: String,
+        fooId: String
         createProperty: ComplexProperty
         mutableProperty: ComplexProperty
         readProperty: ComplexProperty
@@ -643,9 +643,9 @@ The following example defines a CloudFormation resource that has the
 .. smithy-trait:: aws.cloudformation#cfnDefaultValue
 .. _aws.cloudformation#cfnDefaultValue-trait:
 
-----------------------------------------
+--------------------------------------------
 ``aws.cloudformation#cfnDefaultValue`` trait
-----------------------------------------
+--------------------------------------------
 
 Summary
     Indicates that the member annotated has a default value for the resource.
@@ -670,36 +670,36 @@ that the ``fooAlias`` member has a default value for this resource.
     @cfnResource
     resource Foo {
         identifiers: {
-            fooId: String,
-        },
-        read: GetFoo,
+            fooId: String
+        }
+        read: GetFoo
     }
 
     @readonly
     @http(method: "GET", uri: "/foos/{fooId}", code: 200)
     operation GetFoo {
-        input: GetFooRequest,
-        output: GetFooResponse,
+        input: GetFooRequest
+        output: GetFooResponse
     }
 
     @input
     structure GetFooRequest {
         @httpLabel
         @required
-        fooId: String,
+        fooId: String
 
-        fooAlias: String,
+        fooAlias: String
     }
 
     @output
     structure GetFooResponse {
-        fooId: String,
+        fooId: String
 
         @cfnDefaultValue
-        fooAlias: String,
+        fooAlias: String
 
         @httpResponseCode
-        responseCode: Integer,
+        responseCode: Integer
     }
 
 
@@ -791,10 +791,10 @@ Given the following model,
         updatedAt: Timestamp
 
         @cfnDefaultValue
-        fooAlias: String,
-        createProperty: ComplexProperty,
-        mutableProperty: ComplexProperty,
-        readProperty: ComplexProperty,
+        fooAlias: String
+        createProperty: ComplexProperty
+        mutableProperty: ComplexProperty
+        readProperty: ComplexProperty
     }
 
     @idempotent
