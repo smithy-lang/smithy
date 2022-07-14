@@ -641,6 +641,69 @@ The following example defines a CloudFormation resource that has the
     }
 
 
+.. smithy-trait:: aws.cloudformation#cfnDefaultValue
+.. _aws.cloudformation#cfnDefaultValue-trait:
+
+--------------------------------------------
+``aws.cloudformation#cfnDefaultValue`` trait
+--------------------------------------------
+
+Summary
+    Indicates that the member annotated has a default value for the resource.
+Trait selector
+    ``resource > operation -[output]-> structure > member``
+
+    *Only applicable to members of ``@output`` operations*
+Value type
+    Annotation trait
+
+Given the following example, because the ``fooAlias``
+member is annotated with ``cfnDefaultValue``, it can be derived
+that the ``fooAlias`` member has a default value for this resource.
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    use aws.cloudformation#cfnDefaultValue
+    use aws.cloudformation#cfnResource
+
+    @cfnResource
+    resource Foo {
+        identifiers: {
+            fooId: String,
+        },
+        read: GetFoo,
+    }
+
+    @readonly
+    @http(method: "GET", uri: "/foos/{fooId}", code: 200)
+    operation GetFoo {
+        input: GetFooRequest,
+        output: GetFooResponse,
+    }
+
+    @input
+    structure GetFooRequest {
+        @httpLabel
+        @required
+        fooId: String,
+
+        fooAlias: String,
+    }
+
+    @output
+    structure GetFooResponse {
+        fooId: String,
+
+        @cfnDefaultValue
+        fooAlias: String,
+
+        @httpResponseCode
+        responseCode: Integer,
+    }
+
+
 -------------
 Example model
 -------------
@@ -656,6 +719,7 @@ Given the following model,
 
     namespace smithy.example
 
+    use aws.cloudformation#cfnDefaultValue
     use aws.cloudformation#cfnAdditionalIdentifier
     use aws.cloudformation#cfnExcludeProperty
     use aws.cloudformation#cfnMutability
@@ -727,6 +791,7 @@ Given the following model,
         @cfnMutability("read")
         updatedAt: Timestamp,
 
+        @cfnDefaultValue
         fooAlias: String,
         createProperty: ComplexProperty,
         mutableProperty: ComplexProperty,
