@@ -29,10 +29,20 @@ string cfnName
     conflicts: [
         cfnAdditionalIdentifier,
         cfnMutability,
+        cfnDefaultValue
     ],
     breakingChanges: [{change: "add"}]
 )
 structure cfnExcludeProperty {}
+
+/// Indicates that a structure member has a default value
+/// for the property of the CloudFormation resource.
+@unstable
+@trait(
+    selector: "resource > operation -[input, output]-> structure > member",
+    conflicts: [cfnExcludeProperty]
+)
+structure cfnDefaultValue {}
 
 /// Indicates an explicit CloudFormation mutability of the structure member
 /// when part of a CloudFormation resource.
