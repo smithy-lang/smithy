@@ -2,35 +2,26 @@
 SPHINXOPTS    =
 SPHINXBUILD   = python3 -msphinx
 SPHINXPROJ    = Smithy
-SOURCEDIR     = source
-BUILDDIR      = build
-
-help:
-	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
-	@echo "  openhtml    to preview the built index.html"
 
 install:
 	pip3 install -r requirements.txt .
 	pip3 install -e .
 
 clean:
-	-rm -rf $(BUILDDIR)/*
+	-rm -rf build/*
 
-install-server:
-	pip3 install -r requirements-server.txt
+html1:
+	@$(SPHINXBUILD) -M html "source-1.0" "build/1.0" $(SPHINXOPTS) $(O)
 
-serve: clean
-	sphinx-autobuild source build/html
+html2:
+	@$(SPHINXBUILD) -M html "source-2.0" "build/2.0" $(SPHINXOPTS) $(O)
 
-html:
-	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+html: html1 html2 merge-versions
 
-openhtml:
-	open "$(BUILDDIR)/html/index.html"
+merge-versions:
+	mkdir -p build/html
+	cp -R "build/1.0/html" "build/html/1.0"
+	cp -R "build/2.0/html" "build/html/2.0"
+	cp -R "root-redirects/" "build/html"
 
-# Catch-all target: route all unknown targets to Sphinx using the new
-# "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
-%: Makefile
-	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
-
-.PHONY: help Makefile clean openhtml
+.PHONY: Makefile clean
