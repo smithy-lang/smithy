@@ -1114,3 +1114,18 @@ dt:target, .highlighted {
     display: none !important
   }
 }
+
+#announcement {
+  background: rgb(0,0,0);
+  background: linear-gradient(171deg, rgba(0,0,0,1) 0%, rgba(96,42,0,1) 39%, rgba(145,4,0,1) 82%);
+  padding: 1em;
+  color: #fff;
+  font-size: 1.5rem;
+  text-align: center;
+  border: 4px 0 solid #007682;
+}
+
+#announcement a {
+  text-decoration: underline;
+  color: #fff;
+}
