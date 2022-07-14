@@ -123,8 +123,7 @@
             "name": "query",
             "in": "query",
             "schema": {
-              "type": "number",
-              "format": "int32"
+              "type": "number"
             }
           },
           {
@@ -197,8 +196,7 @@
             "maxLength": 100
           },
           "def": {
-            "type": "number",
-            "format": "int32"
+            "type": "number"
           },
           "hij": {
             "$ref": "#/components/schemas/Map"

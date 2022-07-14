@@ -163,8 +163,11 @@ public class OpenApiJsonSchemaMapperTest {
     public void supportsInt32() {
         IntegerShape shape = IntegerShape.builder().id("a.b#C").build();
         Model model = Model.builder().addShape(shape).build();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setUseIntegerType(true);
         SchemaDocument document = JsonSchemaConverter.builder()
                 .addMapper(new OpenApiJsonSchemaMapper())
+                .config(config)
                 .model(model)
                 .build()
                 .convertShape(shape);
@@ -176,8 +179,11 @@ public class OpenApiJsonSchemaMapperTest {
     public void supportsInt64() {
         LongShape shape = LongShape.builder().id("a.b#C").build();
         Model model = Model.builder().addShape(shape).build();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setUseIntegerType(true);
         SchemaDocument document = JsonSchemaConverter.builder()
                 .addMapper(new OpenApiJsonSchemaMapper())
+                .config(config)
                 .model(model)
                 .build()
                 .convertShape(shape);
