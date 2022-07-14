@@ -650,9 +650,9 @@ The following example defines a CloudFormation resource that has the
 Summary
     Indicates that the member annotated has a default value for the resource.
 Trait selector
-    ``structure > member``
+    ``resource > operation -[output]-> structure > member``
 
-    *Any structure member*
+    *Only applicable to members of ``@output`` operations*
 Value type
     Annotation trait
 
@@ -688,7 +688,6 @@ that the ``fooAlias`` member has a default value for this resource.
         @required
         fooId: String,
 
-        @cfnDefaultValue
         fooAlias: String,
     }
 
@@ -696,6 +695,7 @@ that the ``fooAlias`` member has a default value for this resource.
     structure GetFooResponse {
         fooId: String,
 
+        @cfnDefaultValue
         fooAlias: String,
 
         @httpResponseCode
@@ -776,7 +776,6 @@ Given the following model,
 
         @httpQuery("fooAlias")
         @cfnAdditionalIdentifier
-        @cfnDefaultValue
         fooAlias: String,
     }
 
@@ -791,6 +790,7 @@ Given the following model,
         @cfnMutability("read")
         updatedAt: Timestamp,
 
+        @cfnDefaultValue
         fooAlias: String,
         createProperty: ComplexProperty,
         mutableProperty: ComplexProperty,
