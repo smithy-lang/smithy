@@ -46,6 +46,9 @@
     {%- block relbar1 %}{% endblock %}
 
     {% block content %}
+        {% if theme_announcement is defined and theme_announcement != '' %}
+        <div id="announcement">{{ theme_announcement }}</div>
+        {% endif %}
         {% if pagename == "index" %}
         {%- include 'landing.html' with context %}
         {% endif %}
