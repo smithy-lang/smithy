@@ -1,6 +1,8 @@
+# Include the shared conf.py file.
 shared_config = "../conf.py"
-exec(compile(source=open(shared_config).read(), filename=shared_config, mode='exec'))
+with open(shared_config) as file:
+    exec(file.read())
 
-# Place any version specific overrides here.
+# Place version specific overrides after here.
 release = u'2.0'
 version = release
