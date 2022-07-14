@@ -43,7 +43,7 @@ public final class ChangedMemberOrder extends AbstractDiffEvaluator {
                 .filter(diff -> isUnordered(diff.getOldShape().members(), diff.getNewShape().members()))
                 .map(diff -> danger(diff.getNewShape(), String.format(
                         "%s shape members were reordered. This can cause ABI compatibility issues in languages "
-                        + "like C, C++, and Rust where the layout and alignment of a data structure matters.",
+                        + "like C and C++ where the layout and alignment of a data structure matters.",
                         diff.getOldShape().getType())))
                 .collect(Collectors.toList());
     }
