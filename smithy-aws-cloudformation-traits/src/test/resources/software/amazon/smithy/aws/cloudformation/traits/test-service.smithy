@@ -52,11 +52,11 @@ operation GetFooOperation {
 
 structure GetFooRequest {
     @required
-    @cfnDefaultValue
     fooId: FooId,
 }
 
 structure GetFooResponse {
+    @cfnDefaultValue
     fooId: FooId,
 
     fooValidReadProperty: String,
