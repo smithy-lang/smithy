@@ -143,7 +143,7 @@ The Smithy Gradle plugin relies on a ``smithy-build.json`` file found at the
 root of a project to define the actual process of building the OpenAPI
 specification. The following example defines a ``smithy-build.json`` file
 that builds an OpenAPI specification from a service for the
-``smithy.example#Weather`` service using the ``aws.protocols#restJson1`` protocol:
+``example.weather#Weather`` service using the ``aws.protocols#restJson1`` protocol:
 
 .. code-block:: json
     :caption: smithy-build.json
@@ -153,7 +153,7 @@ that builds an OpenAPI specification from a service for the
         "version": "1.0",
         "plugins": {
             "openapi": {
-                "service": "smithy.example#Weather",
+                "service": "example.weather#Weather",
                 "protocol": "aws.protocols#restJson1"
             }
         }
@@ -184,7 +184,7 @@ The following key-value pairs are supported:
 
 service (``string``)
     **Required**. The Smithy service :ref:`shape ID <shape-id>` to convert.
-    For example, ``smithy.example#Weather``.
+    For example, ``example.weather#Weather``.
 
     .. code-block:: json
 
@@ -192,7 +192,7 @@ service (``string``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather"
+                    "service": "example.weather#Weather"
                 }
             }
         }
@@ -222,7 +222,7 @@ protocol (``string``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "protocol": "aws.protocols#restJson1"
                 }
             }
@@ -241,7 +241,7 @@ tags (``boolean``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "tags": true
                 }
             }
@@ -260,7 +260,7 @@ supportedTags (``[string]``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "tags": true,
                     "supportedTags": ["foo", "baz", "bar"]
                 }
@@ -280,7 +280,7 @@ defaultBlobFormat (``string``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "defaultBlobFormat": "byte"
                 }
             }
@@ -301,7 +301,7 @@ externalDocs (``[string]``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "externalDocs": [
                         "Homepage",
                         "Custom"
@@ -322,7 +322,7 @@ keepUnusedComponents (``boolean``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "keepUnusedComponents": true
                 }
             }
@@ -340,7 +340,7 @@ jsonContentType (``string``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "jsonContentType": "application/x-amz-json-1.1"
                 }
             }
@@ -359,7 +359,7 @@ forbidGreedyLabels (``boolean``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "forbidGreedyLabels": true
                 }
             }
@@ -379,7 +379,7 @@ removeGreedyParameterSuffix (``boolean``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "removeGreedyParameterSuffix": true
                 }
             }
@@ -403,7 +403,7 @@ onHttpPrefixHeaders (``string``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "onHttpPrefixHeaders": "WARN"
                 }
             }
@@ -421,7 +421,7 @@ ignoreUnsupportedTraits (``boolean``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "ignoreUnsupportedTraits": true
                 }
             }
@@ -455,7 +455,7 @@ substitutions (``Map<String, any>``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "substitutions": {
                         "REPLACE_ME": ["this is a", " replacement"],
                         "ANOTHER_REPLACEMENT": "Hello!!!"
@@ -484,7 +484,7 @@ jsonAdd (``Map<String, Node>``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "jsonAdd": {
                         "/info/title": "Replaced title value",
                         "/info/nested/foo": {
@@ -512,7 +512,7 @@ useIntegerType (``boolean``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "useIntegerType": true
                 }
             }
@@ -550,7 +550,7 @@ useJsonName (``boolean``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "useJsonName": true
                 }
             }
@@ -570,7 +570,7 @@ defaultTimestampFormat (``string``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "defaultTimestampFormat": "epoch-seconds"
                 }
             }
@@ -595,7 +595,7 @@ unionStrategy (``string``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "unionStrategy": "oneOf"
                 }
             }
@@ -622,7 +622,7 @@ mapStrategy (``string``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "mapStrategy": "propertyNames"
                 }
             }
@@ -640,7 +640,7 @@ schemaDocumentExtensions (``Map<String, any>``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "schemaDocumentExtensions": {
                         "x-my-custom-top-level-property": "Hello!",
                         "x-another-custom-top-level-property": {
@@ -663,7 +663,7 @@ disableFeatures (``[string]``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "disableFeatures": ["propertyNames"]
                 }
             }
@@ -686,7 +686,7 @@ supportNonNumericFloats (``boolean``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "supportNonNumericFloats": true
                 }
             }
@@ -752,7 +752,7 @@ For example, given the following Smithy model:
 
 .. code-block:: smithy
 
-    namespace smithy.example
+    namespace example.weather
 
     use aws.protocols#restJson1
 
@@ -849,7 +849,7 @@ apiGatewayType (``string``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "apiGatewayType": "REST"
                 }
             }
@@ -865,7 +865,7 @@ disableCloudFormationSubstitution (``boolean``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "disableCloudFormationSubstitution": true
                 }
             }
@@ -886,7 +886,7 @@ additionalAllowedCorsHeaders (``[string]``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "additionalAllowedCorsHeaders": ["foo-header", "bar-header"]
                 }
             }
@@ -1009,7 +1009,7 @@ The following Smithy model:
 
 .. code-block:: smithy
 
-    namespace smithy.example
+    namespace example.weather
 
     use aws.apigateway#authorizer
     use aws.apigateway#authorizers
@@ -1257,7 +1257,7 @@ The following Smithy model enables API Gateway's API key usage plans on the
 
 .. code-block:: smithy
 
-    namespace smithy.example
+    namespace example.weather
 
     use aws.apigateway#authorizer
     use aws.apigateway#authorizers
@@ -1326,7 +1326,7 @@ Next, you need to create and configure an ``OpenApiConverter``:
 
     // Add any necessary configuration settings.
     OpenApiConfig config = new OpenApiConfig();
-    config.setService(ShapeId.from("smithy.example#Weather"));
+    config.setService(ShapeId.from("example.weather#Weather"));
     converter.config(config);
 
     // Generate the OpenAPI schema.
