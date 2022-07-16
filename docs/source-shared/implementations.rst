@@ -1,6 +1,6 @@
-===================================
-Smithy projects and implementations
-===================================
+===============
+Implementations
+===============
 
 This document provides an overview of known Smithy implementations and
 projects.
@@ -26,7 +26,7 @@ Smithy meta model
       - Language
       - Status
       - Description
-    * - :ref:`specification`
+    * - :doc:`spec/index`
       - N/A
       - 2.0
       - The Smithy specification defines Smithy and its capabilities.
@@ -226,8 +226,8 @@ AWS specific
       - Generator Language
       - Status
       - Description
-    * - :ref:`aws-specifications`
-      - Java
+    * - :doc:`aws/index`
+      - N/A
       - 1.x
       - Smithy supports various AWS plugins, traits, and specifications,
         though these are generally only useful to developers within Amazon
@@ -250,3 +250,8 @@ AWS specific
       - Java
       - 1.x
       - Converts Smithy models to CloudFormation Resource Schemas.
+
+.. toctree::
+    :hidden:
+
+    ts-ssdk/index

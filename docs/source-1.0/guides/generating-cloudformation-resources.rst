@@ -7,11 +7,6 @@ Generating CloudFormation Resource Schemas from Smithy
 This guide describes how Smithy models can generate `CloudFormation Resource
 Schemas`_.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
 ------------
 Introduction
 ------------

@@ -8,12 +8,6 @@ Smithy models are defined using either the Smithy interface definition language
 (IDL) or the :ref:`JSON abstract syntax tree <json-ast>` (AST). This document
 defines the ABNF_ grammar and syntax for defining models with the Smithy IDL.
 
-.. contents:: Table of contents
-    :depth: 1
-    :local:
-    :backlinks: none
-
-
 -------------------
 Smithy IDL overview
 -------------------
@@ -160,7 +154,8 @@ The Smithy IDL is defined by the following ABNF:
                         :/ %x5D-10FFFF    ; "]"+
                         :/ `escaped_char`
                         :/ `preserved_double`
-    escaped_char        :`escape` (`escape` / "'" / DQUOTE / "b" / "f" / "n" / "r" / "t" / "/" / `unicode_escape`)
+    escaped_char        :`escape` (`escape` / "'" / DQUOTE / "b"
+                        :            / "f" / "n" / "r" / "t" / "/" / `unicode_escape`)
     unicode_escape      :"u" `hex` `hex` `hex` `hex`
     hex                 : DIGIT / %x41-46 / %x61-66
     preserved_double    :`escape` (%x20-21 / %x23-5B / %x5D-10FFFF)

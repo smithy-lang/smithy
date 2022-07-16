@@ -6,12 +6,6 @@ AWS Authentication Traits
 
 This document defines AWS authentication schemes.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
-
 .. smithy-trait:: aws.auth#sigv4
 .. _aws.auth#sigv4-trait:
 

@@ -18,11 +18,6 @@ in the translation, and provides a more complete depiction of a resource in its
 schema. These schemas can be utilized by the `CloudFormation Command Line
 Interface`_ to build, register, and deploy `resource providers`_.
 
-.. contents:: Table of contents
-    :depth: 3
-    :local:
-    :backlinks: none
-
 
 .. smithy-trait:: aws.cloudformation#cfnResource
 .. _aws.cloudformation#cfnResource-trait:

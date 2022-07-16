@@ -4,11 +4,6 @@ Model linters
 
 This guide describes how to apply optional linters to a Smithy model.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
 
 ----------------
 Linting overview
@@ -22,14 +17,12 @@ can be used to apply additional validation to Smithy models.
 The following example adds ``smithy-linters`` as a Gradle dependency
 to a ``build.gradle.kts`` file:
 
-.. tabs::
+.. code-block:: kotlin
 
-    .. code-tab:: kotlin
-
-        dependencies {
-            implementation("software.amazon.smithy:smithy-model:__smithy_version__")
-            implementation("software.amazon.smithy:smithy-linters:__smithy_version__")
-        }
+    dependencies {
+        implementation("software.amazon.smithy:smithy-model:__smithy_version__")
+        implementation("software.amazon.smithy:smithy-linters:__smithy_version__")
+    }
 
 After the dependency is added and available on the Java classpath, validators
 defined in the package and registered using `Java SPI`_ are available for
@@ -79,7 +72,7 @@ Example:
 
 .. code-block:: smithy
 
-    $version: "1.0"
+    $version: "2"
 
     metadata validators = [
         {name: "AbbreviationName"}
@@ -121,7 +114,7 @@ Example:
 
 .. code-block:: smithy
 
-    $version: "1.0"
+    $version: "2"
 
     metadata validators = [
         {name: "CamelCase"}
@@ -181,7 +174,7 @@ Example:
 
 .. code-block:: smithy
 
-    $version: "1.0"
+    $version: "2"
 
     metadata validators = [{
         name: "NoninclusiveTerms"
@@ -250,7 +243,7 @@ Example:
 
 .. code-block:: smithy
 
-    $version: "1.0"
+    $version: "2"
 
     metadata validators = [{
         id: "FooReservedWords"
@@ -405,7 +398,7 @@ Example:
 
 .. code-block:: smithy
 
-    $version: "1.0"
+    $version: "2"
 
     metadata validators = [{
         name: "StandardOperationVerb"
@@ -643,6 +636,8 @@ union are marked with the ``@clientOptional`` trait.
 
 .. code-block:: smithy
 
+    $version: "2"
+
     metadata validators = [
         {
             name: "MissingClientOptionalTrait",
@@ -830,7 +825,7 @@ example warns each time the word "meow" appears in documentation:
 
 .. code-block:: smithy
 
-    $version: "1.0"
+    $version: "2"
 
     metadata validators = [
         {
@@ -849,7 +844,7 @@ example warns each time the word "meow" appears in documentation:
 
     .. code-block:: smithy
 
-        $version: "1.0"
+        $version: "2"
 
         metadata validators = [
             {

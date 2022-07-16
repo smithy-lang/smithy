@@ -7,12 +7,6 @@ Converting Smithy to OpenAPI
 This guide describes how Smithy models can be converted to `OpenAPI`_
 specifications.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
-
 ------------
 Introduction
 ------------

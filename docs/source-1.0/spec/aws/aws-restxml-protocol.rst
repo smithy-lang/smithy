@@ -6,11 +6,6 @@ AWS restXml protocol
 
 This specification defines the ``aws.protocols#restXml`` protocol.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
 
 .. smithy-trait:: aws.protocols#restXml
 .. _aws.protocols#restXml-trait:

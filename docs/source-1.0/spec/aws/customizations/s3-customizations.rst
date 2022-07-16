@@ -2,11 +2,6 @@
 Amazon S3 Customizations
 ========================
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
 S3 Bucket Addressing
 ====================
 

@@ -7,12 +7,6 @@ Converting Smithy to OpenAPI
 This guide describes how Smithy models can be converted to `OpenAPI`_
 specifications.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
-
 ------------
 Introduction
 ------------
@@ -150,7 +144,7 @@ that builds an OpenAPI specification from a service for the
     :name: open-api-smithy-build-json
 
     {
-        "version": "1.0",
+        "version": "2.0",
         "plugins": {
             "openapi": {
                 "service": "smithy.example#Weather",
@@ -189,7 +183,7 @@ service (``string``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather"
@@ -219,7 +213,7 @@ protocol (``string``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -238,7 +232,7 @@ tags (``boolean``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -257,7 +251,7 @@ supportedTags (``[string]``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -277,7 +271,7 @@ defaultBlobFormat (``string``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -298,7 +292,7 @@ externalDocs (``[string]``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -319,7 +313,7 @@ keepUnusedComponents (``boolean``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -337,7 +331,7 @@ jsonContentType (``string``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -356,7 +350,7 @@ forbidGreedyLabels (``boolean``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -376,7 +370,7 @@ removeGreedyParameterSuffix (``boolean``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -400,7 +394,7 @@ onHttpPrefixHeaders (``string``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -418,7 +412,7 @@ ignoreUnsupportedTraits (``boolean``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -452,7 +446,7 @@ substitutions (``Map<String, any>``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -481,7 +475,7 @@ jsonAdd (``Map<String, Node>``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -509,7 +503,7 @@ useIntegerType (``boolean``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -547,7 +541,7 @@ useJsonName (``boolean``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -567,7 +561,7 @@ defaultTimestampFormat (``string``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -592,7 +586,7 @@ unionStrategy (``string``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -619,7 +613,7 @@ mapStrategy (``string``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -637,7 +631,7 @@ schemaDocumentExtensions (``Map<String, any>``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -660,7 +654,7 @@ disableFeatures (``[string]``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -683,7 +677,7 @@ supportNonNumericFloats (``boolean``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -751,6 +745,8 @@ Smithy provides built-in support for the following authentication traits:
 For example, given the following Smithy model:
 
 .. code-block:: smithy
+
+    $version: "2"
 
     namespace smithy.example
 
@@ -846,7 +842,7 @@ apiGatewayType (``string``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -862,7 +858,7 @@ disableCloudFormationSubstitution (``boolean``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -883,7 +879,7 @@ additionalAllowedCorsHeaders (``[string]``)
     .. code-block:: json
 
         {
-            "version": "1.0",
+            "version": "2.0",
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
@@ -1008,6 +1004,8 @@ or operations using the ``aws.apigateway#authorizer-trait``.
 The following Smithy model:
 
 .. code-block:: smithy
+
+    $version: "2"
 
     namespace smithy.example
 
@@ -1257,6 +1255,8 @@ The following Smithy model enables API Gateway's API key usage plans on the
 ``OperationA`` operation:
 
 .. code-block:: smithy
+
+    $version: "2"
 
     namespace smithy.example
 
