@@ -6,11 +6,6 @@ AWS JSON 1.0 protocol
 
 This specification defines the ``aws.protocols#awsJson1_0`` protocol.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
 
 .. smithy-trait:: aws.protocols#awsJson1_0
 .. _aws.protocols#awsJson1_0-trait:

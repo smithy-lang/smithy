@@ -4,12 +4,6 @@ Resource traits
 
 Resource traits augment resources and resource operation semantics.
 
-.. contents:: Table of contents
-    :depth: 1
-    :local:
-    :backlinks: none
-
-
 .. smithy-trait:: smithy.api#noReplace
 .. _noReplace-trait:
 

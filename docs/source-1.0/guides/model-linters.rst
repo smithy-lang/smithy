@@ -4,12 +4,6 @@ Model linters
 
 This guide describes how to apply optional linters to a Smithy model.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
-
 ----------------
 Linting overview
 ----------------

@@ -316,9 +316,10 @@ an appropriate default value for the member:
 * map: an empty map
 * enum, intEnum, union: The unknown variant. These types SHOULD define an
   unknown variant to account for receiving unknown members.
+* union: The unknown variant. Client code generators for unions SHOULD
+  define an unknown variant to account for newly added members.
 * structure: an empty structure, if possible, otherwise a deserialization
   error.
-* union: a deserialization error.
 
 
 ### Default value serialization

@@ -9,11 +9,6 @@ shapes within a model. Selectors are used to build custom
 :ref:`validators <EmitEachSelector>` and to specify where it is valid to
 apply a :ref:`trait <defining-traits>`.
 
-.. contents:: Table of contents
-    :depth: 1
-    :local:
-    :backlinks: none
-
 
 Introduction
 ============

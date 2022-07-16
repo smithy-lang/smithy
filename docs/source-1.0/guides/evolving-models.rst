@@ -5,11 +5,6 @@ Evolving Models
 This guide describes how to evolve Smithy models without breaking your
 customers.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
 
 Updating services
 =================

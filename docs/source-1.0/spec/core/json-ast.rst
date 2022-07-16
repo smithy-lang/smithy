@@ -16,12 +16,6 @@ parser.
   over the Smithy IDL is that relative and forward references never need to
   be resolved.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
-
 --------------------
 Top level properties
 --------------------
