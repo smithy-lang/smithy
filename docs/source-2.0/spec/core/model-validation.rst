@@ -8,12 +8,6 @@ Smithy provides a customizable validation system that can be used by
 API designers and organizations to ensure that their APIs adhere to their
 own standards and best practices.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
-
 ------------
 Introduction
 ------------
@@ -101,7 +95,7 @@ The following Smithy document applies a custom validator named "SomeValidator":
 
 .. code-block:: smithy
 
-    $version: "1.0"
+    $version: "2.0"
 
     metadata validators = [
         {
@@ -200,16 +194,14 @@ Value type
 The following example suppresses the ``Foo`` and ``Bar`` validation events
 for the ``smithy.example#MyString`` shape:
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    $version: "2.0"
 
-        $version: "1.0"
+    namespace smithy.example
 
-        namespace smithy.example
-
-        @suppress(["Foo", "Bar"])
-        string MyString
+    @suppress(["Foo", "Bar"])
+    string MyString
 
 
 .. _suppressions-metadata:
@@ -249,7 +241,7 @@ in the ``foo.baz`` namespace with an ID of ``UnreferencedShape``:
 
 .. code-block:: smithy
 
-    $version: "1.0"
+    $version: "2.0"
 
     metadata suppressions = [
         {
@@ -264,7 +256,7 @@ ID of ``OverlyBroadValidator``:
 
 .. code-block:: smithy
 
-    $version: "1.0"
+    $version: "2.0"
 
     metadata suppressions = [
         {
@@ -332,7 +324,7 @@ following constraints:
 
 .. code-block:: smithy
 
-    $version: "1.0"
+    $version: "2.0"
 
     metadata validators = [{
         name: "EmitEachSelector"
@@ -353,7 +345,7 @@ input/output that has a shape name that does not case-insensitively end with
 
 .. code-block:: smithy
 
-    $version: "1.0"
+    $version: "2.0"
 
     metadata validators = [
         {
@@ -380,7 +372,7 @@ as lifecycle 'read' or 'delete' that has a shape name that does not start with
 
 .. code-block:: smithy
 
-    $version: "1.0"
+    $version: "2.0"
 
     metadata validators = [
         {
@@ -562,6 +554,7 @@ templates.
         ``foo`` is not a valid selector attribute, the message expands to:
 
         .. code-block:: none
+            :class: no-copybutton
 
             Hello, .
     * - :ref:`id <id-attribute>`
@@ -581,6 +574,7 @@ templates.
         a :ref:`tags-trait` that contains "a" and "b" would expand to:
 
         .. code-block:: none
+            :class: no-copybutton
 
             ["a","b"]
     * - :ref:`projection <projection-attribute>`
@@ -593,6 +587,7 @@ templates.
         to:
 
         .. code-block:: none
+            :class: no-copybutton
 
             [smithy.example#A, smithy.example#B]
     * - :ref:`service <service-attribute>`
@@ -638,7 +633,7 @@ traits.
 
 .. code-block:: smithy
 
-    $version: "1.0"
+    $version: "2.0"
 
     metadata validators = [{
         name: "EmitNoneSelector"

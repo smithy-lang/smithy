@@ -7,11 +7,6 @@ Generating CloudFormation Resource Schemas from Smithy
 This guide describes how Smithy models can generate `CloudFormation Resource
 Schemas`_.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
 ------------
 Introduction
 ------------
@@ -111,6 +106,8 @@ generate one Resource Schema with the ``typeName`` of ``AWS:Queues:Queue``.
 
 .. code-block:: smithy
     :caption: model.smithy
+
+    $version: "2.0"
 
     namespace smithy.example
 

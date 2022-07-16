@@ -5,12 +5,6 @@ Protocol traits
 Serialization and protocol traits define how data is transferred over
 the wire.
 
-.. contents:: Table of contents
-    :depth: 1
-    :local:
-    :backlinks: none
-
-
 .. smithy-trait:: smithy.api#protocolDefinition
 .. _protocolDefinition-trait:
 

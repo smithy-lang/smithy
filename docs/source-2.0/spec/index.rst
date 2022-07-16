@@ -6,41 +6,23 @@ Specifications
 
 Smithy is split into several specifications.
 
-
-.. _smithy-specification:
-
---------------------
-Smithy specification
---------------------
-
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
+    :caption: Smithy Core Specification
 
     core/index
 
-
-.. _additional-specifications:
-
--------------------------
-Additional specifications
--------------------------
-
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
+    :caption: Additional Specifications
 
-    http-protocol-compliance-tests
-    waiters
-    mqtt
-
+    additional/index
 
 .. _aws-specifications:
 
-------------------
-AWS specifications
-------------------
-
 .. toctree::
     :maxdepth: 2
+    :caption: AWS Specifications
 
     aws/index
 

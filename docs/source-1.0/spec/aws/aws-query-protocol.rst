@@ -6,11 +6,6 @@ AWS query protocol
 
 This document defines the ``aws.protocols#awsQuery`` protocol.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
 
 --------
 Overview

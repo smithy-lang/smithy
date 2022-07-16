@@ -16,11 +16,6 @@ parser.
   over the Smithy IDL is that relative and forward references never need to
   be resolved.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
 
 .. _ast-top-level-properties:
 
@@ -64,7 +59,7 @@ a ``type`` property to define the shape type or ``apply``.
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "smithy": "2.0",
         "shapes": {
             "smithy.example#MyString": {
                 "type": "string"
@@ -94,7 +89,7 @@ The following example defines a string shape with a documentation trait.
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "smithy": "2.0",
         "shapes": {
             "smithy.example#MyString": {
                 "type": "string",
@@ -116,7 +111,7 @@ example defines a shape for each simple type:
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "smithy": "2.0",
         "shapes": {
             "smithy.example#Blob": {
                 "type": "blob"
@@ -173,7 +168,7 @@ The following example defines a list with a string member:
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "smithy": "2.0",
         "shapes": {
             "smithy.example#MyList": {
                 "type": "list",
@@ -212,7 +207,7 @@ The following example defines a list shape and its member.
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "smithy": "2.0",
         "shapes": {
             "smithy.example#MyList": {
                 "type": "list",
@@ -248,7 +243,7 @@ list of a service shape.
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "smithy": "2.0",
         "shapes": {
             "smithy.example#Service": {
                 "type": "service",
@@ -278,7 +273,7 @@ The following example defines a map of strings to numbers:
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "smithy": "2.0",
         "shapes": {
             "smithy.example#IntegerMap": {
                 "type": "map",
@@ -445,7 +440,7 @@ shapes defined in JSON support the same properties as the Smithy IDL.
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "smithy": "2.0",
         "shapes": {
             "smithy.example#MyService": {
                 "type": "service",
@@ -541,7 +536,7 @@ shapes defined in JSON support the same properties as the Smithy IDL.
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "smithy": "2.0",
         "shapes": {
             "smithy.example#Thing": {
                 "type": "resource",
@@ -626,7 +621,7 @@ The following example defines an operation, its input, output, and errors:
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "smithy": "2.0",
         "shapes": {
             "smithy.example#MyOperation": {
                 "type": "operation",
@@ -725,7 +720,7 @@ applied. The ``apply`` type allows only the ``traits`` property.
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "smithy": "2.0",
         "shapes": {
             "smithy.example#Struct": {
                 "type": "structure",

@@ -17,12 +17,6 @@ policies for resources in a service. Condition keys for services defined in
 Smithy are automatically inferred. These can be disabled or augmented. For
 more information, see :ref:`deriving-condition-keys`.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
-
 .. smithy-trait:: aws.iam#actionPermissionDescription
 .. _aws.iam#actionPermissionDescription-trait:
 
@@ -38,31 +32,16 @@ Trait selector
 Value type
     ``string``
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    $version: "2.0"
 
-        namespace smithy.example
+    namespace smithy.example
 
-        use aws.iam#actionPermissionDescription
+    use aws.iam#actionPermissionDescription
 
-        @actionPermissionDescription("This will allow the user to Foo.")
-        operation FooOperation {}
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#FooOperation": {
-                    "type": "operation",
-                    "traits": {
-                        "aws.iam#actionPermissionDescription": "This will allow the user to Foo."
-                    }
-                }
-            }
-        }
-
+    @actionPermissionDescription("This will allow the user to Foo.")
+    operation FooOperation {}
 
 .. smithy-trait:: aws.iam#conditionKeys
 .. _aws.iam#conditionKeys-trait:
@@ -86,85 +65,31 @@ The following example's ``MyResource`` resource has the
 ``myservice:MyResourceFoo`` and  ``otherservice:Bar`` condition keys. The
 ``MyOperation`` operation has the ``aws:region`` condition key.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    $version: "2.0"
 
-        namespace smithy.example
+    namespace smithy.example
 
-        use aws.api#service
-        use aws.iam#definedContextKeys
-        use aws.iam#conditionKeys
+    use aws.api#service
+    use aws.iam#definedContextKeys
+    use aws.iam#conditionKeys
 
-        @service(sdkId: "My Value", arnNamespace: "myservice")
-        @defineConditionKeys("otherservice:Bar": { type: "String" })
-        service MyService {
-            version: "2017-02-11"
-            resources: [MyResource]
-        }
+    @service(sdkId: "My Value", arnNamespace: "myservice")
+    @defineConditionKeys("otherservice:Bar": { type: "String" })
+    service MyService {
+        version: "2017-02-11"
+        resources: [MyResource]
+    }
 
-        @conditionKeys(["otherservice:Bar"])
-        resource MyResource {
-            identifiers: {foo: String}
-            operations: [MyOperation]
-        }
+    @conditionKeys(["otherservice:Bar"])
+    resource MyResource {
+        identifiers: {foo: String}
+        operations: [MyOperation]
+    }
 
-        @conditionKeys(["aws:region"])
-        operation MyOperation {}
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyService": {
-                    "type": "service",
-                    "version": "2017-02-11",
-                    "resources": [
-                        {
-                            "target": "smithy.example#MyResource"
-                        }
-                    ],
-                    "traits": {
-                        "aws.api#service": {
-                            "sdkId": "My Value",
-                            "arnNamespace": "myservice"
-                        },
-                        "aws.iam#defineConditionKeys": {
-                            "otherservice:Bar": {
-                                "type": "String"
-                            }
-                        }
-                    }
-                },
-                "smithy.example#MyResource": {
-                    "type": "resource",
-                    "identifiers": {
-                        "foo": {
-                            "target": "smithy.api#String"
-                        }
-                    },
-                    "operations": [
-                        {
-                            "target": "smithy.example#MyOperation"
-                        }
-                    ],
-                    "traits": {
-                        "aws.iam#conditionKeys": [
-                            "otherservice:Bar"
-                        ]
-                    }
-                },
-                "smithy.example#MyOperation": {
-                    "type": "operation",
-                    "traits": {
-                        "aws.iam#conditionKeys": [
-                            "aws:region"
-                        ]
-                    }
-                }
-            }
-        }
+    @conditionKeys(["aws:region"])
+    operation MyOperation {}
 
 .. note::
 
@@ -215,56 +140,26 @@ Each condition key structure supports the following members:
       - ``string``
       - A valid URL that defines more information about the condition key.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    $version: "2.0"
 
-        namespace smithy.example
+    namespace smithy.example
 
-        use aws.api#service
-        use aws.iam#defineConditionKeys
+    use aws.api#service
+    use aws.iam#defineConditionKeys
 
-        @service(sdkId: "My Value", arnNamespace: "myservice")
-        @defineConditionKeys(
-            "otherservice:Bar": {
-                type: "String"
-                documentation: "The Bar string"
-                externalDocumentation: "http://example.com"
-            })
-        service MyService {
-            version: "2017-02-11"
-            resources: [MyResource]
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyService": {
-                    "type": "service",
-                    "version": "2017-02-11",
-                    "resources": [
-                        {
-                            "target": "smithy.example#MyResource"
-                        }
-                    ],
-                    "traits": {
-                        "aws.api#service": {
-                            "sdkId": "My Value",
-                            "arnNamespace": "myservice"
-                        },
-                        "aws.iam#defineConditionKeys": {
-                            "otherservice:Bar": {
-                                "type": "String",
-                                "documentation": "The Bar string",
-                                "externalDocumentation": "http://example.com"
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    @service(sdkId: "My Value", arnNamespace: "myservice")
+    @defineConditionKeys(
+        "otherservice:Bar": {
+            type: "String"
+            documentation: "The Bar string"
+            externalDocumentation: "http://example.com"
+        })
+    service MyService {
+        version: "2017-02-11"
+        resources: [MyResource]
+    }
 
 .. note::
 
@@ -337,66 +232,28 @@ the identifiers of its ancestors (if present.)
 The following example shows a resource, ``MyResource``, that has had its
 condition key inference disabled.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    $version: "2.0"
 
-        namespace smithy.example
+    namespace smithy.example
 
-        use aws.api#service
-        use aws.iam#disableConditionKeyInference
+    use aws.api#service
+    use aws.iam#disableConditionKeyInference
 
-        @service(sdkId: "My Value", arnNamespace: "myservice")
-        service MyService {
-            version: "2017-02-11"
-            resources: [MyResource]
+    @service(sdkId: "My Value", arnNamespace: "myservice")
+    service MyService {
+        version: "2017-02-11"
+        resources: [MyResource]
+    }
+
+    @disableConditionKeyInference
+    resource MyResource {
+        identifiers: {
+            foo: String
+            bar: String
         }
-
-        @disableConditionKeyInference
-        resource MyResource {
-            identifiers: {
-                foo: String
-                bar: String
-            }
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyService": {
-                    "type": "service",
-                    "version": "2017-02-11",
-                    "resources": [
-                        {
-                            "target": "smithy.example#MyResource"
-                        }
-                    ],
-                    "traits": {
-                        "aws.api#service": {
-                            "sdkId": "My Value",
-                            "arnNamespace": "myservice"
-                        }
-                    }
-                },
-                "smithy.example#MyResource": {
-                    "type": "resource",
-                    "identifiers": {
-                        "foo": {
-                            "target": "smithy.api#String"
-                        },
-                        "bar": {
-                            "target": "smithy.api#String"
-                        }
-                    },
-                    "traits": {
-                        "aws.iam#disableConditionKeyInference": {}
-                    }
-                }
-            }
-        }
-
+    }
 
 .. smithy-trait:: aws.iam#requiredActions
 .. _aws.iam#requiredActions-trait:
@@ -420,73 +277,28 @@ indicates that, in order to invoke the ``MyOperation`` operation, the invoker
 must also be authorized to execute the ``otherservice:OtherOperation``
 operation for it to complete successfully.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    $version: "2.0"
 
-        namespace smithy.example
+    namespace smithy.example
 
-        use aws.api#service
-        use aws.iam#requiredActions
+    use aws.api#service
+    use aws.iam#requiredActions
 
-        @service(sdkId: "My Value", arnNamespace: "myservice")
-        service MyService {
-            version: "2017-02-11"
-            resources: [MyResource]
-        }
+    @service(sdkId: "My Value", arnNamespace: "myservice")
+    service MyService {
+        version: "2017-02-11"
+        resources: [MyResource]
+    }
 
-        resource MyResource {
-            identifiers: {foo: String}
-            operations: [MyOperation]
-        }
+    resource MyResource {
+        identifiers: {foo: String}
+        operations: [MyOperation]
+    }
 
-        @requiredActions(["otherservice:OtherOperation"])
-        operation MyOperation {}
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyService": {
-                    "type": "service",
-                    "version": "2017-02-11",
-                    "resources": [
-                        {
-                            "target": "smithy.example#MyResource"
-                        }
-                    ],
-                    "traits": {
-                        "aws.api#service": {
-                            "sdkId": "My Value",
-                            "arnNamespace": "myservice"
-                        }
-                    }
-                },
-                "smithy.example#MyResource": {
-                    "type": "resource",
-                    "identifiers": {
-                        "foo": {
-                            "target": "smithy.api#String"
-                        }
-                    },
-                    "operations": [
-                        {
-                            "target": "smithy.example#MyOperation"
-                        }
-                    ]
-                },
-                "smithy.example#MyOperation": {
-                    "type": "operation",
-                    "traits": {
-                        "aws.iam#requiredActions": [
-                            "otherservice:OtherOperation"
-                        ]
-                    }
-                }
-            }
-        }
-
+    @requiredActions(["otherservice:OtherOperation"])
+    operation MyOperation {}
 
 .. smithy-trait:: aws.iam#supportedPrincipalTypes
 .. _aws.iam#supportedPrincipalTypes-trait:
@@ -514,24 +326,24 @@ The following example defines two operations:
   the IAM principal types supported by this operation are the principal types
   applied to the service.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    $version: "2.0"
 
-        namespace smithy.example
+    namespace smithy.example
 
-        use aws.iam#supportedPrincipalTypes
+    use aws.iam#supportedPrincipalTypes
 
-        @supportedPrincipalTypes(["Root", "IAMUser", "IAMRole", "FederatedUser"])
-        service MyService {
-            version: "2020-07-02"
-            operations: [OperationA, OperationB]
-        }
+    @supportedPrincipalTypes(["Root", "IAMUser", "IAMRole", "FederatedUser"])
+    service MyService {
+        version: "2020-07-02"
+        operations: [OperationA, OperationB]
+    }
 
-        @supportedPrincipalTypes(["Root"])
-        operation OperationA {}
+    @supportedPrincipalTypes(["Root"])
+    operation OperationA {}
 
-        operation OperationB {}
+    operation OperationB {}
 
 
 .. smithy-trait:: aws.iam#iamResource
@@ -565,20 +377,20 @@ members:
 The following example defines a simple resource with a name in AWS IAM that
 deviates from the :ref:`shape name of the shape ID <shape-id>` of the resource.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    $version: "2.0"
 
-        namespace smithy.example
+    namespace smithy.example
 
-        use aws.iam#iamResource
+    use aws.iam#iamResource
 
-        @iamResource(name: "super")
-        resource SuperResource {
-            identifiers: {
-                superId: String,
-            }
+    @iamResource(name: "super")
+    resource SuperResource {
+        identifiers: {
+            superId: String,
         }
+    }
 
 
 .. _deriving-condition-keys:
@@ -603,6 +415,8 @@ trait.
 Given the following model,
 
 .. code-block:: smithy
+
+    $version: "2.0"
 
     namespace smithy.example
 

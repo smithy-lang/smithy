@@ -1,6 +1,6 @@
-===================================
-Smithy projects and implementations
-===================================
+===============
+Implementations
+===============
 
 This document provides an overview of known Smithy implementations and
 projects.
@@ -250,3 +250,8 @@ AWS specific
       - Java
       - 1.x
       - Converts Smithy models to CloudFormation Resource Schemas.
+
+.. toctree::
+    :hidden:
+
+    ts-ssdk/index

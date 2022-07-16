@@ -5,11 +5,6 @@ Smithy IDL 1.0 to 2.0 Migration Guide
 This guide describes how to migrate your models from Smithy IDL version 1.0
 to version 2.0 without breaking your models or customers.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
 Update the model file version
 =============================
 

@@ -2,12 +2,6 @@
 Amazon Glacier Customizations
 =============================
 
-.. contents:: Table of contents
-    :depth: 1
-    :local:
-    :backlinks: none
-
-
 --------------------------------
 ``X-Amz-Glacier-Version`` header
 --------------------------------

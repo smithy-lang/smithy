@@ -2,12 +2,6 @@
 Amazon Machine Learning Customizations
 ======================================
 
-.. contents:: Table of contents
-    :depth: 1
-    :local:
-    :backlinks: none
-
-
 ----------------------------------------
 Set host to value of ``PredictEndpoint``
 ----------------------------------------

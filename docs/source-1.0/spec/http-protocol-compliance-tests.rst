@@ -10,12 +10,6 @@ Protocol specifications define the serialization format of a protocol, and
 protocol compliance tests help to ensure that implementations correctly
 implement a protocol specification.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
-
 --------
 Overview
 --------

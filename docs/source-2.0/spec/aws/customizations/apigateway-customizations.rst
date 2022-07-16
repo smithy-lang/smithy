@@ -2,12 +2,6 @@
 Amazon API Gateway Customizations
 =================================
 
-.. contents:: Table of contents
-    :depth: 1
-    :local:
-    :backlinks: none
-
-
 --------------------------------
 ``Accept`` header
 --------------------------------

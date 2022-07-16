@@ -7,11 +7,6 @@ Constraint traits
 Constraint traits are used to constrain the values that can be provided
 for a shape.
 
-.. contents:: Table of contents
-    :depth: 1
-    :local:
-    :backlinks: none
-
 
 .. smithy-trait:: smithy.api#enum
 .. _enum-trait:

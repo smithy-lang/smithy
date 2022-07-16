@@ -6,11 +6,6 @@ Authentication traits
 
 Authentication traits define how a client authenticates with a service.
 
-.. contents:: Table of contents
-    :depth: 1
-    :local:
-    :backlinks: none
-
 
 .. smithy-trait:: smithy.api#authDefinition
 .. _authDefinition-trait:
@@ -321,7 +316,7 @@ to services and operations:
   * ``OperationA`` is not annotated with the ``auth`` trait and inherits all
     of the authentication scheme applied to the service.
 
-  * ``OperationB`` is annotated with the ``auth`` trait and defines an explicit 
+  * ``OperationB`` is annotated with the ``auth`` trait and defines an explicit
     list of authentication schemes.
 
 * ``ServiceWithAuthTrait`` is annotated with the ``auth`` trait and binds two
@@ -331,7 +326,7 @@ to services and operations:
     of the authentication schemes applied via the ``auth`` trait on the
     service.
 
-  * ``OperationD`` is annotated with the ``auth`` trait and defines an explicit 
+  * ``OperationD`` is annotated with the ``auth`` trait and defines an explicit
     list of authentication schemes.
 
 .. tabs::

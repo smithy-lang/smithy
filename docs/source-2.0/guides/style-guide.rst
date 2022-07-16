@@ -5,11 +5,6 @@ Style Guide
 This document defines a style guide for Smithy models. Adhering to common
 style guide makes models easier to read.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
 
 Model files
 ===========
@@ -19,7 +14,7 @@ Smithy models SHOULD resemble the following example:
 
 .. code-block:: smithy
 
-    $version: "1.0"
+    $version: "2.0"
 
     metadata validators = []
     metadata suppressions = []
@@ -123,7 +118,7 @@ Do:
 
 .. code-block:: smithy
 
-    $version: "1.0"
+    $version: "2.0"
 
     metadata validators = [{
         name: "StandardOperationVerb"
@@ -150,7 +145,7 @@ Do not:
 
 .. code-block:: smithy
 
-    $version: "1.0"
+    $version: "2.0"
 
     metadata validators = [{
         name: "StandardOperationVerb",

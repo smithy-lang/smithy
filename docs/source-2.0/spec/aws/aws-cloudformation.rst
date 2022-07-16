@@ -1,7 +1,7 @@
 .. _aws-cloudformation-traits:
 
 =========================
-AWS CloudFormation traits
+AWS CloudFormation Traits
 =========================
 
 CloudFormation traits are used to describe Smithy resources and their
@@ -17,11 +17,6 @@ effort needed to generate and maintain them, reduces the potential for errors
 in the translation, and provides a more complete depiction of a resource in its
 schema. These schemas can be utilized by the `CloudFormation Command Line
 Interface`_ to build, register, and deploy `resource providers`_.
-
-.. contents:: Table of contents
-    :depth: 3
-    :local:
-    :backlinks: none
 
 
 .. smithy-trait:: aws.cloudformation#cfnResource
@@ -64,20 +59,20 @@ supports the following members:
 The following example defines a simple resource that is also a CloudFormation
 resource:
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    $version: "2.0"
 
-        namespace smithy.example
+    namespace smithy.example
 
-        use aws.cloudformation#cfnResource
+    use aws.cloudformation#cfnResource
 
-        @cfnResource
-        resource Foo {
-            identifiers: {
-                fooId: String
-            }
+    @cfnResource
+    resource Foo {
+        identifiers: {
+            fooId: String
         }
+    }
 
 
 Resources that have properties that cannot be :ref:`automatically derived
@@ -89,26 +84,26 @@ cannot be automatically converted to CloudFormation properties.
 The following example provides a ``name`` value and one structure shape in the
 ``additionalSchemas`` list.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    $version: "2.0"
 
-        namespace smithy.example
+    namespace smithy.example
 
-        use aws.cloudformation#cfnResource
+    use aws.cloudformation#cfnResource
 
-        @cfnResource(
-            name: "Foo"
-            additionalSchemas: [AdditionalFooProperties])
-        resource FooResource {
-            identifiers: {
-                fooId: String
-            }
+    @cfnResource(
+        name: "Foo"
+        additionalSchemas: [AdditionalFooProperties])
+    resource FooResource {
+        identifiers: {
+            fooId: String
         }
+    }
 
-        structure AdditionalFooProperties {
-            barProperty: String
-        }
+    structure AdditionalFooProperties {
+        barProperty: String
+    }
 
 
 .. _aws-cloudformation-property-deriviation:
@@ -171,6 +166,8 @@ The following example defines a CloudFormation resource that excludes the
 
 .. code-block:: smithy
 
+    $version: "2.0"
+
     namespace smithy.example
 
     use aws.cloudformation#cfnExcludeProperty
@@ -232,6 +229,8 @@ mutability settings:
 Given the following model without mutability traits applied,
 
 .. code-block:: smithy
+
+    $version: "2.0"
 
     namespace smithy.example
 
@@ -395,6 +394,8 @@ and ``barProperty`` properties as fully mutable:
 
 .. code-block:: smithy
 
+    $version: "2.0"
+
     namespace smithy.example
 
     use aws.cloudformation#cfnMutability
@@ -435,6 +436,8 @@ The following example defines a CloudFormation resource that marks the
 
 .. code-block:: smithy
 
+    $version: "2.0"
+
     namespace smithy.example
 
     use aws.cloudformation#cfnMutability
@@ -457,6 +460,8 @@ The following example defines a CloudFormation resource that marks the
 ``updatedAt`` and ``createdAt`` properties as read only:
 
 .. code-block:: smithy
+
+    $version: "2.0"
 
     namespace smithy.example
 
@@ -499,6 +504,8 @@ The following example defines a CloudFormation resource that marks the
 derivable ``secret`` and ``password`` properties as write only:
 
 .. code-block:: smithy
+
+    $version: "2.0"
 
     namespace smithy.example
 
@@ -558,6 +565,8 @@ Given the following structure definition:
 
 .. code-block:: smithy
 
+    $version: "2.0"
+
     namespace smithy.example
 
     use aws.cloudformation#cfnName
@@ -613,6 +622,8 @@ The following example defines a CloudFormation resource that has the
 
 .. code-block:: smithy
 
+    $version: "2.0"
+
     namespace smithy.example
 
     use aws.cloudformation#cfnAdditionalIdentifier
@@ -661,6 +672,8 @@ member is annotated with ``cfnDefaultValue``, it can be derived
 that the ``fooAlias`` member has a default value for this resource.
 
 .. code-block:: smithy
+
+    $version: "2.0"
 
     namespace smithy.example
 
@@ -715,6 +728,8 @@ can be annotated for CloudFormation resource generation.
 Given the following model,
 
 .. code-block:: smithy
+
+    $version: "2.0"
 
     namespace smithy.example
 

@@ -5,11 +5,6 @@ Style Guide
 This document defines a style guide for Smithy models. Adhering to common
 style guide makes models easier to read.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
 
 Model files
 ===========

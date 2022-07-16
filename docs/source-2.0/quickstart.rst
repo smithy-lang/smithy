@@ -10,11 +10,6 @@ language (IDL). By reading this tutorial, you will learn:
   :ref:`resource`, and :ref:`operation` shapes
 * How to apply :ref:`traits <traits>` to shapes
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
 
 What is Smithy?
 ===============
@@ -42,33 +37,31 @@ Smithy supports the following types:
 
     * - Type
       - Description
-    * - blob
+    * - :ref:`blob`
       - Uninterpreted binary data
-    * - boolean
+    * - :ref:`boolean`
       - Boolean value type
-    * - string
+    * - :ref:`string`
       - UTF-8 encoded string
-    * - byte
+    * - :ref:`byte`
       - 8-bit signed integer ranging from -128 to 127 (inclusive)
-    * - short
+    * - :ref:`short`
       - 16-bit signed integer ranging from -32,768 to 32,767 (inclusive)
-    * - integer
+    * - :ref:`integer`
       - 32-bit signed integer ranging from -2^31 to (2^31)-1 (inclusive)
-    * - long
+    * - :ref:`long`
       - 64-bit signed integer ranging from -2^63 to (2^63)-1 (inclusive)
-    * - float
+    * - :ref:`float`
       - Single precision IEEE-754 floating point number
-    * - double
+    * - :ref:`double`
       - Double precision IEEE-754 floating point number
-    * - bigInteger
+    * - :ref:`bigInteger`
       - Arbitrarily large signed integer
-    * - bigDecimal
+    * - :ref:`bigDecimal`
       - Arbitrary precision signed decimal number
-    * - timestamp
-      - An instant in time with no UTC offset or timezone. The
-        serialization of a timestamp is determined by a
-        :ref:`protocol <protocolDefinition-trait>`.
-    * - document type
+    * - :ref:`timestamp`
+      - An instant in time with no UTC offset or timezone.
+    * - :ref:`document`
       - An untyped JSON-like value.
     * - :ref:`list`
       - Homogeneous collection of values
@@ -77,7 +70,7 @@ Smithy supports the following types:
     * - :ref:`structure`
       - Fixed set of named heterogeneous members
     * - :ref:`union`
-      - `Tagged union`_ data structure that can take on several different,
+      - Tagged union data structure that can take on several different,
         but fixed, types
     * - :ref:`service`
       - Entry point of an API that aggregates resources and operations together
@@ -420,7 +413,7 @@ building a Smithy model. First, create a ``smithy-build.json`` file:
 .. code-block:: json
 
     {
-        "version": "1.0"
+        "version": "2.0"
     }
 
 Then create a new ``build.gradle.kts`` file:
@@ -487,7 +480,7 @@ The ``smithy-build.json`` should have the following contents:
 .. code-block:: json
 
     {
-        "version": "1.0"
+        "version": "2.0"
     }
 
 The ``build.gradle.kts`` should have the following contents:
@@ -518,6 +511,8 @@ The ``build.gradle.kts`` should have the following contents:
 Finally, the complete ``weather.smithy`` model should look like:
 
 .. code-block:: smithy
+
+    $version: "2.0"
 
     namespace example.weather
 
@@ -665,6 +660,5 @@ Finally, the complete ``weather.smithy`` model should look like:
     }
 
 .. _examples directory: https://github.com/awslabs/smithy-gradle-plugin/tree/main/examples
-.. _Tagged union: https://en.wikipedia.org/wiki/Tagged_union
 .. _Smithy Gradle Plugin: https://github.com/awslabs/smithy-gradle-plugin/
 .. _gradle installed: https://gradle.org/install/

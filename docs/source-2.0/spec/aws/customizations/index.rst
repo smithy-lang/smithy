@@ -2,10 +2,8 @@
 AWS Service Customizations
 ==========================
 
-.. rst-class:: large-toctree
-
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
     apigateway-customizations
     glacier-customizations

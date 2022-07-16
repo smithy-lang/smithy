@@ -9,12 +9,6 @@ protocol is used to expose services that serialize payloads as JSON and
 utilize features of HTTP like configurable HTTP methods, URIs, and
 status codes.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
-
 .. smithy-trait:: aws.protocols#restJson1
 .. _aws.protocols#restJson1-trait:
 

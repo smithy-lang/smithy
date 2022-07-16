@@ -8,11 +8,6 @@ Smithy models are defined using either the Smithy interface definition language
 (IDL) or the :ref:`JSON abstract syntax tree <json-ast>` (AST). This document
 defines the ABNF_ grammar and syntax for defining models with the Smithy IDL.
 
-.. contents:: Table of contents
-    :depth: 1
-    :local:
-    :backlinks: none
-
 
 -------------------
 Smithy IDL overview
@@ -30,30 +25,32 @@ The Smithy IDL is made up of 3, ordered sections, each of which is optional:
 
 The following example defines a model file with each section:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-            // (1) Control section
-            $version: "1.0"
+        // (1) Control section
+        $version: "2.0"
 
-            // (2) Metadata section
-            metadata foo = "bar"
+        // (2) Metadata section
+        metadata foo = "bar"
 
-            // (3) Shape section
-            namespace smithy.example
+        // (3) Shape section
+        namespace smithy.example
 
-            use smithy.other.namespace#MyString
+        use smithy.other.namespace#MyString
 
-            structure MyStructure {
-                @required
-                foo: MyString
-            }
+        structure MyStructure {
+            @required
+            foo: MyString
+        }
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: smithy
 
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "metadata": {
                 "foo": "bar"
             },
@@ -154,7 +151,8 @@ The Smithy IDL is defined by the following ABNF:
                         :/ %x5D-10FFFF    ; "]"+
                         :/ `escaped_char`
                         :/ `preserved_double`
-    escaped_char        :`escape` (`escape` / "'" / DQUOTE / "b" / "f" / "n" / "r" / "t" / "/" / `unicode_escape`)
+    escaped_char        :`escape` (`escape` / "'" / DQUOTE / "b"
+                        :            / "f" / "n" / "r" / "t" / "/" / `unicode_escape`)
     unicode_escape      :"u" `hex` `hex` `hex` `hex`
     hex                 : DIGIT / %x41-46 / %x61-66
     preserved_double    :`escape` (%x20-21 / %x23-5B / %x5D-10FFFF)
@@ -240,6 +238,8 @@ forward slashes followed by any character. A newline terminates a comment.
 
 .. code-block:: smithy
 
+    $version: "2.0"
+
     // This is a comment
     namespace com.foo // This is also a comment
 
@@ -306,36 +306,40 @@ adhere to the following ABNF:
 .. productionlist:: smithy
     version_string :1*DIGIT [ "." 1*DIGIT ]
 
-The following example sets the version to ``1``, meaning that tooling MUST
-support a version greater than or equal to ``1.0`` and less than ``2.0``:
+The following example sets the version to ``2``, meaning that tooling MUST
+support a version greater than or equal to ``2.0`` and less than ``3.0``:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        $version: "1"
+        $version: "2.0"
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: json
 
         {
-            "smithy": "1"
+            "smithy": "2"
         }
 
 A minor version SHOULD be provided when a model depends on a feature released
 in a minor update of the specification. The following example sets the
-version requirement of a file to ``1.1``, meaning that tooling MUST support a
-version greater than or equal to ``1.1`` and less than ``2.0``:
+version requirement of a file to ``2.0``, meaning that tooling MUST support a
+version greater than or equal to ``2.0`` and less than ``3.0``:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        $version: "1.1"
+        $version: "2.0"
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: json
 
         {
-            "smithy": "1.1"
+            "smithy": "2.0"
         }
 
 .. rubric:: Version compatibility
@@ -359,17 +363,19 @@ consists of the metadata key to set, followed by ``=``, followed by the
 
 The following example defines metadata in the model:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
         metadata greeting = "hello"
         metadata "stringList" = ["a", "b", "c"]
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "metadata": {
                 "greeting": "hello",
                 "stringList": ["a", "b", "c"]
@@ -397,18 +403,22 @@ one namespace can appear per file.
 The following example defines a string shape named ``MyString`` in the
 ``smithy.example`` namespace:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
+
+        $version: "2.0"
 
         namespace smithy.example
 
         string MyString
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "string"
@@ -432,6 +442,8 @@ so that they can be referred to using only ``Foo`` and ``Baz``.
 
 .. code-block:: smithy
 
+    $version: "2.0"
+
     namespace smithy.hello
 
     use smithy.example#Foo
@@ -449,6 +461,8 @@ uses the ``smithy.example#test`` and ``smithy.example#anotherTrait``
 traits so that they can be applied using relative shape IDs:
 
 .. code-block:: smithy
+
+    $version: "2.0"
 
     namespace smithy.hello
 
@@ -486,6 +500,8 @@ the shape named ``MyStructure`` that describes the shape the member resolves
 to.
 
 .. code-block:: smithy
+
+    $version: "2.0"
 
     namespace smithy.example
 
@@ -543,6 +559,8 @@ in another namespace.
 
 .. code-block:: smithy
 
+    $version: "2.0"
+
     namespace smithy.example
 
     use smithy.other#MyString
@@ -556,7 +574,7 @@ The above model is equivalent to the following JSON AST model:
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "smithy": "2.0",
         "shapes": {
             "smithy.example#MyList": {
                 "type": "list",
@@ -577,6 +595,8 @@ it resolves the value of the :ref:`error-trait` to the shape ID
 
 .. code-block:: smithy
 
+    $version: "2.0"
+
     namespace smithy.example
 
     @error(client) // <-- This MUST be "client"
@@ -589,7 +609,7 @@ The above example is equivalent to the following incorrect JSON AST:
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "smithy": "2.0",
         "shapes": {
             "smithy.example#Error": {
                 "type": "structure",
@@ -622,7 +642,7 @@ The above example is equivalent to the following JSON AST:
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "smithy": "2.0",
         "metadata": {
             "String": "smithy.api#String"
         }
@@ -664,18 +684,22 @@ Simple shapes
 
 The following example defines a ``string`` shape:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
+
+        $version: "2.0"
 
         namespace smithy.example
 
         string MyString
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "shapes": {
                 "smithy.example#String": {
                     "type": "string"
@@ -685,19 +709,23 @@ The following example defines a ``string`` shape:
 
 The following example defines an ``integer`` shape with a :ref:`range-trait`:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
+
+        $version: "2.0"
 
         namespace smithy.example
 
         @range(min: 0, max: 1000)
         integer MaxResults
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "shapes": {
                 "smithy.example#MaxResults": {
                     "type": "integer",
@@ -838,9 +866,11 @@ A :ref:`list <list>` shape is defined using a :token:`smithy:list_statement`.
 The following example defines a list with a string member from the
 :ref:`prelude <prelude>`:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
+
+        $version: "2.0"
 
         namespace smithy.example
 
@@ -848,10 +878,12 @@ The following example defines a list with a string member from the
             member: String
         }
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "shapes": {
                 "smithy.example#MyList": {
                     "type": "list",
@@ -864,9 +896,11 @@ The following example defines a list with a string member from the
 
 Traits can be applied to the list shape and its member:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
+
+        $version: "2.0"
 
         namespace smithy.example
 
@@ -876,10 +910,12 @@ Traits can be applied to the list shape and its member:
             member: String
         }
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "shapes": {
                 "smithy.example#MyList": {
                     "type": "list",
@@ -912,9 +948,11 @@ A :ref:`map <map>` shape is defined using a :token:`smithy:map_statement`.
 
 The following example defines a map of strings to integers:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
+
+        $version: "2.0"
 
         namespace smithy.example
 
@@ -923,10 +961,12 @@ The following example defines a map of strings to integers:
             value: Integer
         }
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "shapes": {
                 "type": "map",
                 "smithy.example#IntegerMap": {
@@ -942,9 +982,11 @@ The following example defines a map of strings to integers:
 
 Traits can be applied to the map shape and its members:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
+
+        $version: "2.0"
 
         namespace smithy.example
 
@@ -957,10 +999,12 @@ Traits can be applied to the map shape and its members:
             value: Integer
         }
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "shapes": {
                 "smithy.example#IntegerMap": {
                     "type": "map",
@@ -1003,9 +1047,11 @@ A :ref:`structure <structure>` shape is defined using a
 
 The following example defines a structure with two members:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
+
+        $version: "2.0"
 
         namespace smithy.example
 
@@ -1014,10 +1060,12 @@ The following example defines a structure with two members:
             baz: Integer
         }
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "shapes": {
                 "smithy.example#MyStructure": {
                     "type": "structure",
@@ -1035,9 +1083,11 @@ The following example defines a structure with two members:
 
 Traits can be applied to structure members:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
+
+        $version: "2.0"
 
         namespace smithy.example
 
@@ -1052,10 +1102,12 @@ Traits can be applied to structure members:
             baz: Integer
         }
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "shapes": {
                 "smithy.example#MyStructure": {
                     "type": "structure",
@@ -1110,9 +1162,11 @@ A :ref:`union <union>` shape is defined using a :token:`smithy:union_statement`.
 
 The following example defines a union shape with several members:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
+
+        $version: "2.0"
 
         namespace smithy.example
 
@@ -1125,10 +1179,12 @@ The following example defines a union shape with several members:
             time: Timestamp
         }
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "shapes": {
                 "smithy.example#MyUnion": {
                     "type": "union",
@@ -1164,9 +1220,11 @@ A service shape is defined using a :token:`smithy:service_statement` and the pro
 The following example defines a service named ``ModelRepository`` that binds
 a resource named ``Model`` and an operation named ``PingService``:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
+
+        $version: "2.0"
 
         namespace smithy.example
 
@@ -1176,10 +1234,12 @@ a resource named ``Model`` and an operation named ``PingService``:
             operations: [PingService]
         }
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "shapes": {
                 "smithy.example#ModelRepository": {
                     "type": "service",
@@ -1212,9 +1272,11 @@ structure named ``Input``, returns an output structure named ``Output``, and
 can potentially return the ``Unavailable`` or ``BadRequest``
 :ref:`error structures <error-trait>`.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
+
+        $version: "2.0"
 
         namespace smithy.example
 
@@ -1224,10 +1286,12 @@ can potentially return the ``Unavailable`` or ``BadRequest``
             errors: [UnavailableError, BadRequestError]
         }
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "shapes": {
                 "smithy.example#PingService": {
                     "type": "operation",
@@ -1365,9 +1429,11 @@ provided :token:`smithy:node_object` supports the same properties defined in the
 The following example defines a resource shape that has a single identifier,
 and defines a :ref:`read <read-lifecycle>` operation:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
+
+        $version: "2.0"
 
         namespace smithy.example
 
@@ -1378,10 +1444,12 @@ and defines a :ref:`read <read-lifecycle>` operation:
             read: GetSprocket,
         }
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "shapes": {
                 "smithy.example#Sprocket": {
                     "type": "resource",
@@ -1554,6 +1622,8 @@ The following Smithy IDL example,
 
 .. code-block:: smithy
 
+    $version: "2.0"
+
     namespace smithy.example
 
     /// This is documentation about a shape.
@@ -1572,7 +1642,7 @@ is equivalent to the following JSON AST model:
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "smithy": "2.0",
         "shapes": {
             "smithy.example#MyString": {
                 "type": "string",
@@ -1637,9 +1707,11 @@ and the current namespace in exactly the same way as
 The following example applies the :ref:`length-trait` and
 :ref:`documentation-trait` to ``MyString``:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
+
+        $version: "2.0"
 
         namespace smithy.example
 
@@ -1647,10 +1719,12 @@ The following example applies the :ref:`length-trait` and
         @documentation("Contains a string")
         string MyString
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "string",
@@ -1718,9 +1792,11 @@ Omitting a value is allowed on ``list``, ``set``, ``map``, and ``structure``
 traits if the shapes have no ``length`` constraints or ``required`` members.
 The following applications of the ``foo`` trait are equivalent:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
+
+        $version: "2.0"
 
         namespace smithy.example
 
@@ -1733,10 +1809,12 @@ The following applications of the ``foo`` trait are equivalent:
         @foo()
         string MyString2
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "2.0",
             "shapes": {
                 "smithy.example#foo": {
                     "type": "structure",
@@ -1795,16 +1873,19 @@ Traits can be applied to shapes outside of a shape's definition using an
 The following example applies the :ref:`documentation-trait` to the
 ``smithy.example#MyString`` shape:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
         $version: "2.0"
+
         namespace smithy.example
 
         apply MyString @documentation("This is my string!")
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: json
 
         {
             "smithy": "2.0",
@@ -1822,11 +1903,12 @@ Multiple traits can be applied to the same shape using a block apply
 statement. The following example applies the :ref:`documentation-trait`
 and :ref:`length-trait` to the ``smithy.example#MyString`` shape:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
         $version: "2.0"
+
         namespace smithy.example
 
         apply MyString {
@@ -1834,7 +1916,9 @@ and :ref:`length-trait` to the ``smithy.example#MyString`` shape:
             @length(min: 1, max: 10)
         }
 
-    .. code-tab:: json
+.. tab:: JSON
+
+    .. code-block:: json
 
         {
             "smithy": "2.0",
@@ -1857,6 +1941,7 @@ Traits can be applied to members too:
 .. code-block:: smithy
 
     $version: "2.0"
+
     namespace smithy.example
 
     apply MyStructure$foo @documentation("Structure member documentation")
@@ -2152,6 +2237,7 @@ incidental whitespace using the following algorithm:
    left margin):
 
    .. code-block:: none
+       :class: no-copybutton
 
        |Foo
        |    Baz
@@ -2244,6 +2330,7 @@ Because string escapes are expanded after incidental whitespace is removed, it
 is interpreted as:
 
 .. code-block:: none
+    :class: no-copybutton
 
     <div>
     ..<p>Hi

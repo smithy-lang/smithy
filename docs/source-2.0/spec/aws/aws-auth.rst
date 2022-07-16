@@ -6,12 +6,6 @@ AWS Authentication Traits
 
 This document defines AWS authentication schemes.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
-
 .. smithy-trait:: aws.auth#sigv4
 .. _aws.auth#sigv4-trait:
 
@@ -41,43 +35,22 @@ Trait value
             NOT be empty. This value SHOULD match the ``arnNamespace`` property
             of the :ref:`aws.api#service-trait`.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+    $version: "2.0"
 
-        namespace aws.fooBaz
+    namespace aws.fooBaz
 
-        use aws.api#service
-        use aws.auth#sigv4
-        use aws.protocols#restJson1
+    use aws.api#service
+    use aws.auth#sigv4
+    use aws.protocols#restJson1
 
-        @service(sdkId: "Some Value")
-        @sigv4(name: "foobaz")
-        @restJson1
-        service FooBaz {
-            version: "2018-03-17"
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "aws.fooBaz#FooBaz": {
-                    "type": "service",
-                    "version": "2018-03-17",
-                    "traits": {
-                        "aws.protocols#restJson1": {},
-                        "aws.api#service": {
-                            "sdkId": "Some Value"
-                        },
-                        "aws.auth#sigv4": {
-                            "name": "foobaz"
-                        }
-                    }
-                }
-            }
-        }
+    @service(sdkId: "Some Value")
+    @sigv4(name: "foobaz")
+    @restJson1
+    service FooBaz {
+        version: "2018-03-17"
+    }
 
 
 .. smithy-trait:: aws.auth#unsignedPayload
@@ -103,37 +76,17 @@ payload of a request is not signed.
 The following example defines an operation that indicates the payload of the
 operation MUST NOT be used as part of the request signature calculation:
 
-.. tabs::
+.. code-block:: Smithy
 
-    .. code-tab:: smithy
+    $version: "2.0"
 
-        use aws.auth#unsignedPayload
+    use aws.auth#unsignedPayload
 
-        @unsignedPayload
-        operation PutThings {
-            input: PutThingsInput
-            output: PutThingsOutput
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#PutThings": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#PutThingsInput"
-                    },
-                    "output": {
-                        "target": "smithy.example#PutThingsOutput"
-                    },
-                    "traits": {
-                        "aws.auth#unsignedPayload": {}
-                    }
-                }
-            }
-        }
+    @unsignedPayload
+    operation PutThings {
+        input: PutThingsInput
+        output: PutThingsOutput
+    }
 
 
 Unsigned Payloads and signature version 4
@@ -173,6 +126,8 @@ Trait value
             element is of this format: ``arn:aws:cognito-idp:{region}:{account_id}:userpool/{user_pool_id}``.
 
 .. code-block:: smithy
+
+    $version: "2.0"
 
     namespace aws.fooBaz
 

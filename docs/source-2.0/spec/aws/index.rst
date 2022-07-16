@@ -2,10 +2,8 @@
 AWS specifications
 ==================
 
-.. rst-class:: large-toctree
-
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 1
 
     aws-core
     aws-auth
@@ -13,26 +11,16 @@ AWS specifications
     amazon-apigateway
     aws-cloudformation
 
-
 AWS Protocols
 =============
 
-.. rst-class:: large-toctree
-
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
 
-    aws-restjson1-protocol
-    aws-json-1_0-protocol
-    aws-json-1_1-protocol
-    aws-restxml-protocol
-    aws-query-protocol
-    aws-ec2-query-protocol
+    protocols/index
 
 AWS Service Customizations
 ==========================
-
-.. rst-class:: large-toctree
 
 .. toctree::
     :maxdepth: 2
