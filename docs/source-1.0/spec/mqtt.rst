@@ -15,12 +15,6 @@ Smithy models with MQTT metadata.
     The MQTT traits defined in this specification are still evolving and
     subject to change.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
-
 ------------
 Introduction
 ------------

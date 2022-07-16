@@ -8,11 +8,6 @@ This document defines how to bind Smithy shapes to XML documents. Smithy
 defines several traits that are used to influence the serialization of
 shapes with XML based protocols.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
 
 .. _serializing-xml-shapes:
 

@@ -5,11 +5,6 @@ AWS Core Specification
 Various AWS-specific traits are used to integrate Smithy models with other
 AWS products like AWS CloudFormation and tools like the AWS SDKs.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
 
 .. smithy-trait:: aws.api#service
 .. _aws.api#service-trait:

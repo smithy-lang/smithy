@@ -2,8 +2,6 @@
 AWS specifications
 ==================
 
-.. rst-class:: large-toctree
-
 .. toctree::
     :maxdepth: 3
 
@@ -17,8 +15,6 @@ AWS specifications
 AWS Protocols
 =============
 
-.. rst-class:: large-toctree
-
 .. toctree::
     :maxdepth: 3
 
@@ -31,8 +27,6 @@ AWS Protocols
 
 AWS Service Customizations
 ==========================
-
-.. rst-class:: large-toctree
 
 .. toctree::
     :maxdepth: 2

@@ -7,12 +7,6 @@ Documentation traits
 Documentation traits are used to document and describe shapes in the model
 in a way that does not materially affect the semantics of the model.
 
-.. contents:: Table of contents
-    :depth: 1
-    :local:
-    :backlinks: none
-
-
 .. smithy-trait:: smithy.api#deprecated
 .. _deprecated-trait:
 

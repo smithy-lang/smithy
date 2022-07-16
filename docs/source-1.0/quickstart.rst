@@ -10,11 +10,6 @@ language (IDL). By reading this tutorial, you will learn:
   :ref:`resource`, and :ref:`operation` shapes
 * How to apply :ref:`traits <traits>` to shapes
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
 
 What is Smithy?
 ===============
