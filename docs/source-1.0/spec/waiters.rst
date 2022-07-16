@@ -792,9 +792,10 @@ For example, suppose a resource has the following state transitions, and
 if a resource is in the "Stopped" state, it can only transition to "Running"
 if the user invokes the "StartResource" API operation:
 
-.. text-figure::
+.. code-block:: none
     :caption: **Figure Waiters-1.1**: Example resource state transitions
     :name: waiters-figure-1.1
+    :class: no-copybutton
 
               User calls
              StopResource

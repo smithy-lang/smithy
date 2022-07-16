@@ -4,5 +4,6 @@ with open(shared_config) as file:
     exec(file.read())
 
 # Place version specific overrides after here.
+html_title = "Smithy 2.0"
 release = u'2.0'
 version = release

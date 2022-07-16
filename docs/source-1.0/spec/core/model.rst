@@ -7,12 +7,6 @@ The Smithy model
 The *Smithy model* describes the Smithy semantic model and the files used to
 create it. Smithy models are used to describe services and data structures.
 
-.. contents:: Table of contents
-    :depth: 1
-    :local:
-    :backlinks: none
-
-
 .. _smithy-overview:
 
 ---------------
@@ -23,9 +17,10 @@ Smithy is a framework that consists of a semantic model, file formats used to
 define a model, and a build process used to validate models and facilitate
 model transformations.
 
-.. text-figure::
+.. code-block:: none
     :caption: **Figure 1.1**: Smithy framework concepts
     :name: figure-1.1
+    :class: no-copybutton
 
                     ┌────────────────┐ part of          ┌────────────────┐
                     │                │╲                ╱│                │
@@ -82,9 +77,10 @@ independent of any particular serialized representation. The semantic
 model contains :ref:`metadata <metadata>` and a graph of
 :ref:`shapes <shapes>` connected by :ref:`shape IDs <shape-id>`.
 
-.. text-figure::
+.. code-block:: none
     :caption: **Figure 1.2**: The semantic model
     :name: figure-1.2
+    :class: no-copybutton
 
                                           ┌───────────────┐
                                           │Semantic Model │╲
@@ -152,9 +148,10 @@ on services and resources.
 
 Shapes are visualized using the following diagram:
 
-.. text-figure::
+.. code-block:: none
     :caption: **Figure 1.4**: Smithy shapes
     :name: figure-1.4
+    :class: no-copybutton
 
                                       ┌─────────────┐
                              members ╱│ «abstract»  │
@@ -3063,9 +3060,10 @@ semantic model:
 * **applied trait**: The value of a trait applied to a shape is defined
   using a node value.
 
-.. text-figure::
+.. code-block:: none
     :caption: **Figure 1.3**: Node value types
     :name: figure-1.3
+    :class: no-copybutton
 
     ┌─────────────────┐                     ┌─────────────┐
     │ Semantic Model  │                     │Applied Trait│

@@ -7,12 +7,6 @@ Endpoint Traits
 Smithy provides various endpoint binding traits that can be used to configure
 request endpoints.
 
-.. contents:: Table of contents
-    :depth: 1
-    :local:
-    :backlinks: none
-
-
 .. smithy-trait:: smithy.api#endpoint
 .. _endpoint-trait:
 

@@ -6,11 +6,6 @@ AWS EC2 query protocol
 
 This specification defines the ``aws.protocols#ec2`` protocol.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
 
 .. smithy-trait:: aws.protocols#ec2Query
 .. _aws.protocols#ec2Query-trait:

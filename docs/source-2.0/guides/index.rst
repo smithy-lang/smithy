@@ -1,11 +1,9 @@
-=============
-Smithy Guides
-=============
-
-.. rst-class:: large-toctree
+======
+Guides
+======
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
     building-models/index
     model-linters

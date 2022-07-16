@@ -4,12 +4,6 @@ Behavior traits
 
 Behavior traits are used to alter the behavior of operations.
 
-.. contents:: Table of contents
-    :depth: 1
-    :local:
-    :backlinks: none
-
-
 .. smithy-trait:: smithy.api#idempotencyToken
 .. _idempotencyToken-trait:
 

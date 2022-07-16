@@ -17,11 +17,6 @@ policies for resources in a service. Condition keys for services defined in
 Smithy are automatically inferred. These can be disabled or augmented. For
 more information, see :ref:`deriving-condition-keys`.
 
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
 
 .. smithy-trait:: aws.iam#actionPermissionDescription
 .. _aws.iam#actionPermissionDescription-trait:

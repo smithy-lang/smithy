@@ -7,11 +7,6 @@ Streaming Traits
 A streaming shape is a shape which represents data that is not returned all at
 once. This includes both streaming binary data and event streams.
 
-.. contents:: Table of contents
-    :depth: 3
-    :local:
-    :backlinks: none
-
 
 .. smithy-trait:: smithy.api#streaming
 .. _streaming-trait:
