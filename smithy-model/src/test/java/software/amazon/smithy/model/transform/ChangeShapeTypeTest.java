@@ -330,7 +330,6 @@ public class ChangeShapeTypeTest {
                 .build();
 
         Model model = Model.assembler()
-                .setParsedShapesVersion("2.0")
                 .addShape(startShape)
                 .assemble()
                 .unwrap();
@@ -431,7 +430,6 @@ public class ChangeShapeTypeTest {
         IntEnumShape intEnum = intEnumBuilder.addMember("FOO", 1).build();
 
         Model model = Model.assembler()
-                .setParsedShapesVersion("2.0")
                 .addShapes(stringEnum, intEnum)
                 .assemble().unwrap();
         Model result = ModelTransformer.create().downgradeEnums(model);

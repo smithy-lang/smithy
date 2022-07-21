@@ -52,9 +52,8 @@ final class FullyResolvedModelFile extends AbstractMutableModelFile {
      * @return Returns the create {@code FullyResolvedModelFile} containing the shapes.
      */
     static FullyResolvedModelFile fromShapes(TraitFactory traitFactory, Collection<Shape> shapes) {
-        return fromShapes(traitFactory, shapes, null);
+        return fromShapes(traitFactory, shapes, Version.UNKNOWN);
     }
-
 
     /**
      * Create a {@code FullyResolvedModelFile} from already built shapes.
@@ -67,9 +66,7 @@ final class FullyResolvedModelFile extends AbstractMutableModelFile {
         FullyResolvedModelFile modelFile = new FullyResolvedModelFile(
                 SourceLocation.none().getFilename(), traitFactory);
 
-        if (version != null) {
-            modelFile.setVersion(version);
-        }
+        modelFile.setVersion(version);
 
         for (Shape shape : shapes) {
             // Convert the shape to a builder and remove all the traits.
