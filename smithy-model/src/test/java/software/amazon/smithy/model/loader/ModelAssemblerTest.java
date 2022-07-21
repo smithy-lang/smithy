@@ -54,6 +54,8 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.shapes.SetShape;
+import software.amazon.smithy.model.shapes.SetShapeTest;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
@@ -748,5 +750,19 @@ public class ModelAssemblerTest {
         });
 
         assertThat(e.getMessage(), containsString("Conflicting shape definition for `smithy.example#A`"));
+    }
+
+    @Test
+    public void canLoadSetsUsingBuiltModel() {
+        SetShape set = SetShape.builder()
+                .id("smithy.example#Set")
+                .member(ShapeId.from("smithy.api#String"))
+                .build();
+        Model model = Model.assembler()
+                .addShape(set)
+                .assemble()
+                .unwrap();
+
+        Model.assembler().addModel(model).assemble().unwrap();
     }
 }
