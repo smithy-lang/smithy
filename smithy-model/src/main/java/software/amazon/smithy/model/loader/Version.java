@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -25,15 +25,121 @@ import software.amazon.smithy.model.traits.MixinTrait;
  */
 enum Version {
 
-    UNKNOWN(""),
-    VERSION_1_0("1.0"),
-    VERSION_2_0("2.0");
+    /**
+     * Unknown is used for in-memory models that aren't tied to a specific version.
+     * For these kinds of models, we just assume every feature is supported.
+     *
+     * <p>When loading IDL models with no $version specified, the default assumed
+     * version is 1.0, not UNKNOWN (see {@link TraitContainer.VersionAwareTraitContainer}).
+     */
+    UNKNOWN {
+        @Override
+        public String toString() {
+            return "";
+        }
 
-    private final String version;
+        @Override
+        boolean supportsMixins() {
+            return true;
+        }
 
-    Version(String version) {
-        this.version = version;
-    }
+        @Override
+        boolean supportsInlineOperationIO() {
+            return true;
+        }
+
+        @Override
+        boolean supportsTargetElision() {
+            return true;
+        }
+
+        @Override
+        boolean isDefaultSupported() {
+            return true;
+        }
+
+        @Override
+        boolean isShapeTypeSupported(ShapeType shapeType) {
+            return true;
+        }
+    },
+
+    VERSION_1_0 {
+        @Override
+        public String toString() {
+            return "1.0";
+        }
+
+        @Override
+        boolean supportsMixins() {
+            return false;
+        }
+
+        @Override
+        boolean supportsInlineOperationIO() {
+            return false;
+        }
+
+        @Override
+        boolean supportsTargetElision() {
+            return false;
+        }
+
+        @Override
+        boolean isDefaultSupported() {
+            return false;
+        }
+
+        @Override
+        boolean isShapeTypeSupported(ShapeType shapeType) {
+            return shapeType != ShapeType.ENUM && shapeType != ShapeType.INT_ENUM;
+        }
+
+        @Override
+        void validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
+            if (traitId.equals(MixinTrait.ID)) {
+                throw ModelSyntaxException.builder()
+                        .message(String.format("Mixins can only be used in Smithy 2.0 or later. Attempted to apply "
+                                               + "a @mixin trait to `%s` in a model file using version `%s`.",
+                                               target, this))
+                        .shapeId(target)
+                        .sourceLocation(value)
+                        .build();
+            }
+        }
+    },
+
+    VERSION_2_0 {
+        @Override
+        public String toString() {
+            return "2.0";
+        }
+
+        @Override
+        boolean supportsMixins() {
+            return true;
+        }
+
+        @Override
+        boolean supportsInlineOperationIO() {
+            return true;
+        }
+
+        @Override
+        boolean supportsTargetElision() {
+            return true;
+        }
+
+        @Override
+        boolean isDefaultSupported() {
+            return true;
+        }
+
+        @Override
+        boolean isShapeTypeSupported(ShapeType shapeType) {
+            return shapeType != ShapeType.SET;
+        }
+    };
 
     /**
      * Creates a Version from a string, or returns null if the version
@@ -55,28 +161,19 @@ enum Version {
         }
     }
 
-    @Override
-    public String toString() {
-        return version;
-    }
-
     /**
      * Checks if this version of the IDL supports mixins.
      *
      * @return Returns true if this version supports mixins.
      */
-    boolean supportsMixins() {
-        return this == VERSION_2_0;
-    }
+    abstract boolean supportsMixins();
 
     /**
      * Checks if this version of the IDL supports inlined operation IO shapes.
      *
      * @return Returns true if this version supports inlined operation IO shapes.
      */
-    boolean supportsInlineOperationIO() {
-        return this == VERSION_2_0;
-    }
+    abstract boolean supportsInlineOperationIO();
 
     /**
      * Checks if this version of the IDL supports eliding targets for structures
@@ -84,9 +181,13 @@ enum Version {
      *
      * @return Returns true if the version supports eliding targets.
      */
-    boolean supportsTargetElision() {
-        return this == VERSION_2_0;
-    }
+    abstract boolean supportsTargetElision();
+
+    /**
+     * Checks if the default trait is supported.
+     * @return Returns true if supported (i.e., IDL 2.0 or UNKNOWN).
+     */
+    abstract boolean isDefaultSupported();
 
     /**
      * Checks if the given shape type is supported in this version.
@@ -94,17 +195,7 @@ enum Version {
      * @param shapeType The shape type to check.
      * @return Returns true if the shape type is supported in this version.
      */
-    boolean isShapeTypeSupported(ShapeType shapeType) {
-        switch (shapeType) {
-            case SET:
-                return this == VERSION_1_0;
-            case ENUM:
-            case INT_ENUM:
-                return this == VERSION_2_0;
-            default:
-                return true;
-        }
-    }
+    abstract boolean isShapeTypeSupported(ShapeType shapeType);
 
     /**
      * Perform version-specific trait validation.
@@ -115,18 +206,5 @@ enum Version {
      * @throws ModelSyntaxException if the given trait cannot be used in this version.
      */
     void validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
-        if (traitId.equals(MixinTrait.ID) && (this != Version.VERSION_2_0)) {
-            throw ModelSyntaxException.builder()
-                    .message(String.format("Mixins can only be used in Smithy 2.0 or later. Attempted to apply "
-                                           + "a @mixin trait to `%s` in a model file using version `%s`.",
-                                           target, version))
-                    .shapeId(target)
-                    .sourceLocation(value)
-                    .build();
-        }
-    }
-
-    boolean isDefaultSupported() {
-        return this == VERSION_2_0;
     }
 }

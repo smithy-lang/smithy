@@ -91,13 +91,16 @@ final class ModelUpgrader {
             // We must assume v2 for manually created shapes.
             Version version = fileToVersion.getOrDefault(member.getSourceLocation().getFilename(),
                                                          Version.VERSION_2_0);
-            if (version == Version.VERSION_1_0) {
+
+            if (version == Version.VERSION_2_0) {
+                validateV2Member(member);
+            } else {
+                // Also attempt to upgrade unknown versions since they could be 1.0 and
+                // trying to upgrade 2.0 shapes has no effect.
                 // For v1 shape checks, we need to know the containing shape type to apply the appropriate transform.
                 model.getShape(member.getContainer()).ifPresent(container -> {
                     upgradeV1Member(container.getType(), member);
                 });
-            } else if (version == Version.VERSION_2_0) {
-                validateV2Member(member);
             }
         }
 
