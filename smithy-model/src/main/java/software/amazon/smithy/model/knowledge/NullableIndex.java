@@ -23,7 +23,9 @@ import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.InputTrait;
@@ -42,7 +44,7 @@ import software.amazon.smithy.utils.SetUtils;
  */
 public class NullableIndex implements KnowledgeIndex {
 
-    private static final Set<ShapeId> REMOVED_PRIMITIVE_SHAPES = SetUtils.of(
+    private static final Set<ShapeId> V1_REMOVED_PRIMITIVE_SHAPES = SetUtils.of(
             ShapeId.from("smithy.api#PrimitiveBoolean"),
             ShapeId.from("smithy.api#PrimitiveByte"),
             ShapeId.from("smithy.api#PrimitiveShort"),
@@ -50,6 +52,19 @@ public class NullableIndex implements KnowledgeIndex {
             ShapeId.from("smithy.api#PrimitiveLong"),
             ShapeId.from("smithy.api#PrimitiveFloat"),
             ShapeId.from("smithy.api#PrimitiveDouble"));
+
+    private static final Set<ShapeType> V1_INHERENTLY_BOXED = SetUtils.of(
+            ShapeType.STRING,
+            ShapeType.BLOB,
+            ShapeType.TIMESTAMP,
+            ShapeType.BIG_DECIMAL,
+            ShapeType.BIG_INTEGER,
+            ShapeType.LIST,
+            ShapeType.SET,
+            ShapeType.MAP,
+            ShapeType.STRUCTURE,
+            ShapeType.UNION,
+            ShapeType.DOCUMENT);
 
     private final WeakReference<Model> model;
 
@@ -125,13 +140,19 @@ public class NullableIndex implements KnowledgeIndex {
     }
 
     /**
-     * Checks if a member is nullable.
+     * Checks if a member is nullable using v2 nullability rules.
      *
      * <p>A {@code checkMode} parameter is required to declare what kind of
      * model consumer is checking if the member is optional. The authoritative
      * consumers like servers do not need to honor the {@link InputTrait} or
      * {@link ClientOptionalTrait}, while non-authoritative consumers like clients
      * must honor these traits.
+     *
+     * <p>This method will also attempt to detect when a member targets a
+     * primitive prelude shape that was removed in Smithy IDL 2.0 to account
+     * for models that were created manually without passing through a
+     * ModelAssembler. If a member targets a removed primitive prelude shape,
+     * the member is considered non-null.
      *
      * @param member Member to check.
      * @param checkMode The mode used when checking if the member is considered nullable.
@@ -145,7 +166,7 @@ public class NullableIndex implements KnowledgeIndex {
             case STRUCTURE:
                 // Client mode honors the nullable and input trait.
                 if (checkMode == CheckMode.CLIENT
-                    && (member.hasTrait(ClientOptionalTrait.class) || container.hasTrait(InputTrait.class))) {
+                        && (member.hasTrait(ClientOptionalTrait.class) || container.hasTrait(InputTrait.class))) {
                     return true;
                 }
 
@@ -157,7 +178,7 @@ public class NullableIndex implements KnowledgeIndex {
                 // Detect if the member targets a 1.0 primitive prelude shape and the shape wasn't upgraded.
                 // These removed prelude shapes are impossible to appear in a 2.0 model, so it's safe to
                 // detect them and honor 1.0 semantics here.
-                return !REMOVED_PRIMITIVE_SHAPES.contains(member.getTarget());
+                return !V1_REMOVED_PRIMITIVE_SHAPES.contains(member.getTarget());
             case UNION:
             case SET:
                 // Union and set members are never null.
@@ -174,5 +195,44 @@ public class NullableIndex implements KnowledgeIndex {
             default:
                 return false;
         }
+    }
+
+    /**
+     * Checks if a member is nullable using v1 nullability rules.
+     *
+     * <p>This method matches the previous behavior seen in NullableIndex prior
+     * to Smithy 1.0. Most models are sent through a ModelAssembler which makes
+     * using the normal {@link #isMemberNullable(MemberShape)} the best choice.
+     * However, in some cases, a model might get created directly in code
+     * using Smithy 1.0 semantics. In those cases, this method can be used to
+     * detect if the member is nullable or not.
+     *
+     * <p>This method ignores the default trait, clientOptional trait,
+     * input trait, and required trait.
+     *
+     * @param member Member to check.
+     * @return Returns true if the member is nullable using 1.0 resolution rules.
+     */
+    public boolean isMemberNullableInV1(MemberShape member) {
+        Model m = Objects.requireNonNull(model.get());
+        Shape container = m.getShape(member.getContainer()).orElse(null);
+        Shape target = m.getShape(member.getTarget()).orElse(null);
+
+        // Ignore broken models in this index. Other validators handle these checks.
+        if (container == null || target == null) {
+            return false;
+        }
+
+        // Defer to 2.0 checks for shapes that aren't structures, since the logic is the same.
+        if (container.getType() != ShapeType.STRUCTURE) {
+            return isMemberNullable(member);
+        }
+
+        // Check if the member or the target has the box trait.
+        if (member.getMemberTrait(m, BoxTrait.class).isPresent()) {
+            return true;
+        }
+
+        return V1_INHERENTLY_BOXED.contains(target.getType());
     }
 }
