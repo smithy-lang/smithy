@@ -22,11 +22,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.SetShape;
@@ -227,5 +229,20 @@ public class NullableIndexTest {
             Arguments.of(NullableIndex.CheckMode.CLIENT, true, true, true),
             Arguments.of(NullableIndex.CheckMode.SERVER, false, false, true)
         );
+    }
+
+    @Test
+    public void detectsPreviousPrimitivePreludeShapes() {
+        IntegerShape integer = IntegerShape.builder()
+                .id("smithy.api#PrimitiveInteger")
+                .build();
+        StructureShape struct = StructureShape.builder()
+                .id("smithy.example#Struct")
+                .addMember("foo", integer.getId())
+                .build();
+        Model model = Model.builder().addShapes(integer, struct).build();
+        NullableIndex index = NullableIndex.of(model);
+
+        assertThat(index.isMemberNullable(struct.getMember("foo").get()), is(false));
     }
 }
