@@ -130,6 +130,7 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
         return Optional.empty();
     }
 
+    @SuppressWarnings("deprecation")
     private Optional<ValidationEvent> validateEnumMember(
             Model model,
             HttpChecksumTrait trait,
