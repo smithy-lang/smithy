@@ -31,6 +31,7 @@ import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.Tagged;
@@ -53,6 +54,7 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
     private final Map<ShapeId, Trait> introducedTraits;
     private final Map<ShapeId, Shape> mixins;
     private final transient SourceLocation source;
+    private transient List<String> memberNames;
 
     /**
      * This class is package-private, which means that all subclasses of this
@@ -671,12 +673,12 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
     }
 
     /**
-     * Gets all of the members contained in the shape.
+     * Gets all the members contained in the shape.
      *
      * @return Returns the members contained in the shape (if any).
      */
     public Collection<MemberShape> members() {
-        return Collections.emptyList();
+        return getAllMembers().values();
     }
 
     /**
@@ -688,7 +690,35 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
      * @return Returns the optional member.
      */
     public Optional<MemberShape> getMember(String name) {
-        return Optional.empty();
+        return Optional.ofNullable(getAllMembers().get(name));
+    }
+
+    /**
+     * Gets the members of the shape, including mixin members.
+     *
+     * @return Returns the immutable member map.
+     */
+    public Map<String, MemberShape> getAllMembers() {
+        return Collections.emptyMap();
+    }
+
+    /**
+     * Returns an ordered list of member names based on the order they are
+     * defined in the model, including mixin members.
+     *
+     * <p>The order in which map key and value members are returned might
+     * not match the order in which they were defined in the model because
+     * their ordering is insignificant.
+     *
+     * @return Returns an immutable list of member names.
+     */
+    public List<String> getMemberNames() {
+        List<String> result = memberNames;
+        if (result == null) {
+            result = ListUtils.copyOf(getAllMembers().keySet());
+            memberNames = result;
+        }
+        return result;
     }
 
     /**
@@ -749,10 +779,13 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
         }
 
         Shape other = (Shape) o;
-        return getId().equals(other.getId())
-               && getType() == other.getType()
+        return getType() == other.getType()
+               && getId().equals(other.getId())
                && traits.equals(other.traits)
-               && mixins.equals(other.mixins);
+               && mixins.equals(other.mixins)
+               // Ensure members are equal and defined in the same order.
+               && getAllMembers().equals(other.getAllMembers())
+               && getMemberNames().equals(other.getMemberNames());
     }
 
     /**
