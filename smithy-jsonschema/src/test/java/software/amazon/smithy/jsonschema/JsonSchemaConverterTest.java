@@ -308,6 +308,7 @@ public class JsonSchemaConverterTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void supportsListAndSetLengthTrait() {
         StringShape string = StringShape.builder().id("smithy.api#String").build();
         MemberShape member = MemberShape.builder()
@@ -428,6 +429,7 @@ public class JsonSchemaConverterTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void supportsEnum() {
         StringShape string = StringShape.builder()
                 .id("smithy.api#String")

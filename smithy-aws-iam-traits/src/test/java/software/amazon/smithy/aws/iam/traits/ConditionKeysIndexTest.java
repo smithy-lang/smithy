@@ -75,7 +75,7 @@ public class ConditionKeysIndexTest {
 
         assertTrue(result.isBroken());
         assertThat(result.getValidationEvents(Severity.ERROR).stream()
-                           .map(ValidationEvent::getEventId)
+                           .map(ValidationEvent::getId)
                            .collect(Collectors.toSet()),
                 contains("ConditionKeys"));
     }

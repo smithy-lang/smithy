@@ -66,6 +66,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
 @SmithyInternalApi
+@SuppressWarnings("deprecation")
 public final class Upgrade1to2Command extends SimpleCommand {
     private static final Logger LOGGER = Logger.getLogger(Upgrade1to2Command.class.getName());
     private static final Pattern VERSION_1 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"1\\.0\"\\s*$");
