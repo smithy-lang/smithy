@@ -17,21 +17,39 @@ package software.amazon.smithy.model.knowledge;
 
 import java.lang.ref.WeakReference;
 import java.util.Objects;
+import java.util.Set;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ToShapeId;
-import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.InputTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * An index that checks if a member is nullable.
+ *
+ * <p>Note: this index assumes Smithy 2.0 nullability semantics.
+ * There is basic support for detecting 1.0 models by detecting
+ * when a removed primitive prelude shape is targeted by a member.
+ * Beyond that, 1.0 models SHOULD be loaded through a {@link ModelAssembler}
+ * to upgrade them to IDL 2.0.
  */
 public class NullableIndex implements KnowledgeIndex {
+
+    private static final Set<ShapeId> REMOVED_PRIMITIVE_SHAPES = SetUtils.of(
+            ShapeId.from("smithy.api#PrimitiveBoolean"),
+            ShapeId.from("smithy.api#PrimitiveByte"),
+            ShapeId.from("smithy.api#PrimitiveShort"),
+            ShapeId.from("smithy.api#PrimitiveInteger"),
+            ShapeId.from("smithy.api#PrimitiveLong"),
+            ShapeId.from("smithy.api#PrimitiveFloat"),
+            ShapeId.from("smithy.api#PrimitiveDouble"));
 
     private final WeakReference<Model> model;
 
@@ -119,26 +137,27 @@ public class NullableIndex implements KnowledgeIndex {
      * @param checkMode The mode used when checking if the member is considered nullable.
      * @return Returns true if the member is optional.
      */
-    @SuppressWarnings("deprecation")
     public boolean isMemberNullable(MemberShape member, CheckMode checkMode) {
         Model m = Objects.requireNonNull(model.get());
         Shape container = m.expectShape(member.getContainer());
 
-        // Support box trait for 1.0 loaded models that weren't converted to 2.0.
-        if (member.hasTrait(BoxTrait.class)) {
-            return true;
-        }
-
-        // Client mode honors the nullable and input trait.
-        if (checkMode == CheckMode.CLIENT
-                && (member.hasTrait(ClientOptionalTrait.class) || container.hasTrait(InputTrait.class))) {
-            return true;
-        }
-
         switch (container.getType()) {
             case STRUCTURE:
-                // Structure members are nullable by default; non-null when marked as @default / @required.
-                return !member.hasTrait(DefaultTrait.class) && !member.hasTrait(RequiredTrait.class);
+                // Client mode honors the nullable and input trait.
+                if (checkMode == CheckMode.CLIENT
+                    && (member.hasTrait(ClientOptionalTrait.class) || container.hasTrait(InputTrait.class))) {
+                    return true;
+                }
+
+                // Structure members that are @required or @default are not nullable.
+                if (member.hasTrait(DefaultTrait.class) || member.hasTrait(RequiredTrait.class)) {
+                    return false;
+                }
+
+                // Detect if the member targets a 1.0 primitive prelude shape and the shape wasn't upgraded.
+                // These removed prelude shapes are impossible to appear in a 2.0 model, so it's safe to
+                // detect them and honor 1.0 semantics here.
+                return !REMOVED_PRIMITIVE_SHAPES.contains(member.getTarget());
             case UNION:
             case SET:
                 // Union and set members are never null.
