@@ -245,4 +245,86 @@ public class NullableIndexTest {
 
         assertThat(index.isMemberNullable(struct.getMember("foo").get()), is(false));
     }
+
+    @Test
+    public void worksWithV1NullabilityRulesForInteger() {
+        // In Smithy v1, integer was non-nullable by default.
+        IntegerShape integer = IntegerShape.builder()
+                .id("smithy.example#Integer")
+                .build();
+        StructureShape struct = StructureShape.builder()
+                .id("smithy.example#Struct")
+                .addMember("foo", integer.getId())
+                .build();
+        Model model = Model.builder().addShapes(integer, struct).build();
+        NullableIndex index = NullableIndex.of(model);
+
+        assertThat(index.isMemberNullableInV1(struct.getMember("foo").get()), is(false));
+    }
+
+    @Test
+    public void worksWithV1NullabilityRulesForString() {
+        StringShape string = StringShape.builder()
+                .id("smithy.example#String")
+                .build();
+        StructureShape struct = StructureShape.builder()
+                .id("smithy.example#Struct")
+                .addMember("foo", string.getId())
+                .build();
+        Model model = Model.builder().addShapes(string, struct).build();
+        NullableIndex index = NullableIndex.of(model);
+
+        assertThat(index.isMemberNullableInV1(struct.getMember("foo").get()), is(true));
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    public void worksWithV1NullabilityRulesForBoxedMember() {
+        IntegerShape integer = IntegerShape.builder()
+                .id("smithy.example#Integer")
+                .build();
+        StructureShape struct = StructureShape.builder()
+                .id("smithy.example#Struct")
+                .addMember("foo", integer.getId(), b -> b.addTrait(new BoxTrait()))
+                .build();
+        Model model = Model.builder().addShapes(integer, struct).build();
+        NullableIndex index = NullableIndex.of(model);
+
+        assertThat(index.isMemberNullableInV1(struct.getMember("foo").get()), is(true));
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    public void worksWithV1NullabilityRulesForBoxedTarget() {
+        IntegerShape integer = IntegerShape.builder()
+                .id("smithy.example#Integer")
+                .addTrait(new BoxTrait())
+                .build();
+        StructureShape struct = StructureShape.builder()
+                .id("smithy.example#Struct")
+                .addMember("foo", integer.getId())
+                .build();
+        Model model = Model.builder().addShapes(integer, struct).build();
+        NullableIndex index = NullableIndex.of(model);
+
+        assertThat(index.isMemberNullableInV1(struct.getMember("foo").get()), is(true));
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    public void worksWithV1NullabilityRulesIgnoringRequired() {
+        IntegerShape integer = IntegerShape.builder()
+                .id("smithy.example#Integer")
+                .addTrait(new BoxTrait())
+                .build();
+        StructureShape struct = StructureShape.builder()
+                .id("smithy.example#Struct")
+                // The required trait isn't used in v1 to determine nullability.
+                .addMember("foo", integer.getId(), b -> b.addTrait(new RequiredTrait()))
+                .build();
+        Model model = Model.builder().addShapes(integer, struct).build();
+        NullableIndex index = NullableIndex.of(model);
+
+        assertThat(index.isMemberNullableInV1(struct.getMember("foo").get()), is(true));
+    }
 }
