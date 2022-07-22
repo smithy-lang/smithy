@@ -21,6 +21,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.InputTrait;
@@ -118,9 +119,15 @@ public class NullableIndex implements KnowledgeIndex {
      * @param checkMode The mode used when checking if the member is considered nullable.
      * @return Returns true if the member is optional.
      */
+    @SuppressWarnings("deprecation")
     public boolean isMemberNullable(MemberShape member, CheckMode checkMode) {
         Model m = Objects.requireNonNull(model.get());
         Shape container = m.expectShape(member.getContainer());
+
+        // Support box trait for 1.0 loaded models that weren't converted to 2.0.
+        if (member.hasTrait(BoxTrait.class)) {
+            return true;
+        }
 
         // Client mode honors the nullable and input trait.
         if (checkMode == CheckMode.CLIENT
