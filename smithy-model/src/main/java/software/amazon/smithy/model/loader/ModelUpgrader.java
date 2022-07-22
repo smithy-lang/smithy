@@ -98,9 +98,8 @@ final class ModelUpgrader {
                 // Also attempt to upgrade unknown versions since they could be 1.0 and
                 // trying to upgrade 2.0 shapes has no effect.
                 // For v1 shape checks, we need to know the containing shape type to apply the appropriate transform.
-                model.getShape(member.getContainer()).ifPresent(container -> {
-                    upgradeV1Member(container.getType(), member);
-                });
+                model.getShape(member.getContainer())
+                        .ifPresent(container -> upgradeV1Member(container.getType(), member));
             }
         }
 
@@ -182,6 +181,7 @@ final class ModelUpgrader {
         return true;
     }
 
+    @SuppressWarnings("deprecation")
     private boolean shouldV1MemberHaveDefaultTrait(ShapeType containerType, MemberShape member, Shape target) {
         return containerType == ShapeType.STRUCTURE
             // Only when the targeted shape had a default value by default in v1 or if
@@ -210,6 +210,7 @@ final class ModelUpgrader {
         return builder == null ? member.toBuilder() : builder;
     }
 
+    @SuppressWarnings("deprecation")
     private void validateV2Member(MemberShape member) {
         if (REMOVED_PRIMITIVE_SHAPES.containsKey(member.getTarget())) {
             emitWhenTargetingRemovedPreludeShape(Severity.ERROR, member);

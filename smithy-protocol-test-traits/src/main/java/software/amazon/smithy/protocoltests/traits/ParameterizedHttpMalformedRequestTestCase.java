@@ -28,9 +28,9 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ToShapeId;
-import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SimpleCodeWriter;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.Tagged;
@@ -117,7 +117,7 @@ final class ParameterizedHttpMalformedRequestTestCase
                 .orElseThrow(IllegalStateException::new);
         final List<HttpMalformedRequestTestCase> testCases = new ArrayList<>(paramLength);
         for (int i = 0; i < paramLength; i++) {
-            final CodeWriter writer = new CodeWriter();
+            final SimpleCodeWriter writer = new SimpleCodeWriter();
             for (Map.Entry<String, List<String>> e : testParameters.entrySet()) {
                 writer.putContext(e.getKey(), e.getValue().get(i));
             }
@@ -135,8 +135,10 @@ final class ParameterizedHttpMalformedRequestTestCase
         return testCases;
     }
 
-    private static HttpMalformedResponseDefinition interpolateResponse(HttpMalformedResponseDefinition response,
-                                                                       CodeWriter writer) {
+    private static HttpMalformedResponseDefinition interpolateResponse(
+            HttpMalformedResponseDefinition response,
+            SimpleCodeWriter writer
+    ) {
         HttpMalformedResponseDefinition.Builder responseBuilder =
                 response.toBuilder().headers(formatHeaders(writer, response.getHeaders()));
         response.getBody()
@@ -151,8 +153,10 @@ final class ParameterizedHttpMalformedRequestTestCase
         return responseBuilder.build();
     }
 
-    private static HttpMalformedRequestDefinition interpolateRequest(HttpMalformedRequestDefinition request,
-                                                                     CodeWriter writer) {
+    private static HttpMalformedRequestDefinition interpolateRequest(
+            HttpMalformedRequestDefinition request,
+            SimpleCodeWriter writer
+    ) {
         HttpMalformedRequestDefinition.Builder requestBuilder = request.toBuilder()
                 .headers(formatHeaders(writer, request.getHeaders()))
                 .queryParams(request.getQueryParams().stream().map(writer::format).collect(Collectors.toList()));
@@ -161,7 +165,7 @@ final class ParameterizedHttpMalformedRequestTestCase
         return requestBuilder.build();
     }
 
-    private static Map<String, String> formatHeaders(CodeWriter writer, Map<String, String> headers) {
+    private static Map<String, String> formatHeaders(SimpleCodeWriter writer, Map<String, String> headers) {
         Map<String, String> newHeaders = new HashMap<>();
         for (Map.Entry<String, String> headerEntry : headers.entrySet()) {
             newHeaders.put(writer.format(headerEntry.getKey()), writer.format(headerEntry.getValue()));
