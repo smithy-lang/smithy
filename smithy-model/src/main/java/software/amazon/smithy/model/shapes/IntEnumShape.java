@@ -18,7 +18,6 @@ package software.amazon.smithy.model.shapes;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -26,12 +25,10 @@ import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.utils.BuilderRef;
-import software.amazon.smithy.utils.ListUtils;
 
-public final class IntEnumShape extends IntegerShape implements NamedMembers {
+public final class IntEnumShape extends IntegerShape {
 
     private final Map<String, MemberShape> members;
-    private volatile List<String> memberNames;
     private volatile Map<String, Integer> enumValues;
 
     private IntEnumShape(Builder builder) {
@@ -68,50 +65,6 @@ public final class IntEnumShape extends IntegerShape implements NamedMembers {
     @Override
     public Map<String, MemberShape> getAllMembers() {
         return members;
-    }
-
-    /**
-     * Returns an ordered list of member names based on the order they are
-     * defined in the model, including mixin members.
-     *
-     * @return Returns an immutable list of member names.
-     */
-    @Override
-    public List<String> getMemberNames() {
-        List<String> names = memberNames;
-        if (names == null) {
-            names = ListUtils.copyOf(members.keySet());
-            memberNames = names;
-        }
-
-        return names;
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        if (!super.equals(other)) {
-            return false;
-        }
-
-        // Members are ordered, so do a test on the ordering and their values.
-        IntEnumShape b = (IntEnumShape) other;
-        return getMemberNames().equals(b.getMemberNames()) && members.equals(b.members);
-    }
-
-    /**
-     * Get a specific member by name.
-     *
-     * @param name Name of the member to retrieve.
-     * @return Returns the optional member.
-     */
-    @Override
-    public Optional<MemberShape> getMember(String name) {
-        return Optional.ofNullable(members.get(name));
-    }
-
-    @Override
-    public Collection<MemberShape> members() {
-        return members.values();
     }
 
     public static Builder builder() {

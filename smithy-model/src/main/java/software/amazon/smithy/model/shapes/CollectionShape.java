@@ -17,8 +17,8 @@ package software.amazon.smithy.model.shapes;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Consumer;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.Trait;
@@ -29,10 +29,18 @@ import software.amazon.smithy.model.traits.Trait;
 public abstract class CollectionShape extends Shape {
 
     private final MemberShape member;
+    private transient Map<String, MemberShape> memberMap;
 
     CollectionShape(Builder<?, ?> builder) {
         super(builder, false);
-        member = builder.member != null ? builder.member : getRequiredMixinMember(builder, "member");
+
+        // Get the member from the builder or from any mixins.
+        if (builder.member != null) {
+            member = builder.member;
+        } else {
+            member = getRequiredMixinMember(builder, "member");
+        }
+
         ShapeId expected = getId().withMember("member");
         if (!member.getId().equals(expected)) {
             throw new IllegalArgumentException(String.format(
@@ -51,18 +59,13 @@ public abstract class CollectionShape extends Shape {
     }
 
     @Override
-    public final Optional<MemberShape> getMember(String name) {
-        return name.equals("member") ? Optional.of(member) : Optional.empty();
-    }
-
-    @Override
-    public Collection<MemberShape> members() {
-        return Collections.singletonList(member);
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        return super.equals(other) && getMember().equals(((CollectionShape) other).getMember());
+    public final Map<String, MemberShape> getAllMembers() {
+        Map<String, MemberShape> members = memberMap;
+        if (members == null) {
+            members = Collections.singletonMap("member", member);
+            memberMap = members;
+        }
+        return members;
     }
 
     /**

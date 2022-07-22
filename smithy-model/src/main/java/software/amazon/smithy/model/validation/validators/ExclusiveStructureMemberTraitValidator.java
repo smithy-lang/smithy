@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.NamedMembers;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
@@ -51,11 +50,9 @@ public final class ExclusiveStructureMemberTraitValidator extends AbstractValida
         }
 
         List<ValidationEvent> events = new ArrayList<>();
-        for (Shape shape : model.toSet()) {
-            if (shape instanceof NamedMembers) {
-                validateExclusiveMembers(shape, exclusiveMemberTraits, events);
-                validateExclusiveTargets(model, shape, exclusiveTargetTraits, events);
-            }
+        for (Shape shape : model.getStructureShapes()) {
+            validateExclusiveMembers(shape, exclusiveMemberTraits, events);
+            validateExclusiveTargets(model, shape, exclusiveTargetTraits, events);
         }
 
         return events;
