@@ -875,7 +875,7 @@ public final class SmithyIdlModelSerializer {
                 if (shape != null && shape.isMapShape()) {
                     // For maps the value member will always be the same.
                     member = shape.asMapShape().get().getValue();
-                } else if (shape instanceof NamedMembersShape) {
+                } else if (shape instanceof StructureShape || shape instanceof UnionShape) {
                     member = members.get(name.getValue());
                 } else {
                     // At this point the shape is either null or a document shape.

@@ -15,14 +15,20 @@
 
 package software.amazon.smithy.model.shapes;
 
+import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.Pair;
+import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -32,6 +38,7 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
 
     private final MemberShape key;
     private final MemberShape value;
+    private transient Map<String, MemberShape> memberMap;
 
     private MapShape(Builder builder) {
         super(builder, false);
@@ -83,32 +90,60 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
     }
 
     @Override
-    public Collection<MemberShape> members() {
-        return ListUtils.of(key, value);
-    }
+    public Map<String, MemberShape> getAllMembers() {
+        Map<String, MemberShape> result = memberMap;
 
-    @Override
-    public Optional<MemberShape> getMember(String name) {
-        switch (name) {
-            case "key":
-                return Optional.of(key);
-            case "value":
-                return Optional.of(value);
-            default:
-                return Optional.empty();
-        }
-    }
+        // Create a two-entry map that only knows about "key" and "value".
+        if (result == null) {
+            result = new AbstractMap<String, MemberShape>() {
+                private transient Set<Entry<String, MemberShape>> entries;
+                private transient List<MemberShape> values;
 
-    @Override
-    public boolean equals(Object other) {
-        if (!super.equals(other)) {
-            return false;
-        } else {
-            MapShape otherShape = (MapShape) other;
-            return super.equals(otherShape)
-                    && getKey().equals(otherShape.getKey())
-                    && getValue().equals(((MapShape) other).getValue());
+                @Override
+                public MemberShape get(Object keyName) {
+                    if ("key".equals(keyName)) {
+                        return key;
+                    } else if ("value".equals(keyName)) {
+                        return value;
+                    } else {
+                        return null;
+                    }
+                }
+
+                @Override
+                public boolean containsKey(Object keyName) {
+                    return "key".equals(keyName) || "value".equals(keyName);
+                }
+
+                @Override
+                public Set<String> keySet() {
+                    return SetUtils.of("key", "value");
+                }
+
+                @Override
+                public Collection<MemberShape> values() {
+                    List<MemberShape> result = values;
+                    if (result == null) {
+                        result = ListUtils.of(key, value);
+                        values = result;
+                    }
+                    return result;
+                }
+
+                @Override
+                public Set<Entry<String, MemberShape>> entrySet() {
+                    Set<Entry<String, MemberShape>> result = entries;
+                    if (result == null) {
+                        result = SetUtils.of(Pair.of("key", key), Pair.of("value", value));
+                        entries = result;
+                    }
+                    return result;
+                }
+            };
+            memberMap = result;
         }
+
+        return result;
     }
 
     /**

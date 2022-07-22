@@ -18,7 +18,6 @@ package software.amazon.smithy.model.shapes;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -35,15 +34,13 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
 import software.amazon.smithy.utils.BuilderRef;
-import software.amazon.smithy.utils.ListUtils;
 
-public final class EnumShape extends StringShape implements NamedMembers {
+public final class EnumShape extends StringShape {
 
     private static final Pattern CONVERTABLE_VALUE = Pattern.compile("^[a-zA-Z-_.:/\\s]+[a-zA-Z_0-9-.:/\\s]*$");
     private static final Logger LOGGER = Logger.getLogger(EnumShape.class.getName());
 
     private final Map<String, MemberShape> members;
-    private volatile List<String> memberNames;
     private volatile Map<String, String> enumValues;
 
     private EnumShape(Builder builder) {
@@ -82,56 +79,13 @@ public final class EnumShape extends StringShape implements NamedMembers {
         return members;
     }
 
-    /**
-     * Returns an ordered list of member names based on the order they are
-     * defined in the model, including mixin members.
-     *
-     * @return Returns an immutable list of member names.
-     */
     @Override
-    public List<String> getMemberNames() {
-        List<String> names = memberNames;
-        if (names == null) {
-            names = ListUtils.copyOf(members.keySet());
-            memberNames = names;
-        }
-
-        return names;
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        if (!super.equals(other)) {
-            return false;
-        }
-
-        // Members are ordered, so do a test on the ordering and their values.
-        EnumShape b = (EnumShape) other;
-        return getMemberNames().equals(b.getMemberNames()) && members.equals(b.members);
-    }
-
-    @Override
+    @SuppressWarnings("deprecation")
     public Optional<Trait> findTrait(ShapeId id) {
         if (id.equals(EnumTrait.ID)) {
             return super.findTrait(SyntheticEnumTrait.ID);
         }
         return super.findTrait(id);
-    }
-
-    /**
-     * Get a specific member by name.
-     *
-     * @param name Name of the member to retrieve.
-     * @return Returns the optional member.
-     */
-    @Override
-    public Optional<MemberShape> getMember(String name) {
-        return Optional.ofNullable(members.get(name));
-    }
-
-    @Override
-    public Collection<MemberShape> members() {
-        return members.values();
     }
 
     public static Builder builder() {
