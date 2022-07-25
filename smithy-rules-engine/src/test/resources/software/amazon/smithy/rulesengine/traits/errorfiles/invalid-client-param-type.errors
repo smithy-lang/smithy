@@ -1,0 +1,2 @@
+[WARNING] smithy.example#ExampleService: This shape applies a trait that is unstable: smithy.rules#clientContextParams | UnstableTrait
+[ERROR] smithy.example#ExampleService: Error validating trait `smithy.rules#clientContextParams`.invalidParam.type: String value provided for `smithy.rules#ShapeType` must be one of the following values: `boolean`, `string` | TraitValue
