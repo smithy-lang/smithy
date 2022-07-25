@@ -24,7 +24,7 @@ Read more
     :caption: Implementations
     :maxdepth: 1
 
-    implementations
+    Implementations <https://awslabs.github.io/smithy/implementations.html>
     ts-ssdk/index
 
 .. toctree::
