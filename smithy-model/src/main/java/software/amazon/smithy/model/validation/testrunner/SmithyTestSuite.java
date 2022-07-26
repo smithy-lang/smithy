@@ -57,7 +57,7 @@ public final class SmithyTestSuite {
     }
 
     /**
-     * Factory method used to easily created a JUnit 5 {@code ParameterizedTest}
+     * Factory method used to easily create a JUnit 5 {@code ParameterizedTest}
      * {@code MethodSource} based on the given {@code Class}.
      *
      * <p>This method assumes that there is a resource named {@code errorfiles}

@@ -668,6 +668,108 @@ maps it to the "forecastId" identifier is provided by the
 on ``GetHistoricalForecastInput$customHistoricalIdName`` maps that member
 to the "historicalId" identifier.
 
+.. _resource-properties:
+
+Resource Properties
+-------------------
+
+:dfn:`Resource properties` represent the state of a resource within a service.
+Properties can be referred to in the top level input and output shapes
+of a resource's instance operations, including create, read, update,
+delete, and put. All declared resource properties MUST appear in at
+least one instance operation's input or output.
+
+For example, the following model defines a ``Forecast`` resource with a
+single property ``chanceOfRain`` read by the GetForecast operation, and the
+output operation shape ``GetForecastOutput`` contains that output property.
+
+.. code-block:: smithy
+
+    $version: "2.0"
+    namespace smithy.example
+
+    resource Forecast {
+        properties: { chanceOfRain: Float }
+        read: GetForecast
+    }
+
+    @readonly
+    operation GetForecast {
+       output: GetForecastOutput
+    }
+
+    structure GetForecastOutput{
+        chanceOfRain: Float
+    }
+
+.. _binding-properties:
+
+Binding members to properties
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Property bindings* associate top-level members of input or output shapes
+with resource properties. The match occurs through a match between member
+name and property name by default.
+
+.. code-block:: smithy
+
+    $version: "2.0"
+    namespace smithy.example
+
+    resource Forecast {
+        properties: { chanceOfRain: Float }
+        read: GetForecast
+    }
+
+    @readonly
+    operation GetForecast {
+       output: GetForecastOutput
+    }
+
+    structure GetForecastOutput for Forecast {
+        $chanceOfRain
+    }
+
+The `name` property of the :ref:`property-trait` is used to bind a member to
+the named property when the member name does not match a property name. This is
+useful if the member name cannot be changed due backwards compatibility reasons,
+but resource property modeling is being added to your Smithy model.
+
+The following example demonstrates the ``howLikelyToRain`` member of
+``GetForecastOutput`` can be bound to the ``chanceOfRain`` resource property:
+
+.. code-block:: smithy
+
+    resource Forecast {
+        properties: { chanceOfRain: Float }
+        read: GetForecast
+    }
+
+    @readonly
+    operation GetForecast {
+       output: GetForecastOutput
+    }
+
+    structure GetForecastOutput {
+        @property(name: "chanceOfRain")
+        howLikelyToRain: Float
+    }
+
+.. rubric:: Resource property binding validation
+
+- All top-level input or output members must bind to a resource property unless
+  marked with :ref:`notProperty-trait` or another trait with it applied.
+- Top-level members of the input and output of resource instance operations MUST
+  only use properties that resolve to declared resource properties except for
+  members marked with the ``@notProperty`` trait or marked with traits marked
+  with the ``@notProperty`` trait.
+- Defined resource properties that do not resolve to any top-level input or
+  output members are invalid.
+- Members that provide a value for a resource property but use a different
+  target shape are invalid.
+- Members marked with a :ref:`property-trait` using a name that does not map to
+  a declared resource property are invalid.
+
 
 .. _lifecycle-operations:
 

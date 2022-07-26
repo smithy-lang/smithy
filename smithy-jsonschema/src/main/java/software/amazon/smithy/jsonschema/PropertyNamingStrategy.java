@@ -51,7 +51,7 @@ public interface PropertyNamingStrategy {
      */
     static PropertyNamingStrategy createDefaultStrategy() {
         return (containingShape, member, config) -> {
-            // Use the jsonName trait if configured to do so.
+           // Use the jsonName trait if configured to do so.
             if (config.getUseJsonName() && member.hasTrait(JsonNameTrait.class)) {
                 return member.expectTrait(JsonNameTrait.class).getValue();
             }

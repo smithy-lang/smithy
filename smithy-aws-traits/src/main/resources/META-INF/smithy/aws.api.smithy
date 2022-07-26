@@ -201,6 +201,59 @@ structure service {
     endpointPrefix: String
 }
 
+/// Annotates a service as having tagging on 1 or more resources and associated
+/// APIs to perform CRUD operations on those tags
+@trait(selector: "service")
+structure tagEnabled {
+    /// The `disableDefaultOperations` property is a boolean value that specifies
+    /// if the service does not have the standard tag operations supporting all
+    /// resources on the service. Default value is `false`
+    disableDefaultOperations: Boolean
+}
+
+/// Points to an operation designated for a tagging APi
+@idRef(
+    failWhenMissing: true
+    selector: "resource > operation"
+)
+string TagOperationReference
+
+/// Structure representing the configuration of resource specific tagging APIs
+structure TaggableApiConfig {
+    /// The `tagApi` property is a string value that references a non-instance
+    /// or create operation that creates or updates tags on the resource.
+    @required
+    tagApi: TagOperationReference
+
+    /// The `untagApi` property is a string value that references a non-instance
+    /// operation that removes tags on the resource.
+    @required
+    untagApi: TagOperationReference
+
+    /// The `listTagsApi` property is a string value that references a non-
+    /// instance operation which gets the current tags on the resource.
+    @required
+    listTagsApi: TagOperationReference
+}
+
+/// Indicates a resource supports CRUD operations for tags. Either through
+/// resource lifecycle or instance operations or tagging operations on the
+/// service.
+@trait(selector: "resource")
+structure taggable {
+    /// The `property` property is a string value that identifies which
+    /// resource property represents tags for the resource.
+    property: String
+
+    /// Specifies configuration for resource specific tagging APIs if the
+    /// resource has them.
+    apiConfig: TaggableApiConfig
+
+    /// Flag indicating if the resource is not able to carry AWS system level.
+    /// Used by service principals. Default value is `false`
+    disableSystemTags: Boolean
+}
+
 /// A string representing a service's ARN namespace.
 @pattern("^[a-z0-9.\\-]{1,63}$")
 @private

@@ -1,2 +1,6 @@
 [ERROR] ns.foo#Invalid1: This resource is bound as a child of `ns.foo#Valid1`, but it is invalid because its `identifiers` property is missing the following identifiers that are defined in `ns.foo#Valid1`: [b] | ResourceIdentifier
 [ERROR] ns.foo#Invalid2: The `identifiers` property of this resource is incompatible with its binding to `ns.foo#Valid1`: expected the `b` member to target `smithy.api#String`, but found a target of `ns.foo#MyString` | ResourceIdentifier
+[ERROR] ns.foo#Invalid3: Resource identifier `c` cannot also be a resource property | ResourceIdentifier
+[ERROR] ns.foo#Invalid3: Resource property `c` is not used in the input or output of create or an instance operation. | ResourceOperationInputOutput
+[ERROR] ns.foo#Invalid4: Resource identifier `d` cannot also be a resource property | ResourceIdentifier
+[ERROR] ns.foo#Invalid4: Resource property `D` is not used in the input or output of create or an instance operation. | ResourceOperationInputOutput

@@ -1,0 +1,2 @@
+[ERROR] smithy.example#Resource: Resource property `price` is not used in the input or output of create or an instance operation. | ResourceOperationInputOutput
+[NOTE] smithy.example#Price: The string shape is not connected to from any service shape. | UnreferencedShape
