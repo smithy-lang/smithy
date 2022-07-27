@@ -40,6 +40,9 @@ public interface Validator {
     /** Event ID used for structural errors encountered when loading a model. */
     String MODEL_ERROR =  "Model";
 
+    /** Event ID used when something in the model is deprecated. */
+    String MODEL_DEPRECATION =  "ModelDeprecation";
+
     /**
      * Validates a model and returns a list of validation events.
      *

@@ -54,11 +54,7 @@ abstract class NamedMembersShapeBuilder<B extends NamedMembersShapeBuilder<B, S>
         return (B) this;
     }
 
-    /**
-     * Removes all members from the shape.
-     *
-     * @return Returns the builder.
-     */
+    @Override
     @SuppressWarnings("unchecked")
     public B clearMembers() {
         members.clear();

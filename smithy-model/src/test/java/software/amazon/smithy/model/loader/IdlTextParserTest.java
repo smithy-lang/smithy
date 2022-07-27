@@ -8,13 +8,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.model.traits.TraitFactory;
 
 public class IdlTextParserTest {
     @ParameterizedTest
     @MethodSource("validTextProvider")
     public void parsesText(String input, String lexeme) {
-        IdlModelParser parser = new IdlModelParser(TraitFactory.createServiceFactory(), "/foo", input);
+        IdlModelParser parser = new IdlModelParser("/foo", input);
         StringNode result = IdlNodeParser.parseNode(parser).expectStringNode();
         assertThat(result.getValue(), equalTo(lexeme));
     }

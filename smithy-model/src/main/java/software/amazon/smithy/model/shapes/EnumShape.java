@@ -378,11 +378,7 @@ public final class EnumShape extends StringShape {
             return this;
         }
 
-        /**
-         * Removes all members from the shape.
-         *
-         * @return Returns the builder.
-         */
+        @Override
         public Builder clearMembers() {
             members.clear();
             return this;

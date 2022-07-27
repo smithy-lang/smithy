@@ -107,6 +107,11 @@ public final class SetShape extends ListShape {
         }
 
         @Override
+        public Builder clearMembers() {
+            return (Builder) super.clearMembers();
+        }
+
+        @Override
         public Builder id(String shapeId) {
             return (Builder) super.id(shapeId);
         }

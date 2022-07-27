@@ -15,10 +15,12 @@
 
 package software.amazon.smithy.model.loader;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.function.Function;
+import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -31,69 +33,62 @@ import software.amazon.smithy.model.validation.Validator;
 /**
  * Applies mixins to shapes after the mixins have been resolved.
  */
-final class ApplyMixin implements PendingShapeModifier {
+final class ApplyMixin implements ShapeModifier {
     private final ShapeId mixin;
-    private final List<ValidationEvent> events;
+    private List<ValidationEvent> events;
 
-    ApplyMixin(ShapeId mixin, List<ValidationEvent> events) {
+    ApplyMixin(ShapeId mixin) {
         this.mixin = mixin;
-        this.events = events;
-    }
-
-    @Override
-    public Set<ShapeId> getDependencies() {
-        return Collections.singleton(mixin);
     }
 
     @Override
     public void modifyMember(
             AbstractShapeBuilder<?, ?> shapeBuilder,
             MemberShape.Builder memberBuilder,
-            TraitContainer resolvedTraits,
-            Map<ShapeId, Shape> shapeMap
+            Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits,
+            Function<ShapeId, Shape> shapeMap
     ) {
-        // Fast-fail the common case.
+        // The target could have been set by resource based properties.
         if (memberBuilder.getTarget() != null) {
             return;
         }
 
         // Members inherited from mixins can have their targets elided, so here we set them
         // to the target defined in the mixin.
-        Shape mixinShape = shapeMap.get(mixin);
-        String name = memberBuilder.getId().getMember().get();
-        if (mixinShape.getMember(name).isPresent()) {
-            memberBuilder.target(mixinShape.getMember(name).get().getTarget());
+        Shape mixinShape = shapeMap.apply(mixin);
+        if (mixinShape == null) {
+            throw new SourceException("Cannot apply mixin to " + memberBuilder.getId() + ": " + mixin + " not found",
+                                      memberBuilder);
         }
+
+        String name = memberBuilder.getId().getMember().get();
+        mixinShape.getMember(name).ifPresent(mixinMember -> memberBuilder.target(mixinMember.getTarget()));
     }
 
     @Override
     public void modifyShape(
             AbstractShapeBuilder<?, ?> builder,
             Map<String, MemberShape.Builder> memberBuilders,
-            TraitContainer resolvedTraits,
-            Map<ShapeId, Shape> shapeMap
+            Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits,
+            Function<ShapeId, Shape> shapeMap
     ) {
-        Shape mixinShape = shapeMap.get(mixin);
+        Shape mixinShape = shapeMap.apply(mixin);
+        if (mixinShape == null) {
+            throw new SourceException("Cannot apply mixin to " + builder.getId() + ": " + mixin + " not found",
+                                      builder);
+        }
+
         for (MemberShape member : mixinShape.members()) {
             ShapeId targetId = builder.getId().withMember(member.getMemberName());
-            Map<ShapeId, Trait> introducedTraits = resolvedTraits.getTraitsForShape(targetId);
+            // Claim traits from the trait map that were applied to synthesized shapes.
+            Map<ShapeId, Trait> introducedTraits = unclaimedTraits.apply(targetId);
 
             MemberShape introducedMember = null;
             if (memberBuilders.containsKey(member.getMemberName())) {
-                introducedMember = memberBuilders.get(member.getMemberName())
-                        .addMixin(member)
-                        .build();
-
+                MemberShape.Builder original = memberBuilders.get(member.getMemberName());
+                introducedMember = original.addMixin(member).build();
                 if (!introducedMember.getTarget().equals(member.getTarget())) {
-                    // Members cannot be redefined if their targets conflict.
-                    MemberShape.Builder conflict = memberBuilders.get(member.getMemberName());
-                    events.add(ValidationEvent.builder()
-                            .severity(Severity.ERROR)
-                            .id(Validator.MODEL_ERROR)
-                            .shapeId(conflict.getId())
-                            .sourceLocation(conflict.getSourceLocation())
-                            .message("Member conflicts with an inherited mixin member: " + member.getId())
-                            .build());
+                    mixinMemberConflict(original, member);
                 }
             } else if (!introducedTraits.isEmpty()) {
                 // Build local member copies before adding mixins if traits
@@ -111,6 +106,25 @@ final class ApplyMixin implements PendingShapeModifier {
                 builder.addMember(introducedMember);
             }
         }
+
         builder.addMixin(mixinShape);
+    }
+
+    private void mixinMemberConflict(MemberShape.Builder conflict, MemberShape other) {
+        if (events == null) {
+            events = new ArrayList<>();
+        }
+        events.add(ValidationEvent.builder()
+                .severity(Severity.ERROR)
+                .id(Validator.MODEL_ERROR)
+                .shapeId(conflict.getId())
+                .sourceLocation(conflict.getSourceLocation())
+                .message("Member conflicts with an inherited mixin member: " + other.getId())
+                .build());
+    }
+
+    @Override
+    public List<ValidationEvent> getEvents() {
+        return events == null ? Collections.emptyList() : events;
     }
 }

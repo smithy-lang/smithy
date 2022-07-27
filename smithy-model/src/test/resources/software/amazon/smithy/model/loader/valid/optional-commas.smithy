@@ -1,3 +1,4 @@
+$version: "2.0"
 namespace example.weather
 
 // Commas are whitespace.

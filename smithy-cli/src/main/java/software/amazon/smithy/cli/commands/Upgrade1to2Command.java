@@ -478,8 +478,10 @@ public final class Upgrade1to2Command extends SimpleCommand {
         }
 
         private void eraseTrait(Shape shape, Trait trait) {
-            SourceLocation to = findLocationAfterTrait(shape, trait.getClass());
-            erase(trait.getSourceLocation(), to);
+            if (trait.getSourceLocation() != SourceLocation.NONE) {
+                SourceLocation to = findLocationAfterTrait(shape, trait.getClass());
+                erase(trait.getSourceLocation(), to);
+            }
         }
 
         private SourceLocation findLocationAfterTrait(Shape shape, Class<? extends Trait> target) {

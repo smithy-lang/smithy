@@ -136,6 +136,12 @@ public abstract class CollectionShape extends Shape {
         }
 
         @Override
+        public B clearMembers() {
+            member = null;
+            return super.clearMembers();
+        }
+
+        @Override
         public B flattenMixins() {
             for (Shape mixin : getMixins().values()) {
                 SourceLocation location = getSourceLocation();

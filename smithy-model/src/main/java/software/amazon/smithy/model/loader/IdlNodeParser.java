@@ -86,9 +86,9 @@ final class IdlNodeParser {
                 // not be able to be resolved until after the entire model is loaded.
                 Pair<StringNode, Consumer<String>> pair = StringNode.createLazyString(text, location);
                 Consumer<String> consumer = pair.right;
-                parser.modelFile.addForwardReference(text, (id, typeFunction) -> {
-                    if (typeFunction.apply(id) == null) {
-                        parser.modelFile.events().add(ValidationEvent.builder()
+                parser.addForwardReference(text, (id, typeProvider) -> {
+                    if (typeProvider.apply(id) == null) {
+                        parser.emit(ValidationEvent.builder()
                                 .id(SYNTACTIC_SHAPE_ID_TARGET)
                                 .severity(Severity.DANGER)
                                 .message(String.format("Syntactic shape ID `%s` does not resolve to a valid shape ID: "

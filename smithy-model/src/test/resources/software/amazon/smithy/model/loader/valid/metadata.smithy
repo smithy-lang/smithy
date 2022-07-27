@@ -63,5 +63,3 @@ metadata trailing_commas2 = ["a", "b",]
 
 // Unquoted strings resolve to shape IDs.
 metadata shape_id = smithy.api#String
-
-namespace foo.baz

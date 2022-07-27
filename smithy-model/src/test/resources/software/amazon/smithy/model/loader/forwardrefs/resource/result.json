@@ -1,0 +1,22 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#GetFoo": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.api#Unit"
+            },
+            "output": {
+                "target": "smithy.api#Unit"
+            }
+        },
+        "smithy.example#Smithy": {
+            "type": "resource",
+            "operations": [
+                {
+                    "target": "smithy.example#GetFoo"
+                }
+            ]
+        }
+    }
+}

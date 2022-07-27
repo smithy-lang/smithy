@@ -2,7 +2,12 @@
     "smithy": "1.0",
     "shapes": {
         "foo.example#Widget": {
-            "type": "structure"
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String"
+                }
+            }
         }
     }
 }

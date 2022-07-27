@@ -1,0 +1,1 @@
+[ERROR] smithy.example#Foo$bar: The @default trait can only be used in Smithy 2.0 or later | Model

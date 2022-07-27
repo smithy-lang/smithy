@@ -22,9 +22,6 @@ structure PrimitiveBearer {
     handlesComments: // Nobody actually does this right?
         Short,
 
-    @default(0)
-    handlesPreexistingDefault: Short,
-
     @required
     handlesRequired: Long,
 
