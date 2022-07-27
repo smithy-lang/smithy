@@ -3,7 +3,6 @@ $version: "1.0"
 namespace smithy.example
 
 structure Foo {
-    @default(0)
     alreadyDefault: PrimitiveInteger,
 
     @required

@@ -18,9 +18,12 @@ package software.amazon.smithy.model.loader;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -272,5 +275,15 @@ public class IdlModelLoaderTest {
 
         // Make sure we can find our Unit type
         assertThat(model.expectShape(ShapeId.from("smithy.example#Unit")), Matchers.notNullValue());
+    }
+
+    @Test
+    public void emitsVersionWhenNotSet() {
+        List<LoadOperation> operations = new ArrayList<>();
+        IdlModelParser parser = new IdlModelParser("foo.smithy", "namespace smithy.example\n");
+        parser.parse(operations::add);
+
+        assertThat(operations, hasSize(1));
+        assertThat(operations.get(0), instanceOf(LoadOperation.ModelVersion.class));
     }
 }

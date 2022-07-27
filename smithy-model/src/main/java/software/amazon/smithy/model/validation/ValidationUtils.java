@@ -94,7 +94,7 @@ public final class ValidationUtils {
         return shapes.stream()
                 .map(ToShapeId::toShapeId)
                 // Exclude IDs with members since these need to be validated separately.
-                .filter(id -> !id.getMember().isPresent())
+                .filter(id -> !id.hasMember())
                 // Group by the lowercase name of each shape, and collect the shape IDs as strings.
                 .collect(groupingBy(id -> id.getName().toLowerCase(Locale.US)))
                 .entrySet().stream()

@@ -18,20 +18,13 @@ package software.amazon.smithy.model.loader;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.MixinTrait;
 
 /**
  * Tracks version-specific features and validation.
  */
 enum Version {
-
-    /**
-     * Unknown is used for in-memory models that aren't tied to a specific version.
-     * For these kinds of models, we just assume every feature is supported.
-     *
-     * <p>When loading IDL models with no $version specified, the default assumed
-     * version is 1.0, not UNKNOWN (see {@link TraitContainer.VersionAwareTraitContainer}).
-     */
     UNKNOWN {
         @Override
         public String toString() {
@@ -61,6 +54,11 @@ enum Version {
         @Override
         boolean isShapeTypeSupported(ShapeType shapeType) {
             return true;
+        }
+
+        @Override
+        boolean isDeprecated() {
+            return false;
         }
     },
 
@@ -97,15 +95,27 @@ enum Version {
 
         @Override
         void validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
+            String errorMessage = null;
             if (traitId.equals(MixinTrait.ID)) {
+                errorMessage = String.format("Mixins can only be used in Smithy 2.0 or later. Attempted to apply "
+                                             + "a @mixin trait to `%s` in a model file using version `%s`.",
+                                             target, this);
+            } else if (traitId.equals(DefaultTrait.ID)) {
+                errorMessage = "The @default trait can only be used in Smithy 2.0 or later";
+            }
+
+            if (errorMessage != null) {
                 throw ModelSyntaxException.builder()
-                        .message(String.format("Mixins can only be used in Smithy 2.0 or later. Attempted to apply "
-                                               + "a @mixin trait to `%s` in a model file using version `%s`.",
-                                               target, this))
+                        .message(errorMessage)
                         .shapeId(target)
                         .sourceLocation(value)
                         .build();
             }
+        }
+
+        @Override
+        boolean isDeprecated() {
+            return true;
         }
     },
 
@@ -139,6 +149,11 @@ enum Version {
         boolean isShapeTypeSupported(ShapeType shapeType) {
             return shapeType != ShapeType.SET;
         }
+
+        @Override
+        boolean isDeprecated() {
+            return false;
+        }
     };
 
     /**
@@ -169,6 +184,11 @@ enum Version {
     boolean supportsResourceProperties() {
         return this == VERSION_2_0;
     }
+
+    /**
+     * @return Return true if deprecated.
+     */
+    abstract boolean isDeprecated();
 
     /**
      * Checks if this version of the IDL supports mixins.

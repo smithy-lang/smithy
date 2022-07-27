@@ -15,24 +15,20 @@
 
 package software.amazon.smithy.model.loader;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.function.Function;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.validation.ValidationEvent;
 
 /**
  * Represents a modification that needs to be done to resolve a pending shape.
  */
-interface PendingShapeModifier {
-
-    /**
-     * @return Returns the shapes that need to be resolved before this
-     *         modification can be applied.
-     */
-    Set<ShapeId> getDependencies();
-
+interface ShapeModifier {
     /**
      * Modifies locally defined members on the shape.
      *
@@ -40,14 +36,14 @@ interface PendingShapeModifier {
      *
      * @param shapeBuilder The builder for the shape being modified.
      * @param memberBuilder The builder for the locally defined member.
-     * @param resolvedTraits A container with all the traits in the model that have been resolved.
-     * @param shapeMap A map of shape id to resolved shape.
+     * @param unclaimedTraits Function that provides unclaimed traits for a shape.
+     * @param shapeMap A function that returns a shape for a given ID, or null.
      */
     default void modifyMember(
             AbstractShapeBuilder<?, ?> shapeBuilder,
             MemberShape.Builder memberBuilder,
-            TraitContainer resolvedTraits,
-            Map<ShapeId, Shape> shapeMap
+            Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits,
+            Function<ShapeId, Shape> shapeMap
     ) {
     }
 
@@ -58,14 +54,19 @@ interface PendingShapeModifier {
      *
      * @param builder The builder for the shape being modified.
      * @param memberBuilders The builders for the shape's locally defined members.
-     * @param resolvedTraits A container with all the traits in the model that have been resolved.
-     * @param shapeMap A map of shape id to resolved shape.
+     * @param unclaimedTraits Function that provides unclaimed traits for a shape.
+     * @param shapeMap A function that returns a shape for a given ID, or null.
      */
     default void modifyShape(
             AbstractShapeBuilder<?, ?> builder,
             Map<String, MemberShape.Builder> memberBuilders,
-            TraitContainer resolvedTraits,
-            Map<ShapeId, Shape> shapeMap
+            Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits,
+            Function<ShapeId, Shape> shapeMap
     ) {
     }
+
+    /**
+     * @return Returns any events emitted by the modifier.
+     */
+    List<ValidationEvent> getEvents();
 }

@@ -15,16 +15,15 @@
 
 package software.amazon.smithy.model.loader;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
 import software.amazon.smithy.model.shapes.Shape;
@@ -39,7 +38,16 @@ import software.amazon.smithy.model.shapes.ShapeId;
 public final class TopologicalShapeSort {
 
     private final Map<ShapeId, Set<ShapeId>> forwardDependencies = new HashMap<>();
-    private final Queue<ShapeId> satisfiedShapes = new LinkedList<>();
+    private final Map<ShapeId, Set<ShapeId>> reverseDependencies = new HashMap<>();
+    private final Deque<ShapeId> satisfiedShapes;
+
+    public TopologicalShapeSort() {
+        this(100);
+    }
+
+    TopologicalShapeSort(int ensureCapacity) {
+        satisfiedShapes = new ArrayDeque<>(ensureCapacity);
+    }
 
     /**
      * Add a shape to the sort queue, and automatically extract dependencies.
@@ -57,7 +65,14 @@ public final class TopologicalShapeSort {
      * @param dependencies Dependencies of the shape.
      */
     public void enqueue(ShapeId shape, Collection<ShapeId> dependencies) {
-        forwardDependencies.put(shape, new LinkedHashSet<>(dependencies));
+        if (dependencies.isEmpty()) {
+            satisfiedShapes.offer(shape);
+        } else {
+            for (ShapeId dependent : dependencies) {
+                reverseDependencies.computeIfAbsent(dependent, unused -> new HashSet<>()).add(shape);
+            }
+            forwardDependencies.put(shape, new HashSet<>(dependencies));
+        }
     }
 
     /**
@@ -67,23 +82,7 @@ public final class TopologicalShapeSort {
      * @throws CycleException if cycles exist between shapes.
      */
     public List<ShapeId> dequeueSortedShapes() {
-        Map<ShapeId, Set<ShapeId>> reverseDependencies = new HashMap<>();
-
-        for (Map.Entry<ShapeId, Set<ShapeId>> entry : forwardDependencies.entrySet()) {
-            if (entry.getValue().isEmpty()) {
-                satisfiedShapes.offer(entry.getKey());
-            } else {
-                for (ShapeId dependent : entry.getValue()) {
-                    reverseDependencies.computeIfAbsent(dependent, unused -> new HashSet<>()).add(entry.getKey());
-                }
-            }
-        }
-
-        return topologicalSort(reverseDependencies);
-    }
-
-    private List<ShapeId> topologicalSort(Map<ShapeId, Set<ShapeId>> reverseDependencies) {
-        List<ShapeId> result = new ArrayList<>();
+        List<ShapeId> result = new ArrayList<>(satisfiedShapes.size() + forwardDependencies.size());
 
         while (!satisfiedShapes.isEmpty()) {
             ShapeId current = satisfiedShapes.poll();
@@ -94,13 +93,15 @@ public final class TopologicalShapeSort {
                 Set<ShapeId> dependentDependencies = forwardDependencies.get(dependent);
                 dependentDependencies.remove(current);
                 if (dependentDependencies.isEmpty()) {
-                    satisfiedShapes.add(dependent);
+                    satisfiedShapes.offer(dependent);
                 }
             }
         }
 
+        reverseDependencies.clear();
+
         if (!forwardDependencies.isEmpty()) {
-            throw new CycleException(new TreeSet<>(forwardDependencies.keySet()));
+            throw new CycleException(new TreeSet<>(forwardDependencies.keySet()), result);
         }
 
         return result;
@@ -111,10 +112,12 @@ public final class TopologicalShapeSort {
      */
     public static final class CycleException extends RuntimeException {
         private final Set<ShapeId> unresolved;
+        private final List<ShapeId> resolved;
 
-        public CycleException(Set<ShapeId> unresolved) {
+        public CycleException(Set<ShapeId> unresolved, List<ShapeId> resolved) {
             super("Mixin cycles detected among " + unresolved);
             this.unresolved = unresolved;
+            this.resolved = resolved;
         }
 
         /**
@@ -124,6 +127,13 @@ public final class TopologicalShapeSort {
          */
         public Set<ShapeId> getUnresolved() {
             return unresolved;
+        }
+
+        /**
+         * @return Returns the set of resolved shapes.
+         */
+        public List<ShapeId> getResolved() {
+            return resolved;
         }
     }
 }

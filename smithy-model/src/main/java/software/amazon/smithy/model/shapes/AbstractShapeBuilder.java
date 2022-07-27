@@ -133,6 +133,15 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<B, S>,
     }
 
     /**
+     * Get an immutable view of the traits applied to the builder.
+     *
+     * @return Returns the applied traits.
+     */
+    public Map<ShapeId, Trait> getAllTraits() {
+        return traits.peek();
+    }
+
+    /**
      * Adds traits from an iterator to the shape builder, replacing any
      * conflicting traits.
      *
@@ -202,12 +211,22 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<B, S>,
      * Adds a member to the shape IFF the shape supports members.
      *
      * @param member Member to add to the shape.
-     * @return Returns the model assembler.
+     * @return Returns the builder.
      * @throws UnsupportedOperationException if the shape does not support members.
      */
     public B addMember(MemberShape member) {
         throw new UnsupportedOperationException(String.format(
                 "Member `%s` cannot be added to %s", member.getId(), getClass().getName()));
+    }
+
+    /**
+     * Removes all members from the builder.
+     *
+     * @return Returns the builder.
+     */
+    @SuppressWarnings("unchecked")
+    public B clearMembers() {
+        return (B) this;
     }
 
     /**

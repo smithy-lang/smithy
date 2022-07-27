@@ -999,6 +999,17 @@ public final class Model implements ToSmithyBuilder<Model> {
             return this;
         }
 
+        /**
+         * Gets an immutable view of the current shapes in the builder.
+         *
+         * <p>The returned view may not be updated as shapes are added to the builder.
+         *
+         * @return Returns the current shapes in the builder.
+         */
+        public Map<ShapeId, Shape> getCurrentShapes() {
+            return shapeMap.peek();
+        }
+
         @Override
         public Model build() {
             return new Model(this);

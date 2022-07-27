@@ -197,6 +197,13 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
             }
         }
 
+        @Override
+        public Builder clearMembers() {
+            key = null;
+            value = null;
+            return this;
+        }
+
         /**
          * Sets the key member of the map.
          *

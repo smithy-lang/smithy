@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.NumberNode;
@@ -40,6 +41,7 @@ import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.utils.MapUtils;
 
 /**
@@ -49,8 +51,6 @@ import software.amazon.smithy.utils.MapUtils;
  * numbers and booleans, and the @default trait.
  */
 final class ModelUpgrader {
-
-    private static final String UPGRADE_MODEL = "UpgradeModel";
 
     /** Shape types in Smithy 1.0 that had a default value. */
     private static final EnumSet<ShapeType> HAD_DEFAULT_VALUE_IN_1_0 = EnumSet.of(
@@ -77,10 +77,10 @@ final class ModelUpgrader {
 
     private final Model model;
     private final List<ValidationEvent> events;
-    private final Map<String, Version> fileToVersion;
+    private final Function<Shape, Version> fileToVersion;
     private final List<Shape> shapeUpgrades = new ArrayList<>();
 
-    ModelUpgrader(Model model, List<ValidationEvent> events, Map<String, Version> fileToVersion) {
+    ModelUpgrader(Model model, List<ValidationEvent> events, Function<Shape, Version> fileToVersion) {
         this.model = model;
         this.events = events;
         this.fileToVersion = fileToVersion;
@@ -88,10 +88,11 @@ final class ModelUpgrader {
 
     ValidatedResult<Model> transform() {
         for (MemberShape member : model.getMemberShapes()) {
-            // We must assume v2 for manually created shapes.
-            Version version = fileToVersion.getOrDefault(member.getSourceLocation().getFilename(),
-                                                         Version.VERSION_2_0);
+            if (Prelude.isPreludeShape(member)) {
+                continue;
+            }
 
+            Version version = fileToVersion.apply(member);
             if (version == Version.VERSION_2_0) {
                 validateV2Member(member);
             } else {
@@ -99,14 +100,14 @@ final class ModelUpgrader {
                 // trying to upgrade 2.0 shapes has no effect.
                 // For v1 shape checks, we need to know the containing shape type to apply the appropriate transform.
                 model.getShape(member.getContainer())
-                        .ifPresent(container -> upgradeV1Member(container.getType(), member));
+                        .ifPresent(container -> upgradeV1Member(version, container.getType(), member));
             }
         }
 
         return new ValidatedResult<>(ModelTransformer.create().replaceShapes(model, shapeUpgrades), events);
     }
 
-    private void upgradeV1Member(ShapeType containerType, MemberShape member) {
+    private void upgradeV1Member(Version version, ShapeType containerType, MemberShape member) {
         // Don't fail here on broken models, and since it's broken, don't try to upgrade it.
         Shape target = model.getShape(member.getTarget()).orElse(null);
         if (target == null) {
@@ -126,7 +127,7 @@ final class ModelUpgrader {
         // Add the @default trait to structure members when needed.
         if (shouldV1MemberHaveDefaultTrait(containerType, member, target)) {
             events.add(ValidationEvent.builder()
-                               .id(UPGRADE_MODEL)
+                               .id(Validator.MODEL_DEPRECATION)
                                .severity(Severity.WARNING)
                                .shape(member)
                                .message("Add the @default trait to this member to make it forward compatible with "
@@ -141,11 +142,32 @@ final class ModelUpgrader {
             } else if (isZeroValidDefault(member)) {
                 builder.addTrait(new DefaultTrait(new NumberNode(0, builder.getSourceLocation())));
             }
+        } else if (isMemberImplicitlyBoxed(version, containerType, member, target)) {
+            // Add a synthetic box trait to the shape.
+            builder = createOrReuseBuilder(member, builder).addTrait(new BoxTrait());
         }
 
         if (builder != null) {
             shapeUpgrades.add(builder.build());
         }
+    }
+
+    // If it's for sure a v1 shape and was implicitly boxed, then add a synthetic box trait so tooling
+    // can know that the shape was previously considered nullable. Note that this method does not
+    // check if the targeted shape is required. It's up to tooling to determine how to handle a 1.0
+    // member that is both required and boxed.
+    private boolean isMemberImplicitlyBoxed(
+            Version version,
+            ShapeType containerType,
+            MemberShape member,
+            Shape target
+    ) {
+        return version == Version.VERSION_1_0
+               && containerType == ShapeType.STRUCTURE
+               && !member.hasTrait(DefaultTrait.class) // don't add box if it has a default trait.
+               && !member.hasTrait(BoxTrait.class) // don't add box again
+               && !REMOVED_PRIMITIVE_SHAPES.containsKey(target.getId())
+               && (target.hasTrait(BoxTrait.class) || HAD_DEFAULT_VALUE_IN_1_0.contains(target.getType()));
     }
 
     private boolean isZeroValidDefault(MemberShape member) {
@@ -159,7 +181,7 @@ final class ModelUpgrader {
         // Min is greater than 0.
         if (rangeTrait.getMin().isPresent() && rangeTrait.getMin().get().compareTo(BigDecimal.ZERO) > 0) {
             events.add(ValidationEvent.builder()
-                    .id(UPGRADE_MODEL)
+                    .id(Validator.MODEL_DEPRECATION)
                     .severity(Severity.WARNING)
                     .shape(member)
                     .message("Cannot add the @default trait to this member due to a minimum range constraint.")
@@ -170,7 +192,7 @@ final class ModelUpgrader {
         // Max is less than 0.
         if (rangeTrait.getMax().isPresent() && rangeTrait.getMax().get().compareTo(BigDecimal.ZERO) < 0) {
             events.add(ValidationEvent.builder()
-                    .id(UPGRADE_MODEL)
+                    .id(Validator.MODEL_DEPRECATION)
                     .severity(Severity.WARNING)
                     .shape(member)
                     .message("Cannot add the @default trait to this member due to a maximum range constraint.")
@@ -218,7 +240,7 @@ final class ModelUpgrader {
 
         if (member.hasTrait(BoxTrait.class)) {
             events.add(ValidationEvent.builder()
-                               .id(UPGRADE_MODEL)
+                               .id(Validator.MODEL_DEPRECATION)
                                .severity(Severity.ERROR)
                                .shape(member)
                                .sourceLocation(member.expectTrait(BoxTrait.class))
@@ -229,7 +251,7 @@ final class ModelUpgrader {
 
     private void emitWhenTargetingRemovedPreludeShape(Severity severity, MemberShape member) {
         events.add(ValidationEvent.builder()
-                           .id(UPGRADE_MODEL)
+                           .id(Validator.MODEL_DEPRECATION)
                            .severity(severity)
                            .shape(member)
                            .sourceLocation(member)

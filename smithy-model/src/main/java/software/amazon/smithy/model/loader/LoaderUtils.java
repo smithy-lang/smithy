@@ -17,6 +17,7 @@ package software.amazon.smithy.model.loader;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
@@ -36,21 +37,22 @@ final class LoaderUtils {
      * @param node Node to check.
      * @param shape Shape to associate with the error.
      * @param properties Properties to allow.
+     * @return Returns an optionally created event.
      */
-    static void checkForAdditionalProperties(
+    static Optional<ValidationEvent> checkForAdditionalProperties(
             ObjectNode node,
-            ShapeId shape, Collection<String> properties,
-            List<ValidationEvent> events
+            ShapeId shape, Collection<String> properties
     ) {
         try {
             node.expectNoAdditionalProperties(properties);
+            return Optional.empty();
         } catch (ExpectationNotMetException e) {
             ValidationEvent event = ValidationEvent.fromSourceException(e)
                     .toBuilder()
                     .shapeId(shape)
                     .severity(Severity.WARNING)
                     .build();
-            events.add(event);
+            return Optional.of(event);
         }
     }
 
@@ -99,14 +101,5 @@ final class LoaderUtils {
             }
         }
         return false;
-    }
-
-    static ValidationEvent onDeprecatedIdlVersion(Version version, String filename) {
-        return ValidationEvent.builder()
-                .id(Validator.MODEL_ERROR)
-                .severity(Severity.WARNING)
-                .message("Smithy IDL " + version + " is deprecated. Please upgrade to Smithy IDL 2.0.")
-                .sourceLocation(new SourceLocation(filename, 1, 1))
-                .build();
     }
 }
