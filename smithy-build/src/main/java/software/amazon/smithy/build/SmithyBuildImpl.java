@@ -284,7 +284,7 @@ final class SmithyBuildImpl {
             baseModel = assembler.assemble();
 
             // Fail if the model can't be merged with the imports.
-            if (!baseModel.getResult().isPresent()) {
+            if (baseModel.isBroken() || !baseModel.getResult().isPresent()) {
                 LOGGER.severe(String.format(
                         "The model could not be merged with the following imports: [%s]",
                         projection.getImports()));

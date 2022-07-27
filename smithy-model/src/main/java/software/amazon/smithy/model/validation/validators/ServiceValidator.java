@@ -77,7 +77,7 @@ public final class ServiceValidator extends AbstractValidator {
         // Create a mapping of lowercase contextual shape names to shape IDs.
         Map<String, Set<ShapeId>> normalizedNamesToIds = new HashMap<>();
         for (ShapeId id : serviceClosure.keySet()) {
-            if (!id.getMember().isPresent()) {
+            if (!id.hasMember()) {
                 String possiblyRename = service.getContextualName(id);
                 normalizedNamesToIds
                         .computeIfAbsent(possiblyRename.toLowerCase(Locale.ENGLISH), name -> new TreeSet<>())

@@ -1,6 +1,7 @@
 package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 import java.io.IOException;
@@ -20,9 +21,11 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ModelSerializer;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
+import software.amazon.smithy.model.validation.Validator;
 
 public class ModelUpgraderTest {
     @Test
@@ -161,7 +164,7 @@ public class ModelUpgraderTest {
                 .description("Changed member to target " + newShapeName + " with a warning")
                 .addAssertion(member -> member.getTarget().equals(ShapeId.fromParts(Prelude.NAMESPACE, newShapeName)),
                               member -> "targeted " + member.getTarget())
-                .addEventAssertion("UpgradeModel", Severity.WARNING, newShapeName + " instead")
+                .addEventAssertion(Validator.MODEL_DEPRECATION, Severity.WARNING, newShapeName + " instead")
                 .build();
     }
 
@@ -170,7 +173,7 @@ public class ModelUpgraderTest {
                 .description("member to have a default trait with warning")
                 .addAssertion(member -> member.hasTrait(DefaultTrait.class),
                               member -> "no @default trait")
-                .addEventAssertion("UpgradeModel", Severity.WARNING, "@default")
+                .addEventAssertion(Validator.MODEL_DEPRECATION, Severity.WARNING, "@default")
                 .build();
     }
 
@@ -180,14 +183,32 @@ public class ModelUpgraderTest {
                 .addAssertion(member -> member.getTarget().getName().startsWith("Primitive")
                                         && member.getTarget().getNamespace().equals(Prelude.NAMESPACE),
                               member -> "member does not target a primitive prelude shape")
-                .addEventAssertion("UpgradeModel", Severity.ERROR, "removed in Smithy IDL 2.0")
+                .addEventAssertion(Validator.MODEL_DEPRECATION, Severity.ERROR, "removed in Smithy IDL 2.0")
                 .build();
     }
 
     private static Matcher<ShapeId> v2ShapeUsesBoxTrait(ValidatedResult<Model> result) {
         return ShapeMatcher.builderFor(MemberShape.class, result)
                 .description("v2 shape uses box trait")
-                .addEventAssertion("UpgradeModel", Severity.ERROR, "@box is not supported")
+                .addEventAssertion(Validator.MODEL_DEPRECATION, Severity.ERROR, "@box is not supported")
                 .build();
+    }
+
+    @Test
+    public void addSyntheticBoxTrait() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("upgrade/does-not-introduce-conflict/main.smithy"))
+                .assemble()
+                .unwrap();
+
+        assertThat(hasBoxTrait(model, "smithy.example#Foo$alreadyDefault"), is(false));
+        assertThat(hasBoxTrait(model, "smithy.example#Foo$alreadyRequired"), is(false));
+        assertThat(hasBoxTrait(model, "smithy.example#Foo$boxedMember"), is(true));
+        assertThat(hasBoxTrait(model, "smithy.example#Foo$explicitlyBoxedTarget"), is(true));
+        assertThat(hasBoxTrait(model, "smithy.example#Foo$previouslyBoxedTarget"), is(true));
+    }
+
+    private boolean hasBoxTrait(Model model, String shape) {
+        return model.expectShape(ShapeId.from(shape)).hasTrait(BoxTrait.class);
     }
 }

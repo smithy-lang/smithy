@@ -26,6 +26,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.traits.SuppressTrait;
@@ -175,7 +176,7 @@ final class ModelValidator {
 
             // Add suppressions found in the model via metadata.
             List<Suppression> modelSuppressions = new ArrayList<>(suppressions);
-            loadModelSuppressions(modelSuppressions, model);
+            loadModelSuppressions(modelSuppressions, model, coreEvents);
 
             // Add validators defined in the model through metadata.
             List<Validator> modelValidators = new ArrayList<>(staticValidators);
@@ -236,7 +237,8 @@ final class ModelValidator {
             List<Suppression> suppressions
     ) {
         // Load validators defined in metadata.
-        ValidatedResult<List<ValidatorDefinition>> loaded = ValidationLoader.loadValidators(model.getMetadata());
+        ValidatedResult<List<ValidatorDefinition>> loaded = ValidationLoader
+                .loadValidators(model.getMetadata());
         events.addAll(loaded.getValidationEvents());
         List<ValidatorDefinition> definitions = loaded.getResult().orElseGet(Collections::emptyList);
         ValidatorFromDefinitionFactory factory = new ValidatorFromDefinitionFactory(validatorFactory);
@@ -264,11 +266,19 @@ final class ModelValidator {
                 .build();
     }
 
-    private static void loadModelSuppressions(List<Suppression> suppressions, Model model) {
+    private static void loadModelSuppressions(
+            List<Suppression> suppressions,
+            Model model,
+            List<ValidationEvent> events
+    ) {
         model.getMetadataProperty(SUPPRESSIONS).ifPresent(value -> {
             List<ObjectNode> values = value.expectArrayNode().getElementsAs(ObjectNode.class);
             for (ObjectNode rule : values) {
-                suppressions.add(Suppression.fromMetadata(rule));
+                try {
+                    suppressions.add(Suppression.fromMetadata(rule));
+                } catch (SourceException e) {
+                    events.add(ValidationEvent.fromSourceException(e));
+                }
             }
         });
     }

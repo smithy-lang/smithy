@@ -143,12 +143,12 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
      */
     private void validateShapeId(boolean expectMember) {
         if (expectMember) {
-            if (!getId().getMember().isPresent()) {
+            if (!getId().hasMember()) {
                 throw new SourceException(String.format(
                         "Shapes of type `%s` must contain a member in their shape ID. Found `%s`",
                         getType(), getId()), getSourceLocation());
             }
-        } else if (getId().getMember().isPresent()) {
+        } else if (getId().hasMember()) {
             throw new SourceException(String.format(
                     "Shapes of type `%s` cannot contain a member in their shape ID. Found `%s`",
                     getType(), getId()), getSourceLocation());
@@ -785,17 +785,17 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
             return true;
         } else if (!(o instanceof Shape)) {
             return false;
+        } else if (hashCode() != o.hashCode()) {
+            return false; // take advantage of hashcode caching
         }
 
         Shape other = (Shape) o;
         return getType() == other.getType()
-               && hashCode() == other.hashCode() // take advantage of hashcode caching
                && getId().equals(other.getId())
-               && traits.equals(other.traits)
-               && mixins.equals(other.mixins)
-               // Ensure members are equal and defined in the same order.
+               && getMemberNames().equals(other.getMemberNames())
                && getAllMembers().equals(other.getAllMembers())
-               && getMemberNames().equals(other.getMemberNames());
+               && getAllTraits().equals(other.getAllTraits())
+               && mixins.equals(other.mixins);
     }
 
     /**

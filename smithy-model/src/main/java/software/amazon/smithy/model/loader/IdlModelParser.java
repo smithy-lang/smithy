@@ -21,11 +21,13 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import software.amazon.smithy.model.SourceLocation;
@@ -68,7 +70,6 @@ import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.model.traits.InputTrait;
 import software.amazon.smithy.model.traits.OutputTrait;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -104,7 +105,6 @@ final class IdlModelParser extends SimpleParser {
             IDENTIFIERS_KEY, RESOURCES_KEY, OPERATIONS_KEY, PUT_KEY, PROPERTIES_KEY, COLLECTION_OPERATIONS_KEY);
     static final List<String> SERVICE_PROPERTY_NAMES = ListUtils.of(
             TYPE_KEY, VERSION_KEY, OPERATIONS_KEY, RESOURCES_KEY, RENAME_KEY, ERRORS_KEY);
-    private static final Collection<String> OPERATION_PROPERTY_NAMES = ListUtils.of("input", "output", "errors");
     private static final Set<String> SHAPE_TYPES = new HashSet<>();
 
     static {
@@ -115,9 +115,13 @@ final class IdlModelParser extends SimpleParser {
         }
     }
 
-    final ForwardReferenceModelFile modelFile;
     private final String filename;
+    private final Map<String, ShapeId> useShapes = new HashMap<>();
+    private Consumer<LoadOperation> operations;
+    private Version modelVersion = Version.VERSION_1_0;
+    private String namespace;
     private TraitEntry pendingDocumentationComment;
+    private boolean emittedVersion = false;
 
     private String operationInputSuffix = "Input";
     private String operationOutputSuffix = "Output";
@@ -135,18 +139,60 @@ final class IdlModelParser extends SimpleParser {
         }
     }
 
-    IdlModelParser(TraitFactory traitFactory, String filename, String model) {
+    IdlModelParser(String filename, String model) {
         super(model, MAX_NESTING_LEVEL);
         this.filename = filename;
-        this.modelFile = new ForwardReferenceModelFile(filename, traitFactory);
     }
 
-    ModelFile parse() {
+    void parse(Consumer<LoadOperation> operationConsumer) {
+        operations = operationConsumer;
         ws();
         parseControlSection();
+
+        // Emit a version from the current location if the assumed 1.0 is used.
+        if (!emittedVersion) {
+            operations.accept(new LoadOperation.ModelVersion(modelVersion, currentLocation()));
+        }
+
         parseMetadataSection();
         parseShapeSection();
-        return modelFile;
+    }
+
+    LoadOperation.DefineShape createShape(AbstractShapeBuilder<?, ?> builder) {
+        return new LoadOperation.DefineShape(modelVersion, builder);
+    }
+
+    void addOperation(LoadOperation operation) {
+        operations.accept(operation);
+    }
+
+    void emit(ValidationEvent event) {
+        addOperation(new LoadOperation.Event(event));
+    }
+
+    void addForwardReference(String id, BiConsumer<ShapeId, Function<ShapeId, ShapeType>> consumer) {
+        int memberPosition = id.indexOf('$');
+
+        // Check for members by removing the member and checking for the root shape.
+        if (memberPosition > 0 && memberPosition < id.length() - 1) {
+            addForwardReference(id.substring(0, memberPosition), (resolved, type) -> {
+                consumer.accept(resolved.withMember(id.substring(memberPosition + 1)), type);
+            });
+        } else {
+            String resolved = useShapes.containsKey(id) ? useShapes.get(id).toString() : id;
+            addOperation(new LoadOperation.ForwardReference(namespace, resolved, consumer));
+        }
+    }
+
+    void addForwardReference(String id, Consumer<ShapeId> consumer) {
+        addForwardReference(id, (resolved, found) -> consumer.accept(resolved));
+    }
+
+    String expectNamespace() {
+        if (namespace == null) {
+            throw new IllegalStateException("No namespace was set before trying to resolve a forward reference");
+        }
+        return namespace;
     }
 
     /**
@@ -207,19 +253,25 @@ final class IdlModelParser extends SimpleParser {
 
             Node value = IdlNodeParser.parseNode(this);
 
-            if (key.equals("version")) {
-                onVersion(value);
-            } else if (key.equals("operationInputSuffix")) {
-                operationInputSuffix = value.expectStringNode().getValue();
-            } else if (key.equals("operationOutputSuffix")) {
-                operationOutputSuffix = value.expectStringNode().getValue();
-            } else {
-                modelFile.events().add(ValidationEvent.builder()
-                        .id(Validator.MODEL_ERROR)
-                        .sourceLocation(value)
-                        .severity(Severity.WARNING)
-                        .message(format("Unknown control statement `%s` with value `%s", key, Node.printJson(value)))
-                        .build());
+            switch (key) {
+                case "version":
+                    onVersion(value);
+                    break;
+                case "operationInputSuffix":
+                    operationInputSuffix = value.expectStringNode().getValue();
+                    break;
+                case "operationOutputSuffix":
+                    operationOutputSuffix = value.expectStringNode().getValue();
+                    break;
+                default:
+                    emit(ValidationEvent.builder()
+                                 .id(Validator.MODEL_ERROR)
+                                 .sourceLocation(value)
+                                 .severity(Severity.WARNING)
+                                 .message(format("Unknown control statement `%s` with value `%s",
+                                                 key, Node.printJson(value)))
+                                 .build());
+                    break;
             }
 
             ws();
@@ -239,7 +291,8 @@ final class IdlModelParser extends SimpleParser {
             throw syntax("Unsupported Smithy version number: " + parsedVersion);
         }
 
-        modelFile.setVersion(resolvedVersion);
+        modelVersion = resolvedVersion;
+        operations.accept(new LoadOperation.ModelVersion(modelVersion, value.getSourceLocation()));
     }
 
     private void parseMetadataSection() {
@@ -257,7 +310,7 @@ final class IdlModelParser extends SimpleParser {
             ws();
             expect('=');
             ws();
-            modelFile.putMetadata(key, IdlNodeParser.parseNode(this));
+            operations.accept(new LoadOperation.PutMetadata(modelVersion, key, IdlNodeParser.parseNode(this)));
             ws();
         }
     }
@@ -278,7 +331,7 @@ final class IdlModelParser extends SimpleParser {
             // Parse the namespace.
             int start = position();
             ParserUtils.consumeNamespace(this);
-            modelFile.setNamespace(sliceFrom(start));
+            namespace = sliceFrom(start);
             // Clear out any erroneous documentation comments.
             clearPendingDocs();
             ws();
@@ -311,8 +364,33 @@ final class IdlModelParser extends SimpleParser {
             clearPendingDocs();
             ws();
 
-            modelFile.useShape(ShapeId.from(lexeme), location);
+            ShapeId target = ShapeId.from(lexeme);
+
+            // Validate use statements when the model is fully loaded.
+            addForwardReference(lexeme, (resolved, typeProvider) -> {
+                if (typeProvider.apply(resolved) == null) {
+                    ValidationEvent event = ValidationEvent.builder()
+                            .id(Validator.MODEL_ERROR)
+                            .severity(Severity.WARNING)
+                            .sourceLocation(location)
+                            .message("Use statement refers to undefined shape: " + lexeme)
+                            .build();
+                    emit(event);
+                }
+            });
+
+            useShape(target, location);
         }
+    }
+
+    void useShape(ShapeId id, SourceLocation location) {
+        if (useShapes.containsKey(id.getName())) {
+            ShapeId previous = useShapes.get(id.getName());
+            String message = String.format("Cannot use name `%s` because it conflicts with `%s`", id, previous);
+            throw new ModelSyntaxException(message, location);
+        }
+
+        useShapes.put(id.getName(), id);
     }
 
     private void parseShapeStatements() {
@@ -455,44 +533,55 @@ final class IdlModelParser extends SimpleParser {
         }
 
         addTraits(id, traits);
+        clearPendingDocs();
         ws();
     }
 
     private ShapeId parseShapeName() {
+        SourceLocation currentLocation = currentLocation();
         String name = ParserUtils.parseIdentifier(this);
-        return ShapeId.fromRelative(modelFile.namespace(), name);
+        ShapeId id = ShapeId.fromRelative(expectNamespace(), name);
+
+        if (useShapes.containsKey(name)) {
+            ShapeId previous = useShapes.get(name);
+            String message = String.format("Shape name `%s` conflicts with imported shape `%s`", name, previous);
+            throw new ModelSyntaxException(message, currentLocation);
+        }
+
+        return id;
     }
 
-    private void parseSimpleShape(ShapeId id, SourceLocation location, AbstractShapeBuilder builder) {
-        modelFile.onShape(builder.source(location).id(id));
-        parseMixins(id);
+    private void parseSimpleShape(ShapeId id, SourceLocation location, AbstractShapeBuilder<?, ?> builder) {
+        LoadOperation.DefineShape operation = createShape(builder.source(location).id(id));
+        parseMixins(operation);
+        operations.accept(operation);
     }
 
     private void parseEnumShape(
             ShapeId id,
             SourceLocation location,
-            AbstractShapeBuilder builder,
+            AbstractShapeBuilder<?, ?> builder,
             MemberParsing memberParsing
     ) {
-        modelFile.onShape(builder.id(id).source(location));
-        parseMixins(id);
-        parseMembers(id, Collections.emptySet(), memberParsing);
+        LoadOperation.DefineShape operation = createShape(builder.id(id).source(location));
+        parseMixins(operation);
+        parseMembers(operation, Collections.emptySet(), memberParsing);
         clearPendingDocs();
+        operations.accept(operation);
     }
 
     // See parseMap for information on why members are parsed before the
     // list/set is registered with the ModelFile.
-    private void parseCollection(ShapeId id, SourceLocation location, CollectionShape.Builder builder) {
-        builder.id(id).source(location);
-        parseMixins(id);
-        // Add the shape before parsing and adding members to ensure sets are rejected before adding a member.
-        modelFile.onShape(builder.id(id));
-        parseMembers(id, SetUtils.of("member"));
+    private void parseCollection(ShapeId id, SourceLocation location, CollectionShape.Builder<?, ?> builder) {
+        LoadOperation.DefineShape operation = createShape(builder.id(id).source(location));
+        parseMixins(operation);
+        parseMembers(operation, SetUtils.of("member"));
         clearPendingDocs();
+        operations.accept(operation);
     }
 
-    private void parseMembers(ShapeId id, Set<String> requiredMembers) {
-        parseMembers(id, requiredMembers, MemberParsing.PARSING_MEMBER);
+    private void parseMembers(LoadOperation.DefineShape operation, Set<String> requiredMembers) {
+        parseMembers(operation, requiredMembers, MemberParsing.PARSING_MEMBER);
     }
 
     private enum MemberParsing {
@@ -600,7 +689,7 @@ final class IdlModelParser extends SimpleParser {
         abstract boolean targetsUnit();
     }
 
-    private void parseMembers(ShapeId id, Set<String> requiredMembers, MemberParsing memberParsing) {
+    private void parseMembers(LoadOperation.DefineShape op, Set<String> requiredMembers, MemberParsing memberParsing) {
         Set<String> definedMembers = new HashSet<>();
 
         ws();
@@ -612,7 +701,7 @@ final class IdlModelParser extends SimpleParser {
                 break;
             }
 
-            parseMember(id, requiredMembers, definedMembers, memberParsing);
+            parseMember(op, requiredMembers, definedMembers, memberParsing);
 
             // Clears out any previously captured documentation
             // comments that may have been found when parsing the member.
@@ -628,7 +717,14 @@ final class IdlModelParser extends SimpleParser {
         expect('}');
     }
 
-    private void parseMember(ShapeId parent, Set<String> allowed, Set<String> defined, MemberParsing memberParsing) {
+    private void parseMember(
+            LoadOperation.DefineShape operation,
+            Set<String> allowed,
+            Set<String> defined,
+            MemberParsing memberParsing
+    ) {
+        ShapeId parent = operation.toShapeId();
+
         // Parse optional member traits.
         List<TraitEntry> memberTraits = parseDocsAndTraits();
         SourceLocation memberLocation = currentLocation();
@@ -654,24 +750,23 @@ final class IdlModelParser extends SimpleParser {
 
         ShapeId memberId = parent.withMember(memberName);
 
-        if (isTargetElided && !modelFile.getVersion().supportsTargetElision()) {
+        if (isTargetElided && !modelVersion.supportsTargetElision()) {
             throw syntax(memberId, "Members can only elide targets in IDL version 2 or later. "
-                    + "Attempted to elide a target with version `" + modelFile.getVersion() + "`.");
+                    + "Attempted to elide a target with version `" + modelVersion + "`.");
         }
 
         MemberShape.Builder memberBuilder = MemberShape.builder().id(memberId).source(memberLocation);
-        modelFile.onShape(memberBuilder);
 
         // Members whose targets are elided will have those targets resolved later,
         // for example by SetResourceBasedTargets
         if (!isTargetElided) {
             if (memberParsing.targetsUnit()) {
-                modelFile.addForwardReference(UnitTypeTrait.UNIT.toString(), memberBuilder::target);
+                addForwardReference(UnitTypeTrait.UNIT.toString(), memberBuilder::target);
             } else {
                 ws();
                 expect(':');
                 ws();
-                modelFile.addForwardReference(ParserUtils.parseShapeId(this), memberBuilder::target);
+                addForwardReference(ParserUtils.parseShapeId(this), memberBuilder::target);
             }
         }
 
@@ -679,7 +774,7 @@ final class IdlModelParser extends SimpleParser {
         sp();
 
         if (memberParsing.supportsAssignment() && peek() == '=') {
-            if (!modelFile.getVersion().isDefaultSupported()) {
+            if (!modelVersion.isDefaultSupported()) {
                 throw syntax("@default assignment is only supported in IDL version 2 or later");
             }
             expect('=');
@@ -687,21 +782,17 @@ final class IdlModelParser extends SimpleParser {
             memberBuilder.addTrait(memberParsing.createAssignmentTrait(memberId, IdlNodeParser.parseNode(this)));
         }
 
-        addTraits(parent.withMember(memberName), memberTraits);
+        // Only add the member once fully parsed.
+        operation.addMember(memberBuilder);
+        addTraits(memberBuilder.getId(), memberTraits);
     }
 
     private void parseMapStatement(ShapeId id, SourceLocation location) {
-        // Parsing members of list/set/map before registering the shape with
-        // the ModelFile ensures that the shape is only registered if it
-        // has all of its required members. Otherwise, the validation gives
-        // a cryptic message with no context about how a "member" wasn't set
-        // on a builder. This does not suffer the same error messages as
-        // structures/unions because list/set/map have a fixed and required
-        // set of members that must be provided.
-        parseMixins(id);
-        parseMembers(id, SetUtils.of("key", "value"));
-        modelFile.onShape(MapShape.builder().id(id).source(location));
+        LoadOperation.DefineShape operation = createShape(MapShape.builder().id(id).source(location));
+        parseMixins(operation);
+        parseMembers(operation, SetUtils.of("key", "value"));
         clearPendingDocs();
+        operations.accept(operation);
     }
 
     private void parseStructuredShape(
@@ -710,26 +801,22 @@ final class IdlModelParser extends SimpleParser {
             AbstractShapeBuilder<?, ?> builder,
             MemberParsing memberParsing
     ) {
-        // Register the structure/union with the loader before parsing members.
-        // This will detect shape conflicts with other types (like an operation)
-        // and still give useful error messages. Trying to parse members first
-        // would otherwise result in cryptic error messages like:
-        // "Member `foo.baz#Foo$Baz` cannot be added to software.amazon.smithy.model.shapes.OperationShape$Builder"
-        modelFile.onShape(builder.id(id).source(location));
+        LoadOperation.DefineShape operation = createShape(builder.id(id).source(location));
 
         // If it's a structure, parse the optional "from" statement to enable
         // eliding member targets for resource identifiers.
         if (builder.getShapeType() == ShapeType.STRUCTURE) {
-            parseForResource(id);
+            parseForResource(operation);
         }
 
         // Parse optional "with" statements to add mixins, but only if it's supported by the version.
-        parseMixins(id);
-        parseMembers(id, Collections.emptySet(), memberParsing);
+        parseMixins(operation);
+        parseMembers(operation, Collections.emptySet(), memberParsing);
         clearPendingDocs();
+        operations.accept(operation);
     }
 
-    private void parseMixins(ShapeId id) {
+    private void parseMixins(LoadOperation.DefineShape operation) {
         sp();
         if (peek() != 'w') {
             return;
@@ -740,9 +827,9 @@ final class IdlModelParser extends SimpleParser {
         expect('t');
         expect('h');
 
-        if (!modelFile.getVersion().supportsMixins()) {
-            throw syntax(id, "Mixins can only be used with Smithy version 2 or later. "
-                    + "Attempted to use mixins with version `" + modelFile.getVersion() + "`.");
+        if (!modelVersion.supportsMixins()) {
+            throw syntax(operation.toShapeId(), "Mixins can only be used with Smithy version 2 or later. "
+                    + "Attempted to use mixins with version `" + modelVersion + "`.");
         }
 
         ws();
@@ -751,16 +838,21 @@ final class IdlModelParser extends SimpleParser {
 
         do {
             String target = ParserUtils.parseShapeId(this);
-            modelFile.addForwardReference(target, resolved -> modelFile.addPendingMixin(id, resolved));
+            addForwardReference(target, resolved -> {
+                operation.addDependency(resolved);
+                operation.addModifier(new ApplyMixin(resolved));
+            });
             ws();
         } while (peek() != ']');
+
         expect(']');
         clearPendingDocs();
     }
 
     private void parseOperationStatement(ShapeId id, SourceLocation location) {
-        parseMixins(id);
         OperationShape.Builder builder = OperationShape.builder().id(id).source(location);
+        LoadOperation.DefineShape operation = createShape(builder);
+        parseMixins(operation);
         parseProperties(id, propertyName -> {
             switch (propertyName) {
                 case "input":
@@ -778,8 +870,8 @@ final class IdlModelParser extends SimpleParser {
                     throw syntax(id, String.format("Unknown property %s for %s", propertyName, id));
             }
         });
-        modelFile.onShape(builder);
         clearPendingDocs();
+        operations.accept(operation);
     }
 
     private void parseProperties(ShapeId id, Consumer<String> valueParser) {
@@ -811,9 +903,9 @@ final class IdlModelParser extends SimpleParser {
             TraitEntry defaultTrait
     ) {
         if (peek() == '=') {
-            if (!modelFile.getVersion().supportsInlineOperationIO()) {
+            if (!modelVersion.supportsInlineOperationIO()) {
                 throw syntax(id, "Inlined operation inputs and outputs can only be used with Smithy version 2 or "
-                        + "later. Attempted to use inlined IO with version `" + modelFile.getVersion() + "`.");
+                        + "later. Attempted to use inlined IO with version `" + modelVersion + "`.");
             }
             expect('=');
             clearPendingDocs();
@@ -821,7 +913,7 @@ final class IdlModelParser extends SimpleParser {
             consumer.accept(parseInlineStructure(id.getName() + suffix, defaultTrait));
         } else {
             ws();
-            modelFile.addForwardReference(ParserUtils.parseShapeId(this), consumer);
+            addForwardReference(ParserUtils.parseShapeId(this), consumer);
         }
     }
 
@@ -830,21 +922,21 @@ final class IdlModelParser extends SimpleParser {
         if (defaultTrait != null) {
             traits.add(defaultTrait);
         }
-        ShapeId id = ShapeId.fromRelative(modelFile.namespace(), name);
+        ShapeId id = ShapeId.fromRelative(expectNamespace(), name);
         SourceLocation location = currentLocation();
-        parseMixins(id);
-        parseForResource(id);
         StructureShape.Builder builder = StructureShape.builder().id(id).source(location);
-
-        modelFile.onShape(builder);
-        parseMembers(id, Collections.emptySet(), MemberParsing.PARSING_STRUCTURE_MEMBER);
+        LoadOperation.DefineShape operation = createShape(builder);
+        parseMixins(operation);
+        parseForResource(operation);
+        parseMembers(operation, Collections.emptySet(), MemberParsing.PARSING_STRUCTURE_MEMBER);
         addTraits(id, traits);
         clearPendingDocs();
+        operations.accept(operation);
         ws();
         return id;
     }
 
-    private void parseForResource(ShapeId id) {
+    private void parseForResource(LoadOperation.DefineShape operation) {
         sp();
         if (peek() != 'f') {
             return;
@@ -854,17 +946,18 @@ final class IdlModelParser extends SimpleParser {
         expect('o');
         expect('r');
 
-        if (!modelFile.getVersion().supportsTargetElision()) {
-            throw syntax(id, "Structures can only be bound to resources with Smithy version 2 or later. "
-                    + "Attempted to bind a structure to a resource with version `" + modelFile.getVersion() + "`.");
+        if (!modelVersion.supportsTargetElision()) {
+            throw syntax(operation.toShapeId(), "Structures can only be bound to resources with Smithy version 2 or "
+                                                + "later. Attempted to bind a structure to a resource with version `"
+                                                + modelVersion + "`.");
         }
 
         ws();
 
-        modelFile.addForwardReference(
-                ParserUtils.parseShapeId(this),
-                shapeId -> modelFile.addPendingModification(id, new SetResourceBasedTargets(shapeId))
-        );
+        addForwardReference(ParserUtils.parseShapeId(this), shapeId -> {
+            operation.addDependency(shapeId);
+            operation.addModifier(new ApplyResourceBasedTargets(shapeId));
+        });
     }
 
     private void parseIdList(Consumer<ShapeId> consumer) {
@@ -874,7 +967,7 @@ final class IdlModelParser extends SimpleParser {
         ws();
 
         while (!eof() && peek() != ']') {
-            modelFile.addForwardReference(ParserUtils.parseShapeId(this), consumer);
+            addForwardReference(ParserUtils.parseShapeId(this), consumer);
             ws();
         }
 
@@ -883,23 +976,24 @@ final class IdlModelParser extends SimpleParser {
     }
 
     private void parseServiceStatement(ShapeId id, SourceLocation location) {
-        parseMixins(id);
-        ws();
         ServiceShape.Builder builder = new ServiceShape.Builder().id(id).source(location);
+        LoadOperation.DefineShape operation = createShape(builder);
+        parseMixins(operation);
+        ws();
         ObjectNode shapeNode = IdlNodeParser.parseObjectNode(this, id.toString());
-        LoaderUtils.checkForAdditionalProperties(shapeNode, id, SERVICE_PROPERTY_NAMES, modelFile.events());
+        LoaderUtils.checkForAdditionalProperties(shapeNode, id, SERVICE_PROPERTY_NAMES).ifPresent(this::emit);
         shapeNode.getStringMember(VERSION_KEY).map(StringNode::getValue).ifPresent(builder::version);
-        modelFile.onShape(builder);
         optionalIdList(shapeNode, OPERATIONS_KEY, builder::addOperation);
         optionalIdList(shapeNode, RESOURCES_KEY, builder::addResource);
         optionalIdList(shapeNode, ERRORS_KEY, builder::addError);
         AstModelLoader.loadServiceRenameIntoBuilder(builder, shapeNode);
         clearPendingDocs();
+        operations.accept(operation);
     }
 
     private void optionalId(ObjectNode node, String name, Consumer<ShapeId> consumer) {
         if (node.getMember(name).isPresent()) {
-            modelFile.addForwardReference(node.expectStringMember(name).getValue(), consumer);
+            addForwardReference(node.expectStringMember(name).getValue(), consumer);
         }
     }
 
@@ -907,19 +1001,20 @@ final class IdlModelParser extends SimpleParser {
         if (node.getMember(name).isPresent()) {
             ArrayNode value = node.expectArrayMember(name);
             for (StringNode element : value.getElementsAs(StringNode.class)) {
-                modelFile.addForwardReference(element.getValue(), consumer);
+                addForwardReference(element.getValue(), consumer);
             }
         }
     }
 
     private void parseResourceStatement(ShapeId id, SourceLocation location) {
-        parseMixins(id);
-        ws();
         ResourceShape.Builder builder = ResourceShape.builder().id(id).source(location);
-        modelFile.onShape(builder);
-        ObjectNode shapeNode = IdlNodeParser.parseObjectNode(this, id.toString());
+        LoadOperation.DefineShape operation = createShape(builder);
 
-        LoaderUtils.checkForAdditionalProperties(shapeNode, id, RESOURCE_PROPERTY_NAMES, modelFile.events());
+        parseMixins(operation);
+        ws();
+
+        ObjectNode shapeNode = IdlNodeParser.parseObjectNode(this, id.toString());
+        LoaderUtils.checkForAdditionalProperties(shapeNode, id, RESOURCE_PROPERTY_NAMES).ifPresent(this::emit);
         optionalId(shapeNode, PUT_KEY, builder::put);
         optionalId(shapeNode, CREATE_KEY, builder::create);
         optionalId(shapeNode, READ_KEY, builder::read);
@@ -935,22 +1030,23 @@ final class IdlModelParser extends SimpleParser {
             for (Map.Entry<StringNode, Node> entry : ids.getMembers().entrySet()) {
                 String name = entry.getKey().getValue();
                 StringNode target = entry.getValue().expectStringNode();
-                modelFile.addForwardReference(target.getValue(), targetId -> builder.addIdentifier(name, targetId));
+                addForwardReference(target.getValue(), targetId -> builder.addIdentifier(name, targetId));
             }
         });
         // Load properties and resolve forward references.
         shapeNode.getObjectMember(PROPERTIES_KEY).ifPresent(properties -> {
-            if (!modelFile.getVersion().supportsResourceProperties()) {
+            if (!modelVersion.supportsResourceProperties()) {
                 throw syntax(id, "Resource properties can only be used with Smithy version 2 or later. "
-                        + "Attempted to use resource properties with version `" + modelFile.getVersion() + "`.");
+                                 + "Attempted to use resource properties with version `" + modelVersion + "`.");
             }
             for (Map.Entry<StringNode, Node> entry : properties.getMembers().entrySet()) {
                 String name = entry.getKey().getValue();
                 StringNode target = entry.getValue().expectStringNode();
-                modelFile.addForwardReference(target.getValue(), targetId -> builder.addProperty(name, targetId));
+                addForwardReference(target.getValue(), targetId -> builder.addProperty(name, targetId));
             }
         });
         clearPendingDocs();
+        operations.accept(operation);
     }
 
     // "//" *(not_newline)
@@ -1012,9 +1108,9 @@ final class IdlModelParser extends SimpleParser {
         }
 
         // First, resolve the targeted shape.
-        modelFile.addForwardReference(name, id -> {
+        addForwardReference(name, target -> {
             for (TraitEntry traitEntry : traitsToApply) {
-                onDeferredTrait(id, traitEntry.traitName, traitEntry.value, traitEntry.isAnnotation);
+                onDeferredTrait(target, traitEntry.traitName, traitEntry.value, traitEntry.isAnnotation);
             }
         });
 
@@ -1042,15 +1138,15 @@ final class IdlModelParser extends SimpleParser {
      * @param isAnnotation Set to true to indicate that the value for the trait was omitted.
      */
     private void onDeferredTrait(ShapeId target, String traitName, Node traitValue, boolean isAnnotation) {
-        modelFile.addForwardReference(traitName, (id, typeProvider) -> {
-            modelFile.onTrait(target, id, coerceTraitValue(id, traitValue, isAnnotation, typeProvider));
+        addForwardReference(traitName, (traitId, typeProvider) -> {
+            Node coerced = coerceTraitValue(traitValue, isAnnotation, typeProvider.apply(traitId));
+            operations.accept(new LoadOperation.ApplyTrait(
+                    modelVersion, traitValue.getSourceLocation(), expectNamespace(), target, traitId, coerced));
         });
     }
 
-    private Node coerceTraitValue(
-            ShapeId traitId, Node value, boolean isAnnotation, Function<ShapeId, ShapeType> typeProvider) {
+    private Node coerceTraitValue(Node value, boolean isAnnotation, ShapeType targetType) {
         if (isAnnotation && value.isNullNode()) {
-            ShapeType targetType = typeProvider.apply(traitId);
             if (targetType == null || targetType == ShapeType.STRUCTURE || targetType == ShapeType.MAP) {
                 // The targetType == null condition helps mitigate a confusing
                 // failure mode where a trait isn't defined in the model, but a
@@ -1073,10 +1169,6 @@ final class IdlModelParser extends SimpleParser {
 
     SourceLocation currentLocation() {
         return new SourceLocation(filename, line(), column());
-    }
-
-    NumberNode parseNumberNode() {
-        return parseNumberNode(currentLocation());
     }
 
     NumberNode parseNumberNode(SourceLocation location) {
@@ -1127,5 +1219,4 @@ final class IdlModelParser extends SimpleParser {
 
         return result.length() == 0 ? "[EOF]" : result.toString();
     }
-
 }

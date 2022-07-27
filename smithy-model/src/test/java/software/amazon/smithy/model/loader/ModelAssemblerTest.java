@@ -54,20 +54,26 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ModelSerializer;
+import software.amazon.smithy.model.shapes.ModelSerializerTest;
 import software.amazon.smithy.model.shapes.SetShape;
-import software.amazon.smithy.model.shapes.SetShapeTest;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.BoxTrait;
+import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.InternalTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
+import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.traits.SuppressTrait;
+import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
@@ -126,7 +132,8 @@ public class ModelAssemblerTest {
                                 .withMember("type", Node.from("string"))));
         ValidatedResult<Model> result = new ModelAssembler().addDocumentNode(node).assemble();
 
-        assertThat(result.getValidationEvents(), empty());
+        assertThat(result.getValidationEvents().stream().anyMatch(e -> e.getMessage().contains("is deprecated")),
+                   is(true));
         assertTrue(result.unwrap().getShape(ShapeId.from("ns.foo#String")).isPresent());
     }
 
@@ -764,5 +771,106 @@ public class ModelAssemblerTest {
                 .unwrap();
 
         Model.assembler().addModel(model).assemble().unwrap();
+    }
+
+    @Test
+    public void canIgnoreTraitConflictsWithBuiltShapes() {
+        StringShape string1 = StringShape.builder()
+                .id("smithy.example#String1")
+                .addTrait(new DocumentationTrait("hi"))
+                .build();
+        ModelAssembler assembler = Model.assembler();
+        assembler.addShape(string1);
+        assembler.addUnparsedModel("foo.smithy", "$version: \"2.0\"\n"
+                                                 + "namespace smithy.example\n\n"
+                                                 + "@documentation(\"hi\")\n"
+                                                 + "string String1\n");
+        Model result = assembler.assemble().unwrap();
+
+        assertThat(result.expectShape(string1.getId()).expectTrait(DocumentationTrait.class).getValue(), equalTo("hi"));
+    }
+
+    @Test
+    public void canMergeTraitConflictsWithBuiltShapes() {
+        StringShape string1 = StringShape.builder()
+                .id("smithy.example#String1")
+                .addTrait(TagsTrait.builder().addValue("a").build())
+                .build();
+        ModelAssembler assembler = Model.assembler();
+        assembler.addShape(string1);
+        assembler.addUnparsedModel("foo.smithy", "$version: \"2.0\"\n"
+                                                 + "namespace smithy.example\n\n"
+                                                 + "@tags([\"b\"])\n"
+                                                 + "string String1\n");
+        Model result = assembler.assemble().unwrap();
+
+        assertThat(result.expectShape(string1.getId()).getTags(), contains("a", "b"));
+    }
+
+    @Test
+    public void canRoundTripShapesWithMixinsThroughAssembler() {
+        StructureShape mixin = StructureShape.builder()
+                .id("smithy.example#Mixin")
+                .addTrait(MixinTrait.builder().build())
+                .build();
+        StructureShape struct = StructureShape.builder()
+                .id("smithy.example#Foo")
+                .addMixin(mixin)
+                .addMember("foo", ShapeId.from("smithy.api#String"))
+                .build();
+        Model model = Model.assembler().addShapes(mixin, struct).assemble().unwrap();
+
+        assertThat(model.expectShape(struct.getId()), equalTo(struct));
+        assertThat(model.expectShape(mixin.getId()), equalTo(mixin));
+    }
+
+    @Test
+    public void mixinShapesNoticeDependencyChanges() {
+        StructureShape mixin = StructureShape.builder()
+                .id("smithy.example#Mixin")
+                .addTrait(MixinTrait.builder().build())
+                .build();
+        StructureShape struct = StructureShape.builder()
+                .id("smithy.example#Foo")
+                .addMixin(mixin)
+                .addMember("foo", ShapeId.from("smithy.api#String"))
+                .build();
+        Model model = Model.assembler()
+                .addShapes(mixin, struct)
+                .addTrait(mixin.getId(), new SensitiveTrait())
+                .assemble()
+                .unwrap();
+
+        assertThat(model.expectShape(mixin.getId()).getAllTraits(), hasKey(SensitiveTrait.ID));
+        assertThat(model.expectShape(mixin.getId()).getIntroducedTraits(), hasKey(SensitiveTrait.ID));
+        assertThat(model.expectShape(struct.getId()).getAllTraits(), hasKey(SensitiveTrait.ID));
+        assertThat(model.expectShape(struct.getId()).getIntroducedTraits(), not(hasKey(SensitiveTrait.ID)));
+    }
+
+    @Test
+    public void nodeModelsDoNotInterfereWithManuallyAddedModels() {
+        StructureShape struct = StructureShape.builder()
+                .id("smithy.example#Foo")
+                .addMember("foo", ShapeId.from("smithy.api#Integer"))
+                .build();
+        // Create an object node with a source location of none.
+        ObjectNode node = Node.objectNodeBuilder()
+                .withMember(new StringNode("smithy", SourceLocation.NONE), new StringNode("1.0", SourceLocation.NONE))
+                .build();
+        Model model = Model.assembler()
+                .addShape(struct)
+                // Add a Node with a 1.0 version and a SourceLocation.none() value.
+                // This source location is the same as the manually given shape, but it should not
+                // cause the manually given shape to also think it's a 1.0 shape.
+                .addDocumentNode(node)
+                .assemble()
+                .unwrap();
+
+        // Ensure that the upgrade process did not add a Box trait to the manually created shape
+        // because it is not assumed to be a 1.0 shape.
+        ShapeId memberCheck = struct.getMember("foo").get().getId();
+        MemberShape createdMember = model.expectShape(memberCheck, MemberShape.class);
+
+        assertThat(createdMember.getAllTraits(), not(hasKey(BoxTrait.ID)));
     }
 }

@@ -276,10 +276,14 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
     /**
      * Creates a new Shape.Id with no member.
      *
-     * @return returns a new Shape.Id
+     * @return returns a new Shape.Id, or the existing shape if it has no member.
      */
     public ShapeId withoutMember() {
-        return new ShapeId(namespace, name, null);
+        if (member == null) {
+            return this;
+        } else {
+            return new ShapeId(namespace, name, null);
+        }
     }
 
     /**
@@ -329,6 +333,15 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
      */
     public Optional<String> getMember() {
         return Optional.ofNullable(member);
+    }
+
+    /**
+     * Checks if the ID has a member set.
+     *
+     * @return Returns true if the ID has a member.
+     */
+    public boolean hasMember() {
+        return member != null;
     }
 
     /**

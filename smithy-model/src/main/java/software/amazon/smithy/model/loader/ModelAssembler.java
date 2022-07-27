@@ -40,11 +40,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
-import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.Severity;
@@ -52,7 +50,6 @@ import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
-import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.Pair;
 
 /**
@@ -500,43 +497,6 @@ public final class ModelAssembler {
     /**
      * Assembles the model and returns the validated result.
      *
-     * <h2>Implementation notes</h2>
-     *
-     * <p>Assembling models is a multi-step process that revolves around
-     * {@link ModelFile}s. ModelFiles are essentially files that contain
-     * localized definitions of shapes and metadata. Some model files use
-     * forward references and can't be fully resolved until all other model
-     * files have been loaded. To achieve this, the assembler first creates a
-     * model file that represents manually added shapes, traits, validators,
-     * etc., and then parses each given import. Parsing an import is used to
-     * create zero or more ModelFiles by parsing .json, .smithy, and
-     * .jar files.
-     *
-     * <p>After the parsing phase, each model file returns the metadata
-     * defined in the file using {@link ModelFile#metadata()} and the set of
-     * shape IDs that were defined in the file using {@link ModelFile#shapeIds()}.
-     * The metadata across each file is merged together using the rules
-     * defined in the Smithy specification.
-     *
-     * <p>Next, the assembler calls {@link ModelFile#resolveShapes} on each
-     * ModelFile which resolves any forward references, creates traits, and
-     * returns all of the traits created in the file. The assembler passes in
-     * the set of found shapes IDs along with a function that can be used to
-     * get the {@link ShapeType} of any defined shape (this is used to coerce
-     * annotation trait values into the appropriate type for a trait).
-     * The assembler aggregates and merges the traits applied across all model
-     * files using the merge rules defined in the Smithy specification.
-     *
-     * <p>Next, the assembler invokes {@link ModelFile#createShapes}, passing
-     * in all of the traits defined across every model file. This method
-     * causes a ModelFile to apply these traits to any shape in the ModelFile,
-     * build each shape, and return the built shapes. The assembler then
-     * aggregates all of the created traits, performs conflict resolution,
-     * and builds a {@link Model} from the shapes and loaded metadata. A shape
-     * is allowed to be defined in multiple model files if the conflicting
-     * shapes are equivalent after all traits have been applied to both
-     * shapes.
-     *
      * @return Returns the validated result that optionally contains a Model
      *  and validation events.
      */
@@ -545,122 +505,84 @@ public final class ModelAssembler {
             traitFactory = LazyTraitFactoryHolder.INSTANCE;
         }
 
-        List<ModelFile> files = createModelFiles();
-        // Create "model files" for the prelude, manually added shapes, imports, etc.
-        CompositeModelFile composite = new CompositeModelFile(traitFactory, files);
+        Model prelude = disablePrelude ? null : Prelude.getPreludeModel();
+        LoadOperationProcessor processor = new LoadOperationProcessor(
+                traitFactory, prelude, areUnknownTraitsAllowed(), validationEventListener);
+        List<ValidationEvent> events = processor.events();
+
+        // Register manually added metadata.
+        addMetadataToProcessor(metadata, processor);
+
+        // Register manually added shapes. Skip members because they are part of aggregate shapes.
+        shapes.forEach(processor::putCreatedShape);
+
+        // Register manually added traits.
+        for (Pair<ShapeId, Trait> entry : pendingTraits) {
+            processor.accept(LoadOperation.ApplyTrait.from(entry.getKey(), entry.getValue()));
+        }
+
+        // Register manually added Models.
+        for (Model model : mergeModels) {
+            // Add manually added metadata from the Model.
+            addMetadataToProcessor(model.getMetadata(), processor);
+            model.shapes().forEach(processor::putCreatedShape);
+        }
+
+        // Load parsed AST nodes and merge them into the processor.
+        for (Node node : documentNodes) {
+            try {
+                ModelLoader.loadParsedNode(node, processor);
+            } catch (SourceException e) {
+                processor.accept(new LoadOperation.Event(ValidationEvent.fromSourceException(e)));
+            }
+        }
+
+        // Load model files into the processor.
+        for (Map.Entry<String, Supplier<InputStream>> entry : inputStreamModels.entrySet()) {
+            try {
+                ModelLoader.load(traitFactory, properties, entry.getKey(), processor, entry.getValue());
+            } catch (SourceException e) {
+                processor.accept(new LoadOperation.Event(ValidationEvent.fromSourceException(e)));
+            }
+        }
+
+        Model processedModel = processor.buildModel();
+
+        // If ERROR validation events occur while loading, then performing more
+        // granular semantic validation will only obscure the root cause of errors.
+        if (LoaderUtils.containsErrorEvents(events)) {
+            return returnOnlyErrors(processedModel, events);
+        }
+
+        // Do the 1.0 -> 2.0 transform before full-model validation.
+        ValidatedResult<Model> transformed = new ModelUpgrader(processedModel, events, processor::getShapeVersion)
+                .transform();
+
+        if (disableValidation
+                || !transformed.getResult().isPresent()
+                || LoaderUtils.containsErrorEvents(transformed.getValidationEvents())) {
+            // Don't continue to validate the model if the upgrade raised ERROR events.
+            return transformed;
+        }
 
         try {
-            TraitContainer traits = composite.resolveShapes(composite.shapeIds(), composite::getShapeType);
-            Model model = Model.builder()
-                    .metadata(composite.metadata())
-                    .addShapes(composite.createShapes(traits).getCreatedShapes())
-                    .build();
-
-            List<ValidationEvent> compositeEvents = composite.events();
-
-            // Always perform trait validation before 1.0 -> 2.0 transforms.
-            validateTraits(model.getShapeIds(), traits, compositeEvents);
-
-            // If ERROR validation events occur while loading, then performing more
-            // granular semantic validation will only obscure the root cause of errors.
-            if (LoaderUtils.containsErrorEvents(compositeEvents)) {
-                return returnOnlyErrors(model, compositeEvents);
-            }
-
-            // Do the 1.0 -> 2.0 transform before full model validation.
-            ValidatedResult<Model> transformedModel = upgradeModel(model, compositeEvents, files);
-
-            if (disableValidation || LoaderUtils.containsErrorEvents(transformedModel.getValidationEvents())) {
-                // Don't continue to validate the model if the upgrade raised ERROR events.
-                return transformedModel;
-            }
-
-            return validate(transformedModel.getResult().get(), transformedModel.getValidationEvents());
+            return validate(transformed.getResult().get(), transformed.getValidationEvents());
         } catch (SourceException e) {
-            List<ValidationEvent> events = new ArrayList<>();
             events.add(ValidationEvent.fromSourceException(e));
-            events.addAll(composite.events());
-            return ValidatedResult.fromErrors(events);
+            return new ValidatedResult<>(transformed.getResult().get(), events);
+        }
+    }
+
+    private void addMetadataToProcessor(Map<String, Node> metadataMap, LoadOperationProcessor processor) {
+        for (Map.Entry<String, Node> entry : metadataMap.entrySet()) {
+            processor.accept(new LoadOperation.PutMetadata(Version.UNKNOWN, entry.getKey(), entry.getValue()));
         }
     }
 
     private ValidatedResult<Model> returnOnlyErrors(Model model, List<ValidationEvent> events) {
         return new ValidatedResult<>(model, events.stream()
                 .filter(event -> event.getSeverity() == Severity.ERROR)
-                .peek(validationEventListener)
                 .collect(Collectors.toList()));
-    }
-
-    private ValidatedResult<Model> upgradeModel(Model model, List<ValidationEvent> events, List<ModelFile> files) {
-        // Create a mapping of filename -> version so that the SourceLocation of each shape and
-        // trait can be tracked back to a version. Note that the map might contain files that start with
-        // "file:/", "jar:", etc, and others might not. That doesn't matter because shapes are bound to
-        // files, and files are defined within a version, so normalizing filenames here would have no effect.
-        Map<String, Version> modelVersions = new HashMap<>(files.size());
-        for (ModelFile file : files) {
-            modelVersions.put(file.getFilename(), file.getVersion());
-            // Warn when any model file is 1.0 and it isn't the default source location. We assume 1.0 by default.
-            if (file.getVersion() == Version.VERSION_1_0
-                    && !file.getFilename().equals(SourceLocation.none().getFilename())) {
-                events.add(LoaderUtils.onDeprecatedIdlVersion(file.getVersion(), file.getFilename()));
-            }
-        }
-
-        return new ModelUpgrader(model, events, modelVersions).transform();
-    }
-
-    private List<ModelFile> createModelFiles() {
-        List<ModelFile> modelFiles = new ArrayList<>();
-
-        if (!disablePrelude) {
-            modelFiles.add(new ImmutablePreludeModelFile(Prelude.getPreludeModel()));
-        }
-
-        // A modelFile is created for the assembler to capture anything that was manually added.
-        FullyResolvedModelFile assemblerModelFile = FullyResolvedModelFile.fromShapes(traitFactory, shapes);
-
-        modelFiles.add(assemblerModelFile);
-        metadata.forEach(assemblerModelFile::putMetadata);
-        for (Pair<ShapeId, Trait> pendingTrait : pendingTraits) {
-            assemblerModelFile.onTrait(pendingTrait.left, pendingTrait.right);
-        }
-
-        // Merge in fully-built models into the assembler.
-        for (Model model : mergeModels) {
-            // Fully resolved models typically contain a prelude. This ensures that the prelude is not included
-            // in the assembler since it would cause pointless conflicts.
-            List<Shape> nonPrelude = model.shapes()
-                    .filter(FunctionalUtils.not(Prelude::isPreludeShape))
-                    .collect(Collectors.toList());
-            FullyResolvedModelFile resolvedFile = FullyResolvedModelFile.fromShapes(traitFactory, nonPrelude);
-            model.getMetadata().forEach(resolvedFile::putMetadata);
-            modelFiles.add(resolvedFile);
-        }
-
-        // Load parsed AST nodes and merge them into the assembler.
-        for (Node node : documentNodes) {
-            try {
-                modelFiles.add(ModelLoader.loadParsedNode(traitFactory, node));
-            } catch (SourceException e) {
-                assemblerModelFile.events().add(ValidationEvent.fromSourceException(e));
-            }
-        }
-
-        // Load model files and merge them into the assembler.
-        for (Map.Entry<String, Supplier<InputStream>> entry : inputStreamModels.entrySet()) {
-            try {
-                List<ModelFile> loaded = ModelLoader.load(traitFactory, properties, entry.getKey(), entry.getValue());
-                if (loaded.isEmpty()) {
-                    LOGGER.warning(() -> "No ModelLoader was able to load " + entry.getKey());
-                } else {
-                    modelFiles.addAll(loaded);
-                }
-            } catch (SourceException e) {
-                assemblerModelFile.events().add(ValidationEvent.fromSourceException(e));
-            }
-        }
-
-        return modelFiles;
     }
 
     private ValidatedResult<Model> validate(Model model, List<ValidationEvent> events) {
@@ -675,37 +597,6 @@ public final class ModelAssembler {
                 .validate(model);
 
         return new ValidatedResult<>(model, mergedEvents);
-    }
-
-    private void validateTraits(Set<ShapeId> ids, TraitContainer resolvedTraits, List<ValidationEvent> events) {
-        Severity severity = areUnknownTraitsAllowed() ? Severity.WARNING : Severity.ERROR;
-        for (Map.Entry<ShapeId, Map<ShapeId, Trait>> entry : resolvedTraits.traits().entrySet()) {
-            ShapeId target = entry.getKey();
-            for (Trait trait : entry.getValue().values()) {
-                // Find trait values that weren't defined, and ignore synthetic traits.
-                if (!trait.isSynthetic() && !ids.contains(trait.toShapeId())) {
-                    events.add(ValidationEvent.builder()
-                            .id(Validator.MODEL_ERROR)
-                            .severity(severity)
-                            .sourceLocation(trait)
-                            .shapeId(target)
-                            .message(String.format(
-                                    "Unable to resolve trait `%s`. If this is a custom trait, then it must be "
-                                    + "defined before it can be used in a model.", trait.toShapeId()))
-                            .build());
-                }
-                // Find traits applied to shapes that don't exist.
-                if (!ids.contains(target)) {
-                    events.add(ValidationEvent.builder()
-                            .id(Validator.MODEL_ERROR)
-                            .severity(Severity.ERROR)
-                            .sourceLocation(trait)
-                            .message(String.format("Trait `%s` applied to unknown shape `%s`",
-                                                   Trait.getIdiomaticTraitName(trait.toShapeId()), target))
-                            .build());
-                }
-            }
-        }
     }
 
     private boolean areUnknownTraitsAllowed() {
