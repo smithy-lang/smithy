@@ -702,7 +702,7 @@ CloudFormation schema for this resource.
 
         // If the user has not specified backTrackWindow
         // upon create, a default value will still be
-        // observed n the DescribeDBClusterResponse
+        // observed in the DescribeDBClusterResponse
         @cfnDefaultValue
         $backTrackWindow
     }
