@@ -18,7 +18,6 @@ package software.amazon.smithy.model;
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -89,8 +88,7 @@ public final class Model implements ToSmithyBuilder<Model> {
     private final Map<Class<? extends Shape>, Set<? extends Shape>> cachedTypes = new ConcurrentHashMap<>();
 
     /** Cache of computed {@link KnowledgeIndex} instances. */
-    private final Map<Class<? extends KnowledgeIndex>, KnowledgeIndex> blackboard
-            = new ConcurrentSkipListMap<>(Comparator.comparing(Class::getCanonicalName));
+    private final Map<String, KnowledgeIndex> blackboard = new ConcurrentSkipListMap<>();
 
     /** Lazily computed trait mappings. */
     private volatile TraitCache traitCache;
@@ -882,7 +880,7 @@ public final class Model implements ToSmithyBuilder<Model> {
      */
     @SuppressWarnings("unchecked")
     public <T extends KnowledgeIndex> T getKnowledge(Class<T> type, Function<Model, T> constructor) {
-        return (T) blackboard.computeIfAbsent(type, t -> constructor.apply(this));
+        return (T) blackboard.computeIfAbsent(type.getName(), t -> constructor.apply(this));
     }
 
     /**
