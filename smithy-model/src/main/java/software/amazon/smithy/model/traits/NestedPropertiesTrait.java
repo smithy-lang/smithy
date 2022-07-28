@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.model.traits;
 
-import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 
@@ -28,10 +27,6 @@ public final class NestedPropertiesTrait extends AnnotationTrait {
 
     public NestedPropertiesTrait(ObjectNode node) {
         super(ID, node);
-    }
-
-    public NestedPropertiesTrait() {
-        this(Node.objectNode());
     }
 
     public static final class Provider extends AnnotationTrait.Provider<NestedPropertiesTrait> {
