@@ -691,38 +691,20 @@ CloudFormation schema for this resource.
     // this is a very simplified example of AWS::RDS::DBCluster
     @cfnResource
     resource DBCluster {
-        identifiers: {
-            DBClusterIdentifier: String,
-        },
-        create: CreateDBCluster,
+        identifiers: { DBClusterIdentifier: String }
+        properties: { backTrackWindow: Integer }
         read: DescribeDBCluster,
-        update: ModifyDBCluster,
-        delete: DeleteDBCluster
-    }
-
-    @readonly
-    @http(method: "GET", uri: "/rds/{DBClusterIdentifier}", code: 200)
-    operation DescribeDBCluster {
-        input: DescribeDBClusterRequest,
-        output: DescribeDBClusterResponse,
-    }
-
-    @input
-    structure DescribeDBClusterRequest {
-        @httpLabel
-        @required
-        DBClusterIdentifier: String,
     }
 
     @output
     structure DescribeDBClusterResponse {
-        DBClusterIdentifier: String,
+        $DBClusterIdentifier
 
-        // if the user has not specified this value
+        // If the user has not specified backTrackWindow
         // upon create, a default value will still be
-        // observed on Describe
+        // observed n the DescribeDBClusterResponse
         @cfnDefaultValue
-        backTrackWindow: Integer
+        $backTrackWindow
     }
 
 -------------
