@@ -659,17 +659,25 @@ The following example defines a CloudFormation resource that has the
 --------------------------------------------
 
 Summary
-    Indicates that the member annotated has a default value for the resource.
+    Indicates that the member annotated has a default value
+    for that property of the CloudFormation resource. Thus,
+    when this trait annotates an ``@output`` structure member,
+    it indicates that the CloudFormation property generated
+    from that member has a default value in the CloudFormation
+    schema. This trait can be used to indicate that an output
+    field with a value may return a default value assigned
+    by the service.
 Trait selector
     ``resource > operation -[output]-> structure > member``
 
-    *Only applicable to members of ``@output`` operations*
+    *Only applicable to members of @output operations*
 Value type
     Annotation trait
 
-Given the following example, because the ``fooAlias``
+Given the following example, because the ``backTrackWindow``
 member is annotated with ``cfnDefaultValue``, it can be derived
-that the ``fooAlias`` member has a default value for this resource.
+that the ``backTrackWindow`` member has a default value in the
+CloudFormation schema for this resource.
 
 .. code-block:: smithy
 
@@ -677,44 +685,45 @@ that the ``fooAlias`` member has a default value for this resource.
 
     namespace smithy.example
 
-    use aws.cloudformation#cfnDefaultValue
+   use aws.cloudformation#cfnDefaultValue
     use aws.cloudformation#cfnResource
 
+    // this is a very simplified example of AWS::RDS::DBCluster
     @cfnResource
-    resource Foo {
+    resource DBCluster {
         identifiers: {
-            fooId: String
-        }
-        read: GetFoo
+            DBClusterIdentifier: String,
+        },
+        create: CreateDBCluster,
+        read: DescribeDBCluster,
+        update: ModifyDBCluster,
+        delete: DeleteDBCluster
     }
 
     @readonly
-    @http(method: "GET", uri: "/foos/{fooId}", code: 200)
-    operation GetFoo {
-        input: GetFooRequest
-        output: GetFooResponse
+    @http(method: "GET", uri: "/rds/{DBClusterIdentifier}", code: 200)
+    operation DescribeDBCluster {
+        input: DescribeDBClusterRequest,
+        output: DescribeDBClusterResponse,
     }
 
     @input
-    structure GetFooRequest {
+    structure DescribeDBClusterRequest {
         @httpLabel
         @required
-        fooId: String
-
-        fooAlias: String
+        DBClusterIdentifier: String,
     }
 
     @output
-    structure GetFooResponse {
-        fooId: String
+    structure DescribeDBClusterResponse {
+        DBClusterIdentifier: String,
 
+        // if the user has not specified this value
+        // upon create, a default value will still be
+        // observed on Describe
         @cfnDefaultValue
-        fooAlias: String
-
-        @httpResponseCode
-        responseCode: Integer
+        backTrackWindow: Integer
     }
-
 
 -------------
 Example model
