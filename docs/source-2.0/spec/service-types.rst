@@ -730,7 +730,7 @@ name and property name by default.
         $chanceOfRain
     }
 
-The `name` property of the :ref:`property-trait` is used to bind a member to
+The :ref:`property-trait` is used to bind a member to
 the named property when the member name does not match a property name. This is
 useful if the member name cannot be changed due backwards compatibility reasons,
 but resource property modeling is being added to your Smithy model.
