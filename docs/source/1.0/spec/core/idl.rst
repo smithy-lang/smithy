@@ -171,7 +171,7 @@ The Smithy IDL is defined by the following ABNF:
 .. rubric:: Shapes
 
 .. productionlist:: smithy
-    shape_section :[`namespace_statement` [`use_section`] [`shape_statements`]]
+    shape_section :[`namespace_statement` `use_section` `shape_statements`]
     namespace_statement :"namespace" `ws` `namespace` `br`
     use_section   :*(`use_statement`)
     use_statement :"use" `ws` `absolute_root_shape_id` `br`
