@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -55,6 +56,7 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
     private final Map<ShapeId, Shape> mixins;
     private final transient SourceLocation source;
     private transient List<String> memberNames;
+    private int hash;
 
     /**
      * This class is package-private, which means that all subclasses of this
@@ -767,7 +769,14 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
 
     @Override
     public int hashCode() {
-        return getId().hashCode() + 3 * getType().hashCode();
+        int h = hash;
+
+        if (h == 0) {
+            h = Objects.hash(getType(), getId());
+            hash = h;
+        }
+
+        return h;
     }
 
     @Override
@@ -780,6 +789,7 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
 
         Shape other = (Shape) o;
         return getType() == other.getType()
+               && hashCode() == other.hashCode() // take advantage of hashcode caching
                && getId().equals(other.getId())
                && traits.equals(other.traits)
                && mixins.equals(other.mixins)
