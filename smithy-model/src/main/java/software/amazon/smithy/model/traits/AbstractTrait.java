@@ -87,12 +87,16 @@ public abstract class AbstractTrait implements Trait {
 
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof Trait)) {
+        if (other == this) {
+            return true;
+        } else if (!(other instanceof Trait)) {
             return false;
+        } else if (hashCode() != other.hashCode()) { // take advantage of hashcode caching
+            return false;
+        } else {
+            Trait b = (Trait) other;
+            return toShapeId().equals(b.toShapeId()) && toNode().equals(b.toNode());
         }
-
-        Trait b = (Trait) other;
-        return this == other || (toShapeId().equals(b.toShapeId()) && toNode().equals(b.toNode()));
     }
 
     @Override
