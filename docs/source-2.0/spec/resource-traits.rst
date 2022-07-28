@@ -12,7 +12,7 @@ Summary
     Allows the binding of resource properties to occur within a nested structure
     deeper than the lifecycle operation's input or output shape.
 Trait selector
-    ``:is(operation -[input, output]-> structure > member :test(> structure)``
+    ``operation -[input, output]-> structure > member :test(> structure)``
 
     *A member of a top-level input or output structure member*
 Value type

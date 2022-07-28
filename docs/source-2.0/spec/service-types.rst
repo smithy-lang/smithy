@@ -512,15 +512,15 @@ define an ``identifiers`` property that is compatible with their parents:
 Binding identifiers to operations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-*Identifier bindings* indicate which top-level members of the input structure
-of an operation provide values for the identifiers of a resource.
+*Identifier bindings* indicate which top-level members of the input or output
+structure of an operation provide values for the identifiers of a resource.
 
 .. rubric:: Identifier binding validation
 
 - Child resources MUST provide identifier bindings for all of its parent's
   identifiers.
-- Identifier bindings are only formed on input structure members that are
-  marked as :ref:`required <required-trait>`.
+- Identifier bindings are only formed on input or output structure members that
+  are marked as :ref:`required <required-trait>`.
 - Resource operations MUST form a valid *instance operation* or
   *collection operation*.
 
@@ -571,9 +571,9 @@ For example, given the following model,
     }
 
     @input
-    structure GetForecastInput {
+    structure GetForecastInput for Forecast {
         @required
-        forecastId: ForecastId
+        $forecastId
     }
 
     @output
@@ -652,14 +652,14 @@ For example, given the following,
     }
 
     @input
-    structure GetHistoricalForecastInput {
+    structure GetHistoricalForecastInput for HistoricalForecast {
         @required
         @resourceIdentifier("forecastId")
         customForecastIdName: ForecastId
 
         @required
         @resourceIdentifier("historicalId")
-        customHistoricalIdName: String
+        $customHistoricalIdName
     }
 
 the :ref:`resourceIdentifier-trait` on ``GetHistoricalForecastInput$customForecastIdName``
@@ -698,8 +698,8 @@ output operation shape ``GetForecastOutput`` contains that output property.
        output: GetForecastOutput
     }
 
-    structure GetForecastOutput{
-        chanceOfRain: Float
+    structure GetForecastOutput for Forecast {
+        $chanceOfRain
     }
 
 .. _binding-properties:
@@ -769,6 +769,15 @@ The following example demonstrates the ``howLikelyToRain`` member of
   target shape are invalid.
 - Members marked with a :ref:`property-trait` using a name that does not map to
   a declared resource property are invalid.
+
+Binding members to nested properties
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Property bindings* associate top-level members of input or output shapes
+with resource properties. The match occurs through a match between member
+name and property name by default.
+
+.. code-block:: smithy
 
 
 .. _lifecycle-operations:

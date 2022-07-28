@@ -1793,15 +1793,15 @@ define an ``identifiers`` property that is compatible with their parents:
 Binding identifiers to operations
 ---------------------------------
 
-*Identifier bindings* indicate which top-level members of the input structure
-of an operation provide values for the identifiers of a resource.
+*Identifier bindings* indicate which top-level members of the input or output
+structure of an operation provide values for the identifiers of a resource.
 
 .. rubric:: Identifier binding validation
 
 - Child resources MUST provide identifier bindings for all of its parent's
   identifiers.
-- Identifier bindings may be formed on input or output structure members that are
-  marked as :ref:`required <required-trait>`.
+- Identifier bindings are only formed on input or output structure members that
+  are marked as :ref:`required <required-trait>`.
 - Resource operations MUST form a valid *instance operation* or
   *collection operation*.
 
