@@ -685,7 +685,7 @@ CloudFormation schema for this resource.
 
     namespace smithy.example
 
-   use aws.cloudformation#cfnDefaultValue
+    use aws.cloudformation#cfnDefaultValue
     use aws.cloudformation#cfnResource
 
     // this is a very simplified example of AWS::RDS::DBCluster
