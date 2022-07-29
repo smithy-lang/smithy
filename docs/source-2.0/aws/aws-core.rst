@@ -1228,7 +1228,7 @@ operations for the ``aws.api#tagEnabled``  Weather service.
 ``TagResource``
 ===============
 
-The tag resource operation for a ``aws.api#tagEnabled`` creates and updates
+The tag resource operation for an ``aws.api#tagEnabled`` service creates and updates
 tag associations on a resource:
 
     * Operation name must case-sensitively match ``TagResource``.
