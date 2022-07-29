@@ -154,7 +154,7 @@ to call ``CreateTable`` on a table that already exists will return an error.
 ==================
 
 Summary
-    Binds a top-level input or output shape member of a structure to a resource
+    Binds a top-level input or output structure member to a resource
     property with a different name.
 Trait selector
     ``structure > member``
