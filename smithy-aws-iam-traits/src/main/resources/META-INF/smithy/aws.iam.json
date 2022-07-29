@@ -127,79 +127,99 @@
                 "ARN": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": "ARN"
+                        "smithy.api#enumValue": "ARN",
+                        "smithy.api#documentation": "A String type that contains an Amazon Resource Name (ARN)."
                     }
                 },
                 "ARRAY_OF_ARN": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": "ArrayOfARN"
+                        "smithy.api#enumValue": "ArrayOfARN",
+                        "smithy.api#documentation": "An unordered list of ARN types."
                     }
                 },
                 "BINARY": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": "Binary"
+                        "smithy.api#enumValue": "Binary",
+                        "smithy.api#documentation": "A String type that contains base-64 encoded binary data."
                     }
                 },
                 "ARRAY_OF_BINARY": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": "ArrayOfBinary"
+                        "smithy.api#enumValue": "ArrayOfBinary",
+                        "smithy.api#documentation": "An unordered list of Binary types."
                     }
                 },
                 "STRING": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": "String"
+                        "smithy.api#enumValue": "String",
+                        "smithy.api#documentation": "A general string type."
                     }
                 },
                 "ARRAY_OF_STRING": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": "ArrayOfString"
+                        "smithy.api#enumValue": "ArrayOfString",
+                        "smithy.api#documentation": "An unordered list of String types."
                     }
                 },
                 "NUMERIC": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": "Numeric"
+                        "smithy.api#enumValue": "Numeric",
+                        "smithy.api#documentation": "A general type for integers and floats."
+                    }
+                },
+                "ARRAY_OF_NUMERIC": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "ArrayOfNumeric",
+                        "smithy.api#documentation": "An unordered list of Numeric types."
                     }
                 },
                 "DATE": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": "Date"
+                        "smithy.api#enumValue": "Date",
+                        "smithy.api#documentation": "A String type that conforms to the datetime profile of ISO 8601."
                     }
                 },
                 "ARRAY_OF_DATE": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": "ArrayOfDate"
+                        "smithy.api#enumValue": "ArrayOfDate",
+                        "smithy.api#documentation": "An unordered list of Date types."
                     }
                 },
                 "BOOL": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": "Bool"
+                        "smithy.api#enumValue": "Bool",
+                        "smithy.api#documentation": "A general boolean type."
                     }
                 },
                 "ARRAY_OF_BOOL": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": "ArrayOfBool"
+                        "smithy.api#enumValue": "ArrayOfBool",
+                        "smithy.api#documentation": "An unordered list of Bool types."
                     }
                 },
                 "IP_ADDRESS": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": "IPAddress"
+                        "smithy.api#enumValue": "IPAddress",
+                        "smithy.api#documentation": "A String type that conforms to RFC 4632."
                     }
                 },
                 "ARRAY_OF_IP_ADDRESS": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": "ArrayOfIPAddress"
+                        "smithy.api#enumValue": "ArrayOfIPAddress",
+                        "smithy.api#documentation": "An unordered list of IPAddress types."
                     }
                 }
             },
@@ -214,25 +234,29 @@
                 "ROOT": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": "Root"
+                        "smithy.api#enumValue": "Root",
+                        "smithy.api#documentation": "An AWS account."
                     }
                 },
                 "IAM_USER": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": "IAMUser"
+                        "smithy.api#enumValue": "IAMUser",
+                        "smithy.api#documentation": "An AWS IAM user."
                     }
                 },
                 "IAM_ROLE": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": "IAMRole"
+                        "smithy.api#enumValue": "IAMRole",
+                        "smithy.api#documentation": "An AWS IAM role."
                     }
                 },
                 "FEDERATED_USER": {
                     "target": "smithy.api#Unit",
                     "traits": {
-                        "smithy.api#enumValue": "FederatedUser"
+                        "smithy.api#enumValue": "FederatedUser",
+                        "smithy.api#documentation": "A federated user session."
                     }
                 }
             },
