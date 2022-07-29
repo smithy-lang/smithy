@@ -659,17 +659,25 @@ The following example defines a CloudFormation resource that has the
 --------------------------------------------
 
 Summary
-    Indicates that the member annotated has a default value for the resource.
+    Indicates that the member annotated has a default value
+    for that property of the CloudFormation resource. Thus,
+    when this trait annotates an ``@output`` structure member,
+    it indicates that the CloudFormation property generated
+    from that member has a default value in the CloudFormation
+    schema. This trait can be used to indicate that an output
+    field with a value may return a default value assigned
+    by the service.
 Trait selector
     ``resource > operation -[output]-> structure > member``
 
-    *Only applicable to members of ``@output`` operations*
+    *Only applicable to members of @output operations*
 Value type
     Annotation trait
 
-Given the following example, because the ``fooAlias``
+Given the following example, because the ``backTrackWindow``
 member is annotated with ``cfnDefaultValue``, it can be derived
-that the ``fooAlias`` member has a default value for this resource.
+that the ``backTrackWindow`` member has a default value in the
+CloudFormation schema for this resource.
 
 .. code-block:: smithy
 
@@ -680,41 +688,24 @@ that the ``fooAlias`` member has a default value for this resource.
     use aws.cloudformation#cfnDefaultValue
     use aws.cloudformation#cfnResource
 
+    // this is a very simplified example of AWS::RDS::DBCluster
     @cfnResource
-    resource Foo {
-        identifiers: {
-            fooId: String
-        }
-        read: GetFoo
-    }
-
-    @readonly
-    @http(method: "GET", uri: "/foos/{fooId}", code: 200)
-    operation GetFoo {
-        input: GetFooRequest
-        output: GetFooResponse
-    }
-
-    @input
-    structure GetFooRequest {
-        @httpLabel
-        @required
-        fooId: String
-
-        fooAlias: String
+    resource DBCluster {
+        identifiers: { DBClusterIdentifier: String }
+        properties: { backTrackWindow: Integer }
+        read: DescribeDBCluster,
     }
 
     @output
-    structure GetFooResponse {
-        fooId: String
+    structure DescribeDBClusterResponse {
+        $DBClusterIdentifier
 
+        // If the user has not specified backTrackWindow
+        // upon create, a default value will still be
+        // observed in the DescribeDBClusterResponse
         @cfnDefaultValue
-        fooAlias: String
-
-        @httpResponseCode
-        responseCode: Integer
+        $backTrackWindow
     }
-
 
 -------------
 Example model
