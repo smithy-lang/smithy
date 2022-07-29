@@ -407,11 +407,11 @@ Trait selector
 Value type
     ``string``
 
-The ``resourceIdentifier`` trait may only be used on members of structures that
-serve as input shapes for operations bound to resources. The string value
-provided must correspond to the name of an identifier for said resource. The
-trait is not required when the name of the input structure member is an exact
-match for the name of the resource identifier.
+The ``resourceIdentifier`` trait may only be used on members of structures for
+operations bound to resources. The string value provided must correspond to the
+name of an identifier for said resource. The trait is not required when the
+name of the structure member is an exact match for the name of the resource
+identifier.
 
 .. code-block:: smithy
 
@@ -431,9 +431,9 @@ match for the name of the resource identifier.
     }
 
     @input
-    structure GetFileInput {
+    structure GetFileInput for File {
         @required
-        directory: String
+        $directory
 
         // resourceIdentifier is used because the input member name
         // does not match the resource identifier name

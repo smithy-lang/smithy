@@ -363,6 +363,10 @@ A resource supports the following members:
       - ``object``
       - Defines a map of identifier string names to :ref:`shape-id`\s used to
         identify the resource. Each shape ID MUST target a ``string`` shape.
+    * - :ref:`properties <resource-properties>`
+      - ``object``
+      - Defines a map of property string names to :ref:`shape-id`\s that
+        enumerate the properties of the resource.
     * - :ref:`create <create-lifecycle>`
       - ``string``
       - Defines the lifecycle operation used to create a resource using one

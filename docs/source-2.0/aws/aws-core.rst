@@ -1231,14 +1231,14 @@ operations for the ``aws.api#tagEnabled``  Weather service.
 The tag resource operation for a ``aws.api#tagEnabled`` creates and updates
 tag associations on a resource:
 
-    * Operation name must case-sensitively match ``TagResource``.
-    * Must have exactly one input member that targets a string shape and has a
-      member name that matches: ``^([R|r]esource)?([A|a]rn|ARN)$`` to accept
-      the resource ARN.
-    * Must have exactly one input member that targets a list shape, with list
-      member targeting a structure that consists of two members that target a
-      string shape representing the tag key or name and the tag value. This
-      member name must match: ``^[T|t]ag(s|[L|l]ist)$``
+* Operation name must case-sensitively match ``TagResource``.
+* Must have exactly one input member that targets a string shape and has a
+  member name that matches ``^([R|r]esource)?([A|a]rn|ARN)$`` to accept
+  the resource ARN.
+* Must have exactly one input member that targets a list shape, with list
+  member targeting a structure that consists of two members that target a
+  string shape representing the tag key or name and the tag value. This
+  member name must match: ``^[T|t]ag(s|[L|l]ist)$``
 
 The following snippet is a valid definition of a tag resource operation and
 its input:
@@ -1266,13 +1266,13 @@ its input:
 
 The untag resource operation removes tag associations on a resource.
 
-    * Operation name must case-sensitively match ``UntagResource``.
-    * Must have exactly one input member that targets a string shape and has a
-      member name that matches: ``^([R|r]esource)?([A|a]rn|ARN)$`` to accept
-      the resource ARN.
-    * Must have exactly one input member that targets a list shape, with list
-      member targeting a string representing tag keys or names to remove. This
-      member name must match: ``^[T|t]ag[K|k]eys$``
+* Operation name must case-sensitively match ``UntagResource``.
+* Must have exactly one input member that targets a string shape and has a
+  member name that matches: ``^([R|r]esource)?([A|a]rn|ARN)$`` to accept
+  the resource ARN.
+* Must have exactly one input member that targets a list shape, with list
+  member targeting a string representing tag keys or names to remove. This
+  member name must match: ``^[T|t]ag[K|k]eys$``
 
 The following snippet is an example of the untag resource operation and its
 input:
@@ -1299,14 +1299,14 @@ input:
 The list tags for resource operation retrieves all tag associations on a
 resource.
 
-    * Operation name must case-sensitively match ``ListTagsForResource``.
-    * Must have exactly one input member that targets a string shape and has a
-      member name that matches: ``^([R|r]esource)?([A|a]rn|ARN)$`` to accept
-      the resource ARN.
-    * Must have exactly one output member that targets a list shape, with list
-      member targeting a structure that consists of two members that target a
-      string shape representing the tag key or name and the tag value. This
-      member name must match: ``^[T|t]ag(s|[L|l]ist)$``
+* Operation name must case-sensitively match ``ListTagsForResource``.
+* Must have exactly one input member that targets a string shape and has a
+  member name that matches: ``^([R|r]esource)?([A|a]rn|ARN)$`` to accept
+  the resource ARN.
+* Must have exactly one output member that targets a list shape, with list
+  member targeting a structure that consists of two members that target a
+  string shape representing the tag key or name and the tag value. This
+  member name must match: ``^[T|t]ag(s|[L|l]ist)$``
 
 The following snippet is an example of the list tags for resource operation and
 its input:
@@ -1384,21 +1384,23 @@ members:
     * - apiConfig
       - ``structure``
       - Configuration structure for resource specific tagging operations, if
-        applicable.
+        applicable. If this property is present the three sub-properties are
+        required.
     * - apiConfig.tagApi
       - ``ShapeID``
-      - Defines the operation used to create and update tags associations for
-        the resource. The value MUST be a valid :ref:`shape-id` that targets an
-        ``operation`` shape.
+      - **Required** Defines the operation used to create and update tags
+        associations for the resource. The value MUST be a valid
+        :ref:`shape-id` that targets an ``operation`` shape.
     * - apiConfig.untagApi
       - ``ShapeID``
-      - Defines the operation used to deletes tag associations from the
-        resource. The value MUST be a valid :ref:`shape-id` that targets an
-        ``operation`` shape.
+      - **Required** Defines the operation used to deletes tag associations
+        from the resource. The value MUST be a valid :ref:`shape-id` that
+        targets an ``operation`` shape.
     * - apiConfig.listTagsApi
       - ``ShapeID``
-      - Defines the operation used to list tags for the resource. The value
-        MUST be a valid :ref:`shape-id` that targets an ``operation`` shape.
+      - **Required** Defines the operation used to list tags for the resource.
+        The value MUST be a valid :ref:`shape-id` that targets an ``operation``
+        shape.
 
 Resource specific tagging operations tagApi, untagApi, and listTagsApi have
 corresponding requirements to :ref:`tag-resource-api`, :ref:`untag-resource-api`,
