@@ -18,10 +18,9 @@ Trait selector
 Value type
     Annotation trait.
 
-By default, top-level input and output shape members of lifecycle operations are
-bound to resource properties. The ``@nestedProperties`` trait is used when the
-properties of a resource are nested one level deeper than top-level input and
-output members.
+By default, resource properties are resolved by looking at top-level input and
+output members. The ``@nestedProperties`` trait is used when the properties of
+a resource are nested one level deeper than top-level input and output members.
 
 .. code-block:: smithy
 
@@ -46,9 +45,10 @@ output members.
 
 .. seealso::
 
-    The :ref:`target elision syntax <idl-target-elision>` for an easy way to
-    define structures that reference resource properties without having to
-    repeat the target definition.
+    Member :ref:`target elision syntax <idl-target-elision>` is used to define
+    structure members for a resource property, identifier, or mixin member that
+    do not repeat the target definition.
+
 
 The shape targeted by the member marked with this trait will have its members
 used for resource property bindings. These members may not use
