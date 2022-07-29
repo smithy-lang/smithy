@@ -62,11 +62,10 @@ any resource property binding exclusion or bindings with mismatched property nam
 =====================
 
 Summary
-    Used to explicitly mark a that top-level input or output shape member of an
-    operation is not bound to a resource property. This trait can also mark
-    another trait as a carrier for ``@notProperty`` so that if that trait is
-    applied to a member, the member is considered implicitly marked with
-    ``@notProperty``.
+    Indicates that a top-level input or output shape member is not bound to a
+    resource property. This trait can also mark another trait as a carrier for
+    ``@notProperty`` so that if that trait is applied to a member, the member
+    is considered implicitly marked with ``@notProperty``.
 Trait selector
     ``:is(operation -[input, output]-> structure > member, [trait|trait])``
 
@@ -75,15 +74,15 @@ Value type
     Annotation trait.
 
 By default, top-level input and output members of lifecycle operations must
-be bound to a resource property or identifier. Members that are neither, must
+be bound to a resource property or identifier. Members that are neither must
 have this trait applied, or be annotated with a different trait that has this
 trait applied.
 
 Use this trait on a resource operation input or output member that explicitly
 has a purpose unrelated to reading or writing resource properties. Also use
 this traith on a custom defined Smithy trait used to annotate input or output
-members for purposes unrelated to resource property modeling such as idempotency
-token.
+members for purposes unrelated to resource property modeling such as an
+idempotency token.
 
 .. code-block:: smithy
 
@@ -96,8 +95,8 @@ token.
        input: UpdateForecastInput
     }
 
-    structure UpdateForecastInput {
-        chanceOfRain: Float
+    structure UpdateForecastInput for Forecast {
+        $chanceOfRain
 
         @notProperty
         dryRun: Boolean
@@ -158,7 +157,7 @@ Summary
     Binds a top-level input or output shape member of a structure to a resource
     property with a different name.
 Trait selector
-    ``:is(operation -[input, output]-> structure > member)``
+    ``structure > member``
 
     *A top-level member of an operation's input or output shape*
 Value type
