@@ -38,6 +38,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.OpenApiException;
+import software.amazon.smithy.openapi.OpenApiVersion;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.PathItem;
 import software.amazon.smithy.utils.IoUtils;
@@ -527,6 +528,39 @@ public class OpenApiConverterTest {
         Node result = OpenApiConverter.create().config(config).convertToNode(model);
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("nonconflicting-unit.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
+    public void convertsToOpenAPI3_0_2() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("nullability-and-format.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example#Example"));
+        config.setVersion(OpenApiVersion.VERSION_3_0_2);
+        Node result = OpenApiConverter.create().config(config).convertToNode(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("openapi-3-0-2.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
+    @Test
+    public void convertsToOpenAPI3_1_0() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("nullability-and-format.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example#Example"));
+        config.setVersion(OpenApiVersion.VERSION_3_1_0);
+        Node result = OpenApiConverter.create().config(config).convertToNode(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("openapi-3-1-0.openapi.json")));
 
         Node.assertEquals(result, expectedNode);
     }

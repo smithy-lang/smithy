@@ -228,6 +228,25 @@ protocol (``string``)
             }
         }
 
+.. _generate-openapi-setting-version:
+
+version (``string``)
+    Specifies the OpenAPI specification version.
+    Currently supports OpenAPI 3.0.2 and OpenAPI 3.1.0.
+    This option defaults to ``3.0.2``.
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "version": "3.1.0"
+                }
+            }
+        }
+
 .. _generate-openapi-setting-tags:
 
 tags (``boolean``)
