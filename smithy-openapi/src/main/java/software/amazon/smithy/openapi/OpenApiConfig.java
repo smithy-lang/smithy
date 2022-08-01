@@ -36,9 +36,6 @@ import software.amazon.smithy.utils.StringUtils;
  */
 public class OpenApiConfig extends JsonSchemaConfig {
 
-    /** The supported version of OpenAPI. */
-    public static final String VERSION = "3.0.2";
-
     /** Specifies what to do when the httpPrefixHeaders trait is found in a model. */
     public enum HttpPrefixHeadersStrategy {
         /** The default setting that causes the build to fail. */
@@ -86,6 +83,8 @@ public class OpenApiConfig extends JsonSchemaConfig {
     private List<String> externalDocs = ListUtils.of(
             "Homepage", "API Reference", "User Guide", "Developer Guide", "Reference", "Guide");
     private boolean useIntegerType;
+
+    private OpenApiVersion version = OpenApiVersion.VERSION_3_0_2;
 
     public OpenApiConfig() {
         super();
@@ -328,6 +327,14 @@ public class OpenApiConfig extends JsonSchemaConfig {
      */
     public void setUseIntegerType(boolean useIntegerType) {
         this.useIntegerType = useIntegerType;
+    }
+
+    public OpenApiVersion getVersion() {
+        return this.version;
+    }
+
+    public void setVersion(OpenApiVersion version) {
+        this.version = Objects.requireNonNull(version);
     }
 
     /**

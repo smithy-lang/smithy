@@ -58,10 +58,6 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
                 .map(ExternalDocumentation::toNode)
                 .ifPresent(docs -> builder.putExtension("externalDocs", docs));
 
-        if (shape.hasTrait(BoxTrait.class)) {
-            builder.putExtension("nullable", Node.from(true));
-        }
-
         if (shape.hasTrait(DeprecatedTrait.class)) {
             builder.putExtension("deprecated", Node.from(true));
         }
@@ -89,11 +85,9 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
                 updateFloatFormat(builder, config, "float");
             } else if (shape.isDoubleShape()) {
                 updateFloatFormat(builder, config, "double");
-            } else if (shape.isBlobShape()) {
-                if (config instanceof OpenApiConfig) {
-                    String blobFormat = ((OpenApiConfig) config).getDefaultBlobFormat();
-                    return builder.format(blobFormat);
-                }
+            } else if (shape.isBlobShape() && config instanceof OpenApiConfig) {
+                handleFormatKeyword(builder, (OpenApiConfig) config);
+                return builder;
             } else if (shape.isTimestampShape()) {
                 // Add the "double" format when epoch-seconds is used
                 // to account for optional millisecond precision.
@@ -105,10 +99,35 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
             }
         }
 
+        if (shape.hasTrait(BoxTrait.class)) {
+            handleNullability(builder, config);
+        }
+
         // Remove unsupported JSON Schema keywords.
         UNSUPPORTED_KEYWORD_DIRECTIVES.forEach(builder::disableProperty);
 
         return builder;
+    }
+
+    private void handleFormatKeyword(Schema.Builder builder, OpenApiConfig config) {
+        String blobFormat = config.getDefaultBlobFormat();
+        if (config.getVersion().supportsContentEncodingKeyword()) {
+            builder.contentEncoding(blobFormat);
+        } else {
+            builder.format(blobFormat);
+        }
+    }
+
+    private void handleNullability(Schema.Builder builder, JsonSchemaConfig config) {
+        if (config instanceof OpenApiConfig
+                && !((OpenApiConfig) config).getVersion().supportsNullableKeyword()) {
+            builder.putExtension(
+                    "type",
+                    Node.arrayNode(Node.from(builder.build().getType().get()), Node.nullNode())
+            );
+        } else {
+            builder.putExtension("nullable", Node.from(true));
+        }
     }
 
     private void updateFloatFormat(Schema.Builder builder, JsonSchemaConfig config, String format) {

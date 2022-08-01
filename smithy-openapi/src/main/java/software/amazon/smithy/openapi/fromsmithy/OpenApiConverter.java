@@ -302,7 +302,8 @@ public final class OpenApiConverter {
         Context<T> context = environment.context;
         OpenApiMapper mapper = environment.mapper;
         OpenApiProtocol<T> openApiProtocol = environment.context.getOpenApiProtocol();
-        OpenApi.Builder openapi = OpenApi.builder().openapi(OpenApiConfig.VERSION).info(createInfo(service));
+        String version = context.getConfig().getVersion().toString();
+        OpenApi.Builder openapi = OpenApi.builder().openapi(version).info(createInfo(service));
 
         mapper.before(context, openapi);
 
