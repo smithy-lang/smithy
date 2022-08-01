@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.BlobShape;
@@ -56,6 +57,26 @@ public class NeighborVisitorTest {
         List<Relationship> relationships = shape.accept(neighborVisitor);
 
         assertThat(relationships, empty());
+    }
+
+    @Test
+    public void findsMixinsOnThingsOtherThanStructAndUnion() {
+        Shape blobMixin = BlobShape.builder().id("smithy.example#BlobMixin")
+                .addTrait(MixinTrait.builder().build())
+                .build();
+        Shape shape = BlobShape.builder()
+                .id("ns.foo#name")
+                .addMixin(blobMixin)
+                .build();
+        Model model = Model.builder().addShapes(shape, blobMixin).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
+        List<Relationship> relationships = shape.accept(neighborVisitor);
+
+        List<RelationshipType> types = relationships.stream()
+                .map(Relationship::getRelationshipType)
+                .collect(Collectors.toList());
+
+        assertThat(types, contains(RelationshipType.MIXIN));
     }
 
     @Test

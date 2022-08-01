@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.neighbor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.EntityShape;
@@ -33,7 +34,6 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
-import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Finds all neighbors of a shape, returning them as a list of
@@ -59,12 +59,32 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
 
     @Override
     public List<Relationship> getDefault(Shape shape) {
-        return ListUtils.of();
+        return shape.getMixins().isEmpty()
+               ? Collections.emptyList()
+               : initializeRelationships(shape, 0);
+    }
+
+    private List<Relationship> initializeRelationships(Shape shape, int knownMemberCount) {
+        if (shape.isMemberShape()) {
+            // Members have mixins but shouldn't contribute a relationship.
+            return new ArrayList<>(knownMemberCount);
+        } else {
+            knownMemberCount += shape.getMixins().size();
+            List<Relationship> result = new ArrayList<>(knownMemberCount);
+            for (ShapeId mixin : shape.getMixins()) {
+                result.add(relationship(shape, RelationshipType.MIXIN, mixin));
+            }
+            return result;
+        }
     }
 
     @Override
     public List<Relationship> serviceShape(ServiceShape shape) {
-        List<Relationship> result = new ArrayList<>();
+        int operationAndResourceRelationships = 2 * (shape.getAllOperations().size() + shape.getResources().size());
+        int errorSize = shape.getErrors().size();
+        int neededSize = operationAndResourceRelationships + errorSize;
+        List<Relationship> result = initializeRelationships(shape, neededSize);
+
         // Add OPERATION from service -> operation. Add BINDING from operation -> service.
         for (ShapeId operation : shape.getOperations()) {
             addBinding(result, shape, operation, RelationshipType.OPERATION);
@@ -92,7 +112,12 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
 
     @Override
     public List<Relationship> resourceShape(ResourceShape shape) {
-        List<Relationship> result = new ArrayList<>();
+        // This is a rough estimate for the number of needed relationships.
+        int operationAndResourceRelationships = 2 * (shape.getAllOperations().size() + shape.getResources().size());
+        int identifierSize = shape.getIdentifiers().size();
+        int neededSize = (operationAndResourceRelationships * 2) + identifierSize;
+        List<Relationship> result = initializeRelationships(shape, neededSize);
+
         // Add IDENTIFIER relationships.
         shape.getIdentifiers().forEach((k, v) -> result.add(relationship(shape, RelationshipType.IDENTIFIER, v)));
         // Add RESOURCE from resourceA -> resourceB and BOUND from resourceB -> resourceA
@@ -154,10 +179,22 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
 
     @Override
     public List<Relationship> operationShape(OperationShape shape) {
-        List<Relationship> result = new ArrayList<>();
+        ShapeId input = shape.getInput().orElse(null);
+        ShapeId output = shape.getOutput().orElse(null);
 
-        shape.getInput().ifPresent(input -> result.add(relationship(shape, RelationshipType.INPUT, input)));
-        shape.getOutput().ifPresent(output -> result.add(relationship(shape, RelationshipType.OUTPUT, output)));
+        // Calculate the number of relationships up front.
+        int assumedRelationshipCount = shape.getErrors().size()
+                + (input == null ? 0 : 1)
+                + (output == null ? 0 : 1);
+        List<Relationship> result = initializeRelationships(shape, assumedRelationshipCount);
+
+        if (input != null) {
+            result.add(relationship(shape, RelationshipType.INPUT, input));
+        }
+
+        if (output != null) {
+            result.add(relationship(shape, RelationshipType.OUTPUT, output));
+        }
 
         for (ShapeId errorId : shape.getErrors()) {
             result.add(relationship(shape, RelationshipType.ERROR, errorId));
@@ -167,7 +204,7 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
 
     @Override
     public List<Relationship> memberShape(MemberShape shape) {
-        List<Relationship> result = new ArrayList<>(2);
+        List<Relationship> result = initializeRelationships(shape, 2);
         result.add(relationship(shape, RelationshipType.MEMBER_CONTAINER, shape.getContainer()));
         result.add(relationship(shape, RelationshipType.MEMBER_TARGET, shape.getTarget()));
         return result;
@@ -175,7 +212,7 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
 
     @Override
     public List<Relationship> enumShape(EnumShape shape) {
-        List<Relationship> result = new ArrayList<>();
+        List<Relationship> result = initializeRelationships(shape, shape.getAllMembers().size());
         for (MemberShape member : shape.getAllMembers().values()) {
             result.add(relationship(shape, RelationshipType.ENUM_MEMBER, member));
         }
@@ -184,7 +221,7 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
 
     @Override
     public List<Relationship> intEnumShape(IntEnumShape shape) {
-        List<Relationship> result = new ArrayList<>();
+        List<Relationship> result = initializeRelationships(shape, shape.getAllMembers().size());
         for (MemberShape member : shape.getAllMembers().values()) {
             result.add(relationship(shape, RelationshipType.INT_ENUM_MEMBER, member));
         }
@@ -193,17 +230,21 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
 
     @Override
     public List<Relationship> listShape(ListShape shape) {
-        return ListUtils.of(relationship(shape, RelationshipType.LIST_MEMBER, shape.getMember()));
+        List<Relationship> result = initializeRelationships(shape, 1);
+        result.add(relationship(shape, RelationshipType.LIST_MEMBER, shape.getMember()));
+        return result;
     }
 
     @Override
     public List<Relationship> setShape(SetShape shape) {
-        return ListUtils.of(relationship(shape, RelationshipType.SET_MEMBER, shape.getMember()));
+        List<Relationship> result = initializeRelationships(shape, 1);
+        result.add(relationship(shape, RelationshipType.SET_MEMBER, shape.getMember()));
+        return result;
     }
 
     @Override
     public List<Relationship> mapShape(MapShape shape) {
-        List<Relationship> result = new ArrayList<>(2);
+        List<Relationship> result = initializeRelationships(shape, 2);
         result.add(relationship(shape, RelationshipType.MAP_KEY, shape.getKey()));
         result.add(relationship(shape, RelationshipType.MAP_VALUE, shape.getValue()));
         return result;
@@ -211,10 +252,7 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
 
     @Override
     public List<Relationship> structureShape(StructureShape shape) {
-        List<Relationship> result = new ArrayList<>();
-        for (ShapeId mixin : shape.getMixins()) {
-            result.add(relationship(shape, RelationshipType.MIXIN, mixin));
-        }
+        List<Relationship> result = initializeRelationships(shape, shape.getAllMembers().size());
         for (MemberShape member : shape.getAllMembers().values()) {
             result.add(Relationship.create(shape, RelationshipType.STRUCTURE_MEMBER, member));
         }
@@ -223,10 +261,7 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
 
     @Override
     public List<Relationship> unionShape(UnionShape shape) {
-        List<Relationship> result = new ArrayList<>();
-        for (ShapeId mixin : shape.getMixins()) {
-            result.add(relationship(shape, RelationshipType.MIXIN, mixin));
-        }
+        List<Relationship> result = initializeRelationships(shape, shape.getAllMembers().size());
         for (MemberShape member : shape.getAllMembers().values()) {
             result.add(Relationship.create(shape, RelationshipType.UNION_MEMBER, member));
         }
