@@ -10,12 +10,12 @@
             },
             "properties": {
                 "name": {
-                    "type": "string"
+                    "target": "String"
                 }
             }
         },
         "example.weather#CityId": {
-            "type": "string",
+            "type": "smithy.api#string",
             "traits": {
                 "smithy.api#pattern": "^[A-Za-z0-9 ]+$"
             }

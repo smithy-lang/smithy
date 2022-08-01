@@ -15,15 +15,12 @@
 
 package software.amazon.smithy.model.loader;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
 import org.junit.jupiter.api.Test;
+
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SourceLocation;
 
 public class AstModelLoaderTest {
-    // @Test
+    @Test
     public void failsToLoadPropertiesFromV1() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("invalid/properties-v2-only.json"))

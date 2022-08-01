@@ -67,7 +67,6 @@ public class InvalidSmithyModelLoaderRunnerTest {
                 .replace("[EOF]", "")
                 // Make sure the line separators and representations of them are consistent across
                 // operating systems.
-                .replace("\n\n", "\\n")
                 .replace("\r\n", "\\n")
                 .replace("\r", "\\n")
                 .replace("\n", "\\n");

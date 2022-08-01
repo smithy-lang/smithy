@@ -1,5 +1,4 @@
-// Resource properties can only be used with Smithy version 2 or later | Model
-$version: "1.0"
+//Resource properties can only be used with Smithy version 2 or later.
 
 namespace example.weather
 
