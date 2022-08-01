@@ -102,6 +102,7 @@ public final class TargetValidator extends AbstractValidator {
                     return Optional.of(error(shape, format(
                             "Members cannot target %s shapes, but found %s", target.getType(), target)));
                 }
+                return Optional.empty();
             case MAP_KEY:
                 return target.asMemberShape().flatMap(m -> validateMapKey(shape, m.getTarget(), model));
             case RESOURCE:
