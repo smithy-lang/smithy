@@ -330,6 +330,7 @@ public class NeighborVisitorTest {
         ResourceShape resource = ResourceShape.builder()
                 .id("ns.foo#Resource")
                 .addIdentifier("id", "ns.foo#ResourceIdentifier")
+                .addProperty("fooProperty", "ns.foo#ResourceProperty")
                 .put(ShapeId.from("ns.foo#Put"))
                 .create(ShapeId.from("ns.foo#Create"))
                 .read(ShapeId.from("ns.foo#Get"))
@@ -341,6 +342,7 @@ public class NeighborVisitorTest {
                 .addResource("ns.foo#Child1")
                 .build();
         StringShape identifier = StringShape.builder().id("ns.foo#ResourceIdentifier").build();
+        StringShape property = StringShape.builder().id("ns.foo#ResourceProperty").build();
         OperationShape createOperation = OperationShape.builder().id("ns.foo#Create").build();
         OperationShape getOperation = OperationShape.builder()
                 .id("ns.foo#Get")
@@ -367,7 +369,7 @@ public class NeighborVisitorTest {
         ResourceShape child1 = ResourceShape.builder().id("ns.foo#Child1").addResource("ns.foo#Child2").build();
         ResourceShape child2 = ResourceShape.builder().id("ns.foo#Child2").build();
         Model model = Model.builder()
-                .addShapes(parent, resource, identifier, child1, child2)
+                .addShapes(parent, resource, identifier, property, child1, child2)
                 .addShapes(createOperation, getOperation, updateOperation, deleteOperation, listOperation)
                 .addShapes(namedOperation, collectionOperation, putOperation)
                 .build();
@@ -376,9 +378,9 @@ public class NeighborVisitorTest {
 
         assertThat(relationships, containsInAnyOrder(
                 Relationship.create(parent, RelationshipType.RESOURCE, resource),
-
                 Relationship.create(resource, RelationshipType.BOUND, parent),
                 Relationship.create(resource, RelationshipType.IDENTIFIER, identifier),
+                Relationship.create(resource, RelationshipType.PROPERTY, property),
                 Relationship.create(resource, RelationshipType.CREATE, createOperation),
                 Relationship.create(resource, RelationshipType.READ, getOperation),
                 Relationship.create(resource, RelationshipType.UPDATE, updateOperation),

@@ -15,17 +15,18 @@
 
 package software.amazon.smithy.model.validation.validators;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ResourceShape;
-import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Validates that the resource identifiers of children of a resource contain
@@ -35,17 +36,40 @@ public final class ResourceIdentifierValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.shapes(ResourceShape.class)
-                .flatMap(resource -> validateAgainstChildren(resource, model))
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        for (ResourceShape resource : model.getResourceShapes()) {
+            events.addAll(validatePropertyRedefine(resource, model));
+            events.addAll(validateAgainstChildren(resource, model));
+        }
+        return events;
     }
 
-    private Stream<ValidationEvent> validateAgainstChildren(ResourceShape resource, Model model) {
-        return resource.getResources().stream()
-                .flatMap(shape -> OptionalUtils.stream(model.getShape(shape).flatMap(Shape::asResourceShape)))
-                .flatMap(child -> Stream.concat(
-                        OptionalUtils.stream(checkForMissing(child, resource)),
-                        OptionalUtils.stream(checkForMismatches(child, resource))));
+    private List<ValidationEvent> validatePropertyRedefine(ResourceShape resource, Model model) {
+        List<ValidationEvent> events = new ArrayList<>();
+        if (resource.hasProperties()) {
+            Map<String, String> propertyLowerCaseToActual = new HashMap<>();
+            for (String propertyName : resource.getProperties().keySet()) {
+                propertyLowerCaseToActual.put(propertyName.toLowerCase(Locale.ENGLISH), propertyName);
+            }
+
+            for (String identifier : resource.getIdentifiers().keySet()) {
+                if (propertyLowerCaseToActual.containsKey(identifier.toLowerCase(Locale.ENGLISH))) {
+                   events.add(error(resource, String.format("Resource identifier `%s` cannot also be a"
+                           + " resource property", identifier)));
+                }
+            }
+        }
+        return events;
+    }
+
+    private List<ValidationEvent> validateAgainstChildren(ResourceShape resource, Model model) {
+        List<ValidationEvent> events = new ArrayList<>();
+        for (ShapeId childResourceId: resource.getResources()) {
+            ResourceShape childResource = model.expectShape(childResourceId, ResourceShape.class);
+            checkForMissing(childResource, resource).ifPresent(e -> events.add(e));
+            checkForMismatches(childResource, resource).ifPresent(e -> events.add(e));
+        }
+        return events;
     }
 
     private Optional<ValidationEvent> checkForMissing(ResourceShape resource, ResourceShape parent) {

@@ -1,0 +1,49 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://schema.cloudformation.us-east-1.amazonaws.com/provider.configuration.definition.schema.v1.json",
+    "title": "CloudFormation Type Provider Configuration Definition MetaSchema",
+    "description": "This schema validates a CloudFormation type provider configuration definition.",
+    "type": "object",
+    "properties": {
+        "additionalProperties": {
+            "$comment": "All properties must be expressed in the schema - arbitrary inputs are not allowed",
+            "type": "boolean",
+            "const": false
+        },
+        "deprecatedProperties": {
+            "$ref": "base.definition.schema.v1.json#/properties/deprecatedProperties"
+        },
+        "allOf": {
+            "$ref": "base.definition.schema.v1.json#/definitions/schemaArray"
+        },
+        "anyOf": {
+            "$ref": "base.definition.schema.v1.json#/definitions/schemaArray"
+        },
+        "oneOf": {
+            "$ref": "base.definition.schema.v1.json#/definitions/schemaArray"
+        },
+        "required": {
+            "$ref": "base.definition.schema.v1.json#/properties/required"
+        },
+        "description": {
+            "$comment": "A short description of the type configuration. This will be shown in the AWS CloudFormation console.",
+            "$ref": "base.definition.schema.v1.json#/properties/description"
+        },
+        "properties": {
+            "type": "object",
+            "patternProperties": {
+                "(?!CloudFormation)^[A-Za-z0-9]{1,64}$": {
+                    "$comment": "TypeConfiguration properties starting with `CloudFormation` are reserved for CloudFormation use",
+                    "$ref": "base.definition.schema.v1.json#/definitions/properties"
+                }
+            },
+            "minProperties": 1,
+            "additionalProperties": false
+        }
+    },
+    "required": [
+        "properties",
+        "additionalProperties"
+    ],
+    "additionalProperties": false
+}

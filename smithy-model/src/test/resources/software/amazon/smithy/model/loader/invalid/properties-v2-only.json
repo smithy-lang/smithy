@@ -1,0 +1,13 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+       "smithy.example#Book": {
+            "type": "resource",
+            "properties": {
+                "title": {
+                    "target": "smithy.api#String"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,88 @@
+{
+    "typeName": "Smithy::Weather::City",
+    "description": "Definition of Smithy::Weather::City Resource Type",
+    "definitions": {
+        "CityCoordinates": {
+            "type": "object",
+            "properties": {
+                "Latitude": {
+                    "type": "number"
+                },
+                "Longitude": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "Latitude",
+                "Longitude"
+            ],
+            "additionalProperties": false
+        },
+        "Tag": {
+            "type": "object",
+            "properties": {
+                "Key": {
+                    "type": "string"
+                },
+                "Value": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false
+        }
+    },
+    "properties": {
+        "CityId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9 ]+$"
+        },
+        "Coordinates": {
+            "$ref": "#/definitions/CityCoordinates"
+        },
+        "Name": {
+            "type": "string"
+        },
+        "Tags": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/Tag"
+            }
+        }
+    },
+    "readOnlyProperties": [
+        "/properties/CityId"
+    ],
+    "primaryIdentifier": [
+        "/properties/CityId"
+    ],
+    "handlers": {
+        "create": {
+            "permissions": [
+                "weather:CreateCity"
+            ]
+        },
+        "read": {
+            "permissions": [
+                "weather:GetCity"
+            ]
+        },
+        "update": {
+            "permissions": [
+                "weather:UpdateCity"
+            ]
+        },
+        "list": {
+            "permissions": [
+                "weather:ListCities"
+            ]
+        }
+    },
+    "tagging": {
+        "tagOnCreate": false,
+        "tagProperty": "Tags",
+        "tagUpdatable": true,
+        "cloudFormationSystemTags": true,
+        "taggable": true
+    },
+    "additionalProperties": false
+}
