@@ -15,7 +15,7 @@
 
 package software.amazon.smithy.aws.traits.tagging;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ResourceShape;
@@ -28,7 +28,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public final class TagResourcePropertyNameValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        List<ValidationEvent> events = new LinkedList<>();
+        List<ValidationEvent> events = new ArrayList<>();
 
         for (ResourceShape resource : model.getResourceShapesWithTrait(TaggableTrait.class)) {
             TaggableTrait trait = resource.expectTrait(TaggableTrait.class);

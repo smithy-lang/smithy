@@ -120,6 +120,12 @@ public enum RelationshipType {
     IDENTIFIER("identifier", RelationshipDirection.DIRECTED),
 
     /**
+     * Relationships that exist between a {@link ResourceShape member} and
+     * the shapes that are referenced by its properties property.
+     */
+    PROPERTY("property", RelationshipDirection.DIRECTED),
+
+    /**
      * Relationships exist on {@link MemberShape member} shapes. The subject
      * of the relationship is the member shape, and the neighbor is the
      * aggregate shape that contains the member.

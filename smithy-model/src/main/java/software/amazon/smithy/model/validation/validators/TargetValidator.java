@@ -96,8 +96,9 @@ public final class TargetValidator extends AbstractValidator {
         }
 
         switch (relType) {
+            case PROPERTY:
             case MEMBER_TARGET:
-                // Members cannot target other members, service, operation, or resource shapes.
+                // Members and property cannot target other members, service, operation, or resource shapes.
                 if (INVALID_MEMBER_TARGETS.contains(target.getType())) {
                     return Optional.of(error(shape, format(
                             "Members cannot target %s shapes, but found %s", target.getType(), target)));

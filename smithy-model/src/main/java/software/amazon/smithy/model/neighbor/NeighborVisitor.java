@@ -95,6 +95,8 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
         List<Relationship> result = new ArrayList<>();
         // Add IDENTIFIER relationships.
         shape.getIdentifiers().forEach((k, v) -> result.add(relationship(shape, RelationshipType.IDENTIFIER, v)));
+        // Add PROPERTY relationships.
+        shape.getProperties().forEach((k, v) -> result.add(relationship(shape, RelationshipType.PROPERTY, v)));
         // Add RESOURCE from resourceA -> resourceB and BOUND from resourceB -> resourceA
         shape.getResources().forEach(id -> addBinding(result, shape, id, RelationshipType.RESOURCE));
         // Add all operation BINDING relationships (resource -> operation) and BOUND relations (operation -> resource).

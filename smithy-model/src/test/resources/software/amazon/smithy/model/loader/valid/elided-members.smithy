@@ -6,6 +6,10 @@ resource MyResource {
     identifiers: {
         id: String
     }
+    properties: {
+        property: String
+    }
+    operations: [ThrowAway]
 }
 
 structure MyResourceIdentifiers for MyResource {
@@ -34,6 +38,12 @@ structure MixedStructureWithTraits with [MixinStructure] {
 structure MixedResourceStructure for MyResource with [MixinStructure] {
     $id
     $foo
+}
+
+structure MixedResourceWithPropertiesStructure for MyResource with [MixinStructure] {
+    $id
+    $foo
+    $property
 }
 
 structure MixedResourceStructureWithTraits for MyResource with [MixinStructure] {
@@ -83,3 +93,14 @@ map MixedMap with [MixinMap] {
     $key
     $value
 }
+
+/// Operation needed to utilize property for validity
+operation ThrowAway {
+    input := {
+        @required
+        id: String
+        property: String
+    }
+    output := {}
+}
+
