@@ -183,10 +183,10 @@ were added to the identifiers property that isn't present on the ``City``
 resource.
 
 The state of a resource is represented through its
-:ref:-properties <resource-properties>`. ``City`` contains coordinates,
-and ``Forecast`` has a chance of rain
-represented as a float. Input and output members of resource lifecycle map
-to resource properties or identifiers.
+:ref:-properties <resource-properties>`. ``City`` contains coordinates, and
+``Forecast`` has a chance of rain represented as a float. Input and output
+members of resource operations map to resource properties or identifiers to
+perform updates on or examine the state of a resource.
 
 .. code-block:: smithy
 
@@ -226,8 +226,8 @@ to resource properties or identifiers.
 .. seealso::
 
     The :ref:`target elision syntax <idl-target-elision>` for an easy way to
-    define structures that reference resource properties without having to
-    repeat the target definition.
+    define structures that reference resource identifiers and properties
+    without having to repeat the target definition.
 
 
 Defining operations
@@ -252,11 +252,11 @@ Let's define the operation used to "read" a ``City``.
     }
 
     @input
-    structure GetCityInput {
+    structure GetCityInput for City {
         // "cityId" provides the identifier for the resource and
         // has to be marked as required.
         @required
-        cityId: CityId
+        $cityId
     }
 
     @output
@@ -264,10 +264,11 @@ Let's define the operation used to "read" a ``City``.
         // "required" is used on output to indicate if the service
         // will always provide a value for the member.
         @required
+        @notProperty
         name: String
 
         @required
-        coordinates: CityCoordinates
+        $coordinates
     }
 
     structure CityCoordinates {

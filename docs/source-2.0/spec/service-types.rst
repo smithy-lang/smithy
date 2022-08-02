@@ -591,6 +591,12 @@ not marked with the ``collection`` trait and ``GetForecastInput`` provides
 *implicit identifier bindings* by defining a required "forecastId" member
 that targets the same shape as the "forecastId" identifier of the resource.
 
+.. seealso::
+
+    The :ref:`target elision syntax <idl-target-elision>` for an easy way to
+    define structures that reference resource identifiers and properties
+    without having to repeat the target definition.
+
 Implicit identifier bindings for collection operations are created in a
 similar way to an instance operation, but MUST NOT contain identifier bindings
 for *all* child identifiers of the resource.
