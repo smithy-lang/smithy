@@ -18,13 +18,20 @@ package software.amazon.smithy.model.loader;
 import org.junit.jupiter.api.Test;
 
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.validation.Severity;
+import software.amazon.smithy.model.validation.ValidatedResult;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AstModelLoaderTest {
     @Test
     public void failsToLoadPropertiesFromV1() {
-        Model model = Model.assembler()
+        ValidatedResult<Model> model = Model.assembler()
                 .addImport(getClass().getResource("invalid/properties-v2-only.json"))
-                .assemble()
-                .unwrap();
+                .assemble();
+        assertEquals(1, model.getValidationEvents(Severity.ERROR).size());
+        assertTrue(model.getValidationEvents(Severity.ERROR).get(0).getMessage()
+                .contains("Resource properties can only be used with Smithy version 2 or later."));
     }
 }

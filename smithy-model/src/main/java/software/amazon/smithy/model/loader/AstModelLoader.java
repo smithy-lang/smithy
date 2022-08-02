@@ -302,7 +302,7 @@ enum AstModelLoader {
                 modelFile.events().add(ValidationEvent.builder()
                         .sourceLocation(properties.getSourceLocation())
                         .id(Validator.MODEL_ERROR)
-                        .severity(Severity.WARNING)
+                        .severity(Severity.ERROR)
                         .message("Resource properties can only be used with Smithy version 2 or later. "
                         + "Attempted to use resource properties with version `" + modelFile.getVersion() + "`.")
                         .build());

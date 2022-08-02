@@ -1,23 +1,12 @@
 {
     "smithy": "1.0",
     "shapes": {
-        "example.weather#City": {
+       "smithy.example#Book": {
             "type": "resource",
-            "identifiers": {
-                "cityId": {
-                    "target": "example.weather#CityId"
-                }
-            },
             "properties": {
-                "name": {
-                    "target": "String"
+                "title": {
+                    "target": "smithy.api#String"
                 }
-            }
-        },
-        "example.weather#CityId": {
-            "type": "smithy.api#string",
-            "traits": {
-                "smithy.api#pattern": "^[A-Za-z0-9 ]+$"
             }
         }
     }
