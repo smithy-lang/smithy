@@ -182,6 +182,35 @@ needed. Because there is only one forecast per city, no additional identifiers
 were added to the identifiers property that isn't present on the ``City``
 resource.
 
+The state of a resource is represented through its
+:ref:-properties <resource-properties>`. ``City`` contains coordinates, and
+``Forecast`` has a chance of rain represented as a float. Input and output
+members of resource operations map to resource properties or identifiers to
+perform updates on or examine the state of a resource.
+
+.. code-block:: smithy
+
+    resource City {
+        identifiers: { cityId: CityId }
+        properties: { coordinates: CityCoordinates }
+        read: GetCity
+        resources: [Forecast]
+    }
+
+    structure GetCityOutput for City {
+        $coordinates
+    }
+
+    resource Forecast {
+        identifiers: { cityId: CityId }
+        properties: { chanceOfRain: Float }
+        read: GetForecast
+    }
+
+    structure GetForecastOutput for Forecast {
+        $chanceOfRain
+    }
+
 .. admonition:: Review
     :class: tip
 
@@ -190,6 +219,15 @@ resource.
     2. Resources can define identifiers.
     3. Child resources must define the same identifiers as their parents,
        and they can also define additional identifiers.
+    4. Resources can define properties.
+    5. Resource properties are set, modified, or read through lifecycle
+       operations.
+
+.. seealso::
+
+    The :ref:`target elision syntax <idl-target-elision>` for an easy way to
+    define structures that reference resource identifiers and properties
+    without having to repeat the target definition.
 
 
 Defining operations
@@ -214,11 +252,11 @@ Let's define the operation used to "read" a ``City``.
     }
 
     @input
-    structure GetCityInput {
+    structure GetCityInput for City {
         // "cityId" provides the identifier for the resource and
         // has to be marked as required.
         @required
-        cityId: CityId
+        $cityId
     }
 
     @output
@@ -226,10 +264,11 @@ Let's define the operation used to "read" a ``City``.
         // "required" is used on output to indicate if the service
         // will always provide a value for the member.
         @required
+        @notProperty
         name: String
 
         @required
-        coordinates: CityCoordinates
+        $coordinates
     }
 
     structure CityCoordinates {

@@ -1179,6 +1179,310 @@ trait. Setting only the ``requestChecksumRequired`` property of the
 trait.
 
 
+.. smithy-trait:: aws.api#tagEnabled
+
+----------------------------
+``aws.api#tagEnabled`` trait
+----------------------------
+
+Trait summary
+    Indicates the service supports resource level tagging consistent with AWS
+    services.
+Trait selector
+    ``service``
+Trait value
+    ``structure``
+
+The ``aws.api#tagEnabled`` trait is a structure that supports the following
+members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - disableDefaultOperations
+      - ``boolean``
+      - Set to true to indicate that the service does not have default tagging
+        operations that create, read, update, and delete tags on resources.
+
+The default operations for resource tagging operations are named TagResource,
+UntagResource, and ListTagsForResource. All three operations are required to be
+in the service, and each operation must satisfy corresponding validation
+constraints unless ``disableDefaultOperations`` is set to **true**.
+
+The following is a minimal snippet showing the inclusion of the named required
+operations for the ``aws.api#tagEnabled``  Weather service.
+
+.. code-block:: smithy
+
+    @tagEnabled
+    service Weather {
+        operations: [TagResource, UntagResource, ListTagsForResource]
+    }
+
+.. _tag-resource-api:
+
+``TagResource``
+===============
+
+The tag resource operation for an ``aws.api#tagEnabled`` service creates and updates
+tag associations on a resource:
+
+* Operation name must case-sensitively match ``TagResource``.
+* Must have exactly one input member that targets a string shape and has a
+  member name that matches ``^([R|r]esource)?([A|a]rn|ARN)$`` to accept
+  the resource ARN.
+* Must have exactly one input member that targets a list shape, with list
+  member targeting a structure that consists of two members that target a
+  string shape representing the tag key or name and the tag value. This
+  member name must match: ``^[T|t]ag(s|[L|l]ist)$``
+
+The following snippet is a valid definition of a tag resource operation and
+its input:
+
+.. code-block:: smithy
+
+    structure Tag { key: String, value: String }
+
+    list TagList { member: Tag }
+
+    operation TagResource {
+        input := {
+            @required
+            resourceArn: String
+            @length(max: 128)
+            tags: TagList
+        }
+        output := { }
+    }
+
+.. _untag-resource-api:
+
+``UntagResource``
+=================
+
+The untag resource operation removes tag associations on a resource.
+
+* Operation name must case-sensitively match ``UntagResource``.
+* Must have exactly one input member that targets a string shape and has a
+  member name that matches: ``^([R|r]esource)?([A|a]rn|ARN)$`` to accept
+  the resource ARN.
+* Must have exactly one input member that targets a list shape, with list
+  member targeting a string representing tag keys or names to remove. This
+  member name must match: ``^[T|t]ag[K|k]eys$``
+
+The following snippet is an example of the untag resource operation and its
+input:
+
+.. code-block:: smithy
+
+    list TagKeys { member: String }
+
+    operation UntagResource {
+        input := {
+            @required
+            arn: String
+            @required
+            tagKeys: TagKeys
+        }
+        output := { }
+    }
+
+.. _listtags-resource-api:
+
+``ListTagsForResource``
+=======================
+
+The list tags for resource operation retrieves all tag associations on a
+resource.
+
+* Operation name must case-sensitively match ``ListTagsForResource``.
+* Must have exactly one input member that targets a string shape and has a
+  member name that matches: ``^([R|r]esource)?([A|a]rn|ARN)$`` to accept
+  the resource ARN.
+* Must have exactly one output member that targets a list shape, with list
+  member targeting a structure that consists of two members that target a
+  string shape representing the tag key or name and the tag value. This
+  member name must match: ``^[T|t]ag(s|[L|l]ist)$``
+
+The following snippet is an example of the list tags for resource operation and
+its input:
+
+.. code-block:: smithy
+
+    structure Tag { key: String, value: String }
+
+    list TagList { member: Tag }
+
+    operation ListTagsForResource {
+        input := {
+            @required
+            arn: String
+        }
+        output := {
+            @length(max: 128)
+            tags: TagList
+        }
+    }
+
+The following example shows a typical service with the default tagging
+operations. It can be understood that Forecast resource tags are managed
+through the operates attached to the service.
+
+.. code-block:: smithy
+
+    @tagEnabled
+    service Weather {
+        resources: [Forecast]
+        operations: [TagResource, UntagResource, ListTagsForResource]
+    }
+
+    @arn(template: "city/{cityId}/forecast/{forecastId}")
+    @taggable
+    resource Forecast {
+        identifiers: {
+            forecastId: ForecastId
+        }
+    }
+
+
+.. smithy-trait:: aws.api#taggable
+
+--------------------------
+``aws.api#taggable`` trait
+--------------------------
+
+Trait summary
+    Indicates the resource supports AWS tag associations and identifies resource
+    specific operations that perform CRUD on the associated tags. Managing tag
+    associations on a resource through service-wide operations is possible if
+    the resource has an :ref:`aws.api#arn-trait`.
+
+Trait selector
+    ``resource``
+Trait value
+    ``structure``
+
+The ``aws.api#taggable`` trait is a structure that supports the following
+members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - property
+      - ``string``
+      - The name of the resource property representing tags for the resource.
+        Specifying this enables Smithy to understand which resource lifecycle
+        operations operate on tags.
+    * - apiConfig
+      - :ref:`Taggable resource API config structure <taggable-apiconfig-structure>`
+      - Configuration structure for specifying resource instance tagging
+        operations, if applicable.
+
+Resource specific tagging operations tagApi, untagApi, and listTagsApi have
+corresponding requirements to :ref:`tag-resource-api`, :ref:`untag-resource-api`,
+and :ref:`listtags-resource-api`. The differences is that these operations may
+have any name, and the resource ARN input member requirement is replaced by the
+expected identifier binding rules for instance operations.
+
+The following is an example of a resource with its own resource specific
+tagging operations. Note the service has disabled default tagging operations
+and the resource lacks an :ref:`aws.api#arn-trait`.
+
+.. code-block:: smithy
+
+    @tagEnabled(disableDefaultOperations: true)
+    service Weather {
+        resources: [City]
+    }
+    operation TagCity {
+        input := {
+            @required
+            cityId: CityId
+            @length(max: 128)
+            tags: TagList
+        }
+        output := { }
+    }
+
+    operation UntagCity {
+        input := {
+            @required
+            cityId: CityId
+            @required
+            @notProperty
+            tagKeys: TagKeys
+        }
+        output := { }
+    }
+
+    operation ListTagsForCity {
+        input := {
+            @required
+            cityId: CityId
+        }
+        output := {
+            @length(max: 128)
+            tags: TagList
+        }
+    }
+
+    @taggable(
+        property: "tags",
+        apiConfig: {
+            tagApi: TagCity,
+            untagApi: UntagCity,
+            listTagsApi: ListTagsForCity
+        })
+    resource City {
+        properties: {
+            tags: TagList
+        }
+        operations: [TagCity, UntagCity, ListTagsForCity],
+    }
+
+
+.. _taggable-apiconfig-structure:
+
+Taggable resource API config structure
+======================================
+
+Configuration structure for specifying resource instance tagging operations,
+if applicable.
+
+**Properties**
+
+.. list-table::
+    :header-rows: 1
+    :widths: 30 10 60
+
+    * - Property
+      - Type
+      - Description
+    * - tagApi
+      - ``ShapeID``
+      - **Required** Defines the operation used to create and update tags
+        associations for the resource. The value MUST be a valid
+        :ref:`shape-id` that targets an ``operation`` shape.
+    * - untagApi
+      - ``ShapeID``
+      - **Required** Defines the operation used to deletes tag associations
+        from the resource. The value MUST be a valid :ref:`shape-id` that
+        targets an ``operation`` shape.
+    * - listTagsApi
+      - ``ShapeID``
+      - **Required** Defines the operation used to list tags for the resource.
+        The value MUST be a valid :ref:`shape-id` that targets an ``operation``
+        shape.
+
+
 --------
 Appendix
 --------

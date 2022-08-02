@@ -279,15 +279,23 @@ public final class ModelSerializer {
         @Override
         public Node resourceShape(ResourceShape shape) {
             Optional<Node> identifiers = Optional.empty();
+            Optional<Node> properties = Optional.empty();
             if (shape.hasIdentifiers()) {
                 Stream<Map.Entry<String, ShapeId>> ids = shape.getIdentifiers().entrySet().stream();
                 identifiers = Optional.of(ids.collect(ObjectNode.collectStringKeys(
                         Map.Entry::getKey,
                         entry -> serializeReference(entry.getValue()))));
             }
+            if (shape.hasProperties()) {
+                Stream<Map.Entry<String, ShapeId>> props = shape.getProperties().entrySet().stream();
+                properties = Optional.of(props.collect(ObjectNode.collectStringKeys(
+                        Map.Entry::getKey,
+                        entry -> serializeReference(entry.getValue()))));
+            }
 
             return serializeAllTraits(shape, createTypedBuilder(shape)
                     .withOptionalMember("identifiers", identifiers)
+                    .withOptionalMember("properties", properties)
                     .withOptionalMember("put", shape.getPut().map(this::serializeReference))
                     .withOptionalMember("create", shape.getCreate().map(this::serializeReference))
                     .withOptionalMember("read", shape.getRead().map(this::serializeReference))

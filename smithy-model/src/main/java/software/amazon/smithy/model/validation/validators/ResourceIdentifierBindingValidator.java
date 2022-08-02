@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
             IdentifierBindingIndex bindingIndex
     ) {
         if (bindingIndex.getOperationBindingType(child, operation) != IdentifierBindingIndex.BindingType.NONE) {
-            Set<String> bindings = bindingIndex.getOperationBindings(child, operation).keySet();
+            Set<String> bindings = bindingIndex.getOperationInputBindings(child, operation).keySet();
             Set<String> missing = parent.getIdentifiers().keySet().stream()
                     .filter(FunctionalUtils.not(bindings::contains))
                     .collect(Collectors.toSet());
@@ -130,7 +130,7 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
                 .filter(operation -> !hasAllIdentifiersBound(resource, operation, bindingIndex))
                 .map(operation -> {
                     String expectedIdentifiers = createBindingMessage(resource.getIdentifiers());
-                    String boundIds = createBindingMessage(bindingIndex.getOperationBindings(resource, operation));
+                    String boundIds = createBindingMessage(bindingIndex.getOperationInputBindings(resource, operation));
                     return error(operation, format(
                             "This operation does not form a valid instance operation when bound to resource `%s`. "
                                     + "All of the identifiers of the resource were not implicitly or explicitly bound "
@@ -143,7 +143,7 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
     private boolean hasAllIdentifiersBound(
             ResourceShape resource, OperationShape operation, IdentifierBindingIndex bindingIndex
     ) {
-        return bindingIndex.getOperationBindings(resource, operation).keySet()
+        return bindingIndex.getOperationInputBindings(resource, operation).keySet()
                 .containsAll(resource.getIdentifiers().keySet());
     }
 

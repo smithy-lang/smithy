@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -29,7 +30,9 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
@@ -37,6 +40,7 @@ import org.junit.jupiter.api.TestFactory;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.NodePointer;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.traits.DocumentationTrait;
@@ -233,5 +237,19 @@ public class ModelSerializerTest {
                            .getValue(node).expectStringNode().getValue(), equalTo("list"));
         assertThat(NodePointer.parse("/shapes/smithy.example#Set/traits/smithy.api#uniqueItems")
                            .getValue(node).isNullNode(), equalTo(false));
+    }
+
+    @Test
+    public void serializesResourceProperties() {
+        Map<String, ShapeId> properties = new TreeMap<>();
+        properties.put("fooProperty", ShapeId.from("ns.foo#Shape"));
+        ResourceShape shape = ResourceShape.builder().id("ns.foo#Bar")
+            .properties(properties)
+            .build();
+        Model model = Model.builder().addShape(shape).build();
+        Node node = ModelSerializer.builder().build().serialize(model);
+        Node expectedNode = Node.parse("{\"smithy\":\"2.0\",\"shapes\":{\"ns.foo#Bar\":" +
+                "{\"type\":\"resource\",\"properties\":{\"fooProperty\":{\"target\":\"ns.foo#Shape\"}}}}}");
+        Node.assertEquals(node, expectedNode);
     }
 }

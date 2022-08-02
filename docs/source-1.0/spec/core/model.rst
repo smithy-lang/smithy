@@ -1793,15 +1793,15 @@ define an ``identifiers`` property that is compatible with their parents:
 Binding identifiers to operations
 ---------------------------------
 
-*Identifier bindings* indicate which top-level members of the input structure
-of an operation provide values for the identifiers of a resource.
+*Identifier bindings* indicate which top-level members of the input or output
+structure of an operation provide values for the identifiers of a resource.
 
 .. rubric:: Identifier binding validation
 
 - Child resources MUST provide identifier bindings for all of its parent's
   identifiers.
-- Identifier bindings are only formed on input structure members that are
-  marked as :ref:`required <required-trait>`.
+- Identifier bindings are only formed on input or output structure members that
+  are marked as :ref:`required <required-trait>`.
 - Resource operations MUST form a valid *instance operation* or
   *collection operation*.
 
@@ -1830,9 +1830,9 @@ resource.
 Implicit identifier bindings
 ----------------------------
 
-*Implicit identifier bindings* are formed when the input of an operation
-contains member names that target the same shapes that are defined in the
-"identifiers" property of the resource to which an operation is bound.
+*Implicit identifier bindings* are formed when the input or output of an
+operation contains member names that target the same shapes that are defined
+in the "identifiers" property of the resource to which an operation is bound.
 
 For example, given the following model,
 
@@ -1870,7 +1870,7 @@ that targets the same shape as the "forecastId" identifier of the resource.
 
 Implicit identifier bindings for collection operations are created in a
 similar way to an instance operation, but MUST NOT contain identifier bindings
-for *all* child identifiers of the resource.
+for *all* child identifiers of the resource on an input shape.
 
 Given the following model,
 
