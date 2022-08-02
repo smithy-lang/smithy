@@ -1382,25 +1382,9 @@ members:
         Specifying this enables Smithy to understand which resource lifecycle
         operations operate on tags.
     * - apiConfig
-      - ``structure``
-      - Configuration structure for resource specific tagging operations, if
-        applicable. If this property is present the three sub-properties are
-        required.
-    * - apiConfig.tagApi
-      - ``ShapeID``
-      - **Required** Defines the operation used to create and update tags
-        associations for the resource. The value MUST be a valid
-        :ref:`shape-id` that targets an ``operation`` shape.
-    * - apiConfig.untagApi
-      - ``ShapeID``
-      - **Required** Defines the operation used to deletes tag associations
-        from the resource. The value MUST be a valid :ref:`shape-id` that
-        targets an ``operation`` shape.
-    * - apiConfig.listTagsApi
-      - ``ShapeID``
-      - **Required** Defines the operation used to list tags for the resource.
-        The value MUST be a valid :ref:`shape-id` that targets an ``operation``
-        shape.
+      - :ref:`Taggable resource API config structure <taggable-apiconfig-structure>`
+      - Configuration structure for specifying resource instance tagging
+        operations, if applicable.
 
 Resource specific tagging operations tagApi, untagApi, and listTagsApi have
 corresponding requirements to :ref:`tag-resource-api`, :ref:`untag-resource-api`,
@@ -1463,6 +1447,40 @@ and the resource lacks an :ref:`aws.api#arn-trait`.
         }
         operations: [TagCity, UntagCity, ListTagsForCity],
     }
+
+
+.. _taggable-apiconfig-structure:
+
+Taggable resource API config structure
+======================================
+
+Configuration structure for specifying resource instance tagging operations,
+if applicable.
+
+**Properties**
+
+.. list-table::
+    :header-rows: 1
+    :widths: 30 10 60
+
+    * - Property
+      - Type
+      - Description
+    * - tagApi
+      - ``ShapeID``
+      - **Required** Defines the operation used to create and update tags
+        associations for the resource. The value MUST be a valid
+        :ref:`shape-id` that targets an ``operation`` shape.
+    * - untagApi
+      - ``ShapeID``
+      - **Required** Defines the operation used to deletes tag associations
+        from the resource. The value MUST be a valid :ref:`shape-id` that
+        targets an ``operation`` shape.
+    * - listTagsApi
+      - ``ShapeID``
+      - **Required** Defines the operation used to list tags for the resource.
+        The value MUST be a valid :ref:`shape-id` that targets an ``operation``
+        shape.
 
 
 --------

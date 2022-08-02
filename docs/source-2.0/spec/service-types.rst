@@ -759,10 +759,16 @@ The following example demonstrates the ``howLikelyToRain`` member of
         howLikelyToRain: Float
     }
 
+Though resource properties are usually bound to top level input and output
+members, use the :ref:`nested-properties-trait` on a member to designate its
+target structure shape as the root to form property bindings. No adjacent
+members can form property bindings when this trait is applied.
+
 .. rubric:: Resource property binding validation
 
 - All top-level input or output members must bind to a resource property unless
-  marked with :ref:`notProperty-trait` or another trait with it applied.
+  marked with :ref:`notProperty-trait` or another trait with it applied, or one
+  of the members is marked with :ref:`nested-properties-trait`
 - Top-level members of the input and output of resource instance operations MUST
   only use properties that resolve to declared resource properties except for
   members marked with the ``@notProperty`` trait or marked with traits marked
@@ -773,15 +779,6 @@ The following example demonstrates the ``howLikelyToRain`` member of
   target shape are invalid.
 - Members marked with a :ref:`property-trait` using a name that does not map to
   a declared resource property are invalid.
-
-Binding members to nested properties
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-*Property bindings* associate top-level members of input or output shapes
-with resource properties. The match occurs through a match between member
-name and property name by default.
-
-.. code-block:: smithy
 
 
 .. _lifecycle-operations:
