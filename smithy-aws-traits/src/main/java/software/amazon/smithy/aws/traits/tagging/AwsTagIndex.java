@@ -34,11 +34,13 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.utils.SmithyInternalApi;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Index of AWS tagging trait information in a service closure and convenient
  * access to tag operations by name in service closures.
  */
+@SmithyUnstableApi
 public final class AwsTagIndex implements KnowledgeIndex {
     private final Set<ShapeId> servicesWithAllTagOperations = new HashSet<>();
     private final Set<ShapeId> resourceIsTagOnCreate = new HashSet<>();
