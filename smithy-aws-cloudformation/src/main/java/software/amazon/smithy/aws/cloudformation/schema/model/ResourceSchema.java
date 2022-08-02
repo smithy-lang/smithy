@@ -59,6 +59,7 @@ public final class ResourceSchema implements ToNode, ToSmithyBuilder<ResourceSch
     // Use a custom comparator to keep the Handler outputs in CRUDL order.
     private final Map<String, Handler> handlers = new TreeMap<>(Comparator.comparing(Handler::getHandlerNameOrder));
     private final Map<String, Remote> remotes = new TreeMap<>();
+    private final Tagging tagging;
 
     private ResourceSchema(Builder builder) {
         typeName = SmithyBuilder.requiredState("typeName", builder.typeName);
@@ -82,6 +83,7 @@ public final class ResourceSchema implements ToNode, ToSmithyBuilder<ResourceSch
         additionalIdentifiers = ListUtils.copyOf(builder.additionalIdentifiers);
         handlers.putAll(builder.handlers);
         remotes.putAll(builder.remotes);
+        tagging = builder.tagging;
     }
 
     @Override
@@ -131,6 +133,9 @@ public final class ResourceSchema implements ToNode, ToSmithyBuilder<ResourceSch
         if (!remotes.isEmpty()) {
             builder.withMember("remotes", mapper.serialize(remotes));
         }
+        if (tagging != null) {
+            builder.withMember("tagging", mapper.serialize(tagging));
+        }
 
         return builder.build();
     }
@@ -152,7 +157,8 @@ public final class ResourceSchema implements ToNode, ToSmithyBuilder<ResourceSch
                 .deprecatedProperties(deprecatedProperties)
                 .additionalIdentifiers(additionalIdentifiers)
                 .handlers(handlers)
-                .remotes(remotes);
+                .remotes(remotes)
+                .tagging(tagging);
     }
 
     public static Builder builder() {
@@ -215,6 +221,10 @@ public final class ResourceSchema implements ToNode, ToSmithyBuilder<ResourceSch
         return remotes;
     }
 
+    public Tagging getTagging() {
+        return tagging;
+    }
+
     public static final class Builder implements SmithyBuilder<ResourceSchema> {
         private String typeName;
         private String description;
@@ -231,6 +241,7 @@ public final class ResourceSchema implements ToNode, ToSmithyBuilder<ResourceSch
         private final List<List<String>> additionalIdentifiers = new ArrayList<>();
         private final Map<String, Handler> handlers = new TreeMap<>();
         private final Map<String, Remote> remotes = new TreeMap<>();
+        private Tagging tagging;
 
         private Builder() {}
 
@@ -437,6 +448,11 @@ public final class ResourceSchema implements ToNode, ToSmithyBuilder<ResourceSch
         public Builder remotes(Map<String, Remote> remotes) {
             this.remotes.clear();
             this.remotes.putAll(remotes);
+            return this;
+        }
+
+        public Builder tagging(Tagging tagging) {
+            this.tagging = tagging;
             return this;
         }
 

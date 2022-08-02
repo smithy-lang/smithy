@@ -71,6 +71,8 @@ final class SetResourceBasedTargets implements PendingShapeModifier {
         if (resource.getIdentifiers().containsKey(name)) {
             memberBuilder.target(resource.getIdentifiers().get(name));
         }
-        // TODO: check for resource properties too once they're added
+        if (resource.getProperties().containsKey(name)) {
+            memberBuilder.target(resource.getProperties().get(name));
+        }
     }
 }

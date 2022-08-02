@@ -1,0 +1,5 @@
+[WARNING] example.weather#Weather: Service marked `aws.api#TagEnabled` is missing an operation named 'ListTagsForResource.' | ServiceTagging
+[WARNING] example.weather#Weather: Service marked `aws.api#TagEnabled` is missing an operation named 'TagResource.' | ServiceTagging
+[WARNING] example.weather#Weather: Service marked `aws.api#TagEnabled` is missing an operation named 'UntagResource.' | ServiceTagging
+[ERROR] example.weather#Weather: Service marked `aws.api#tagEnabled` trait must have at least one `aws.api#taggable` resource. | TagEnabledService
+[WARNING] example.weather#Weather: Service marked `aws.api#tagEnabled` trait does not have consistent tagging operations implemented: {TagResource, UntagResource, and ListTagsForResource}. | TagEnabledService

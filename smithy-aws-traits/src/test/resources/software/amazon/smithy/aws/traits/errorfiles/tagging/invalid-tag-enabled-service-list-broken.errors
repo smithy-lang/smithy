@@ -1,0 +1,3 @@
+[DANGER] example.weather#Weather: Shape `example.weather#ListTagsForResource` does not satisfy 'ListTagsForResource' operation requirements. | ServiceTagging
+[ERROR] example.weather#City: Resource does not have tagging CRUD operations and is not compatible with service-wide tagging operations. | TaggableResource
+[WARNING] example.weather#Weather: Service marked `aws.api#tagEnabled` trait does not have consistent tagging operations implemented: {TagResource, UntagResource, and ListTagsForResource}. | TagEnabledService

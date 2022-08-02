@@ -354,6 +354,7 @@ structure idempotent {}
     structurallyExclusive: "member",
     breakingChanges: [{change: "remove"}]
 )
+@notProperty
 structure idempotencyToken {}
 
 /// Shapes marked with the internal trait are meant only for internal use and
@@ -473,6 +474,7 @@ map NonEmptyStringMap {
     breakingChanges: [{change: "remove"}]
 )
 @length(min: 1)
+@notProperty
 string resourceIdentifier
 
 /// Prevents models defined in a different namespace from referencing the targeted shape.
@@ -614,6 +616,34 @@ string pattern
     conflicts: [default]
 )
 structure required {}
+
+/// Configures a structure member's resource property mapping behavior.
+@trait(
+    selector: "structure > member",
+    conflicts: [resourceIdentifier],
+    breakingChanges: [{change: "remove"}, {change: "update"}]
+)
+structure property {
+    name: String
+}
+
+/// Explicitly excludes a member from resource property mapping or
+/// enables another trait to carry the same implied meaning.
+@trait(
+    selector: ":is(operation -[input, output]-> structure > member, [trait|trait])",
+    breakingChanges: [{change: "add"}]
+)
+@notProperty
+structure notProperty {}
+
+/// Adjusts the resource property mapping of a lifecycle operation to the targeted member.
+@trait(
+    selector: "operation -[input, output]-> structure > member :test(> structure)"
+    structurallyExclusive: "member"
+    breakingChanges: [{change: "any"}]
+)
+@notProperty
+structure nestedProperties {}
 
 /// Indicates that a structure member SHOULD be set.
 @trait(selector: "structure > member", conflicts: [required])

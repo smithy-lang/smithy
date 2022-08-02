@@ -27,6 +27,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.IdentifierBindingIndex;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
+import software.amazon.smithy.model.knowledge.PropertyBindingIndex;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -83,7 +84,6 @@ public final class CfnResourceIndex implements KnowledgeIndex {
     }
 
     public CfnResourceIndex(Model model) {
-
         OperationIndex operationIndex = OperationIndex.of(model);
         model.shapes(ResourceShape.class)
                 .filter(shape -> shape.hasTrait(CfnResourceTrait.ID))
@@ -234,7 +234,7 @@ public final class CfnResourceIndex implements KnowledgeIndex {
         for (MemberShape member : propertyContainer.members()) {
             // We've explicitly set identifier mutability based on how the
             // resource instance comes about, so only handle non-identifiers.
-            if (operationMemberIsIdentifier(model, resourceId, operationId, member)) {
+            if (inputOperationMemberIsIdentifier(model, resourceId, operationId, member)) {
                 continue;
             }
 
@@ -281,7 +281,7 @@ public final class CfnResourceIndex implements KnowledgeIndex {
         };
     }
 
-    private boolean operationMemberIsIdentifier(
+    private boolean inputOperationMemberIsIdentifier(
             Model model,
             ShapeId resourceId,
             ShapeId operationId,
@@ -294,7 +294,7 @@ public final class CfnResourceIndex implements KnowledgeIndex {
         }
 
         IdentifierBindingIndex index = IdentifierBindingIndex.of(model);
-        Map<String, String> bindings = index.getOperationBindings(resourceId, operationId);
+        Map<String, String> bindings = index.getOperationInputBindings(resourceId, operationId);
         String memberName = member.getMemberName();
         // Check for literal identifier bindings.
         for (String bindingMemberName : bindings.values()) {
@@ -354,9 +354,11 @@ public final class CfnResourceIndex implements KnowledgeIndex {
 
     private static final class ExcludedPropertiesVisitor extends ShapeVisitor.Default<Set<ShapeId>> {
         private final Model model;
+        private final PropertyBindingIndex propertyBindingIndex;
 
         private ExcludedPropertiesVisitor(Model model) {
             this.model = model;
+            this.propertyBindingIndex = PropertyBindingIndex.of(model);
         }
 
         @Override
@@ -369,6 +371,8 @@ public final class CfnResourceIndex implements KnowledgeIndex {
             Set<ShapeId> excludedShapes = new HashSet<>();
             for (MemberShape member : shape.members()) {
                 if (member.hasTrait(CfnExcludePropertyTrait.ID)) {
+                    excludedShapes.add(member.getId());
+                } else if (!propertyBindingIndex.doesMemberShapeRequireProperty(member)) {
                     excludedShapes.add(member.getId());
                 } else {
                     excludedShapes.addAll(model.expectShape(member.getTarget()).accept(this));

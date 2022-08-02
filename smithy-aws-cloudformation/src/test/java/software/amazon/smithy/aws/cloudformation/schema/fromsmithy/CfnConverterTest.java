@@ -128,4 +128,50 @@ public class CfnConverterTest {
 
         Node.assertEquals(result.get("Smithy::TestService::FooResource"), expectedNode);
     }
+
+    @Test
+    public void resourcePropertiesWithTagsTest() {
+        Model model = Model.assembler()
+                .addImport(CfnConverterTest.class.getResource("weather.smithy"))
+                .addImport(CfnConverterTest.class.getResource("tagging.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        CfnConfig config = new CfnConfig();
+        config.setOrganizationName("Smithy");
+        config.setService(ShapeId.from("example.weather#Weather"));
+        config.setServiceName("Weather");
+        Map<String, ObjectNode> result = CfnConverter.create().config(config)
+                .convertToNodes(model);
+        assertEquals(1, result.keySet().size());
+        result.keySet().contains("Smithy::Weather::City");
+
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("weather.cfn.json")));
+
+        Node.assertEquals(result.get("Smithy::Weather::City"), expectedNode);
+    }
+
+    @Test
+    public void resourcePropertiesWithTagsServiceWideTest() {
+        Model model = Model.assembler()
+                .addImport(CfnConverterTest.class.getResource("weather-service-wide.smithy"))
+                .addImport(CfnConverterTest.class.getResource("tagging.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        CfnConfig config = new CfnConfig();
+        config.setOrganizationName("Smithy");
+        config.setService(ShapeId.from("example.weather#Weather"));
+        config.setServiceName("Weather");
+        Map<String, ObjectNode> result = CfnConverter.create().config(config)
+                .convertToNodes(model);
+        assertEquals(1, result.keySet().size());
+        result.keySet().contains("Smithy::Weather::City");
+ 
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("weather-service-wide.cfn.json")));
+
+        Node.assertEquals(result.get("Smithy::Weather::City"), expectedNode);
+     }
 }

@@ -43,7 +43,7 @@ public class IdentifierBindingIndexTest {
 
         assertThat(index.getOperationBindingType(ShapeId.from("ns.foo#A"), ShapeId.from("ns.foo#B")),
                    equalTo(IdentifierBindingIndex.BindingType.NONE));
-        assertThat(index.getOperationBindings(ShapeId.from("ns.foo#A"), ShapeId.from("ns.foo#B")),
+        assertThat(index.getOperationInputBindings(ShapeId.from("ns.foo#A"), ShapeId.from("ns.foo#B")),
                    equalTo(Collections.emptyMap()));
     }
 
@@ -71,7 +71,7 @@ public class IdentifierBindingIndexTest {
 
         Map<String, String> expectedBindings = new HashMap<>();
         expectedBindings.put("abc", "abc");
-        assertThat(index.getOperationBindings(resource.getId(), operation.getId()), equalTo(expectedBindings));
+        assertThat(index.getOperationInputBindings(resource.getId(), operation.getId()), equalTo(expectedBindings));
     }
 
     @Test
@@ -106,14 +106,14 @@ public class IdentifierBindingIndexTest {
 
         assertThat(index.getOperationBindingType(resource.getId(), operation.getId()),
                    equalTo(IdentifierBindingIndex.BindingType.COLLECTION));
-        assertThat(index.getOperationBindings(resource.getId(), operation.getId()), equalTo(Collections.emptyMap()));
+        assertThat(index.getOperationInputBindings(resource.getId(), operation.getId()), equalTo(Collections.emptyMap()));
         assertThat(index.getOperationBindingType(resource.getId(), listOperation.getId()),
                 equalTo(IdentifierBindingIndex.BindingType.COLLECTION));
-        assertThat(index.getOperationBindings(
+        assertThat(index.getOperationInputBindings(
                 resource.getId(), listOperation.getId()), equalTo(Collections.emptyMap()));
         assertThat(index.getOperationBindingType(resource.getId(), createOperation.getId()),
                 equalTo(IdentifierBindingIndex.BindingType.COLLECTION));
-        assertThat(index.getOperationBindings(
+        assertThat(index.getOperationInputBindings(
                 resource.getId(), createOperation.getId()), equalTo(Collections.emptyMap()));
     }
 
@@ -140,6 +140,6 @@ public class IdentifierBindingIndexTest {
 
         assertThat(index.getOperationBindingType(resource.getId(), operation.getId()),
                    equalTo(IdentifierBindingIndex.BindingType.INSTANCE));
-        assertThat(index.getOperationBindings(resource.getId(), operation.getId()), equalTo(expectedBindings));
+        assertThat(index.getOperationInputBindings(resource.getId(), operation.getId()), equalTo(expectedBindings));
     }
 }

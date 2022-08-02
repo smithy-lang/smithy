@@ -31,6 +31,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  */
 public final class ResourceShape extends EntityShape implements ToSmithyBuilder<ResourceShape> {
     private final Map<String, ShapeId> identifiers;
+    private final Map<String, ShapeId> properties;
     private final ShapeId put;
     private final ShapeId create;
     private final ShapeId read;
@@ -43,6 +44,7 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
     private ResourceShape(Builder builder) {
         super(builder);
         identifiers = builder.identifiers.copy();
+        properties = builder.properties.copy();
         put = builder.put;
         create = builder.create;
         read = builder.read;
@@ -68,6 +70,7 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
                 || getUpdate().isPresent()
                 || getDelete().isPresent()
                 || getList().isPresent()
+                || !getProperties().isEmpty()
                 || !getOperations().isEmpty()
                 || !getResources().isEmpty())) {
             throw new IllegalStateException(String.format(
@@ -84,6 +87,7 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
     public Builder toBuilder() {
         Builder builder = updateBuilder(builder())
                 .identifiers(getIdentifiers())
+                .properties(properties)
                 .put(put)
                 .create(create)
                 .read(read)
@@ -143,6 +147,14 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
      */
     public boolean hasIdentifiers() {
         return !identifiers.isEmpty();
+    }
+
+    public Map<String, ShapeId> getProperties() {
+        return properties;
+    }
+
+    public boolean hasProperties() {
+        return !properties.isEmpty();
     }
 
     /**
@@ -207,6 +219,7 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
 
         ResourceShape otherShape = (ResourceShape) other;
         return identifiers.equals(otherShape.identifiers)
+               && Objects.equals(properties, otherShape.properties)
                && Objects.equals(create, otherShape.create)
                && Objects.equals(put, otherShape.put)
                && Objects.equals(read, otherShape.read)
@@ -220,6 +233,7 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
      */
     public static final class Builder extends EntityShape.Builder<Builder, ResourceShape> {
         private final BuilderRef<Map<String, ShapeId>> identifiers = BuilderRef.forOrderedMap();
+        private final BuilderRef<Map<String, ShapeId>> properties = BuilderRef.forOrderedMap();
         private final BuilderRef<Set<ShapeId>> collectionOperations = BuilderRef.forOrderedSet();
         private ShapeId put;
         private ShapeId create;
@@ -264,6 +278,21 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
 
         public Builder addIdentifier(String name, String identifier) {
             return addIdentifier(name, ShapeId.from(identifier));
+        }
+
+        public Builder properties(Map<String, ShapeId> properties) {
+            this.properties.clear();
+            this.properties.get().putAll(properties);
+            return this;
+        }
+
+        public Builder addProperty(String name, ToShapeId targetShape) {
+            properties.get().put(Objects.requireNonNull(name), targetShape.toShapeId());
+            return this;
+        }
+
+        public Builder addProperty(String name, String targetShape) {
+            return addProperty(name, ShapeId.from(targetShape));
         }
 
         public Builder put(ToShapeId put) {

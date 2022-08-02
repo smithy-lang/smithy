@@ -363,6 +363,10 @@ A resource supports the following members:
       - ``object``
       - Defines a map of identifier string names to :ref:`shape-id`\s used to
         identify the resource. Each shape ID MUST target a ``string`` shape.
+    * - :ref:`properties <resource-properties>`
+      - ``object``
+      - Defines a map of property string names to :ref:`shape-id`\s that
+        enumerate the properties of the resource.
     * - :ref:`create <create-lifecycle>`
       - ``string``
       - Defines the lifecycle operation used to create a resource using one
@@ -512,15 +516,15 @@ define an ``identifiers`` property that is compatible with their parents:
 Binding identifiers to operations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-*Identifier bindings* indicate which top-level members of the input structure
-of an operation provide values for the identifiers of a resource.
+*Identifier bindings* indicate which top-level members of the input or output
+structure of an operation provide values for the identifiers of a resource.
 
 .. rubric:: Identifier binding validation
 
 - Child resources MUST provide identifier bindings for all of its parent's
   identifiers.
-- Identifier bindings are only formed on input structure members that are
-  marked as :ref:`required <required-trait>`.
+- Identifier bindings are only formed on input or output structure members that
+  are marked as :ref:`required <required-trait>`.
 - Resource operations MUST form a valid *instance operation* or
   *collection operation*.
 
@@ -571,9 +575,9 @@ For example, given the following model,
     }
 
     @input
-    structure GetForecastInput {
+    structure GetForecastInput for Forecast {
         @required
-        forecastId: ForecastId
+        $forecastId
     }
 
     @output
@@ -586,6 +590,12 @@ For example, given the following model,
 not marked with the ``collection`` trait and ``GetForecastInput`` provides
 *implicit identifier bindings* by defining a required "forecastId" member
 that targets the same shape as the "forecastId" identifier of the resource.
+
+.. seealso::
+
+    The :ref:`target elision syntax <idl-target-elision>` for an easy way to
+    define structures that reference resource identifiers and properties
+    without having to repeat the target definition.
 
 Implicit identifier bindings for collection operations are created in a
 similar way to an instance operation, but MUST NOT contain identifier bindings
@@ -652,14 +662,14 @@ For example, given the following,
     }
 
     @input
-    structure GetHistoricalForecastInput {
+    structure GetHistoricalForecastInput for HistoricalForecast {
         @required
         @resourceIdentifier("forecastId")
         customForecastIdName: ForecastId
 
         @required
         @resourceIdentifier("historicalId")
-        customHistoricalIdName: String
+        $customHistoricalIdName
     }
 
 the :ref:`resourceIdentifier-trait` on ``GetHistoricalForecastInput$customForecastIdName``
@@ -667,6 +677,114 @@ maps it to the "forecastId" identifier is provided by the
 "customForecastIdName" member, and the :ref:`resourceIdentifier-trait`
 on ``GetHistoricalForecastInput$customHistoricalIdName`` maps that member
 to the "historicalId" identifier.
+
+.. _resource-properties:
+
+Resource Properties
+-------------------
+
+:dfn:`Resource properties` represent the state of a resource within a service.
+Properties can be referred to in the top level input and output shapes
+of a resource's instance operations, including create, read, update,
+delete, and put. All declared resource properties MUST appear in at
+least one instance operation's input or output.
+
+For example, the following model defines a ``Forecast`` resource with a
+single property ``chanceOfRain`` read by the GetForecast operation, and the
+output operation shape ``GetForecastOutput`` contains that output property.
+
+.. code-block:: smithy
+
+    $version: "2.0"
+    namespace smithy.example
+
+    resource Forecast {
+        properties: { chanceOfRain: Float }
+        read: GetForecast
+    }
+
+    @readonly
+    operation GetForecast {
+       output: GetForecastOutput
+    }
+
+    structure GetForecastOutput for Forecast {
+        $chanceOfRain
+    }
+
+.. _binding-properties:
+
+Binding members to properties
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Property bindings* associate top-level members of input or output shapes
+with resource properties. The match occurs through a match between member
+name and property name by default.
+
+.. code-block:: smithy
+
+    $version: "2.0"
+    namespace smithy.example
+
+    resource Forecast {
+        properties: { chanceOfRain: Float }
+        read: GetForecast
+    }
+
+    @readonly
+    operation GetForecast {
+       output: GetForecastOutput
+    }
+
+    structure GetForecastOutput for Forecast {
+        $chanceOfRain
+    }
+
+The :ref:`property-trait` is used to bind a member to
+a resource property if the member name does not match the property name. This is
+useful if the member name cannot be changed due backwards compatibility reasons,
+but resource property modeling is being added to your Smithy model.
+
+The following example demonstrates the ``howLikelyToRain`` member of
+``GetForecastOutput`` can be bound to the ``chanceOfRain`` resource property:
+
+.. code-block:: smithy
+
+    resource Forecast {
+        properties: { chanceOfRain: Float }
+        read: GetForecast
+    }
+
+    @readonly
+    operation GetForecast {
+       output: GetForecastOutput
+    }
+
+    structure GetForecastOutput {
+        @property(name: "chanceOfRain")
+        howLikelyToRain: Float
+    }
+
+Though resource properties are usually bound to top level input and output
+members, use the :ref:`nested-properties-trait` on a member to designate its
+target structure shape as the root to form property bindings. No adjacent
+members can form property bindings when this trait is applied.
+
+.. rubric:: Resource property binding validation
+
+- All top-level input or output members must bind to a resource property unless
+  marked with :ref:`notProperty-trait` or another trait with it applied, or one
+  of the members is marked with :ref:`nested-properties-trait`
+- Top-level members of the input and output of resource instance operations MUST
+  only use properties that resolve to declared resource properties except for
+  members marked with the ``@notProperty`` trait or marked with traits marked
+  with the ``@notProperty`` trait.
+- Defined resource properties that do not resolve to any top-level input or
+  output members are invalid.
+- Members that provide a value for a resource property but use a different
+  target shape are invalid.
+- Members marked with a :ref:`property-trait` using a name that does not map to
+  a declared resource property are invalid.
 
 
 .. _lifecycle-operations:
