@@ -70,7 +70,7 @@ public final class TaggableResourceValidator extends AbstractValidator {
         // Generate danger if resource has tag property in update API.
         if (awsTagIndex.isResourceTagOnUpdate(resource.getId())) {
             Shape updateOperation = model.expectShape(resource.getUpdate().get());
-            events.add(danger(updateOperation, "Update resource lifecycle operation should not support updating tags "
+            events.add(danger(updateOperation, "Update resource lifecycle operation should not support updating tags"
                     + " because it is a privileged operation that modifies access."));
         }
         // A valid taggable resource must support one of the following:
@@ -97,20 +97,7 @@ public final class TaggableResourceValidator extends AbstractValidator {
         return events;
     }
 
-    private Optional<OperationShape> resolveTagOperation(
-        List<ValidationEvent> events,
-        ShapeId tagApiId,
-        Model model,
-        ServiceShape service,
-        ResourceShape resource,
-        String defaultOpName,
-        String fieldName
-    ) {
-        // If operation is specified in the model, it must be a valid reference.
-        if (!model.getShape(tagApiId).map(Shape::asOperationShape).isPresent()) {
-            events.add(error(resource, String.format("%s$%s must reference an operation shape.",
-                    fieldName, TaggableTrait.ID.toString())));
-        }
+    private Optional<OperationShape> resolveTagOperation(ShapeId tagApiId, Model model) {
         return model.getShape(tagApiId).flatMap(shape -> shape.asOperationShape());
     }
 
@@ -128,23 +115,20 @@ public final class TaggableResourceValidator extends AbstractValidator {
             boolean untagApiVerified = false;
             boolean listTagsApiVerified = false;
 
-            Optional<OperationShape> tagApi = resolveTagOperation(events, apiConfig.getTagApi(), model, service,
-                    resource, TaggingShapeUtils.TAG_RESOURCE_OPNAME, "tagApi");
+            Optional<OperationShape> tagApi = resolveTagOperation(apiConfig.getTagApi(), model);
             if (tagApi.isPresent()) {
                 tagApiVerified = TaggingShapeUtils.isTagPropertyInInput(Optional.of(
                         tagApi.get().getId()), model, resource, propertyBindingIndex)
                         && verifyTagApi(tagApi.get(), model, service, resource);
             }
 
-            Optional<OperationShape> untagApi = resolveTagOperation(events, apiConfig.getUntagApi(), model, service,
-                    resource, TaggingShapeUtils.UNTAG_RESOURCE_OPNAME, "untagApi");
+            Optional<OperationShape> untagApi = resolveTagOperation(apiConfig.getUntagApi(), model);
             if (untagApi.isPresent()) {
                 untagApiVerified = verifyUntagApi(untagApi.get(), model, service, resource);
             }
 
 
-            Optional<OperationShape> listTagsApi = resolveTagOperation(events, apiConfig.getListTagsApi(), model,
-                    service, resource, TaggingShapeUtils.LIST_TAGS_OPNAME, "listTagsApi");
+            Optional<OperationShape> listTagsApi = resolveTagOperation(apiConfig.getListTagsApi(), model);
             if (listTagsApi.isPresent()) {
                 listTagsApiVerified = verifyListTagsApi(listTagsApi.get(), model, service, resource);
             }

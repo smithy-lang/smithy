@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.aws.traits.tagging;
 
+import java.util.Objects;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
@@ -36,7 +37,7 @@ public final class TaggableApiConfig implements FromSourceLocation, ToNode, ToSm
         tagApi = builder.tagApi;
         untagApi = builder.untagApi;
         listTagsApi = builder.listTagsApi;
-        sourceLocation = builder.sourceLocation;
+        sourceLocation = Objects.requireNonNull(builder.sourceLocation);
     }
 
     /**
@@ -93,11 +94,6 @@ public final class TaggableApiConfig implements FromSourceLocation, ToNode, ToSm
 
     @Override
     public Node toNode() {
-        /* NodeMapper mapper = new NodeMapper();
-        mapper.disableToNodeForClass(TaggableApiConfig.class);
-        mapper.setOmitEmptyValues(true);
-        return mapper.serialize(this).expectObjectNode();
-*/
         return Node.objectNodeBuilder()
                 .sourceLocation(getSourceLocation())
                 .withMember("tagApi", tagApi.toString())

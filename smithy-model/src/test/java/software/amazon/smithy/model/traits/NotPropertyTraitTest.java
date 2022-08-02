@@ -18,8 +18,8 @@ package software.amazon.smithy.model.traits;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
@@ -35,5 +35,12 @@ public class NotPropertyTraitTest {
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(NotPropertyTrait.class));
         assertThat(trait.get().toNode(), equalTo(Node.objectNode()));
+    }
+
+    @Test
+    public void testEmptyConstructor() {
+        NotPropertyTrait emptyTrait = new NotPropertyTrait();
+        NotPropertyTrait otherTrait = new NotPropertyTrait(Node.objectNodeBuilder().build());
+        assertEquals(emptyTrait, otherTrait);
     }
 }

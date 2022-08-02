@@ -12,11 +12,11 @@ namespace example.weather
 use aws.api#taggable
 use aws.api#tagEnabled
 
-@tagEnabled
+@tagEnabled(disableDefaultOperations: true)
 service Weather {
     version: "2006-03-01",
     resources: [City]
-    operations: [GetCurrentTime, TagResource, UntagResource, ListTagsForResource]
+    operations: [GetCurrentTime]
 }
 
 structure Tag {
@@ -32,42 +32,12 @@ list TagKeys {
     member: String
 }
 
-operation TagResource {
-    input := {
-        @required
-        arn: String
-        @length(max: 128)
-        tags: TagList
-    }
-    output := { }
-}
-
-operation UntagResource {
-    input := {
-        @required
-        arn: String
-        @required
-        tagKeys: TagKeys
-    }
-    output := { }
-}
-
-operation ListTagsForResource {
-    input := {
-        @required
-        arn: String
-    }
-    output := {
-        @length(max: 128)
-        tags: TagList
-    }
-}
-
 operation TagCity {
     input := {
         @required
         cityId: CityId
         @length(max: 128)
+        @property(name: "tagz")
         tags: TagList
     }
     output := { }
@@ -91,24 +61,47 @@ operation ListTagsForCity {
     }
     output := { 
         @length(max: 128)
+        @property(name: "tagz")
         tags: TagList
     }
 }
 
-@taggable(property: "tags", apiConfig: {tagApi: TagCity, untagApi: UntagCity, listTagsApi: ListTagsForCity})
+@taggable(property: "tagz", apiConfig: {tagApi: TagCity, untagApi: UntagCity, listTagsApi: ListTagsForCity})
 resource City {
     identifiers: { cityId: CityId },
     properties: {
         name: String
         coordinates: CityCoordinates
-        tags: TagList
+        tagz: TagList
     }
+    create: CreateCity
     read: GetCity,
+    update: UpdateCity
     operations: [TagCity, UntagCity, ListTagsForCity],
+}
+
+operation CreateCity {
+    output := {
+        @required
+        cityId: CityId
+    }
+    input := {
+        name: String
+        coordinates: CityCoordinates
+    }
 }
 
 @pattern("^[A-Za-z0-9 ]+$")
 string CityId
+
+operation UpdateCity {
+    output := {}
+    input := {
+        @required
+        cityId: CityId
+        tagz: TagList
+    }
+}
 
 @readonly
 operation GetCity {
