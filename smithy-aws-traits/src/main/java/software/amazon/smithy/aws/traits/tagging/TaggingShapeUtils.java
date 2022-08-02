@@ -79,10 +79,13 @@ final class TaggingShapeUtils {
     }
 
     static boolean hasResourceArnInput(Map<String, MemberShape> inputMembers, Model model) {
-        return inputMembers.entrySet().stream().filter(memberEntry ->
-                    TaggingShapeUtils.isArnMemberDesiredName(memberEntry.getKey())
-                    && model.expectShape(memberEntry.getValue().getTarget()).isStringShape()
-                ).count() == 1;
+        for (Map.Entry<String, MemberShape> memberEntry : inputMembers.entrySet()) {
+            if (TaggingShapeUtils.isArnMemberDesiredName(memberEntry.getKey())
+                    && model.expectShape(memberEntry.getValue().getTarget()).isStringShape()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

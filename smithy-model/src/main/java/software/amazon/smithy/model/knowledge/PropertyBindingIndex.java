@@ -194,8 +194,7 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
     }
 
     private boolean doesNotRequireProperty(MemberShape memberShape) {
-        return memberShape.hasTrait(NotPropertyTrait.class)
-            || notPropertyMetaTraitSet.stream().anyMatch(traitId -> memberShape.hasTrait(traitId));
+        return notPropertyMetaTraitSet.stream().anyMatch(traitId -> memberShape.hasTrait(traitId));
     }
 
     private StructureShape getPropertiesShape(Collection<MemberShape> members, StructureShape presumedShape) {

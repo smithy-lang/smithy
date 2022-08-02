@@ -18,6 +18,7 @@ package software.amazon.smithy.model.validation.validators;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,11 +49,11 @@ public final class ResourceIdentifierValidator extends AbstractValidator {
         if (resource.hasProperties()) {
             Map<String, String> propertyLowerCaseToActual = new HashMap<>();
             for (String propertyName : resource.getProperties().keySet()) {
-                propertyLowerCaseToActual.put(propertyName.toLowerCase(), propertyName);
+                propertyLowerCaseToActual.put(propertyName.toLowerCase(Locale.ENGLISH), propertyName);
             }
 
             for (String identifier : resource.getIdentifiers().keySet()) {
-                if (propertyLowerCaseToActual.containsKey(identifier.toLowerCase())) {
+                if (propertyLowerCaseToActual.containsKey(identifier.toLowerCase(Locale.ENGLISH))) {
                    events.add(error(resource, String.format("Resource identifier `%s` cannot also be a"
                            + " resource property", identifier)));
                 }

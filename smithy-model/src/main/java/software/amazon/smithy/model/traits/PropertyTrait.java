@@ -19,7 +19,6 @@ import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -40,8 +39,10 @@ public final class PropertyTrait extends AbstractTrait implements ToSmithyBuilde
 
     @Override
     protected Node createNode() {
-        return new ObjectNode(MapUtils.of(), getSourceLocation())
-                .withOptionalMember("name", getName().map(Node::from));
+        return Node.objectNodeBuilder()
+                .sourceLocation(getSourceLocation())
+                .withOptionalMember("name", getName().map(Node::from))
+                .build();
     }
 
     public static Builder builder() {

@@ -18,7 +18,6 @@ package software.amazon.smithy.aws.traits.tagging;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -37,9 +36,7 @@ public final class TaggableApiConfig implements FromSourceLocation, ToNode, ToSm
         tagApi = builder.tagApi;
         untagApi = builder.untagApi;
         listTagsApi = builder.listTagsApi;
-        sourceLocation = builder.sourceLocation != null
-                ? builder.sourceLocation
-                : SourceLocation.none();
+        sourceLocation = builder.sourceLocation;
     }
 
     /**
@@ -96,10 +93,17 @@ public final class TaggableApiConfig implements FromSourceLocation, ToNode, ToSm
 
     @Override
     public Node toNode() {
-        NodeMapper mapper = new NodeMapper();
+        /* NodeMapper mapper = new NodeMapper();
         mapper.disableToNodeForClass(TaggableApiConfig.class);
         mapper.setOmitEmptyValues(true);
         return mapper.serialize(this).expectObjectNode();
+*/
+        return Node.objectNodeBuilder()
+                .sourceLocation(getSourceLocation())
+                .withMember("tagApi", tagApi.toString())
+                .withMember("untagApi", untagApi.toString())
+                .withMember("listTagsApi", listTagsApi.toString())
+                .build();
     }
 
     @Override
@@ -126,7 +130,7 @@ public final class TaggableApiConfig implements FromSourceLocation, ToNode, ToSm
         private ShapeId tagApi;
         private ShapeId untagApi;
         private ShapeId listTagsApi;
-        private SourceLocation sourceLocation;
+        private SourceLocation sourceLocation = SourceLocation.none();
 
         Builder tagApi(ShapeId tagApi) {
             this.tagApi = tagApi;

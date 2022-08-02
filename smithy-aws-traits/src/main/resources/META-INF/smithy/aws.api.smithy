@@ -204,6 +204,7 @@ structure service {
 /// Annotates a service as having tagging on 1 or more resources and associated
 /// APIs to perform CRUD operations on those tags
 @trait(selector: "service")
+@unstable
 structure tagEnabled {
     /// The `disableDefaultOperations` property is a boolean value that specifies
     /// if the service does not have the standard tag operations supporting all
@@ -240,6 +241,7 @@ structure TaggableApiConfig {
 /// resource lifecycle or instance operations or tagging operations on the
 /// service.
 @trait(selector: "resource")
+@unstable
 structure taggable {
     /// The `property` property is a string value that identifies which
     /// resource property represents tags for the resource.

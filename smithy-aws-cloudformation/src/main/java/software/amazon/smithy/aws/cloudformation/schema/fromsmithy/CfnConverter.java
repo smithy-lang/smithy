@@ -193,7 +193,8 @@ public final class CfnConverter {
     private ConversionEnvironment createConversionEnvironment(
             Model model,
             ServiceShape serviceShape,
-            ResourceShape resourceShape) {
+            ResourceShape resourceShape
+    ) {
         // Prepare the JSON Schema Converter.
         JsonSchemaConverter.Builder jsonSchemaConverterBuilder = JsonSchemaConverter.builder()
                 .config(config)

@@ -633,6 +633,7 @@ structure property {
     selector: ":is(operation -[input, output]-> structure > member, [trait|trait])",
     breakingChanges: [{change: "add"}]
 )
+@notProperty
 structure notProperty {}
 
 /// Adjusts the resource property mapping of a lifecycle operation to the targeted member.
