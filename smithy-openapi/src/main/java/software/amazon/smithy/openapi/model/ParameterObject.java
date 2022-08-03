@@ -16,6 +16,7 @@
 package software.amazon.smithy.openapi.model;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -35,8 +36,8 @@ public final class ParameterObject extends Component implements ToSmithyBuilder<
     private final boolean explode;
     private final boolean allowReserved;
     private final Schema schema;
-    private final Node example;
-    private final Map<String, Node> examples;
+    private final ExampleObject example;
+    private final Map<String, ExampleObject> examples;
     private final Map<String, MediaTypeObject> content;
 
     private ParameterObject(Builder builder) {
@@ -68,7 +69,7 @@ public final class ParameterObject extends Component implements ToSmithyBuilder<
         return Optional.ofNullable(in);
     }
 
-    public Map<String, Node> getExamples() {
+    public Map<String, ExampleObject> getExamples() {
         return examples;
     }
 
@@ -108,7 +109,7 @@ public final class ParameterObject extends Component implements ToSmithyBuilder<
         return Optional.ofNullable(schema);
     }
 
-    public Optional<Node> getExample() {
+    public Optional<ExampleObject> getExample() {
         return Optional.ofNullable(example);
     }
 
@@ -157,6 +158,10 @@ public final class ParameterObject extends Component implements ToSmithyBuilder<
 
     @Override
     public Builder toBuilder() {
+        Map<String, Node> nodeExamples = new HashMap<>();
+        for (Map.Entry<String, ExampleObject> ex : examples.entrySet()) {
+            nodeExamples.put(ex.getKey(), ex.getValue().toNode());
+        }
         return builder()
                 .extensions(getExtensions())
                 .name(name)
@@ -169,8 +174,8 @@ public final class ParameterObject extends Component implements ToSmithyBuilder<
                 .explode(explode)
                 .allowReserved(allowReserved)
                 .schema(schema)
-                .example(example)
-                .examples(examples)
+                .example(example == null ? null : example.toNode())
+                .examples(nodeExamples)
                 .content(content);
     }
 
@@ -185,8 +190,8 @@ public final class ParameterObject extends Component implements ToSmithyBuilder<
         private boolean explode;
         private boolean allowReserved;
         private Schema schema;
-        private Node example;
-        private final Map<String, Node> examples = new TreeMap<>();
+        private ExampleObject example;
+        private final Map<String, ExampleObject> examples = new TreeMap<>();
         private final Map<String, MediaTypeObject> content = new TreeMap<>();
 
         private Builder() {}
@@ -247,18 +252,20 @@ public final class ParameterObject extends Component implements ToSmithyBuilder<
         }
 
         public Builder example(Node example) {
-            this.example = example;
+            this.example = ExampleObject.fromNode(example);
             return this;
         }
 
         public Builder examples(Map<String, Node> examples) {
             this.examples.clear();
-            this.examples.putAll(examples);
+            for (Map.Entry<String, Node> example : examples.entrySet()) {
+                this.examples.put(example.getKey(), ExampleObject.fromNode(example.getValue()));
+            }
             return this;
         }
 
         public Builder putExample(String name, Node example) {
-            this.examples.put(name, example);
+            this.examples.put(name, ExampleObject.fromNode(example));
             return this;
         }
 

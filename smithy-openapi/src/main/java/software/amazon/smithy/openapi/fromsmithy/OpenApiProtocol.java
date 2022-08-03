@@ -62,6 +62,12 @@ public interface OpenApiProtocol<T extends Trait> {
      * Creates an operation entry, including the method, URI, and operation
      * object builder.
      *
+     * The returned operation object builder should contain protocol-specific fields of an
+     * OpenAPI Operation object, such as: [parameters, requestBody, responses] and [examples for any of the above,
+     * contained by respective objects that the example values are for].
+     * The returned operation object builder should not contain protocol-agnostic fields of an OpenAPI
+     * Operation object, such as: tags, summary, description, externalDocs, deprecated, security.
+     *
      * <p>The operation is returned as an empty Optional if the operation is
      * not supported by the protocol. This method should make calls to
      * {@link #getOperationUri} and {@link #getOperationMethod} when creating

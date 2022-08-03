@@ -266,7 +266,29 @@ public class AwsRestJson1ProtocolTest {
             return OpenApiMapper.super.updateOperation(context, shape, operation, httpMethodName, path);
         }
     }
+    
+    @Test
+    public void convertsExamples() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("examples-test.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.examplestrait#Banking"));
+        ObjectNode result = OpenApiConverter.create()
+                .config(config)
+                .convertToNode(model);
+        InputStream openApiStream = getClass().getResourceAsStream("examples-test.openapi.json");
 
+        if (openApiStream == null) {
+            throw new RuntimeException("OpenAPI model not found for test case: examples-test.openapi.json");
+        } else {
+            Node expectedNode = Node.parse(IoUtils.toUtf8String(openApiStream));
+            Node.assertEquals(result, expectedNode);
+        }
+    }
+    
     @Test
     public void convertsErrorStructuresWithSameErrorCodeWithoutUsingOneOf() {
         Model model = Model.assembler()
