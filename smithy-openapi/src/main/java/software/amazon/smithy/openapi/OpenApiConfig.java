@@ -45,6 +45,28 @@ public class OpenApiConfig extends JsonSchemaConfig {
         WARN
     }
 
+    /** Specifies how to resolve multiple error responses with same error codes. */
+    public enum ErrorStatusConflictHandlingStrategy {
+        /** The default setting that uses OpenAPI's oneOf keyword to combine multiple schemas for same media type. */
+        ONE_OF("oneOf"),
+        /**
+         * The custom setting that combines multiple schemas for same media type using properties field of
+         * OpenAPI Schema object.
+         */
+        PROPERTIES("properties");
+
+        private String stringValue;
+
+        ErrorStatusConflictHandlingStrategy(String stringValue) {
+            this.stringValue = stringValue;
+        }
+
+        @Override
+        public String toString() {
+            return stringValue;
+        }
+    }
+
     /** The JSON pointer to where OpenAPI schema components should be written. */
     private static final String SCHEMA_COMPONENTS_POINTER = "#/components/schemas";
 
@@ -77,6 +99,7 @@ public class OpenApiConfig extends JsonSchemaConfig {
     private boolean forbidGreedyLabels;
     private boolean removeGreedyParameterSuffix;
     private HttpPrefixHeadersStrategy onHttpPrefixHeaders = HttpPrefixHeadersStrategy.FAIL;
+    private ErrorStatusConflictHandlingStrategy onErrorStatusConflict = ErrorStatusConflictHandlingStrategy.ONE_OF;
     private boolean ignoreUnsupportedTraits;
     private Map<String, Node> substitutions = Collections.emptyMap();
     private Map<String, Node> jsonAdd = Collections.emptyMap();
@@ -236,6 +259,19 @@ public class OpenApiConfig extends JsonSchemaConfig {
      */
     public void setOnHttpPrefixHeaders(HttpPrefixHeadersStrategy onHttpPrefixHeaders) {
         this.onHttpPrefixHeaders = Objects.requireNonNull(onHttpPrefixHeaders);
+    }
+
+    public ErrorStatusConflictHandlingStrategy getOnErrorStatusConflict() {
+        return onErrorStatusConflict;
+    }
+
+    /**
+     * Specifies what to do when multiple error responses share the same HTTP status code.
+     *
+     * @param onErrorStatusConflict Strategy to use for multiple errors with same status code.
+     */
+    public void setOnErrorStatusConflict(ErrorStatusConflictHandlingStrategy onErrorStatusConflict) {
+        this.onErrorStatusConflict = Objects.requireNonNull(onErrorStatusConflict);
     }
 
     public boolean getIgnoreUnsupportedTraits() {

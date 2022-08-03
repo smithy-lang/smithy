@@ -38,13 +38,20 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.AuthTrait;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
+import software.amazon.smithy.model.traits.ErrorTrait;
+import software.amazon.smithy.model.traits.HttpErrorTrait;
+import software.amazon.smithy.model.traits.HttpHeaderTrait;
+import software.amazon.smithy.model.traits.HttpPayloadTrait;
+import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.TitleTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.transform.ModelTransformer;
@@ -168,6 +175,10 @@ public final class OpenApiConverter {
     }
 
     private ConversionEnvironment<? extends Trait> createConversionEnvironment(Model model) {
+        if (config.getOnErrorStatusConflict() == OpenApiConfig.ErrorStatusConflictHandlingStrategy.PROPERTIES) {
+            model = replaceConflictingErrorsWithUnionErrors(model);
+        }
+
         ShapeId serviceShapeId = config.getService();
 
         if (serviceShapeId == null) {
@@ -234,6 +245,120 @@ public final class OpenApiConverter {
                 openApiProtocol, document, securitySchemeConverters);
 
         return new ConversionEnvironment<>(context, extensions, components, composedMapper);
+    }
+
+    private Model replaceConflictingErrorsWithUnionErrors(Model model) {
+        // Get mapping of status code to error shapes.
+        Map<String, List<StructureShape>> statusCodeToErrors = new HashMap<>();
+        for (StructureShape error : model.getStructureShapesWithTrait(ErrorTrait.class)) {
+            statusCodeToErrors.computeIfAbsent(
+                    error.hasTrait(HttpErrorTrait.ID)
+                            ? Integer.toString(error.getTrait(HttpErrorTrait.class).get().getCode())
+                            : Integer.toString(error.getTrait(ErrorTrait.class).get().getDefaultHttpStatusCode()),
+                    (k) -> new ArrayList<>()
+            ).add(error);
+        }
+
+        // This is the list of union error shapes.
+        List<StructureShape> unions = new ArrayList<>();
+        // This is the mapping used for renaming conflicting errors in the model to corresponding union error.
+        Map<ShapeId, ShapeId> renameMapping = new HashMap<>();
+
+        Map<String, ShapeId> members = new HashMap<>();
+        Map<String, String> memberNameToErrorName = new HashMap<>();
+
+        // Create union errors for each group of conflicting errors (errors with same status code).
+        for (Map.Entry<String, List<StructureShape>> statusCodeToConflictingErrors : statusCodeToErrors.entrySet()) {
+            if (statusCodeToConflictingErrors.getValue().size() > 1) {
+                // Synthesize the union error structure for conflicting errors.
+                StructureShape.Builder union = StructureShape.builder();
+                String unionId = config.getService().getNamespace()
+                                    + "#Union"
+                                    + statusCodeToConflictingErrors.getKey()
+                                    + "Error";
+
+                for (StructureShape conflictingError : statusCodeToConflictingErrors.getValue()) {
+                    for (MemberShape eachMember : conflictingError.getAllMembers().values()) {
+                        // Check if members with same name target different shapes.
+                        if (members.containsKey(eachMember.getMemberName())
+                                && members.get(eachMember.getMemberName()) != eachMember.getTarget()) {
+                            String message =
+                                    "Error structures %s and %s with status code %s both have a member named \"%s\" "
+                                            + "that target different shapes, and the config setting for "
+                                            + "\"onErrorStatusConflict\" is set to \"properties\". Failed to combine "
+                                            + "error structures into one union error structure.";
+                            // Throw exception.
+                            String memberName = eachMember.getMemberName();
+                            String error1 = conflictingError.toShapeId().toString();
+                            String error2 = memberNameToErrorName.get(memberName);
+                            throw new OpenApiException(String.format(message, error1, error2, memberName));
+                        }
+                        members.put(eachMember.getMemberName(), eachMember.getTarget());
+                        memberNameToErrorName.put(eachMember.getMemberName(), conflictingError.getId().toString());
+
+                        // If the member has @httpPayload trait, throw an exception.
+                        if (eachMember.hasTrait(HttpPayloadTrait.ID)) {
+                            throw new OpenApiException(
+                                    createConflictingErrorHttpPayloadExceptionMessage(
+                                            statusCodeToConflictingErrors.getKey(),
+                                            conflictingError.getId().toString(),
+                                            eachMember.toShapeId().toString()
+                                    )
+                            );
+                        }
+
+                        // Drop @required trait and @httpPayload traits from members that are put into union error.
+                        eachMember = eachMember
+                                        .toBuilder()
+                                        .removeTrait(RequiredTrait.ID)
+                                        .build();
+                        // Change header id to [unionId + originalHeaderName] in order to match over-the-wire data.
+                        if (eachMember.hasTrait(HttpHeaderTrait.ID)) {
+                            String originalHeaderName = eachMember.toShapeId().getName();
+                            eachMember = eachMember.toBuilder().id(unionId + "$" + originalHeaderName).build();
+                        }
+                        union.addMember(eachMember);
+                    }
+                    // Add rename mapping from conflicting error to newly synthesized union error.
+                    renameMapping.put(conflictingError.toShapeId(), ShapeId.from(unionId));
+                }
+
+                // Add @httpError and/or @error trait(s) to union error shape.
+                if (statusCodeToConflictingErrors.getKey().equals("400")
+                        || statusCodeToConflictingErrors.getKey().equals("500")) {
+                    union.addTrait(new ErrorTrait(statusCodeToConflictingErrors.getKey()));
+                } else {
+                    if (statusCodeToConflictingErrors.getKey().charAt(0) == '4') {
+                        union.addTrait(new ErrorTrait("client"));
+                    } else {
+                        union.addTrait(new ErrorTrait("server"));
+                    }
+                    union.addTrait(new HttpErrorTrait(Integer.parseInt(statusCodeToConflictingErrors.getKey())));
+                }
+
+                // Set ShapeID on union error, build, and add to list of union errors.
+                unions.add(union.id(unionId).build());
+            }
+        }
+
+        // Add synthesized union errors to model, build, rename conflicting errors to union errors, and return.
+        return ModelTransformer.create().renameShapes(
+                (model.toBuilder().addShapes(unions).build()),
+                renameMapping
+        );
+    }
+
+    public static String createConflictingErrorHttpPayloadExceptionMessage(
+            String code,
+            String error,
+            String memberName
+    ) {
+        String message =
+                "The status code %s of %s is shared by two or more error shapes, and %s has a "
+                        + "member %s that has a @httpPayload trait. Failure in combining error shapes into "
+                        + "one union error. Remove @httpPayload trait to resolve the exception";
+
+        return String.format(message, code, error, error, memberName);
     }
 
     private static OpenApiMapper createComposedMapper(
