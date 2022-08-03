@@ -206,6 +206,7 @@ public class ModelUpgraderTest {
         assertThat(hasBoxTrait(model, "smithy.example#Foo$boxedMember"), is(true));
         assertThat(hasBoxTrait(model, "smithy.example#Foo$explicitlyBoxedTarget"), is(true));
         assertThat(hasBoxTrait(model, "smithy.example#Foo$previouslyBoxedTarget"), is(true));
+        assertThat(hasBoxTrait(model, "smithy.example#Foo$customPrimitiveLong"), is(false));
     }
 
     private boolean hasBoxTrait(Model model, String shape) {

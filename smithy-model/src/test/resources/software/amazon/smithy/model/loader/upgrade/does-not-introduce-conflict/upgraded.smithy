@@ -13,7 +13,12 @@ structure Foo {
 
     previouslyBoxedTarget: Integer,
 
-    explicitlyBoxedTarget: BoxedInteger
+    explicitlyBoxedTarget: BoxedInteger,
+
+    @required
+    customPrimitiveLong: MyPrimitiveLong
 }
 
 integer BoxedInteger
+
+long MyPrimitiveLong

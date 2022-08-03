@@ -167,7 +167,7 @@ final class ModelUpgrader {
                && !member.hasTrait(DefaultTrait.class) // don't add box if it has a default trait.
                && !member.hasTrait(BoxTrait.class) // don't add box again
                && !REMOVED_PRIMITIVE_SHAPES.containsKey(target.getId())
-               && (target.hasTrait(BoxTrait.class) || HAD_DEFAULT_VALUE_IN_1_0.contains(target.getType()));
+               && (target.hasTrait(BoxTrait.class) || PREVIOUSLY_BOXED.contains(target.getId()));
     }
 
     private boolean isZeroValidDefault(MemberShape member) {
