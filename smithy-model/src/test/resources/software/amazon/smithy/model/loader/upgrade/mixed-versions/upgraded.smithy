@@ -4,7 +4,7 @@ namespace smithy.example
 
 structure Foo {
     @default(0)
-    number: Integer
+    number: PrimitiveInteger
 }
 
 structure Baz {

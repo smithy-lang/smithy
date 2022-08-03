@@ -46,7 +46,6 @@ import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.loader.ModelAssembler;
-import software.amazon.smithy.model.loader.ParserUtils;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.NumberShape;
@@ -282,8 +281,6 @@ public final class Upgrade1to2Command extends SimpleCommand {
         }
 
         private void handleMemberShape(MemberShape shape) {
-            replacePrimitiveTarget(shape);
-
             if (hasSyntheticDefault(shape)) {
                 SourceLocation memberLocation = shape.getSourceLocation();
                 String padding = "";
@@ -307,29 +304,6 @@ public final class Upgrade1to2Command extends SimpleCommand {
             if (shape.hasTrait(BoxTrait.class)) {
                 writer.eraseTrait(shape, shape.expectTrait(BoxTrait.class));
             }
-        }
-
-        private void replacePrimitiveTarget(MemberShape member) {
-            Shape target = completeModel.expectShape(member.getTarget());
-            if (!Prelude.isPreludeShape(target) || !HAD_DEFAULT_VALUE_IN_1_0.contains(target.getType())) {
-                return;
-            }
-
-            IdlAwareSimpleParser parser = new IdlAwareSimpleParser(writer.flush());
-            parser.rewind(member.getSourceLocation());
-
-            parser.consumeUntilNoLongerMatches(character -> character != ':');
-            parser.skip();
-            parser.ws();
-
-            // Capture the start of the target identifier.
-            int start = parser.position();
-            parser.consumeUntilNoLongerMatches(ParserUtils::isValidIdentifierCharacter);
-
-            // Replace the target with the proper target. Note that we don't
-            // need to do any sort of mapping because smithy already upgraded
-            // the target, so we can just use the name of the target it added.
-            writer.replace(start, parser.position(), target.getId().getName());
         }
 
         private boolean hasSyntheticDefault(MemberShape shape) {
