@@ -873,6 +873,79 @@ Smithy will generate the following OpenAPI model:
         ]
     }
 
+--------------------------------
+``@examples`` trait conversion
+--------------------------------
+
+In Smithy, example values of input structure members and the corresponding
+output or error structure members for an operation are grouped together
+into one set of example values for an operation. Below is an example "unit" of ``FooOperation``
+operation shape, which shows this logical grouping.
+
+.. code-block:: smithy
+
+    apply FooOperation @examples(
+        [
+            {
+                title: "valid example",
+                documentation: "valid example doc",
+                input: {
+                    bar: "1234"
+                },
+                output: {
+                    baz: "5678"
+                },
+            }
+        ]
+    )
+
+However, example values in OpenAPI are scattered throughout the model, with each example value
+contained by the OpenAPI object the example value is for.
+The following is an example OpenAPI model for the above Smithy example value.
+
+.. code-block:: json
+
+        "paths": {
+            "/": {
+                "get": {
+                    "operationId": "FooOperation",
+                    "requestBody": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "FooOperation_example1": {
+                                        "summary": "valid example",
+                                        "description": "valid example doc",
+                                        "value": {
+                                            "bar": "1234"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    "responses": {
+                        "200": {
+                            "description": "FooOperation response",
+                            "content": {
+                                "application/json": {
+                                    "examples": {
+                                        "FooOperation_example1": {
+                                            "summary": "valid example",
+                                            "description": "valid example doc",
+                                            "value": {
+                                                "baz": "5678"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
 
 -----------------------------
 Amazon API Gateway extensions

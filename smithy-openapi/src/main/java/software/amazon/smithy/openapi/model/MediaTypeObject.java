@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.openapi.model;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -25,8 +26,8 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class MediaTypeObject extends Component implements ToSmithyBuilder<MediaTypeObject> {
     private final Schema schema;
-    private final Node example;
-    private final Map<String, Node> examples = new TreeMap<>();
+    private final ExampleObject example;
+    private final Map<String, ExampleObject> examples = new TreeMap<>();
     private final Map<String, EncodingObject> encoding = new TreeMap<>();
 
     private MediaTypeObject(Builder builder) {
@@ -45,11 +46,11 @@ public final class MediaTypeObject extends Component implements ToSmithyBuilder<
         return Optional.ofNullable(schema);
     }
 
-    public Optional<Node> getExample() {
+    public Optional<ExampleObject> getExample() {
         return Optional.ofNullable(example);
     }
 
-    public Map<String, Node> getExamples() {
+    public Map<String, ExampleObject> getExamples() {
         return examples;
     }
 
@@ -78,18 +79,22 @@ public final class MediaTypeObject extends Component implements ToSmithyBuilder<
 
     @Override
     public Builder toBuilder() {
+        Map<String, Node> nodeExamples = new HashMap<>();
+        for (Map.Entry<String, ExampleObject> ex : examples.entrySet()) {
+            nodeExamples.put(ex.getKey(), ex.getValue().toNode());
+        }
         return builder()
                 .extensions(getExtensions())
                 .schema(schema)
-                .example(example)
-                .examples(examples)
+                .example(example == null ? null : example.toNode())
+                .examples(nodeExamples)
                 .encoding(encoding);
     }
 
     public static final class Builder extends Component.Builder<Builder, MediaTypeObject> {
         private Schema schema;
-        private Node example;
-        private final Map<String, Node> examples = new TreeMap<>();
+        private ExampleObject example;
+        private final Map<String, ExampleObject> examples = new TreeMap<>();
         private final Map<String, EncodingObject> encoding = new TreeMap<>();
 
         private Builder() {}
@@ -105,17 +110,19 @@ public final class MediaTypeObject extends Component implements ToSmithyBuilder<
         }
 
         public Builder example(Node example) {
-            this.example = example;
+            this.example = ExampleObject.fromNode(example);
             return this;
         }
 
         public Builder examples(Map<String, Node> examples) {
             this.examples.clear();
-            this.examples.putAll(examples);
+            for (Map.Entry<String, Node> example : examples.entrySet()) {
+                this.examples.put(example.getKey(), ExampleObject.fromNode(example.getValue()));
+            }
             return this;
         }
 
-        public Builder putExample(String name, Node example) {
+        public Builder putExample(String name, ExampleObject example) {
             examples.put(name, example);
             return this;
         }
