@@ -18,9 +18,7 @@ package software.amazon.smithy.model.loader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -42,13 +40,12 @@ import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
-import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Upgrades Smithy models from IDL v1 to IDL v2, specifically taking into
- * account the removal of the Primitive* shapes from the prelude, the
- * removal of the @box trait, the change in default value semantics of
- * numbers and booleans, and the @default trait.
+ * account the removal of the box trait, the change in default value
+ * semantics of numbers and booleans, and the @default trait.
  */
 final class ModelUpgrader {
 
@@ -62,18 +59,15 @@ final class ModelUpgrader {
             ShapeType.DOUBLE,
             ShapeType.BOOLEAN);
 
-    /** Provides a mapping of prelude shapes that were removed to the shape to use instead. */
-    private static final Map<ShapeId, ShapeId> REMOVED_PRIMITIVE_SHAPES = MapUtils.of(
-            ShapeId.from("smithy.api#PrimitiveBoolean"), ShapeId.from("smithy.api#Boolean"),
-            ShapeId.from("smithy.api#PrimitiveByte"), ShapeId.from("smithy.api#Byte"),
-            ShapeId.from("smithy.api#PrimitiveShort"), ShapeId.from("smithy.api#Short"),
-            ShapeId.from("smithy.api#PrimitiveInteger"), ShapeId.from("smithy.api#Integer"),
-            ShapeId.from("smithy.api#PrimitiveLong"), ShapeId.from("smithy.api#Long"),
-            ShapeId.from("smithy.api#PrimitiveFloat"), ShapeId.from("smithy.api#Float"),
-            ShapeId.from("smithy.api#PrimitiveDouble"), ShapeId.from("smithy.api#Double"));
-
     /** Shapes that were boxed in 1.0, but @box was removed in 2.0. */
-    private static final Set<ShapeId> PREVIOUSLY_BOXED = new HashSet<>(REMOVED_PRIMITIVE_SHAPES.values());
+    private static final Set<ShapeId> PREVIOUSLY_BOXED = SetUtils.of(
+            ShapeId.from("smithy.api#Boolean"),
+            ShapeId.from("smithy.api#Byte"),
+            ShapeId.from("smithy.api#Short"),
+            ShapeId.from("smithy.api#Integer"),
+            ShapeId.from("smithy.api#Long"),
+            ShapeId.from("smithy.api#Float"),
+            ShapeId.from("smithy.api#Double"));
 
     private final Model model;
     private final List<ValidationEvent> events;
@@ -117,13 +111,6 @@ final class ModelUpgrader {
         // This builder will become non-null if/when the member needs to be updated.
         MemberShape.Builder builder = null;
 
-        // Rewrite the member to target the non-removed prelude shape if it's known to be removed.
-        if (REMOVED_PRIMITIVE_SHAPES.containsKey(target.getId())) {
-            emitWhenTargetingRemovedPreludeShape(Severity.WARNING, member);
-            builder = createOrReuseBuilder(member, builder);
-            builder.target(REMOVED_PRIMITIVE_SHAPES.get(target.getId()));
-        }
-
         // Add the @default trait to structure members when needed.
         if (shouldV1MemberHaveDefaultTrait(containerType, member, target)) {
             events.add(ValidationEvent.builder()
@@ -166,7 +153,6 @@ final class ModelUpgrader {
                && containerType == ShapeType.STRUCTURE
                && !member.hasTrait(DefaultTrait.class) // don't add box if it has a default trait.
                && !member.hasTrait(BoxTrait.class) // don't add box again
-               && !REMOVED_PRIMITIVE_SHAPES.containsKey(target.getId())
                && (target.hasTrait(BoxTrait.class) || PREVIOUSLY_BOXED.contains(target.getId()));
     }
 
@@ -234,10 +220,6 @@ final class ModelUpgrader {
 
     @SuppressWarnings("deprecation")
     private void validateV2Member(MemberShape member) {
-        if (REMOVED_PRIMITIVE_SHAPES.containsKey(member.getTarget())) {
-            emitWhenTargetingRemovedPreludeShape(Severity.ERROR, member);
-        }
-
         if (member.hasTrait(BoxTrait.class)) {
             events.add(ValidationEvent.builder()
                                .id(Validator.MODEL_DEPRECATION)
@@ -247,17 +229,5 @@ final class ModelUpgrader {
                                .message("@box is not supported in Smithy IDL 2.0")
                                .build());
         }
-    }
-
-    private void emitWhenTargetingRemovedPreludeShape(Severity severity, MemberShape member) {
-        events.add(ValidationEvent.builder()
-                           .id(Validator.MODEL_DEPRECATION)
-                           .severity(severity)
-                           .shape(member)
-                           .sourceLocation(member)
-                           .message("This member targets " + member.getTarget() + " which was removed in Smithy "
-                                    + "IDL " + Model.MODEL_VERSION + ". Target "
-                                    + REMOVED_PRIMITIVE_SHAPES.get(member.getTarget()) + " instead ")
-                           .build());
     }
 }

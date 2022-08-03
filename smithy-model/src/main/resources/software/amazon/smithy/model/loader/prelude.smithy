@@ -31,6 +31,48 @@ double Double
 @unitType
 structure Unit {}
 
+@deprecated(
+    message: "Use Boolean instead, and add the @default trait to structure members that targets this shape",
+    since: "2.0"
+)
+boolean PrimitiveBoolean
+
+@deprecated(
+    message: "Use Byte instead, and add the @default trait to structure members that targets this shape",
+    since: "2.0"
+)
+byte PrimitiveByte
+
+@deprecated(
+    message: "Use Short instead, and add the @default trait to structure members that targets this shape",
+    since: "2.0"
+)
+short PrimitiveShort
+
+@deprecated(
+    message: "Use Integer instead, and add the @default trait to structure members that targets this shape",
+    since: "2.0"
+)
+integer PrimitiveInteger
+
+@deprecated(
+    message: "Use Long instead, and add the @default trait to structure members that targets this shape",
+    since: "2.0"
+)
+long PrimitiveLong
+
+@deprecated(
+    message: "Use Float instead, and add the @default trait to structure members that targets this shape",
+    since: "2.0"
+)
+float PrimitiveFloat
+
+@deprecated(
+    message: "Use Double instead, and add the @default trait to structure members that targets this shape",
+    since: "2.0"
+)
+double PrimitiveDouble
+
 /// Makes a shape a trait.
 @trait(
     selector: ":is(simpleType, list, map, structure, union)",

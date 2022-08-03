@@ -4,12 +4,12 @@ namespace smithy.example
 
 structure Foo {
     @default(0)
-    alreadyDefault: Integer,
+    alreadyDefault: PrimitiveInteger,
 
     @required
-    alreadyRequired: Integer,
+    alreadyRequired: PrimitiveInteger,
 
-    boxedMember: Integer,
+    boxedMember: PrimitiveInteger,
 
     previouslyBoxedTarget: Integer,
 

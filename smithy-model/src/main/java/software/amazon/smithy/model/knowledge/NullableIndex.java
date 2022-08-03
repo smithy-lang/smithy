@@ -22,7 +22,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.BoxTrait;
@@ -37,21 +36,12 @@ import software.amazon.smithy.utils.SetUtils;
  * An index that checks if a member is nullable.
  *
  * <p>Note: this index assumes Smithy 2.0 nullability semantics.
- * There is basic support for detecting 1.0 models by detecting
- * when a removed primitive prelude shape is targeted by a member.
- * Beyond that, 1.0 models SHOULD be loaded through a {@link ModelAssembler}
- * to upgrade them to IDL 2.0.
+ * 1.0 models SHOULD be loaded through a {@link ModelAssembler}
+ * to upgrade them in memory to IDL 2.0. Use
+ * {@link #isMemberNullableInV1(MemberShape)} to check if a shape
+ * is nullable according to Smithy 1.0 semantics.
  */
 public class NullableIndex implements KnowledgeIndex {
-
-    private static final Set<ShapeId> V1_REMOVED_PRIMITIVE_SHAPES = SetUtils.of(
-            ShapeId.from("smithy.api#PrimitiveBoolean"),
-            ShapeId.from("smithy.api#PrimitiveByte"),
-            ShapeId.from("smithy.api#PrimitiveShort"),
-            ShapeId.from("smithy.api#PrimitiveInteger"),
-            ShapeId.from("smithy.api#PrimitiveLong"),
-            ShapeId.from("smithy.api#PrimitiveFloat"),
-            ShapeId.from("smithy.api#PrimitiveDouble"));
 
     private static final Set<ShapeType> V1_INHERENTLY_BOXED = SetUtils.of(
             ShapeType.STRING,
@@ -148,12 +138,6 @@ public class NullableIndex implements KnowledgeIndex {
      * {@link ClientOptionalTrait}, while non-authoritative consumers like clients
      * must honor these traits.
      *
-     * <p>This method will also attempt to detect when a member targets a
-     * primitive prelude shape that was removed in Smithy IDL 2.0 to account
-     * for models that were created manually without passing through a
-     * ModelAssembler. If a member targets a removed primitive prelude shape,
-     * the member is considered non-null.
-     *
      * @param member Member to check.
      * @param checkMode The mode used when checking if the member is considered nullable.
      * @return Returns true if the member is optional.
@@ -171,14 +155,7 @@ public class NullableIndex implements KnowledgeIndex {
                 }
 
                 // Structure members that are @required or @default are not nullable.
-                if (member.hasTrait(DefaultTrait.class) || member.hasTrait(RequiredTrait.class)) {
-                    return false;
-                }
-
-                // Detect if the member targets a 1.0 primitive prelude shape and the shape wasn't upgraded.
-                // These removed prelude shapes are impossible to appear in a 2.0 model, so it's safe to
-                // detect them and honor 1.0 semantics here.
-                return !V1_REMOVED_PRIMITIVE_SHAPES.contains(member.getTarget());
+                return !member.hasTrait(DefaultTrait.class) && !member.hasTrait(RequiredTrait.class);
             case UNION:
             case SET:
                 // Union and set members are never null.

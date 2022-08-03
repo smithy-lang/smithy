@@ -41,9 +41,9 @@ public class ModelUpgraderTest {
         assertThat(ShapeId.from("smithy.example#Shorts$nullable2"), ShapeMatcher.memberIsNullable(result));
         assertThat(ShapeId.from("smithy.example#Integers$nullable2"), ShapeMatcher.memberIsNullable(result));
 
-        assertThat(ShapeId.from("smithy.example#Bytes$nullable2"), changedMemberTarget(result, "Byte"));
-        assertThat(ShapeId.from("smithy.example#Shorts$nullable2"), changedMemberTarget(result, "Short"));
-        assertThat(ShapeId.from("smithy.example#Integers$nullable2"), changedMemberTarget(result, "Integer"));
+        assertThat(ShapeId.from("smithy.example#Bytes$nullable2"), targetsShape(result, "PrimitiveByte"));
+        assertThat(ShapeId.from("smithy.example#Shorts$nullable2"), targetsShape(result, "PrimitiveShort"));
+        assertThat(ShapeId.from("smithy.example#Integers$nullable2"), targetsShape(result, "PrimitiveInteger"));
 
         assertThat(ShapeId.from("smithy.example#Bytes$nonNull"), not(ShapeMatcher.memberIsNullable(result)));
         assertThat(ShapeId.from("smithy.example#Shorts$nonNull"), not(ShapeMatcher.memberIsNullable(result)));
@@ -57,7 +57,9 @@ public class ModelUpgraderTest {
         UpgradeTestCase testCase = UpgradeTestCase.createAndValidate("upgrade/mixed-versions");
         ValidatedResult<Model> result = testCase.actualModel;
 
-        assertThat(ShapeId.from("smithy.example#Foo$number"), changedMemberTarget(result, "Integer"));
+        // We don't rewrite or mess with Primitive* shape references. (a previous iteration of IDL 2.0
+        // attempted to do shape rewrites, but it ended up causing issues with older models).
+        assertThat(ShapeId.from("smithy.example#Foo$number"), targetsShape(result, "PrimitiveInteger"));
         assertThat(ShapeId.from("smithy.example#Foo$number"), addedDefaultTrait(result));
     }
 
@@ -66,13 +68,13 @@ public class ModelUpgraderTest {
         UpgradeTestCase testCase = UpgradeTestCase.createAndValidate("upgrade/primitives-in-v2");
         ValidatedResult<Model> result = testCase.actualModel;
 
-        assertThat(ShapeId.from("smithy.example#Bad$boolean"), shapeTargetsInvalidPrimitive(result));
-        assertThat(ShapeId.from("smithy.example#Bad$byte"), shapeTargetsInvalidPrimitive(result));
-        assertThat(ShapeId.from("smithy.example#Bad$short"), shapeTargetsInvalidPrimitive(result));
-        assertThat(ShapeId.from("smithy.example#Bad$integer"), shapeTargetsInvalidPrimitive(result));
-        assertThat(ShapeId.from("smithy.example#Bad$long"), shapeTargetsInvalidPrimitive(result));
-        assertThat(ShapeId.from("smithy.example#Bad$float"), shapeTargetsInvalidPrimitive(result));
-        assertThat(ShapeId.from("smithy.example#Bad$double"), shapeTargetsInvalidPrimitive(result));
+        assertThat(ShapeId.from("smithy.example#Bad$boolean"), shapeTargetsDeprecatedPrimitive(result));
+        assertThat(ShapeId.from("smithy.example#Bad$byte"), shapeTargetsDeprecatedPrimitive(result));
+        assertThat(ShapeId.from("smithy.example#Bad$short"), shapeTargetsDeprecatedPrimitive(result));
+        assertThat(ShapeId.from("smithy.example#Bad$integer"), shapeTargetsDeprecatedPrimitive(result));
+        assertThat(ShapeId.from("smithy.example#Bad$long"), shapeTargetsDeprecatedPrimitive(result));
+        assertThat(ShapeId.from("smithy.example#Bad$float"), shapeTargetsDeprecatedPrimitive(result));
+        assertThat(ShapeId.from("smithy.example#Bad$double"), shapeTargetsDeprecatedPrimitive(result));
     }
 
     @Test
@@ -88,9 +90,9 @@ public class ModelUpgraderTest {
         UpgradeTestCase testCase = UpgradeTestCase.createAndValidate("upgrade/does-not-introduce-conflict");
         ValidatedResult<Model> result = testCase.actualModel;
 
-        assertThat(ShapeId.from("smithy.example#Foo$alreadyDefault"), changedMemberTarget(result, "Integer"));
-        assertThat(ShapeId.from("smithy.example#Foo$alreadyRequired"), changedMemberTarget(result, "Integer"));
-        assertThat(ShapeId.from("smithy.example#Foo$boxedMember"), changedMemberTarget(result, "Integer"));
+        assertThat(ShapeId.from("smithy.example#Foo$alreadyDefault"), targetsShape(result, "PrimitiveInteger"));
+        assertThat(ShapeId.from("smithy.example#Foo$alreadyRequired"), targetsShape(result, "PrimitiveInteger"));
+        assertThat(ShapeId.from("smithy.example#Foo$boxedMember"), targetsShape(result, "PrimitiveInteger"));
         assertThat(ShapeId.from("smithy.example#Foo$boxedMember"), not(addedDefaultTrait(result)));
         assertThat(ShapeId.from("smithy.example#Foo$previouslyBoxedTarget"), not(addedDefaultTrait(result)));
         assertThat(ShapeId.from("smithy.example#Foo$explicitlyBoxedTarget"), not(addedDefaultTrait(result)));
@@ -159,12 +161,12 @@ public class ModelUpgraderTest {
         }
     }
 
-    private static Matcher<ShapeId> changedMemberTarget(ValidatedResult<Model> result, String newShapeName) {
+    private static Matcher<ShapeId> targetsShape(ValidatedResult<Model> result, String shapeName) {
         return ShapeMatcher.builderFor(MemberShape.class, result)
-                .description("Changed member to target " + newShapeName + " with a warning")
-                .addAssertion(member -> member.getTarget().equals(ShapeId.fromParts(Prelude.NAMESPACE, newShapeName)),
+                .description("Targets " + shapeName)
+                .addAssertion(member -> member.getTarget()
+                                      .equals(ShapeId.fromOptionalNamespace(Prelude.NAMESPACE, shapeName)),
                               member -> "targeted " + member.getTarget())
-                .addEventAssertion(Validator.MODEL_DEPRECATION, Severity.WARNING, newShapeName + " instead")
                 .build();
     }
 
@@ -177,13 +179,14 @@ public class ModelUpgraderTest {
                 .build();
     }
 
-    private static Matcher<ShapeId> shapeTargetsInvalidPrimitive(ValidatedResult<Model> result) {
+    private static Matcher<ShapeId> shapeTargetsDeprecatedPrimitive(ValidatedResult<Model> result) {
         return ShapeMatcher.builderFor(MemberShape.class, result)
-                .description("shape targets a removed primitive shape")
+                .description("shape targets a deprecated primitive shape and emits a warning")
                 .addAssertion(member -> member.getTarget().getName().startsWith("Primitive")
                                         && member.getTarget().getNamespace().equals(Prelude.NAMESPACE),
                               member -> "member does not target a primitive prelude shape")
-                .addEventAssertion(Validator.MODEL_DEPRECATION, Severity.ERROR, "removed in Smithy IDL 2.0")
+                .addEventAssertion("DeprecatedShape", Severity.WARNING,
+                                   "and add the @default trait to structure members that targets this shape")
                 .build();
     }
 
