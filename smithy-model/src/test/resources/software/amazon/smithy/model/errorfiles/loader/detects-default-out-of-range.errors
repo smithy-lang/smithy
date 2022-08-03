@@ -1,11 +1,7 @@
 [WARNING] -: Smithy IDL 1.0 is deprecated. Please upgrade to 2.0. | ModelDeprecation
 [WARNING] smithy.example#Integers$noRange: Add the @default trait to this member to make it forward compatible with Smithy IDL 2.0 | ModelDeprecation
-[WARNING] smithy.example#Integers$noRange: This member targets smithy.api#PrimitiveInteger which was removed in Smithy IDL 2.0. Target smithy.api#Integer instead  | ModelDeprecation
 [WARNING] smithy.example#Integers$valid: Add the @default trait to this member to make it forward compatible with Smithy IDL 2.0 | ModelDeprecation
-[WARNING] smithy.example#Integers$valid: This member targets smithy.api#PrimitiveInteger which was removed in Smithy IDL 2.0. Target smithy.api#Integer instead  | ModelDeprecation
 [WARNING] smithy.example#Integers$invalidMin: Add the @default trait to this member to make it forward compatible with Smithy IDL 2.0 | ModelDeprecation
 [WARNING] smithy.example#Integers$invalidMin: Cannot add the @default trait to this member due to a minimum range constraint. | ModelDeprecation
-[WARNING] smithy.example#Integers$invalidMin: This member targets smithy.api#PrimitiveInteger which was removed in Smithy IDL 2.0. Target smithy.api#Integer instead  | ModelDeprecation
 [WARNING] smithy.example#Integers$invalidMax: Add the @default trait to this member to make it forward compatible with Smithy IDL 2.0 | ModelDeprecation
 [WARNING] smithy.example#Integers$invalidMax: Cannot add the @default trait to this member due to a maximum range constraint. | ModelDeprecation
-[WARNING] smithy.example#Integers$invalidMax: This member targets smithy.api#PrimitiveInteger which was removed in Smithy IDL 2.0. Target smithy.api#Integer instead  | ModelDeprecation

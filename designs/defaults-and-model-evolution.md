@@ -135,7 +135,7 @@ This proposal:
 1. Introduces a `@default` trait
 2. Introduces a `@clientOptional` trait
 3. Removes the `@box` trait
-4. Removes the `Primitive*` shapes from the prelude
+4. Deprecates the `Primitive*` shapes from the prelude
 5. Make the optionality of a structure completely controlled by members rather
    than the shape targeted by a member
 
@@ -195,19 +195,11 @@ optionality controls from shapes to structure members. Smithy IDL 2.0 will:
    version bump of the service.
 3. Remove the `@box` trait from the Smithy 2.0 prelude and fail to load models
    that contain the `@box` trait.
-4. Remove the `PrimitiveBoolean`, `PrimitiveShort`, `PrimitiveInteger`,
-   `PrimitiveLong`, `PrimitiveFloat`, and `PrimitiveDouble` shapes from the
-   Smithy 2.0 prelude. IDL 2.0 models will fail if they use these shapes.
-5. Update the Smithy IDL 2.0 model loader implementation to be able to load
-   Smithy 1.0 models alongside Smithy 2.0 models.
-   1. Inject an appropriate `@default` trait on structure members that targeted
-      shapes with a default zero value and were not marked with the `@box`
-      trait.
-   2. Replace the `@box` trait with `@clientOptional` on structure members.
-   3. Remove the `@box` trait from non-members.
-   4. Rewrite members that target one of the removed Primitive* shapes to
-      target the corresponding non-primitive shape in the prelude (for example,
-      `PrimitiveInteger` is rewritten to target `Integer`).
+4. Deprecate the `PrimitiveBoolean`, `PrimitiveShort`, `PrimitiveInteger`,
+   `PrimitiveLong`, `PrimitiveFloat`, and `PrimitiveDouble` shapes in the
+   Smithy 2.0 prelude. These shapes are treated exactly the same as their
+   prelude counterparts not prefixed with "Primitive", so there is no need to
+   use these shapes.
 
 
 ## `@default` trait

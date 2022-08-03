@@ -232,21 +232,6 @@ public class NullableIndexTest {
     }
 
     @Test
-    public void detectsPreviousPrimitivePreludeShapes() {
-        IntegerShape integer = IntegerShape.builder()
-                .id("smithy.api#PrimitiveInteger")
-                .build();
-        StructureShape struct = StructureShape.builder()
-                .id("smithy.example#Struct")
-                .addMember("foo", integer.getId())
-                .build();
-        Model model = Model.builder().addShapes(integer, struct).build();
-        NullableIndex index = NullableIndex.of(model);
-
-        assertThat(index.isMemberNullable(struct.getMember("foo").get()), is(false));
-    }
-
-    @Test
     public void worksWithV1NullabilityRulesForInteger() {
         // In Smithy v1, integer was non-nullable by default.
         IntegerShape integer = IntegerShape.builder()
