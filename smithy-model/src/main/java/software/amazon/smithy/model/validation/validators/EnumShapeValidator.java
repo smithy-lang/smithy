@@ -23,6 +23,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -60,16 +62,16 @@ public final class EnumShapeValidator extends AbstractValidator {
     private void validateEnumShape(List<ValidationEvent> events, EnumShape shape) {
         Set<String> values = new HashSet<>();
         for (MemberShape member : shape.members()) {
-            Optional<String> value = member.expectTrait(EnumValueTrait.class).getStringValue();
+            EnumValueTrait trait = member.expectTrait(EnumValueTrait.class);
+            Optional<String> value = trait.getStringValue();
             if (!value.isPresent()) {
                 events.add(error(member, member.expectTrait(EnumValueTrait.class),
-                        "The enumValue trait must use the string option when applied to enum shapes."));
+                                 "enum members can only be assigned string values, but found: "
+                                 + Node.printJson(trait.toNode())));
             } else {
                 if (!values.add(value.get())) {
-                    events.add(error(member, String.format(
-                            "Multiple enum members found with duplicate value `%s`",
-                            value.get()
-                    )));
+                    events.add(error(member, String.format("Multiple enum members found with duplicate value `%s`",
+                                                           value.get())));
                 }
                 if (value.get().equals("")) {
                     events.add(error(member, "enum values may not be empty."));
@@ -82,25 +84,49 @@ public final class EnumShapeValidator extends AbstractValidator {
     private void validateIntEnumShape(List<ValidationEvent> events, IntEnumShape shape) {
         Set<Integer> values = new HashSet<>();
         for (MemberShape member : shape.members()) {
+            // intEnum must all have the EnumValueTrait.
             if (!member.hasTrait(EnumValueTrait.ID)) {
                 events.add(missingIntEnumValue(member, member));
-            } else if (!member.expectTrait(EnumValueTrait.class).getIntValue().isPresent()) {
-                events.add(missingIntEnumValue(member, member.expectTrait(EnumValueTrait.class)));
-            } else {
-                int value = member.expectTrait(EnumValueTrait.class).getIntValue().get();
-                if (!values.add(value)) {
-                    events.add(error(member, String.format(
-                            "Multiple enum members found with duplicate value `%s`",
-                            value
-                    )));
-                }
+                continue;
             }
+
+            EnumValueTrait trait = member.expectTrait(EnumValueTrait.class);
+
+            // The EnumValueTrait must point to a number.
+            if (!trait.getIntValue().isPresent()) {
+                ValidationEvent event = error(member, trait, "intEnum members require integer values, but found: "
+                                                             + Node.printJson(trait.toNode()));
+                events.add(event);
+                continue;
+            }
+
+            NumberNode number = trait.toNode().asNumberNode().get();
+
+            // Validate the it is an integer.
+            if (number.isFloatingPointNumber()) {
+                events.add(error(member, trait, "intEnum members do not support floating point values: "
+                                                + number.getValue()));
+                continue;
+            }
+
+            long longValue = number.getValue().longValue();
+            if (longValue > Integer.MAX_VALUE || longValue < Integer.MIN_VALUE) {
+                events.add(error(member, trait, "intEnum members must fit within an integer, but found: "
+                                                + longValue));
+                continue;
+            }
+
+            if (!values.add(number.getValue().intValue())) {
+                events.add(error(member, String.format("Multiple intEnum members found with duplicate value `%d`",
+                                                       number.getValue().intValue())));
+            }
+
             validateEnumMemberName(events, member);
         }
     }
 
     private ValidationEvent missingIntEnumValue(Shape shape, FromSourceLocation sourceLocation) {
-        return error(shape, sourceLocation, "intEnum members must have the enumValue trait with the `int` member set");
+        return error(shape, sourceLocation, "intEnum members must be assigned an integer value");
     }
 
     private void validateEnumMemberName(List<ValidationEvent> events, MemberShape member) {

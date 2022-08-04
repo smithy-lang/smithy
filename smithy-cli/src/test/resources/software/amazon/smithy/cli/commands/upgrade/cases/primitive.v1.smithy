@@ -11,8 +11,7 @@ structure PrimitiveBearer {
     long: PrimitiveLong,
     short: PrimitiveShort,
 
-    handlesComments: // Nobody actually does this right?
-        PrimitiveShort,
+    handlesComments: PrimitiveShort, // comment
 
     @required
     handlesRequired: PrimitiveLong,

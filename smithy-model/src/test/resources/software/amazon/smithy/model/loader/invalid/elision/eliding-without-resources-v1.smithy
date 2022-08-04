@@ -1,4 +1,4 @@
-// Members can only elide targets in IDL version 2 or later. Attempted to elide a target with version `1.0`.
+// Members can only elide targets in IDL version 2 or later
 $version: "1.0"
 
 namespace smithy.example

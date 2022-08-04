@@ -16,7 +16,6 @@
 package software.amazon.smithy.model.traits;
 
 import java.util.Optional;
-import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NumberNode;
@@ -31,19 +30,14 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class EnumValueTrait extends AbstractTrait implements ToSmithyBuilder<EnumValueTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.api#enumValue");
 
-    private final String string;
-    private final Integer integer;
+    private final Node value;
 
     private EnumValueTrait(Builder builder) {
         super(ID, builder.sourceLocation);
-        string = builder.string;
-        integer = builder.integer;
-        if (string == null && integer == null) {
-            throw new SourceException(
-                    "Either a string value or an integer value must be set for the enumValue trait.",
-                    getSourceLocation()
-            );
+        if (builder.value == null) {
+            throw new IllegalStateException("No integer or string value set on EnumValueTrait");
         }
+        value = builder.value;
     }
 
     /**
@@ -52,7 +46,7 @@ public final class EnumValueTrait extends AbstractTrait implements ToSmithyBuild
      * @return Optionally returns the string value.
      */
     public Optional<String> getStringValue() {
-        return Optional.ofNullable(string);
+        return value.asStringNode().map(StringNode::getValue);
     }
 
     /**
@@ -73,7 +67,7 @@ public final class EnumValueTrait extends AbstractTrait implements ToSmithyBuild
      * @return Returns the set int value.
      */
     public Optional<Integer> getIntValue() {
-        return Optional.ofNullable(integer);
+        return value.asNumberNode().map(NumberNode::getValue).map(Number::intValue);
     }
 
     /**
@@ -96,41 +90,20 @@ public final class EnumValueTrait extends AbstractTrait implements ToSmithyBuild
         @Override
         public Trait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
-            value.asStringNode().ifPresent(node -> builder.stringValue(node.getValue()));
-            value.asNumberNode().ifPresent(node -> {
-                if (node.isNaturalNumber()) {
-                    builder.intValue(node.getValue().intValue());
-                } else {
-                    throw new SourceException(
-                            "Enum values may not use fractional numbers.",
-                            value.getSourceLocation()
-                    );
-                }
-            });
-            EnumValueTrait result = builder.build();
-            result.setNodeCache(value);
-            return result;
+            builder.value = value;
+            return builder.build();
         }
     }
 
     @Override
     protected Node createNode() {
-        if (getIntValue().isPresent()) {
-            return new NumberNode(integer, getSourceLocation());
-        } else {
-            return new StringNode(string, getSourceLocation());
-
-        }
+        return value;
     }
 
     @Override
     public SmithyBuilder<EnumValueTrait> toBuilder() {
         Builder builder = builder().sourceLocation(getSourceLocation());
-        if (getIntValue().isPresent()) {
-            builder.intValue(getIntValue().get());
-        } else if (getStringValue().isPresent()) {
-            builder.stringValue(getStringValue().get());
-        }
+        builder.value = value;
         return builder;
     }
 
@@ -139,8 +112,7 @@ public final class EnumValueTrait extends AbstractTrait implements ToSmithyBuild
     }
 
     public static final class Builder extends AbstractTraitBuilder<EnumValueTrait, Builder> {
-        private String string;
-        private Integer integer;
+        private Node value;
 
         @Override
         public EnumValueTrait build() {
@@ -148,14 +120,12 @@ public final class EnumValueTrait extends AbstractTrait implements ToSmithyBuild
         }
 
         public Builder stringValue(String string) {
-            this.string = string;
-            this.integer = null;
+            this.value = Node.from(string);
             return this;
         }
 
         public Builder intValue(int integer) {
-            this.integer = integer;
-            this.string = null;
+            this.value = Node.from(integer);
             return this;
         }
     }
