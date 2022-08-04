@@ -55,7 +55,7 @@ The service shape supports the following properties:
         contained in the service, and map values are the disambiguated shape
         names to use in the context of the service. Each given shape ID MUST
         reference a shape contained in the closure of the service. Each given
-        map value MUST match the :token:`smithy:identifier` production used for
+        map value MUST match the :token:`smithy:Identifier` production used for
         shape IDs. Renaming a shape *does not* give the shape a new shape ID.
 
         * No renamed shape name can case-insensitively match any other renamed

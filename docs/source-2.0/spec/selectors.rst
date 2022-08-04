@@ -287,7 +287,7 @@ Numeric comparators
 -------------------
 
 Relative comparators only match if both values being compared contain valid
-:token:`smithy:number` productions when converted to a string.
+:token:`smithy:Number` productions when converted to a string.
 
 .. list-table::
     :header-rows: 1
@@ -395,7 +395,7 @@ The ``id`` attribute can be used as an object, and it supports the
 following properties.
 
 ``namespace``
-    Gets the :token:`smithy:namespace` part of a shape ID.
+    Gets the :token:`smithy:Namespace` part of a shape ID.
 
     The following selector matches shapes in the ``foo.baz`` namespace:
 
@@ -547,7 +547,7 @@ to a shape. The ``trait`` attribute supports the following properties:
 
         [trait|deprecated]
 
-    Traits are converted to their serialized :token:`node <smithy:node_value>` form
+    Traits are converted to their serialized :token:`node <smithy:NodeValue>` form
     when matching against their values. Only string, boolean, and numeric
     values can be compared using a :ref:`string comparator <string-comparators>`.
     Boolean values are converted to "true" or "false". Numeric values are
@@ -884,7 +884,7 @@ Context values
 The first part of a scoped attribute selector is the attribute that is scoped
 for the expression, followed by ``:``. The scoped attribute is accessed using
 a :token:`context value <selectors:selector_context_value>` in the form of
-``@{`` :token:`smithy:identifier` ``}``.
+``@{`` :token:`smithy:Identifier` ``}``.
 
 In the following selector, the ``trait|range`` attribute is used as the scoped
 attribute of the expression, and the selector matches shapes marked with
@@ -1615,20 +1615,20 @@ Selectors are defined by the following ABNF_ grammar.
                                          :/ `selector_forward_recursive_neighbor`
                                          :/ `selector_variable_set`
                                          :/ `selector_variable_get`
-    selector_shape_types                 :"*" / `smithy:identifier`
+    selector_shape_types                 :"*" / `smithy:Identifier`
     selector_forward_undirected_neighbor :">"
     selector_reverse_undirected_neighbor :"<"
     selector_forward_directed_neighbor   :"-[" `selector_directed_relationships` "]->"
     selector_reverse_directed_neighbor   :"<-[" selector_directed_relationships "]-"
-    selector_directed_relationships      :`smithy:identifier` *("," `smithy:identifier`)
+    selector_directed_relationships      :`smithy:Identifier` *("," `smithy:Identifier`)
     selector_forward_recursive_neighbor  :"~>"
     selector_attr                        :"[" `selector_key` [selector_attr_comparison] "]"
     selector_attr_comparison             :`selector_comparator` `selector_attr_values` ["i"]
-    selector_key                         :`smithy:identifier` ["|" `selector_path`]
+    selector_key                         :`smithy:Identifier` ["|" `selector_path`]
     selector_path                        :`selector_path_segment` *("|" `selector_path_segment`)
     selector_path_segment                :`selector_value` / `selector_function_property`
-    selector_value                       :`selector_text` / `smithy:number` / `smithy:root_shape_id`
-    selector_function_property           :"(" `smithy:identifier` ")"
+    selector_value                       :`selector_text` / `smithy:Number` / `smithy:RootShapeId`
+    selector_function_property           :"(" `smithy:Identifier` ")"
     selector_attr_values                 :`selector_value` *("," `selector_value`)
     selector_comparator                  :`selector_string_comparator`
                                          :/ `selector_numeric_comparator`
@@ -1636,22 +1636,22 @@ Selectors are defined by the following ABNF_ grammar.
     selector_string_comparator           :"^=" / "$=" / "*=" / "!=" / "=" / "?="
     selector_numeric_comparator          :">=" / ">" / "<=" / "<"
     selector_projection_comparator       :"{=}" / "{!=}" / "{<}" / "{<<}"
-    selector_absolute_root_shape_id      :`smithy:namespace` "#" `smithy:identifier`
+    selector_AbsoluteRootShapeId         :`smithy:Namespace` "#" `smithy:Identifier`
     selector_scoped_attr                 :"[@" [`selector_key`] ":" `selector_scoped_assertions` "]"
     selector_scoped_assertions           :`selector_scoped_assertion` *("&&" `selector_scoped_assertion`)
     selector_scoped_assertion            :`selector_scoped_value` `selector_comparator` `selector_scoped_values` ["i"]
     selector_scoped_value                :`selector_value` / `selector_context_value`
     selector_context_value               :"@{" `selector_path` "}"
     selector_scoped_values               :`selector_scoped_value` *("," `selector_scoped_value`)
-    selector_function                    :":" `smithy:identifier` "(" `selector_function_args` ")"
+    selector_function                    :":" `smithy:Identifier` "(" `selector_function_args` ")"
     selector_function_args               :`selector` *("," `selector`)
     selector_text                        :`selector_single_quoted_text` / `selector_double_quoted_text`
     selector_single_quoted_text          :"'" 1*`selector_single_quoted_char` "'"
     selector_double_quoted_text          :DQUOTE 1*`selector_double_quoted_char` DQUOTE
     selector_single_quoted_char          :%x20-26 / %x28-5B / %x5D-10FFFF ; Excludes (')
     selector_double_quoted_char          :%x20-21 / %x23-5B / %x5D-10FFFF ; Excludes (")
-    selector_variable_set                :"$" `smithy:identifier` "(" selector ")"
-    selector_variable_get                :"${" `smithy:identifier` "}"
+    selector_variable_set                :"$" `smithy:Identifier` "(" selector ")"
+    selector_variable_get                :"${" `smithy:Identifier` "}"
 
 .. _ABNF: https://tools.ietf.org/html/rfc5234
 .. _set: https://en.wikipedia.org/wiki/Set_(abstract_data_type)

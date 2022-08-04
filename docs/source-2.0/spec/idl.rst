@@ -20,7 +20,7 @@ The Smithy IDL is made up of 3, ordered sections, each of which is optional:
 2. **Metadata section**; applies metadata to the entire model.
 3. **Shape section**; where shapes and traits are defined. A namespace MUST
    be defined before any shapes or traits can be defined.
-   :token:`smithy:use_statement`\s can be defined after a namespace and before shapes
+   :token:`smithy:UseStatement`\s can be defined after a namespace and before shapes
    or traits to refer to shapes in other namespaces using a shorter name.
 
 The following example defines a model file with each section:
@@ -88,136 +88,144 @@ Lexical notes
 Smithy IDL ABNF
 ---------------
 
-The Smithy IDL is defined by the following ABNF:
+The Smithy IDL is defined by the following ABNF which uses case-sensitive
+string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
 
 .. productionlist:: smithy
-    idl:`ws` `control_section` `metadata_section` `shape_section`
+    idl:*`WS` `ControlSection` `MetadataSection` `ShapeSection`
 
 .. rubric:: Whitespace
 
 .. productionlist:: smithy
-    ws      :*(`sp` / `newline` / `comment` / ",") ; whitespace
-    sp      :*(%x20  / %x09) ; " " and \t
-    br      :`sp` (`comment` / `newline`) `sp` ; break
-    newline :%x0A / %x0D.0A ; \n and \r\n
+    WS   :1*(`SP` / `NL` / `Comment` / ",") ; whitespace
+    SP   :1*(%x20 / %x09) ; one or more spaces or tabs
+    NL   :%x0A / %x0D.0A ; Newline: \n and \r\n
+    NotNL: %x09 / %x20-10FFFF ; Any character except newline
+    BR   :*`SP` 1*(`Comment` / `NL`) *`WS`; line break followed by whitespace
 
 .. rubric:: Comments
 
 .. productionlist:: smithy
-    comment: `documentation_comment` / `line_comment`
-    documentation_comment:"///" *`not_newline` `br`
-    line_comment: "//" *`not_newline` `newline`
-    not_newline: %x09 / %x20-10FFFF ; Any character except newline
+    Comment              : `DocumentationComment` / `LineComment`
+    DocumentationComment :"///" *`NotNL` `NL`
+    LineComment          : "//" *`NotNL` `NL`
 
 .. rubric:: Control
 
 .. productionlist:: smithy
-    control_section   :*(`control_statement`)
-    control_statement :"$" `ws` `node_object_key` `ws` ":" `ws` `node_value` `ws`
+    ControlSection   :*(`ControlStatement`)
+    ControlStatement :"$" `NodeObjectKey` *`SP` ":" *`SP` `NodeValue` `BR`
 
 .. rubric:: Metadata
 
 .. productionlist:: smithy
-    metadata_section   :*(`metadata_statement`)
-    metadata_statement :"metadata" `ws` `node_object_key` `ws` "=" `ws` `node_value` `ws`
+    MetadataSection   :*(`MetadataStatement`)
+    MetadataStatement :%s"metadata" `SP` `NodeObjectKey` *`SP` "=" *`SP` `NodeValue` `BR`
 
 .. rubric:: Node values
 
 .. productionlist:: smithy
-    node_value :`node_array`
-               :/ `node_object`
-               :/ `number`
-               :/ `node_keywords`
-               :/ `node_string_value`
-    node_array           :"[" `ws` *(`node_value` `ws`) "]"
-    node_object          :"{" `ws` *(`node_object_kvp` `ws`) "}"
-    node_object_kvp      :`node_object_key` `ws` ":" `ws` `node_value`
-    node_object_key      :`quoted_text` / `identifier`
-    number              :[`minus`] `int` [`frac`] [`exp`]
-    decimal_point       :%x2E ; .
-    digit1_9            :%x31-39 ; 1-9
-    e                   :%x65 / %x45 ; e E
-    exp                 :`e` [`minus` / `plus`] 1*DIGIT
-    frac                :`decimal_point` 1*DIGIT
-    int                 :`zero` / (`digit1_9` *DIGIT)
-    minus               :%x2D ; -
-    plus                :%x2B ; +
-    zero                :%x30 ; 0
-    node_keywords: "true" / "false" / "null"
-    node_string_value   :`shape_id` / `text_block` / `quoted_text`
-    quoted_text         :DQUOTE *`quoted_char` DQUOTE
-    quoted_char         :%x20-21        ; space - "!"
-                        :/ %x23-5B        ; "#" - "["
-                        :/ %x5D-10FFFF    ; "]"+
-                        :/ `escaped_char`
-                        :/ `preserved_double`
-    escaped_char        :`escape` (`escape` / "'" / DQUOTE / "b"
-                        :            / "f" / "n" / "r" / "t" / "/" / `unicode_escape`)
-    unicode_escape      :"u" `hex` `hex` `hex` `hex`
-    hex                 : DIGIT / %x41-46 / %x61-66
-    preserved_double    :`escape` (%x20-21 / %x23-5B / %x5D-10FFFF)
-    escape              :%x5C ; backslash
-    text_block          :`three_dquotes` `br` *`quoted_char` `three_dquotes`
-    three_dquotes       :DQUOTE DQUOTE DQUOTE
+    NodeValue           :`NodeArray`
+                        :/ `NodeObject`
+                        :/ `Number`
+                        :/ `NodeKeywords`
+                        :/ `NodeStringValue`
+    NodeArray           :"[" *`WS` *(`NodeValue` *`WS`) "]"
+    NodeObject          :"{" *`WS` [`NodeObjectKvp` *(`WS` `NodeObjectKvp`)] *`WS` "}"
+    NodeObjectKvp       :`NodeObjectKey` *`WS` ":" *`WS` `NodeValue`
+    NodeObjectKey       :`QuotedText` / `Identifier`
+    Number              :[`Minus`] `Int` [`Frac`] [`Exp`]
+    DecimalPoint        :%x2E ; .
+    DigitOneToNine      :%x31-39 ; 1-9
+    E                   :%x65 / %x45 ; e E
+    Exp                 :`E` [`Minus` / `Plus`] 1*DIGIT
+    Frac                :`DecimalPoint` 1*DIGIT
+    Int                 :`Zero` / (`DigitOneToNine` *DIGIT)
+    Minus               :%x2D ; -
+    Plus                :%x2B ; +
+    Zero                :%x30 ; 0
+    NodeKeywords        :%s"true" / %s"false" / %s"null"
+    NodeStringValue     :`ShapeId` / `TextBlock` / `QuotedText`
+    QuotedText          :DQUOTE *`QuotedChar` DQUOTE
+    QuotedChar          :%x20-21     ; space - "!"
+                        :/ %x23-5B     ; "#" - "["
+                        :/ %x5D-10FFFF ; "]"+
+                        :/ `EscapedChar`
+                        :/ `PreservedDouble`
+                        :/ `NL`
+    EscapedChar         :`Escape` (`Escape` / "'" / DQUOTE / %s"b"
+                        :          / %s"f" / %s"n" / %s"r" / %s"t"
+                        :          / "/" / `UnicodeEscape`)
+    UnicodeEscape       :%s"u" `Hex` `Hex` `Hex` `Hex`
+    Hex                 :DIGIT / %x41-46 / %x61-66
+    PreservedDouble     :`Escape` (%x20-21 / %x23-5B / %x5D-10FFFF)
+    Escape              :%x5C ; backslash
+    TextBlock           :`ThreeDquotes` *`SP` `NL` *`QuotedChar` `ThreeDquotes`
+    ThreeDquotes        :DQUOTE DQUOTE DQUOTE
 
 .. rubric:: Shapes
 
 .. productionlist:: smithy
-    shape_section :[`namespace_statement` [`use_section`] [`shape_statements`]]
-    namespace_statement :"namespace" `ws` `namespace` `ws`
-    use_section   :*(`use_statement`)
-    use_statement :"use" `ws` `absolute_root_shape_id` `ws`
-    shape_statements             :*(`shape_statement` / `apply_statement`)
-    shape_statement              :`trait_statements` `shape_body` `ws`
-    shape_body                   :`simple_shape_statement`
-                                 :/ `enum_shape_statement`
-                                 :/ `list_statement`
-                                 :/ `set_statement`
-                                 :/ `map_statement`
-                                 :/ `structure_statement`
-                                 :/ `union_statement`
-                                 :/ `service_statement`
-                                 :/ `operation_statement`
-                                 :/ `resource_statement`
-    mixins                 :`sp` "with" `ws` "[" 1*(`ws` `shape_id`) `ws` "]"
-    simple_shape_statement :`simple_type_name` `ws` `identifier` [`mixins`]
-    simple_type_name       :"blob" / "boolean" / "document" / "string"
-                           :/ "byte" / "short" / "integer" / "long"
-                           :/ "float" / "double" / "bigInteger"
-                           :/ "bigDecimal" / "timestamp"
-    enum_shape_statement   :`enum_type_name` `ws` `identifier` [`mixins`] `ws` `enum_shape_members`
-    enum_type_name         :"enum" / "intEnum"
-    enum_shape_members     :"{" `ws` 1*(`trait_statements` `identifier` [`value_assignment`] `ws`) "}"
-    value_assignment       :*`sp` "=" `ws` `node_value`
-    shape_members          :"{" `ws` *(`trait_statements` `shape_member` `ws`) "}"
-    shape_member           :(`shape_member_kvp` / `shape_member_elided`) [`value_assignment`]
-    shape_member_kvp       :`identifier` `ws` ":" `ws` `shape_id`
-    shape_member_elided    :"$" `identifier`
-    list_statement         :"list" `ws` `identifier` [`mixins`] `ws` `shape_members`
-    set_statement          :"set" `ws` `identifier` [`mixins`] `ws` `shape_members`
-    map_statement          :"map" `ws` `identifier` [`mixins`] `ws` `shape_members`
-    structure_statement    :"structure" `ws` `identifier` ["for" `shape_id`] [`mixins`] `ws` `shape_members`
-    union_statement        :"union" `ws` `identifier` [`mixins`] `ws` `shape_members`
-    service_statement      :"service" `ws` `identifier` [`mixins`] `ws` `node_object`
-    operation_statement    :"operation" `ws` `identifier` [`mixins`] `ws` `inlineable_properties`
-    inlineable_properties  :"{" *(`inlineable_property` `ws`) `ws` "}"
-    inlineable_property    :`node_object_kvp` / `inline_structure`
-    inline_structure       :`node_object_key` `ws` ":=" `ws` `inline_structure_value`
-    inline_structure_value :`trait_statements` [`mixins` ws] shape_members
-    resource_statement     :"resource" `ws` `identifier` [`mixins`] `ws` `node_object`
+    ShapeSection          :[`NamespaceStatement` `UseSection` `ShapeStatements`]
+    NamespaceStatement    :%s"namespace" `SP` `Namespace` `BR`
+    UseSection            :*(`UseStatement`)
+    UseStatement          :%s"use" `SP` `AbsoluteRootShapeId` `BR`
+    ShapeStatements       :*(`ShapeStatement` / `ApplyStatement`)
+    ShapeStatement        :`TraitStatements` `ShapeBody` `BR`
+    ShapeBody             :`SimpleShapeStatement`
+                          :/ `EnumShapeStatement`
+                          :/ `ListStatement`
+                          :/ `MapStatement`
+                          :/ `StructureStatement`
+                          :/ `UnionStatement`
+                          :/ `ServiceStatement`
+                          :/ `OperationStatement`
+                          :/ `ResourceStatement`
+    SimpleShapeStatement  :`SimpleTypeName` `SP` `Identifier` [`Mixins`]
+    SimpleTypeName        :%s"blob" / %s"boolean" / %s"document" / %s"string"
+                          :/ %s"byte" / %s"short" / %s"integer" / %s"long"
+                          :/ %s"float" / %s"double" / %s"bigInteger"
+                          :/ %s"bigDecimal" / %s"timestamp"
+    Mixins                :*`SP` %s"with" *`WS` "[" 1*(*`WS` `ShapeId`) *`WS` "]"
+    EnumShapeStatement    :`EnumTypeName` `SP` `Identifier` [`Mixins`] *`WS` `EnumShapeMembers`
+    EnumTypeName          :%s"enum" / %s"intEnum"
+    EnumShapeMembers      :"{" *`WS` 1*(`TraitStatements` `Identifier` [`ValueAssignment`] `*WS`) "}"
+    ValueAssignment       :*`SP` "=" *`SP` `NodeValue` `BR`
+    ShapeMembers          :"{" *`WS` *(`TraitStatements` `ShapeMember` *`WS`) "}"
+    ShapeMember           :(`ShapeMemberKvp` / `ShapeMemberElided`) [`ValueAssignment`]
+    ShapeMemberKvp        :`Identifier` *`WS` ":" *`WS` `ShapeId`
+    ShapeMemberElided     :"$" `Identifier`
+    ListStatement         :%s"list" `SP` `Identifier` [`Mixins`] *`WS` `ShapeMembers`
+    MapStatement          :%s"map" `SP` `Identifier` [`Mixins`] *`WS` `ShapeMembers`
+    StructureStatement    :%s"structure" `SP` `Identifier` [`StructureResource`]
+                          :        [`Mixins`] *`WS` `ShapeMembers`
+    StructureResource     :`SP` %s"for" `SP` `ShapeId`
+    UnionStatement        :%s"union" `SP` `Identifier` [`Mixins`] *`WS` `ShapeMembers`
+    ServiceStatement      :%s"service" `SP` `Identifier` [`Mixins`] *`WS` `NodeObject`
+    ResourceStatement     :%s"resource" `SP` `Identifier` [`Mixins`] *`WS` `NodeObject`
+    OperationStatement    :%s"operation" `SP` `Identifier` [`Mixins`] *`WS` `OperationBody`
+    OperationBody         :"{" *`WS`
+                          :    [`OperationInput`]
+                          :    [`OperationOutput`]
+                          :    [`OperationErrors`]
+                          : *`WS` "}"
+    OperationInput        :%s"input" *WS (`InlineStructure` / `Identifier`) `BR`
+    OperationOutput       :%s"output" *WS (`InlineStructure` / `ShapeId`) `BR`
+    OperationErrors       :%s"errors" *WS ":" *WS "[" *(*`WS` `Identifier`) *`WS` "]" `BR`
+    InlineStructure       :":=" *`WS` `TraitStatements` [`Mixins`] *`WS` `ShapeMembers`
 
 .. rubric:: Traits
 
 .. productionlist:: smithy
-    trait_statements    : *(`ws` `trait`) `ws`
-    trait               :"@" `shape_id` [`trait_body`]
-    trait_body          :"(" `ws` `trait_body_value` `ws` ")"
-    trait_body_value    :`trait_structure` / `node_value`
-    trait_structure     :`trait_structure_kvp` *(`ws` `trait_structure_kvp`)
-    trait_structure_kvp :`node_object_key` `ws` ":" `ws` `node_value`
-    apply_statement     :`apply_statement_singular` / `apply_statement_block`
-    apply_statement_singular: "apply" `ws` `shape_id` `ws` `trait` `ws`
-    apply_statement_block: "apply" `ws` `shape_id` `ws` "{" `trait_statements` "}"
+    TraitStatements         : *(*`WS` `Trait`) *`WS`
+    Trait                   :"@" `ShapeId` [`TraitBody`]
+    TraitBody               :"(" *`WS` [`TraitBodyValue`] *`WS` ")"
+    TraitBodyValue          :`TraitStructure` / `NodeValue`
+    TraitStructure          :`TraitStructureKvp` *(*`WS` `TraitStructureKvp`)
+    TraitStructureKvp       :`NodeObjectKey` *`WS` ":" *`WS` `NodeValue`
+    ApplyStatement          :(`ApplyStatementSingular` / `ApplyStatementBlock`)
+    ApplyStatementSingular  :%s"apply" `SP` `ShapeId` `SP` `Trait` `BR`
+    ApplyStatementBlock     :%s"apply" `SP` `ShapeId` `SP` "{" `TraitStatements` "}" `BR`
 
 .. rubric:: Shape ID
 
@@ -232,8 +240,8 @@ The Smithy IDL is defined by the following ABNF:
 Comments
 --------
 
-A :token:`comment <smithy:comment>` can appear at any place between tokens where
-whitespace (:token:`smithy:ws`) can appear. Comments in Smithy are defined using two
+A :token:`comment <smithy:Comment>` can appear at any place between tokens where
+whitespace (:token:`smithy:WS`) can appear. Comments in Smithy are defined using two
 forward slashes followed by any character. A newline terminates a comment.
 
 .. code-block:: smithy
@@ -258,8 +266,8 @@ forward slashes followed by any character. A newline terminates a comment.
 Control section
 ---------------
 
-The :token:`control section <smithy:control_section>` of a model contains
-:token:`control statements <smithy:control_statement>` that apply parser directives
+The :token:`control section <smithy:ControlSection>` of a model contains
+:token:`control statements <smithy:ControlStatement>` that apply parser directives
 to a *specific IDL file*. Because control statements influence parsing, they
 MUST appear at the beginning of a file before any other statements and have
 no effect on the :ref:`semantic model <semantic-model>` The following control
@@ -295,7 +303,7 @@ Version statement
 
 The Smithy specification is versioned using a ``major`` . ``minor``
 versioning scheme. A version requirement is specified for a model file using
-the ``$version`` control statement. When no version number is specified in
+the ``$version`` control statement. When no version Number is specified in
 the IDL, an implementation SHOULD assume that the model can be loaded.
 Because this can lead to unexpected parsing errors, models SHOULD always
 include a version.
@@ -356,10 +364,10 @@ supported by the tool loading the models.
 Metadata section
 ----------------
 
-The :token:`metadata section <smithy:metadata_section>` is used to apply untyped
-:ref:`metadata <metadata>` to the entire model. A :token:`smithy:metadata_statement`
+The :token:`metadata section <smithy:MetadataSection>` is used to apply untyped
+:ref:`metadata <metadata>` to the entire model. A :token:`smithy:MetadataStatement`
 consists of the metadata key to set, followed by ``=``, followed by the
-:token:`node value <smithy:node_value>` to assign to the key.
+:token:`node value <smithy:NodeValue>` to assign to the key.
 
 The following example defines metadata in the model:
 
@@ -387,7 +395,7 @@ The following example defines metadata in the model:
 Shape section
 -------------
 
-The :token:`shape section <smithy:shape_section>` of the IDL is used to define
+The :token:`shape section <smithy:ShapeSection>` of the IDL is used to define
 shapes and apply traits to shapes.
 
 
@@ -397,7 +405,7 @@ Namespaces
 ==========
 
 Shapes can only be defined after a namespace is declared. A namespace is
-declared using a :token:`namespace statement <smithy:namespace_statement>`. Only
+declared using a :token:`namespace statement <smithy:NamespaceStatement>`. Only
 one namespace can appear per file.
 
 The following example defines a string shape named ``MyString`` in the
@@ -431,9 +439,9 @@ The following example defines a string shape named ``MyString`` in the
 Referring to shapes
 ===================
 
-The :token:`use section <smithy:use_section>` of the IDL is used to import shapes
+The :token:`use section <smithy:UseSection>` of the IDL is used to import shapes
 into the current namespace so that they can be referred to using a
-:ref:`relative shape ID <relative-shape-id>`. The :token:`use_statement <smithy:use_statement>`\s
+:ref:`relative shape ID <relative-shape-id>`. The :token:`UseStatement <smithy:UseStatement>`\s
 that make up this section have no effect on the :ref:`semantic model <semantic-model>`.
 
 The following example uses ``smithy.example#Foo`` and ``smithy.example#Baz``
@@ -483,7 +491,7 @@ Relative shape ID resolution
 
 Relative shape IDs are resolved using the following process:
 
-#. If a :token:`smithy:use_statement` has imported a shape with the same name,
+#. If a :token:`smithy:UseStatement` has imported a shape with the same name,
    the shape ID resolves to the imported shape ID.
 #. If a shape is defined in the same namespace as the shape with the same name,
    the namespace of the shape resolves to the *current namespace*.
@@ -665,7 +673,7 @@ reference can be ignored.
 Defining shapes
 ===============
 
-Shapes are defined using a :token:`smithy:shape_statement`.
+Shapes are defined using a :token:`smithy:ShapeStatement`.
 
 
 .. _idl-simple:
@@ -674,7 +682,7 @@ Simple shapes
 -------------
 
 :ref:`Simple shapes <simple-types>` are defined using a
-:token:`smithy:simple_shape_statement`.
+:token:`smithy:SimpleShapeStatement`.
 
 The following example defines a ``string`` shape:
 
@@ -737,7 +745,7 @@ The following example defines an ``integer`` shape with a :ref:`range-trait`:
 Enum shapes
 -----------
 
-The :ref:`enum` shape is defined using an :token:`smithy:enum_shape_statement`.
+The :ref:`enum` shape is defined using an :token:`smithy:EnumShapeStatement`.
 
 The following example defines an :ref:`enum` shape:
 
@@ -800,7 +808,7 @@ IntEnum shapes
 --------------
 
 The :ref:`intEnum` shape is defined using an
-:token:`smithy:enum_shape_statement`.
+:token:`smithy:EnumShapeStatement`.
 
 .. note::
     The :ref:`enumValue trait <enumValue-trait>` is required on all
@@ -848,7 +856,7 @@ The above intEnum is exactly equivalent to the following intEnum:
 List shapes
 -----------
 
-A :ref:`list <list>` shape is defined using a :token:`smithy:list_statement`.
+A :ref:`list <list>` shape is defined using a :token:`smithy:ListStatement`.
 
 The following example defines a list with a string member from the
 :ref:`prelude <prelude>`:
@@ -929,7 +937,7 @@ Traits can be applied to the list shape and its member:
 Map shapes
 ----------
 
-A :ref:`map <map>` shape is defined using a :token:`smithy:map_statement`.
+A :ref:`map <map>` shape is defined using a :token:`smithy:MapStatement`.
 
 The following example defines a map of strings to integers:
 
@@ -1026,7 +1034,7 @@ Structure shapes
 ----------------
 
 A :ref:`structure <structure>` shape is defined using a
-:token:`smithy:structure_statement`.
+:token:`smithy:StructureStatement`.
 
 The following example defines a structure with two members:
 
@@ -1139,7 +1147,7 @@ Is exactly equivalent to:
 Union shapes
 ------------
 
-A :ref:`union <union>` shape is defined using a :token:`smithy:union_statement`.
+A :ref:`union <union>` shape is defined using a :token:`smithy:UnionStatement`.
 
 The following example defines a union shape with several members:
 
@@ -1193,8 +1201,8 @@ The following example defines a union shape with several members:
 Service shape
 -------------
 
-A service shape is defined using a :token:`smithy:service_statement` and the provided
-:token:`smithy:node_object` supports the same properties defined in the
+A service shape is defined using a :token:`smithy:ServiceStatement` and the provided
+:token:`smithy:NodeObject` supports the same properties defined in the
 :ref:`service specification <service>`.
 
 The following example defines a service named ``ModelRepository`` that binds
@@ -1242,9 +1250,8 @@ a resource named ``Model`` and an operation named ``PingService``:
 Operation shape
 ---------------
 
-An operation shape is defined using an :token:`smithy:operation_statement` and the
-provided :token:`smithy:inlineable_properties` supports the same properties defined
-in the :ref:`operation specification <operation>`.
+An operation shape is defined using an :token:`smithy:OperationStatement` and
+the same properties defined in the :ref:`operation specification <operation>`.
 
 The following example defines an operation shape that accepts an input
 structure named ``Input``, returns an output structure named ``Output``, and
@@ -1400,8 +1407,8 @@ The suffixes for the generated names can be customized using the
 Resource shape
 --------------
 
-A resource shape is defined using a :token:`smithy:resource_statement` and the
-provided :token:`smithy:node_object` supports the same properties defined in the
+A resource shape is defined using a :token:`smithy:ResourceStatement` and the
+provided :token:`smithy:NodeObject` supports the same properties defined in the
 :ref:`resource specification <resource>`.
 
 The following example defines a resource shape that has a single identifier,
@@ -1454,7 +1461,7 @@ Mixins
 ------
 
 :ref:`Mixins <mixins>` can be added to a shape using the optional
-:token:`smithy:mixins` clause of a shape definition.
+:token:`smithy:Mixins` clause of a shape definition.
 
 For example:
 
@@ -1485,7 +1492,7 @@ Target Elision
 Having to completely redefine a :ref:`resource identifier <resource-identifiers>`
 to use it in a structure or redefine a member from a :ref:`mixin <mixins>` to add
 additional traits can be cumbersome and potentially error-prone. The
-:token:`type elision syntax <smithy:shape_member_elided>` can be used to cut
+:token:`type elision syntax <smithy:ShapeMemberElided>` can be used to cut
 down on that repetition by prefixing the member name with a ``$``. If a member
 is prefixed this way, its target will automatically be set to the target of a
 mixin member with the same name. The following example shows how to elide the
@@ -1580,8 +1587,8 @@ be checked first. The following example is invalid:
 Documentation comment
 =====================
 
-:token:`Documentation comments <smithy:documentation_comment>` are a
-special kind of :token:`smithy:comment` that provide
+:token:`Documentation comments <smithy:DocumentationComment>` are a
+special kind of :token:`smithy:Comment` that provide
 :ref:`documentation <documentation-trait>` for shapes. A documentation
 comment is formed when three forward slashes (``"///"``) appear as the
 first non-whitespace characters on a line.
@@ -1673,7 +1680,7 @@ Applying traits
 ===============
 
 Trait values immediately preceding a shape definition are applied to the
-shape. The shape ID of a trait is *resolved* against :token:`smithy:use_statement`\s
+shape. The shape ID of a trait is *resolved* against :token:`smithy:UseStatement`\s
 and the current namespace in exactly the same way as
 :ref:`other shape IDs <relative-shape-id>`.
 
@@ -1813,7 +1820,7 @@ List and set trait values
 -------------------------
 
 Traits that are a ``list`` or ``set`` shape are defined inside
-of brackets (``[``) and (``]``) using a :token:`smithy:node_array` production.
+of brackets (``[``) and (``]``) using a :token:`smithy:NodeArray` production.
 
 .. code-block:: smithy
 
@@ -1839,7 +1846,7 @@ Apply statement
 ---------------
 
 Traits can be applied to shapes outside of a shape's definition using an
-:token:`smithy:apply_statement`.
+:token:`smithy:ApplyStatement`.
 
 The following example applies the :ref:`documentation-trait` to the
 ``smithy.example#MyString`` shape:
@@ -1961,9 +1968,9 @@ node value:
 
 .. rubric:: Array node
 
-An array node is defined like a JSON array. A :token:`smithy:node_array` contains
-zero or more heterogeneous :token:`smithy:node_value`\s. A trailing comma is allowed
-in a ``node_array``.
+An array node is defined like a JSON array. A :token:`smithy:NodeArray` contains
+zero or more heterogeneous :token:`smithy:NodeValue`\s. A trailing comma is allowed
+in a ``NodeArray``.
 
 The following examples define arrays with zero, one, and two values:
 
@@ -1973,10 +1980,10 @@ The following examples define arrays with zero, one, and two values:
 
 .. rubric:: Object node
 
-An object node is defined like a JSON object. A :token:`smithy:node_object` contains
-zero or more key value pairs of strings (a :token:`smithy:node_object_key`) that map
-to heterogeneous :token:`smithy:node_value`\s. A trailing comma is allowed
-in a ``node_object``.
+An object node is defined like a JSON object. A :token:`smithy:NodeObject` contains
+zero or more key value pairs of strings (a :token:`smithy:NodeObjectKey`) that map
+to heterogeneous :token:`smithy:NodeValue`\s. A trailing comma is allowed
+in a ``NodeObject``.
 
 The following examples define objects with zero, one, and two key value pairs:
 
@@ -1986,8 +1993,8 @@ The following examples define objects with zero, one, and two key value pairs:
 
 .. rubric:: Number node
 
-A node :token:`smithy:number` contains numeric data. It is defined like a JSON
-number. The following examples define several ``number`` values:
+A node :token:`smithy:Number` contains numeric data. It is defined like a JSON
+Number. The following examples define several ``Number`` values:
 
 * ``0``
 * ``0.0``
@@ -1998,7 +2005,7 @@ number. The following examples define several ``number`` values:
 
 .. rubric:: Node keywords
 
-Several keywords are used when parsing :token:`smithy:node_value`.
+Several keywords are used when parsing :token:`smithy:NodeValue`.
 
 * ``true``: The value is treated as a boolean ``true``
 * ``false``: The value is treated as a boolean ``false``
@@ -2008,7 +2015,7 @@ Several keywords are used when parsing :token:`smithy:node_value`.
 String values
 =============
 
-A ``node_value`` can contain :token:`smithy:node_string_value` productions that all
+A ``NodeValue`` can contain :token:`smithy:NodeStringValue` productions that all
 define strings.
 
 .. rubric:: New lines
@@ -2020,7 +2027,7 @@ a string value using the Unicode escape ``\u000d``.
 
 .. rubric:: String equivalence
 
-The ``node_string_value`` production defines several productions used to
+The ``NodeStringValue`` production defines several productions used to
 define strings, and in order for these productions to work in concert with
 the :ref:`JSON AST format <json-ast>`, each of these production MUST be
 treated like equivalent string values when loaded into the
@@ -2166,7 +2173,7 @@ incidental whitespace using the following algorithm:
        ["    Foo", "        Baz", "", "  ", "    Bar", "    "]
 
 2. Compute the *common whitespace prefix* by iterating over each line,
-   counting the number of leading spaces (" ") and taking the minimum count.
+   counting the Number of leading spaces (" ") and taking the minimum count.
    Except for the last line of content, lines that are empty or consist wholly
    of whitespace are not considered. If the last line of content (that is, the
    line that contains the closing delimiter) appears on its own line, then
