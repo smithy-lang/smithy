@@ -1,4 +1,4 @@
-// Parse error at line 5, column 6 near `: `: Unexpected member of com.foo#MyList: 'foo' | Model
+// Parse error at line 5, column 3 near `foo`: Expected: '}', but found 'f' | Model
 namespace com.foo
 
 list MyList {

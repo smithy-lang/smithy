@@ -1,4 +1,4 @@
-// smithy.example#Foo$BAR: intEnum must fit within an integer, but found: 2147483648
+// smithy.example#Foo$BAR: intEnum members must fit within an integer, but found: 2147483648
 $version: "2.0"
 
 namespace smithy.example
