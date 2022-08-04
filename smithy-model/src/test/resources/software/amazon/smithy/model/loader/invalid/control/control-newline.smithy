@@ -1,3 +1,3 @@
-// Parse error at line 2, column 9 near `\n:`: Expected: ':', but found '\n' | Model
+// Parse error at line 2, column 9
 $version
 : "2.0"

@@ -1,4 +1,4 @@
-// Parse error at line 5, column 4 near `\ns`: Expected one or more spaces | Model
+// Parse error at line 5, column 4
 $version: "2.0"
 namespace smithy.example
 
