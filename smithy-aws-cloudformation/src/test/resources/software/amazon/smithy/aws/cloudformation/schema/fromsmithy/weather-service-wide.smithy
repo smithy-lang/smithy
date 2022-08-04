@@ -34,24 +34,23 @@ resource City {
 }
 
 operation CreateCity {
-    output := {
-        @required
-        cityId: CityId
-    }
     input := {
         name: String
         coordinates: CityCoordinates
+    }
+    output := {
+        @required
+        cityId: CityId
     }
 }
 operation UpdateCity {
-    output := {
-    }
     input := {
         @required
         cityId: CityId
         name: String
         coordinates: CityCoordinates
     }
+    output := {}
 }
 
 /// @cfnResource
@@ -177,4 +176,3 @@ structure GetForecastInput {
 structure GetForecastOutput {
     chanceOfRain: Float
 }
-

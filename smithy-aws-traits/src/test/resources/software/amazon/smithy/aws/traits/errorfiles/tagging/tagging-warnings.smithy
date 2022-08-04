@@ -81,13 +81,13 @@ resource City {
 }
 
 operation CreateCity {
-    output := {
-        @required
-        cityId: CityId
-    }
     input := {
         name: String
         coordinates: CityCoordinates
+    }
+    output := {
+        @required
+        cityId: CityId
     }
 }
 
@@ -95,12 +95,12 @@ operation CreateCity {
 string CityId
 
 operation UpdateCity {
-    output := {}
     input := {
         @required
         cityId: CityId
         tagz: TagList
     }
+    output := {}
 }
 
 @readonly
@@ -160,4 +160,3 @@ structure GetCurrentTimeOutput {
     @required
     time: Timestamp
 }
-

@@ -11,8 +11,8 @@ resource Forecast {
 
 @readonly
 operation GetForecast {
-   output: GetForecastOutput
    input: GetForecastInput
+   output: GetForecastOutput
 }
 
 structure GetForecastOutput {

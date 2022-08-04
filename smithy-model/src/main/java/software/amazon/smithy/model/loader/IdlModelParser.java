@@ -222,6 +222,35 @@ final class IdlModelParser extends SimpleParser {
         }
     }
 
+    // required space
+    public void rsp() {
+        int cc = column();
+        sp();
+        if (column() == cc) {
+            throw syntax("Expected one or more spaces");
+        }
+    }
+
+    @Override
+    public void sp() {
+        while (!eof() && isSpaceOrComma(peek())) {
+            skip();
+        }
+    }
+
+    private boolean isSpaceOrComma(char c) {
+        return c == ' ' || c == '\t' || c == ',';
+    }
+
+    @Override
+    public void br() {
+        int line = line();
+        ws();
+        if (line == line() && peek() != Character.MIN_VALUE) {
+            throw syntax("Expected a line break");
+        }
+    }
+
     @Override
     public ModelSyntaxException syntax(String message) {
         return syntax(null, message);
@@ -240,11 +269,10 @@ final class IdlModelParser extends SimpleParser {
         Set<String> definedKeys = new HashSet<>();
         while (peek() == '$') {
             expect('$');
-            ws();
             String key = IdlNodeParser.parseNodeObjectKey(this);
-            ws();
+            sp();
             expect(':');
-            ws();
+            sp();
 
             if (definedKeys.contains(key)) {
                 throw syntax(format("Duplicate control statement `%s`", key));
@@ -274,7 +302,7 @@ final class IdlModelParser extends SimpleParser {
                     break;
             }
 
-            ws();
+            br();
         }
     }
 
@@ -291,6 +319,7 @@ final class IdlModelParser extends SimpleParser {
             throw syntax("Unsupported Smithy version number: " + parsedVersion);
         }
 
+        emittedVersion = true;
         modelVersion = resolvedVersion;
         operations.accept(new LoadOperation.ModelVersion(modelVersion, value.getSourceLocation()));
     }
@@ -305,13 +334,13 @@ final class IdlModelParser extends SimpleParser {
             expect('a');
             expect('t');
             expect('a');
-            ws();
+            rsp();
             String key = IdlNodeParser.parseNodeObjectKey(this);
-            ws();
+            sp();
             expect('=');
-            ws();
+            sp();
             operations.accept(new LoadOperation.PutMetadata(modelVersion, key, IdlNodeParser.parseNode(this)));
-            ws();
+            br();
         }
     }
 
@@ -326,7 +355,7 @@ final class IdlModelParser extends SimpleParser {
             expect('a');
             expect('c');
             expect('e');
-            ws();
+            rsp();
 
             // Parse the namespace.
             int start = position();
@@ -334,7 +363,7 @@ final class IdlModelParser extends SimpleParser {
             namespace = sliceFrom(start);
             // Clear out any erroneous documentation comments.
             clearPendingDocs();
-            ws();
+            br();
 
             parseUseSection();
             parseShapeStatements();
@@ -352,7 +381,7 @@ final class IdlModelParser extends SimpleParser {
             expect('u');
             expect('s');
             expect('e');
-            ws();
+            rsp();
 
             int start = position();
             SourceLocation location = currentLocation();
@@ -362,7 +391,7 @@ final class IdlModelParser extends SimpleParser {
             String lexeme = sliceFrom(start);
             // Clear out any erroneous documentation comments.
             clearPendingDocs();
-            ws();
+            br();
 
             ShapeId target = ShapeId.from(lexeme);
 
@@ -395,7 +424,6 @@ final class IdlModelParser extends SimpleParser {
 
     private void parseShapeStatements() {
         while (!eof()) {
-            ws();
             if (peek() == 'a') {
                 parseApplyStatement();
             } else {
@@ -454,7 +482,7 @@ final class IdlModelParser extends SimpleParser {
             }
         }
 
-        ws();
+        rsp();
         ShapeId id = parseShapeName();
 
         switch (shapeType) {
@@ -534,7 +562,7 @@ final class IdlModelParser extends SimpleParser {
 
         addTraits(id, traits);
         clearPendingDocs();
-        ws();
+        br();
     }
 
     private ShapeId parseShapeName() {
@@ -778,8 +806,9 @@ final class IdlModelParser extends SimpleParser {
                 throw syntax("@default assignment is only supported in IDL version 2 or later");
             }
             expect('=');
-            ws();
+            sp();
             memberBuilder.addTrait(memberParsing.createAssignmentTrait(memberId, IdlNodeParser.parseNode(this)));
+            br();
         }
 
         // Only add the member once fully parsed.
@@ -853,47 +882,56 @@ final class IdlModelParser extends SimpleParser {
         OperationShape.Builder builder = OperationShape.builder().id(id).source(location);
         LoadOperation.DefineShape operation = createShape(builder);
         parseMixins(operation);
-        parseProperties(id, propertyName -> {
-            switch (propertyName) {
-                case "input":
-                    TraitEntry inputTrait = new TraitEntry(InputTrait.ID.toString(), Node.objectNode(), true);
-                    parseInlineableOperationMember(id, operationInputSuffix, builder::input, inputTrait);
-                    break;
-                case "output":
-                    TraitEntry outputTrait = new TraitEntry(OutputTrait.ID.toString(), Node.objectNode(), true);
-                    parseInlineableOperationMember(id, operationOutputSuffix, builder::output, outputTrait);
-                    break;
-                case "errors":
-                    parseIdList(builder::addError);
-                    break;
-                default:
-                    throw syntax(id, String.format("Unknown property %s for %s", propertyName, id));
-            }
-        });
-        clearPendingDocs();
-        operations.accept(operation);
-    }
-
-    private void parseProperties(ShapeId id, Consumer<String> valueParser) {
         ws();
         expect('{');
         ws();
 
-        Set<String> defined = new HashSet<>();
-        while (!eof() && peek() != '}') {
-            String key = IdlNodeParser.parseNodeObjectKey(this);
-            if (defined.contains(key)) {
-                throw syntax(id, String.format("Duplicate %s binding for %s", key, id));
-            }
-            defined.add(key);
+        char next = expect('i', 'o', 'e', '}');
 
+        if (next == 'i') {
+            expect('n');
+            expect('p');
+            expect('u');
+            expect('t');
             ws();
             expect(':');
-            valueParser.accept(key);
-            ws();
+            TraitEntry inputTrait = new TraitEntry(InputTrait.ID.toString(), Node.objectNode(), true);
+            parseInlineableOperationMember(id, operationInputSuffix, builder::input, inputTrait);
+            br();
+            next = expect('o', 'e', '}');
         }
 
-        expect('}');
+        if (next == 'o') {
+            expect('u');
+            expect('t');
+            expect('p');
+            expect('u');
+            expect('t');
+            ws();
+            expect(':');
+            TraitEntry outputTrait = new TraitEntry(OutputTrait.ID.toString(), Node.objectNode(), true);
+            parseInlineableOperationMember(id, operationOutputSuffix, builder::output, outputTrait);
+            br();
+            next = expect('e', '}');
+        }
+
+        if (next == 'e') {
+            expect('r');
+            expect('r');
+            expect('o');
+            expect('r');
+            expect('s');
+            ws();
+            expect(':');
+            parseIdList(builder::addError);
+            br();
+            expect('}');
+        } else if (next != '}') {
+            expect('}');
+        }
+
+        clearPendingDocs();
+        operations.accept(operation);
     }
 
     private void parseInlineableOperationMember(
@@ -932,7 +970,6 @@ final class IdlModelParser extends SimpleParser {
         addTraits(id, traits);
         clearPendingDocs();
         operations.accept(operation);
-        ws();
         return id;
     }
 
@@ -952,7 +989,7 @@ final class IdlModelParser extends SimpleParser {
                                                 + modelVersion + "`.");
         }
 
-        ws();
+        rsp();
 
         addForwardReference(ParserUtils.parseShapeId(this), shapeId -> {
             operation.addDependency(shapeId);
@@ -1080,9 +1117,25 @@ final class IdlModelParser extends SimpleParser {
         }
         int start = position();
         consumeRemainingCharactersOnLine();
-        br();
+        nl();
         sp();
         return StringUtils.stripEnd(sliceFrom(start), " \t\r\n");
+    }
+
+    private void nl() {
+        switch (peek()) {
+            case '\n':
+                skip();
+                break;
+            case '\r':
+                skip();
+                if (peek() == '\n') {
+                    expect('\n');
+                }
+                break;
+            default:
+                throw syntax("Expected a newline");
+        }
     }
 
     private void parseApplyStatement() {
@@ -1091,10 +1144,10 @@ final class IdlModelParser extends SimpleParser {
         expect('p');
         expect('l');
         expect('y');
-        ws();
+        rsp();
 
         String name = ParserUtils.parseShapeId(this);
-        ws();
+        rsp();
 
         // Account for singular or block apply statements.
         List<TraitEntry> traitsToApply;
@@ -1116,7 +1169,7 @@ final class IdlModelParser extends SimpleParser {
 
         // Clear out any errantly captured pending docs.
         clearPendingDocs();
-        ws();
+        br();
     }
 
     private void addTraits(ShapeId id, List<TraitEntry> traits) {
