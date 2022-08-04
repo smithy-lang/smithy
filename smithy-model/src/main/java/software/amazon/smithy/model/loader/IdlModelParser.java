@@ -75,7 +75,6 @@ import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SimpleParser;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -233,7 +232,7 @@ final class IdlModelParser extends SimpleParser {
 
     @Override
     public void sp() {
-        while (!eof() && isSpaceOrComma(peek())) {
+        while (isSpaceOrComma(peek())) {
             skip();
         }
     }
@@ -246,7 +245,7 @@ final class IdlModelParser extends SimpleParser {
     public void br() {
         int line = line();
         ws();
-        if (line == line() && peek() != Character.MIN_VALUE) {
+        if (line == line() && !eof()) {
             throw syntax("Expected a line break");
         }
     }
@@ -517,7 +516,7 @@ final class IdlModelParser extends SimpleParser {
                 parseSimpleShape(id, location, StringShape.builder());
                 break;
             case "enum":
-                parseEnumShape(id, location, EnumShape.builder(), MemberParsing.PARSING_ENUM);
+                parseEnumShape(id, location, EnumShape.builder());
                 break;
             case "blob":
                 parseSimpleShape(id, location, BlobShape.builder());
@@ -532,7 +531,7 @@ final class IdlModelParser extends SimpleParser {
                 parseSimpleShape(id, location, IntegerShape.builder());
                 break;
             case "intEnum":
-                parseEnumShape(id, location, IntEnumShape.builder(), MemberParsing.PARSING_INT_ENUM);
+                parseEnumShape(id, location, IntEnumShape.builder());
                 break;
             case "long":
                 parseSimpleShape(id, location, LongShape.builder());
@@ -585,15 +584,41 @@ final class IdlModelParser extends SimpleParser {
         operations.accept(operation);
     }
 
-    private void parseEnumShape(
-            ShapeId id,
-            SourceLocation location,
-            AbstractShapeBuilder<?, ?> builder,
-            MemberParsing memberParsing
-    ) {
+    private void parseEnumShape(ShapeId id, SourceLocation location, AbstractShapeBuilder<?, ?> builder) {
         LoadOperation.DefineShape operation = createShape(builder.id(id).source(location));
         parseMixins(operation);
-        parseMembers(operation, Collections.emptySet(), memberParsing);
+
+        ws();
+        expect('{');
+        clearPendingDocs();
+        ws();
+
+        while (!eof() && peek() != '}') {
+            List<TraitEntry> memberTraits = parseDocsAndTraits();
+            SourceLocation memberLocation = currentLocation();
+            String memberName = ParserUtils.parseIdentifier(this);
+            MemberShape.Builder memberBuilder = MemberShape.builder()
+                    .id(id.withMember(memberName))
+                    .source(memberLocation)
+                    .target(UnitTypeTrait.UNIT);
+            operation.addMember(memberBuilder);
+            addTraits(memberBuilder.getId(), memberTraits);
+
+            // Check for optional value assignment.
+            sp();
+            if (peek() == '=') {
+                expect('=');
+                sp();
+                Node value = IdlNodeParser.parseNode(this);
+                memberBuilder.addTrait(new EnumValueTrait.Provider().createTrait(memberBuilder.getId(), value));
+                br();
+            }
+
+            clearPendingDocs();
+            ws();
+        }
+
+        expect('}');
         clearPendingDocs();
         operations.accept(operation);
     }
@@ -603,223 +628,69 @@ final class IdlModelParser extends SimpleParser {
     private void parseCollection(ShapeId id, SourceLocation location, CollectionShape.Builder<?, ?> builder) {
         LoadOperation.DefineShape operation = createShape(builder.id(id).source(location));
         parseMixins(operation);
-        parseMembers(operation, SetUtils.of("member"));
+        ws();
+        expect('{');
+        clearPendingDocs();
+        ws();
+        parsePossiblyElidedMember(operation, "member");
+        ws();
+        expect('}');
+
         clearPendingDocs();
         operations.accept(operation);
     }
 
-    private void parseMembers(LoadOperation.DefineShape operation, Set<String> requiredMembers) {
-        parseMembers(operation, requiredMembers, MemberParsing.PARSING_MEMBER);
-    }
-
-    private enum MemberParsing {
-        PARSING_INT_ENUM {
-            @Override
-            boolean supportsAssignment() {
-                return true;
-            }
-
-            @Override
-            Trait createAssignmentTrait(ShapeId id, Node value) {
-                NumberNode number = value.asNumberNode().orElseThrow(() -> ModelSyntaxException.builder()
-                        .shapeId(id)
-                        .sourceLocation(value)
-                        .message("intEnum shapes require integer values but found: " + Node.printJson(value))
-                        .build());
-                if (number.isFloatingPointNumber()) {
-                    throw ModelSyntaxException.builder()
-                            .shapeId(id)
-                            .message("intEnum shapes do not support floating point values: " + value)
-                            .sourceLocation(value)
-                            .build();
-                }
-                long longValue = number.getValue().longValue();
-                if (longValue > Integer.MAX_VALUE || longValue < Integer.MIN_VALUE) {
-                    throw ModelSyntaxException.builder()
-                            .shapeId(id)
-                            .message("intEnum must fit within an integer, but found: " + longValue)
-                            .sourceLocation(value)
-                            .build();
-                }
-                return EnumValueTrait.builder()
-                        .sourceLocation(value.getSourceLocation())
-                        .intValue(number.getValue().intValue())
-                        .build();
-            }
-
-            @Override
-            boolean targetsUnit() {
-                return true;
-            }
-        },
-        PARSING_ENUM {
-            @Override
-            boolean supportsAssignment() {
-                return true;
-            }
-
-            @Override
-            Trait createAssignmentTrait(ShapeId id, Node value) {
-                String stringValue = value.asStringNode().orElseThrow(() -> ModelSyntaxException.builder()
-                        .shapeId(id)
-                        .sourceLocation(value)
-                        .message("enum shapes require string values but found: " + Node.printJson(value))
-                        .build())
-                        .getValue();
-                return EnumValueTrait.builder()
-                        .sourceLocation(value.getSourceLocation())
-                        .stringValue(stringValue)
-                        .build();
-            }
-
-            @Override
-            boolean targetsUnit() {
-                return true;
-            }
-        },
-        PARSING_STRUCTURE_MEMBER {
-            @Override
-            boolean supportsAssignment() {
-                return true;
-            }
-
-            @Override
-            Trait createAssignmentTrait(ShapeId id, Node value) {
-                return new DefaultTrait(value);
-            }
-
-            @Override
-            boolean targetsUnit() {
-                return false;
-            }
-        },
-        PARSING_MEMBER {
-            @Override
-            boolean supportsAssignment() {
-                return false;
-            }
-
-            @Override
-            Trait createAssignmentTrait(ShapeId id, Node value) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            boolean targetsUnit() {
-                return false;
-            }
-        };
-
-        abstract boolean supportsAssignment();
-
-        abstract Trait createAssignmentTrait(ShapeId id, Node value);
-
-        abstract boolean targetsUnit();
-    }
-
-    private void parseMembers(LoadOperation.DefineShape op, Set<String> requiredMembers, MemberParsing memberParsing) {
-        Set<String> definedMembers = new HashSet<>();
-
-        ws();
-        expect('{');
-        ws();
-
-        while (!eof()) {
-            if (peek() == '}') {
-                break;
-            }
-
-            parseMember(op, requiredMembers, definedMembers, memberParsing);
-
-            // Clears out any previously captured documentation
-            // comments that may have been found when parsing the member.
-            clearPendingDocs();
-
-            ws();
-        }
-
-        if (eof()) {
-            expect('}');
-        }
-
-        expect('}');
-    }
-
-    private void parseMember(
-            LoadOperation.DefineShape operation,
-            Set<String> allowed,
-            Set<String> defined,
-            MemberParsing memberParsing
-    ) {
-        ShapeId parent = operation.toShapeId();
-
-        // Parse optional member traits.
+    // Parsed list, set, and map members.
+    private void parsePossiblyElidedMember(LoadOperation.DefineShape operation, String memberName) {
+        boolean isElided = false;
         List<TraitEntry> memberTraits = parseDocsAndTraits();
-        SourceLocation memberLocation = currentLocation();
 
-        boolean isTargetElided = !memberParsing.targetsUnit() && peek() == '$';
-        if (isTargetElided) {
+        if (peek() == '$') {
+            isElided = true;
+            if (!modelVersion.supportsTargetElision()) {
+                throw syntax(operation.toShapeId().withMember(memberName),
+                             "Members can only elide targets in IDL version 2 or later");
+            }
             expect('$');
-        }
-
-        String memberName = ParserUtils.parseIdentifier(this);
-
-        if (defined.contains(memberName)) {
-            // This is a duplicate member name.
-            throw syntax(parent, "Duplicate member of " + parent + ": '" + memberName + '\'');
-        }
-
-        defined.add(memberName);
-
-        // Only enforce "allowedMembers" if it isn't empty.
-        if (!allowed.isEmpty() && !allowed.contains(memberName)) {
-            throw syntax(parent, "Unexpected member of " + parent + ": '" + memberName + '\'');
-        }
-
-        ShapeId memberId = parent.withMember(memberName);
-
-        if (isTargetElided && !modelVersion.supportsTargetElision()) {
-            throw syntax(memberId, "Members can only elide targets in IDL version 2 or later. "
-                    + "Attempted to elide a target with version `" + modelVersion + "`.");
-        }
-
-        MemberShape.Builder memberBuilder = MemberShape.builder().id(memberId).source(memberLocation);
-
-        // Members whose targets are elided will have those targets resolved later,
-        // for example by SetResourceBasedTargets
-        if (!isTargetElided) {
-            if (memberParsing.targetsUnit()) {
-                addForwardReference(UnitTypeTrait.UNIT.toString(), memberBuilder::target);
-            } else {
-                ws();
-                expect(':');
-                ws();
-                addForwardReference(ParserUtils.parseShapeId(this), memberBuilder::target);
+        } else if (peek() != memberName.charAt(0)) {
+            if (!memberTraits.isEmpty()) {
+                throw syntax("Expected member definition to follow traits");
             }
+            return;
         }
 
-        // Skip spaces to check if there is default trait sugar.
-        sp();
+        MemberShape.Builder memberBuilder = MemberShape.builder()
+                .id(operation.toShapeId().withMember(memberName))
+                .source(currentLocation());
 
-        if (memberParsing.supportsAssignment() && peek() == '=') {
-            if (!modelVersion.isDefaultSupported()) {
-                throw syntax("@default assignment is only supported in IDL version 2 or later");
-            }
-            expect('=');
+        for (int i = 0; i < memberName.length(); i++) {
+            expect(memberName.charAt(i));
+        }
+
+        if (!isElided) {
             sp();
-            memberBuilder.addTrait(memberParsing.createAssignmentTrait(memberId, IdlNodeParser.parseNode(this)));
-            br();
+            expect(':');
+            sp();
+            addForwardReference(ParserUtils.parseShapeId(this), memberBuilder::target);
         }
 
-        // Only add the member once fully parsed.
         operation.addMember(memberBuilder);
         addTraits(memberBuilder.getId(), memberTraits);
+        clearPendingDocs();
     }
 
     private void parseMapStatement(ShapeId id, SourceLocation location) {
         LoadOperation.DefineShape operation = createShape(MapShape.builder().id(id).source(location));
         parseMixins(operation);
-        parseMembers(operation, SetUtils.of("key", "value"));
+        ws();
+        expect('{');
+        clearPendingDocs();
+        ws();
+        parsePossiblyElidedMember(operation, "key");
+        ws();
+        parsePossiblyElidedMember(operation, "value");
+        ws();
+        expect('}');
         clearPendingDocs();
         operations.accept(operation);
     }
@@ -840,7 +711,7 @@ final class IdlModelParser extends SimpleParser {
 
         // Parse optional "with" statements to add mixins, but only if it's supported by the version.
         parseMixins(operation);
-        parseMembers(operation, Collections.emptySet(), memberParsing);
+        parseMembers(operation, memberParsing);
         clearPendingDocs();
         operations.accept(operation);
     }
@@ -876,6 +747,115 @@ final class IdlModelParser extends SimpleParser {
 
         expect(']');
         clearPendingDocs();
+    }
+
+    private enum MemberParsing {
+        PARSING_STRUCTURE_MEMBER {
+            @Override
+            boolean supportsAssignment() {
+                return true;
+            }
+
+            @Override
+            Trait createAssignmentTrait(ShapeId id, Node value) {
+                return new DefaultTrait(value);
+            }
+        },
+        PARSING_MEMBER {
+            @Override
+            boolean supportsAssignment() {
+                return false;
+            }
+
+            @Override
+            Trait createAssignmentTrait(ShapeId id, Node value) {
+                throw new UnsupportedOperationException();
+            }
+        };
+
+        abstract boolean supportsAssignment();
+
+        abstract Trait createAssignmentTrait(ShapeId id, Node value);
+    }
+
+    private void parseMembers(LoadOperation.DefineShape op, MemberParsing memberParsing) {
+        Set<String> definedMembers = new HashSet<>();
+
+        ws();
+        expect('{');
+        ws();
+
+        while (!eof()) {
+            if (peek() == '}') {
+                break;
+            }
+
+            parseMember(op, definedMembers, memberParsing);
+
+            // Clears out any previously captured documentation
+            // comments that may have been found when parsing the member.
+            clearPendingDocs();
+
+            ws();
+        }
+
+        expect('}');
+    }
+
+    private void parseMember(LoadOperation.DefineShape operation, Set<String> defined, MemberParsing memberParsing) {
+        ShapeId parent = operation.toShapeId();
+
+        // Parse optional member traits.
+        List<TraitEntry> memberTraits = parseDocsAndTraits();
+        SourceLocation memberLocation = currentLocation();
+
+        boolean isTargetElided = peek() == '$';
+        if (isTargetElided) {
+            expect('$');
+        }
+
+        String memberName = ParserUtils.parseIdentifier(this);
+
+        if (defined.contains(memberName)) {
+            // This is a duplicate member name.
+            throw syntax(parent, "Duplicate member of " + parent + ": '" + memberName + '\'');
+        }
+
+        defined.add(memberName);
+
+        ShapeId memberId = parent.withMember(memberName);
+
+        if (isTargetElided && !modelVersion.supportsTargetElision()) {
+            throw syntax(memberId, "Members can only elide targets in IDL version 2 or later");
+        }
+
+        MemberShape.Builder memberBuilder = MemberShape.builder().id(memberId).source(memberLocation);
+
+        // Members whose targets are elided will have those targets resolved later,
+        // for example by SetResourceBasedTargets
+        if (!isTargetElided) {
+            sp();
+            expect(':');
+            sp();
+            addForwardReference(ParserUtils.parseShapeId(this), memberBuilder::target);
+        }
+
+        // Skip spaces to check if there is default trait sugar.
+        sp();
+
+        if (memberParsing.supportsAssignment() && peek() == '=') {
+            if (!modelVersion.isDefaultSupported()) {
+                throw syntax("@default assignment is only supported in IDL version 2 or later");
+            }
+            expect('=');
+            sp();
+            memberBuilder.addTrait(memberParsing.createAssignmentTrait(memberId, IdlNodeParser.parseNode(this)));
+            br();
+        }
+
+        // Only add the member once fully parsed.
+        operation.addMember(memberBuilder);
+        addTraits(memberBuilder.getId(), memberTraits);
     }
 
     private void parseOperationStatement(ShapeId id, SourceLocation location) {
@@ -926,8 +906,6 @@ final class IdlModelParser extends SimpleParser {
             parseIdList(builder::addError);
             br();
             expect('}');
-        } else if (next != '}') {
-            expect('}');
         }
 
         clearPendingDocs();
@@ -966,7 +944,7 @@ final class IdlModelParser extends SimpleParser {
         LoadOperation.DefineShape operation = createShape(builder);
         parseMixins(operation);
         parseForResource(operation);
-        parseMembers(operation, Collections.emptySet(), MemberParsing.PARSING_STRUCTURE_MEMBER);
+        parseMembers(operation, MemberParsing.PARSING_STRUCTURE_MEMBER);
         addTraits(id, traits);
         clearPendingDocs();
         operations.accept(operation);

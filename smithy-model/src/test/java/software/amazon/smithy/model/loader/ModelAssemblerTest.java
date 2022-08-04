@@ -873,4 +873,17 @@ public class ModelAssemblerTest {
 
         assertThat(createdMember.getAllTraits(), not(hasKey(BoxTrait.ID)));
     }
+
+    @Test
+    public void canResolveTargetsWithoutPrelude() {
+        ValidatedResult<Model> model = Model.assembler()
+                .disablePrelude()
+                .addUnparsedModel("foo.smithy", "$version: \"2.0\"\n"
+                                                + "namespace smithy.example\n"
+                                                + "list Foo { member: String }\n")
+                .assemble();
+
+        assertThat(model.getValidationEvents(), hasSize(1));
+        assertThat(model.getValidationEvents().get(0).getMessage(), containsString("unresolved shape"));
+    }
 }

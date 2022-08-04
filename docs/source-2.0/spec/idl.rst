@@ -100,7 +100,7 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
     WS   :1*(`SP` / `NL` / `Comment` / ",") ; whitespace
     SP   :1*(%x20 / %x09) ; one or more spaces or tabs
     NL   :%x0A / %x0D.0A ; Newline: \n and \r\n
-    NotNL: %x09 / %x20-10FFFF ; Any character except newline
+    NotNL:%x09 / %x20-10FFFF ; Any character except newline
     BR   :*`SP` 1*(`Comment` / `NL`) *`WS`; line break followed by whitespace
 
 .. rubric:: Comments
@@ -166,58 +166,71 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
 .. rubric:: Shapes
 
 .. productionlist:: smithy
-    ShapeSection          :[`NamespaceStatement` `UseSection` `ShapeStatements`]
-    NamespaceStatement    :%s"namespace" `SP` `Namespace` `BR`
-    UseSection            :*(`UseStatement`)
-    UseStatement          :%s"use" `SP` `AbsoluteRootShapeId` `BR`
-    ShapeStatements       :*(`ShapeStatement` / `ApplyStatement`)
-    ShapeStatement        :`TraitStatements` `ShapeBody` `BR`
-    ShapeBody             :`SimpleShapeStatement`
-                          :/ `EnumShapeStatement`
-                          :/ `ListStatement`
-                          :/ `MapStatement`
-                          :/ `StructureStatement`
-                          :/ `UnionStatement`
-                          :/ `ServiceStatement`
-                          :/ `OperationStatement`
-                          :/ `ResourceStatement`
-    SimpleShapeStatement  :`SimpleTypeName` `SP` `Identifier` [`Mixins`]
-    SimpleTypeName        :%s"blob" / %s"boolean" / %s"document" / %s"string"
-                          :/ %s"byte" / %s"short" / %s"integer" / %s"long"
-                          :/ %s"float" / %s"double" / %s"bigInteger"
-                          :/ %s"bigDecimal" / %s"timestamp"
-    Mixins                :*`SP` %s"with" *`WS` "[" 1*(*`WS` `ShapeId`) *`WS` "]"
-    EnumShapeStatement    :`EnumTypeName` `SP` `Identifier` [`Mixins`] *`WS` `EnumShapeMembers`
-    EnumTypeName          :%s"enum" / %s"intEnum"
-    EnumShapeMembers      :"{" *`WS` 1*(`TraitStatements` `Identifier` [`ValueAssignment`] `*WS`) "}"
-    ValueAssignment       :*`SP` "=" *`SP` `NodeValue` `BR`
-    ShapeMembers          :"{" *`WS` *(`TraitStatements` `ShapeMember` *`WS`) "}"
-    ShapeMember           :(`ShapeMemberKvp` / `ShapeMemberElided`) [`ValueAssignment`]
-    ShapeMemberKvp        :`Identifier` *`WS` ":" *`WS` `ShapeId`
-    ShapeMemberElided     :"$" `Identifier`
-    ListStatement         :%s"list" `SP` `Identifier` [`Mixins`] *`WS` `ShapeMembers`
-    MapStatement          :%s"map" `SP` `Identifier` [`Mixins`] *`WS` `ShapeMembers`
-    StructureStatement    :%s"structure" `SP` `Identifier` [`StructureResource`]
-                          :        [`Mixins`] *`WS` `ShapeMembers`
-    StructureResource     :`SP` %s"for" `SP` `ShapeId`
-    UnionStatement        :%s"union" `SP` `Identifier` [`Mixins`] *`WS` `ShapeMembers`
-    ServiceStatement      :%s"service" `SP` `Identifier` [`Mixins`] *`WS` `NodeObject`
-    ResourceStatement     :%s"resource" `SP` `Identifier` [`Mixins`] *`WS` `NodeObject`
-    OperationStatement    :%s"operation" `SP` `Identifier` [`Mixins`] *`WS` `OperationBody`
-    OperationBody         :"{" *`WS`
-                          :    [`OperationInput`]
-                          :    [`OperationOutput`]
-                          :    [`OperationErrors`]
-                          : *`WS` "}"
-    OperationInput        :%s"input" *WS (`InlineStructure` / `Identifier`) `BR`
-    OperationOutput       :%s"output" *WS (`InlineStructure` / `ShapeId`) `BR`
-    OperationErrors       :%s"errors" *WS ":" *WS "[" *(*`WS` `Identifier`) *`WS` "]" `BR`
-    InlineStructure       :":=" *`WS` `TraitStatements` [`Mixins`] *`WS` `ShapeMembers`
+    ShapeSection            :[`NamespaceStatement` `UseSection` `ShapeStatements`]
+    NamespaceStatement      :%s"namespace" `SP` `Namespace` `BR`
+    UseSection              :*(`UseStatement`)
+    UseStatement            :%s"use" `SP` `AbsoluteRootShapeId` `BR`
+    ShapeStatements         :*(`ShapeStatement` / `ApplyStatement`)
+    ShapeStatement          :`TraitStatements` `ShapeBody` `BR`
+    ShapeBody               :`SimpleShapeStatement`
+                            :/ `EnumShapeStatement`
+                            :/ `ListStatement`
+                            :/ `MapStatement`
+                            :/ `StructureStatement`
+                            :/ `UnionStatement`
+                            :/ `ServiceStatement`
+                            :/ `OperationStatement`
+                            :/ `ResourceStatement`
+    SimpleShapeStatement    :`SimpleTypeName` `SP` `Identifier` [`Mixins`]
+    SimpleTypeName          :%s"blob" / %s"boolean" / %s"document" / %s"string"
+                            :/ %s"byte" / %s"short" / %s"integer" / %s"long"
+                            :/ %s"float" / %s"double" / %s"bigInteger"
+                            :/ %s"bigDecimal" / %s"timestamp"
+    Mixins                  :*`SP` %s"with" *`WS` "[" 1*(*`WS` `ShapeId`) *`WS` "]"
+    EnumShapeStatement      :`EnumTypeName` `SP` `Identifier` [`Mixins`] *`WS` `EnumShapeMembers`
+    EnumTypeName            :%s"enum" / %s"intEnum"
+    EnumShapeMembers        :"{" *`WS` 1*(`TraitStatements` `Identifier` [`ValueAssignment`] `*WS`) "}"
+    ValueAssignment         :*`SP` "=" *`SP` `NodeValue` `BR`
+    ListStatement           :%s"list" `SP` `Identifier` [`Mixins`] *`WS` `ListMembers`
+    ListMembers             :"{" *`WS` `ListMember` *`WS` "}"
+    ListMember              :[TraitStatements] (`ElidedListMember` / `ExplicitListMember`)
+    ElidedListMember        :%s"$member"
+    ExplicitListMember      :%s"member" *`SP` ":" *`SP` `ShapeId`
+    MapStatement            :%s"map" `SP` `Identifier` [`Mixins`] *`WS` `MapMembers`
+    MapMembers              :"{" *`WS` `MapKey` `BR` `MapValue` *`WS` "}"
+    MapKey                  :[TraitStatements] (`ElidedMapKey` / `ExplicitMapKey`)
+    MapValue                :[TraitStatements] (`ElidedMapValue` / `ExplicitMapValue`)
+    ElidedMapKey            :%s"$key"
+    ExplicitMapKey          :%s"key" *`SP` ":" *`SP` `ShapeId`
+    ElidedMapValue          :%s"$value"
+    ExplicitMapValue        :%s"value" *`SP` ":" *`SP` `ShapeId`
+    StructureStatement      :%s"structure" `SP` `Identifier` [`StructureResource`]
+                            :        [`Mixins`] *`WS` `StructureMembers`
+    StructureResource       :`SP` %s"for" `SP` `ShapeId`
+    StructureMembers        :"{" *`WS` *(`TraitStatements` `StructureMember` *`WS`) "}"
+    StructureMember         :(`ExplicitStructureMember` / `ElidedStructureMember`) [`ValueAssignment`]
+    ExplicitStructureMember :`Identifier` *`SP` ":" *`SP` `ShapeId`
+    ElidedStructureMember   :"$" `Identifier`
+    UnionStatement          :%s"union" `SP` `Identifier` [`Mixins`] *`WS` `UnionMembers`
+    UnionMembers            :"{" *`WS` *(`TraitStatements` `UnionMember` *`WS`) "}"
+    UnionMember             :(`ExplicitStructureMember` / `ElidedStructureMember`)
+    ServiceStatement        :%s"service" `SP` `Identifier` [`Mixins`] *`WS` `NodeObject`
+    ResourceStatement       :%s"resource" `SP` `Identifier` [`Mixins`] *`WS` `NodeObject`
+    OperationStatement      :%s"operation" `SP` `Identifier` [`Mixins`] *`WS` `OperationBody`
+    OperationBody           :"{" *`WS`
+                            :    [`OperationInput`]
+                            :    [`OperationOutput`]
+                            :    [`OperationErrors`]
+                            : *`WS` "}"
+    OperationInput          :%s"input" *WS (`InlineStructure` / (":" *`WS` `ShapeId`)) `BR`
+    OperationOutput         :%s"output" *WS (`InlineStructure` / (":" *`WS` `ShapeId`)) `BR`
+    OperationErrors         :%s"errors" *WS ":" *WS "[" *(*`WS` `Identifier`) *`WS` "]" `BR`
+    InlineStructure         :":=" *`WS` `TraitStatements` [`Mixins`] *`WS` `StructureMembers`
 
 .. rubric:: Traits
 
 .. productionlist:: smithy
-    TraitStatements         : *(*`WS` `Trait`) *`WS`
+    TraitStatements         :*(*`WS` `Trait`) *`WS`
     Trait                   :"@" `ShapeId` [`TraitBody`]
     TraitBody               :"(" *`WS` [`TraitBodyValue`] *`WS` ")"
     TraitBodyValue          :`TraitStructure` / `NodeValue`
@@ -1491,12 +1504,11 @@ Target Elision
 
 Having to completely redefine a :ref:`resource identifier <resource-identifiers>`
 to use it in a structure or redefine a member from a :ref:`mixin <mixins>` to add
-additional traits can be cumbersome and potentially error-prone. The
-:token:`type elision syntax <smithy:ShapeMemberElided>` can be used to cut
-down on that repetition by prefixing the member name with a ``$``. If a member
-is prefixed this way, its target will automatically be set to the target of a
-mixin member with the same name. The following example shows how to elide the
-target for a member inherited from a mixin:
+additional traits can be cumbersome and potentially error-prone. Target elision
+syntax can be used to cut down on that repetition by prefixing the member name
+with a ``$``. If a member is prefixed this way, its target will automatically be
+set to the target of a mixin member with the same name. The following example
+shows how to elide the target for a member inherited from a mixin:
 
 .. code-block:: smithy
 
