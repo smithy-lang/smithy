@@ -222,11 +222,21 @@ final class IdlModelParser extends SimpleParser {
     }
 
     // required space
-    public void rsp() {
+    private void rsp() {
         int cc = column();
         sp();
         if (column() == cc) {
             throw syntax("Expected one or more spaces");
+        }
+    }
+
+    // Required whitespace.
+    private void rws() {
+        int line = line();
+        int column = column();
+        ws();
+        if (line() == line && column == column()) {
+            throw syntax("Expected one or more whitespace characters");
         }
     }
 
@@ -1122,10 +1132,10 @@ final class IdlModelParser extends SimpleParser {
         expect('p');
         expect('l');
         expect('y');
-        rsp();
+        sp();
 
         String name = ParserUtils.parseShapeId(this);
-        rsp();
+        rws();
 
         // Account for singular or block apply statements.
         List<TraitEntry> traitsToApply;
