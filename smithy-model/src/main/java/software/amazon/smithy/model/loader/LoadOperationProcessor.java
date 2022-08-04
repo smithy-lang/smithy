@@ -169,7 +169,7 @@ final class LoadOperationProcessor implements Consumer<LoadOperation> {
         } else {
             // Try to find a prelude shape by ID if no ID exists in the namespace with this name.
             ShapeId preludeId = ShapeId.fromOptionalNamespace(Prelude.NAMESPACE, reference.name);
-            if (prelude.getShapeIds().contains(preludeId)) {
+            if (prelude != null && prelude.getShapeIds().contains(preludeId)) {
                 reference.resolve(preludeId, test -> prelude.expectShape(test).getType());
             } else {
                 reference.resolve(inNamespace, test -> null);
