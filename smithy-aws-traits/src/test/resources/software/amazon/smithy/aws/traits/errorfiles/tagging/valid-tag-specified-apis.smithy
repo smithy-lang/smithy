@@ -78,13 +78,13 @@ resource City {
 }
 
 operation CreateCity {
-    output := {
-        @required
-        cityId: CityId
-    }
     input := {
         name: String
         coordinates: CityCoordinates
+    }
+    output := {
+        @required
+        cityId: CityId
     }
 }
 

@@ -19,8 +19,7 @@ structure Foo {
     n: Long = 100
     o: Float = 0
     p: Double= 0
-    q: StringMap =
-        {}
+    q: StringMap = {} // comment
     r: BigInteger = 0
     s: BigDecimal = 0
 }
