@@ -322,6 +322,11 @@ public final class EnumShape extends StringShape {
             return this;
         }
 
+        @Override
+        public Builder id(String id) {
+            return (Builder) super.id(id);
+        }
+
         /**
          * Sets enum members from an {@link EnumTrait}.
          *

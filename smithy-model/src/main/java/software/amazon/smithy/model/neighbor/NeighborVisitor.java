@@ -206,6 +206,13 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
 
     @Override
     public List<Relationship> memberShape(MemberShape shape) {
+        Shape container = model.getShape(shape.getContainer()).orElse(null);
+
+        // Don't emit relationships from enum/intEnum to the Unit shape.
+        if (container != null && (container.isEnumShape() || container.isIntEnumShape())) {
+            return Collections.emptyList();
+        }
+
         List<Relationship> result = initializeRelationships(shape, 2);
         result.add(relationship(shape, RelationshipType.MEMBER_CONTAINER, shape.getContainer()));
         result.add(relationship(shape, RelationshipType.MEMBER_TARGET, shape.getTarget()));

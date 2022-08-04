@@ -19,6 +19,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,11 +43,13 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
+import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.IdempotentTrait;
 import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.ReadonlyTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
+import software.amazon.smithy.model.traits.UnitTypeTrait;
 
 public class NeighborVisitorTest {
 
@@ -437,6 +441,36 @@ public class NeighborVisitorTest {
                 Relationship.create(method, RelationshipType.INPUT, input),
                 Relationship.create(method, RelationshipType.OUTPUT, output),
                 Relationship.create(method, RelationshipType.ERROR, error)));
+    }
+
+    @Test
+    public void operationShapeDoesNotEmitUnitRelationships() {
+        OperationShape method = OperationShape.builder().id("ns.foo#Foo").build();
+        Model model = Model.builder().addShapes(method).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
+        List<Relationship> relationships = method.accept(neighborVisitor);
+
+        assertThat(relationships, empty());
+    }
+
+    @Test
+    public void unitTypeRelsNotEmittedFromEnums() {
+        MemberShape member = MemberShape.builder()
+                .id("smithy.api#Example$foo")
+                .target(UnitTypeTrait.UNIT)
+                .addTrait(EnumValueTrait.builder().stringValue("hi").build())
+                .build();
+        EnumShape enumShape = EnumShape.builder()
+                .id("smithy.api#Example")
+                .addMember(member)
+                .build();
+
+        Model model = Model.builder().addShapes(enumShape).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
+        List<Relationship> relationships = enumShape.accept(neighborVisitor);
+
+        assertThat(relationships, hasSize(1));
+        assertThat(relationships.get(0), equalTo(Relationship.create(enumShape, RelationshipType.ENUM_MEMBER, member)));
     }
 
     @Test
