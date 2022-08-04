@@ -133,7 +133,7 @@ public final class SmithyTestCase {
             normalizedActualMessage += " (" + actual.getSuppressionReason().get() + ")";
         }
 
-        String comparedMessage = expected.getMessage().replace("\n", "\\n");
+        String comparedMessage = expected.getMessage().replace("\n", "\\n").replace("\r", "\\n");
         return expected.getSeverity() == actual.getSeverity()
                && expected.getId().equals(actual.getId())
                && expected.getShapeId().equals(actual.getShapeId())
