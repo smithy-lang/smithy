@@ -1,0 +1,24 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#Foo": {
+            "type": "enum",
+            "members": {
+                "BAR": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#documentation": "Hello1",
+                        "smithy.api#enumValue": "hi"
+                    }
+                },
+                "BAZ": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#documentation": "Hello2",
+                        "smithy.api#enumValue": "there"
+                    }
+                }
+            }
+        }
+    }
+}

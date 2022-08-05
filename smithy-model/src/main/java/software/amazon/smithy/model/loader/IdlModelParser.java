@@ -621,11 +621,11 @@ final class IdlModelParser extends SimpleParser {
                 sp();
                 Node value = IdlNodeParser.parseNode(this);
                 memberBuilder.addTrait(new EnumValueTrait.Provider().createTrait(memberBuilder.getId(), value));
+                clearPendingDocs();
                 br();
+            } else {
+                ws();
             }
-
-            clearPendingDocs();
-            ws();
         }
 
         expect('}');
