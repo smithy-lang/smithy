@@ -221,9 +221,9 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
                             :    *([`OperationInput`] / [`OperationOutput`] / [`OperationErrors`])
                             :    *`WS` "}"
                             :    ; only one of each property can be specified.
-    OperationInput          :%s"input" *WS (`InlineStructure` / (":" *`WS` `ShapeId`)) `BR`
-    OperationOutput         :%s"output" *WS (`InlineStructure` / (":" *`WS` `ShapeId`)) `BR`
-    OperationErrors         :%s"errors" *WS ":" *WS "[" *(*`WS` `Identifier`) *`WS` "]" `BR`
+    OperationInput          :%s"input" *WS (`InlineStructure` / (":" *`WS` `ShapeId`)) `WS`
+    OperationOutput         :%s"output" *WS (`InlineStructure` / (":" *`WS` `ShapeId`)) `WS`
+    OperationErrors         :%s"errors" *WS ":" *WS "[" *(*`WS` `Identifier`) *`WS` "]" `WS`
     InlineStructure         :":=" *`WS` `TraitStatements` [`Mixins`] *`WS` `StructureMembers`
 
 .. rubric:: Traits
