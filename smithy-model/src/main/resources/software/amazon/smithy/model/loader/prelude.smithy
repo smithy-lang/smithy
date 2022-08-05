@@ -1,5 +1,4 @@
 $version: "2.0"
-
 namespace smithy.api
 
 string String

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.BooleanNode;
@@ -28,7 +27,6 @@ import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
@@ -40,7 +38,6 @@ import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
-import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Upgrades Smithy models from IDL v1 to IDL v2, specifically taking into
@@ -58,16 +55,6 @@ final class ModelUpgrader {
             ShapeType.FLOAT,
             ShapeType.DOUBLE,
             ShapeType.BOOLEAN);
-
-    /** Shapes that were boxed in 1.0, but @box was removed in 2.0. */
-    private static final Set<ShapeId> PREVIOUSLY_BOXED = SetUtils.of(
-            ShapeId.from("smithy.api#Boolean"),
-            ShapeId.from("smithy.api#Byte"),
-            ShapeId.from("smithy.api#Short"),
-            ShapeId.from("smithy.api#Integer"),
-            ShapeId.from("smithy.api#Long"),
-            ShapeId.from("smithy.api#Float"),
-            ShapeId.from("smithy.api#Double"));
 
     private final Model model;
     private final List<ValidationEvent> events;
@@ -153,7 +140,7 @@ final class ModelUpgrader {
                && containerType == ShapeType.STRUCTURE
                && !member.hasTrait(DefaultTrait.class) // don't add box if it has a default trait.
                && !member.hasTrait(BoxTrait.class) // don't add box again
-               && (target.hasTrait(BoxTrait.class) || PREVIOUSLY_BOXED.contains(target.getId()));
+               && target.hasTrait(BoxTrait.class);
     }
 
     private boolean isZeroValidDefault(MemberShape member) {
@@ -196,10 +183,6 @@ final class ModelUpgrader {
             // the member has the http payload trait and targets a streaming blob, which
             // implies a default in 2.0
             && (HAD_DEFAULT_VALUE_IN_1_0.contains(target.getType()) || isDefaultPayload(target))
-            // Not when the targeted shape was one of the prelude types with the @box trait.
-            // This needs special handling here because the @box trait was removed from these
-            // prelude shapes in v2.
-            && !PREVIOUSLY_BOXED.contains(target.getId())
             // Don't re-add the @default trait
             && !member.hasTrait(DefaultTrait.class)
             // Don't add a @default trait if it will conflict with the @required trait.
