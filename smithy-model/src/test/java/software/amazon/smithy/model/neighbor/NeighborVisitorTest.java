@@ -467,10 +467,17 @@ public class NeighborVisitorTest {
 
         Model model = Model.builder().addShapes(enumShape).build();
         NeighborVisitor neighborVisitor = new NeighborVisitor(model);
-        List<Relationship> relationships = enumShape.accept(neighborVisitor);
 
-        assertThat(relationships, hasSize(1));
-        assertThat(relationships.get(0), equalTo(Relationship.create(enumShape, RelationshipType.ENUM_MEMBER, member)));
+        List<Relationship> enumRelationships = enumShape.accept(neighborVisitor);
+        List<Relationship> enumMemberRelationships = member.accept(neighborVisitor);
+
+        assertThat(enumRelationships, hasSize(1));
+        assertThat(enumRelationships.get(0),
+                   equalTo(Relationship.create(enumShape, RelationshipType.ENUM_MEMBER, member)));
+
+        assertThat(enumMemberRelationships, hasSize(1));
+        assertThat(enumMemberRelationships.get(0),
+                   equalTo(Relationship.create(member, RelationshipType.MEMBER_CONTAINER, enumShape)));
     }
 
     @Test
