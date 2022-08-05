@@ -876,50 +876,44 @@ final class IdlModelParser extends SimpleParser {
         expect('{');
         ws();
 
-        char next = expect('i', 'o', 'e', '}');
-
-        if (next == 'i') {
-            expect('n');
-            expect('p');
-            expect('u');
-            expect('t');
-            ws();
-            expect(':');
-            TraitEntry inputTrait = new TraitEntry(InputTrait.ID.toString(), Node.objectNode(), true);
-            parseInlineableOperationMember(id, operationInputSuffix, builder::input, inputTrait);
+        parseProperties(id, propertyName -> {
+            switch (propertyName) {
+                case "input":
+                    TraitEntry inputTrait = new TraitEntry(InputTrait.ID.toString(), Node.objectNode(), true);
+                    parseInlineableOperationMember(id, operationInputSuffix, builder::input, inputTrait);
+                    break;
+                case "output":
+                    TraitEntry outputTrait = new TraitEntry(OutputTrait.ID.toString(), Node.objectNode(), true);
+                    parseInlineableOperationMember(id, operationOutputSuffix, builder::output, outputTrait);
+                    break;
+                case "errors":
+                    parseIdList(builder::addError);
+                    break;
+                default:
+                    throw syntax(id, String.format("Unknown property %s for %s", propertyName, id));
+            }
             br();
-            next = expect('o', 'e', '}');
-        }
+        });
 
-        if (next == 'o') {
-            expect('u');
-            expect('t');
-            expect('p');
-            expect('u');
-            expect('t');
-            ws();
-            expect(':');
-            TraitEntry outputTrait = new TraitEntry(OutputTrait.ID.toString(), Node.objectNode(), true);
-            parseInlineableOperationMember(id, operationOutputSuffix, builder::output, outputTrait);
-            br();
-            next = expect('e', '}');
-        }
-
-        if (next == 'e') {
-            expect('r');
-            expect('r');
-            expect('o');
-            expect('r');
-            expect('s');
-            ws();
-            expect(':');
-            parseIdList(builder::addError);
-            br();
-            expect('}');
-        }
-
+        expect('}');
         clearPendingDocs();
         operations.accept(operation);
+    }
+
+    private void parseProperties(ShapeId id, Consumer<String> valueParser) {
+        Set<String> defined = new HashSet<>();
+        while (!eof() && peek() != '}') {
+            String key = ParserUtils.parseIdentifier(this);
+            if (defined.contains(key)) {
+                throw syntax(id, String.format("Duplicate operation %s property for %s", key, id));
+            }
+            defined.add(key);
+
+            ws();
+            expect(':');
+            valueParser.accept(key);
+            ws();
+        }
     }
 
     private void parseInlineableOperationMember(

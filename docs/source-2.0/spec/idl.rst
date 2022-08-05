@@ -218,10 +218,9 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
     ResourceStatement       :%s"resource" `SP` `Identifier` [`Mixins`] *`WS` `NodeObject`
     OperationStatement      :%s"operation" `SP` `Identifier` [`Mixins`] *`WS` `OperationBody`
     OperationBody           :"{" *`WS`
-                            :    [`OperationInput`]
-                            :    [`OperationOutput`]
-                            :    [`OperationErrors`]
-                            : *`WS` "}"
+                            :    *([`OperationInput`] / [`OperationOutput`] / [`OperationErrors`])
+                            :    *`WS` "}"
+                            :    ; only one of each property can be specified.
     OperationInput          :%s"input" *WS (`InlineStructure` / (":" *`WS` `ShapeId`)) `BR`
     OperationOutput         :%s"output" *WS (`InlineStructure` / (":" *`WS` `ShapeId`)) `BR`
     OperationErrors         :%s"errors" *WS ":" *WS "[" *(*`WS` `Identifier`) *`WS` "]" `BR`
