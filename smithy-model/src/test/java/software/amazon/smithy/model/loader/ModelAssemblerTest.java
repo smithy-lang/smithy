@@ -55,8 +55,6 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.ModelSerializer;
-import software.amazon.smithy.model.shapes.ModelSerializerTest;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -64,7 +62,6 @@ import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.BoxTrait;
-import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.DynamicTrait;
@@ -885,5 +882,18 @@ public class ModelAssemblerTest {
 
         assertThat(model.getValidationEvents(), hasSize(1));
         assertThat(model.getValidationEvents().get(0).getMessage(), containsString("unresolved shape"));
+    }
+
+    @Test
+    public void findsBoxTraitOnPreludeShapes() {
+        Model model = Model.assembler().assemble().unwrap();
+
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Boolean")).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Byte")).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Short")).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Integer")).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Long")).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Float")).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Double")).hasTrait(BoxTrait.class), is(true));
     }
 }

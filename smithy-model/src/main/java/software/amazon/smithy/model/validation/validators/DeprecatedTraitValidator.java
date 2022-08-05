@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
@@ -45,8 +46,11 @@ public final class DeprecatedTraitValidator extends AbstractValidator {
                         traitMessage = traitMessage + ", " + deprecatedTrait.getMessage().get();
                     }
                     for (Shape shape : shapesWithTrait) {
-                        events.add(warning(shape, trait, format(
-                                "This shape applies a trait that is deprecated: %s", traitMessage)));
+                        // Ignore the use of @box on prelude shapes.
+                        if (!Prelude.isPreludeShape(shape)) {
+                            events.add(warning(shape, trait, format(
+                                    "This shape applies a trait that is deprecated: %s", traitMessage)));
+                        }
                     }
                 }
             }
