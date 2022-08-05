@@ -31,7 +31,9 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.SetShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -50,7 +52,18 @@ public class NullableIndexTest {
     public void checksIfBoxed(Model model, String shapeId, boolean isBoxed) {
         NullableIndex index = NullableIndex.of(model);
         ShapeId targetId = ShapeId.from(shapeId);
-        boolean actual = index.isNullable(targetId);
+        Shape shape = model.expectShape(targetId);
+
+        boolean actual;
+
+        if (shape.isMemberShape()) {
+            // Test member shapes using 2.0 semantics.
+            MemberShape member = shape.asMemberShape().get();
+            actual = index.isMemberNullable(member);
+        } else {
+            // Test root shapes using 1.0 semantics.
+            actual = index.isNullable(targetId);
+        }
 
         if (isBoxed != actual) {
             if (isBoxed) {
@@ -244,7 +257,7 @@ public class NullableIndexTest {
         Model model = Model.builder().addShapes(integer, struct).build();
         NullableIndex index = NullableIndex.of(model);
 
-        assertThat(index.isMemberNullableInV1(struct.getMember("foo").get()), is(false));
+        assertThat(index.isNullable(struct.getMember("foo").get()), is(false));
     }
 
     @Test
@@ -259,7 +272,7 @@ public class NullableIndexTest {
         Model model = Model.builder().addShapes(string, struct).build();
         NullableIndex index = NullableIndex.of(model);
 
-        assertThat(index.isMemberNullableInV1(struct.getMember("foo").get()), is(true));
+        assertThat(index.isNullable(struct.getMember("foo").get()), is(true));
     }
 
     @Test
@@ -275,7 +288,7 @@ public class NullableIndexTest {
         Model model = Model.builder().addShapes(integer, struct).build();
         NullableIndex index = NullableIndex.of(model);
 
-        assertThat(index.isMemberNullableInV1(struct.getMember("foo").get()), is(true));
+        assertThat(index.isNullable(struct.getMember("foo").get()), is(true));
     }
 
     @Test
@@ -292,7 +305,7 @@ public class NullableIndexTest {
         Model model = Model.builder().addShapes(integer, struct).build();
         NullableIndex index = NullableIndex.of(model);
 
-        assertThat(index.isMemberNullableInV1(struct.getMember("foo").get()), is(true));
+        assertThat(index.isNullable(struct.getMember("foo").get()), is(true));
     }
 
     @Test
@@ -310,6 +323,68 @@ public class NullableIndexTest {
         Model model = Model.builder().addShapes(integer, struct).build();
         NullableIndex index = NullableIndex.of(model);
 
-        assertThat(index.isMemberNullableInV1(struct.getMember("foo").get()), is(true));
+        assertThat(index.isNullable(struct.getMember("foo").get()), is(true));
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    public void worksWithV1NullabilityRulesForDenseMaps() {
+        MapShape map = MapShape.builder()
+                .id("smithy.example#Map")
+                .key(ShapeId.from("smithy.api#String"))
+                .value(ShapeId.from("smithy.api#String"))
+                .build();
+        Model model = Model.assembler().addShapes(map).assemble().unwrap();
+        NullableIndex index = NullableIndex.of(model);
+
+        assertThat(index.isNullable(map), is(true));
+        assertThat(index.isNullable(map.getKey()), is(false));
+        assertThat(index.isNullable(map.getValue()), is(false));
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    public void worksWithV1NullabilityRulesForSparseMaps() {
+        MapShape map = MapShape.builder()
+                .id("smithy.example#Map")
+                .key(ShapeId.from("smithy.api#String"))
+                .value(ShapeId.from("smithy.api#String"))
+                .addTrait(new SparseTrait())
+                .build();
+        Model model = Model.assembler().addShapes(map).assemble().unwrap();
+        NullableIndex index = NullableIndex.of(model);
+
+        assertThat(index.isNullable(map), is(true));
+        assertThat(index.isNullable(map.getKey()), is(false));
+        assertThat(index.isNullable(map.getValue()), is(true));
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    public void worksWithV1NullabilityRulesForDenseLists() {
+        ListShape list = ListShape.builder()
+                .id("smithy.example#Map")
+                .member(ShapeId.from("smithy.api#String"))
+                .build();
+        Model model = Model.assembler().addShapes(list).assemble().unwrap();
+        NullableIndex index = NullableIndex.of(model);
+
+        assertThat(index.isNullable(list), is(true));
+        assertThat(index.isNullable(list.getMember()), is(false));
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    public void worksWithV1NullabilityRulesForSparseLists() {
+        ListShape list = ListShape.builder()
+                .id("smithy.example#Map")
+                .member(ShapeId.from("smithy.api#String"))
+                .addTrait(new SparseTrait())
+                .build();
+        Model model = Model.assembler().addShapes(list).assemble().unwrap();
+        NullableIndex index = NullableIndex.of(model);
+
+        assertThat(index.isNullable(list), is(true));
+        assertThat(index.isNullable(list.getMember()), is(true));
     }
 }

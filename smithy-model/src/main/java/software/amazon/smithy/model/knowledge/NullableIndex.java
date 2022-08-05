@@ -17,12 +17,9 @@ package software.amazon.smithy.model.knowledge;
 
 import java.lang.ref.WeakReference;
 import java.util.Objects;
-import java.util.Set;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.ClientOptionalTrait;
@@ -30,31 +27,11 @@ import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.InputTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
-import software.amazon.smithy.utils.SetUtils;
 
 /**
  * An index that checks if a member is nullable.
- *
- * <p>Note: this index assumes Smithy 2.0 nullability semantics.
- * 1.0 models SHOULD be loaded through a {@link ModelAssembler}
- * to upgrade them in memory to IDL 2.0. Use
- * {@link #isMemberNullableInV1(MemberShape)} to check if a shape
- * is nullable according to Smithy 1.0 semantics.
  */
 public class NullableIndex implements KnowledgeIndex {
-
-    private static final Set<ShapeType> V1_INHERENTLY_BOXED = SetUtils.of(
-            ShapeType.STRING,
-            ShapeType.BLOB,
-            ShapeType.TIMESTAMP,
-            ShapeType.BIG_DECIMAL,
-            ShapeType.BIG_INTEGER,
-            ShapeType.LIST,
-            ShapeType.SET,
-            ShapeType.MAP,
-            ShapeType.STRUCTURE,
-            ShapeType.UNION,
-            ShapeType.DOCUMENT);
 
     private final WeakReference<Model> model;
 
@@ -90,31 +67,6 @@ public class NullableIndex implements KnowledgeIndex {
          * model components.
          */
         SERVER
-    }
-
-    /**
-     * Checks if the given shape is optional using {@link CheckMode#CLIENT}.
-     *
-     * @param shape Shape or shape ID to check.
-     * @return Returns true if the shape is nullable.
-     */
-    public final boolean isNullable(ToShapeId shape) {
-        return isNullable(shape, CheckMode.CLIENT);
-    }
-
-    /**
-     * Checks if the given shape is nullable.
-     *
-     * @param shape Shape or shape ID to check.
-     * @param checkMode The mode used when checking if the shape is considered nullable.
-     * @return Returns true if the shape is nullable.
-     */
-    public final boolean isNullable(ToShapeId shape, CheckMode checkMode) {
-        Model m = Objects.requireNonNull(model.get());
-        Shape s = m.expectShape(shape.toShapeId());
-        MemberShape member = s.asMemberShape().orElse(null);
-        // Non-members should always be considered nullable.
-        return member == null || isMemberNullable(member, checkMode);
     }
 
     /**
@@ -175,41 +127,69 @@ public class NullableIndex implements KnowledgeIndex {
     }
 
     /**
-     * Checks if a member is nullable using v1 nullability rules.
+     * Checks if the given shape is optional using Smithy IDL 1.0 semantics.
      *
-     * <p>This method matches the previous behavior seen in NullableIndex prior
-     * to Smithy 1.0. Most models are sent through a ModelAssembler which makes
-     * using the normal {@link #isMemberNullable(MemberShape)} the best choice.
-     * However, in some cases, a model might get created directly in code
-     * using Smithy 1.0 semantics. In those cases, this method can be used to
-     * detect if the member is nullable or not.
+     * <p>This means that the default trait is ignored, the required trait
+     * is ignored, and only the box trait and sparse traits are used.
      *
-     * <p>This method ignores the default trait, clientOptional trait,
-     * input trait, and required trait.
+     * <p>Use {@link #isMemberNullable(MemberShape)} to check using Smithy
+     * IDL 2.0 semantics that take required, default, and other traits
+     * into account.
      *
-     * @param member Member to check.
-     * @return Returns true if the member is nullable using 1.0 resolution rules.
+     * @param shapeId Shape or shape ID to check.
+     * @return Returns true if the shape is nullable.
      */
-    public boolean isMemberNullableInV1(MemberShape member) {
+    @Deprecated
+    public final boolean isNullable(ToShapeId shapeId) {
         Model m = Objects.requireNonNull(model.get());
-        Shape container = m.getShape(member.getContainer()).orElse(null);
-        Shape target = m.getShape(member.getTarget()).orElse(null);
+        Shape shape = m.getShape(shapeId.toShapeId()).orElse(null);
 
-        // Ignore broken models in this index. Other validators handle these checks.
-        if (container == null || target == null) {
+        if (shape == null) {
             return false;
         }
 
-        // Defer to 2.0 checks for shapes that aren't structures, since the logic is the same.
-        if (container.getType() != ShapeType.STRUCTURE) {
-            return isMemberNullable(member);
+        switch (shape.getType()) {
+            case MEMBER:
+                return isMemberNullableInV1(m, shape.asMemberShape().get());
+            case BOOLEAN:
+            case BYTE:
+            case SHORT:
+            case INTEGER:
+            case LONG:
+            case FLOAT:
+            case DOUBLE:
+                return shape.hasTrait(BoxTrait.class);
+            default:
+                return true;
+        }
+    }
+
+    private boolean isMemberNullableInV1(Model model, MemberShape member) {
+        Shape container = model.getShape(member.getContainer()).orElse(null);
+
+        // Ignore broken models in this index. Other validators handle these checks.
+        if (container == null) {
+            return false;
         }
 
-        // Check if the member or the target has the box trait.
-        if (member.getMemberTrait(m, BoxTrait.class).isPresent()) {
-            return true;
+        switch (container.getType()) {
+            case STRUCTURE:
+                // Only structure shapes look at the box trait.
+                if (member.hasTrait(BoxTrait.class)) {
+                    return true;
+                } else {
+                    return isNullable(member.getTarget());
+                }
+            case MAP:
+                // Map keys can never be null.
+                if (member.getMemberName().equals("key")) {
+                    return false;
+                } // fall-through
+            case LIST:
+                // Sparse lists and maps are considered nullable.
+                return container.hasTrait(SparseTrait.class);
+            default:
+                return false;
         }
-
-        return V1_INHERENTLY_BOXED.contains(target.getType());
     }
 }

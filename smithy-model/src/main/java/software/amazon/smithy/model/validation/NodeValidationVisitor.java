@@ -360,8 +360,11 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     private List<ValidationEvent> invalidShape(Shape shape, NodeType expectedType) {
         // Nullable shapes allow null values.
-        if (allowOptionalNull && value.isNullNode() && nullableIndex.isNullable(shape)) {
-            return Collections.emptyList();
+        if (allowOptionalNull && value.isNullNode()) {
+            // Non-members are nullable. Members are nullable based on context.
+            if (!shape.isMemberShape() || shape.asMemberShape().filter(nullableIndex::isMemberNullable).isPresent()) {
+                return Collections.emptyList();
+            }
         }
 
         String message = String.format(
