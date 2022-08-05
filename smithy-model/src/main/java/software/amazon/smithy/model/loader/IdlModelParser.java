@@ -892,7 +892,7 @@ final class IdlModelParser extends SimpleParser {
                 default:
                     throw syntax(id, String.format("Unknown property %s for %s", propertyName, id));
             }
-            br();
+            rws();
         });
 
         expect('}');
