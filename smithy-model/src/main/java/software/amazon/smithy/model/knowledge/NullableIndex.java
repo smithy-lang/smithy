@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -20,7 +20,9 @@ import java.util.Objects;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
@@ -52,7 +54,32 @@ public class NullableIndex implements KnowledgeIndex {
          * A client, or any other kind of non-authoritative model consumer
          * that must honor the {@link InputTrait} and {@link ClientOptionalTrait}.
          */
-        CLIENT,
+        CLIENT {
+            @Override
+            boolean isStructureMemberOptional(StructureShape container, MemberShape member, Shape target) {
+                if (member.hasTrait(ClientOptionalTrait.class) || container.hasTrait(InputTrait.class)) {
+                    return true;
+                }
+
+                return SERVER.isStructureMemberOptional(container, member, target);
+            }
+        },
+
+        /**
+         * Like {@link #CLIENT} mode, but will treat all members that target
+         * structures and unions as optional because these members can never
+         * transition to optional using a default trait.
+         */
+        CLIENT_CAREFUL {
+            @Override
+            boolean isStructureMemberOptional(StructureShape container, MemberShape member, Shape target) {
+                if (target instanceof StructureShape || target instanceof UnionShape) {
+                    return true;
+                }
+
+                return CLIENT.isStructureMemberOptional(container, member, target);
+            }
+        },
 
         /**
          * A server, or any other kind of authoritative model consumer
@@ -66,7 +93,15 @@ public class NullableIndex implements KnowledgeIndex {
          * server is required to be updated in order to implement newly added
          * model components.
          */
-        SERVER
+        SERVER {
+            @Override
+            boolean isStructureMemberOptional(StructureShape container, MemberShape member, Shape target) {
+                // Structure members that are @required or @default are not nullable.
+                return !(member.hasTrait(DefaultTrait.class) || member.hasTrait(RequiredTrait.class));
+            }
+        };
+
+        abstract boolean isStructureMemberOptional(StructureShape container, MemberShape member, Shape target);
     }
 
     /**
@@ -74,7 +109,7 @@ public class NullableIndex implements KnowledgeIndex {
      *
      * @param member Member to check.
      * @return Returns true if the member is optional in
-     *  non-authoritative consumers of the model like clients.
+     *         non-authoritative consumers of the model like clients.
      * @see #isMemberNullable(MemberShape, CheckMode)
      */
     public boolean isMemberNullable(MemberShape member) {
@@ -97,17 +132,11 @@ public class NullableIndex implements KnowledgeIndex {
     public boolean isMemberNullable(MemberShape member, CheckMode checkMode) {
         Model m = Objects.requireNonNull(model.get());
         Shape container = m.expectShape(member.getContainer());
+        Shape target = m.expectShape(member.getTarget());
 
         switch (container.getType()) {
             case STRUCTURE:
-                // Client mode honors the nullable and input trait.
-                if (checkMode == CheckMode.CLIENT
-                        && (member.hasTrait(ClientOptionalTrait.class) || container.hasTrait(InputTrait.class))) {
-                    return true;
-                }
-
-                // Structure members that are @required or @default are not nullable.
-                return !member.hasTrait(DefaultTrait.class) && !member.hasTrait(RequiredTrait.class);
+                return checkMode.isStructureMemberOptional(container.asStructureShape().get(), member, target);
             case UNION:
             case SET:
                 // Union and set members are never null.

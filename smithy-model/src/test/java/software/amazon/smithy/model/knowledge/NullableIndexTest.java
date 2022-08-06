@@ -387,4 +387,27 @@ public class NullableIndexTest {
         assertThat(index.isNullable(list), is(true));
         assertThat(index.isNullable(list.getMember()), is(true));
     }
+
+    @Test
+    public void carefulModeTreatsStructureAndUnionAsOptional() {
+        StructureShape struct = StructureShape.builder()
+                .id("smithy.example#Struct")
+                .build();
+        UnionShape union = UnionShape.builder()
+                .id("smithy.example#Union")
+                .addMember("a", ShapeId.from("smithy.api#String"))
+                .build();
+        StructureShape outer = StructureShape.builder()
+                .id("smithy.example#Outer")
+                .addMember("a", struct.getId(), m -> m.addTrait(new RequiredTrait()))
+                .addMember("b", union.getId(), m -> m.addTrait(new RequiredTrait()))
+                .build();
+        Model model = Model.assembler().addShapes(struct, union, outer).assemble().unwrap();
+        NullableIndex index = NullableIndex.of(model);
+
+        assertThat(index.isMemberNullable(outer.getMember("a").get(), NullableIndex.CheckMode.CLIENT_CAREFUL),
+                   is(true));
+        assertThat(index.isMemberNullable(outer.getMember("b").get(), NullableIndex.CheckMode.CLIENT_CAREFUL),
+                   is(true));
+    }
 }
