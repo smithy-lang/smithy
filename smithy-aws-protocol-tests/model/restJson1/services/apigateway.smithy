@@ -150,7 +150,6 @@ enum EndpointType {
     PRIVATE
 }
 
-@box
 integer NullableInteger
 
 string String

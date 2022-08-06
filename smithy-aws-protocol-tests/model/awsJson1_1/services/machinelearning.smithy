@@ -160,7 +160,6 @@ integer ErrorCode
 )
 string ErrorMessage
 
-@box
 float floatLabel
 
 @length(

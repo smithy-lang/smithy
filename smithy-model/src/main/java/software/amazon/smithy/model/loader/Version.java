@@ -18,6 +18,7 @@ package software.amazon.smithy.model.loader;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.MixinTrait;
 
@@ -25,6 +26,7 @@ import software.amazon.smithy.model.traits.MixinTrait;
  * Tracks version-specific features and validation.
  */
 enum Version {
+
     UNKNOWN {
         @Override
         public String toString() {
@@ -59,6 +61,10 @@ enum Version {
         @Override
         boolean isDeprecated() {
             return false;
+        }
+
+        @Override
+        void validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
         }
     },
 
@@ -154,6 +160,18 @@ enum Version {
         boolean isDeprecated() {
             return false;
         }
+
+        @Override
+        @SuppressWarnings("deprecated")
+        void validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
+            if (traitId.equals(BoxTrait.ID)) {
+                throw ModelSyntaxException.builder()
+                        .message("@box is not supported in Smithy IDL 2.0")
+                        .shapeId(target)
+                        .sourceLocation(value)
+                        .build();
+            }
+        }
     };
 
     /**
@@ -234,6 +252,5 @@ enum Version {
      * @param value The Node value of the trait.
      * @throws ModelSyntaxException if the given trait cannot be used in this version.
      */
-    void validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
-    }
+    abstract void validateVersionedTrait(ShapeId target, ShapeId traitId, Node value);
 }
