@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -74,32 +74,26 @@ final class ModelUpgrader {
             }
 
             Version version = fileToVersion.apply(member);
-            if (version == Version.VERSION_2_0) {
-                validateV2Member(member);
-            } else {
-                // Also attempt to upgrade unknown versions since they could be 1.0 and
-                // trying to upgrade 2.0 shapes has no effect.
-                // For v1 shape checks, we need to know the containing shape type to apply the appropriate transform.
+
+            // Only update models that are for sure 1.0. Upgrading unknown versions can cause
+            // things like projections to build a model, feed it back into the assembler, and
+            // then lose the original context of which version the model was built with, causing
+            // it to be errantly upgraded.
+            if (version == Version.VERSION_1_0) {
                 model.getShape(member.getContainer())
-                        .ifPresent(container -> upgradeV1Member(version, container.getType(), member));
+                        .ifPresent(container -> upgradeV1Member(container.getType(), member));
             }
         }
 
         return new ValidatedResult<>(ModelTransformer.create().replaceShapes(model, shapeUpgrades), events);
     }
 
-    private void upgradeV1Member(Version version, ShapeType containerType, MemberShape member) {
+    private void upgradeV1Member(ShapeType containerType, MemberShape member) {
         // Don't fail here on broken models, and since it's broken, don't try to upgrade it.
         Shape target = model.getShape(member.getTarget()).orElse(null);
-        if (target == null) {
-            return;
-        }
 
-        // This builder will become non-null if/when the member needs to be updated.
-        MemberShape.Builder builder = null;
-
-        // Add the @default trait to structure members when needed.
-        if (shouldV1MemberHaveDefaultTrait(containerType, member, target)) {
+        if (target != null && shouldV1MemberHaveDefaultTrait(containerType, member, target)) {
+            // Add the @default trait to structure members when needed.
             events.add(ValidationEvent.builder()
                                .id(Validator.MODEL_DEPRECATION)
                                .severity(Severity.WARNING)
@@ -107,8 +101,7 @@ final class ModelUpgrader {
                                .message("Add the @default trait to this member to make it forward compatible with "
                                         + "Smithy IDL 2.0")
                                .build());
-            builder = createOrReuseBuilder(member, builder);
-
+            MemberShape.Builder builder = member.toBuilder();
             if (target.isBooleanShape()) {
                 builder.addTrait(new DefaultTrait(new BooleanNode(false, builder.getSourceLocation())));
             } else if (target.isBlobShape()) {
@@ -116,31 +109,8 @@ final class ModelUpgrader {
             } else if (isZeroValidDefault(member)) {
                 builder.addTrait(new DefaultTrait(new NumberNode(0, builder.getSourceLocation())));
             }
-        } else if (isMemberImplicitlyBoxed(version, containerType, member, target)) {
-            // Add a synthetic box trait to the shape.
-            builder = createOrReuseBuilder(member, builder).addTrait(new BoxTrait());
-        }
-
-        if (builder != null) {
             shapeUpgrades.add(builder.build());
         }
-    }
-
-    // If it's for sure a v1 shape and was implicitly boxed, then add a synthetic box trait so tooling
-    // can know that the shape was previously considered nullable. Note that this method does not
-    // check if the targeted shape is required. It's up to tooling to determine how to handle a 1.0
-    // member that is both required and boxed.
-    private boolean isMemberImplicitlyBoxed(
-            Version version,
-            ShapeType containerType,
-            MemberShape member,
-            Shape target
-    ) {
-        return version == Version.VERSION_1_0
-               && containerType == ShapeType.STRUCTURE
-               && !member.hasTrait(DefaultTrait.class) // don't add box if it has a default trait.
-               && !member.hasTrait(BoxTrait.class) // don't add box again
-               && target.hasTrait(BoxTrait.class);
     }
 
     private boolean isZeroValidDefault(MemberShape member) {
@@ -195,22 +165,5 @@ final class ModelUpgrader {
 
     private boolean isDefaultPayload(Shape target) {
         return target.hasTrait(StreamingTrait.class) && target.isBlobShape();
-    }
-
-    private MemberShape.Builder createOrReuseBuilder(MemberShape member, MemberShape.Builder builder) {
-        return builder == null ? member.toBuilder() : builder;
-    }
-
-    @SuppressWarnings("deprecation")
-    private void validateV2Member(MemberShape member) {
-        if (member.hasTrait(BoxTrait.class)) {
-            events.add(ValidationEvent.builder()
-                               .id(Validator.MODEL_DEPRECATION)
-                               .severity(Severity.ERROR)
-                               .shape(member)
-                               .sourceLocation(member.expectTrait(BoxTrait.class))
-                               .message("@box is not supported in Smithy IDL 2.0")
-                               .build());
-        }
     }
 }
