@@ -28,6 +28,7 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.RangeTrait;
@@ -44,6 +45,7 @@ import software.amazon.smithy.model.validation.Validator;
  * account the removal of the box trait, the change in default value
  * semantics of numbers and booleans, and the @default trait.
  */
+@SuppressWarnings("deprecation")
 final class ModelUpgrader {
 
     /** Shape types in Smithy 1.0 that had a default value. */
@@ -68,31 +70,24 @@ final class ModelUpgrader {
     }
 
     ValidatedResult<Model> transform() {
-        for (MemberShape member : model.getMemberShapes()) {
-            if (Prelude.isPreludeShape(member)) {
-                continue;
-            }
-
-            Version version = fileToVersion.apply(member);
-
-            // Only update models that are for sure 1.0. Upgrading unknown versions can cause
-            // things like projections to build a model, feed it back into the assembler, and
-            // then lose the original context of which version the model was built with, causing
-            // it to be errantly upgraded.
-            if (version == Version.VERSION_1_0) {
-                model.getShape(member.getContainer())
-                        .ifPresent(container -> upgradeV1Member(container.getType(), member));
+        // Upgrade structure members in v1 models to add the default trait if needed. Upgrading unknown versions
+        // can cause things like projections to build a model, feed it back into the assembler, and then lose the
+        // original context of which version the model was built with, causing it to be errantly upgraded.
+        for (StructureShape struct : model.getStructureShapes()) {
+            if (!Prelude.isPreludeShape(struct) && fileToVersion.apply(struct) == Version.VERSION_1_0) {
+                for (MemberShape member : struct.getAllMembers().values()) {
+                    model.getShape(member.getTarget()).ifPresent(target -> {
+                        upgradeV1Member(member, target);
+                    });
+                }
             }
         }
 
         return new ValidatedResult<>(ModelTransformer.create().replaceShapes(model, shapeUpgrades), events);
     }
 
-    private void upgradeV1Member(ShapeType containerType, MemberShape member) {
-        // Don't fail here on broken models, and since it's broken, don't try to upgrade it.
-        Shape target = model.getShape(member.getTarget()).orElse(null);
-
-        if (target != null && shouldV1MemberHaveDefaultTrait(containerType, member, target)) {
+    private void upgradeV1Member(MemberShape member, Shape target) {
+        if (shouldV1MemberHaveDefaultTrait(member, target)) {
             // Add the @default trait to structure members when needed.
             events.add(ValidationEvent.builder()
                                .id(Validator.MODEL_DEPRECATION)
@@ -147,23 +142,22 @@ final class ModelUpgrader {
     }
 
     @SuppressWarnings("deprecation")
-    private boolean shouldV1MemberHaveDefaultTrait(ShapeType containerType, MemberShape member, Shape target) {
-        return containerType == ShapeType.STRUCTURE
-            // Only when the targeted shape had a default value by default in v1 or if
-            // the member has the http payload trait and targets a streaming blob, which
-            // implies a default in 2.0
-            && (HAD_DEFAULT_VALUE_IN_1_0.contains(target.getType()) || isDefaultPayload(target))
+    private boolean shouldV1MemberHaveDefaultTrait(MemberShape member, Shape target) {
+        // Only when the targeted shape had a default value by default in v1 or if
+        // the member has the http payload trait and targets a streaming blob, which
+        // implies a default in 2.0
+        return (HAD_DEFAULT_VALUE_IN_1_0.contains(target.getType()) || isDefaultPayload(target))
             // Don't re-add the @default trait
-            && !member.hasTrait(DefaultTrait.class)
+            && !member.hasTrait(DefaultTrait.ID)
             // Don't add a @default trait if it will conflict with the @required trait.
-            && !member.hasTrait(RequiredTrait.class)
+            && !member.hasTrait(RequiredTrait.ID)
             // Don't add a @default trait if the member was explicitly boxed in v1.
-            && !member.hasTrait(BoxTrait.class)
+            && !member.hasTrait(BoxTrait.ID)
             // Don't add a @default trait if the targeted shape was explicitly boxed in v1.
-            && !target.hasTrait(BoxTrait.class);
+            && !target.hasTrait(BoxTrait.ID);
     }
 
     private boolean isDefaultPayload(Shape target) {
-        return target.hasTrait(StreamingTrait.class) && target.isBlobShape();
+        return target.hasTrait(StreamingTrait.ID) && target.isBlobShape();
     }
 }
