@@ -105,7 +105,25 @@ final class ModelUpgrader {
                 builder.addTrait(new DefaultTrait(new NumberNode(0, builder.getSourceLocation())));
             }
             shapeUpgrades.add(builder.build());
+        } else if (isMemberImplicitlyBoxed(member, target)) {
+            // Add a synthetic box trait to the shape.
+            MemberShape.Builder builder = member.toBuilder();
+            builder.addTrait(new BoxTrait());
+            shapeUpgrades.add(builder.build());
         }
+    }
+
+    // If it's for sure a v1 shape and was implicitly boxed, then add a synthetic box trait to the member
+    // so that tooling that works with both v1 and v2 shapes can know if a shape was considered nullable in 1.0.
+    // This is particularly important if the member is required. A required member in 2.0 semantics is considered
+    // non-nullable, but considered nullable in 1.0 if the member targets a primitive shape. However, once a v1
+    // model is loaded into memory, tooling no longer can differentiate between required in 1.0 or required in
+    // 2.0. With these synthetic box traits, tooling can look for the box trait on a member to detect v1
+    // nullability semantics.
+    private boolean isMemberImplicitlyBoxed(MemberShape member, Shape target) {
+        return !member.hasTrait(DefaultTrait.class) // don't add box if it has a default trait.
+               && !member.hasTrait(BoxTrait.class) // don't add box again
+               && target.hasTrait(BoxTrait.class);
     }
 
     private boolean isZeroValidDefault(MemberShape member) {
