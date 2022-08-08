@@ -410,4 +410,26 @@ public class NullableIndexTest {
         assertThat(index.isMemberNullable(outer.getMember("b").get(), NullableIndex.CheckMode.CLIENT_CAREFUL),
                    is(true));
     }
+
+    @Test
+    public void correctlyDeterminesNullabilityOfUpgradedV1Models() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("nullable-index-v1.smithy"))
+                .assemble()
+                .unwrap();
+
+        NullableIndex index = NullableIndex.of(model);
+
+        for (MemberShape shape : model.getMemberShapes()) {
+            if (shape.getId().getNamespace().equals("smithy.example")) {
+                if (shape.getMemberName().startsWith("nullable")) {
+                    assertThat(index.isMemberNullable(shape), is(true));
+                    assertThat(index.isNullable(shape), is(true));
+                } else if (shape.getMemberName().startsWith("nonNullable")) {
+                    assertThat(index.isMemberNullable(shape), is(false));
+                    assertThat(index.isNullable(shape), is(false));
+                }
+            }
+        }
+    }
 }

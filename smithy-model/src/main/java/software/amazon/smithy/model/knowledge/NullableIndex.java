@@ -96,8 +96,23 @@ public class NullableIndex implements KnowledgeIndex {
         SERVER {
             @Override
             boolean isStructureMemberOptional(StructureShape container, MemberShape member, Shape target) {
-                // Structure members that are @required or @default are not nullable.
-                return !(member.hasTrait(DefaultTrait.class) || member.hasTrait(RequiredTrait.class));
+                // A member with the default trait is never nullable. Note that even 1.0 models will be
+                // assigned a default trait when they are "upgraded".
+                if (member.hasTrait(DefaultTrait.class)) {
+                    return false;
+                }
+
+                // Detects Smithy IDL 1.0 shapes that were marked as nullable using the box trait. When a structure
+                // member is loaded from a 1.0 model, the member is "upgraded" from v1 to v2 in the semantic model.
+                // Any member that was implicitly nullable in v1 gets a synthetic box trait on the member. Box traits
+                // are not allowed in 2.0 models, so this check is specifically here to ensure that the intended
+                // nullability semantics of 1.0 models are honored and not to interfere with 2.0 nullability semantics.
+                if (member.hasTrait(BoxTrait.class)) {
+                    return true;
+                }
+
+                // A 2.0 member with the required trait is never nullable.
+                return !member.hasTrait(RequiredTrait.class);
             }
         };
 
@@ -163,7 +178,9 @@ public class NullableIndex implements KnowledgeIndex {
      *
      * <p>Use {@link #isMemberNullable(MemberShape)} to check using Smithy
      * IDL 2.0 semantics that take required, default, and other traits
-     * into account.
+     * into account. That method also accurately returns the nullability of
+     * 1.0 members as long as the model it's checking was sent through a
+     * ModelAssembler.
      *
      * @param shapeId Shape or shape ID to check.
      * @return Returns true if the shape is nullable.
