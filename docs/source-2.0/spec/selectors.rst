@@ -171,7 +171,7 @@ contains a non-empty ``tags`` list.
 Attribute comparison
 --------------------
 
-An attribute selector with a :token:`comparator <selectors:selector_comparator>`
+An attribute selector with a :token:`comparator <selectors:SelectorComparator>`
 checks for the existence of an attribute and compares the resolved
 attribute value to a comma separated list of possible values. The
 resolved attribute value on the left hand side of the comparator MUST
@@ -190,7 +190,7 @@ There are three kinds of comparators:
 String comparators
 ------------------
 
-:token:`String comparators <selectors:selector_string_comparator>` are used to compare
+:token:`String comparators <selectors:SelectorStringComparator>` are used to compare
 the string representation of values. Attributes that do not have a string
 representation are treated as an empty string when these comparisons are
 performed.
@@ -873,7 +873,7 @@ the comparator are projections.
 Scoped attribute selectors
 ==========================
 
-A :token:`scoped attribute selector <selectors:selector_scoped_attr>` is similar to an
+A :token:`scoped attribute selector <selectors:SelectorScopedAttr>` is similar to an
 attribute selector, but it allows multiple complex comparisons to be made
 against a scoped attribute.
 
@@ -883,7 +883,7 @@ Context values
 
 The first part of a scoped attribute selector is the attribute that is scoped
 for the expression, followed by ``:``. The scoped attribute is accessed using
-a :token:`context value <selectors:selector_context_value>` in the form of
+a :token:`context value <selectors:SelectorContextValue>` in the form of
 ``@{`` :token:`smithy:Identifier` ``}``.
 
 In the following selector, the ``trait|range`` attribute is used as the scoped
@@ -996,7 +996,7 @@ a shape.
 Forward undirected neighbor
 ----------------------------
 
-A :token:`forward undirected neighbor <selectors:selector_forward_undirected_neighbor>`
+A :token:`forward undirected neighbor <selectors:SelectorForwardUndirectedNeighbor>`
 (``>``) yields every shape that is connected to the current shape. For
 example, the following selector matches the key and value members of
 every map:
@@ -1025,7 +1025,7 @@ relationships of each operation:
 
     operation > *
 
-A forward directed edge traversal is applied using :token:`selectors:selector_forward_directed_neighbor`
+A forward directed edge traversal is applied using :token:`selectors:SelectorForwardDirectedNeighbor`
 (``-[X, Y, Z]->``). The following selector matches all structure shapes
 referenced as operation ``input`` or ``output``.
 
@@ -1489,7 +1489,7 @@ results that are computed multiples times in a selector or for capturing
 information about the current shape that is referenced later in a selector
 after traversing neighbors.
 
-A variable is set using a :token:`selectors:selector_variable_set` expression.
+A variable is set using a :token:`selectors:SelectorVariableSet` expression.
 Variables can be reassigned without error.
 
 The following selector defines a variable named ``foo`` that sets the
@@ -1499,7 +1499,7 @@ variable to the result of applying the ``*`` selector to the current shape.
 
     $foo(*)
 
-A variable is retrieved by name using a :token:`selectors:selector_variable_get`
+A variable is retrieved by name using a :token:`selectors:SelectorVariableGet`
 expression. Retrieving a variable yields the set of shapes stored in the
 variable. Attempting to get a variable that does not exist yields no shapes.
 
@@ -1603,55 +1603,55 @@ Selectors are defined by the following ABNF_ grammar.
    changing the semantics of a selector.
 
 .. productionlist:: selectors
-    selector                             :`selector_expression` *(`selector_expression`)
-    selector_expression                  :`selector_shape_types`
-                                         :/ `selector_attr`
-                                         :/ `selector_scoped_attr`
-                                         :/ `selector_function`
-                                         :/ `selector_forward_undirected_neighbor`
-                                         :/ `selector_reverse_undirected_neighbor`
-                                         :/ `selector_forward_directed_neighbor`
-                                         :/ `selector_reverse_directed_neighbor`
-                                         :/ `selector_forward_recursive_neighbor`
-                                         :/ `selector_variable_set`
-                                         :/ `selector_variable_get`
-    selector_shape_types                 :"*" / `smithy:Identifier`
-    selector_forward_undirected_neighbor :">"
-    selector_reverse_undirected_neighbor :"<"
-    selector_forward_directed_neighbor   :"-[" `selector_directed_relationships` "]->"
-    selector_reverse_directed_neighbor   :"<-[" selector_directed_relationships "]-"
-    selector_directed_relationships      :`smithy:Identifier` *("," `smithy:Identifier`)
-    selector_forward_recursive_neighbor  :"~>"
-    selector_attr                        :"[" `selector_key` [selector_attr_comparison] "]"
-    selector_attr_comparison             :`selector_comparator` `selector_attr_values` ["i"]
-    selector_key                         :`smithy:Identifier` ["|" `selector_path`]
-    selector_path                        :`selector_path_segment` *("|" `selector_path_segment`)
-    selector_path_segment                :`selector_value` / `selector_function_property`
-    selector_value                       :`selector_text` / `smithy:Number` / `smithy:RootShapeId`
-    selector_function_property           :"(" `smithy:Identifier` ")"
-    selector_attr_values                 :`selector_value` *("," `selector_value`)
-    selector_comparator                  :`selector_string_comparator`
-                                         :/ `selector_numeric_comparator`
-                                         :/ `selector_projection_comparator`
-    selector_string_comparator           :"^=" / "$=" / "*=" / "!=" / "=" / "?="
-    selector_numeric_comparator          :">=" / ">" / "<=" / "<"
-    selector_projection_comparator       :"{=}" / "{!=}" / "{<}" / "{<<}"
-    selector_AbsoluteRootShapeId         :`smithy:Namespace` "#" `smithy:Identifier`
-    selector_scoped_attr                 :"[@" [`selector_key`] ":" `selector_scoped_assertions` "]"
-    selector_scoped_assertions           :`selector_scoped_assertion` *("&&" `selector_scoped_assertion`)
-    selector_scoped_assertion            :`selector_scoped_value` `selector_comparator` `selector_scoped_values` ["i"]
-    selector_scoped_value                :`selector_value` / `selector_context_value`
-    selector_context_value               :"@{" `selector_path` "}"
-    selector_scoped_values               :`selector_scoped_value` *("," `selector_scoped_value`)
-    selector_function                    :":" `smithy:Identifier` "(" `selector_function_args` ")"
-    selector_function_args               :`selector` *("," `selector`)
-    selector_text                        :`selector_single_quoted_text` / `selector_double_quoted_text`
-    selector_single_quoted_text          :"'" 1*`selector_single_quoted_char` "'"
-    selector_double_quoted_text          :DQUOTE 1*`selector_double_quoted_char` DQUOTE
-    selector_single_quoted_char          :%x20-26 / %x28-5B / %x5D-10FFFF ; Excludes (')
-    selector_double_quoted_char          :%x20-21 / %x23-5B / %x5D-10FFFF ; Excludes (")
-    selector_variable_set                :"$" `smithy:Identifier` "(" selector ")"
-    selector_variable_get                :"${" `smithy:Identifier` "}"
+    Selector                           :`SelectorExpression` *(`SelectorExpression`)
+    SelectorExpression                 :`SelectorShapeTypes`
+                                       :/ `SelectorAttr`
+                                       :/ `SelectorScopedAttr`
+                                       :/ `SelectorFunction`
+                                       :/ `SelectorForwardUndirectedNeighbor`
+                                       :/ `SelectorReverseUndirectedNeighbor`
+                                       :/ `SelectorForwardDirectedNeighbor`
+                                       :/ `SelectorForwardRecursiveNeighbor`
+                                       :/ `SelectorReverseDirectedNeighbor`
+                                       :/ `SelectorVariableSet`
+                                       :/ `SelectorVariableGet`
+    SelectorShapeTypes                 :"*" / `smithy:Identifier`
+    SelectorForwardUndirectedNeighbor  :">"
+    SelectorReverseUndirectedNeighbor  :"<"
+    SelectorForwardDirectedNeighbor    :"-[" `SelectorDirectedRelationships` "]->"
+    SelectorReverseDirectedNeighbor    :"<-[" SelectorDirectedRelationships "]-"
+    SelectorDirectedRelationships      :`smithy:Identifier` *("," `smithy:Identifier`)
+    SelectorForwardRecursiveNeighbor   :"~>"
+    SelectorAttr                       :"[" `SelectorKey` [SelectorAttrComparison] "]"
+    SelectorAttrComparison             :`SelectorComparator` `SelectorAttrValues` ["i"]
+    SelectorKey                        :`smithy:Identifier` ["|" `SelectorPath`]
+    SelectorPath                       :`SelectorPathSegment` *("|" `SelectorPathSegment`)
+    SelectorPathSegment                :`SelectorValue` / `SelectorFunctionProperty`
+    SelectorValue                      :`SelectorText` / `smithy:Number` / `smithy:RootShapeId`
+    SelectorFunctionProperty           :"(" `smithy:Identifier` ")"
+    SelectorAttrValues                 :`SelectorValue` *("," `SelectorValue`)
+    SelectorComparator                 :`SelectorStringComparator`
+                                       :/ `SelectorNumericComparator`
+                                       :/ `SelectorProjectionComparator`
+    SelectorStringComparator           :"^=" / "$=" / "*=" / "!=" / "=" / "?="
+    SelectorNumericComparator          :">=" / ">" / "<=" / "<"
+    SelectorProjectionComparator       :"{=}" / "{!=}" / "{<}" / "{<<}"
+    SelectorAbsoluteRootShapeId        :`smithy:Namespace` "#" `smithy:Identifier`
+    SelectorScopedAttr                 :"[@" [`SelectorKey`] ":" `SelectorScopedAssertions` "]"
+    SelectorScopedAssertions           :`SelectorScopedAssertion` *("&&" `SelectorScopedAssertion`)
+    SelectorScopedAssertion            :`SelectorScopedValue` `SelectorComparator` `SelectorScopedValues` ["i"]
+    SelectorScopedValue                :`SelectorValue` / `SelectorContextValue`
+    SelectorContextValue               :"@{" `SelectorPath` "}"
+    SelectorScopedValues               :`SelectorScopedValue` *("," `SelectorScopedValue`)
+    SelectorFunction                   :":" `smithy:Identifier` "(" `SelectorFunctionArgs` ")"
+    SelectorFunctionArgs               :`selector` *("," `selector`)
+    SelectorText                       :`SelectorSingleQuotedText` / `SelectorDoubleQuotedText`
+    SelectorSingleQuotedText           :"'" 1*`SelectorSingleQuotedChar` "'"
+    SelectorDoubleQuotedText           :DQUOTE 1*`SelectorDoubleQuotedChar` DQUOTE
+    SelectorSingleQuotedChar           :%x20-26 / %x28-5B / %x5D-10FFFF ; Excludes (')
+    SelectorDoubleQuotedChar           :%x20-21 / %x23-5B / %x5D-10FFFF ; Excludes (")
+    SelectorVariableSet                :"$" `smithy:Identifier` "(" selector ")"
+    SelectorVariableGet                :"${" `smithy:Identifier` "}"
 
 .. _ABNF: https://tools.ietf.org/html/rfc5234
 .. _set: https://en.wikipedia.org/wiki/Set_(abstract_data_type)
