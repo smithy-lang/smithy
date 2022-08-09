@@ -574,7 +574,7 @@ string title
     ]
 )
 @length(min: 1)
-@deprecated(messag: "The enum trait is replaced by the enum shape in Smithy 2.0", since: "2.0")
+@deprecated(message: "The enum trait is replaced by the enum shape in Smithy 2.0", since: "2.0")
 list enum {
     member: EnumDefinition
 }

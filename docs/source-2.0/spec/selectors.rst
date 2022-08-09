@@ -1644,7 +1644,7 @@ Selectors are defined by the following ABNF_ grammar.
     SelectorContextValue               :"@{" `SelectorPath` "}"
     SelectorScopedValues               :`SelectorScopedValue` *("," `SelectorScopedValue`)
     SelectorFunction                   :":" `smithy:Identifier` "(" `SelectorFunctionArgs` ")"
-    SelectorFunctionArgs               :`selector` *("," `selector`)
+    SelectorFunctionArgs               :`Selector` *("," `Selector`)
     SelectorText                       :`SelectorSingleQuotedText` / `SelectorDoubleQuotedText`
     SelectorSingleQuotedText           :"'" 1*`SelectorSingleQuotedChar` "'"
     SelectorDoubleQuotedText           :DQUOTE 1*`SelectorDoubleQuotedChar` DQUOTE
