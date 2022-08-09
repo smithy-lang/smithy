@@ -46,6 +46,7 @@ final class MetadataContainer {
      *
      * @param key Metadata key to set.
      * @param value Value to set.
+     * @param events Where to add events as issues are encountered.
      */
     void putMetadata(String key, Node value, List<ValidationEvent> events) {
         Node previous = data.putIfAbsent(key, value);
