@@ -1,5 +1,49 @@
 # Smithy Changelog
 
+## 1.23.0 (2022-08-10)
+
+### Features
+
+* Added version 2.0 of the Smithy IDL. ([#1317](https://github.com/awslabs/smithy/pull/1317),
+  [#1312](https://github.com/awslabs/smithy/pull/1312), [#1318](https://github.com/awslabs/smithy/pull/1318))
+* Added mixins for all shape types. ([#889](https://github.com/awslabs/smithy/pull/889), [#1025](https://github.com/awslabs/smithy/pull/1025),
+  [#1139](https://github.com/awslabs/smithy/pull/1139), [#1323](https://github.com/awslabs/smithy/pull/1323))
+* Added resource properties to version 2.0 of Smithy IDL. ([#1213](https://github.com/awslabs/smithy/pull/1213))
+* Added target elision for mixins/resources. ([#1231](https://github.com/awslabs/smithy/pull/1231))
+* Added inline operation IO shapes. ([#963](https://github.com/awslabs/smithy/pull/963), [#962](https://github.com/awslabs/smithy/pull/962),
+  [#1007](https://github.com/awslabs/smithy/pull/1007))
+* Added validation for multiple IDL versions. ([#917](https://github.com/awslabs/smithy/pull/917))
+* Added IDL 1.0 to 2.0 model migration tool. ([#1175](https://github.com/awslabs/smithy/pull/1175))
+* Added enum shapes. ([#1088](https://github.com/awslabs/smithy/pull/1088), [#1114](https://github.com/awslabs/smithy/pull/1114),
+  [#1133](https://github.com/awslabs/smithy/pull/1133), [#1313](https://github.com/awslabs/smithy/pull/1313))
+* Added `@clientOptional` trait. ([#1052](https://github.com/awslabs/smithy/pull/1052), [#1264](https://github.com/awslabs/smithy/pull/1264))
+* Multiple traits can now be applied in a single `apply` statement. ([#885](https://github.com/awslabs/smithy/pull/885))
+* Commas are now optional in the IDL. ([#772](https://github.com/awslabs/smithy/pull/772), [#776](https://github.com/awslabs/smithy/pull/776),
+  [#1166](https://github.com/awslabs/smithy/pull/1166))
+* Added `@default` trait. ([#1019](https://github.com/awslabs/smithy/pull/1019), [#1286](https://github.com/awslabs/smithy/pull/1286),
+  [#1021](https://github.com/awslabs/smithy/pull/1021), [#1048](https://github.com/awslabs/smithy/pull/1048), [#920](https://github.com/awslabs/smithy/pull/920))
+* Sets can no longer be used in 2.0 models. Use a list with the `@uniqueItems` trait instead. Sets can still be used in 1.0 models, though a
+  warning will be emitted. The `SetShape` in smithy-model is a subclass of `ListShape`, so new code generators can simply treat any `SetShape`
+  like a `ListShape`. ([#1292](https://github.com/awslabs/smithy/pull/1292))
+* Migrated traits packages to use Smithy IDL definitions instead of JSON AST. ([#1207](https://github.com/awslabs/smithy/pull/1207))
+* Added `@cfnDefaultValue` trait ([#1285](https://github.com/awslabs/smithy/pull/1285))
+
+### Bug fixes
+
+* Made streaming blobs required/default. ([#1209](https://github.com/awslabs/smithy/pull/1209))
+* Fixed TextIndex to handle synthetic traits. ([#1206](https://github.com/awslabs/smithy/pull/1206))
+* Removed duplicate aws.protocols model file. ([#1310](https://github.com/awslabs/smithy/pull/1310))
+* Removed empty trait block serialization. ([#1240](https://github.com/awslabs/smithy/pull/1240))
+* Fixed trait source locations. ([#1146](https://github.com/awslabs/smithy/pull/1146), [#1157](https://github.com/awslabs/smithy/pull/1157))
+
+### Documentation
+
+* Added documentation for IDL 2.0 and changed location of 1.0 docs. ([#1302](https://github.com/awslabs/smithy/pull/1302),
+  [#1057](https://github.com/awslabs/smithy/pull/1057))
+* Added IDL 1.0 to 2.0 migration guide. ([#1065](https://github.com/awslabs/smithy/pull/1065), [#1074](https://github.com/awslabs/smithy/pull/1074))
+* Updated the doc highlighter for IDL 2.0. ([#1251](https://github.com/awslabs/smithy/pull/1251))
+* Added documentation to IAM trait enums. ([#1322](https://github.com/awslabs/smithy/pull/1322))
+
 ## 1.22.0 (2022-06-30)
 
 ### Breaking changes
