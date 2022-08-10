@@ -538,11 +538,13 @@ onErrorStatusConflict (``String``)
     This behavior can be customized using the following values for the ``onErrorStatusConflict`` setting:
 
     ``oneOf``
-        Use OpenAPI's ``oneOf`` keyword to combine error responses with same HTTP status code.
-
-
+        Use OpenAPI's ``oneOf`` keyword to combine error responses with same HTTP status code. The ``oneOf`` option
+        wraps schemas for contents of conflicting errors responses schemas into a synthetic union schema using
+        OpenAPI's ``oneOf`` keyword.
     ``properties``
         Use ``properties`` field of OpenAPI schema object to combine error responses with same HTTP status code.
+        The ``properties`` option combines the conflicting error structure shapes into one union error shape that
+        contains all members from each and every conflicting error.
 
     .. note::
             ``oneOf`` keyword is not supported by Amazon API Gateway.
@@ -551,22 +553,16 @@ onErrorStatusConflict (``String``)
     OpenAPI model output, where "XXX" is the status code shared by multiple errors. Both options drop
     the ``@required`` trait from all members of conflicting error structures, making them optional.
 
-    ``oneOf`` option wraps schemas for contents of conflicting errors responses schemas into a synthetic union schema
-    using OpenAPI's ``oneOf`` keyword.
-
-    ``properties`` option combines the conflicting error structure shapes into one union error shape that contains
-     all members from each and every conflicting error.
+    .. warning::
+        When using ``properties`` option, make sure that conflicting error structure shapes do not have member(s)
+        that have same name while having different target shapes. If member shapes with same name
+        (in conflicting error structures) target
+        different shapes, error shapes will not be able to be merged into one union error shape, and
+        an exception will be thrown.
 
     .. warning::
-            When using ``properties`` option, make sure that conflicting error structure shapes do not have member(s)
-            that have same name while having different target shapes. If member shapes with same name
-            (in conflicting error structures) target
-            different shapes, error shapes will not be able to be merged into one union error shape, and
-            an exception will be thrown.
-
-    .. warning::
-            Regardless of the setting, an exception will be thrown if any one of conflicting error structure shape
-            has a member shape with ``@httpPayload`` trait.
+        Regardless of the setting, an exception will be thrown if any one of conflicting error structure shape
+        has a member shape with ``@httpPayload`` trait.
 
     By default, this setting is set to ``oneOf``.
 
