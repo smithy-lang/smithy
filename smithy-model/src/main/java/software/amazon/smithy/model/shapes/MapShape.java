@@ -42,8 +42,8 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
 
     private MapShape(Builder builder) {
         super(builder, false);
-        key = builder.key != null ? builder.key : getRequiredMixinMember(builder, "key");
-        value = builder.value != null ? builder.value : getRequiredMixinMember(builder, "value");
+        key = getRequiredMixinMember(builder, builder.key, "key");
+        value = getRequiredMixinMember(builder, builder.value, "value");
         validateMemberShapeIds();
     }
 

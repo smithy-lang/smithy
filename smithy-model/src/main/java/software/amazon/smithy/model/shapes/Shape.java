@@ -108,7 +108,15 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
         }
     }
 
-    protected MemberShape getRequiredMixinMember(AbstractShapeBuilder<?, ?> builder, String name) {
+    protected MemberShape getRequiredMixinMember(
+            AbstractShapeBuilder<?, ?> builder,
+            MemberShape onBuilder,
+            String name
+    ) {
+        if (onBuilder != null) {
+            return onBuilder;
+        }
+
         // Get the most recently introduced mixin member with the given name.
         MemberShape mostRecentMember = null;
 
