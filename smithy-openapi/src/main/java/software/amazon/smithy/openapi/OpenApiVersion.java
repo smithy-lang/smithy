@@ -17,29 +17,25 @@ package software.amazon.smithy.openapi;
 
 import software.amazon.smithy.utils.SmithyInternalApi;
 
+/**
+ * OpenAPI versions supported by the converter.
+ */
 public enum OpenApiVersion {
-    /** OpenAPI versions supported by the converter. */
-    VERSION_3_0_2("3.0.2", true, false),
-    VERSION_3_1_0("3.1.0", false, true);
+
+    VERSION_3_0_2("3.0.2", false),
+    VERSION_3_1_0("3.1.0", true);
 
     private final String version;
-    private final boolean supportsNullableKeyword;
     private final boolean supportsContentEncodingKeyword;
 
-    OpenApiVersion(String version, boolean supportsNullableKeyword, boolean supportsContentEncodingKeyword) {
+    OpenApiVersion(String version, boolean supportsContentEncodingKeyword) {
         this.version = version;
-        this.supportsNullableKeyword = supportsNullableKeyword;
         this.supportsContentEncodingKeyword = supportsContentEncodingKeyword;
     }
 
     @Override
     public String toString() {
         return version;
-    }
-
-    @SmithyInternalApi
-    public boolean supportsNullableKeyword() {
-        return supportsNullableKeyword;
     }
 
     @SmithyInternalApi

@@ -43,8 +43,7 @@
             "type": "string"
           },
           "def": {
-            "type": "number",
-            "nullable": true
+            "type": "number"
           }
         }
       }
