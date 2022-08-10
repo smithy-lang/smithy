@@ -2,12 +2,8 @@ $version: "2.0"
 
 namespace example.weather
 
-use aws.api#taggable
-use aws.api#tagEnabled
-
 @paginated(inputToken: "nextToken", outputToken: "nextToken",
            pageSize: "pageSize")
-@tagEnabled
 service Weather {
     version: "2006-03-01",
     resources: [City]
@@ -46,7 +42,6 @@ operation ListTagsForCity {
     }
 }
 
-@taggable(property: "tags", apiConfig: {tagApi: TagCity, untagApi: UntagCity, listTagsApi: ListTagsForCity})
 resource City {
     identifiers: { cityId: CityId },
     properties: {

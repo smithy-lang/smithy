@@ -1041,7 +1041,7 @@ shapes that define an identifier:
 
     resource :test(-[identifier]->)
 
-The following selector matches all shapes targeted by resource property of
+The following selector matches all shapes targeted by a resource property of
 MyResource:
 
 .. code-block:: none

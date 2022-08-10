@@ -90,8 +90,7 @@ public class SelectorTest {
                 .addImport(SelectorTest.class.getResource("resource.smithy"))
                 .addImport(SelectorTest.class.getResource("resource-tagging.smithy"))
                 .assemble()
-                .getResult() // ignore built-in errors
-                .get();
+                .unwrap();
     }
 
     @Test
