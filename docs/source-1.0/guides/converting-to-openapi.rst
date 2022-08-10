@@ -531,52 +531,6 @@ useIntegerType (``boolean``)
             }
         }
 
-.. _generate-openapi-setting-onErrorStatusConflict:
-
-onErrorStatusConflict (``String``)
-    Specifies how to resolve multiple error responses that share a same HTTP status code.
-    This behavior can be customized using the following values for the ``onErrorStatusConflict`` setting:
-
-    ``oneOf``
-        Use OpenAPI's ``oneOf`` keyword to combine error responses with same HTTP status code. The ``oneOf`` option
-        wraps schemas for contents of conflicting errors responses schemas into a synthetic union schema using
-        OpenAPI's ``oneOf`` keyword.
-    ``properties``
-        Use ``properties`` field of OpenAPI schema object to combine error responses with same HTTP status code.
-        The ``properties`` option combines the conflicting error structure shapes into one union error shape that
-        contains all members from each and every conflicting error.
-
-    .. note::
-            ``oneOf`` keyword is not supported by Amazon API Gateway.
-
-    Both options generate a single combined response object called "UnionError XXX Response" in the
-    OpenAPI model output, where "XXX" is the status code shared by multiple errors. Both options drop
-    the ``@required`` trait from all members of conflicting error structures, making them optional.
-
-    .. warning::
-        When using ``properties`` option, make sure that conflicting error structure shapes do not have member(s)
-        that have same name while having different target shapes. If member shapes with same name
-        (in conflicting error structures) target
-        different shapes, error shapes will not be able to be merged into one union error shape, and
-        an exception will be thrown.
-
-    .. warning::
-        Regardless of the setting, an exception will be thrown if any one of conflicting error structure shape
-        has a member shape with ``@httpPayload`` trait.
-
-    By default, this setting is set to ``oneOf``.
-
-    .. code-block:: json
-
-        {
-            "version": "1.0",
-            "plugins": {
-                "openapi": {
-                    "service": "smithy.example#Weather",
-                    "onErrorStatusConflict": "properties"
-                }
-            }
-        }
 
 ----------------------------------
 JSON schema configuration settings
