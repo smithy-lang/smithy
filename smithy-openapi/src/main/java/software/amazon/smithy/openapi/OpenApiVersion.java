@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.openapi;
 
+import software.amazon.smithy.utils.SmithyInternalApi;
+
 public enum OpenApiVersion {
     /** OpenAPI versions supported by the converter. */
     VERSION_3_0_2("3.0.2", true, false),
@@ -35,10 +37,12 @@ public enum OpenApiVersion {
         return version;
     }
 
+    @SmithyInternalApi
     public boolean supportsNullableKeyword() {
         return supportsNullableKeyword;
     }
 
+    @SmithyInternalApi
     public boolean supportsContentEncodingKeyword() {
         return supportsContentEncodingKeyword;
     }

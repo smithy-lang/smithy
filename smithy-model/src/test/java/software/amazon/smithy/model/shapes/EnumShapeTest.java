@@ -272,7 +272,7 @@ public class EnumShapeTest {
     public void addMultipleMembers() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
 
-        EnumShape shape = builder.setMembersFromEnumTrait(ListUtils.of(
+        EnumShape shape = builder.members(ListUtils.of(
                 MemberShape.builder()
                         .id("ns.foo#bar$foo")
                         .target(UnitTypeTrait.UNIT)
@@ -316,7 +316,7 @@ public class EnumShapeTest {
     public void removeMember() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
 
-        builder.setMembersFromEnumTrait(ListUtils.of(
+        builder.members(ListUtils.of(
                 MemberShape.builder()
                         .id("ns.foo#bar$foo")
                         .target(UnitTypeTrait.UNIT)

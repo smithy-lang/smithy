@@ -55,6 +55,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -895,5 +896,22 @@ public class ModelAssemblerTest {
         assertThat(model.expectShape(ShapeId.from("smithy.api#Long")).hasTrait(BoxTrait.class), is(true));
         assertThat(model.expectShape(ShapeId.from("smithy.api#Float")).hasTrait(BoxTrait.class), is(true));
         assertThat(model.expectShape(ShapeId.from("smithy.api#Double")).hasTrait(BoxTrait.class), is(true));
+    }
+
+    @Test
+    public void forwardReferencesAreOrdered() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("forward-references-are-ordered.smithy"))
+                .assemble()
+                .unwrap();
+
+        ShapeId service = ShapeId.from("smithy.example#Example");
+        assertThat(model.expectShape(service, ServiceShape.class).getErrors(),
+                   contains(ShapeId.from("smithy.example#Error1"),
+                            ShapeId.from("smithy.example#Error2"),
+                            ShapeId.from("smithy.example#Error3"),
+                            ShapeId.from("smithy.example#Error4"),
+                            ShapeId.from("smithy.example#Error5"),
+                            ShapeId.from("smithy.example#Error6")));
     }
 }

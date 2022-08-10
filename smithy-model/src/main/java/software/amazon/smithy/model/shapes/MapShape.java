@@ -272,6 +272,10 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
 
         @Override
         public Builder flattenMixins() {
+            if (getMixins().isEmpty()) {
+                return this;
+            }
+
             for (Shape mixin : getMixins().values()) {
                 for (MemberShape member : mixin.members()) {
                     SourceLocation location = getSourceLocation();

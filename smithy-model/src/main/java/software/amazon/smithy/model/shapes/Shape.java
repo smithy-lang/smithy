@@ -108,32 +108,31 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
         }
     }
 
-    protected MemberShape getRequiredMixinMember(
-            AbstractShapeBuilder<?, ?> builder,
-            String name
-    ) {
+    protected MemberShape getRequiredMixinMember(AbstractShapeBuilder<?, ?> builder, String name) {
         // Get the most recently introduced mixin member with the given name.
-        MemberShape mixedMember = null;
+        MemberShape mostRecentMember = null;
+
         for (Shape shape : builder.getMixins().values()) {
             for (MemberShape member : shape.members()) {
                 if (member.getMemberName().equals(name)) {
-                    mixedMember = MemberShape.builder()
-                            .id(getId().withMember(name))
-                            .target(member.getTarget())
-                            .source(getSourceLocation())
-                            .addMixin(member)
-                            .build();
-                    break;
+                    mostRecentMember = member;
+                    break; // break to the next mixin shape.
                 }
             }
         }
-        if (mixedMember == null) {
+
+        if (mostRecentMember == null) {
             throw new SourceException(
                     String.format("Missing required member of shape `%s`: %s", getId(), name),
-                    builder.getSourceLocation()
-            );
+                    builder.getSourceLocation());
         }
-        return mixedMember;
+
+        return MemberShape.builder()
+                .id(getId().withMember(name))
+                .target(mostRecentMember.getTarget())
+                .source(getSourceLocation())
+                .addMixin(mostRecentMember)
+                .build();
     }
 
     /**

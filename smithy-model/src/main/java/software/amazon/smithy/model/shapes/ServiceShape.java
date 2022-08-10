@@ -324,13 +324,17 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
 
         @Override
         public Builder flattenMixins() {
+            if (getMixins().isEmpty()) {
+                return this;
+            }
+
             String flatVersion = version;
             Map<ShapeId, String> flatRename = new LinkedHashMap<>();
             Set<ShapeId> flatErrors = new LinkedHashSet<>();
 
             for (Shape shape : getMixins().values()) {
-                if (shape.isServiceShape()) {
-                    ServiceShape mixin = shape.asServiceShape().get();
+                if (shape instanceof ServiceShape) {
+                    ServiceShape mixin = (ServiceShape) shape;
                     if (!mixin.version.isEmpty()) {
                         flatVersion = mixin.version;
                     }
