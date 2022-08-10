@@ -18,7 +18,6 @@ package software.amazon.smithy.openapi.fromsmithy.protocols;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -49,16 +48,13 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.ExamplesTrait;
 import software.amazon.smithy.model.traits.HttpChecksumRequiredTrait;
-import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.Context;
-import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiProtocol;
 import software.amazon.smithy.openapi.model.ExampleObject;
-import software.amazon.smithy.openapi.model.LinkObject;
 import software.amazon.smithy.openapi.model.MediaTypeObject;
 import software.amazon.smithy.openapi.model.OperationObject;
 import software.amazon.smithy.openapi.model.ParameterObject;
@@ -624,27 +620,13 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     ) {
         Map<String, ResponseObject> result = new TreeMap<>();
         OperationIndex operationIndex = OperationIndex.of(context.getModel());
-
         StructureShape output = operationIndex.expectOutputShape(operation);
         updateResponsesMapWithResponseStatusAndObject(
                 context, bindingIndex, eventStreamIndex, operation, output, result);
 
-        Map<String, List<StructureShape>> errors = new LinkedHashMap<>();
-
         for (StructureShape error : operationIndex.getErrors(operation)) {
-            String statusCode = context.getOpenApiProtocol().getOperationResponseStatusCode(context, error);
-            errors.computeIfAbsent(statusCode, (k) -> new ArrayList<>()).add(error);
-        }
-
-        for (Map.Entry<String, List<StructureShape>> error : errors.entrySet()) {
-            List<StructureShape> shapes = error.getValue();
-            if (shapes.size() == 1) {
-                updateResponsesMapWithResponseStatusAndObject(
-                        context, bindingIndex, eventStreamIndex, operation, shapes.get(0), result);
-            } else {
-                updateResponsesMapWithResponseStatusAndMultipleObjectsUsingOneOf(
-                        context, bindingIndex, eventStreamIndex, shapes, result);
-            }
+            updateResponsesMapWithResponseStatusAndObject(
+                    context, bindingIndex, eventStreamIndex, operation, error, result);
         }
         return result;
     }
@@ -660,87 +642,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         Shape operationOrError = shape.hasTrait(ErrorTrait.class) ? shape : operation;
         String statusCode = context.getOpenApiProtocol().getOperationResponseStatusCode(context, operationOrError);
         ResponseObject response = createResponse(
-                context, bindingIndex, eventStreamIndex, statusCode, operationOrError, operation, false);
+                context, bindingIndex, eventStreamIndex, statusCode, operationOrError, operation);
         responses.put(statusCode, response);
-    }
-
-    private void updateResponsesMapWithResponseStatusAndMultipleObjectsUsingOneOf(
-            Context<T> context,
-            HttpBindingIndex bindingIndex,
-            EventStreamIndex eventStreamIndex,
-            List<StructureShape> shapes,
-            Map<String, ResponseObject> responses
-    ) {
-        // Throw an exception if any member in any conflicting error shapes has @httpPayload trait.
-        for (StructureShape error : shapes) {
-            for (Map.Entry<String, MemberShape> member : error.getAllMembers().entrySet()) {
-                if (member.getValue().hasTrait(HttpPayloadTrait.ID)) {
-                    throw new OpenApiException(
-                            OpenApiConverter.createConflictingErrorHttpPayloadExceptionMessage(
-                                    context.getOpenApiProtocol().getOperationResponseStatusCode(context, error),
-                                    error.getId().toString(),
-                                    member.getValue().toShapeId().toString()
-                            )
-                    );
-                }
-            }
-        }
-        // Make response object for each conflicting error response & add to list.
-        List<ResponseObject> errors = new ArrayList<>();
-        String statusCode = context.getOpenApiProtocol().getOperationResponseStatusCode(context, shapes.get(0));
-        for (StructureShape shape : shapes) {
-            errors.add(createResponse(context, bindingIndex, eventStreamIndex, statusCode, shape,
-                    null, true));
-        }
-
-        // This map contains mapping of mediaType string (e.g., "application/json") to MediaTypeObject objects from
-        // conflicting error responses.
-        Map<String, List<MediaTypeObject>> contents = new LinkedHashMap<>();
-
-        // Combine conflicting error response objects into one response object.
-        ResponseObject.Builder combinedResponseBuilder = ResponseObject.builder();
-        for (ResponseObject error : errors) {
-            // Combine headers.
-            for (Map.Entry<String, Ref<ParameterObject>> header : error.getHeaders().entrySet()) {
-                combinedResponseBuilder.putHeader(header.getKey(), header.getValue());
-            }
-
-            // Collect contents from conflicting errors.
-            // E.g., if Error1 and Error2 both have application/json MediaTypeObject,
-            //  an entry in contents map will be ("application/json", [Error1/MediaTypeObject, Error2/MediaTypeObject]).
-            for (Map.Entry<String, MediaTypeObject> content : error.getContent().entrySet()) {
-                contents.computeIfAbsent(content.getKey(), (k) -> new ArrayList<>()).add(content.getValue());
-            }
-
-            // Combine links.
-            for (Map.Entry<String, Ref<LinkObject>> link : error.getLinks().entrySet()) {
-                combinedResponseBuilder.putLink(link.getKey(), link.getValue());
-            }
-        }
-
-        // Populate contents into union response.
-        for (Map.Entry<String, List<MediaTypeObject>> mapping : contents.entrySet()) {
-            if (mapping.getValue().size() == 1) {
-                combinedResponseBuilder.putContent(mapping.getKey(), mapping.getValue().get(0));
-            } else {
-                // Combine contents.
-                combinedResponseBuilder.putContent(mapping.getKey(), combineContents(mapping.getValue()));
-            }
-        }
-
-        // Set description, build, and add to responses.
-        combinedResponseBuilder.description("UnionError " + statusCode + " response");
-        responses.put(statusCode, combinedResponseBuilder.build());
-    }
-
-    private MediaTypeObject combineContents(List<MediaTypeObject> contents) {
-        MediaTypeObject.Builder result = MediaTypeObject.builder();
-        Schema.Builder schema = Schema.builder();
-        List<Schema> schemas = new ArrayList<>();
-        for (MediaTypeObject content : contents) {
-            schemas.add(content.getSchema().get());
-        }
-        return result.schema(schema.oneOf(schemas).build()).build();
     }
 
     private ResponseObject createResponse(
@@ -749,24 +652,15 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             EventStreamIndex eventStreamIndex,
             String statusCode,
             Shape operationOrError,
-            OperationShape operation,
-            boolean dropRequiredTrait
-    ) {
+            OperationShape operation
+   ) {
         ResponseObject.Builder responseBuilder = ResponseObject.builder();
         String contextName = context.getService().getContextualName(operationOrError);
         String responseName = stripNonAlphaNumericCharsIfNecessary(context, contextName);
-
         responseBuilder.description(String.format("%s %s response", responseName, statusCode));
-        Map<String, ParameterObject> headers = createResponseHeaderParameters(context, operationOrError, operation);
-
-        if (dropRequiredTrait) {
-            headers.forEach((k, v) -> responseBuilder.putHeader(k, Ref.local(v.toBuilder().required(false).build())));;
-        } else {
-            headers.forEach((k, v) -> responseBuilder.putHeader(k, Ref.local(v)));;
-        }
-
+        createResponseHeaderParameters(context, operationOrError, operation)
+                .forEach((k, v) -> responseBuilder.putHeader(k, Ref.local(v)));
         addResponseContent(context, bindingIndex, eventStreamIndex, responseBuilder, operationOrError, operation);
-
         return responseBuilder.build();
     }
 
