@@ -137,7 +137,7 @@ The Smithy Gradle plugin relies on a ``smithy-build.json`` file found at the
 root of a project to define the actual process of building the OpenAPI
 specification. The following example defines a ``smithy-build.json`` file
 that builds an OpenAPI specification from a service for the
-``smithy.example#Weather`` service using the ``aws.protocols#restJson1`` protocol:
+``example.weather#Weather`` service using the ``aws.protocols#restJson1`` protocol:
 
 .. code-block:: json
     :caption: smithy-build.json
@@ -147,7 +147,7 @@ that builds an OpenAPI specification from a service for the
         "version": "1.0",
         "plugins": {
             "openapi": {
-                "service": "smithy.example#Weather",
+                "service": "example.weather#Weather",
                 "protocol": "aws.protocols#restJson1"
             }
         }
@@ -178,7 +178,7 @@ The following key-value pairs are supported:
 
 service (``string``)
     **Required**. The Smithy service :ref:`shape ID <shape-id>` to convert.
-    For example, ``smithy.example#Weather``.
+    For example, ``example.weather#Weather``.
 
     .. code-block:: json
 
@@ -186,7 +186,7 @@ service (``string``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather"
+                    "service": "example.weather#Weather"
                 }
             }
         }
@@ -216,8 +216,27 @@ protocol (``string``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "protocol": "aws.protocols#restJson1"
+                }
+            }
+        }
+
+.. _generate-openapi-setting-version:
+
+version (``string``)
+    Specifies the OpenAPI specification version.
+    Currently supports OpenAPI 3.0.2 and OpenAPI 3.1.0.
+    This option defaults to ``3.0.2``.
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "version": "3.1.0"
                 }
             }
         }
@@ -235,7 +254,7 @@ tags (``boolean``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "tags": true
                 }
             }
@@ -254,7 +273,7 @@ supportedTags (``[string]``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "tags": true,
                     "supportedTags": ["foo", "baz", "bar"]
                 }
@@ -274,7 +293,7 @@ defaultBlobFormat (``string``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "defaultBlobFormat": "byte"
                 }
             }
@@ -295,7 +314,7 @@ externalDocs (``[string]``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "externalDocs": [
                         "Homepage",
                         "Custom"
@@ -316,7 +335,7 @@ keepUnusedComponents (``boolean``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "keepUnusedComponents": true
                 }
             }
@@ -334,7 +353,7 @@ jsonContentType (``string``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "jsonContentType": "application/x-amz-json-1.1"
                 }
             }
@@ -353,7 +372,7 @@ forbidGreedyLabels (``boolean``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "forbidGreedyLabels": true
                 }
             }
@@ -373,7 +392,7 @@ removeGreedyParameterSuffix (``boolean``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "removeGreedyParameterSuffix": true
                 }
             }
@@ -397,7 +416,7 @@ onHttpPrefixHeaders (``string``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "onHttpPrefixHeaders": "WARN"
                 }
             }
@@ -415,7 +434,7 @@ ignoreUnsupportedTraits (``boolean``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "ignoreUnsupportedTraits": true
                 }
             }
@@ -449,7 +468,7 @@ substitutions (``Map<String, any>``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "substitutions": {
                         "REPLACE_ME": ["this is a", " replacement"],
                         "ANOTHER_REPLACEMENT": "Hello!!!"
@@ -478,7 +497,7 @@ jsonAdd (``Map<String, Node>``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "jsonAdd": {
                         "/info/title": "Replaced title value",
                         "/info/nested/foo": {
@@ -506,12 +525,58 @@ useIntegerType (``boolean``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "useIntegerType": true
                 }
             }
         }
 
+.. _generate-openapi-setting-onErrorStatusConflict:
+
+onErrorStatusConflict (``String``)
+    Specifies how to resolve multiple error responses that share a same HTTP status code.
+    This behavior can be customized using the following values for the ``onErrorStatusConflict`` setting:
+
+    ``oneOf``
+        Use OpenAPI's ``oneOf`` keyword to combine error responses with same HTTP status code. The ``oneOf`` option
+        wraps schemas for contents of conflicting errors responses schemas into a synthetic union schema using
+        OpenAPI's ``oneOf`` keyword.
+    ``properties``
+        Use ``properties`` field of OpenAPI schema object to combine error responses with same HTTP status code.
+        The ``properties`` option combines the conflicting error structure shapes into one union error shape that
+        contains all members from each and every conflicting error.
+
+    .. note::
+            ``oneOf`` keyword is not supported by Amazon API Gateway.
+
+    Both options generate a single combined response object called "UnionError XXX Response" in the
+    OpenAPI model output, where "XXX" is the status code shared by multiple errors. Both options drop
+    the ``@required`` trait from all members of conflicting error structures, making them optional.
+
+    .. warning::
+        When using ``properties`` option, make sure that conflicting error structure shapes do not have member(s)
+        that have same name while having different target shapes. If member shapes with same name
+        (in conflicting error structures) target
+        different shapes, error shapes will not be able to be merged into one union error shape, and
+        an exception will be thrown.
+
+    .. warning::
+        Regardless of the setting, an exception will be thrown if any one of conflicting error structure shape
+        has a member shape with ``@httpPayload`` trait.
+
+    By default, this setting is set to ``oneOf``.
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "onErrorStatusConflict": "properties"
+                }
+            }
+        }
 
 ----------------------------------
 JSON schema configuration settings
@@ -544,7 +609,7 @@ useJsonName (``boolean``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "useJsonName": true
                 }
             }
@@ -564,7 +629,7 @@ defaultTimestampFormat (``string``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "defaultTimestampFormat": "epoch-seconds"
                 }
             }
@@ -589,7 +654,7 @@ unionStrategy (``string``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "unionStrategy": "oneOf"
                 }
             }
@@ -616,7 +681,7 @@ mapStrategy (``string``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "mapStrategy": "propertyNames"
                 }
             }
@@ -634,7 +699,7 @@ schemaDocumentExtensions (``Map<String, any>``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "schemaDocumentExtensions": {
                         "x-my-custom-top-level-property": "Hello!",
                         "x-another-custom-top-level-property": {
@@ -657,7 +722,7 @@ disableFeatures (``[string]``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "disableFeatures": ["propertyNames"]
                 }
             }
@@ -680,7 +745,7 @@ supportNonNumericFloats (``boolean``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "supportNonNumericFloats": true
                 }
             }
@@ -746,7 +811,7 @@ For example, given the following Smithy model:
 
 .. code-block:: smithy
 
-    namespace smithy.example
+    namespace example.weather
 
     use aws.protocols#restJson1
 
@@ -799,6 +864,80 @@ Smithy will generate the following OpenAPI model:
     }
 
 
+--------------------------------
+``@examples`` trait conversion
+--------------------------------
+
+In Smithy, example values of input structure members and the corresponding
+output or error structure members for an operation are grouped together
+into one set of example values for an operation. Below is an example "unit" of ``FooOperation``
+operation shape, which shows this logical grouping.
+
+.. code-block:: smithy
+
+    apply FooOperation @examples(
+        [
+            {
+                title: "valid example",
+                documentation: "valid example doc",
+                input: {
+                    bar: "1234"
+                },
+                output: {
+                    baz: "5678"
+                },
+            }
+        ]
+    )
+
+However, example values in OpenAPI are scattered throughout the model, with each example value
+contained by the OpenAPI object the example value is for.
+The following is an example OpenAPI model for the above Smithy example value.
+
+.. code-block:: json
+
+        "paths": {
+            "/": {
+                "get": {
+                    "operationId": "FooOperation",
+                    "requestBody": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "FooOperation_example1": {
+                                        "summary": "valid example",
+                                        "description": "valid example doc",
+                                        "value": {
+                                            "bar": "1234"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    "responses": {
+                        "200": {
+                            "description": "FooOperation response",
+                            "content": {
+                                "application/json": {
+                                    "examples": {
+                                        "FooOperation_example1": {
+                                            "summary": "valid example",
+                                            "description": "valid example doc",
+                                            "value": {
+                                                "baz": "5678"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
 -----------------------------
 Amazon API Gateway extensions
 -----------------------------
@@ -843,7 +982,7 @@ apiGatewayType (``string``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "apiGatewayType": "REST"
                 }
             }
@@ -859,7 +998,7 @@ disableCloudFormationSubstitution (``boolean``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "disableCloudFormationSubstitution": true
                 }
             }
@@ -880,7 +1019,7 @@ additionalAllowedCorsHeaders (``[string]``)
             "version": "1.0",
             "plugins": {
                 "openapi": {
-                    "service": "smithy.example#Weather",
+                    "service": "example.weather#Weather",
                     "additionalAllowedCorsHeaders": ["foo-header", "bar-header"]
                 }
             }
@@ -1003,7 +1142,7 @@ The following Smithy model:
 
 .. code-block:: smithy
 
-    namespace smithy.example
+    namespace example.weather
 
     use aws.apigateway#authorizer
     use aws.apigateway#authorizers
@@ -1251,7 +1390,7 @@ The following Smithy model enables API Gateway's API key usage plans on the
 
 .. code-block:: smithy
 
-    namespace smithy.example
+    namespace example.weather
 
     use aws.apigateway#authorizer
     use aws.apigateway#authorizers
@@ -1320,7 +1459,7 @@ Next, you need to create and configure an ``OpenApiConverter``:
 
     // Add any necessary configuration settings.
     OpenApiConfig config = new OpenApiConfig();
-    config.setService(ShapeId.from("smithy.example#Weather"));
+    config.setService(ShapeId.from("example.weather#Weather"));
     converter.config(config);
 
     // Generate the OpenAPI schema.
