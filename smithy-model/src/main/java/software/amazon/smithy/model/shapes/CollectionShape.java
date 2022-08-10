@@ -33,13 +33,7 @@ public abstract class CollectionShape extends Shape {
 
     CollectionShape(Builder<?, ?> builder) {
         super(builder, false);
-
-        // Get the member from the builder or from any mixins.
-        if (builder.member != null) {
-            member = builder.member;
-        } else {
-            member = getRequiredMixinMember(builder, "member");
-        }
+        member = getRequiredMixinMember(builder, builder.member, "member");
 
         ShapeId expected = getId().withMember("member");
         if (!member.getId().equals(expected)) {
