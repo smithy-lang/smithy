@@ -1041,6 +1041,13 @@ shapes that define an identifier:
 
     resource :test(-[identifier]->)
 
+The following selector matches all shapes targeted by resource property of
+MyResource:
+
+.. code-block:: none
+
+    resource [id|name=MyResource] -[property]->
+
 Relationships from a shape to the traits applied to the shape can be traversed
 using a forward directed relationship named ``trait``. It is atypical to
 traverse ``trait`` relationships, therefore they are only yielded by

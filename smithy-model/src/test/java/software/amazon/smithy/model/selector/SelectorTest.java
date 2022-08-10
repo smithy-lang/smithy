@@ -40,12 +40,15 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
+import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.ErrorTrait;
@@ -66,6 +69,7 @@ public class SelectorTest {
     private static Model modelJson;
     private static Model traitModel;
     private static Model httpModel;
+    private static Model resourceModel;
 
     @BeforeAll
     public static void before() {
@@ -79,6 +83,12 @@ public class SelectorTest {
                 .unwrap();
         httpModel = Model.assembler()
                 .addImport(SelectorTest.class.getResource("http-model.smithy"))
+                .assemble()
+                .getResult() // ignore built-in errors
+                .get();
+        resourceModel = Model.assembler()
+                .addImport(SelectorTest.class.getResource("resource.smithy"))
+                .addImport(SelectorTest.class.getResource("resource-tagging.smithy"))
                 .assemble()
                 .getResult() // ignore built-in errors
                 .get();
@@ -1064,5 +1074,31 @@ public class SelectorTest {
 
         assertThat(unusedMixin.select(model).stream().map(Shape::toShapeId).collect(Collectors.toSet()),
                    contains(ShapeId.from("smithy.example#UnusedMixin")));
+    }
+
+    @Test
+    public void supportsResourceProperties() {
+        Set<Shape> resourcesWithProperties = Selector.parse("resource :test(-[property]->)").select(resourceModel);
+        ResourceShape forecastResource = resourceModel.expectShape(ShapeId.from("example.weather#Forecast"),
+                ResourceShape.class);
+        ResourceShape cityResource = resourceModel.expectShape(ShapeId.from("example.weather#City"),
+                ResourceShape.class);
+        assertThat(resourcesWithProperties.size(), equalTo(2));
+        assertThat(resourcesWithProperties, containsInAnyOrder(forecastResource, cityResource));
+
+        Set<Shape> shapesTargettedByAnyProperty = Selector.parse("resource -[property]-> *").select(resourceModel);
+        ListShape tagListShape = resourceModel.expectShape(ShapeId.from("example.tagging#TagList"), ListShape.class);
+        StructureShape coordinatesShape = resourceModel.expectShape(ShapeId.from("example.weather#CityCoordinates"),
+                StructureShape.class);
+        FloatShape floatShape = resourceModel.expectShape(ShapeId.from("smithy.api#Float"), FloatShape.class);
+        StringShape stringShape = resourceModel.expectShape(ShapeId.from("smithy.api#String"), StringShape.class);
+        assertThat(shapesTargettedByAnyProperty.size(), equalTo(4));
+        assertThat(shapesTargettedByAnyProperty, containsInAnyOrder(tagListShape, coordinatesShape, floatShape,
+                stringShape));
+
+        Set<Shape> shapesTargettedByCityOnly = Selector.parse("resource [id|name=City] -[property]-> *")
+                .select(resourceModel);
+        assertThat(shapesTargettedByCityOnly.size(), equalTo(3));
+        assertThat(shapesTargettedByCityOnly, containsInAnyOrder(tagListShape, coordinatesShape, stringShape));
     }
 }
