@@ -1,0 +1,4 @@
+[WARNING] smithy.example#BillingInfo: Detected that this shape possibly contains sensitive data but is not marked with the 'sensitive' trait | DefaultMissingSensitiveTrait
+[WARNING] smithy.example#BillingInfo$bank: Detected that this shape possibly contains sensitive data but is not marked with the 'sensitive' trait | DefaultMissingSensitiveTrait
+[WARNING] smithy.example#BillingInfo$firstName: Detected that this shape possibly contains sensitive data but is not marked with the 'sensitive' trait | DefaultMissingSensitiveTrait
+[WARNING] smithy.example#FirstName: Detected that this shape possibly contains sensitive data but is not marked with the 'sensitive' trait | DefaultMissingSensitiveTrait

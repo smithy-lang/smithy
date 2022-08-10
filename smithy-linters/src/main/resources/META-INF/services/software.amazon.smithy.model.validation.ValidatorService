@@ -9,3 +9,4 @@ software.amazon.smithy.linters.ReservedWordsValidator$Provider
 software.amazon.smithy.linters.ShouldHaveUsedTimestampValidator$Provider
 software.amazon.smithy.linters.StandardOperationVerbValidator$Provider
 software.amazon.smithy.linters.StutteredShapeNameValidator$Provider
+software.amazon.smithy.linters.MissingSensitiveTraitValidator$Provider
