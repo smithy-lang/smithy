@@ -17,6 +17,7 @@ package software.amazon.smithy.codegen.core.directed;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,11 +86,10 @@ public class CodegenDirectorTest {
         public void generateEnumShape(GenerateEnumDirective<TestContext, TestSettings> directive) {
             generatedShapes.add(directive.shape().getId());
             GenerateEnumDirective.EnumType type = directive.getEnumType();
-            if (type == GenerateEnumDirective.EnumType.STRING) {
-                directive.getEnumTrait();
+            if (type == GenerateEnumDirective.EnumType.ENUM) {
+                directive.expectEnumShape();
             } else {
-                // TODO: update for idl-2.0
-                throw new RuntimeException("Expected enum type to be string");
+                throw new RuntimeException("Expected enum type to be enum shape");
             }
         }
 
@@ -153,6 +153,17 @@ public class CodegenDirectorTest {
         runner.createDedicatedInputsAndOutputs();
         runner.sortMembers();
         runner.run();
+
+        // asserts that mixin smithy.example#Paginated is not generated
+        assertThat(testDirected.generatedShapes, containsInAnyOrder(
+                ShapeId.from("smithy.example#Foo"),
+                ShapeId.from("smithy.example#TheFoo"),
+                ShapeId.from("smithy.example#ListFooInput"),
+                ShapeId.from("smithy.example#ListFooOutput"),
+                ShapeId.from("smithy.example#Status"),
+                ShapeId.from("smithy.example#Instruction"),
+                ShapeId.from("smithy.api#Unit")
+        ));
     }
 
     @Test

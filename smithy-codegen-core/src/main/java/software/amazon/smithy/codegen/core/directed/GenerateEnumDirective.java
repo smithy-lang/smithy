@@ -16,6 +16,8 @@
 package software.amazon.smithy.codegen.core.directed;
 
 import software.amazon.smithy.codegen.core.CodegenContext;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.EnumTrait;
@@ -34,11 +36,10 @@ public final class GenerateEnumDirective<C extends CodegenContext<S, ?, ?>, S> e
     }
 
     private static Shape validateShape(Shape shape) {
-        if (!shape.isStringShape() || !shape.hasTrait(EnumTrait.class)) {
-            throw new IllegalArgumentException("GenerateEnum requires a string shape with the enum trait");
+        if (shape.isEnumShape() || (shape.isStringShape() && shape.hasTrait(EnumTrait.class))) {
+            return shape;
         }
-
-        return shape;
+        throw new IllegalArgumentException("GenerateEnum requires an enum shape or a string shape with the enum trait");
     }
 
     /**
@@ -48,9 +49,7 @@ public final class GenerateEnumDirective<C extends CodegenContext<S, ?, ?>, S> e
     public enum EnumType {
         /** A string shape marked with the enum trait is being generated. */
         STRING,
-
-        // TODO: idl-2.0
-        // ENUM
+        ENUM
     }
 
     /**
@@ -65,8 +64,7 @@ public final class GenerateEnumDirective<C extends CodegenContext<S, ?, ?>, S> e
      * @see #getEnumTrait()
      */
     public EnumType getEnumType() {
-        // TODO: update when idl-2.0 is released.
-        return EnumType.STRING;
+        return shape().isEnumShape() ? EnumType.ENUM : EnumType.STRING;
     }
 
     /**
@@ -78,11 +76,8 @@ public final class GenerateEnumDirective<C extends CodegenContext<S, ?, ?>, S> e
         return shape().expectTrait(EnumTrait.class);
     }
 
-    /*
-    TODO: Uncomment after IDL-2.0 is shipped.
     public EnumShape expectEnumShape() {
         return shape().asEnumShape().orElseThrow(() -> new ExpectationNotMetException(
                 "Expected an enum shape, but found " + shape(), shape()));
     }
-    */
 }

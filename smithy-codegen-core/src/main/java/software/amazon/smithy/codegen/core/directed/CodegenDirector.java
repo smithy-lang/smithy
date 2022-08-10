@@ -34,6 +34,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -79,8 +80,8 @@ public final class CodegenDirector<
      *
      * <ul>
      *     <li>Flattens error hierarchies onto every operation.</li>
-     *     <li>Converts enum strings to enum shapes.</li>
      *     <li>Flattens mixins</li>
+     *     <li>Converts enum strings to enum shapes.</li>
      * </ul>
      *
      * <p><em>Note</em>: This transform is applied automatically by a code
@@ -95,9 +96,8 @@ public final class CodegenDirector<
     public static Model simplifyModelForServiceCodegen(Model model, ShapeId service, ModelTransformer transformer) {
         ServiceShape serviceShape = model.expectShape(service, ServiceShape.class);
         model = transformer.copyServiceErrorsToOperations(model, serviceShape);
-        // model = transformer.flattenAndRemoveMixins(model);
-        model = transformer.copyServiceErrorsToOperations(model, serviceShape);
-        // model = transformer.changeStringEnumsToEnumShapes(model, true);
+        model = transformer.flattenAndRemoveMixins(model);
+        model = transformer.changeStringEnumsToEnumShapes(model, true);
         return model;
     }
 
@@ -455,14 +455,11 @@ public final class CodegenDirector<
             return null;
         }
 
-        /*
-        TODO: uncomment in idl-2.0 and remove the stringShape method
         @Override
         public Void enumShape(EnumShape shape) {
-            LOGGER.finest(() -> "Generating string enum " + shape.getId());
+            LOGGER.finest(() -> "Generating enum shape" + shape.getId());
             directedCodegen.generateEnumShape(new GenerateEnumDirective<>(context, serviceShape, shape));
             return null;
         }
-        */
     }
 }

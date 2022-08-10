@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace smithy.example
 
@@ -15,22 +15,15 @@ resource TheFoo {
 @readonly
 @paginated
 operation ListFoo {
-    input: ListFooInput,
-    output: ListFooOutput
-}
-
-@input
-structure ListFooInput {
-    maxResults: Integer,
-    nextToken: String
-}
-
-@output
-structure ListFooOutput {
-    nextToken: String,
-    status: Status,
-    items: StringList,
-    instruction: Instruction,
+    input:= {
+        maxResults: Integer
+        nextToken: String
+    }
+    output:= with [Paginated] {
+        status: Status
+        items: StringList
+        instruction: Instruction
+    }
 }
 
 list StringList {
@@ -46,4 +39,9 @@ string Status
 union Instruction {
     continueIteration: Unit,
     stopIteration: Unit
+}
+
+@mixin
+structure Paginated {
+    nextToken: String
 }
