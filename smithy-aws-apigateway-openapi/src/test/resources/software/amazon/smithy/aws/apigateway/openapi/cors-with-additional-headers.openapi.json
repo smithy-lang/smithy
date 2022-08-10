@@ -298,8 +298,7 @@
             "name": "query",
             "in": "query",
             "schema": {
-              "type": "number",
-              "nullable": true
+              "type": "number"
             }
           },
           {

@@ -28,7 +28,6 @@ import software.amazon.smithy.jsonschema.JsonSchemaMapper;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
@@ -99,11 +98,6 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
             }
         }
 
-        // TODO: Should we even be setting these at all? We don't want people to send null on the wire.
-        if (shape.hasTrait(BoxTrait.class)) {
-            handleNullability(builder, config);
-        }
-
         // Remove unsupported JSON Schema keywords.
         UNSUPPORTED_KEYWORD_DIRECTIVES.forEach(builder::disableProperty);
 
@@ -116,18 +110,6 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
             builder.contentEncoding(blobFormat);
         } else {
             builder.format(blobFormat);
-        }
-    }
-
-    private void handleNullability(Schema.Builder builder, JsonSchemaConfig config) {
-        if (config instanceof OpenApiConfig
-                && !((OpenApiConfig) config).getVersion().supportsNullableKeyword()) {
-            builder.putExtension(
-                    "type",
-                    Node.arrayNode(Node.from(builder.build().getType().get()), Node.nullNode())
-            );
-        } else {
-            builder.putExtension("nullable", Node.from(true));
         }
     }
 

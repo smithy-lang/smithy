@@ -81,8 +81,7 @@
             "type": "string"
           },
           "def": {
-            "type": "number",
-            "nullable": true
+            "type": "number"
           }
         }
       },
@@ -90,8 +89,7 @@
         "type": "object",
         "properties": {
           "def": {
-            "type": "number",
-            "nullable": true
+            "type": "number"
           }
         }
       },
@@ -102,8 +100,7 @@
             "type": "string"
           },
           "def": {
-            "type": "number",
-            "nullable": true
+            "type": "number"
           }
         }
       }

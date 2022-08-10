@@ -13,8 +13,7 @@
             "name": "vendor",
             "in": "query",
             "schema": {
-              "type": "number",
-              "nullable": true
+              "type": "number"
             },
             "required": true
           },
@@ -22,8 +21,7 @@
             "name": "version",
             "in": "query",
             "schema": {
-              "type": "number",
-              "nullable": true
+              "type": "number"
             },
             "required": true
           },
@@ -118,8 +116,7 @@
             "name": "vendor",
             "in": "query",
             "schema": {
-              "type": "number",
-              "nullable": true
+              "type": "number"
             },
             "required": true
           },
@@ -127,8 +124,7 @@
             "name": "version",
             "in": "query",
             "schema": {
-              "type": "number",
-              "nullable": true
+              "type": "number"
             },
             "required": true
           },
