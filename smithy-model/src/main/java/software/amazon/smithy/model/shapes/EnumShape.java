@@ -375,7 +375,7 @@ public final class EnumShape extends StringShape {
          * @param members Members to add to the builder.
          * @return Returns the builder.
          */
-        public Builder setMembersFromEnumTrait(Collection<MemberShape> members) {
+        public Builder members(Collection<MemberShape> members) {
             clearMembers();
             for (MemberShape member : members) {
                 addMember(member);
@@ -491,8 +491,7 @@ public final class EnumShape extends StringShape {
             if (getMixins().isEmpty()) {
                 return this;
             }
-            setMembersFromEnumTrait(NamedMemberUtils.flattenMixins(
-                    members.get(), getMixins(), getId(), getSourceLocation()));
+            members(NamedMemberUtils.flattenMixins(members.get(), getMixins(), getId(), getSourceLocation()));
             return (Builder) super.flattenMixins();
         }
     }

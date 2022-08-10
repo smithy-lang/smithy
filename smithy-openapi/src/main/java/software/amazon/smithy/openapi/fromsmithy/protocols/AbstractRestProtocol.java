@@ -18,8 +18,8 @@ package software.amazon.smithy.openapi.fromsmithy.protocols;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -382,7 +382,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     private ObjectNode getMembersWithHttpBindingTrait(List<HttpBinding> bindings, ObjectNode inputOrOutput) {
         ObjectNode.Builder values = ObjectNode.builder();
 
-        Set<String> memberNamesWithHttpBinding = new HashSet<>();
+        Set<String> memberNamesWithHttpBinding = new LinkedHashSet<>();
         for (HttpBinding binding : bindings) {
             memberNamesWithHttpBinding.add(binding.getMemberName());
         }
@@ -629,7 +629,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         updateResponsesMapWithResponseStatusAndObject(
                 context, bindingIndex, eventStreamIndex, operation, output, result);
 
-        Map<String, List<StructureShape>> errors = new HashMap<>();
+        Map<String, List<StructureShape>> errors = new LinkedHashMap<>();
 
         for (StructureShape error : operationIndex.getErrors(operation)) {
             String statusCode = context.getOpenApiProtocol().getOperationResponseStatusCode(context, error);
@@ -695,7 +695,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
 
         // This map contains mapping of mediaType string (e.g., "application/json") to MediaTypeObject objects from
         // conflicting error responses.
-        Map<String, List<MediaTypeObject>> contents = new HashMap<>();
+        Map<String, List<MediaTypeObject>> contents = new LinkedHashMap<>();
 
         // Combine conflicting error response objects into one response object.
         ResponseObject.Builder combinedResponseBuilder = ResponseObject.builder();

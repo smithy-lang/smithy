@@ -142,7 +142,12 @@ public abstract class CollectionShape extends Shape {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public B flattenMixins() {
+            if (getMixins().isEmpty()) {
+                return (B) this;
+            }
+
             for (Shape mixin : getMixins().values()) {
                 SourceLocation location = getSourceLocation();
                 Collection<Trait> localTraits = Collections.emptyList();

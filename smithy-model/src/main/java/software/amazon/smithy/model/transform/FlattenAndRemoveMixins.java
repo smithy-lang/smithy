@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.MixinTrait;
 
 /**
@@ -27,24 +28,23 @@ import software.amazon.smithy.model.traits.MixinTrait;
 final class FlattenAndRemoveMixins {
     Model transform(ModelTransformer transformer, Model model) {
         List<Shape> updatedShapes = new ArrayList<>();
-        List<Shape> toRemove = new ArrayList<>();
+        List<ShapeId> toRemove = new ArrayList<>();
 
-        model.shapes().forEach(shape -> {
+        for (Shape shape : model.toSet()) {
             if (shape.hasTrait(MixinTrait.class)) {
-                toRemove.add(shape);
+                toRemove.add(shape.getId());
             } else if (!shape.getMixins().isEmpty()) {
                 updatedShapes.add(Shape.shapeToBuilder(shape).flattenMixins().build());
             }
-        });
+        }
 
         if (!updatedShapes.isEmpty()) {
             Model.Builder builder = model.toBuilder();
             updatedShapes.forEach(builder::addShape);
+            // Don't use the removeShapes transform because that would further mutate shapes and remove the things
+            // that were just flattened into the shapes. It's safe to just remove mixin shapes here.
+            toRemove.forEach(builder::removeShape);
             model = builder.build();
-        }
-
-        if (!toRemove.isEmpty()) {
-            model = transformer.removeShapes(model, toRemove);
         }
 
         return model;

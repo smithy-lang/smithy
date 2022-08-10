@@ -62,7 +62,7 @@ public abstract class EntityShape extends Shape {
     }
 
     /**
-     * @return Get all of the resources directly bound to this shape.
+     * @return Get all the resources directly bound to this shape.
      */
     public final Set<ShapeId> getResources() {
         return resources;
@@ -201,7 +201,12 @@ public abstract class EntityShape extends Shape {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public B flattenMixins() {
+            if (getMixins().isEmpty()) {
+                return (B) this;
+            }
+
             Set<ShapeId> flatResources = new LinkedHashSet<>();
             Set<ShapeId> flatOperations = new LinkedHashSet<>();
 

@@ -28,6 +28,7 @@ import software.amazon.smithy.jsonschema.JsonSchemaMapper;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
@@ -98,6 +99,7 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
             }
         }
 
+        // TODO: Should we even be setting these at all? We don't want people to send null on the wire.
         if (shape.hasTrait(BoxTrait.class)) {
             handleNullability(builder, config);
         }

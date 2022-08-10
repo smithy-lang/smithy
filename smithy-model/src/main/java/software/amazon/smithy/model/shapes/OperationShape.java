@@ -312,10 +312,15 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
 
         @Override
         public Builder flattenMixins() {
+            if (getMixins().isEmpty()) {
+                return this;
+            }
+
             Set<ShapeId> computedErrors = new LinkedHashSet<>();
             for (Shape shape : getMixins().values()) {
                 shape.asOperationShape().ifPresent(mixin -> computedErrors.addAll(mixin.getErrors()));
             }
+
             computedErrors.addAll(errors.peek());
             errors(computedErrors);
             return super.flattenMixins();

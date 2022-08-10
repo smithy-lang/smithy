@@ -85,7 +85,6 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<B, S>,
      * @return Returns the builder.
      * @throws ShapeIdSyntaxException if the shape ID is invalid.
      */
-    @SuppressWarnings("unchecked")
     public B id(String shapeId) {
         return id(ShapeId.from(shapeId));
     }
@@ -302,20 +301,22 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<B, S>,
      */
     @SuppressWarnings("unchecked")
     public B flattenMixins() {
-        if (mixins != null) {
-            for (Shape mixin : mixins.values()) {
-                // Only inherit non-local traits that aren't already on the shape.
-                Map<ShapeId, Trait> nonLocalTraits = MixinTrait.getNonLocalTraitsFromMap(mixin.getAllTraits());
-                for (Map.Entry<ShapeId, Trait> entry : nonLocalTraits.entrySet()) {
-                    if (!traits.hasValue() || !traits.get().containsKey(entry.getKey())) {
-                        addTrait(entry.getValue());
-                    }
-                }
-            }
-            // Don't call clearMixins here because its side effects are unwanted.
-            mixins.clear();
+        if (mixins == null || mixins.isEmpty()) {
+            return (B) this;
         }
 
+        for (Shape mixin : mixins.values()) {
+            // Only inherit non-local traits that aren't already on the shape.
+            Map<ShapeId, Trait> nonLocalTraits = MixinTrait.getNonLocalTraitsFromMap(mixin.getAllTraits());
+            for (Map.Entry<ShapeId, Trait> entry : nonLocalTraits.entrySet()) {
+                if (!traits.hasValue() || !traits.get().containsKey(entry.getKey())) {
+                    addTrait(entry.getValue());
+                }
+            }
+        }
+
+        // Don't call clearMixins here because its side effects are unwanted.
+        mixins.clear();
         return (B) this;
     }
 

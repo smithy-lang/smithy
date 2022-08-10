@@ -26,6 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -70,6 +71,7 @@ import software.amazon.smithy.openapi.model.SecurityScheme;
 import software.amazon.smithy.openapi.model.TagObject;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.Tagged;
 
 /**
@@ -252,7 +254,7 @@ public final class OpenApiConverter {
 
     private Model replaceConflictingErrorsWithUnionErrors(Model model) {
         // Get mapping of status code to error shapes.
-        Map<String, List<StructureShape>> statusCodeToErrors = new HashMap<>();
+        Map<String, List<StructureShape>> statusCodeToErrors = new TreeMap<>();
         for (StructureShape error : model.getStructureShapesWithTrait(ErrorTrait.class)) {
             statusCodeToErrors.computeIfAbsent(
                     error.hasTrait(HttpErrorTrait.ID)
@@ -351,6 +353,7 @@ public final class OpenApiConverter {
         );
     }
 
+    @SmithyInternalApi
     public static String createConflictingErrorHttpPayloadExceptionMessage(
             String code,
             String error,
