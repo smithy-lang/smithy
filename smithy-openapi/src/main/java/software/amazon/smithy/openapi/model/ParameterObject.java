@@ -16,7 +16,6 @@
 package software.amazon.smithy.openapi.model;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -158,11 +157,7 @@ public final class ParameterObject extends Component implements ToSmithyBuilder<
 
     @Override
     public Builder toBuilder() {
-        Map<String, Node> nodeExamples = new HashMap<>();
-        for (Map.Entry<String, ExampleObject> ex : examples.entrySet()) {
-            nodeExamples.put(ex.getKey(), ex.getValue().toNode());
-        }
-        return builder()
+        Builder builder = builder()
                 .extensions(getExtensions())
                 .name(name)
                 .in(in)
@@ -175,8 +170,13 @@ public final class ParameterObject extends Component implements ToSmithyBuilder<
                 .allowReserved(allowReserved)
                 .schema(schema)
                 .example(example == null ? null : example.toNode())
-                .examples(nodeExamples)
                 .content(content);
+
+        for (Map.Entry<String, ExampleObject> ex : examples.entrySet()) {
+            builder.putExample(ex.getKey(), ex.getValue().toNode());
+        }
+
+        return builder;
     }
 
     public static final class Builder extends Component.Builder<Builder, ParameterObject> {
