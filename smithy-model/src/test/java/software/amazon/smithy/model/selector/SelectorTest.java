@@ -88,7 +88,6 @@ public class SelectorTest {
                 .get();
         resourceModel = Model.assembler()
                 .addImport(SelectorTest.class.getResource("resource.smithy"))
-                .addImport(SelectorTest.class.getResource("resource-tagging.smithy"))
                 .assemble()
                 .unwrap();
     }
@@ -1086,18 +1085,17 @@ public class SelectorTest {
         assertThat(resourcesWithProperties, containsInAnyOrder(forecastResource, cityResource));
 
         Set<Shape> shapesTargettedByAnyProperty = Selector.parse("resource -[property]-> *").select(resourceModel);
-        ListShape tagListShape = resourceModel.expectShape(ShapeId.from("example.tagging#TagList"), ListShape.class);
         StructureShape coordinatesShape = resourceModel.expectShape(ShapeId.from("example.weather#CityCoordinates"),
                 StructureShape.class);
         FloatShape floatShape = resourceModel.expectShape(ShapeId.from("smithy.api#Float"), FloatShape.class);
         StringShape stringShape = resourceModel.expectShape(ShapeId.from("smithy.api#String"), StringShape.class);
-        assertThat(shapesTargettedByAnyProperty.size(), equalTo(4));
-        assertThat(shapesTargettedByAnyProperty, containsInAnyOrder(tagListShape, coordinatesShape, floatShape,
+        assertThat(shapesTargettedByAnyProperty.size(), equalTo(3));
+        assertThat(shapesTargettedByAnyProperty, containsInAnyOrder(coordinatesShape, floatShape,
                 stringShape));
 
         Set<Shape> shapesTargettedByCityOnly = Selector.parse("resource [id|name=City] -[property]-> *")
                 .select(resourceModel);
-        assertThat(shapesTargettedByCityOnly.size(), equalTo(3));
-        assertThat(shapesTargettedByCityOnly, containsInAnyOrder(tagListShape, coordinatesShape, stringShape));
+        assertThat(shapesTargettedByCityOnly.size(), equalTo(2));
+        assertThat(shapesTargettedByCityOnly, containsInAnyOrder(coordinatesShape, stringShape));
     }
 }
