@@ -16,6 +16,8 @@ Smithy models define a service as a collection of resources, operations, and
 shapes.
 
 ```
+$version: "2"
+
 namespace example.weather
 
 service Weather {
@@ -61,6 +63,8 @@ plugins {
 Finally, create your first model `model/main.smithy`:
 
 ```
+$version: "2"
+
 namespace com.example
 
 service ExampleService {
