@@ -130,10 +130,13 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
         // Parse the required identifier_start production.
         char startingChar = identifier.charAt(offset);
         if (startingChar == '_') {
-            while (identifier.charAt(offset) == '_') {
+            while (offset < identifier.length() && identifier.charAt(offset) == '_') {
                 offset++;
             }
-            if (!ParserUtils.isValidIdentifierCharacter(identifier.charAt(offset))) {
+            if (offset >= identifier.length()) {
+                return -1;
+            }
+            if (!ParserUtils.isAlphabetic(identifier.charAt(offset))) {
                 return -1;
             }
             offset++;

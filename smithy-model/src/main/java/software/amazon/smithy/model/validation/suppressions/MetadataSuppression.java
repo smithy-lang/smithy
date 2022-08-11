@@ -20,6 +20,7 @@ import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.ValidationEventId;
 import software.amazon.smithy.utils.ListUtils;
 
 /**
@@ -48,6 +49,7 @@ final class MetadataSuppression implements Suppression {
         ObjectNode rule = node.expectObjectNode();
         rule.warnIfAdditionalProperties(SUPPRESSION_KEYS);
         String id = rule.expectStringMember(ID).getValue();
+        ValidationEventId.validateValidationEventId(id, rule);
         String namespace = rule.expectStringMember(NAMESPACE).getValue();
         String reason = rule.getStringMemberOrDefault(REASON, null);
         return new MetadataSuppression(id, namespace, reason);

@@ -122,6 +122,12 @@ public class ShapeIdTest {
         assertFalse(ShapeId.isValidNamespace("foo.bar.*"));
         assertFalse(ShapeId.isValidNamespace("foo.bar.."));
         assertFalse(ShapeId.isValidNamespace(""));
+        assertFalse(ShapeId.isValidNamespace("___"));
+        assertFalse(ShapeId.isValidNamespace("a.___"));
+        assertFalse(ShapeId.isValidNamespace("___1"));
+        assertFalse(ShapeId.isValidNamespace("1"));
+        assertFalse(ShapeId.isValidNamespace("a.___.b"));
+        assertFalse(ShapeId.isValidNamespace("_._._"));
 
         assertTrue(ShapeId.isValidNamespace("foo"));
         assertTrue(ShapeId.isValidNamespace("Foo.bar"));
@@ -134,6 +140,7 @@ public class ShapeIdTest {
         assertTrue(ShapeId.isValidNamespace("f.b1.c_d_.e"));
         assertTrue(ShapeId.isValidNamespace("f.b1.c_d_.e"));
         assertTrue(ShapeId.isValidNamespace("f.b1.c_d_1234.e"));
+        assertTrue(ShapeId.isValidNamespace("____f"));
     }
 
     @ParameterizedTest

@@ -357,7 +357,7 @@
                 }
             },
             {
-                "id": "valid-neighbor-only",
+                "id": "valid.neighbor.only",
                 "name": "EmitEachSelector",
                 "configuration": {
                     "selector": ">"
