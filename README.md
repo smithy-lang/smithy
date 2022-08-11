@@ -82,9 +82,9 @@ of the Smithy Gradle Plugin repository.
 This library is licensed under the Apache 2.0 License.
 
 [docs]: https://awslabs.github.io/smithy/
-[specs]: https://awslabs.github.io/smithy/1.0/spec/
+[specs]: https://awslabs.github.io/smithy/2.0/spec/
 [javadocs]: https://awslabs.github.io/smithy/javadoc/latest/
 [quickstart]: https://awslabs.github.io/smithy/quickstart.html
 [Smithy Gradle Plugin]: https://github.com/awslabs/smithy-gradle-plugin/
-[`smithy-build.json`]: https://awslabs.github.io/smithy/1.0/guides/building-models/build-config.html#using-smithy-build-json
-[building]: https://awslabs.github.io/smithy/1.0/guides/building-models/index.html
+[`smithy-build.json`]: https://awslabs.github.io/smithy/2.0/guides/building-models/build-config.html#using-smithy-build-json
+[building]: https://awslabs.github.io/smithy/2.0/guides/building-models/index.html
