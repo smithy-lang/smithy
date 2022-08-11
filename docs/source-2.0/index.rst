@@ -22,7 +22,7 @@ Smithy
         identifiers: { cityId: CityId }
         read: GetCity
         list: ListCities
-        resources: [Foreast],
+        resources: [Forecast]
     }
 
 .. rubric:: Next steps
