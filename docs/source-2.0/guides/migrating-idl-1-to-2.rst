@@ -389,7 +389,7 @@ can be updated to:
 
 .. code-block:: smithy
 
-    $version: "1.0"
+    $version: "2.0"
 
     namespace smithy.example
 
