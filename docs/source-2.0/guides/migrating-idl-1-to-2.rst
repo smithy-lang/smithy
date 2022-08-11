@@ -241,7 +241,7 @@ needed to model an operation. For example, the following model:
 
 can be updated to:
 
-.. code-block::
+.. code-block:: smithy
 
     $version: "2"
 
