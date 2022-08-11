@@ -1,0 +1,1266 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Waiters" href="waiters.html" /><link rel="prev" title="Additional Smithy specifications" href="index.html" />
+
+    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+        <title>HTTP Protocol Compliance Tests - Smithy 2.0</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --admonition-font-size: 100%;
+  --admonition-title-font-size: 100%;
+  --color-brand-primary: #C44536;
+  --color-brand-content: #00808b;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Smithy 2.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/smithy.svg" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../spec/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../spec/model.html">1. The Smithy model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/simple-types.html">2. Simple types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/aggregate-types.html">3. Aggregate types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/service-types.html">4. Service types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/mixins.html">5. Mixins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/constraint-traits.html">6. Constraint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/type-refinement-traits.html">7. Type refinement traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/documentation-traits.html">8. Documentation traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/behavior-traits.html">9. Behavior traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/resource-traits.html">10. Resource traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/authentication-traits.html">11. Authentication traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/protocol-traits.html">12. Serialization and Protocol traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/streaming.html">13. Streaming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/http-bindings.html">14. HTTP bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/endpoint-traits.html">15. Endpoint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/selectors.html">16. Selectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/model-validation.html">17. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/idl.html">18. Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/json-ast.html">19. JSON AST</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../trait-index.html">Trait index</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../guides/index.html">Guides</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-models/build-config.html">smithy-build</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/model-linters.html">Model linters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/style-guide.html">Style Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Additional specs</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mqtt.html">MQTT Protocol Bindings</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../aws/index.html">AWS integrations</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-query-protocol.html">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../implementations.html">Implementations</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://awslabs.github.io/smithy/1.0/">1.0 Documentation</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/additional-specs/http-protocol-compliance-tests.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <div class="section" id="http-protocol-compliance-tests">
+<span id="id1"></span><h1>HTTP Protocol Compliance Tests<a class="headerlink" href="#http-protocol-compliance-tests" title="Permalink to this headline">#</a></h1>
+<p>Smithy is a protocol-agnostic IDL that tries to abstract the serialization
+format of request and response messages sent between a client and server.
+Protocol specifications define the serialization format of a protocol, and
+protocol compliance tests help to ensure that implementations correctly
+implement a protocol specification.</p>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">#</a></h2>
+<p>This specification defines two traits in the <code class="docutils literal notranslate"><span class="pre">smithy.test</span></code> namespace that
+are used to make assertions about client and server protocol implementations.</p>
+<dl class="docutils">
+<dt><a class="reference internal" href="#httprequesttests-trait"><span class="std std-ref">smithy.test#httpRequestTests</span></a></dt><dd>Used to define how an HTTP request is serialized given a specific
+protocol, authentication scheme, and set of input parameters.</dd>
+<dt><a class="reference internal" href="#httpresponsetests-trait"><span class="std std-ref">smithy.test#httpResponseTests</span></a></dt><dd>Used to define how an HTTP response is serialized given a specific
+protocol, authentication scheme, and set of output or error parameters.</dd>
+</dl>
+<p>Additionally, it defines one trait specifically for the behavior of server
+protocol implementations.</p>
+<dl class="docutils">
+<dt><a class="reference internal" href="#httpmalformedrequesttests-trait"><span class="std std-ref">smithy.test#httpMalformedRequestTests</span></a></dt><dd>Used to define how a server rejects a malformed HTTP request given a
+specific protocol and HTTP message.</dd>
+</dl>
+<p>Protocol implementation developers use these traits to ensure that their
+implementation is correct. This can be done through code generation of test
+cases or by dynamically loading test cases at runtime. For example, a Java
+implementation could generate JUnit test cases to assert that the
+expectations defined in a model match the behavior of a generated client
+or server.</p>
+<div class="section" id="parameter-format">
+<h3>Parameter format<a class="headerlink" href="#parameter-format" title="Permalink to this headline">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">params</span></code> property used in both the <code class="docutils literal notranslate"><span class="pre">httpRequestTests</span></code> trait and
+<code class="docutils literal notranslate"><span class="pre">httpResponseTests</span></code> trait test cases represents parameters that are used
+to serialize HTTP requests and responses. In order to compare implementation
+specific results against the expected result of each test case across
+different programming languages, parameters are defined in the same format
+specified in <a class="reference internal" href="../spec/model.html#trait-node-values"><span class="std std-ref">Trait node values</span></a> with the following additional
+constraints:</p>
+<ul class="simple">
+<li>Timestamp values must be converted to a Unix timestamp represented
+as an integer.</li>
+<li>Client implementations that automatically provide values for members marked
+with the <a class="reference internal" href="../spec/behavior-traits.html#idempotencytoken-trait"><span class="std std-ref">idempotencyToken trait</span></a> MUST use a constant value of
+<code class="docutils literal notranslate"><span class="pre">00000000-0000-4000-8000-000000000000</span></code>.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="httprequesttests">
+<span id="httprequesttests-trait"></span><span id="smithy-test-httprequesttests-trait"></span><h2>httpRequestTests<a class="headerlink" href="#httprequesttests" title="Permalink to this headline">#</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>The <code class="docutils literal notranslate"><span class="pre">httpRequestTests</span></code> trait is used to define how an HTTP request is
+serialized given a specific protocol, authentication scheme, and set of
+input parameters.</dd>
+<dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>operation
+</pre></div>
+</div>
+</dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">HttpRequestTestCase</span></code> structures</dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">httpRequestTests</span></code> trait is a list of <code class="docutils literal notranslate"><span class="pre">HttpRequestTestCase</span></code> structures
+that support the following members:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>id</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The identifier of the test case. This identifier can
+be used by protocol test implementations to filter out unsupported
+test cases by ID, to generate test case names, etc. The provided
+<code class="docutils literal notranslate"><span class="pre">id</span></code> MUST match Smithy's <a class="reference internal" href="../spec/model.html#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> ABNF. No two
+<code class="docutils literal notranslate"><span class="pre">httpRequestTests</span></code> test cases can share the same ID.</td>
+</tr>
+<tr class="row-odd"><td>protocol</td>
+<td>shape ID</td>
+<td><strong>Required</strong>. A shape ID that targets a shape marked with the
+<a class="reference internal" href="../spec/protocol-traits.html#protocoldefinition-trait"><span class="std std-ref">protocolDefinition trait</span></a>. Because Smithy services can support
+multiple protocols, each test MUST specify which protocol is under
+test.</td>
+</tr>
+<tr class="row-even"><td>method</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The expected serialized HTTP request method.</td>
+</tr>
+<tr class="row-odd"><td>uri</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The request-target of the HTTP request, not including
+the query string (for example, &quot;/foo/bar&quot;).</td>
+</tr>
+<tr class="row-even"><td>host</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">The host or endpoint provided as input used to generate the HTTP
+request (for example, &quot;example.com&quot;).</p>
+<p class="last"><code class="docutils literal notranslate"><span class="pre">host</span></code> MAY contain a path to indicate a base path from which each
+operation in the service is appended to. For example, given a <code class="docutils literal notranslate"><span class="pre">host</span></code>
+of <code class="docutils literal notranslate"><span class="pre">example.com/foo/bar</span></code> and an operation path of <code class="docutils literal notranslate"><span class="pre">/MyOperation</span></code>,
+the resolved host of the operation is <code class="docutils literal notranslate"><span class="pre">example.com</span></code> and the resolved
+path is <code class="docutils literal notranslate"><span class="pre">/foo/bar/MyOperation</span></code>.</p>
+</td>
+</tr>
+<tr class="row-odd"><td>resolvedHost</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">The expected host present in the <code class="docutils literal notranslate"><span class="pre">Host</span></code> header of the request, not
+including the path or scheme (for example, &quot;prefix.example.com&quot;). If no
+resolvedHost is defined, then no assertions are made about the resolved
+host for the request.</p>
+<p>This can differ from the <code class="docutils literal notranslate"><span class="pre">host</span></code> provided to the client if the
+operation has a member with the <a class="reference internal" href="../spec/endpoint-traits.html#endpoint-trait"><span class="std std-ref">endpoint trait</span></a>.</p>
+<p class="last">Server implementations SHOULD ignore discrepancies in paths when
+comparing the <code class="docutils literal notranslate"><span class="pre">host</span></code> and <code class="docutils literal notranslate"><span class="pre">resolvedHost</span></code> properties.</p>
+</td>
+</tr>
+<tr class="row-even"><td>authScheme</td>
+<td>shape ID</td>
+<td>A shape ID that specifies the optional authentication scheme to
+assume. It's possible that specific authentication schemes might
+influence the serialization logic of an HTTP request. The targeted
+shape MUST be marked with the <a class="reference internal" href="../spec/authentication-traits.html#authdefinition-trait"><span class="std std-ref">authDefinition trait</span></a> trait.</td>
+</tr>
+<tr class="row-odd"><td>queryParams</td>
+<td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></td>
+<td><p class="first">A list of the expected serialized query string parameters.</p>
+<p>Each element in the list is a query string key value pair
+that starts with the query string parameter name optionally
+followed by &quot;=&quot;, optionally followed by the query string
+parameter value. For example, &quot;foo=bar&quot;, &quot;foo=&quot;, and &quot;foo&quot;
+are all valid values.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This kind of list is used instead of a map so that query string
+parameter values for lists can be represented using repeated
+key-value pairs.</p>
+</div>
+<p>The query string parameter name and the value MUST appear in the
+format in which it is expected to be sent over the wire; if a key or
+value needs to be percent-encoded, then it MUST appear
+percent-encoded in this list.</p>
+<p>A serialized HTTP request is not in compliance with the protocol
+if any query string parameter defined in <code class="docutils literal notranslate"><span class="pre">queryParams</span></code> is not
+defined in the request or if the value of a query string parameter
+in the request differs from the expected value.</p>
+<p class="last"><code class="docutils literal notranslate"><span class="pre">queryParams</span></code> applies no constraints on additional query parameters.</p>
+</td>
+</tr>
+<tr class="row-even"><td>forbidQueryParams</td>
+<td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></td>
+<td><p class="first">A list of query string parameter names that must not appear in the
+serialized HTTP request.</p>
+<p class="last">Each value MUST appear in the format in which it is sent over the
+wire; if a key needs to be percent-encoded, then it MUST appear
+percent-encoded in this list.</p>
+</td>
+</tr>
+<tr class="row-odd"><td>requireQueryParams</td>
+<td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></td>
+<td><p class="first">A list of query string parameter names that MUST appear in the
+serialized request URI, but no assertion is made on the value.</p>
+<p class="last">Each value MUST appear in the format in which it is sent over the
+wire; if a key needs to be percent-encoded, then it MUST appear
+percent-encoded in this list.</p>
+</td>
+</tr>
+<tr class="row-even"><td>headers</td>
+<td><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">string&gt;</span></code></td>
+<td><p class="first">A map of expected HTTP headers. Each key represents a header field
+name and each value represents the expected header value. An HTTP
+request is not in compliance with the protocol if any listed header
+is missing from the serialized request or if the expected header
+value differs from the serialized request value.</p>
+<p class="last"><code class="docutils literal notranslate"><span class="pre">headers</span></code> applies no constraints on additional headers.</p>
+</td>
+</tr>
+<tr class="row-odd"><td>forbidHeaders</td>
+<td>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</td>
+<td>A list of header field names that must not appear in the serialized
+HTTP request.</td>
+</tr>
+<tr class="row-even"><td>requireHeaders</td>
+<td>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</td>
+<td>A list of header field names that must appear in the serialized
+HTTP message, but no assertion is made on the value. Headers listed
+in <code class="docutils literal notranslate"><span class="pre">headers</span></code> do not need to appear in this list.</td>
+</tr>
+<tr class="row-odd"><td>body</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>The expected HTTP message body. If no request body is defined,
+then no assertions are made about the body of the message. Because
+the <code class="docutils literal notranslate"><span class="pre">body</span></code> parameter is a string, binary data MUST be represented
+in <code class="docutils literal notranslate"><span class="pre">body</span></code> by base64 encoding the data (for example, use &quot;Zm9vCg==&quot;
+and not &quot;foo&quot;).</td>
+</tr>
+<tr class="row-even"><td>bodyMediaType</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>The media type of the <code class="docutils literal notranslate"><span class="pre">body</span></code>. This is used to help test runners
+to parse and validate the expected data against generated data.</td>
+</tr>
+<tr class="row-odd"><td>params</td>
+<td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
+<td><p class="first">Defines the input parameters used to generate the HTTP request. These
+parameters MUST be compatible with the input of the operation.</p>
+<p class="last">Parameter values that contain binary data MUST be defined using
+values that can be represented in plain text (for example, use &quot;foo&quot;
+and not &quot;Zm9vCg==&quot;). While this limits the kinds of binary values
+that can be tested in protocol tests, it allows protocol tests to
+demonstrate the requirement of many protocols that binary data is
+automatically base64 encoded and decoded.</p>
+</td>
+</tr>
+<tr class="row-even"><td>vendorParams</td>
+<td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
+<td><p class="first">Defines vendor-specific parameters that are used to influence the
+request. For example, some vendors might utilize environment
+variables, configuration files on disk, or other means to influence
+the serialization formats used by clients or servers.</p>
+<p class="last">If a <code class="docutils literal notranslate"><span class="pre">vendorParamsShape</span></code> is set, these parameters MUST be compatible
+with that shape's definition.</p>
+</td>
+</tr>
+<tr class="row-odd"><td>vendorParamsShape</td>
+<td>shape ID</td>
+<td><p class="first">A shape to be used to validate the <code class="docutils literal notranslate"><span class="pre">vendorParams</span></code> member contents.</p>
+<p class="last">If set, the parameters in <code class="docutils literal notranslate"><span class="pre">vendorParams</span></code> MUST be compatible with this
+shape's definition.</p>
+</td>
+</tr>
+<tr class="row-even"><td>documentation</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>A description of the test and what is being asserted defined in
+<a class="reference external" href="https://spec.commonmark.org/">CommonMark</a>.</td>
+</tr>
+<tr class="row-odd"><td>tags</td>
+<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
+<td>Attaches a list of tags that allow test cases to be categorized and
+grouped.</td>
+</tr>
+<tr class="row-even"><td>appliesTo</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code>, one of &quot;client&quot; or &quot;server&quot;</td>
+<td><p class="first">Indicates that the test case is only to be implemented by &quot;client&quot; or
+&quot;server&quot; implementations. This property is useful for identifying and
+testing edge cases of clients and servers that are impossible or
+undesirable to test in <em>both</em> client and server implementations. For
+example, a &quot;server&quot; test might be useful to ensure a service can
+gracefully receive a request that optionally contains a payload.</p>
+<p class="last">Is is assumed that test cases that do not define an <code class="docutils literal notranslate"><span class="pre">appliesTo</span></code>
+member are implemented by both client and server implementations.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="http-request-example">
+<h3>HTTP request example<a class="headerlink" href="#http-request-example" title="Permalink to this headline">#</a></h3>
+<p>The following example defines a protocol compliance test for a JSON protocol
+that uses <a class="reference internal" href="../spec/http-bindings.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a>.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">use </span><span class="nc">smithy.test#httpRequestTests</span><span class="w"></span>
+
+<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{hostLabel}.prefix.&quot;</span>)<span class="w"></span>
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span>)<span class="w"></span>
+<span class="nt">@httpRequestTests</span>([<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;say_hello&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="py">protocol</span><span class="p">:</span><span class="w"> </span><span class="vc">exampleProtocol</span><span class="w"></span>
+<span class="w">        </span><span class="py">params</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;hostLabel&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;greeting&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hi&quot;</span><span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Teddy&quot;</span><span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;query&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hello there&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">        </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="py">host</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.com&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="py">resolvedHost</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo.prefix.example.com&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="py">queryParams</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;Hi=Hello%20there&quot;</span><span class="w"></span>
+<span class="w">        </span>]<span class="w"></span>
+<span class="w">        </span><span class="py">headers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;X-Greeting&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hi&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">        </span><span class="py">body</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{</span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2">: </span><span class="se">\&quot;</span><span class="s2">Teddy</span><span class="se">\&quot;</span><span class="s2">}&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="py">bodyMediaType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;application/json&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+])<span class="w"></span>
+<span class="kd">operation </span><span class="nc">SayHello</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">SayHelloInput</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">Unit</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@input</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">SayHelloInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@hostLabel</span><span class="w"></span>
+<span class="w">    </span><span class="py">hostLabel</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;X-Greeting&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="py">greeting</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+
+<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">&quot;Hi&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="py">query</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="httpresponsetests">
+<span id="httpresponsetests-trait"></span><span id="smithy-test-httpresponsetests-trait"></span><h2>httpResponseTests<a class="headerlink" href="#httpresponsetests" title="Permalink to this headline">#</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>The <code class="docutils literal notranslate"><span class="pre">httpResponseTests</span></code> trait is used to define how an HTTP response
+is serialized given a specific protocol, authentication scheme, and set
+of output or error parameters.</dd>
+<dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>:test(operation, structure[trait|error])
+</pre></div>
+</div>
+</dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">HttpResponseTestCase</span></code> structures</dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">httpResponseTests</span></code> trait is a list of <code class="docutils literal notranslate"><span class="pre">HttpResponseTestCase</span></code>
+structures that support the following members:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>id</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The identifier of the test case. This identifier can
+be used by protocol test implementations to filter out unsupported
+test cases by ID, to generate test case names, etc. The provided
+<code class="docutils literal notranslate"><span class="pre">id</span></code> MUST match Smithy's <a class="reference internal" href="../spec/model.html#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> ABNF. No two
+<code class="docutils literal notranslate"><span class="pre">httpResponseTests</span></code> test cases can share the same ID.</td>
+</tr>
+<tr class="row-odd"><td>protocol</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. A shape ID that targets a shape marked with the
+<a class="reference internal" href="../spec/protocol-traits.html#protocoldefinition-trait"><span class="std std-ref">protocolDefinition trait</span></a> trait. Because Smithy services can
+support multiple protocols, each test MUST specify which protocol is
+under test.</td>
+</tr>
+<tr class="row-even"><td>code</td>
+<td><code class="docutils literal notranslate"><span class="pre">integer</span></code></td>
+<td><strong>Required</strong>. The expected HTTP response status code.</td>
+</tr>
+<tr class="row-odd"><td>authScheme</td>
+<td>shape ID</td>
+<td>A shape ID that specifies the optional authentication scheme to
+assume. It's possible that specific authentication schemes might
+influence the serialization logic of an HTTP response. The targeted
+shape MUST be marked with the <a class="reference internal" href="../spec/authentication-traits.html#authdefinition-trait"><span class="std std-ref">authDefinition trait</span></a> trait.</td>
+</tr>
+<tr class="row-even"><td>headers</td>
+<td><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">string&gt;</span></code></td>
+<td><p class="first">A map of expected HTTP headers. Each key represents a header field
+name and each value represents the expected header value. An HTTP
+response is not in compliance with the protocol if any listed header
+is missing from the serialized response or if the expected header
+value differs from the serialized response value.</p>
+<p class="last"><code class="docutils literal notranslate"><span class="pre">headers</span></code> applies no constraints on additional headers.</p>
+</td>
+</tr>
+<tr class="row-odd"><td>forbidHeaders</td>
+<td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></td>
+<td>A list of header field names that must not appear in the serialized
+HTTP response.</td>
+</tr>
+<tr class="row-even"><td>requireHeaders</td>
+<td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></td>
+<td>A list of header field names that must appear in the serialized
+HTTP response, but no assertion is made on the value. Headers listed
+in <code class="docutils literal notranslate"><span class="pre">headers</span></code> do not need to appear in this list.</td>
+</tr>
+<tr class="row-odd"><td>body</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>The expected HTTP message body. If no response body is defined,
+then no assertions are made about the body of the message.</td>
+</tr>
+<tr class="row-even"><td>bodyMediaType</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>The media type of the <code class="docutils literal notranslate"><span class="pre">body</span></code>. This is used to help test runners
+to parse and validate the expected data against generated data.
+Binary media type formats require that the contents of <code class="docutils literal notranslate"><span class="pre">body</span></code> are
+base64 encoded.</td>
+</tr>
+<tr class="row-odd"><td>params</td>
+<td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
+<td><p class="first">Defines the output or error parameters used to generate the HTTP
+response. These parameters MUST be compatible with the targeted
+operation's output or the targeted error structure.</p>
+<p class="last">Parameter values that contain binary data MUST be defined using
+values that can be represented in plain text (for example, use &quot;foo&quot;
+and not &quot;Zm9vCg==&quot;). While this limits the kinds of binary values
+that can be tested in protocol tests, it allows protocol tests to
+demonstrate the requirement of many protocols that binary data is
+automatically base64 encoded and decoded.</p>
+</td>
+</tr>
+<tr class="row-even"><td>vendorParams</td>
+<td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
+<td><p class="first">Defines vendor-specific parameters that are used to influence the
+response. For example, some vendors might utilize environment
+variables, configuration files on disk, or other means to influence
+the serialization formats used by clients or servers.</p>
+<p class="last">If a <code class="docutils literal notranslate"><span class="pre">vendorParamsShape</span></code> is set, these parameters MUST be compatible
+with that shape's definition.</p>
+</td>
+</tr>
+<tr class="row-odd"><td>vendorParamsShape</td>
+<td>shape ID</td>
+<td><p class="first">A shape to be used to validate the <code class="docutils literal notranslate"><span class="pre">vendorParams</span></code> member contents.</p>
+<p class="last">If set, the parameters in <code class="docutils literal notranslate"><span class="pre">vendorParams</span></code> MUST be compatible with this
+shape's definition.</p>
+</td>
+</tr>
+<tr class="row-even"><td>documentation</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>A description of the test and what is being asserted defined in
+<a class="reference external" href="https://spec.commonmark.org/">CommonMark</a>.</td>
+</tr>
+<tr class="row-odd"><td>tags</td>
+<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
+<td>Attaches a list of tags that allow test cases to be categorized and
+grouped.</td>
+</tr>
+<tr class="row-even"><td>appliesTo</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code>, one of &quot;client&quot; or &quot;server&quot;</td>
+<td><p class="first">Indicates that the test case is only to be implemented by &quot;client&quot; or
+&quot;server&quot; implementations. This property is useful for identifying and
+testing edge cases of clients and servers that are impossible or
+undesirable to test in <em>both</em> client and server implementations. For
+example, a &quot;client&quot; test might be useful to ensure a client can
+gracefully receive a response that optionally contains a payload.</p>
+<p class="last">Is is assumed that test cases that do not define an <code class="docutils literal notranslate"><span class="pre">appliesTo</span></code>
+member are implemented by both client and server implementations.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="http-response-example">
+<h3>HTTP response example<a class="headerlink" href="#http-response-example" title="Permalink to this headline">#</a></h3>
+<p>The following example defines a protocol compliance test for a JSON protocol
+that uses <a class="reference internal" href="../spec/http-bindings.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a>.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">use </span><span class="nc">smithy.test#httpResponseTests</span><span class="w"></span>
+
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span>)<span class="w"></span>
+<span class="nt">@httpResponseTests</span>([<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;say_goodbye&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="py">protocol</span><span class="p">:</span><span class="w"> </span><span class="vc">exampleProtocol</span><span class="w"></span>
+<span class="w">        </span><span class="py">params</span><span class="p">:</span><span class="w"> </span>{<span class="py">farewell</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Bye&quot;</span>}<span class="w"></span>
+<span class="w">        </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="w"></span>
+<span class="w">        </span><span class="py">headers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;X-Farewell&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Bye&quot;</span><span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;Content-Length&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+])<span class="w"></span>
+<span class="kd">operation </span><span class="nc">SayGoodbye</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">SayGoodbyeInput</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">SayGoodbyeOutput</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@input</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">SayGoodbyeInput</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="nt">@output</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">SayGoodbyeOutput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;X-Farewell&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="py">farewell</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="http-error-response-example">
+<h3>HTTP error response example<a class="headerlink" href="#http-error-response-example" title="Permalink to this headline">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">httpResponseTests</span></code> trait can be applied to error structures to define
+how an error HTTP response is serialized. Client protocol compliance test
+implementations SHOULD ensure that each error with the <code class="docutils literal notranslate"><span class="pre">httpResponseTests</span></code>
+trait associated with an operation can be properly deserialized.</p>
+<p>The following example defines a protocol compliance test for a JSON protocol
+that uses <a class="reference internal" href="../spec/http-bindings.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a>.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">use </span><span class="nc">smithy.test#httpResponseTests</span><span class="w"></span>
+
+<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
+<span class="nt">@httpError</span>(<span class="m">400</span>)<span class="w"></span>
+<span class="nt">@httpResponseTests</span>([<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;invalid_greeting&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="py">protocol</span><span class="p">:</span><span class="w"> </span><span class="vc">exampleProtocol</span><span class="w"></span>
+<span class="w">        </span><span class="py">params</span><span class="p">:</span><span class="w"> </span>{<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hi&quot;</span>}<span class="w"></span>
+<span class="w">        </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">400</span><span class="w"></span>
+<span class="w">        </span><span class="py">headers</span><span class="p">:</span><span class="w"> </span>{<span class="s2">&quot;X-Foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;baz&quot;</span>}<span class="w"></span>
+<span class="w">        </span><span class="py">body</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{</span><span class="se">\&quot;</span><span class="s2">message</span><span class="se">\&quot;</span><span class="s2">: </span><span class="se">\&quot;</span><span class="s2">Hi</span><span class="se">\&quot;</span><span class="s2">}&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="py">bodyMediaType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;application/json&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+])<span class="w"></span>
+<span class="kd">structure </span><span class="nc">InvalidGreeting</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;X-Foo&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="httpmalformedrequesttests">
+<span id="httpmalformedrequesttests-trait"></span><span id="smithy-test-httpmalformedrequesttests-trait"></span><h2>httpMalformedRequestTests<a class="headerlink" href="#httpmalformedrequesttests" title="Permalink to this headline">#</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>The <code class="docutils literal notranslate"><span class="pre">httpMalformedRequestTests</span></code> trait is used to define how a malformed
+HTTP request is rejected given a specific protocol and HTTP message.
+Protocol implementations MUST assert that requests are rejected during
+request processing.</dd>
+<dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>operation
+</pre></div>
+</div>
+</dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">HttpMalformedRequestTestCase</span></code> structures</dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">httpMalformedRequestTests</span></code> trait is a list of
+<code class="docutils literal notranslate"><span class="pre">HttpMalformedRequestTestCase</span></code> structures that support the following members:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>id</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The identifier of the test case. This identifier can
+be used by protocol test implementations to filter out unsupported
+test cases by ID, to generate test case names, etc. The provided
+<code class="docutils literal notranslate"><span class="pre">id</span></code> MUST match Smithy's <a class="reference internal" href="../spec/model.html#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> ABNF. No two
+<code class="docutils literal notranslate"><span class="pre">httpMalformedRequestTests</span></code> test cases can share the same ID.</td>
+</tr>
+<tr class="row-odd"><td>protocol</td>
+<td>shape ID</td>
+<td><strong>Required</strong>. A shape ID that targets a shape marked with the
+<a class="reference internal" href="../spec/protocol-traits.html#protocoldefinition-trait"><span class="std std-ref">protocolDefinition trait</span></a>. Because Smithy services can support
+multiple protocols, each test MUST specify which protocol is under
+test.</td>
+</tr>
+<tr class="row-even"><td>request</td>
+<td><a class="reference internal" href="#httpmalformedrequestdefinition-struct"><span class="std std-ref">HttpMalformedRequestDefinition</span></a></td>
+<td><strong>Required</strong>. A structure that describes the request.</td>
+</tr>
+<tr class="row-odd"><td>response</td>
+<td><a class="reference internal" href="#httpmalformedresponsedefinition-struct"><span class="std std-ref">HttpMalformedResponseDefinition</span></a></td>
+<td><strong>Required</strong>. A structure that describes the required response.</td>
+</tr>
+<tr class="row-even"><td>documentation</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>A description of the test and what is being asserted defined in
+<a class="reference external" href="https://spec.commonmark.org/">CommonMark</a>.</td>
+</tr>
+<tr class="row-odd"><td>tags</td>
+<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
+<td><p class="first">Attaches a list of tags that allow test cases to be categorized and
+grouped.</p>
+<p class="last">Using tags to describe types of failures gives implementations control
+of test execution across different suites of tests. For example, it
+allows tests to be executed that exercise booleans being converted into
+numerics, even if there are such tests written for values appearing in
+paths, query strings, headers, and message bodies across different
+protocols.</p>
+</td>
+</tr>
+<tr class="row-even"><td>testParameters</td>
+<td><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">list&lt;string&gt;&gt;</span></code></td>
+<td><p class="first">Optional parameters that are substituted into each member of
+<code class="docutils literal notranslate"><span class="pre">request</span></code>, <code class="docutils literal notranslate"><span class="pre">response</span></code>, as well as the test's <code class="docutils literal notranslate"><span class="pre">tags</span></code> and
+<code class="docutils literal notranslate"><span class="pre">documentation</span></code>.</p>
+<p>The lists of values for each key must be identical
+in length. One test permutation is generated for each index the
+parameter lists. For example, parameters with 5 values for each key
+will generate 5 tests in total.</p>
+<p>Parameter values are substituted using the conventions described by
+the documentation for <a class="reference external" href="https://awslabs.github.io/smithy/javadoc/1.13.1/software/amazon/smithy/utils/CodeWriter.html">CodeWriter</a>. They are available as named
+parameters, and implementations must support both the <code class="docutils literal notranslate"><span class="pre">L</span></code> and <code class="docutils literal notranslate"><span class="pre">S</span></code>
+formatters.</p>
+<div class="last admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If <code class="docutils literal notranslate"><span class="pre">testParameters</span></code> is not null or empty, then substitution
+is performed on every string in <code class="docutils literal notranslate"><span class="pre">request</span></code> and <code class="docutils literal notranslate"><span class="pre">response</span></code>
+even when there is no substitution requested. This means that
+explicit <cite>$</cite> characters must be represented as <cite>$$</cite> so as to not be
+interpreted as substitution expressions by the code generator.</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="httpmalformedrequestdefinition">
+<span id="httpmalformedrequestdefinition-struct"></span><h3>HttpMalformedRequestDefinition<a class="headerlink" href="#httpmalformedrequestdefinition" title="Permalink to this headline">#</a></h3>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>method</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The HTTP request method.</td>
+</tr>
+<tr class="row-odd"><td>uri</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The request-target of the HTTP request, not including
+the query string (for example, &quot;/foo/bar&quot;).</td>
+</tr>
+<tr class="row-even"><td>host</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>The host or endpoint provided as input used to generate the HTTP
+request (for example, &quot;example.com&quot;).</td>
+</tr>
+<tr class="row-odd"><td>queryParams</td>
+<td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></td>
+<td><p class="first">A list of the serialized query string parameters to include in the
+request.</p>
+<p>Each element in the list is a query string key value pair
+that starts with the query string parameter name optionally
+followed by &quot;=&quot;, optionally followed by the query string
+parameter value. For example, &quot;foo=bar&quot;, &quot;foo=&quot;, and &quot;foo&quot;
+are all valid values.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This kind of list is used instead of a map so that query string
+parameter values for lists can be represented using repeated
+key-value pairs.</p>
+</div>
+<p class="last">The query string parameter name and the value MUST appear in the
+format in which it is expected to be sent over the wire; if a key or
+value needs to be percent-encoded, then it MUST appear
+percent-encoded in this list.</p>
+</td>
+</tr>
+<tr class="row-even"><td>headers</td>
+<td><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">string&gt;</span></code></td>
+<td>A map of HTTP headers to include in the request. Each key represents a
+header field name and each value represents the expected header value.</td>
+</tr>
+<tr class="row-odd"><td>body</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>The HTTP message body to include in the request. Because the <code class="docutils literal notranslate"><span class="pre">body</span></code>
+parameter is a string, binary data MUST be represented in <code class="docutils literal notranslate"><span class="pre">body</span></code> by
+base64 encoding the data (for example, use &quot;Zm9vCg==&quot; and not &quot;foo&quot;).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="httpmalformedresponsedefinition">
+<span id="httpmalformedresponsedefinition-struct"></span><h3>HttpMalformedResponseDefinition<a class="headerlink" href="#httpmalformedresponsedefinition" title="Permalink to this headline">#</a></h3>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>headers</td>
+<td><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">string&gt;</span></code></td>
+<td><p class="first">A map of expected HTTP headers. Each key represents a header field
+name and each value represents the expected header value. An HTTP
+response is not in compliance with the protocol if any listed header
+is missing from the serialized response or if the expected header
+value differs from the serialized response value.</p>
+<p class="last"><code class="docutils literal notranslate"><span class="pre">headers</span></code> applies no constraints on additional headers.</p>
+</td>
+</tr>
+<tr class="row-odd"><td>code</td>
+<td><code class="docutils literal notranslate"><span class="pre">integer</span></code></td>
+<td><strong>Required</strong>. The expected HTTP response status code.</td>
+</tr>
+<tr class="row-even"><td>body</td>
+<td><a class="reference internal" href="#httpmalformedresponsebodydefinition-struct"><span class="std std-ref">HttpMalformedResponseBodyDefinition</span></a></td>
+<td>The expected response body.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="httpmalformedresponsebodydefinition">
+<span id="httpmalformedresponsebodydefinition-struct"></span><h4>HttpMalformedResponseBodyDefinition<a class="headerlink" href="#httpmalformedresponsebodydefinition" title="Permalink to this headline">#</a></h4>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>assertion</td>
+<td><a class="reference internal" href="#httpmalformedresponsebodyassertion-union"><span class="std std-ref">HttpMalformedResponseBodyAssertion</span></a></td>
+<td><strong>Required</strong>. The assertion to be applied to the response body.</td>
+</tr>
+<tr class="row-odd"><td>mediaType</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The media type of the <code class="docutils literal notranslate"><span class="pre">body</span></code>. This is used to help test
+runners to parse and validate the expected data against generated data.
+Binary media type formats require that the contents of <code class="docutils literal notranslate"><span class="pre">body</span></code> are
+base64 encoded.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="httpmalformedresponsebodyassertion">
+<span id="httpmalformedresponsebodyassertion-union"></span><h5>HttpMalformedResponseBodyAssertion<a class="headerlink" href="#httpmalformedresponsebodyassertion" title="Permalink to this headline">#</a></h5>
+<p>A union describing the assertion to run against the response body. As it is a
+union, exactly one member must be set.</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>contents</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Defines the expected serialized response body, which will be matched
+exactly.</td>
+</tr>
+<tr class="row-odd"><td>messageRegex</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>A regex to evaluate against the <code class="docutils literal notranslate"><span class="pre">message</span></code> field in the response body.
+For responses that may have some variance from platform to platform,
+such as those that include messages from a parser.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="http-malformed-request-example">
+<h3>HTTP malformed request example<a class="headerlink" href="#http-malformed-request-example" title="Permalink to this headline">#</a></h3>
+<p>The following example defines a malformed request test for a JSON protocol
+that uses <a class="reference internal" href="../spec/http-bindings.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a>. In this example, the server
+is rejecting many different variants of invalid numerics, and uses
+<code class="docutils literal notranslate"><span class="pre">testParameters</span></code> to test three different invalid values, and tags each test
+with a descriptive string that allows implementations to run, or skip,
+specific types of malformed values.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">use </span><span class="nc">smithy.test#httpMalformedRequestTests</span><span class="w"></span>
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/InvertNumber/{numberValue}&quot;</span>)<span class="w"></span>
+<span class="nt">@httpMalformedRequestTests</span>([<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MalformedLongsInPathsRejected&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        Malformed values in the path should be rejected&quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">protocol</span><span class="p">:</span><span class="w"> </span><span class="vc">exampleProtocol</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">request</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/InvertNumber/$value:L&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">response</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">400</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="py">headers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                </span><span class="s2">&quot;errorType&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;BadNumeric&quot;</span><span class="w"></span>
+<span class="w">            </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="py">body</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                </span><span class="py">assertion</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                    </span><span class="py">contents</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    {&quot;errorMessage&quot;: &quot;Invalid value </span><span class="se">\&quot;</span><span class="s2">$value:L</span><span class="se">\&quot;</span><span class="s2">&quot;}&quot;&quot;&quot;</span><span class="w"></span>
+<span class="w">                </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="py">mediaType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;application/json&quot;</span><span class="w"></span>
+<span class="w">            </span>}<span class="w"></span>
+
+<span class="w">        </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">testParameters</span><span class="w"> </span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;value&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;1.001&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;2ABC&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;tag&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;boolean_coercion&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;float_truncation&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;trailing_chars&quot;</span>]<span class="w"></span>
+<span class="w">        </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span>[<span class="w"> </span><span class="s2">&quot;$tag:L&quot;</span><span class="w"> </span>]<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+])<span class="w"></span>
+<span class="kd">operation </span><span class="nc">InvertNumber</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">InvertNumberInput</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">InvertNumberInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nt">@httpLabel</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
+<span class="w">    </span><span class="py">numberValue</span><span class="p">:</span><span class="w"> </span><span class="vc">Long</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="waiters.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Waiters</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="index.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Additional Smithy specifications</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Amazon Web Services
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">HTTP Protocol Compliance Tests</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a><ul>
+<li><a class="reference internal" href="#parameter-format">Parameter format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#httprequesttests">httpRequestTests</a><ul>
+<li><a class="reference internal" href="#http-request-example">HTTP request example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#httpresponsetests">httpResponseTests</a><ul>
+<li><a class="reference internal" href="#http-response-example">HTTP response example</a></li>
+<li><a class="reference internal" href="#http-error-response-example">HTTP error response example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#httpmalformedrequesttests">httpMalformedRequestTests</a><ul>
+<li><a class="reference internal" href="#httpmalformedrequestdefinition">HttpMalformedRequestDefinition</a></li>
+<li><a class="reference internal" href="#httpmalformedresponsedefinition">HttpMalformedResponseDefinition</a><ul>
+<li><a class="reference internal" href="#httpmalformedresponsebodydefinition">HttpMalformedResponseBodyDefinition</a><ul>
+<li><a class="reference internal" href="#httpmalformedresponsebodyassertion">HttpMalformedResponseBodyAssertion</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#http-malformed-request-example">HTTP malformed request example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    <script src="../_static/tabs.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    </body>
+</html>

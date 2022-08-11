@@ -1,0 +1,69 @@
+/* Headings aren't separated enough. */
+h2, h3 {
+    margin-top: 1.75rem;
+}
+
+h4, h5, h6, h7, h8 {
+    margin-top: 2rem;
+}
+
+/* Tables don't have enough padding. */
+table.docutils td, table.docutils th {
+    padding: 0.3rem 0.6rem;
+}
+
+/* Admonitions have no padding for some reason. */
+.admonition, .topic {
+    padding-left: 1rem;
+}
+/* The heading of an admonition needs to account for the added padding. */
+p.admonition-title, p.topic-title {
+    margin-left: -1rem;
+}
+/* Adjust icons to account for added padding. */
+p.admonition-title:before,
+p.topic-title:before {
+    top: 0.5rem;
+}
+
+/* More padding for rubrics. */
+p.rubric {
+    margin-top: 2rem;
+}
+
+/* Better styling of definition lists */
+.content dt {
+    font-weight: 600;
+}
+
+.content dd {
+    margin-bottom: 1rem;
+}
+
+/* TOC tree captions were small and all-caps. */
+.toctree-wrapper.compound .caption,
+.toctree-wrapper.compound :not(.caption) > .caption-text {
+    font-size: 1.5rem;
+    margin: 1rem 0;
+    text-transform: none;
+}
+
+/* Production list pre's need padding to match what is used for .codecell0. */
+pre.productionlist {
+    padding: .625rem .875rem;
+}
+
+pre.productionlist code.literal {
+    background: none;
+    font-size: 100%;
+}
+
+/* Add a border between h2 sections of content. */
+.section:not(:last-child):has(h2) {
+    padding-bottom: 1em;
+    border-bottom: 1px solid var(--color-background-border)
+}
+
+.tab-set {
+    margin-bottom: 1.5rem;
+}

@@ -1,0 +1,825 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="10. Resource traits" href="resource-traits.html" /><link rel="prev" title="8. Documentation traits" href="documentation-traits.html" />
+
+    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+        <title>9. Behavior traits - Smithy 2.0</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --admonition-font-size: 100%;
+  --admonition-title-font-size: 100%;
+  --color-brand-primary: #C44536;
+  --color-brand-content: #00808b;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Smithy 2.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/smithy.svg" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Smithy specification</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="model.html">1. The Smithy model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simple-types.html">2. Simple types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aggregate-types.html">3. Aggregate types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="service-types.html">4. Service types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixins.html">5. Mixins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constraint-traits.html">6. Constraint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="type-refinement-traits.html">7. Type refinement traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html">8. Documentation traits</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">9. Behavior traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resource-traits.html">10. Resource traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="authentication-traits.html">11. Authentication traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="protocol-traits.html">12. Serialization and Protocol traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="streaming.html">13. Streaming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http-bindings.html">14. HTTP bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endpoint-traits.html">15. Endpoint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selectors.html">16. Selectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model-validation.html">17. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="idl.html">18. Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json-ast.html">19. JSON AST</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../trait-index.html">Trait index</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../guides/index.html">Guides</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-models/build-config.html">smithy-build</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/model-linters.html">Model linters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/style-guide.html">Style Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../additional-specs/waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../aws/index.html">AWS integrations</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-query-protocol.html">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../implementations.html">Implementations</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://awslabs.github.io/smithy/1.0/">1.0 Documentation</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/spec/behavior-traits.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <div class="section" id="behavior-traits">
+<h1><span class="section-number">9. </span>Behavior traits<a class="headerlink" href="#behavior-traits" title="Permalink to this headline">#</a></h1>
+<div class="section" id="idempotency">
+<h2><span class="section-number">9.1. </span>Idempotency<a class="headerlink" href="#idempotency" title="Permalink to this headline">#</a></h2>
+<p>Operations marked with the <a class="reference internal" href="#readonly-trait"><span class="std std-ref">readonly trait</span></a> or <a class="reference internal" href="#idempotent-trait"><span class="std std-ref">idempotent trait</span></a>
+are considered idempotent as defined in <a class="reference external" href="https://datatracker.ietf.org/doc/html/rfc7231#section-4.2.2">RFC 7231, section 4.2.2</a>. Operations
+that contain a top-level input member marked with the <a class="reference internal" href="#idempotencytoken-trait"><span class="std std-ref">idempotencyToken trait</span></a>
+that are provided a token for the member are also considered idempotent. All
+other operations SHOULD be considered unsafe to retry unless the response to
+the operation is an error marked with the <a class="reference internal" href="#retryable-trait"><span class="std std-ref">retryable trait</span></a> or another
+kind of protocol-specific hint indicates the operation is safe to retry
+(for example, a <code class="docutils literal notranslate"><span class="pre">Retry-After</span></code> HTTP header, a 503 HTTP response, or a
+429 HTTP response).</p>
+<div class="section" id="idempotencytoken-trait">
+<span id="smithy-api-idempotencytoken-trait"></span><span id="id1"></span><h3><span class="section-number">9.1.1. </span><code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait<a class="headerlink" href="#idempotencytoken-trait" title="Permalink to this headline">#</a></h3>
+<dl class="docutils">
+<dt>Summary</dt><dd>Defines the input member of an operation that is used by the server to
+identify and discard replayed requests.</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">:test(member</span> <span class="pre">&gt;</span> <span class="pre">string)</span></code></p>
+<p><em>Any structure member that targets a string</em></p>
+</dd>
+<dt>Value type</dt><dd>Annotation trait</dd>
+</dl>
+<p>Only a single member of the input of an operation can be targeted by the
+<code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait; only top-level structure members of the input of an
+operation are considered.</p>
+<p>A unique identifier (typically a <a class="reference external" href="https://tools.ietf.org/html/rfc4122">UUID</a>) SHOULD be used by the client when
+providing the value for the request token member. When the request token is
+present, the service MUST ensure that the request is not replayed within a
+service-defined period of time. This allows the client to safely retry
+operation invocations, including operations that are not read-only, that fail
+due to networking issues or internal server errors. The service uses the
+provided request token to identify and discard duplicate requests.</p>
+<p>Client implementations MAY automatically provide a value for a request token
+member if and only if the member is not explicitly provided.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">operation</span> <span class="n">AllocateWidget</span> <span class="p">{</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">AllocateWidgetInput</span>
+<span class="p">}</span>
+
+<span class="nd">@input</span>
+<span class="n">structure</span> <span class="n">AllocateWidgetInput</span> <span class="p">{</span>
+    <span class="nd">@idempotencyToken</span>
+    <span class="n">clientToken</span><span class="p">:</span> <span class="n">String</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="idempotent-trait">
+<span id="smithy-api-idempotent-trait"></span><span id="id2"></span><h3><span class="section-number">9.1.2. </span><code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait<a class="headerlink" href="#idempotent-trait" title="Permalink to this headline">#</a></h3>
+<dl class="docutils">
+<dt>Summary</dt><dd>Indicates that the intended effect on the server of multiple identical
+requests with an operation is the same as the effect for a single such
+request.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
+<dt>Value type</dt><dd>Annotation trait</dd>
+<dt>Conflicts with</dt><dd><a class="reference internal" href="#readonly-trait"><span class="std std-ref">readonly trait</span></a></dd>
+</dl>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@idempotent</span><span class="w"></span>
+<span class="kd">operation </span><span class="nc">DeleteSomething</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteSomethingInput</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteSomethingOutput</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">All operations that are marked as <a class="reference internal" href="#readonly-trait"><span class="std std-ref">readonly trait</span></a> are inherently
+idempotent.</p>
+</div>
+</div>
+<div class="section" id="readonly-trait">
+<span id="smithy-api-readonly-trait"></span><span id="id3"></span><h3><span class="section-number">9.1.3. </span><code class="docutils literal notranslate"><span class="pre">readonly</span></code> trait<a class="headerlink" href="#readonly-trait" title="Permalink to this headline">#</a></h3>
+<dl class="docutils">
+<dt>Summary</dt><dd>Indicates that an operation is effectively read-only.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
+<dt>Value type</dt><dd>Annotation trait</dd>
+<dt>Conflicts with</dt><dd><a class="reference internal" href="#idempotent-trait"><span class="std std-ref">idempotent trait</span></a></dd>
+</dl>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span><span class="w"></span>
+<span class="kd">operation </span><span class="nc">GetSomething</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetSomethingInput</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetSomethingOutput</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="retryable-trait">
+<span id="smithy-api-retryable-trait"></span><span id="id4"></span><h3><span class="section-number">9.1.4. </span><code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait<a class="headerlink" href="#retryable-trait" title="Permalink to this headline">#</a></h3>
+<dl class="docutils">
+<dt>Summary</dt><dd>Indicates that an error MAY be retried by the client.</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure[trait|error]</span></code></p>
+<p><em>A structure shape with the error trait</em></p>
+</dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</dl>
+<p>The retryable trait is a structure that contains the following members:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>throttling</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Indicates that the error is a retryable throttling error.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@error</span>(<span class="s2">&quot;server&quot;</span>)<span class="w"></span>
+<span class="nt">@retryable</span><span class="w"></span>
+<span class="nt">@httpError</span>(<span class="m">503</span>)<span class="w"></span>
+<span class="kd">structure </span><span class="nc">ServiceUnavailableError</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
+<span class="nt">@retryable</span>(<span class="py">throttling</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)<span class="w"></span>
+<span class="nt">@httpError</span>(<span class="m">429</span>)<span class="w"></span>
+<span class="kd">structure </span><span class="nc">ThrottlingError</span><span class="w"> </span>{}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="pagination">
+<span id="id5"></span><h2><span class="section-number">9.2. </span>Pagination<a class="headerlink" href="#pagination" title="Permalink to this headline">#</a></h2>
+<p>Pagination is the process of dividing large result sets into discrete
+pages. Smithy provides a built-in pagination mechanism that utilizes
+cursor based pagination.</p>
+<div class="section" id="paginated-trait">
+<span id="smithy-api-paginated-trait"></span><span id="id6"></span><h3><span class="section-number">9.2.1. </span><code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait<a class="headerlink" href="#paginated-trait" title="Permalink to this headline">#</a></h3>
+<dl class="docutils">
+<dt>Summary</dt><dd>The <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait indicates that an operation intentionally limits
+the number of results returned in a single response and that multiple
+invocations might be necessary to retrieve all results.</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:is(operation,</span> <span class="pre">service)</span></code></p>
+<p><em>An operation or service</em></p>
+</dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait is a structure that contains the following members:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>inputToken</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">The name of the operation input member that contains a continuation
+token. When this value is provided as input, the service returns
+results from where the previous response left off. This input member
+MUST NOT be marked as <code class="docutils literal notranslate"><span class="pre">required</span></code> and SHOULD target a string shape.
+It can, but SHOULD NOT target a map shape.</p>
+<p class="last">When contained within a service, a paginated operation MUST either
+configure <code class="docutils literal notranslate"><span class="pre">inputToken</span></code> on the operation itself or inherit it from
+the service that contains the operation.</p>
+</td>
+</tr>
+<tr class="row-odd"><td>outputToken</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">The path to the operation output member that contains an optional
+continuation token. When this value is present and not empty in
+operation output, it indicates that there are more results to retrieve.
+To get the next page of results, the client passes the received output
+continuation token to the input continuation token of the next request.
+This output member MUST NOT be marked as <code class="docutils literal notranslate"><span class="pre">required</span></code> and SHOULD target
+a string shape. It can, but SHOULD NOT target a map shape.</p>
+<p class="last">When contained within a service, a paginated operation MUST either
+configure <code class="docutils literal notranslate"><span class="pre">outputToken</span></code> on the operation itself or inherit it from
+the service that contains the operation.</p>
+</td>
+</tr>
+<tr class="row-even"><td>items</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>The path to an output member of the operation that contains
+the data that is being paginated across many responses. The named
+output member, if specified, MUST target a list or map.</td>
+</tr>
+<tr class="row-odd"><td>pageSize</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">The name of an operation input member that limits the maximum number
+of results to include in the operation output. This input member
+SHOULD NOT be required and MUST target an integer shape.</p>
+<div class="last admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Do not attempt to fill response pages to meet the value provided
+for the <code class="docutils literal notranslate"><span class="pre">pageSize</span></code> member of a paginated operation. Attempting to
+match a target number of elements results in an unbounded API with
+an unpredictable latency.</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The following example defines a paginated operation that sets each value
+explicitly on the operation.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="nt">@readonly</span><span class="w"></span>
+<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">           </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;maxResults&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foos&quot;</span>)<span class="w"></span>
+<span class="kd">operation </span><span class="nc">GetFoos</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosInput</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosOutput</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@input</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">GetFoosInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">maxResults</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
+<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@output</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">GetFoosOutput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+
+<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
+<span class="w">    </span><span class="py">foos</span><span class="p">:</span><span class="w"> </span><span class="vc">StringList</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">list </span><span class="nc">StringList</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>Attaching the <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait to a service provides default pagination
+configuration settings to all operations bound within the closure of the
+service. Pagination settings configured on an operation override any inherited
+service setting.</p>
+<p>The following example defines a paginated operation that inherits some
+settings from a service.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;maxResults&quot;</span>)<span class="w"></span>
+<span class="kd">service </span><span class="nc">Example</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2019-06-27&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetFoos</span>]<span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@readonly</span><span class="w"> </span><span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foos&quot;</span>)<span class="w"></span>
+<span class="kd">operation </span><span class="nc">GetFoos</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosInput</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosOutput</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>The values for <code class="docutils literal notranslate"><span class="pre">outputToken</span></code> and <code class="docutils literal notranslate"><span class="pre">items</span></code> are paths. <em class="dfn">Paths</em> are a series of
+identifiers separated by dots (<code class="docutils literal notranslate"><span class="pre">.</span></code>) where each identifier represents a
+member name in a structure. The first member name MUST correspond to a member
+of the output structure and each subsequent member name MUST correspond to a
+member in the previously referenced structure. Paths MUST adhere to the
+following ABNF.</p>
+<pre class="productionlist highlight">
+<strong id="grammar-token-smithy-path"><span id="grammar-token-path"></span>path</strong> =
+    <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a> *(&quot;.&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a>)
+</pre>
+<p>The following example defines a paginated operation which uses a result
+wrapper where the output token and items are referenced by paths.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="nt">@readonly</span><span class="w"></span>
+<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;result.nextToken&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">           </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;maxResults&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;result.foos&quot;</span>)<span class="w"></span>
+<span class="kd">operation </span><span class="nc">GetFoos</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosOutput</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@input</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">GetFoosInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">maxResults</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@output</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">GetFoosOutput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
+<span class="w">    </span><span class="py">result</span><span class="p">:</span><span class="w"> </span><span class="vc">ResultWrapper</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">ResultWrapper</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+
+<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
+<span class="w">    </span><span class="py">foos</span><span class="p">:</span><span class="w"> </span><span class="vc">StringList</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">list </span><span class="nc">StringList</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="pagination-behavior">
+<h3><span class="section-number">9.2.2. </span>Pagination Behavior<a class="headerlink" href="#pagination-behavior" title="Permalink to this headline">#</a></h3>
+<ol class="arabic simple">
+<li>If an operation returns a naturally size-limited subset of data
+(e.g., a top-ten list of users sorted by rank), then the operation
+SHOULD NOT be paginated.</li>
+<li>Only one list or map per operation can be paginated.</li>
+<li>Paginated responses SHOULD NOT return the same item of a paginated result
+set more than once.</li>
+<li>Services SHOULD NOT return items in a paginated result set that have been
+deleted during the pagination process, but before reaching the relevant
+page.</li>
+<li>Services MAY include newly created items in a paginated result set on a
+not yet seen page. If pagination is ordered and newly created items are
+returned, then newly created items MUST appear in order on the appropriate
+page.</li>
+</ol>
+</div>
+<div class="section" id="client-behavior">
+<h3><span class="section-number">9.2.3. </span>Client behavior<a class="headerlink" href="#client-behavior" title="Permalink to this headline">#</a></h3>
+<p>Smithy clients SHOULD provide abstractions that can be used to automatically
+iterate over paginated responses. The following steps describe the process a
+client MUST follow when iterating over paginated API calls:</p>
+<ol class="arabic simple">
+<li>Send the initial request to a paginated operation. This request MAY
+include input parameters that are used to influence the starting point
+at which pagination occurs.</li>
+<li>If the received response does not contain a continuation token in the
+referenced <code class="docutils literal notranslate"><span class="pre">outputToken</span></code> member (either the member is not set or is set to
+an empty value), then there are no more results to retrieve and the process
+is complete.</li>
+<li>If there is a continuation token in the referenced <code class="docutils literal notranslate"><span class="pre">outputToken</span></code> member
+of the response, then the client sends a subsequent request using the same
+input parameters as the original call, but including the last received
+continuation token. Clients are free to change the designated <code class="docutils literal notranslate"><span class="pre">pageSize</span></code>
+input parameter at this step as needed.</li>
+<li>If a client receives an identical continuation token from a service in back
+to back calls, then the client MAY choose to stop sending requests. This
+scenario implies a &quot;tail&quot; style API operation where clients are running in
+an infinite loop to send requests to a service in order to retrieve results
+as they are available.</li>
+<li>Return to step 2.</li>
+</ol>
+</div>
+<div class="section" id="continuation-tokens">
+<h3><span class="section-number">9.2.4. </span>Continuation tokens<a class="headerlink" href="#continuation-tokens" title="Permalink to this headline">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait indicates that an operation utilizes cursor-based
+pagination. When a paginated operation truncates its output, it MUST return a
+continuation token in the operation output that can be used to get the next
+page of results. This token can then be provided along with the original input
+to request additional results from the operation.</p>
+<ol class="arabic">
+<li><p class="first"><strong>Continuation tokens SHOULD be opaque.</strong></p>
+<p>Plain text continuation tokens inappropriately expose implementation details
+to the client, resulting in consumers building systems that manually
+construct continuation tokens. Making backwards compatible changes to a
+plain text continuation token format is extremely hard to manage.</p>
+</li>
+<li><p class="first"><strong>Continuation tokens SHOULD be versioned.</strong></p>
+<p>The parameters and context needed to paginate an API call can evolve over
+time. To future-proof these APIs, services SHOULD include some kind of
+version identifier in their continuation tokens. Once the version identifier
+of a token is recognized, a service will then know the appropriate operation
+for decoding and returning the next response for a paginated request.</p>
+</li>
+<li><p class="first"><strong>Continuation tokens SHOULD expire after a period of time.</strong></p>
+<p>Continuation tokens SHOULD expire after a short period of time (e.g., 24
+hours is a reasonable default for many services). This allows services
+to quickly phase out deprecated continuation token formats, and helps to set
+the expectation that continuation tokens are ephemeral and MUST NOT be used
+after extended periods of time. Services MUST reject a request with a client
+error when a client uses an expired continuation token.</p>
+</li>
+<li><p class="first"><strong>Continuation tokens MUST be bound to a fixed set of filtering parameters.</strong></p>
+<p>Services MUST reject a request that changes filtering input parameters while
+paging through responses. Services MUST require clients to send the same
+filtering request parameters used in the initial pagination request to all
+subsequent pagination requests.</p>
+<p><em class="dfn">Filtering parameters</em> are defined as parameters that remove certain
+elements from appearing in the result set of a paginated API call. Filtering
+parameters do not influence the presentation of results (e.g., the
+designated <code class="docutils literal notranslate"><span class="pre">pageSize</span></code> input parameter partitions a result set into smaller
+subsets but does not change the sum of the parts). Services MUST allow
+clients to change presentation based parameters while paginating through a
+result set.</p>
+</li>
+<li><p class="first"><strong>Continuation tokens MUST NOT influence authorization.</strong></p>
+<p>A service MUST NOT evaluate authorization differently depending on the
+presence, absence, or contents of a continuation token.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="backward-compatibility">
+<h3><span class="section-number">9.2.5. </span>Backward compatibility<a class="headerlink" href="#backward-compatibility" title="Permalink to this headline">#</a></h3>
+<p>Many tools use the <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait to expose additional functionality to
+things like generated code. To support these use cases, the following changes
+to the <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait are considered backward incompatible:</p>
+<ol class="arabic simple">
+<li>Removing the <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait.</li>
+<li>Adding, removing, or changing the <code class="docutils literal notranslate"><span class="pre">inputToken</span></code>, <code class="docutils literal notranslate"><span class="pre">outputToken</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">items</span></code> members.</li>
+<li>Removing or changing the <code class="docutils literal notranslate"><span class="pre">pageSize</span></code> member.</li>
+</ol>
+<p>The following changes are considered backward compatible:</p>
+<ol class="arabic simple">
+<li>Adding the <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait to an existing operation.</li>
+<li>Adding the <code class="docutils literal notranslate"><span class="pre">pageSize</span></code> member to an existing <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait.</li>
+</ol>
+</div>
+</div>
+</div>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="resource-traits.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title"><span class="section-number">10. </span>Resource traits</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="documentation-traits.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title"><span class="section-number">8. </span>Documentation traits</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Amazon Web Services
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">9. Behavior traits</a><ul>
+<li><a class="reference internal" href="#idempotency">9.1. Idempotency</a><ul>
+<li><a class="reference internal" href="#idempotencytoken-trait">9.1.1. <code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait</a></li>
+<li><a class="reference internal" href="#idempotent-trait">9.1.2. <code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait</a></li>
+<li><a class="reference internal" href="#readonly-trait">9.1.3. <code class="docutils literal notranslate"><span class="pre">readonly</span></code> trait</a></li>
+<li><a class="reference internal" href="#retryable-trait">9.1.4. <code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pagination">9.2. Pagination</a><ul>
+<li><a class="reference internal" href="#paginated-trait">9.2.1. <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait</a></li>
+<li><a class="reference internal" href="#pagination-behavior">9.2.2. Pagination Behavior</a></li>
+<li><a class="reference internal" href="#client-behavior">9.2.3. Client behavior</a></li>
+<li><a class="reference internal" href="#continuation-tokens">9.2.4. Continuation tokens</a></li>
+<li><a class="reference internal" href="#backward-compatibility">9.2.5. Backward compatibility</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    <script src="../_static/tabs.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    </body>
+</html>

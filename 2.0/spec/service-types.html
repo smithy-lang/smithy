@@ -1,0 +1,1348 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="5. Mixins" href="mixins.html" /><link rel="prev" title="3. Aggregate types" href="aggregate-types.html" />
+
+    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+        <title>4. Service types - Smithy 2.0</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --admonition-font-size: 100%;
+  --admonition-title-font-size: 100%;
+  --color-brand-primary: #C44536;
+  --color-brand-content: #00808b;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Smithy 2.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/smithy.svg" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Smithy specification</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="model.html">1. The Smithy model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simple-types.html">2. Simple types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aggregate-types.html">3. Aggregate types</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">4. Service types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixins.html">5. Mixins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constraint-traits.html">6. Constraint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="type-refinement-traits.html">7. Type refinement traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html">8. Documentation traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="behavior-traits.html">9. Behavior traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resource-traits.html">10. Resource traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="authentication-traits.html">11. Authentication traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="protocol-traits.html">12. Serialization and Protocol traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="streaming.html">13. Streaming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http-bindings.html">14. HTTP bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endpoint-traits.html">15. Endpoint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selectors.html">16. Selectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model-validation.html">17. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="idl.html">18. Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json-ast.html">19. JSON AST</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../trait-index.html">Trait index</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../guides/index.html">Guides</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-models/build-config.html">smithy-build</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/model-linters.html">Model linters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/style-guide.html">Style Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../additional-specs/waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../aws/index.html">AWS integrations</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-query-protocol.html">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../implementations.html">Implementations</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://awslabs.github.io/smithy/1.0/">1.0 Documentation</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/spec/service-types.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <div class="section" id="service-types">
+<span id="id1"></span><h1><span class="section-number">4. </span>Service types<a class="headerlink" href="#service-types" title="Permalink to this headline">#</a></h1>
+<p><em>Service types</em> have specific semantics and define services, resources,
+and operations.</p>
+<div class="section" id="service">
+<span id="id2"></span><h2><span class="section-number">4.1. </span>Service<a class="headerlink" href="#service" title="Permalink to this headline">#</a></h2>
+<p>A <em class="dfn">service</em> is the entry point of an API that aggregates resources and
+operations together. The <a class="reference internal" href="#resource"><span class="std std-ref">resources</span></a> and
+<a class="reference internal" href="#operation"><span class="std std-ref">operations</span></a> of an API are bound within the closure of a
+service. A service is defined in the IDL using a
+<a class="reference internal" href="idl.html#idl-service"><span class="std std-ref">service_statement</span></a>.</p>
+<p>The service shape supports the following properties:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>version</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Defines the optional version of the service. The version can be provided in
+any format (e.g., <code class="docutils literal notranslate"><span class="pre">2017-02-11</span></code>, <code class="docutils literal notranslate"><span class="pre">2.0</span></code>, etc).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#service-operations"><span class="std std-ref">operations</span></a></td>
+<td>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</td>
+<td>Binds a set of <code class="docutils literal notranslate"><span class="pre">operation</span></code> shapes to the service. Each
+element in the given list MUST be a valid <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape ID</span></a>
+that targets an <a class="reference internal" href="#operation"><span class="std std-ref">operation</span></a> shape.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#service-resources"><span class="std std-ref">resources</span></a></td>
+<td>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</td>
+<td>Binds a set of <code class="docutils literal notranslate"><span class="pre">resource</span></code> shapes to the service. Each element in
+the given list MUST be a valid <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape ID</span></a> that targets
+a <a class="reference internal" href="#resource"><span class="std std-ref">resource</span></a> shape.</td>
+</tr>
+<tr class="row-odd"><td>errors</td>
+<td>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</td>
+<td>Defines a list of common errors that every operation bound within the
+closure of the service can return. Each provided shape ID MUST target
+a <a class="reference internal" href="aggregate-types.html#structure"><span class="std std-ref">structure</span></a> shape that is marked with the
+<a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>.</td>
+</tr>
+<tr class="row-even"><td>rename</td>
+<td>map of <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape ID</span></a> to <code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">Disambiguates shape name conflicts in the
+<a class="reference internal" href="#service-closure"><span class="std std-ref">service closure</span></a>. Map keys are shape IDs
+contained in the service, and map values are the disambiguated shape
+names to use in the context of the service. Each given shape ID MUST
+reference a shape contained in the closure of the service. Each given
+map value MUST match the <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> production used for
+shape IDs. Renaming a shape <em>does not</em> give the shape a new shape ID.</p>
+<ul class="last simple">
+<li>No renamed shape name can case-insensitively match any other renamed
+shape name or the name of a non-renamed shape contained in the
+service.</li>
+<li>Member shapes MAY NOT be renamed.</li>
+<li>Resource, operation, and shapes marked with the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>
+MAY NOT be renamed. Renaming shapes is intended for incidental naming
+conflicts, not for renaming the fundamental concepts of a service.</li>
+<li>Shapes from other namespaces marked as <a class="reference internal" href="constraint-traits.html#private-trait"><span class="std std-ref">private</span></a>
+MAY be renamed.</li>
+<li>A rename MUST use a name that is case-sensitively different from the
+original shape ID name.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The following example defines a service with no operations or resources.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>The following example defines a service shape that defines a set of errors
+that are common to every operation in the service:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">SomeError</span>]<span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
+<span class="kd">structure </span><span class="nc">SomeError</span><span class="w"> </span>{}<span class="w"></span>
+</pre></div>
+</div>
+<div class="section" id="service-operations">
+<span id="id3"></span><h3><span class="section-number">4.1.1. </span>Service operations<a class="headerlink" href="#service-operations" title="Permalink to this headline">#</a></h3>
+<p><a class="reference internal" href="#operation"><span class="std std-ref">Operation</span></a> shapes can be bound to a service by adding the
+shape ID of an operation to the <code class="docutils literal notranslate"><span class="pre">operations</span></code> property of a service.
+Operations bound directly to a service are typically RPC-style operations
+that do not fit within a resource hierarchy.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetServerTime</span>]<span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@readonly</span><span class="w"></span>
+<span class="kd">operation </span><span class="nc">GetServerTime</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetServerTimeOutput</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="service-resources">
+<span id="id4"></span><h3><span class="section-number">4.1.2. </span>Service resources<a class="headerlink" href="#service-resources" title="Permalink to this headline">#</a></h3>
+<p><a class="reference internal" href="#resource"><span class="std std-ref">Resource</span></a> shapes can be bound to a service by adding the
+shape ID of a resource to the <code class="docutils literal notranslate"><span class="pre">resources</span></code> property of a service.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="service-closure">
+<span id="id5"></span><h3><span class="section-number">4.1.3. </span>Service closure<a class="headerlink" href="#service-closure" title="Permalink to this headline">#</a></h3>
+<p>The <em>closure</em> of a service is the set of shapes connected to a service
+through resources, operations, and members.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">With some exceptions, the shapes that are referenced in the <em>closure</em>
+of a service MUST have case-insensitively unique names regardless of
+their namespace, and conflicts MUST be disambiguated using the
+<code class="docutils literal notranslate"><span class="pre">rename</span></code> property of a service.</p>
+</div>
+<p>By requiring unique names within a service, each service forms a
+<a class="reference external" href="https://martinfowler.com/bliki/UbiquitousLanguage.html">ubiquitous language</a>, making it easier for developers to understand the
+model and artifacts generated from the model, like code. For example, when
+using Java code generated from a Smithy model, a developer should not need
+to discern between <code class="docutils literal notranslate"><span class="pre">BadRequestException</span></code> classes across multiple packages
+that can be thrown by an operation. Uniqueness is required
+case-insensitively because many model transformations (like code generation)
+change the casing and inflection of shape names to make artifacts more
+idiomatic.</p>
+<p class="rubric">Shape types allowed to conflict in a closure</p>
+<p><a class="reference internal" href="simple-types.html#simple-types"><span class="std std-ref">Simple types</span></a> and <a class="reference internal" href="aggregate-types.html#list"><span class="std std-ref">lists</span></a> of compatible simple
+types are allowed to conflict because a conflict for these type would rarely
+have an impact on generated artifacts. These kinds of conflicts are only
+allowed if both conflicting shapes are the same type and have the exact same
+traits. In the case of a list, a conflict is only allowed if the members
+of the conflicting shapes target compatible shapes.</p>
+<p class="rubric">Disambiguating shapes with <code class="docutils literal notranslate"><span class="pre">rename</span></code></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">rename</span></code> property of a service is used to disambiguate conflicting
+shape names found in the closure of a service. The <code class="docutils literal notranslate"><span class="pre">rename</span></code> property is
+essentially a <a class="reference external" href="https://martinfowler.com/bliki/BoundedContext.html">context map</a> used to ensure that the service still presents
+a ubiquitous language despite bringing together shapes from multiple
+namespaces.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Renames SHOULD be used sparingly. Renaming shapes is something typically
+only needed when aggregating models from multiple independent teams into
+a single service.</p>
+</div>
+<p>The following example defines a service that contains two shapes named
+&quot;Widget&quot; in its closure. The <code class="docutils literal notranslate"><span class="pre">rename</span></code> property is used to disambiguate
+the conflicting shapes.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetSomething</span>]<span class="w"></span>
+<span class="w">    </span><span class="py">rename</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="s2">&quot;foo.example#Widget&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooWidget&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">operation </span><span class="nc">GetSomething</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetSomethingInput</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetSomethingOutput</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@input</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">GetSomethingInput</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="nt">@output</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">GetSomethingOutput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">widget1</span><span class="p">:</span><span class="w"> </span><span class="vc">Widget</span><span class="w"></span>
+<span class="w">    </span><span class="py">fooWidget</span><span class="p">:</span><span class="w"> </span><span class="vc">foo.example#Widget</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">Widget</span><span class="w"> </span>{}<span class="w"></span>
+</pre></div>
+</div>
+<p class="rubric">Resources and operations can be bound once</p>
+<p>An operation or resource MUST NOT be bound to multiple shapes within the
+closure of a service. This constraint allows services to discern between
+operations and resources using only their shape name rather than a
+fully-qualified path from the service to the shape.</p>
+<p class="rubric">Undeclared operation inputs and outputs are not a
+part of the service closure</p>
+<p><a class="reference internal" href="model.html#unit-type"><span class="std std-ref">smithy.api#Unit</span></a> is the shape that is implicitly targeted by
+operation inputs and outputs when they are not explicitly declared. This does
+not, however, add <code class="docutils literal notranslate"><span class="pre">smithy.api#Unit</span></code> to the service's closure, and does not
+require renaming to avoid conflicts with other shapes named <code class="docutils literal notranslate"><span class="pre">Unit</span></code>. Unions in
+the service closure with members targeting <code class="docutils literal notranslate"><span class="pre">smithy.api#Unit</span></code>, however, will
+cause <code class="docutils literal notranslate"><span class="pre">smithy.api#Unit</span></code> to be a part of the service closure.</p>
+</div>
+</div>
+<div class="section" id="operation">
+<span id="id6"></span><h2><span class="section-number">4.2. </span>Operation<a class="headerlink" href="#operation" title="Permalink to this headline">#</a></h2>
+<p>The <em class="dfn">operation</em> type represents the input, output, and possible errors of
+an API operation. Operation shapes are bound to <a class="reference internal" href="#resource"><span class="std std-ref">resource</span></a>
+shapes and <a class="reference internal" href="#service"><span class="std std-ref">service</span></a> shapes. An operation is defined in the IDL
+using an <a class="reference internal" href="idl.html#idl-operation"><span class="std std-ref">operation_statement</span></a>.</p>
+<p>An operation supports the following members:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>input</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">The input of the operation defined using a <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape ID</span></a>
+that MUST target a structure.</p>
+<ul class="last simple">
+<li>Every operation SHOULD define a dedicated input shape marked with
+the <a class="reference internal" href="type-refinement-traits.html#input-trait"><span class="std std-ref">input trait</span></a>. Creating a dedicated input shape ensures
+that input members can be added in the future if needed.</li>
+<li>Input defaults to <a class="reference internal" href="model.html#unit-type"><span class="std std-ref">smithy.api#Unit</span></a> if no input is
+defined, indicating that the operation has no meaningful input.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>output</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">The output of the operation defined using a <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape ID</span></a>
+that MUST target a structure.</p>
+<ul class="last simple">
+<li>Every operation SHOULD define a dedicated output shape marked with
+the <a class="reference internal" href="type-refinement-traits.html#output-trait"><span class="std std-ref">output trait</span></a>. Creating a dedicated output shape ensures
+that output members can be added in the future if needed.</li>
+<li>Output defaults to <a class="reference internal" href="model.html#unit-type"><span class="std std-ref">smithy.api#Unit</span></a> if no output
+is defined, indicating that the operation has no meaningful output.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>errors</td>
+<td>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</td>
+<td>The errors that an operation can return. Each string in the list is
+a shape ID that MUST target a <a class="reference internal" href="aggregate-types.html#structure"><span class="std std-ref">structure</span></a> shape
+marked with the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The following example defines an operation that accepts an input structure
+named <code class="docutils literal notranslate"><span class="pre">MyOperationInput</span></code>, returns an output structure named
+<code class="docutils literal notranslate"><span class="pre">MyOperationOutput</span></code>, and can potentially return the <code class="docutils literal notranslate"><span class="pre">NotFound</span></code> or
+<code class="docutils literal notranslate"><span class="pre">BadRequest</span></code> <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error structures</span></a>.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">MyOperationInput</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">MyOperationOutput</span><span class="w"></span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NotFoundError</span><span class="p">,</span><span class="w"> </span><span class="vc">BadRequestError</span>]<span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@input</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">MyOperationInput</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="nt">@output</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">MyOperationOutput</span><span class="w"> </span>{}<span class="w"></span>
+</pre></div>
+</div>
+<p>While, input and output SHOULD be explicitly defined for every operation,
+omitting them is allowed. The default value for input and output is
+<code class="docutils literal notranslate"><span class="pre">smithy.api#Unit</span></code>, indicating that there is no meaningful value.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">operation </span><span class="nc">MySideEffectOperation</span><span class="w"> </span>{}<span class="w"></span>
+</pre></div>
+</div>
+<p>The following example is equivalent, but more explicit in intent:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">operation </span><span class="nc">MySideEffectOperation</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">Unit</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">Unit</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Using the <code class="docutils literal notranslate"><span class="pre">Unit</span></code> shape for input or output removes flexibility in how an
+operation can evolve over time because members cannot be added to the
+input or output if ever needed.</p>
+</div>
+</div>
+<div class="section" id="resource">
+<span id="id7"></span><h2><span class="section-number">4.3. </span>Resource<a class="headerlink" href="#resource" title="Permalink to this headline">#</a></h2>
+<p>Smithy defines a <em class="dfn">resource</em> as an entity with an identity that has a
+set of operations. A resource shape is defined in the IDL using a
+<a class="reference internal" href="idl.html#idl-resource"><span class="std std-ref">resource_statement</span></a>.</p>
+<p>A resource supports the following members:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="#resource-identifiers"><span class="std std-ref">identifiers</span></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">object</span></code></td>
+<td>Defines a map of identifier string names to <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">Shape ID</span></a>s used to
+identify the resource. Each shape ID MUST target a <code class="docutils literal notranslate"><span class="pre">string</span></code> shape.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#resource-properties"><span class="std std-ref">properties</span></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">object</span></code></td>
+<td>Defines a map of property string names to <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">Shape ID</span></a>s that
+enumerate the properties of the resource.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#create-lifecycle"><span class="std std-ref">create</span></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Defines the lifecycle operation used to create a resource using one
+or more identifiers created by the service. The value MUST be a
+valid <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">Shape ID</span></a> that targets an <code class="docutils literal notranslate"><span class="pre">operation</span></code> shape.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#put-lifecycle"><span class="std std-ref">put</span></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Defines an idempotent lifecycle operation used to create a resource
+using identifiers provided by the client. The value MUST be a
+valid <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">Shape ID</span></a> that targets an <code class="docutils literal notranslate"><span class="pre">operation</span></code> shape.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#read-lifecycle"><span class="std std-ref">read</span></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Defines the lifecycle operation used to retrieve the resource. The
+value MUST be a valid <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">Shape ID</span></a> that targets an
+<code class="docutils literal notranslate"><span class="pre">operation</span></code> shape.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#update-lifecycle"><span class="std std-ref">update</span></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Defines the lifecycle operation used to update the resource. The
+value MUST be a valid <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">Shape ID</span></a> that targets an
+<code class="docutils literal notranslate"><span class="pre">operation</span></code> shape.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#delete-lifecycle"><span class="std std-ref">delete</span></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Defines the lifecycle operation used to delete the resource. The
+value MUST be a valid <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">Shape ID</span></a> that targets an <code class="docutils literal notranslate"><span class="pre">operation</span></code>
+shape.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#list-lifecycle"><span class="std std-ref">list</span></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Defines the lifecycle operation used to list resources of this type.
+The value MUST be a valid <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">Shape ID</span></a> that targets an
+<code class="docutils literal notranslate"><span class="pre">operation</span></code> shape.</td>
+</tr>
+<tr class="row-even"><td>operations</td>
+<td>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</td>
+<td>Binds a list of non-lifecycle instance operations to the resource.
+Each value in the list MUST be a valid <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">Shape ID</span></a> that targets
+an <code class="docutils literal notranslate"><span class="pre">operation</span></code> shape.</td>
+</tr>
+<tr class="row-odd"><td>collectionOperations</td>
+<td>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</td>
+<td>Binds a list of non-lifecycle collection operations to the resource.
+Each value in the list MUST be a valid <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">Shape ID</span></a> that targets
+an <code class="docutils literal notranslate"><span class="pre">operation</span></code> shape.</td>
+</tr>
+<tr class="row-even"><td>resources</td>
+<td>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</td>
+<td>Binds a list of resources to this resource as a child resource,
+forming a containment relationship. Each value in the list MUST be a
+valid <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">Shape ID</span></a> that targets a <code class="docutils literal notranslate"><span class="pre">resource</span></code>. The resources
+MUST NOT have a cyclical containment hierarchy, and a resource
+can not be bound more than once in the entire closure of a
+resource or service.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="resource-identifiers">
+<span id="id8"></span><h3><span class="section-number">4.3.1. </span>Resource Identifiers<a class="headerlink" href="#resource-identifiers" title="Permalink to this headline">#</a></h3>
+<p><em class="dfn">Identifiers</em> are used to refer to a specific resource within a service.
+The identifiers property of a resource is a map of identifier names to
+<a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape IDs</span></a> that MUST target string shapes.</p>
+<p>For example, the following model defines a <code class="docutils literal notranslate"><span class="pre">Forecast</span></code> resource with a
+single identifier named <code class="docutils literal notranslate"><span class="pre">forecastId</span></code> that targets the <code class="docutils literal notranslate"><span class="pre">ForecastId</span></code> shape:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"> </span>}<span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">string </span><span class="nc">ForecastId</span><span class="w"></span>
+</pre></div>
+</div>
+<p>When a resource is bound as a child to another resource using the &quot;resources&quot;
+property, all of the identifiers of the parent resource MUST be repeated
+verbatim in the child resource, and the child resource MAY introduce any
+number of additional identifiers.</p>
+<p><em class="dfn">Parent identifiers</em> are the identifiers of the parent of a resource.
+All parent identifiers MUST be bound as identifiers in the input of every
+operation bound as a child to a resource. <em class="dfn">Child identifiers</em> are the
+identifiers that a child resource contains that are not present in the parent
+identifiers.</p>
+<p>For example, given the following model,</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">ResourceA</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ResourceB</span>]<span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">resource </span><span class="nc">ResourceB</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">        </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ResourceC</span>]<span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">resource </span><span class="nc">ResourceC</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">        </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">        </span><span class="py">c</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ResourceB</span></code> is a valid child of <code class="docutils literal notranslate"><span class="pre">ResourceA</span></code> and contains a child
+identifier of &quot;b&quot;. <code class="docutils literal notranslate"><span class="pre">ResourceC</span></code> is a valid child of <code class="docutils literal notranslate"><span class="pre">ResourceB</span></code> and
+contains a child identifier of &quot;c&quot;.</p>
+<p>However, the following defines two <em>invalid</em> child resources that do not
+define an <code class="docutils literal notranslate"><span class="pre">identifiers</span></code> property that is compatible with their parents:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">ResourceA</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">        </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">Invalid1</span><span class="p">,</span><span class="w"> </span><span class="vc">Invalid2</span>]<span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">resource </span><span class="nc">Invalid1</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="c">// Invalid: missing &quot;a&quot;.</span><span class="w"></span>
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">resource </span><span class="nc">Invalid2</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">        </span><span class="c">// Invalid: does not target the same shape.</span><span class="w"></span>
+<span class="w">        </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">SomeOtherString</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<div class="section" id="binding-identifiers-to-operations">
+<span id="binding-identifiers"></span><h4><span class="section-number">4.3.1.1. </span>Binding identifiers to operations<a class="headerlink" href="#binding-identifiers-to-operations" title="Permalink to this headline">#</a></h4>
+<p><em>Identifier bindings</em> indicate which top-level members of the input or output
+structure of an operation provide values for the identifiers of a resource.</p>
+<p class="rubric">Identifier binding validation</p>
+<ul class="simple">
+<li>Child resources MUST provide identifier bindings for all of its parent's
+identifiers.</li>
+<li>Identifier bindings are only formed on input or output structure members that
+are marked as <a class="reference internal" href="type-refinement-traits.html#required-trait"><span class="std std-ref">required</span></a>.</li>
+<li>Resource operations MUST form a valid <em>instance operation</em> or
+<em>collection operation</em>.</li>
+</ul>
+<p id="instance-operations"><em class="dfn">Instance operations</em> are formed when all of the identifiers of a resource
+are bound to the input structure of an operation or when a resource has no
+identifiers. The <a class="reference internal" href="#put-lifecycle"><span class="std std-ref">put</span></a>, <a class="reference internal" href="#read-lifecycle"><span class="std std-ref">read</span></a>,
+<a class="reference internal" href="#update-lifecycle"><span class="std std-ref">update</span></a>, and <a class="reference internal" href="#delete-lifecycle"><span class="std std-ref">delete</span></a>
+lifecycle operations are examples of instance operations. An operation bound
+to a resource using <cite>operations</cite> MUST form a valid instance operation.</p>
+<p id="collection-operations"><em class="dfn">Collection operations</em> are used when an operation is meant to operate on
+a collection of resources rather than a specific resource. Collection
+operations are formed when an operation is bound to a resource with <cite>collectionOperations</cite>,
+or when bound to the <a class="reference internal" href="#list-lifecycle"><span class="std std-ref">list</span></a> or <a class="reference internal" href="#create-lifecycle"><span class="std std-ref">create</span></a>
+lifecycle operations. A collection operation MUST omit one or more identifiers
+of the resource it is bound to, but MUST bind all identifiers of any parent
+resource.</p>
+</div>
+<div class="section" id="implicit-identifier-bindings">
+<span id="id9"></span><h4><span class="section-number">4.3.1.2. </span>Implicit identifier bindings<a class="headerlink" href="#implicit-identifier-bindings" title="Permalink to this headline">#</a></h4>
+<p><em>Implicit identifier bindings</em> are formed when the input of an operation
+contains member names that target the same shapes that are defined in the
+&quot;identifiers&quot; property of the resource to which an operation is bound.</p>
+<p>For example, given the following model,</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@readonly</span><span class="w"></span>
+<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastInput</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@input</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">GetForecastInput</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Forecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nl">$forecastId</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@output</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
+<span class="w">    </span><span class="py">weather</span><span class="p">:</span><span class="w"> </span><span class="vc">WeatherData</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">GetForecast</span></code> forms a valid instance operation because the operation is
+not marked with the <code class="docutils literal notranslate"><span class="pre">collection</span></code> trait and <code class="docutils literal notranslate"><span class="pre">GetForecastInput</span></code> provides
+<em>implicit identifier bindings</em> by defining a required &quot;forecastId&quot; member
+that targets the same shape as the &quot;forecastId&quot; identifier of the resource.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">The <a class="reference internal" href="idl.html#idl-target-elision"><span class="std std-ref">target elision syntax</span></a> for an easy way to
+define structures that reference resource identifiers and properties
+without having to repeat the target definition.</p>
+</div>
+<p>Implicit identifier bindings for collection operations are created in a
+similar way to an instance operation, but MUST NOT contain identifier bindings
+for <em>all</em> child identifiers of the resource.</p>
+<p>Given the following model,</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+<span class="w">    </span><span class="py">collectionOperations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">BatchPutForecasts</span>]<span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">operation </span><span class="nc">BatchPutForecasts</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">BatchPutForecastsInput</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">BatchPutForecastsOutput</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@input</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">BatchPutForecastsInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
+<span class="w">    </span><span class="py">forecasts</span><span class="p">:</span><span class="w"> </span><span class="vc">BatchPutForecastList</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">BatchPutForecasts</span></code> forms a valid collection operation with implicit
+identifier bindings because <code class="docutils literal notranslate"><span class="pre">BatchPutForecastsInput</span></code> does not require an
+input member named &quot;forecastId&quot; that targets <code class="docutils literal notranslate"><span class="pre">ForecastId</span></code>.</p>
+</div>
+<div class="section" id="explicit-identifier-bindings">
+<h4><span class="section-number">4.3.1.3. </span>Explicit identifier bindings<a class="headerlink" href="#explicit-identifier-bindings" title="Permalink to this headline">#</a></h4>
+<p><em>Explicit identifier bindings</em> are defined by applying the
+<a class="reference internal" href="resource-traits.html#resourceidentifier-trait"><span class="std std-ref">resourceIdentifier trait</span></a> to a member of the input of for an
+operation bound to a resource. Explicit bindings are necessary when the name of
+the input structure member differs from the name of the resource identifier to
+which the input member corresponds.</p>
+<p>For example, given the following,</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="c">// continued from above</span><span class="w"></span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">HistoricalForecast</span>]<span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">resource </span><span class="nc">HistoricalForecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"></span>
+<span class="w">        </span><span class="py">historicalId</span><span class="p">:</span><span class="w"> </span><span class="vc">HistoricalForecastId</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetHistoricalForecast</span><span class="w"></span>
+<span class="w">    </span><span class="py">list</span><span class="p">:</span><span class="w"> </span><span class="vc">ListHistoricalForecasts</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@readonly</span><span class="w"></span>
+<span class="kd">operation </span><span class="nc">GetHistoricalForecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetHistoricalForecastInput</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetHistoricalForecastOutput</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@input</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">GetHistoricalForecastInput</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">HistoricalForecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@resourceIdentifier</span>(<span class="s2">&quot;forecastId&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="py">customForecastIdName</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"></span>
+
+<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@resourceIdentifier</span>(<span class="s2">&quot;historicalId&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">$customHistoricalIdName</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>the <a class="reference internal" href="resource-traits.html#resourceidentifier-trait"><span class="std std-ref">resourceIdentifier trait</span></a> on <code class="docutils literal notranslate"><span class="pre">GetHistoricalForecastInput$customForecastIdName</span></code>
+maps it to the &quot;forecastId&quot; identifier is provided by the
+&quot;customForecastIdName&quot; member, and the <a class="reference internal" href="resource-traits.html#resourceidentifier-trait"><span class="std std-ref">resourceIdentifier trait</span></a>
+on <code class="docutils literal notranslate"><span class="pre">GetHistoricalForecastInput$customHistoricalIdName</span></code> maps that member
+to the &quot;historicalId&quot; identifier.</p>
+</div>
+</div>
+<div class="section" id="resource-properties">
+<span id="id10"></span><h3><span class="section-number">4.3.2. </span>Resource Properties<a class="headerlink" href="#resource-properties" title="Permalink to this headline">#</a></h3>
+<p><em class="dfn">Resource properties</em> represent the state of a resource within a service.
+Properties can be referred to in the top level input and output shapes
+of a resource's instance operations, including create, read, update,
+delete, and put. All declared resource properties MUST appear in at
+least one instance operation's input or output.</p>
+<p>For example, the following model defines a <code class="docutils literal notranslate"><span class="pre">Forecast</span></code> resource with a
+single property <code class="docutils literal notranslate"><span class="pre">chanceOfRain</span></code> read by the GetForecast operation, and the
+output operation shape <code class="docutils literal notranslate"><span class="pre">GetForecastOutput</span></code> contains that output property.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">properties</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"> </span>}<span class="w"></span>
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@readonly</span><span class="w"></span>
+<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">   </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Forecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">$chanceOfRain</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<div class="section" id="binding-members-to-properties">
+<span id="binding-properties"></span><h4><span class="section-number">4.3.2.1. </span>Binding members to properties<a class="headerlink" href="#binding-members-to-properties" title="Permalink to this headline">#</a></h4>
+<p><em>Property bindings</em> associate top-level members of input or output shapes
+with resource properties. The match occurs through a match between member
+name and property name by default.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">properties</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"> </span>}<span class="w"></span>
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@readonly</span><span class="w"></span>
+<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">   </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Forecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">$chanceOfRain</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="resource-traits.html#property-trait"><span class="std std-ref">property trait</span></a> is used to bind a member to
+a resource property if the member name does not match the property name. This is
+useful if the member name cannot be changed due backwards compatibility reasons,
+but resource property modeling is being added to your Smithy model.</p>
+<p>The following example demonstrates the <code class="docutils literal notranslate"><span class="pre">howLikelyToRain</span></code> member of
+<code class="docutils literal notranslate"><span class="pre">GetForecastOutput</span></code> can be bound to the <code class="docutils literal notranslate"><span class="pre">chanceOfRain</span></code> resource property:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">properties</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"> </span>}<span class="w"></span>
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@readonly</span><span class="w"></span>
+<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">   </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nt">@property</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;chanceOfRain&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="py">howLikelyToRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>Though resource properties are usually bound to top level input and output
+members, use the <a class="reference internal" href="resource-traits.html#nested-properties-trait"><span class="std std-ref">nestedProperties trait</span></a> on a member to designate its
+target structure shape as the root to form property bindings. No adjacent
+members can form property bindings when this trait is applied.</p>
+<p class="rubric">Resource property binding validation</p>
+<ul class="simple">
+<li>All top-level input or output members must bind to a resource property unless
+marked with <a class="reference internal" href="resource-traits.html#notproperty-trait"><span class="std std-ref">notProperty trait</span></a> or another trait with it applied, or one
+of the members is marked with <a class="reference internal" href="resource-traits.html#nested-properties-trait"><span class="std std-ref">nestedProperties trait</span></a></li>
+<li>Top-level members of the input and output of resource instance operations MUST
+only use properties that resolve to declared resource properties except for
+members marked with the <code class="docutils literal notranslate"><span class="pre">&#64;notProperty</span></code> trait or marked with traits marked
+with the <code class="docutils literal notranslate"><span class="pre">&#64;notProperty</span></code> trait.</li>
+<li>Defined resource properties that do not resolve to any top-level input or
+output members are invalid.</li>
+<li>Members that provide a value for a resource property but use a different
+target shape are invalid.</li>
+<li>Members marked with a <a class="reference internal" href="resource-traits.html#property-trait"><span class="std std-ref">property trait</span></a> using a name that does not map to
+a declared resource property are invalid.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="resource-lifecycle-operations">
+<span id="lifecycle-operations"></span><h3><span class="section-number">4.3.3. </span>Resource lifecycle operations<a class="headerlink" href="#resource-lifecycle-operations" title="Permalink to this headline">#</a></h3>
+<p><em class="dfn">Lifecycle operations</em> are used to transition the state of a resource
+using well-defined semantics. Lifecycle operations are defined by providing a
+shape ID to the <code class="docutils literal notranslate"><span class="pre">put</span></code>, <code class="docutils literal notranslate"><span class="pre">create</span></code>, <code class="docutils literal notranslate"><span class="pre">read</span></code>, <code class="docutils literal notranslate"><span class="pre">update</span></code>, <code class="docutils literal notranslate"><span class="pre">delete</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">list</span></code> properties of a resource. Each shape ID MUST target an
+<a class="reference internal" href="#operation"><span class="std std-ref">operation</span></a> that is compatible with the semantics of the
+lifecycle.</p>
+<p>The following example defines a resource with each lifecycle method:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"> </span>}<span class="w"></span>
+<span class="w">    </span><span class="py">put</span><span class="p">:</span><span class="w"> </span><span class="vc">PutForecast</span><span class="w"></span>
+<span class="w">    </span><span class="py">create</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateForecast</span><span class="w"></span>
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span><span class="w"></span>
+<span class="w">    </span><span class="py">update</span><span class="p">:</span><span class="w"> </span><span class="vc">UpdateForecast</span><span class="w"></span>
+<span class="w">    </span><span class="py">delete</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteForecast</span><span class="w"></span>
+<span class="w">    </span><span class="py">list</span><span class="p">:</span><span class="w"> </span><span class="vc">ListForecasts</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<div class="section" id="put-lifecycle">
+<span id="id11"></span><h4><span class="section-number">4.3.3.1. </span>Put lifecycle<a class="headerlink" href="#put-lifecycle" title="Permalink to this headline">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">put</span></code> lifecycle operation is used to create a resource using identifiers
+provided by the client.</p>
+<ul class="simple">
+<li>Put operations MUST NOT be marked with the <a class="reference internal" href="behavior-traits.html#readonly-trait"><span class="std std-ref">readonly trait</span></a>.</li>
+<li>Put operations MUST be marked with the <a class="reference internal" href="behavior-traits.html#idempotent-trait"><span class="std std-ref">idempotent trait</span></a>.</li>
+<li>Put operations MUST form valid <a class="reference internal" href="#instance-operations"><span class="std std-ref">instance operations</span></a>.</li>
+</ul>
+<p>The following example defines the <code class="docutils literal notranslate"><span class="pre">PutForecast</span></code> operation.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@idempotent</span><span class="w"></span>
+<span class="kd">operation </span><span class="nc">PutForecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutForecastInput</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">PutForecastOutput</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@input</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">PutForecastInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="c">// The client provides the resource identifier.</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
+<span class="w">    </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"></span>
+
+<span class="w">    </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p class="rubric">Put semantics</p>
+<p>The semantics of a <code class="docutils literal notranslate"><span class="pre">put</span></code> lifecycle operation are similar to the semantics
+of a HTTP PUT method as described in <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc7231.html#section-4.3.4"><strong>section 4.3.4 of [RFC7231]</strong></a>:</p>
+<blockquote>
+<div>The PUT method requests that the state of the target resource be
+created or replaced ...</div></blockquote>
+<p>The <a class="reference internal" href="resource-traits.html#noreplace-trait"><span class="std std-ref">noReplace trait</span></a> can be applied to resources that define a
+<code class="docutils literal notranslate"><span class="pre">put</span></code> lifecycle operation to indicate that a resource cannot be
+replaced using the <code class="docutils literal notranslate"><span class="pre">put</span></code> operation.</p>
+</div>
+<div class="section" id="create-lifecycle">
+<span id="id12"></span><h4><span class="section-number">4.3.3.2. </span>Create lifecycle<a class="headerlink" href="#create-lifecycle" title="Permalink to this headline">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">create</span></code> operation is used to create a resource using one or more
+identifiers created by the service.</p>
+<ul class="simple">
+<li>Create operations MUST NOT be marked with the <a class="reference internal" href="behavior-traits.html#readonly-trait"><span class="std std-ref">readonly trait</span></a>.</li>
+<li>Create operations MUST form valid <a class="reference internal" href="#collection-operations"><span class="std std-ref">collection operations</span></a>.</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">create</span></code> operation MAY be marked with the <a class="reference internal" href="behavior-traits.html#idempotent-trait"><span class="std std-ref">idempotent trait</span></a>.</li>
+</ul>
+<p>The following example defines the <code class="docutils literal notranslate"><span class="pre">CreateForecast</span></code> operation.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">CreateForecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateForecastInput</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateForecastOutput</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">operation </span><span class="nc">CreateForecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateForecastInput</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateForecastOutput</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@input</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">CreateForecastInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="c">// No identifier is provided by the client, so the service is</span><span class="w"></span>
+<span class="w">    </span><span class="c">// responsible for providing the identifier of the resource.</span><span class="w"></span>
+<span class="w">    </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="read-lifecycle">
+<span id="id13"></span><h4><span class="section-number">4.3.3.3. </span>Read lifecycle<a class="headerlink" href="#read-lifecycle" title="Permalink to this headline">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">read</span></code> operation is the canonical operation used to retrieve the current
+representation of a resource.</p>
+<ul class="simple">
+<li>Read operations MUST be valid <a class="reference internal" href="#instance-operations"><span class="std std-ref">instance operations</span></a>.</li>
+<li>Read operations MUST be marked with the <a class="reference internal" href="behavior-traits.html#readonly-trait"><span class="std std-ref">readonly trait</span></a>.</li>
+</ul>
+<p>For example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span><span class="w"></span>
+<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastInput</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span><span class="w"></span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ResourceNotFound</span>]<span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@input</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">GetForecastInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
+<span class="w">    </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="update-lifecycle">
+<span id="id14"></span><h4><span class="section-number">4.3.3.4. </span>Update lifecycle<a class="headerlink" href="#update-lifecycle" title="Permalink to this headline">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">update</span></code> operation is the canonical operation used to update a
+resource.</p>
+<ul class="simple">
+<li>Update operations MUST be valid <a class="reference internal" href="#instance-operations"><span class="std std-ref">instance operations</span></a>.</li>
+<li>Update operations MUST NOT be marked with the <a class="reference internal" href="behavior-traits.html#readonly-trait"><span class="std std-ref">readonly trait</span></a>.</li>
+</ul>
+<p>For example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">UpdateForecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">UpdateForecastInput</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">UpdateForecastOutput</span><span class="w"></span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ResourceNotFound</span>]<span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@input</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">UpdateForecastInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
+<span class="w">    </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"></span>
+
+<span class="w">    </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="delete-lifecycle">
+<span id="id15"></span><h4><span class="section-number">4.3.3.5. </span>Delete lifecycle<a class="headerlink" href="#delete-lifecycle" title="Permalink to this headline">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">delete</span></code> operation is canonical operation used to delete a resource.</p>
+<ul class="simple">
+<li>Delete operations MUST be valid <a class="reference internal" href="#instance-operations"><span class="std std-ref">instance operations</span></a>.</li>
+<li>Delete operations MUST NOT be marked with the <a class="reference internal" href="behavior-traits.html#readonly-trait"><span class="std std-ref">readonly trait</span></a>.</li>
+<li>Delete operations MUST be marked with the <a class="reference internal" href="behavior-traits.html#idempotent-trait"><span class="std std-ref">idempotent trait</span></a>.</li>
+</ul>
+<p>For example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@idempotent</span><span class="w"></span>
+<span class="kd">operation </span><span class="nc">DeleteForecast</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteForecastInput</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteForecastOutput</span><span class="w"></span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ResourceNotFound</span>]<span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@input</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">DeleteForecastInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
+<span class="w">    </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="list-lifecycle">
+<span id="id16"></span><h4><span class="section-number">4.3.3.6. </span>List lifecycle<a class="headerlink" href="#list-lifecycle" title="Permalink to this headline">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">list</span></code> operation is the canonical operation used to list a
+collection of resources.</p>
+<ul class="simple">
+<li>List operations MUST form valid <a class="reference internal" href="#collection-operations"><span class="std std-ref">collection operations</span></a>.</li>
+<li>List operations MUST be marked with the <a class="reference internal" href="behavior-traits.html#readonly-trait"><span class="std std-ref">readonly trait</span></a>.</li>
+<li>The output of a list operation SHOULD contain references to the resource
+being listed.</li>
+<li>List operations SHOULD be <a class="reference internal" href="behavior-traits.html#paginated-trait"><span class="std std-ref">paginated</span></a>.</li>
+</ul>
+<p>For example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span><span class="w"> </span><span class="nt">@paginated</span><span class="w"></span>
+<span class="kd">operation </span><span class="nc">ListForecasts</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ListForecastsInput</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">ListForecastsOutput</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@input</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">ListForecastsInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">maxResults</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
+<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@output</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">ListForecastsOutput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
+<span class="w">    </span><span class="py">forecasts</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastList</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">list </span><span class="nc">ForecastList</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="mixins.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title"><span class="section-number">5. </span>Mixins</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="aggregate-types.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title"><span class="section-number">3. </span>Aggregate types</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Amazon Web Services
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">4. Service types</a><ul>
+<li><a class="reference internal" href="#service">4.1. Service</a><ul>
+<li><a class="reference internal" href="#service-operations">4.1.1. Service operations</a></li>
+<li><a class="reference internal" href="#service-resources">4.1.2. Service resources</a></li>
+<li><a class="reference internal" href="#service-closure">4.1.3. Service closure</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#operation">4.2. Operation</a></li>
+<li><a class="reference internal" href="#resource">4.3. Resource</a><ul>
+<li><a class="reference internal" href="#resource-identifiers">4.3.1. Resource Identifiers</a><ul>
+<li><a class="reference internal" href="#binding-identifiers-to-operations">4.3.1.1. Binding identifiers to operations</a></li>
+<li><a class="reference internal" href="#implicit-identifier-bindings">4.3.1.2. Implicit identifier bindings</a></li>
+<li><a class="reference internal" href="#explicit-identifier-bindings">4.3.1.3. Explicit identifier bindings</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#resource-properties">4.3.2. Resource Properties</a><ul>
+<li><a class="reference internal" href="#binding-members-to-properties">4.3.2.1. Binding members to properties</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#resource-lifecycle-operations">4.3.3. Resource lifecycle operations</a><ul>
+<li><a class="reference internal" href="#put-lifecycle">4.3.3.1. Put lifecycle</a></li>
+<li><a class="reference internal" href="#create-lifecycle">4.3.3.2. Create lifecycle</a></li>
+<li><a class="reference internal" href="#read-lifecycle">4.3.3.3. Read lifecycle</a></li>
+<li><a class="reference internal" href="#update-lifecycle">4.3.3.4. Update lifecycle</a></li>
+<li><a class="reference internal" href="#delete-lifecycle">4.3.3.5. Delete lifecycle</a></li>
+<li><a class="reference internal" href="#list-lifecycle">4.3.3.6. List lifecycle</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    <script src="../_static/tabs.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    </body>
+</html>

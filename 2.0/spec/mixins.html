@@ -1,0 +1,920 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="6. Constraint traits" href="constraint-traits.html" /><link rel="prev" title="4. Service types" href="service-types.html" />
+
+    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+        <title>5. Mixins - Smithy 2.0</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --admonition-font-size: 100%;
+  --admonition-title-font-size: 100%;
+  --color-brand-primary: #C44536;
+  --color-brand-content: #00808b;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Smithy 2.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/smithy.svg" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Smithy specification</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="model.html">1. The Smithy model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simple-types.html">2. Simple types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aggregate-types.html">3. Aggregate types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="service-types.html">4. Service types</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">5. Mixins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constraint-traits.html">6. Constraint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="type-refinement-traits.html">7. Type refinement traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html">8. Documentation traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="behavior-traits.html">9. Behavior traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resource-traits.html">10. Resource traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="authentication-traits.html">11. Authentication traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="protocol-traits.html">12. Serialization and Protocol traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="streaming.html">13. Streaming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http-bindings.html">14. HTTP bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endpoint-traits.html">15. Endpoint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selectors.html">16. Selectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model-validation.html">17. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="idl.html">18. Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json-ast.html">19. JSON AST</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../trait-index.html">Trait index</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../guides/index.html">Guides</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-models/build-config.html">smithy-build</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/model-linters.html">Model linters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/style-guide.html">Style Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../additional-specs/waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../aws/index.html">AWS integrations</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-query-protocol.html">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../implementations.html">Implementations</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://awslabs.github.io/smithy/1.0/">1.0 Documentation</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/spec/mixins.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <div class="section" id="mixins">
+<span id="id1"></span><h1><span class="section-number">5. </span>Mixins<a class="headerlink" href="#mixins" title="Permalink to this headline">#</a></h1>
+<p>A mixin is a shape that has the <a class="reference internal" href="type-refinement-traits.html#mixin-trait"><span class="std std-ref">mixin trait</span></a>. Adding a mixin to a shape
+causes the members and traits of the mixin shape to be copied into the local
+shape.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">UserIdentifiersMixin</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">UserDetails</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">UserIdentifiersMixin</span>]<span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">alias</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>Multiple mixins can be applied:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">UserIdentifiersMixin</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">AccessDetailsMixin</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">firstAccess</span><span class="p">:</span><span class="w"> </span><span class="vc">Timestamp</span><span class="w"></span>
+<span class="w">    </span><span class="py">lastAccess</span><span class="p">:</span><span class="w"> </span><span class="vc">Timestamp</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">UserDetails</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span><span class="vc">UserIdentifiersMixin</span><span class="w"></span>
+<span class="w">    </span><span class="vc">AccessDetailsMixin</span><span class="w"></span>
+]<span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">alias</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>Mixins can be composed of other mixins:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">MixinA</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">MixinB</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">MixinA</span>]<span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">C</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">MixinB</span>]<span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">c</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>When a member is copied from a mixin into a target shape, the shape ID of the
+copied member takes on the containing shape ID of the target shape. This
+ensures that members defined via mixins are treated the same way as members
+defined directly in a shape, and it allows members of a shape to be backward
+compatibly refactored and moved into a mixin or for a shape to remove a mixin
+and replace it with members defined directly in the shape.</p>
+<p>The above <cite>C</cite> structure is equivalent to the following flattened structure
+without mixins:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">C</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span><span class="py">c</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>Mixins be any shape type, but they MUST NOT be applied to a shape of a
+different type. For example, a string mixin can be applied to a string
+shape, but not to a blob shape.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@mixin</span><span class="w"></span>
+<span class="nt">@pattern</span>(<span class="s2">&quot;[a-zA-Z0-1]*&quot;</span>)<span class="w"></span>
+<span class="kd">string </span><span class="nc">AlphaNumericMixin</span><span class="w"></span>
+
+<span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">32</span>)<span class="w"></span>
+<span class="kd">string </span><span class="nc">Username</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">AlphaNumericMixin</span>]<span class="w"></span>
+</pre></div>
+</div>
+<div class="section" id="traits-and-mixins">
+<h2><span class="section-number">5.1. </span>Traits and mixins<a class="headerlink" href="#traits-and-mixins" title="Permalink to this headline">#</a></h2>
+<p>Shapes that use mixins inherit the traits applied to their mixins, except for
+the <a class="reference internal" href="type-refinement-traits.html#mixin-trait"><span class="std std-ref">mixin trait</span></a> and <em>mixin local traits</em>. Traits applied directly to a
+shape take precedence over traits applied to its mixins.</p>
+<p>For example, the definition of <code class="docutils literal notranslate"><span class="pre">UserSummary</span></code> in the following model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Generic mixin documentation.</span><span class="w"></span>
+<span class="nt">@tags</span>([<span class="s2">&quot;a&quot;</span>])<span class="w"></span>
+<span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">UserInfoMixin</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">userId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">UserSummary</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">UserInfoMixin</span>]<span class="w"> </span>{}<span class="w"></span>
+</pre></div>
+</div>
+<p>Is equivalent to the following flattened structure because it inherits the
+traits of <code class="docutils literal notranslate"><span class="pre">UserInfo</span></code>:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Generic mixin documentation.</span><span class="w"></span>
+<span class="nt">@tags</span>([<span class="s2">&quot;a&quot;</span>])<span class="w"></span>
+<span class="kd">structure </span><span class="nc">UserSummary</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">userId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>The definition of <code class="docutils literal notranslate"><span class="pre">UserSummary</span></code> in the following model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Generic mixin documentation.</span><span class="w"></span>
+<span class="nt">@tags</span>([<span class="s2">&quot;a&quot;</span>])<span class="w"></span>
+<span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">UserInfoMixin</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">userId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="c">/// Specific documentation</span><span class="w"></span>
+<span class="nt">@tags</span>([<span class="s2">&quot;replaced-tags&quot;</span>])<span class="w"></span>
+<span class="kd">structure </span><span class="nc">UserSummary</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">UserInfoMixin</span>]<span class="w"> </span>{}<span class="w"></span>
+</pre></div>
+</div>
+<p>Is equivalent to the following flattened structure because it inherits the
+traits of <code class="docutils literal notranslate"><span class="pre">UserInfo</span></code> and traits applied to <code class="docutils literal notranslate"><span class="pre">UserSummary</span></code> take precedence
+over traits it inherits:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Specific documentation</span><span class="w"></span>
+<span class="nt">@tags</span>([<span class="s2">&quot;replaced-tags&quot;</span>])<span class="w"></span>
+<span class="kd">structure </span><span class="nc">UserSummary</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">userId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>The order in which mixins are applied to a shape controls the inheritance
+precedence of traits. For each mixin applied to a shape, traits applied
+directly to the mixin override traits applied to any of its mixins. Traits
+applied to mixins that come later in the list of mixins applied to a shape take
+precedence over traits applied to mixins that come earlier in the list of
+mixins. For example, the definition of <cite>StructD</cite> in the following model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// A</span><span class="w"></span>
+<span class="nt">@foo</span>(<span class="m">1</span>)<span class="w"></span>
+<span class="nt">@oneTrait</span><span class="w"></span>
+<span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">StructA</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="c">/// B</span><span class="w"></span>
+<span class="nt">@foo</span>(<span class="m">2</span>)<span class="w"></span>
+<span class="nt">@twoTrait</span><span class="w"></span>
+<span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">StructB</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="c">/// C</span><span class="w"></span>
+<span class="nt">@threeTrait</span><span class="w"></span>
+<span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">StructC</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">StructA</span><span class="p">,</span><span class="w"> </span><span class="vc">StructB</span>]<span class="w"> </span>{}<span class="w"></span>
+
+<span class="c">/// D</span><span class="w"></span>
+<span class="nt">@fourTrait</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">StructD</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">StructC</span>]<span class="w"> </span>{}<span class="w"></span>
+</pre></div>
+</div>
+<p>Is equivalent to the following flattened structure:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">// (1)</span><span class="w"></span>
+<span class="c">/// D</span><span class="w"></span>
+<span class="nt">@fourTrait</span><span class="w">    </span><span class="c">// (2)</span><span class="w"></span>
+<span class="nt">@threeTrait</span><span class="w">   </span><span class="c">// (3)</span><span class="w"></span>
+<span class="nt">@foo</span>(<span class="m">2</span>)<span class="w">       </span><span class="c">// (4)</span><span class="w"></span>
+<span class="nt">@twoTrait</span><span class="w">     </span><span class="c">// (5)</span><span class="w"></span>
+<span class="nt">@oneTrait</span><span class="w">     </span><span class="c">// (6)</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">StructD</span><span class="w"> </span>{}<span class="w"></span>
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li>The <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a> applied to <code class="docutils literal notranslate"><span class="pre">StructD</span></code> takes precedence over
+any inherited traits.</li>
+<li><code class="docutils literal notranslate"><span class="pre">fourTrait</span></code> is applied directly to <code class="docutils literal notranslate"><span class="pre">StructD</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">threeTrait</span></code> is applied to <code class="docutils literal notranslate"><span class="pre">StructC</span></code>, <code class="docutils literal notranslate"><span class="pre">StructC</span></code> is a mixin of
+<code class="docutils literal notranslate"><span class="pre">StructD</span></code>, and <cite>StructD</cite> inherits the resolved traits of each applied
+mixin.</li>
+<li>Because the <cite>StructB</cite> mixin applied to <code class="docutils literal notranslate"><span class="pre">StructC</span></code> comes after the
+<code class="docutils literal notranslate"><span class="pre">StructA</span></code> mixin in the list of mixins applied to <code class="docutils literal notranslate"><span class="pre">StructC</span></code>, <code class="docutils literal notranslate"><span class="pre">foo(2)</span></code>
+takes precedence over <code class="docutils literal notranslate"><span class="pre">foo(1)</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">StructC</span></code> inherits the resolved traits of <code class="docutils literal notranslate"><span class="pre">StructB</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">StructC</span></code> inherits the resolved traits of <code class="docutils literal notranslate"><span class="pre">StructA</span></code>.</li>
+</ol>
+<div class="section" id="mixin-local-traits">
+<h3><span class="section-number">5.1.1. </span>Mixin local traits<a class="headerlink" href="#mixin-local-traits" title="Permalink to this headline">#</a></h3>
+<p>Sometimes it's necessary to apply traits to a mixin that are not copied onto
+shapes that use the mixin. For example, if a mixin is an implementation detail
+of a model, then it is recommended to apply the <a class="reference internal" href="constraint-traits.html#private-trait"><span class="std std-ref">private trait</span></a> to the
+mixin so that shapes outside of the namespace the mixin is defined within
+cannot refer to the mixin. However, every shape that uses the mixin doesn't
+necessarily need to be marked as private. The <code class="docutils literal notranslate"><span class="pre">localTraits</span></code> property of
+the <a class="reference internal" href="type-refinement-traits.html#mixin-trait"><span class="std std-ref">mixin trait</span></a> can be used to ensure that a list of traits applied to
+the mixin are not copied onto shapes that use the mixin (note that this has
+no effect on the traits applied to members contained within a mixin).</p>
+<p>Consider the following model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="nt">@private</span><span class="w"></span>
+<span class="nt">@mixin</span>(<span class="py">localTraits</span><span class="p">:</span><span class="w"> </span>[<span class="vc">private</span>])<span class="w"></span>
+<span class="kd">structure </span><span class="nc">PrivateMixin</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">PublicShape</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">PrivateMixin</span>]<span class="w"> </span>{}<span class="w"></span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">PublicShape</span></code> is equivalent to the following flattened structure:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">PublicShape</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">PrivateMixin</span></code> shape can only be referenced from the <code class="docutils literal notranslate"><span class="pre">smithy.example</span></code>
+namespace. Because the <a class="reference internal" href="constraint-traits.html#private-trait"><span class="std std-ref">private trait</span></a> is present in the <code class="docutils literal notranslate"><span class="pre">localTraits</span></code>
+property of the <a class="reference internal" href="type-refinement-traits.html#mixin-trait"><span class="std std-ref">mixin trait</span></a>, <code class="docutils literal notranslate"><span class="pre">PublicShape</span></code> is not marked with the
+<a class="reference internal" href="constraint-traits.html#private-trait"><span class="std std-ref">private trait</span></a> and can be referred to outside of <code class="docutils literal notranslate"><span class="pre">smithy.example</span></code>.</p>
+</div>
+<div class="section" id="adding-and-replacing-traits-on-copied-members">
+<h3><span class="section-number">5.1.2. </span>Adding and replacing traits on copied members<a class="headerlink" href="#adding-and-replacing-traits-on-copied-members" title="Permalink to this headline">#</a></h3>
+<p>The members and traits applied to members of a mixin are copied onto the target
+shape. It is sometimes necessary to provide a more specific trait value for a
+copied member or to add traits only to a specific copy of a member. Traits can
+be added on to these members like any other member. Additionally, traits can be
+applied to these members in the JSON AST using the <a class="reference internal" href="json-ast.html#ast-apply"><span class="std std-ref">apply type</span></a>
+and in the Smithy IDL using <a class="reference internal" href="idl.html#apply-statement"><span class="std std-ref">apply statements</span></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Traits applied to shapes supersede any traits inherited from mixins.</p>
+</div>
+<p>For example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">MyMixin</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="c">/// Generic docs</span><span class="w"></span>
+<span class="w">    </span><span class="py">mixinMember</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">MyStruct</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">MyMixin</span>]<span class="w"> </span>{}<span class="w"></span>
+<span class="kd">apply </span><span class="nc">MyStruct$mixinMember</span><span class="w"> </span><span class="nt">@documentation</span>(<span class="s2">&quot;Specific docs&quot;</span>)<span class="w"></span>
+</pre></div>
+</div>
+<p>Alternatively, the member can be redefined if it targets the same shape:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">MyMixin</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="c">/// Generic docs</span><span class="w"></span>
+<span class="w">    </span><span class="py">mixinMember</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">MyStruct</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">MyMixin</span>]<span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="c">/// Specific docs</span><span class="w"></span>
+<span class="w">    </span><span class="py">mixinMember</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="mixins-are-an-implementation-detail-of-the-model">
+<h2><span class="section-number">5.2. </span>Mixins are an implementation detail of the model<a class="headerlink" href="#mixins-are-an-implementation-detail-of-the-model" title="Permalink to this headline">#</a></h2>
+<p>Mixins are an implementation detail of models and are only intended to reduce
+duplication in Smithy shape definitions. Mixins do not provide any kind of
+runtime polymorphism for types generated from Smithy models. Smithy model
+transformations like code generation or converting to other model formats
+like OpenAPI SHOULD completely elide mixins by flattening the model.</p>
+<p>It is a backward compatible change to remove a mixin from a shape as long as
+equivalent traits and members of the mixin are applied directly to the shape.
+Such a change should have no impact on generated artifacts like code or
+OpenAPI models.</p>
+</div>
+<div class="section" id="mixins-cannot-be-referenced-other-than-as-mixins-to-other-shapes">
+<h2><span class="section-number">5.3. </span>Mixins cannot be referenced other than as mixins to other shapes<a class="headerlink" href="#mixins-cannot-be-referenced-other-than-as-mixins-to-other-shapes" title="Permalink to this headline">#</a></h2>
+<p>To ensure that mixins are not code generated, mixins MUST NOT be referenced
+from any other shapes except to mix them into other shapes. Mixins MUST NOT be
+used as operation input, output, or errors, and they MUST NOT be targeted by
+members.</p>
+<p>The following model is invalid because a structure member targets a mixin:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">GreetingMixin</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">greeting</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">InvalidStructure</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">notValid</span><span class="p">:</span><span class="w"> </span><span class="vc">GreetingMixin</span><span class="w"> </span><span class="c">// &lt;- this is invalid</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>The following model is invalid because an operation attempts to use a mixin
+as input:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">InputMixin</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="kd">operation </span><span class="nc">InvalidOperation</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">InputMixin</span><span class="w"> </span><span class="c">// &lt;- this is invalid</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mixins-must-not-introduce-cycles">
+<h2><span class="section-number">5.4. </span>Mixins MUST NOT introduce cycles<a class="headerlink" href="#mixins-must-not-introduce-cycles" title="Permalink to this headline">#</a></h2>
+<p>Mixins MUST NOT introduce circular references. The following model is invalid:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">CycleA</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">CycleB</span>]<span class="w"> </span>{}<span class="w"></span>
+
+<span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">CycleB</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">CycleA</span>]<span class="w"> </span>{}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mixin-members-must-not-conflict">
+<h2><span class="section-number">5.5. </span>Mixin members MUST NOT conflict<a class="headerlink" href="#mixin-members-must-not-conflict" title="Permalink to this headline">#</a></h2>
+<p>The list of mixins applied to a shape MUST NOT attempt to define members that
+use the same member name with different targets. The following model is
+invalid:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">A1</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">A2</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">Invalid</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">A1</span><span class="p">,</span><span class="w"> </span><span class="vc">A2</span>]<span class="w"> </span>{}<span class="w"></span>
+</pre></div>
+</div>
+<p>The following model is also invalid, but not specifically because of mixins.
+This model is invalid because the member name <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">A</span></code> case
+insensitively conflict.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">A1</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">A2</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">A</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">Invalid</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">A1</span><span class="p">,</span><span class="w"> </span><span class="vc">A2</span>]<span class="w"> </span>{}<span class="w"></span>
+</pre></div>
+</div>
+<p>Members that are mixed into shapes MAY be redefined if and only if each
+redefined member targets the same shape. Traits applied to redefined members
+supersede any traits inherited from mixins.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">A1</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nt">@private</span><span class="w"></span>
+<span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">A2</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
+<span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">Valid</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">A1</span><span class="p">,</span><span class="w"> </span><span class="vc">A2</span>]<span class="w"> </span>{}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="member-ordering">
+<h2><span class="section-number">5.6. </span>Member ordering<a class="headerlink" href="#member-ordering" title="Permalink to this headline">#</a></h2>
+<p>The order of structure and union members is important for languages like C
+that require a stable ABI. Mixins provide a deterministic member ordering.
+Members inherited from mixins come before members defined directly in the
+shape.</p>
+<p>Members are ordered in a kind of depth-first, preorder traversal of mixins
+that are applied to a structure or union. To resolve the member order of a
+shape, iterate over each mixin applied to the shape in the order in which they
+are applied, from left to right. For each mixin, iterate over the mixins
+applied to the mixin in the order in which mixins are applied. When the
+evaluated shape has no mixins, the members of that shape are added to the
+resolved list of ordered members. After evaluating all the mixins of a shape,
+the members of the shape are added onto the resolved list of ordered members.
+This process continues until all mixins and the members of the starting shape
+are added to the ordered list.</p>
+<p>Given the following model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">FilteredByNameMixin</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">nameFilter</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">PaginatedInputMixin</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">ListSomethingInput</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span><span class="vc">PaginatedInputMixin</span><span class="w"></span>
+<span class="w">    </span><span class="vc">FilteredByNameMixin</span><span class="w"></span>
+]<span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">sizeFilter</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>The members are ordered as follows:</p>
+<ol class="arabic simple">
+<li><code class="docutils literal notranslate"><span class="pre">nextToken</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">pageSize</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">nameFilter</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">sizeFilter</span></code></li>
+</ol>
+</div>
+<div class="section" id="mixins-on-shapes-with-non-member-properties">
+<h2><span class="section-number">5.7. </span>Mixins on shapes with non-member properties<a class="headerlink" href="#mixins-on-shapes-with-non-member-properties" title="Permalink to this headline">#</a></h2>
+<p>Some shapes don't have members, but do have other properties. Adding a mixin
+to such a shape merges the properties of each mixin into the local shape. Only
+certain properties may be defined in the mixin shapes. See the sections below
+for which properties are permitted for each shape type.</p>
+<p>Scalar properties defined in the local shape are kept, and non-scalar
+properties are merged. When merging map properties, the values for local keys
+are kept. The ordering of merged lists / sets follows the same ordering as
+members.</p>
+<div class="section" id="service-mixins">
+<h3><span class="section-number">5.7.1. </span>Service mixins<a class="headerlink" href="#service-mixins" title="Permalink to this headline">#</a></h3>
+<p>Service shapes with the <a class="reference internal" href="type-refinement-traits.html#mixin-trait"><span class="std std-ref">mixin trait</span></a> may define any property. For
+example, in the following model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">service </span><span class="nc">A</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span>]<span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">service </span><span class="nc">B</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">A</span>]<span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="py">rename</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="s2">&quot;smithy.example#OperationA&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperA&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="s2">&quot;smithy.example#OperationB&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperB&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationB</span>]<span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">operation </span><span class="nc">OperationC</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="kd">service </span><span class="nc">C</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">B</span>]<span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;C&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="py">rename</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="s2">&quot;smithy.example#OperationA&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OpA&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="s2">&quot;smithy.example#OperationC&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OpC&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationC</span>]<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>The flattened equivalent of <code class="docutils literal notranslate"><span class="pre">C</span></code> with no mixins is:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="kd">operation </span><span class="nc">OperationC</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="kd">service </span><span class="nc">C</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;C&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="py">rename</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="s2">&quot;smithy.example#OperationA&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OpA&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="s2">&quot;smithy.example#OperationB&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperB&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="s2">&quot;smithy.example#OperationC&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OpC&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationB</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationC</span>]<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="resource-mixins">
+<h3><span class="section-number">5.7.2. </span>Resource mixins<a class="headerlink" href="#resource-mixins" title="Permalink to this headline">#</a></h3>
+<p>Resource shapes with the <a class="reference internal" href="type-refinement-traits.html#mixin-trait"><span class="std std-ref">mixin trait</span></a> MAY NOT define any properties. This
+is because every property of a resource shape is intrinsically tied to its set
+of identifiers. Changing these identifiers would invalidate every other
+property of a given resource. For example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@mixin</span><span class="w"></span>
+<span class="nt">@internal</span><span class="w"></span>
+<span class="kd">resource </span><span class="nc">MixinResource</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="kd">resource </span><span class="nc">MixedResource</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">MixinResource</span>]<span class="w"> </span>{}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="operation-mixins">
+<h3><span class="section-number">5.7.3. </span>Operation mixins<a class="headerlink" href="#operation-mixins" title="Permalink to this headline">#</a></h3>
+<p>Operation shapes with the <a class="reference internal" href="type-refinement-traits.html#mixin-trait"><span class="std std-ref">mixin trait</span></a> MAY NOT define an <code class="docutils literal notranslate"><span class="pre">input</span></code> or
+<code class="docutils literal notranslate"><span class="pre">output</span></code> shape other than the <a class="reference internal" href="model.html#unit-type"><span class="std std-ref">Unit type</span></a>. This is because allowing
+input and output shapes to be shared goes against the goal of the
+<a class="reference internal" href="type-refinement-traits.html#input-trait"><span class="std std-ref">input trait</span></a> and <a class="reference internal" href="type-refinement-traits.html#output-trait"><span class="std std-ref">output trait</span></a>.</p>
+<p>Operation shapes with the <a class="reference internal" href="type-refinement-traits.html#mixin-trait"><span class="std std-ref">mixin trait</span></a> MAY define errors.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">operation </span><span class="nc">ValidatedOperation</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ValidationError</span>]<span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
+<span class="kd">structure </span><span class="nc">ValidationError</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="kd">operation </span><span class="nc">GetUsername</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">ValidatedOperation</span>]<span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+<span class="w">    </span><span class="py">error</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NotFoundError</span>]<span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
+<span class="kd">structure </span><span class="nc">NotFoundError</span><span class="w"> </span>{}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="constraint-traits.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title"><span class="section-number">6. </span>Constraint traits</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="service-types.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title"><span class="section-number">4. </span>Service types</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Amazon Web Services
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">5. Mixins</a><ul>
+<li><a class="reference internal" href="#traits-and-mixins">5.1. Traits and mixins</a><ul>
+<li><a class="reference internal" href="#mixin-local-traits">5.1.1. Mixin local traits</a></li>
+<li><a class="reference internal" href="#adding-and-replacing-traits-on-copied-members">5.1.2. Adding and replacing traits on copied members</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mixins-are-an-implementation-detail-of-the-model">5.2. Mixins are an implementation detail of the model</a></li>
+<li><a class="reference internal" href="#mixins-cannot-be-referenced-other-than-as-mixins-to-other-shapes">5.3. Mixins cannot be referenced other than as mixins to other shapes</a></li>
+<li><a class="reference internal" href="#mixins-must-not-introduce-cycles">5.4. Mixins MUST NOT introduce cycles</a></li>
+<li><a class="reference internal" href="#mixin-members-must-not-conflict">5.5. Mixin members MUST NOT conflict</a></li>
+<li><a class="reference internal" href="#member-ordering">5.6. Member ordering</a></li>
+<li><a class="reference internal" href="#mixins-on-shapes-with-non-member-properties">5.7. Mixins on shapes with non-member properties</a><ul>
+<li><a class="reference internal" href="#service-mixins">5.7.1. Service mixins</a></li>
+<li><a class="reference internal" href="#resource-mixins">5.7.2. Resource mixins</a></li>
+<li><a class="reference internal" href="#operation-mixins">5.7.3. Operation mixins</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    <script src="../_static/tabs.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    </body>
+</html>
