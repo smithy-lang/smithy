@@ -113,6 +113,38 @@ Needs to be updated to:
     }
 
 
+Convert set shapes to list shapes
+=================================
+
+The set shape was deprecated for IDL 2.0. Each set shape must be replaced by a
+list shape with the :ref:`uniqueItems-trait`.
+
+For example, the following set:
+
+.. code-block:: smithy
+
+    $version "1.0"
+
+    namespace smithy.example
+
+    set StringSet {
+        member: String
+    }
+
+Needs to be updated to:
+
+.. code-block:: smithy
+
+    $version "2"
+
+    namespace smithy.example
+
+    @uniqueItems
+    list StringSet {
+        member: String
+    }
+
+
 Add the default trait to streaming blobs
 ========================================
 
@@ -209,7 +241,7 @@ needed to model an operation. For example, the following model:
 
 can be updated to:
 
-.. code-block::
+.. code-block:: smithy
 
     $version: "2"
 
