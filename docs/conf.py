@@ -55,7 +55,6 @@ html_theme_options = {
     ],
     "source_repository": "https://github.com/awslabs/smithy/",
     "source_branch": "main",
-    "source_directory": "docs/",
     "sidebar_hide_name": True
 }
 
