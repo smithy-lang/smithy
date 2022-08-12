@@ -421,7 +421,7 @@ can be updated to:
 
 .. code-block:: smithy
 
-    $version: "2.0"
+    $version: "2"
 
     namespace smithy.example
 
@@ -445,7 +445,7 @@ means they can be individually targeted by traits, without having to have
 special handling inside of Smithy itself. Their definitions in the IDL are now
 also much more concise and readable. For example, the following model:
 
-.. code-block::
+.. code-block:: smithy
 
     $version: "1.0"
 
