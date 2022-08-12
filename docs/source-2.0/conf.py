@@ -7,3 +7,5 @@ with open(shared_config) as file:
 html_title = "Smithy 2.0"
 release = u'2.0'
 version = release
+
+html_theme_options['source_directory'] = "docs/source-2.0"
