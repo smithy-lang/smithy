@@ -47,7 +47,7 @@ provided request token to identify and discard duplicate requests.
 Client implementations MAY automatically provide a value for a request token
 member if and only if the member is not explicitly provided.
 
-.. code-block::
+.. code-block:: smithy
 
     operation AllocateWidget {
         input: AllocateWidgetInput

@@ -322,7 +322,7 @@ trait does not need to be added in its place.
 The special ":=" syntax for the operation input property automatically applies
 the ``input`` trait:
 
-.. code-block::
+.. code-block:: smithy
 
     operation PutTimeSpan {
         input := {
@@ -334,7 +334,7 @@ the ``input`` trait:
 Because of the ``input`` trait, the operation can be updated to remove the
 ``required`` trait without breaking things like previously generated clients:
 
-.. code-block::
+.. code-block:: smithy
 
     operation PutTimeSpan {
         input := {
