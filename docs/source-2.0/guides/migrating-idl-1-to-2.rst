@@ -135,7 +135,7 @@ Needs to be updated to:
 
 .. code-block:: smithy
 
-    $version "2.0"
+    $version "2"
 
     namespace smithy.example
 
