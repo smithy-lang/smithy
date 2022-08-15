@@ -183,7 +183,7 @@ were added to the identifiers property that isn't present on the ``City``
 resource.
 
 The state of a resource is represented through its
-:ref:-properties <resource-properties>`. ``City`` contains coordinates, and
+:ref:`properties <resource-properties>`. ``City`` contains coordinates, and
 ``Forecast`` has a chance of rain represented as a float. Input and output
 members of resource operations map to resource properties or identifiers to
 perform updates on or examine the state of a resource.
