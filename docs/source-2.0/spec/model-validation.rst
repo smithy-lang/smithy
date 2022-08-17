@@ -50,6 +50,8 @@ objects that are used to constrain a model. Each object in the
         implementations to find and configure the appropriate validator
         implementation. Validators only take effect if a Smithy processor
         implements the validator.
+
+        ``name`` follows the :ref:`validation-event-id-abnf`.
     * - id
       - ``string``
       - Defines a custom identifier for the validator.
@@ -60,6 +62,8 @@ objects that are used to constrain a model. Each object in the
 
         If ``id`` is not specified, it will default to the ``name`` property of
         the validator definition.
+
+        ``id`` follows the :ref:`validation-event-id-abnf`.
     * - message
       - ``string``
       - Provides a custom message to use when emitting validation events. The
@@ -188,7 +192,7 @@ Summary
 Trait selector
     ``*``
 Value type
-    ``[string]``
+    ``[string]``, where each ``string`` follows the :ref:`validation-event-id-abnf`
 
 The following example suppresses the ``Foo`` and ``Bar`` validation events
 for the ``smithy.example#MyString`` shape:
@@ -224,6 +228,8 @@ following properties:
     * - id
       - ``string``
       - **Required**. The validation event ID to suppress.
+
+        ``id`` follows the :ref:`validation-event-id-abnf`.
     * - namespace
       - ``string``
       - **Required**. The validation event is only suppressed if it matches the
@@ -637,3 +643,16 @@ traits.
             selector: ":is([trait|enum], [trait|pattern], [trait|length], [trait|range])"
         }
     }]
+
+
+.. _validation-event-id-abnf:
+
+------------------------
+Validation Event ID ABNF
+------------------------
+
+The Validation Event ID is defined by the following ABNF:
+
+.. productionlist:: smithy
+    ValidationEventId    :`Identifier` *("." `Identifier`)
+

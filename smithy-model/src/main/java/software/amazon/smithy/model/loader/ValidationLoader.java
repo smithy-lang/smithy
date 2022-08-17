@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.loader;
 
 import static software.amazon.smithy.model.node.Node.loadArrayOfString;
+import static software.amazon.smithy.model.validation.ValidationEventId.validateValidationEventId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +68,9 @@ final class ValidationLoader {
     private static ValidatorDefinition loadSingleValidator(ObjectNode node) {
         node.warnIfAdditionalProperties(VALIDATOR_PROPERTIES);
         String name = node.expectStringMember("name").getValue();
+        validateValidationEventId(name, node);
         String id = node.getStringMemberOrDefault("id", name);
+        validateValidationEventId(id, node);
         ValidatorDefinition def = new ValidatorDefinition(name, id);
         def.sourceLocation = node.getSourceLocation();
         def.message = node.getStringMemberOrDefault("message", null);

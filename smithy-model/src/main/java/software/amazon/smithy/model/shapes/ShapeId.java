@@ -127,13 +127,16 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
             return -1;
         }
 
-        // Parse the required identifier_start production.
+        // Parse the required IdentifierStart production.
         char startingChar = identifier.charAt(offset);
         if (startingChar == '_') {
-            while (identifier.charAt(offset) == '_') {
+            while (offset < identifier.length() && identifier.charAt(offset) == '_') {
                 offset++;
             }
-            if (!ParserUtils.isValidIdentifierCharacter(identifier.charAt(offset))) {
+            if (offset >= identifier.length()) {
+                return -1;
+            }
+            if (!ParserUtils.isAlphabetic(identifier.charAt(offset))) {
                 return -1;
             }
             offset++;
@@ -141,7 +144,7 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
             return -1;
         }
 
-        // Parse the optional identifier_chars production.
+        // Parse the optional IdentifierChars production.
         while (offset < identifier.length()) {
             if (!ParserUtils.isValidIdentifierCharacter(identifier.charAt(offset))) {
                 // Return the position of the character that stops the identifier.
