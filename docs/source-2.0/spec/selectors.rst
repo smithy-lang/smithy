@@ -1629,10 +1629,10 @@ Selectors are defined by the following ABNF_ grammar.
     SelectorForwardUndirectedNeighbor  :">"
     SelectorReverseUndirectedNeighbor  :"<"
     SelectorForwardDirectedNeighbor    :"-[" `SelectorDirectedRelationships` "]->"
-    SelectorReverseDirectedNeighbor    :"<-[" SelectorDirectedRelationships "]-"
+    SelectorReverseDirectedNeighbor    :"<-[" `SelectorDirectedRelationships` "]-"
     SelectorDirectedRelationships      :`smithy:Identifier` *("," `smithy:Identifier`)
     SelectorForwardRecursiveNeighbor   :"~>"
-    SelectorAttr                       :"[" `SelectorKey` [SelectorAttrComparison] "]"
+    SelectorAttr                       :"[" `SelectorKey` [`SelectorAttrComparison`] "]"
     SelectorAttrComparison             :`SelectorComparator` `SelectorAttrValues` ["i"]
     SelectorKey                        :`smithy:Identifier` ["|" `SelectorPath`]
     SelectorPath                       :`SelectorPathSegment` *("|" `SelectorPathSegment`)
@@ -1660,7 +1660,7 @@ Selectors are defined by the following ABNF_ grammar.
     SelectorDoubleQuotedText           :DQUOTE 1*`SelectorDoubleQuotedChar` DQUOTE
     SelectorSingleQuotedChar           :%x20-26 / %x28-5B / %x5D-10FFFF ; Excludes (')
     SelectorDoubleQuotedChar           :%x20-21 / %x23-5B / %x5D-10FFFF ; Excludes (")
-    SelectorVariableSet                :"$" `smithy:Identifier` "(" selector ")"
+    SelectorVariableSet                :"$" `smithy:Identifier` "(" `Selector` ")"
     SelectorVariableGet                :"${" `smithy:Identifier` "}"
 
 .. _ABNF: https://tools.ietf.org/html/rfc5234

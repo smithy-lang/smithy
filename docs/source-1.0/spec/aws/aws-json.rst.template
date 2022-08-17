@@ -50,9 +50,9 @@ The |quoted shape name| protocol uses the following headers:
         `RFC 7230 Section 3.3.2`_.
     * - ``X-Amz-Target``
       - true for requests
-      - The value of this header is the :token:`shape name <smithy:identifier>` of the
+      - The value of this header is the :token:`shape name <smithy:Identifier>` of the
         service's :ref:`shape-id` joined to the
-        :token:`shape name <smithy:identifier>` of the operation's :ref:`shape-id`,
+        :token:`shape name <smithy:Identifier>` of the operation's :ref:`shape-id`,
         separated by a single period (``.``) character.
 
         For example, the value for the operation ``ns.example#MyOp`` of the
@@ -188,7 +188,7 @@ There are two difference between :ref:`awsJson1_0 <aws.protocols#awsJson1_0-trai
 Second, error type serialization is different. In ``awsJson1_0``, servers SHOULD
 send the error shape's full :ref:`shape-id` in the ``__type`` field of the body.
 In ``awsJson1_1``, servers SHOULD only send the error's
-:token:`shape name <smithy:identifier>`. However, clients MUST accept either behavior
+:token:`shape name <smithy:Identifier>`. However, clients MUST accept either behavior
 for both protocols. See `Operation error serialization`_ for full details on how to
 deserialize errors for |quoted shape name|.
 

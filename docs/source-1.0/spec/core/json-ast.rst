@@ -312,7 +312,7 @@ one member, and a structure shape MAY omit the ``members`` property
 entirely if the structure contains no members.
 
 Structure and union member names MUST be case-insensitively unique across the
-entire set of members. Each member name MUST adhere to the :token:`smithy:identifier`
+entire set of members. Each member name MUST adhere to the :token:`smithy:Identifier`
 ABNF grammar.
 
 The following example defines a structure with one required and one optional
@@ -403,7 +403,7 @@ shapes defined in JSON support the same properties as the Smithy IDL.
       - map of :ref:`shape ID <shape-id>` to trait values
       - Traits to apply to the service
     * - rename
-      - map of :ref:`shape ID <shape-id>` to ``string`` :token:`smithy:identifier`
+      - map of :ref:`shape ID <shape-id>` to ``string`` :token:`smithy:Identifier`
       - Disambiguates shape name conflicts in the
         :ref:`service closure <service-closure>`.
 

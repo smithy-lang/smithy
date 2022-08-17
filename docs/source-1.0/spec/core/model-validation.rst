@@ -445,7 +445,7 @@ Message templates
 -----------------
 
 A ``messageTemplate`` is used to create more granular error messages. The
-template consists of literal spans and :token:`selector context value <selectors:selector_context_value>`
+template consists of literal spans and :token:`selector context value <selectors:SelectorContextValue>`
 templates (for example, ``@{id}``). A selector context value MAY be escaped
 by placing a ``@`` before a ``@`` character (for example, ``@@`` expands to
 ``@``). ``@`` characters in the message template that are not escaped MUST

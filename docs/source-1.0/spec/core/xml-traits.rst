@@ -862,11 +862,11 @@ Trait selector
 
     *A structure, union, or member*
 Value type
-    ``string`` value that MUST adhere to the :token:`smithy:xml_name` ABNF production:
+    ``string`` value that MUST adhere to the :token:`smithy:XmlName` ABNF production:
 
     .. productionlist:: smithy
-        xml_name       :xml_identifier / (xml_identifier ":" xml_identifier)
-        xml_identifier :(ALPHA / "_") *(ALPHA / DIGIT / "-" / "_")
+        XmlName       :`XmlIdentifier` / (`XmlIdentifier` ":" `XmlIdentifier`)
+        XmlIdentifier :(ALPHA / "_") *(ALPHA / DIGIT / "-" / "_")
 
 By default, structure properties are serialized in attributes or nested
 elements using the same name as the structure member name. Given the following:
@@ -966,7 +966,7 @@ The ``xmlNamespace`` trait is a structure that contains the following members:
       - ``string`` value
       - The `namespace prefix`_ for elements from this namespace. Values
         provides for ``prefix`` property MUST adhere to the
-        :token:`smithy:xml_identifier` production.
+        :token:`smithy:XmlIdentifier` production.
 
 Given the following:
 

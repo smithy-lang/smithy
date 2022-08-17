@@ -18,7 +18,7 @@ Requests MUST include the following key value pairs in the serialized body:
     * - Key
       - Value
     * - ``Action``
-      - The :token:`shape name <smithy:identifier>` of the operation's :ref:`shape-id`.
+      - The :token:`shape name <smithy:Identifier>` of the operation's :ref:`shape-id`.
     * - ``Version``
       - The value of the :ref:`"version" property of the service <service>`.
 
