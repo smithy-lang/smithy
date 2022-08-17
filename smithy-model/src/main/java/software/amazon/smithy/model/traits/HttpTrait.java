@@ -17,11 +17,8 @@ package software.amazon.smithy.model.traits;
 
 import java.util.Objects;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NumberNode;
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.pattern.UriPattern;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -49,13 +46,10 @@ public final class HttpTrait extends AbstractTrait implements ToSmithyBuilder<Ht
         @Override
         public Trait createTrait(ShapeId target, Node value) {
             HttpTrait.Builder builder = builder().sourceLocation(value);
-            ObjectNode members = value.expectObjectNode();
-            builder.uri(UriPattern.parse(members.expectStringMember("uri").getValue()));
-            builder.method(members.expectStringMember("method").getValue());
-            builder.code(members.getNumberMember("code")
-                                 .map(NumberNode::getValue)
-                                 .map(Number::intValue)
-                                 .orElse(200));
+            value.expectObjectNode()
+                    .expectStringMember("uri", s -> builder.uri(UriPattern.parse(s)))
+                    .expectStringMember("method", builder::method)
+                    .getNumberMember("code", n -> builder.code(n.intValue()));
             HttpTrait result = builder.build();
             result.setNodeCache(value);
             return result;
@@ -76,10 +70,12 @@ public final class HttpTrait extends AbstractTrait implements ToSmithyBuilder<Ht
 
     @Override
     protected Node createNode() {
-        return new ObjectNode(MapUtils.of(), getSourceLocation())
+        return Node.objectNodeBuilder()
+                .sourceLocation(getSourceLocation())
                 .withMember("method", Node.from(method))
                 .withMember("uri", Node.from(uri.toString()))
-                .withMember("code", Node.from(code));
+                .withMember("code", Node.from(code))
+                .build();
     }
 
     /**

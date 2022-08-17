@@ -82,8 +82,7 @@ public final class EndpointTrait extends AbstractTrait implements ToSmithyBuilde
         @Override
         public Trait createTrait(ShapeId target, Node value) {
             EndpointTrait.Builder builder = builder().sourceLocation(value);
-            ObjectNode objectNode = value.expectObjectNode();
-            builder.hostPrefix(objectNode.expectStringMember("hostPrefix").getValue());
+            value.expectObjectNode().expectStringMember("hostPrefix", builder::hostPrefix);
             EndpointTrait result = builder.build();
             result.setNodeCache(value);
             return result;

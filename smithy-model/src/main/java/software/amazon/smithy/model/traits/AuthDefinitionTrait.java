@@ -77,12 +77,7 @@ public final class AuthDefinitionTrait extends AbstractTrait implements ToSmithy
         @Override
         public AuthDefinitionTrait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
-            ObjectNode objectNode = value.expectObjectNode();
-            objectNode.getArrayMember("traits").ifPresent(traits -> {
-                for (String string : Node.loadArrayOfString("traits", traits)) {
-                    builder.addTrait(ShapeId.from(string));
-                }
-            });
+            value.expectObjectNode().getArrayMember("traits", ShapeId::fromNode, builder::traits);
             AuthDefinitionTrait result = builder.build();
             result.setNodeCache(value);
             return result;

@@ -306,12 +306,8 @@ public abstract class Node implements FromSourceLocation, ToNode {
      * @throws SourceException on error.
      */
     public static List<String> loadArrayOfString(String descriptor, Node node) {
-        return node.expectArrayNode("Expected `" + descriptor + "` to be an array of strings. Found {type}.")
-                .getElements().stream()
-                .map(element -> element.expectStringNode(
-                        "Each element of `" + descriptor + "` must be a string. Found {type}."))
-                .map(StringNode::getValue)
-                .collect(Collectors.toList());
+        return node.expectArrayNode(() -> "Expected `" + descriptor + "` to be an array of strings. Found {type}.")
+                .getElementsAs(StringNode::getValue);
     }
 
     /**

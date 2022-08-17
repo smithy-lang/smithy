@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -205,17 +206,21 @@ public final class ArrayNode extends Node implements Iterable<Node>, ToSmithyBui
                 String message = e.getMessage();
                 Matcher matcher = CAST_PATTERN_TYPE.matcher(message);
                 String formatted = matcher.matches()
-                        ? String.format(
-                                "Expected ArrayNode element %d to be a `%s` but found a `%s`.",
-                                i, matcher.group(1), elements.get(i).getClass().getSimpleName())
-                        : String.format(
-                                "ArrayNode element at position %d is an invalid type `%s`: %s",
-                                i, elements.get(i).getClass().getSimpleName(), e.getMessage());
+                        ? String.format("Expected array element %d to be a %s but found %s.", i,
+                                        nodeClassToSimpleTypeName(matcher.group(1)),
+                                        nodeClassToSimpleTypeName(elements.get(i).getClass().getSimpleName()))
+                        : String.format("Array element at position %d is an invalid type `%s`: %s", i,
+                                        nodeClassToSimpleTypeName(elements.get(i).getClass().getSimpleName()),
+                                        e.getMessage());
                 throw new ExpectationNotMetException(formatted, elements.get(i));
             }
         }
 
         return result;
+    }
+
+    private static String nodeClassToSimpleTypeName(String className) {
+        return className.replace("Node", "").toLowerCase(Locale.ENGLISH);
     }
 
     /**

@@ -15,8 +15,6 @@
 
 package software.amazon.smithy.model.traits;
 
-import static software.amazon.smithy.model.node.Node.loadArrayOfString;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -397,29 +395,17 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
         public TraitDefinition createTrait(ShapeId target, Node value) {
             // The handling of a trait definition is special-cased, so coercion
             // from a null value to an object is required.
-            ObjectNode members = value.isNullNode()
-                    ? Node.objectNode()
-                    : value.expectObjectNode();
-
+            ObjectNode members = value.isNullNode() ? Node.objectNode() : value.expectObjectNode();
             Builder builder = builder().sourceLocation(value);
-
-            members.getMember("selector")
-                    .map(Selector::fromNode)
-                    .ifPresent(builder::selector);
-
-            members.getStringMember("structurallyExclusive")
-                    .map(StructurallyExclusive::fromNode)
-                    .ifPresent(builder::structurallyExclusive);
-
-            members.getMember("conflicts")
-                    .ifPresent(values -> loadArrayOfString("conflicts", values).forEach(builder::addConflict));
-
-            members.getArrayMember("breakingChanges").ifPresent(d -> {
-                for (ObjectNode entry : d.getElementsAs(ObjectNode.class)) {
-                    builder.addBreakingChange(BreakingChangeRule.fromNode(entry));
-                }
-            });
-
+            members.expectObjectNode()
+                    .getMember("selector", Selector::fromNode, builder::selector)
+                    .getMember("structurallyExclusive", StructurallyExclusive::fromNode, builder::structurallyExclusive)
+                    .getArrayMember("conflicts", nodes -> {
+                        for (Node element : nodes) {
+                            builder.addConflict(element.expectStringNode().getValue());
+                        }
+                    })
+                    .getArrayMember("breakingChanges", BreakingChangeRule::fromNode, builder::breakingChanges);
             TraitDefinition result = builder.build();
             result.setNodeCache(value);
             return result;

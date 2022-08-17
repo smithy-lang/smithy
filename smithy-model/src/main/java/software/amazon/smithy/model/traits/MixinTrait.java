@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -146,12 +144,7 @@ public final class MixinTrait extends AbstractTrait implements ToSmithyBuilder<M
         @Override
         public MixinTrait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
-            ObjectNode objectNode = value.expectObjectNode();
-            objectNode.getArrayMember("localTraits").ifPresent(values -> {
-                for (StringNode entry : values.getElementsAs(StringNode.class)) {
-                    builder.addLocalTrait(entry.expectShapeId());
-                }
-            });
+            value.expectObjectNode().getArrayMember("localTraits", ShapeId::fromNode, builder::localTraits);
             return builder.build();
         }
     }

@@ -25,7 +25,6 @@ import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -200,22 +199,12 @@ public final class ValidationEvent implements Comparable<ValidationEvent>, ToNod
                 objectNode.expectStringMember("filename").getValue(),
                 objectNode.getNumberMemberOrDefault("line", 0).intValue(),
                 objectNode.getNumberMemberOrDefault("column", 0).intValue());
-
-        // Set required properties.
-        Builder builder = builder()
-                .id(objectNode.expectStringMember("id").getValue())
-                .severity(Severity.valueOf(objectNode.expectStringMember("severity").getValue()))
-                .message(objectNode.expectStringMember("message").getValue())
-                .sourceLocation(location);
-
-        // Set optional properties.
-        objectNode.getStringMember("suppressionReason").map(StringNode::getValue)
-                .ifPresent(builder::suppressionReason);
-        objectNode.getStringMember("shapeId")
-                .map(StringNode::getValue)
-                .map(ShapeId::from)
-                .ifPresent(builder::shapeId);
-
+        Builder builder = builder().sourceLocation(location);
+        objectNode.expectStringMember("id", builder::id)
+                .expectMember("severity", Severity::fromNode, builder::severity)
+                .expectStringMember("message", builder::message)
+                .getStringMember("suppressionReason", builder::suppressionReason)
+                .getMember("shapeId", ShapeId::fromNode, builder::shapeId);
         return builder.build();
     }
 

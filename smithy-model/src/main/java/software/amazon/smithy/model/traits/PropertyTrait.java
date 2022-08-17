@@ -17,7 +17,6 @@ package software.amazon.smithy.model.traits;
 
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -76,9 +75,9 @@ public final class PropertyTrait extends AbstractTrait implements ToSmithyBuilde
 
         @Override
         public PropertyTrait createTrait(ShapeId target, Node value) {
-            ObjectNode objectNode = value.expectObjectNode();
-            String name = objectNode.getStringMemberOrDefault("name", null);
-            PropertyTrait result = builder().sourceLocation(value).name(name).build();
+            Builder builder = builder().sourceLocation(value.getSourceLocation());
+            value.expectObjectNode().getStringMember("name", builder::name);
+            PropertyTrait result = builder.build();
             result.setNodeCache(value);
             return result;
         }

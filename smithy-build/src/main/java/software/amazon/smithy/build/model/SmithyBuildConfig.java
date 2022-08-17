@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -51,6 +52,26 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
         projections = builder.projections.copy();
         plugins = builder.plugins.copy();
         ignoreMissingPlugins = builder.ignoreMissingPlugins;
+    }
+
+    public static SmithyBuildConfig fromNode(Node node) {
+        Builder builder = builder();
+        node.expectObjectNode()
+                .expectStringMember("version", builder::version)
+                .getStringMember("outputDirectory", builder::outputDirectory)
+                .getArrayMember("imports", StringNode::getValue, builder::imports)
+                .getObjectMember("projections", v -> {
+                    for (Map.Entry<String, Node> entry : v.getStringMap().entrySet()) {
+                        builder.projections.get().put(entry.getKey(), ProjectionConfig.fromNode(entry.getValue()));
+                    }
+                })
+                .getObjectMember("plugins", v -> {
+                    for (Map.Entry<String, Node> entry : v.getStringMap().entrySet()) {
+                        builder.plugins.get().put(entry.getKey(), entry.getValue().expectObjectNode());
+                    }
+                })
+                .getBooleanMember("ignoreMissingPlugins", builder::ignoreMissingPlugins);
+        return builder.build();
     }
 
     /**

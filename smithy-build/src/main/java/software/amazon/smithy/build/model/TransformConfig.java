@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.build.model;
 
+import java.util.function.Function;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -29,6 +30,14 @@ public final class TransformConfig {
     private TransformConfig(Builder builder) {
         name = SmithyBuilder.requiredState("name", builder.name);
         args = builder.args;
+    }
+
+    public static TransformConfig fromNode(Node node) {
+        TransformConfig.Builder builder = builder();
+        node.expectObjectNode()
+                .expectStringMember("name", builder::name)
+                .getMember("args", Function.identity(), builder::args);
+        return builder.build();
     }
 
     public static Builder builder() {
